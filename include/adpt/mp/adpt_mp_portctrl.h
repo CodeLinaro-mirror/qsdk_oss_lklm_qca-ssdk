@@ -59,5 +59,6 @@
 #define PORT_LPI_ENABLE_STATUS           0x3
 #define PORT_LPI_TASK_RUNNING            0x10000
 #define PORT_LPI_TASK_START              0x20000
+#define PORT_MAX_FRAME_SIZE              0x3fff
 
 #endif

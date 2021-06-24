@@ -622,6 +622,10 @@ adpt_mp_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	MP_PORT_ID_CHECK(port_id);
 
+	if (max_frame > PORT_MAX_FRAME_SIZE - 8) {
+		return SW_OUT_OF_RANGE;
+	}
+
 	memset(&configuration, 0, sizeof(configuration));
 	memset(&mac_max_frame_ctrl, 0, sizeof(mac_max_frame_ctrl));
 	memset(&mac_operation_mode_ctrl, 0, sizeof(mac_operation_mode_ctrl));
