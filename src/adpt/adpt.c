@@ -42,6 +42,12 @@ a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id)
 	return g_chip_ver[dev_id].chip_revision;
 }
 #endif
+
+a_uint32_t adpt_chip_type_get(a_uint32_t dev_id)
+{
+	return g_chip_ver[dev_id].chip_type;
+}
+
 #if defined(HPPE)
 a_uint32_t adpt_hppe_chip_revision_get(a_uint32_t dev_id)
 {
