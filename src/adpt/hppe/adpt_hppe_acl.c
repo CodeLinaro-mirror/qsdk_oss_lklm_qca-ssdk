@@ -3273,16 +3273,17 @@ _adpt_hppe_acl_rule_hw_add(a_uint32_t dev_id, ADPT_HPPE_ACL_SW_LIST *list_entry,
 			hw_reg.bf.res_chain, hw_reg.bf.pri, hw_reg.bf.src_1, hw_reg.bf.src_0,
 			hw_reg.bf.src_type, hw_reg.bf.rule_type, hw_reg.bf.inverse_en,
 			hw_reg.bf.range_en);
+
+		_adpt_hppe_acl_action_sw_2_hw(dev_id,rule, &hw_act);
+		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_act, sizeof(hw_act));*/
+		rv |= hppe_ipo_action_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
+			&hw_act);
 		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_reg, sizeof(hw_reg));*/
 		rv |= hppe_ipo_rule_reg_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
 			&hw_reg);
 		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_mask, sizeof(hw_mask));*/
 		rv |= hppe_ipo_mask_reg_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
 			&hw_mask);
-		_adpt_hppe_acl_action_sw_2_hw(dev_id,rule, &hw_act);
-		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_act, sizeof(hw_act));*/
-		rv |= hppe_ipo_action_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
-			&hw_act);
 
 		if(rv != SW_OK)
 		{
