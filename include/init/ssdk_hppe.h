@@ -25,6 +25,8 @@ extern "C" {
 
 sw_error_t qca_hppe_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id);
 
+sw_error_t
+qca_hppe_tdm_hw_init(a_uint32_t dev_id, a_bool_t enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
