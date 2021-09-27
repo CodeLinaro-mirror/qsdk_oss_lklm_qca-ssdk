@@ -3656,6 +3656,8 @@ regi_exit(void)
 /*qca808x_start*/
 	sw_error_t rv;
 /*qca808x_end*/
+	unregister_netdevice_notifier(&ssdk_dev_notifier);
+
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		ssdk_driver_unregister(dev_id);
@@ -3685,7 +3687,6 @@ regi_exit(void)
 		ssdk_plat_exit(dev_id);
 	}
 
-	unregister_netdevice_notifier(&ssdk_dev_notifier);
 /*qca808x_start*/
 	ssdk_free_priv();
 }
