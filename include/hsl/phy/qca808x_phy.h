@@ -433,6 +433,9 @@ extern "C"
 #define QCA808X_PHY_ADC_THRESHOLD_200MV         0x0f
 #define QCA808X_PHY_ADC_THRESHOLD_300MV         0xff
 
+#define QCA808X_PHY_MMD7_CHIP_TYPE              0x901d
+#define QCA808X_PHY_1G_CHIP_TYPE                0x1
+
 a_uint16_t
 qca808x_phy_reg_read(a_uint32_t dev_id, a_uint32_t phy_id, a_uint32_t reg_id);
 
