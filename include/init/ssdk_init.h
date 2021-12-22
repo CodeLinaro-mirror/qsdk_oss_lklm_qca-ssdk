@@ -51,7 +51,10 @@ extern "C" {
 #define PORT_GMAC_TYPE                  1
 #define PORT_XGMAC_TYPE                 2
 
+
 /*qca808x_start*/
+#define IOCTL_COMPAT
+
     typedef enum {
         HSL_MDIO = 1,
         HSL_HEADER,
@@ -348,6 +351,17 @@ typedef struct
         a_bool_t in_interfacectrl;
     } ssdk_features;
 /*qca808x_start*/
+#ifdef IOCTL_COMPAT
+	typedef struct
+	{		
+		hsl_init_mode	cpu_mode;
+		hsl_access_mode reg_mode;
+		ssdk_chip_type	chip_type;
+		a_uint32_t		chip_revision;
+		a_uint32_t		nl_prot;
+	} ssdk_init_cfg_us;
+#endif
+
 #define CFG_STR_SIZE 20
     typedef struct
     {
@@ -364,7 +378,11 @@ typedef struct
 /*qca808x_end*/
         ssdk_features features;
 /*qca808x_start*/
+#ifdef IOCTL_COMPAT
+        ssdk_init_cfg_us init_cfg;
+#else
         ssdk_init_cfg init_cfg;
+#endif
     } ssdk_cfg_t;
 
 #define SSDK_RFS_INTF_MAX	8
