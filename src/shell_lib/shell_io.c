@@ -23,7 +23,7 @@
     do { if ((rtn) == NULL) return SW_BAD_PARAM; } while(0);
 
 #define DEFAULT_FLAG "default"
-#define MAX_ARRT_NUM 32
+#define MAX_ARRT_NUM 16
 #define INVALID_ARRT_VALUE 0xFFFFFFFF
 static char **full_cmdstrp;
 static int talk_mode = 1;
@@ -149,6 +149,7 @@ struct attr_des_t g_attr_des[] =
 			{NULL, INVALID_ARRT_VALUE}
 		}
 	},
+#if defined(IN_ACL) || defined(IN_TUNNEL)
 	{
 		"tunnel_type",
 		{
@@ -170,6 +171,7 @@ struct attr_des_t g_attr_des[] =
 			{NULL, INVALID_ARRT_VALUE}
 		}
 	},
+#endif
 	{
 		"vport_type",
 		{
@@ -334,27 +336,6 @@ struct attr_des_t g_attr_des[] =
 			{"proto_map0", FAL_TUNNEL_RULE_SRC3_PROTO_MAP0},
 			{"proto_map1", FAL_TUNNEL_RULE_SRC3_PROTO_MAP1},
 			{NULL, FAL_TUNNEL_RULE_SRC3_DATA_INVALID}
-		}
-	},
-	{
-		"tunnel_type",
-		{
-			{"gre_tap_ipv4", FAL_TUNNEL_TYPE_GRE_TAP_OVER_IPV4},
-			{"gre_tap_ipv6", FAL_TUNNEL_TYPE_GRE_TAP_OVER_IPV6},
-			{"vxlan_ipv4", FAL_TUNNEL_TYPE_VXLAN_OVER_IPV4},
-			{"vxlan_ipv6", FAL_TUNNEL_TYPE_VXLAN_OVER_IPV6},
-			{"vxlan_gpe_ipv4", FAL_TUNNEL_TYPE_VXLAN_GPE_OVER_IPV4},
-			{"vxlan_gpe_ipv6", FAL_TUNNEL_TYPE_VXLAN_GPE_OVER_IPV6},
-			{"ipv4_ipv6", FAL_TUNNEL_TYPE_IPV4_OVER_IPV6},
-			{"program0", FAL_TUNNEL_TYPE_PROGRAM0},
-			{"program1", FAL_TUNNEL_TYPE_PROGRAM1},
-			{"program2", FAL_TUNNEL_TYPE_PROGRAM2},
-			{"program3", FAL_TUNNEL_TYPE_PROGRAM3},
-			{"program4", FAL_TUNNEL_TYPE_PROGRAM4},
-			{"program5", FAL_TUNNEL_TYPE_PROGRAM5},
-			{"geneve_ipv4", FAL_TUNNEL_TYPE_GENEVE_OVER_IPV4},
-			{"geneve_ipv6", FAL_TUNNEL_TYPE_GENEVE_OVER_IPV6},
-			{NULL, FAL_TUNNEL_TYPE_INVALID_TUNNEL}
 		}
 	},
 	{
@@ -611,7 +592,7 @@ static sw_data_type_t sw_data_type[] =
 #endif
     SW_TYPE_DEF(SW_MACCMD, cmd_data_check_maccmd, NULL),
 #ifdef IN_IP
-#ifndef IN_IP_MINI
+#if !defined(IN_IP_MINI)
     SW_TYPE_DEF(SW_FLOWCMD, cmd_data_check_flowcmd, NULL),
     SW_TYPE_DEF(SW_FLOWTYPE, cmd_data_check_flowtype, NULL),
 #endif
@@ -672,6 +653,7 @@ static sw_data_type_t sw_data_type[] =
 #endif
 #if defined(IN_IP) || defined(IN_NAT)
     SW_TYPE_DEF(SW_IP_HOSTENTRY, (param_check_t)cmd_data_check_host_entry, NULL),
+#if !defined(IN_IP_MINI)
     SW_TYPE_DEF(SW_ARP_LEARNMODE, cmd_data_check_arp_learn_mode, NULL),
     SW_TYPE_DEF(SW_IP_GUARDMODE, cmd_data_check_ip_guard_mode, NULL),
     SW_TYPE_DEF(SW_NATENTRY, (param_check_t)cmd_data_check_nat_entry, NULL),
@@ -680,10 +662,11 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_FLOWCOOKIE, (param_check_t)cmd_data_check_flow_cookie, NULL),
     SW_TYPE_DEF(SW_FLOWRFS, (param_check_t)cmd_data_check_flow_rfs, NULL),
     SW_TYPE_DEF(SW_NAPTMODE, cmd_data_check_napt_mode, NULL),
-    SW_TYPE_DEF(SW_IP4ADDR, (param_check_t)cmd_data_check_ip4addr, NULL),
-    SW_TYPE_DEF(SW_IP6ADDR, (param_check_t)cmd_data_check_ip6addr, NULL),
     SW_TYPE_DEF(SW_INTFMACENTRY, (param_check_t)cmd_data_check_intf_mac_entry, NULL),
     SW_TYPE_DEF(SW_PUBADDRENTRY, (param_check_t)cmd_data_check_pub_addr_entry, NULL),
+#endif
+    SW_TYPE_DEF(SW_IP4ADDR, (param_check_t)cmd_data_check_ip4addr, NULL),
+    SW_TYPE_DEF(SW_IP6ADDR, (param_check_t)cmd_data_check_ip6addr, NULL),
 #endif
 #ifdef IN_RATE
     SW_TYPE_DEF(SW_INGPOLICER, (param_check_t)cmd_data_check_port_policer, NULL),
@@ -725,13 +708,14 @@ static sw_data_type_t sw_data_type[] =
 #endif
 #endif
 #ifdef IN_IP
-#ifndef IN_IP_MINI
+#if !defined(IN_IP_MINI)
     SW_TYPE_DEF(SW_DEFAULT_ROUTE_ENTRY, (param_check_t)cmd_data_check_default_route_entry, NULL),
-    SW_TYPE_DEF(SW_HOST_ROUTE_ENTRY, (param_check_t)cmd_data_check_host_route_entry, NULL),
     SW_TYPE_DEF(SW_IP_RFS_IP4, (param_check_t)cmd_data_check_ip4_rfs_entry, NULL),
     SW_TYPE_DEF(SW_IP_RFS_IP6, (param_check_t)cmd_data_check_ip6_rfs_entry, NULL),
-    SW_TYPE_DEF(SW_ARP_SG_CFG, (param_check_t)cmd_data_check_arp_sg, NULL),
+    SW_TYPE_DEF(SW_HOST_ROUTE_ENTRY, (param_check_t)cmd_data_check_host_route_entry, NULL),
     SW_TYPE_DEF(SW_IP_NETWORK_ROUTE, (param_check_t)cmd_data_check_network_route, NULL),
+#endif
+    SW_TYPE_DEF(SW_ARP_SG_CFG, (param_check_t)cmd_data_check_arp_sg, NULL),
     SW_TYPE_DEF(SW_IP_INTF, (param_check_t)cmd_data_check_intf, NULL),
     SW_TYPE_DEF(SW_IP_VSI_INTF, (param_check_t)cmd_data_check_vsi_intf, NULL),
     SW_TYPE_DEF(SW_IP_NEXTHOP, (param_check_t)cmd_data_check_nexthop, NULL),
@@ -740,7 +724,6 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_IP_PORTMAC, (param_check_t)cmd_data_check_ip_portmac, NULL),
     SW_TYPE_DEF(SW_IP_MCMODE, (param_check_t)cmd_data_check_ip_mcmode, NULL),
     SW_TYPE_DEF(SW_IP_GLOBAL, (param_check_t)cmd_data_check_ip_global, NULL),
-#endif
 #endif
 #ifdef IN_PORTCONTROL
 #ifndef IN_PORTCONTROL_MINI
@@ -875,6 +858,10 @@ static sw_data_type_t sw_data_type[] =
 		    (param_check_t)cmd_data_check_encap_ecn_rule, NULL),
     SW_TYPE_DEF(SW_TUNNEL_ECN_VAL,
 		    (param_check_t)cmd_data_check_ecn_val, NULL),
+    SW_TYPE_DEF(SW_TUNNEL_TYPE,
+		    cmd_data_check_tunnel_type, NULL),
+    SW_TYPE_DEF(SW_TUNNEL_KEY,
+		    (param_check_t)cmd_data_check_tunnel_key, NULL),
 #endif
 #ifdef IN_MAPT
     SW_TYPE_DEF(SW_MAPT_DECAP_CTRL,
@@ -3177,7 +3164,7 @@ cmd_data_check_maccmd(char *cmdstr, fal_fwd_cmd_t * val, a_uint32_t size)
 
 /*flow*/
 #ifdef IN_IP
-#ifndef IN_IP_MINI
+#if !defined(IN_IP_MINI)
 sw_error_t
 cmd_data_check_flowcmd(char *cmdstr, fal_default_flow_cmd_t * val, a_uint32_t size)
 {
@@ -6846,7 +6833,7 @@ cmd_data_check_host_entry(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 
-
+#if !defined(IN_IP_MINI)
 sw_error_t
 cmd_data_check_arp_learn_mode(char *cmd_str, fal_arp_learn_mode_t * arg_val,
                               a_uint32_t size)
@@ -7321,7 +7308,6 @@ cmd_data_check_flow_entry(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 
-
 sw_error_t
 cmd_data_check_napt_mode(char *cmd_str, fal_napt_mode_t * arg_val,
                          a_uint32_t size)
@@ -7354,7 +7340,6 @@ cmd_data_check_napt_mode(char *cmd_str, fal_napt_mode_t * arg_val,
 
     return SW_OK;
 }
-
 
 sw_error_t
 cmd_data_check_intf_mac_entry(char *cmd_str, void * val, a_uint32_t size)
@@ -7418,7 +7403,6 @@ cmd_data_check_intf_mac_entry(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 
-
 sw_error_t
 cmd_data_check_pub_addr_entry(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -7444,6 +7428,7 @@ cmd_data_check_pub_addr_entry(char *cmd_str, void * val, a_uint32_t size)
     *(fal_nat_pub_addr_t *)val = entry;
     return SW_OK;
 }
+#endif
 #endif
 
 #ifdef IN_RATE
@@ -9073,7 +9058,7 @@ cmd_data_check_remark_entry(char *info, void *val, a_uint32_t size)
 #endif
 #endif
 #ifdef IN_IP
-#ifndef IN_IP_MINI
+#if !defined(IN_IP_MINI)
 sw_error_t
 cmd_data_check_default_route_entry(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -9389,6 +9374,7 @@ cmd_data_check_fdb_rfs(char *cmd_str, void * val, a_uint32_t size)
 }
 #endif
 #if defined(IN_IP) || defined(IN_NAT)
+#if !defined(IN_IP_MINI)
 sw_error_t
 cmd_data_check_flow_cookie(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -9502,8 +9488,8 @@ cmd_data_check_flow_rfs(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 #endif
+#endif
 #ifdef IN_IP
-#ifndef IN_IP_MINI
 sw_error_t
 cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -10781,6 +10767,7 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 
+#if !defined(IN_IP_MINI)
 sw_error_t
 cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -10922,8 +10909,7 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
     *(fal_network_route_entry_t *)val = entry;
     return SW_OK;
 }
-
-
+#endif
 
 sw_error_t
 cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
@@ -11185,6 +11171,8 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
     *(fal_arp_sg_cfg_t *)val = entry;
     return SW_OK;
 }
+
+#if !defined(IN_IP_MINI)
 sw_error_t
 cmd_data_check_ip6_rfs_entry(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -18333,6 +18321,146 @@ cmd_data_check_decap_ecn_action(char *cmd_str,
 	SW_RTN_ON_ERROR(rv);
 
 	*(fal_tunnel_decap_ecn_action_t *)arg_val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_tunnel_type(char *cmd_str, fal_tunnel_type_t *arg_val, a_uint32_t size)
+{
+
+	return cmd_data_check_attr("tunnel_type", cmd_str,
+			arg_val, sizeof(*arg_val));
+}
+
+sw_error_t
+cmd_data_check_tunnel_key(char *cmd_str, fal_tunnel_decap_key_t *arg_val, a_uint32_t size)
+{
+	char *cmd;
+	fal_tunnel_decap_key_t entry;
+	a_uint32_t tmp = 0;
+	a_bool_t enable = A_FALSE;
+	sw_error_t rv = SW_OK;
+
+	aos_mem_zero(&entry, sizeof(fal_tunnel_decap_key_t));
+
+        rv = __cmd_data_check_boolean("key_sip_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_SIP_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_SIP_EN);
+
+        rv = __cmd_data_check_boolean("key_dip_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_DIP_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_DIP_EN);
+
+        rv = __cmd_data_check_boolean("key_l4proto_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_L4PROTO_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_L4PROTO_EN);
+
+        rv = __cmd_data_check_boolean("key_sport_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_SPORT_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_SPORT_EN);
+
+        rv = __cmd_data_check_boolean("key_dport_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_DPORT_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_DPORT_EN);
+
+        rv = __cmd_data_check_boolean("key_tlinfo_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_TLINFO_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_TLINFO_EN);
+
+	cmd_data_check_element("tunnel_info_mask", "0",
+			"usage: tunnel info\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+
+	entry.tunnel_info_mask = tmp;
+
+        rv = __cmd_data_check_boolean("key_udf0_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_UDF0_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_UDF0_EN);
+
+	cmd_data_check_element("udf0_idx", "0",
+			"usage: udf0 id to select\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+
+	entry.udf0_idx = tmp;
+
+	cmd_data_check_element("udf0_mask", "0",
+			"usage: udf0 mask value\n",
+			cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+
+	entry.udf0_mask = tmp;
+
+        rv = __cmd_data_check_boolean("key_udf1_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &enable,
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable == A_TRUE)
+		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_UDF1_EN);
+	else
+		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_UDF1_EN);
+
+	cmd_data_check_element("udf1_idx", "0",
+			"usage: udf1 id to select\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.udf1_idx = tmp;
+
+	cmd_data_check_element("udf1_mask", "0",
+			"usage: udf1 mask value\n",
+			cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+	entry.udf1_mask = tmp;
+
+	*arg_val = entry;
 
 	return SW_OK;
 }

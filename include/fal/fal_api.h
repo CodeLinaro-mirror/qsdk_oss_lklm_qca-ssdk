@@ -1496,7 +1496,7 @@ extern "C" {
 #endif
 
 #ifdef IN_IP
-#ifndef IN_IP_MINI
+#if !defined(IN_IP_MINI)
 #define IP_API \
     SW_API_DEF(SW_API_IP_HOST_ADD, fal_ip_host_add), \
     SW_API_DEF(SW_API_IP_HOST_DEL, fal_ip_host_del), \
@@ -1669,8 +1669,89 @@ extern "C" {
     SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_SET) \
     SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_GET)
 #else
-#define IP_API
-#define IP_API_PARAM
+#define IP_API \
+    SW_API_DEF(SW_API_IP_HOST_ADD, fal_ip_host_add), \
+    SW_API_DEF(SW_API_IP_HOST_DEL, fal_ip_host_del), \
+    SW_API_DEF(SW_API_IP_HOST_GET, fal_ip_host_get), \
+    SW_API_DEF(SW_API_IP_HOST_NEXT, fal_ip_host_next), \
+    SW_API_DEF(SW_API_IP_VIS_ARP_SG_CFG_GET, fal_ip_vsi_arp_sg_cfg_get), \
+    SW_API_DEF(SW_API_IP_VIS_ARP_SG_CFG_SET, fal_ip_vsi_arp_sg_cfg_set), \
+    SW_API_DEF(SW_API_IP_INTF_GET, fal_ip_intf_get), \
+    SW_API_DEF(SW_API_IP_INTF_SET, fal_ip_intf_set), \
+    SW_API_DEF(SW_API_IP_VSI_INTF_GET, fal_ip_vsi_intf_get), \
+    SW_API_DEF(SW_API_IP_VSI_INTF_SET, fal_ip_vsi_intf_set), \
+    SW_API_DEF(SW_API_IP_NEXTHOP_GET, fal_ip_nexthop_get), \
+    SW_API_DEF(SW_API_IP_NEXTHOP_SET, fal_ip_nexthop_set), \
+    SW_API_DEF(SW_API_IP_VSI_SG_SET, fal_ip_vsi_sg_cfg_set), \
+    SW_API_DEF(SW_API_IP_VSI_SG_GET, fal_ip_vsi_sg_cfg_get), \
+    SW_API_DEF(SW_API_IP_PORT_SG_SET, fal_ip_port_sg_cfg_set), \
+    SW_API_DEF(SW_API_IP_PORT_SG_GET, fal_ip_port_sg_cfg_get), \
+    SW_API_DEF(SW_API_IP_PUB_IP_SET, fal_ip_pub_addr_set), \
+    SW_API_DEF(SW_API_IP_PUB_IP_GET, fal_ip_pub_addr_get), \
+    SW_API_DEF(SW_API_IP_PORT_INTF_GET, fal_ip_port_intf_get), \
+    SW_API_DEF(SW_API_IP_PORT_INTF_SET, fal_ip_port_intf_set), \
+    SW_API_DEF(SW_API_IP_PORT_MAC_GET, fal_ip_port_macaddr_get), \
+    SW_API_DEF(SW_API_IP_PORT_MAC_SET, fal_ip_port_macaddr_set), \
+    SW_API_DEF(SW_API_IP_ROUTE_MISS_GET, fal_ip_route_mismatch_action_get), \
+    SW_API_DEF(SW_API_IP_ROUTE_MISS_SET, fal_ip_route_mismatch_action_set), \
+    SW_API_DEF(SW_API_IP_PORT_ARP_SG_SET, fal_ip_port_arp_sg_cfg_set), \
+    SW_API_DEF(SW_API_IP_PORT_ARP_SG_GET, fal_ip_port_arp_sg_cfg_get), \
+    SW_API_DEF(SW_API_IP_VSI_MC_MODE_SET, fal_ip_vsi_mc_mode_set), \
+    SW_API_DEF(SW_API_IP_VSI_MC_MODE_GET, fal_ip_vsi_mc_mode_get), \
+    SW_API_DEF(SW_API_GLOBAL_CTRL_GET, fal_ip_global_ctrl_get), \
+    SW_API_DEF(SW_API_GLOBAL_CTRL_SET, fal_ip_global_ctrl_set), \
+    SW_API_DEF(SW_API_IP_INTF_MTU_MRU_SET, fal_ip_intf_mtu_mru_set), \
+    SW_API_DEF(SW_API_IP_INTF_MTU_MRU_GET, fal_ip_intf_mtu_mru_get), \
+    SW_API_DEF(SW_API_IP6_INTF_MTU_MRU_SET, fal_ip6_intf_mtu_mru_set), \
+    SW_API_DEF(SW_API_IP6_INTF_MTU_MRU_GET, fal_ip6_intf_mtu_mru_get), \
+    SW_API_DEF(SW_API_IP_INTF_MACADDR_ADD, fal_ip_intf_macaddr_add), \
+    SW_API_DEF(SW_API_IP_INTF_MACADDR_DEL, fal_ip_intf_macaddr_del), \
+    SW_API_DEF(SW_API_IP_INTF_MACADDR_GET_FIRST, fal_ip_intf_macaddr_get_first), \
+    SW_API_DEF(SW_API_IP_INTF_MACADDR_GET_NEXT, fal_ip_intf_macaddr_get_next), \
+    SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_SET, fal_ip_intf_dmac_check_set), \
+    SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_GET, fal_ip_intf_dmac_check_get),
+
+#define IP_API_PARAM \
+    SW_API_DESC(SW_API_IP_HOST_ADD) \
+    SW_API_DESC(SW_API_IP_HOST_DEL) \
+    SW_API_DESC(SW_API_IP_HOST_GET) \
+    SW_API_DESC(SW_API_IP_HOST_NEXT) \
+    SW_API_DESC(SW_API_IP_VIS_ARP_SG_CFG_GET) \
+    SW_API_DESC(SW_API_IP_VIS_ARP_SG_CFG_SET) \
+    SW_API_DESC(SW_API_IP_INTF_GET) \
+    SW_API_DESC(SW_API_IP_INTF_SET) \
+    SW_API_DESC(SW_API_IP_VSI_INTF_GET) \
+    SW_API_DESC(SW_API_IP_VSI_INTF_SET) \
+    SW_API_DESC(SW_API_IP_NEXTHOP_GET) \
+    SW_API_DESC(SW_API_IP_NEXTHOP_SET) \
+    SW_API_DESC(SW_API_IP_VSI_SG_SET) \
+    SW_API_DESC(SW_API_IP_VSI_SG_GET) \
+    SW_API_DESC(SW_API_IP_PORT_SG_SET) \
+    SW_API_DESC(SW_API_IP_PORT_SG_GET) \
+    SW_API_DESC(SW_API_IP_PUB_IP_SET) \
+    SW_API_DESC(SW_API_IP_PUB_IP_GET) \
+    SW_API_DESC(SW_API_IP_PORT_INTF_GET) \
+    SW_API_DESC(SW_API_IP_PORT_INTF_SET) \
+    SW_API_DESC(SW_API_IP_PORT_MAC_GET) \
+    SW_API_DESC(SW_API_IP_PORT_MAC_SET) \
+    SW_API_DESC(SW_API_IP_ROUTE_MISS_GET) \
+    SW_API_DESC(SW_API_IP_ROUTE_MISS_SET) \
+    SW_API_DESC(SW_API_IP_PORT_ARP_SG_SET) \
+    SW_API_DESC(SW_API_IP_PORT_ARP_SG_GET) \
+    SW_API_DESC(SW_API_IP_VSI_MC_MODE_SET) \
+    SW_API_DESC(SW_API_IP_VSI_MC_MODE_GET) \
+    SW_API_DESC(SW_API_GLOBAL_CTRL_GET) \
+    SW_API_DESC(SW_API_GLOBAL_CTRL_SET) \
+    SW_API_DESC(SW_API_IP_INTF_MTU_MRU_SET) \
+    SW_API_DESC(SW_API_IP_INTF_MTU_MRU_GET) \
+    SW_API_DESC(SW_API_IP6_INTF_MTU_MRU_SET) \
+    SW_API_DESC(SW_API_IP6_INTF_MTU_MRU_GET) \
+    SW_API_DESC(SW_API_IP_INTF_MACADDR_ADD) \
+    SW_API_DESC(SW_API_IP_INTF_MACADDR_DEL) \
+    SW_API_DESC(SW_API_IP_INTF_MACADDR_GET_FIRST) \
+    SW_API_DESC(SW_API_IP_INTF_MACADDR_GET_NEXT) \
+    SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_SET) \
+    SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_GET)
 #endif
 #else
 #define IP_API
@@ -1678,7 +1759,7 @@ extern "C" {
 #endif
 
 #ifdef IN_FLOW
-#ifndef IN_FLOW_MINI
+#if !defined(IN_FLOW_MINI)
 #define FLOW_API \
     SW_API_DEF(SW_API_FLOW_STATUS_SET, fal_flow_status_set), \
     SW_API_DEF(SW_API_FLOW_STATUS_GET, fal_flow_status_get), \
@@ -1696,6 +1777,7 @@ extern "C" {
     SW_API_DEF(SW_API_FLOW_HOST_DEL, fal_flow_host_del), \
     SW_API_DEF(SW_API_FLOWENTRY_NEXT, fal_flow_entry_next), \
     SW_API_DEF(SW_API_FLOW_COUNTER_GET, fal_flow_counter_get), \
+    SW_API_DEF(SW_API_FLOW_COUNTER_CLEANUP, fal_flow_counter_cleanup), \
     SW_API_DEF(SW_API_FLOW_ENTRY_EN_SET, fal_flow_entry_en_set), \
     SW_API_DEF(SW_API_FLOW_ENTRY_EN_GET, fal_flow_entry_en_get), \
     SW_API_DEF(SW_API_FLOW_QOS_SET, fal_flow_qos_set), \
@@ -1718,18 +1800,53 @@ extern "C" {
     SW_API_DESC(SW_API_FLOW_HOST_DEL) \
     SW_API_DESC(SW_API_FLOWENTRY_NEXT) \
     SW_API_DESC(SW_API_FLOW_COUNTER_GET) \
+    SW_API_DESC(SW_API_FLOW_COUNTER_CLEANUP) \
     SW_API_DESC(SW_API_FLOW_ENTRY_EN_SET) \
     SW_API_DESC(SW_API_FLOW_ENTRY_EN_GET) \
     SW_API_DESC(SW_API_FLOW_QOS_SET) \
     SW_API_DESC(SW_API_FLOW_QOS_GET)
 #else
 #define FLOW_API \
+    SW_API_DEF(SW_API_FLOW_STATUS_SET, fal_flow_status_set), \
+    SW_API_DEF(SW_API_FLOW_STATUS_GET, fal_flow_status_get), \
     SW_API_DEF(SW_API_FLOW_CTRL_SET, fal_flow_mgmt_set), \
-    SW_API_DEF(SW_API_FLOW_CTRL_GET, fal_flow_mgmt_get),
+    SW_API_DEF(SW_API_FLOW_CTRL_GET, fal_flow_mgmt_get), \
+    SW_API_DEF(SW_API_FLOW_ENTRY_ADD, fal_flow_entry_add), \
+    SW_API_DEF(SW_API_FLOW_ENTRY_DEL, fal_flow_entry_del), \
+    SW_API_DEF(SW_API_FLOW_ENTRY_GET, fal_flow_entry_get), \
+    SW_API_DEF(SW_API_FLOW_GLOBAL_CFG_GET, fal_flow_global_cfg_get), \
+    SW_API_DEF(SW_API_FLOW_GLOBAL_CFG_SET, fal_flow_global_cfg_set), \
+    SW_API_DEF(SW_API_FLOW_HOST_ADD, fal_flow_host_add), \
+    SW_API_DEF(SW_API_FLOW_HOST_GET, fal_flow_host_get), \
+    SW_API_DEF(SW_API_FLOW_HOST_DEL, fal_flow_host_del), \
+    SW_API_DEF(SW_API_FLOWENTRY_NEXT, fal_flow_entry_next), \
+    SW_API_DEF(SW_API_FLOW_COUNTER_GET, fal_flow_counter_get), \
+    SW_API_DEF(SW_API_FLOW_COUNTER_CLEANUP, fal_flow_counter_cleanup), \
+    SW_API_DEF(SW_API_FLOW_ENTRY_EN_SET, fal_flow_entry_en_set), \
+    SW_API_DEF(SW_API_FLOW_ENTRY_EN_GET, fal_flow_entry_en_get), \
+    SW_API_DEF(SW_API_FLOW_QOS_SET, fal_flow_qos_set), \
+    SW_API_DEF(SW_API_FLOW_QOS_GET, fal_flow_qos_get),
 
 #define FLOW_API_PARAM \
+    SW_API_DESC(SW_API_FLOW_STATUS_SET) \
+    SW_API_DESC(SW_API_FLOW_STATUS_GET) \
     SW_API_DESC(SW_API_FLOW_CTRL_SET) \
-    SW_API_DESC(SW_API_FLOW_CTRL_GET)
+    SW_API_DESC(SW_API_FLOW_CTRL_GET) \
+    SW_API_DESC(SW_API_FLOW_ENTRY_ADD) \
+    SW_API_DESC(SW_API_FLOW_ENTRY_DEL) \
+    SW_API_DESC(SW_API_FLOW_ENTRY_GET) \
+    SW_API_DESC(SW_API_FLOW_GLOBAL_CFG_GET) \
+    SW_API_DESC(SW_API_FLOW_GLOBAL_CFG_SET) \
+    SW_API_DESC(SW_API_FLOW_HOST_ADD) \
+    SW_API_DESC(SW_API_FLOW_HOST_GET) \
+    SW_API_DESC(SW_API_FLOW_HOST_DEL) \
+    SW_API_DESC(SW_API_FLOWENTRY_NEXT) \
+    SW_API_DESC(SW_API_FLOW_COUNTER_GET) \
+    SW_API_DESC(SW_API_FLOW_COUNTER_CLEANUP) \
+    SW_API_DESC(SW_API_FLOW_ENTRY_EN_SET) \
+    SW_API_DESC(SW_API_FLOW_ENTRY_EN_GET) \
+    SW_API_DESC(SW_API_FLOW_QOS_SET) \
+    SW_API_DESC(SW_API_FLOW_QOS_GET)
 #endif
 #else
 #define FLOW_API
@@ -2037,27 +2154,69 @@ extern "C" {
 #else
 #define QM_API \
     SW_API_DEF(SW_API_UCAST_QUEUE_BASE_PROFILE_SET, fal_ucast_queue_base_profile_set), \
+    SW_API_DEF(SW_API_UCAST_QUEUE_BASE_PROFILE_GET, fal_ucast_queue_base_profile_get), \
     SW_API_DEF(SW_API_UCAST_PRIORITY_CLASS_SET, fal_ucast_priority_class_set), \
+    SW_API_DEF(SW_API_UCAST_PRIORITY_CLASS_GET, fal_ucast_priority_class_get), \
     SW_API_DEF(SW_API_QUEUE_FLUSH, fal_queue_flush), \
+    SW_API_DEF(SW_API_UCAST_HASH_MAP_SET, fal_ucast_hash_map_set), \
+    SW_API_DEF(SW_API_UCAST_HASH_MAP_GET, fal_ucast_hash_map_get), \
+    SW_API_DEF(SW_API_UCAST_DFLT_HASH_MAP_SET, fal_ucast_default_hash_set), \
+    SW_API_DEF(SW_API_UCAST_DFLT_HASH_MAP_GET, fal_ucast_default_hash_get), \
     SW_API_DEF(SW_API_AC_CTRL_SET, fal_ac_ctrl_set), \
+    SW_API_DEF(SW_API_AC_CTRL_GET, fal_ac_ctrl_get), \
     SW_API_DEF(SW_API_AC_PRE_BUFFER_SET, fal_ac_prealloc_buffer_set), \
+    SW_API_DEF(SW_API_AC_PRE_BUFFER_GET, fal_ac_prealloc_buffer_get), \
     SW_API_DEF(SW_API_QUEUE_GROUP_SET, fal_ac_queue_group_set), \
+    SW_API_DEF(SW_API_QUEUE_GROUP_GET, fal_ac_queue_group_get), \
     SW_API_DEF(SW_API_STATIC_THRESH_SET, fal_ac_static_threshold_set), \
+    SW_API_DEF(SW_API_STATIC_THRESH_GET, fal_ac_static_threshold_get), \
     SW_API_DEF(SW_API_DYNAMIC_THRESH_SET, fal_ac_dynamic_threshold_set), \
+    SW_API_DEF(SW_API_DYNAMIC_THRESH_GET, fal_ac_dynamic_threshold_get), \
     SW_API_DEF(SW_API_GOURP_BUFFER_SET, fal_ac_group_buffer_set), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CTRL_SET, fal_qm_enqueue_ctrl_set),
+    SW_API_DEF(SW_API_GOURP_BUFFER_GET, fal_ac_group_buffer_get), \
+    SW_API_DEF(SW_API_QUEUE_CNT_CTRL_GET, fal_queue_counter_ctrl_get), \
+    SW_API_DEF(SW_API_QUEUE_CNT_CTRL_SET, fal_queue_counter_ctrl_set), \
+    SW_API_DEF(SW_API_QUEUE_CNT_GET, fal_queue_counter_get), \
+    SW_API_DEF(SW_API_QUEUE_CNT_CLEANUP, fal_queue_counter_cleanup), \
+    SW_API_DEF(SW_API_QM_ENQUEUE_CTRL_SET, fal_qm_enqueue_ctrl_set), \
+    SW_API_DEF(SW_API_QM_ENQUEUE_CTRL_GET, fal_qm_enqueue_ctrl_get), \
+    SW_API_DEF(SW_API_QM_SOURCE_PROFILE_SET, fal_qm_port_source_profile_set), \
+    SW_API_DEF(SW_API_QM_SOURCE_PROFILE_GET, fal_qm_port_source_profile_get), \
+    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_GET, fal_qm_enqueue_config_get), \
+    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_SET, fal_qm_enqueue_config_set),
 
 #define QM_API_PARAM \
     SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_SET) \
+    SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_GET) \
     SW_API_DESC(SW_API_UCAST_PRIORITY_CLASS_SET) \
+    SW_API_DESC(SW_API_UCAST_PRIORITY_CLASS_GET) \
     SW_API_DESC(SW_API_QUEUE_FLUSH) \
+    SW_API_DESC(SW_API_UCAST_HASH_MAP_SET) \
+    SW_API_DESC(SW_API_UCAST_HASH_MAP_GET) \
+    SW_API_DESC(SW_API_UCAST_DFLT_HASH_MAP_SET) \
+    SW_API_DESC(SW_API_UCAST_DFLT_HASH_MAP_GET) \
     SW_API_DESC(SW_API_AC_CTRL_SET) \
+    SW_API_DESC(SW_API_AC_CTRL_GET) \
     SW_API_DESC(SW_API_AC_PRE_BUFFER_SET) \
+    SW_API_DESC(SW_API_AC_PRE_BUFFER_GET) \
     SW_API_DESC(SW_API_QUEUE_GROUP_SET) \
+    SW_API_DESC(SW_API_QUEUE_GROUP_GET) \
     SW_API_DESC(SW_API_STATIC_THRESH_SET) \
+    SW_API_DESC(SW_API_STATIC_THRESH_GET) \
     SW_API_DESC(SW_API_DYNAMIC_THRESH_SET) \
+    SW_API_DESC(SW_API_DYNAMIC_THRESH_GET) \
     SW_API_DESC(SW_API_GOURP_BUFFER_SET) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CTRL_SET)
+    SW_API_DESC(SW_API_GOURP_BUFFER_GET) \
+    SW_API_DESC(SW_API_QUEUE_CNT_CTRL_GET) \
+    SW_API_DESC(SW_API_QUEUE_CNT_CTRL_SET) \
+    SW_API_DESC(SW_API_QUEUE_CNT_GET) \
+    SW_API_DESC(SW_API_QUEUE_CNT_CLEANUP) \
+    SW_API_DESC(SW_API_QM_ENQUEUE_CTRL_SET) \
+    SW_API_DESC(SW_API_QM_ENQUEUE_CTRL_GET) \
+    SW_API_DESC(SW_API_QM_SOURCE_PROFILE_SET) \
+    SW_API_DESC(SW_API_QM_SOURCE_PROFILE_GET) \
+    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_GET) \
+    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_SET)
 #endif
 #else
 #define QM_API
