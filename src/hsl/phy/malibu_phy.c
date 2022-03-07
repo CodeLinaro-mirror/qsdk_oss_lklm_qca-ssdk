@@ -1,15 +1,18 @@
 /*
  * Copyright (c) 2015-2019, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #include "sw.h"
@@ -1389,27 +1392,24 @@ a_bool_t malibu_phy_get_link_status(a_uint32_t dev_id, a_uint32_t phy_id)
 *
 */
 sw_error_t
-malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
 			   a_uint32_t autoneg)
 {
 	a_uint16_t phy_data = 0;
-	if (phy_id == COMBO_PHY_ID) {
-		if (__medium_is_fiber_100fx(dev_id, phy_id))
+
+	hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, autoneg);
+
+	if (phy_addr == COMBO_PHY_ID) {
+		if (__medium_is_fiber_100fx(dev_id, phy_addr))
 			return SW_NOT_SUPPORTED;
 
 		if (MALIBU_PHY_MEDIUM_COPPER ==
-		    __phy_active_medium_get(dev_id, phy_id)) {
-
-			__phy_reg_pages_sel(dev_id, phy_id,
-					    MALIBU_PHY_COPPER_PAGES);
-			phy_data =
-			    malibu_phy_reg_read(dev_id, phy_id,
-						MALIBU_AUTONEG_ADVERT);
+			__phy_active_medium_get(dev_id, phy_addr)) {
+				__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
+			phy_data = malibu_phy_reg_read(dev_id, phy_addr,
+				MALIBU_AUTONEG_ADVERT);
 			phy_data &= ~MALIBU_ADVERTISE_MEGA_ALL;
-			phy_data &=
-			    ~(MALIBU_ADVERTISE_PAUSE |
-			      MALIBU_ADVERTISE_ASYM_PAUSE);
-
+			phy_data &= ~(MALIBU_ADVERTISE_PAUSE | MALIBU_ADVERTISE_ASYM_PAUSE);
 			if (autoneg & FAL_PHY_ADV_100TX_FD) {
 				phy_data |= MALIBU_ADVERTISE_100FULL;
 			}
@@ -1428,35 +1428,29 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 			if (autoneg & FAL_PHY_ADV_ASY_PAUSE) {
 				phy_data |= MALIBU_ADVERTISE_ASYM_PAUSE;
 			}
-			__phy_reg_pages_sel(dev_id, phy_id,
-					    MALIBU_PHY_COPPER_PAGES);
+			__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
 			if (autoneg & FAL_PHY_ADV_1000T_FD) {
 				phy_data |= MALIBU_EXTENDED_NEXT_PAGE_EN;
 			} else {
 				phy_data &= ~MALIBU_EXTENDED_NEXT_PAGE_EN;
 			}
-			malibu_phy_reg_write(dev_id, phy_id,
-					     MALIBU_AUTONEG_ADVERT, phy_data);
+			malibu_phy_reg_write(dev_id, phy_addr, MALIBU_AUTONEG_ADVERT,
+				phy_data);
 
-			phy_data =
-			    malibu_phy_reg_read(dev_id, phy_id,
-						MALIBU_1000BASET_CONTROL);
+			phy_data = malibu_phy_reg_read(dev_id, phy_addr,
+				MALIBU_1000BASET_CONTROL);
 			phy_data &= ~MALIBU_ADVERTISE_1000FULL;
 			phy_data &= ~MALIBU_ADVERTISE_1000HALF;
 
 			if (autoneg & FAL_PHY_ADV_1000T_FD) {
 				phy_data |= MALIBU_ADVERTISE_1000FULL;
 			}
-			malibu_phy_reg_write(dev_id, phy_id,
-					     MALIBU_1000BASET_CONTROL,
-					     phy_data);
+			malibu_phy_reg_write(dev_id, phy_addr, MALIBU_1000BASET_CONTROL,
+				phy_data);
 		} else {
-
-			__phy_reg_pages_sel(dev_id, phy_id,
-					    MALIBU_PHY_SGBX_PAGES);
-			phy_data =
-			    malibu_phy_reg_read(dev_id, phy_id,
-						MALIBU_AUTONEG_ADVERT);
+			__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_SGBX_PAGES);
+			phy_data = malibu_phy_reg_read(dev_id, phy_addr,
+				MALIBU_AUTONEG_ADVERT);
 			phy_data &= ~MALIBU_BX_ADVERTISE_ALL;
 
 			if (autoneg & FAL_PHY_ADV_1000BX_FD) {
@@ -1471,19 +1465,15 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 			if (autoneg & FAL_PHY_ADV_ASY_PAUSE) {
 				phy_data |= MALIBU_BX_ADVERTISE_ASYM_PAUSE;
 			}
-			__phy_reg_pages_sel(dev_id, phy_id,
-					    MALIBU_PHY_SGBX_PAGES);
+			__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_SGBX_PAGES);
 
-			malibu_phy_reg_write(dev_id, phy_id,
-					     MALIBU_AUTONEG_ADVERT, phy_data);
+			malibu_phy_reg_write(dev_id, phy_addr, MALIBU_AUTONEG_ADVERT,
+				phy_data);
 		}
 	} else {
-
-		phy_data =
-		    malibu_phy_reg_read(dev_id, phy_id, MALIBU_AUTONEG_ADVERT);
+		phy_data = malibu_phy_reg_read(dev_id, phy_addr, MALIBU_AUTONEG_ADVERT);
 		phy_data &= ~MALIBU_ADVERTISE_MEGA_ALL;
-		phy_data &=
-		    ~(MALIBU_ADVERTISE_PAUSE | MALIBU_ADVERTISE_ASYM_PAUSE);
+		phy_data &= ~(MALIBU_ADVERTISE_PAUSE | MALIBU_ADVERTISE_ASYM_PAUSE);
 
 		if (autoneg & FAL_PHY_ADV_100TX_FD) {
 			phy_data |= MALIBU_ADVERTISE_100FULL;
@@ -1503,21 +1493,18 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 		if (autoneg & FAL_PHY_ADV_ASY_PAUSE) {
 			phy_data |= MALIBU_ADVERTISE_ASYM_PAUSE;
 		}
-		malibu_phy_reg_write(dev_id, phy_id, MALIBU_AUTONEG_ADVERT,
-				     phy_data);
-
-		phy_data =
-		    malibu_phy_reg_read(dev_id, phy_id,
-					MALIBU_1000BASET_CONTROL);
+		malibu_phy_reg_write(dev_id, phy_addr, MALIBU_AUTONEG_ADVERT,
+			phy_data);
+		phy_data = malibu_phy_reg_read(dev_id, phy_addr,
+			MALIBU_1000BASET_CONTROL);
 		phy_data &= ~MALIBU_ADVERTISE_1000FULL;
 		phy_data &= ~MALIBU_ADVERTISE_1000HALF;
 
 		if (autoneg & FAL_PHY_ADV_1000T_FD) {
 			phy_data |= MALIBU_ADVERTISE_1000FULL;
 		}
-		malibu_phy_reg_write(dev_id, phy_id, MALIBU_1000BASET_CONTROL,
-				     phy_data);
-
+		malibu_phy_reg_write(dev_id, phy_addr, MALIBU_1000BASET_CONTROL,
+			phy_data);
 	}
 
 	return SW_OK;
@@ -1658,20 +1645,22 @@ a_bool_t malibu_phy_autoneg_status(a_uint32_t dev_id, a_uint32_t phy_id)
 * malibu_restart_autoneg - restart the phy autoneg
 *
 */
-sw_error_t malibu_phy_restart_autoneg(a_uint32_t dev_id, a_uint32_t phy_id)
+sw_error_t malibu_phy_restart_autoneg(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
 	a_uint16_t phy_data = 0;
 
-	if (phy_id == COMBO_PHY_ID) {
-		if (__medium_is_fiber_100fx(dev_id, phy_id))
+	hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, 0);
+
+	if (phy_addr == COMBO_PHY_ID) {
+		if (__medium_is_fiber_100fx(dev_id, phy_addr))
 			return SW_NOT_SUPPORTED;
-		__phy_reg_pages_sel_by_active_medium(dev_id, phy_id);
+		__phy_reg_pages_sel_by_active_medium(dev_id, phy_addr);
 	}
-	phy_data = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_CONTROL);
+	phy_data = malibu_phy_reg_read(dev_id, phy_addr, MALIBU_PHY_CONTROL);
 
 	phy_data |= MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
-	malibu_phy_reg_write(dev_id, phy_id, MALIBU_PHY_CONTROL,
-			     phy_data | MALIBU_CTRL_RESTART_AUTONEGOTIATION);
+	malibu_phy_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL,
+		phy_data | MALIBU_CTRL_RESTART_AUTONEGOTIATION);
 
 	return SW_OK;
 }
@@ -1681,18 +1670,20 @@ sw_error_t malibu_phy_restart_autoneg(a_uint32_t dev_id, a_uint32_t phy_id)
 * malibu_phy_enable_autonego 
 *
 */
-sw_error_t malibu_phy_enable_autoneg(a_uint32_t dev_id, a_uint32_t phy_id)
+sw_error_t malibu_phy_enable_autoneg(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
 	a_uint16_t phy_data = 0;
 
-	if (phy_id == COMBO_PHY_ID) {
-		if (__medium_is_fiber_100fx(dev_id, phy_id))
-			return SW_NOT_SUPPORTED;
-		__phy_reg_pages_sel_by_active_medium(dev_id, phy_id);
-	}
-	phy_data = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_CONTROL);
+	hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, 0);
 
-	malibu_phy_reg_write(dev_id, phy_id, MALIBU_PHY_CONTROL,
+	if (phy_addr == COMBO_PHY_ID) {
+		if (__medium_is_fiber_100fx(dev_id, phy_addr))
+			return SW_NOT_SUPPORTED;
+		__phy_reg_pages_sel_by_active_medium(dev_id, phy_addr);
+	}
+	phy_data = malibu_phy_reg_read(dev_id, phy_addr, MALIBU_PHY_CONTROL);
+
+	malibu_phy_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL,
 			     phy_data | MALIBU_CTRL_AUTONEGOTIATION_ENABLE);
 
 	return SW_OK;
@@ -1704,24 +1695,22 @@ sw_error_t malibu_phy_enable_autoneg(a_uint32_t dev_id, a_uint32_t phy_id)
 * specified device.
 */
 sw_error_t
-malibu_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_id,
+malibu_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
 		     fal_port_speed_t speed)
 {
 	a_uint16_t phy_data = 0;
 	fal_port_duplex_t old_duplex;
 
-	if (phy_id == COMBO_PHY_ID) {
+	if (phy_addr == COMBO_PHY_ID) {
 		if (MALIBU_PHY_MEDIUM_COPPER !=
-		    __phy_active_medium_get(dev_id, phy_id))
-
+			__phy_active_medium_get(dev_id, phy_addr))
 			return SW_NOT_SUPPORTED;
-
-		__phy_reg_pages_sel(dev_id, phy_id, MALIBU_PHY_COPPER_PAGES);
+		__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
 	}
 
-	phy_data = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_CONTROL);
+	phy_data = malibu_phy_reg_read(dev_id, phy_addr, MALIBU_PHY_CONTROL);
 
-	malibu_phy_get_duplex(dev_id, phy_id, &old_duplex);
+	malibu_phy_get_duplex(dev_id, phy_addr, &old_duplex);
 
 	if (old_duplex == FAL_FULL_DUPLEX) {
 		phy_data |= MALIBU_CTRL_FULL_DUPLEX;
@@ -1730,6 +1719,7 @@ malibu_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 			phy_data |= MALIBU_CTRL_SPEED_1000;
 			phy_data &= ~MALIBU_CTRL_SPEED_100;
 			phy_data |= MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
+			phy_data |= MALIBU_CTRL_RESTART_AUTONEGOTIATION;
 		} else if (FAL_SPEED_100 == speed) {
 			phy_data |= MALIBU_CTRL_SPEED_100;
 			phy_data &= ~MALIBU_CTRL_SPEED_1000;
@@ -1739,11 +1729,10 @@ malibu_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 			phy_data &= ~MALIBU_CTRL_SPEED_1000;
 			phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
 		} else {
-		return SW_BAD_PARAM;
+			return SW_BAD_PARAM;
 		}
-	} else if (old_duplex == FAL_HALF_DUPLEX) {
+	} else {
 		phy_data &= ~MALIBU_CTRL_FULL_DUPLEX;
-
 		if (FAL_SPEED_100 == speed) {
 			phy_data |= MALIBU_CTRL_SPEED_100;
 			phy_data &= ~MALIBU_CTRL_SPEED_1000;
@@ -1752,19 +1741,17 @@ malibu_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 			phy_data &= ~MALIBU_CTRL_SPEED_100;
 			phy_data &= ~MALIBU_CTRL_SPEED_1000;
 			phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
-		} else if (FAL_SPEED_1000 == speed){
-            phy_data |= MALIBU_CTRL_FULL_DUPLEX;
-            phy_data |= MALIBU_CTRL_SPEED_1000;
-		    phy_data &= ~MALIBU_CTRL_SPEED_100;
-		    phy_data |= MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
 		} else {
-		return SW_BAD_PARAM;
-	       }
-	} else {
-		return SW_FAIL;
+			return SW_NOT_SUPPORTED;
+		}
 	}
 
-	malibu_phy_reg_write(dev_id, phy_id, MALIBU_PHY_CONTROL, phy_data);
+	if(speed == FAL_SPEED_1000)
+		malibu_phy_set_autoneg_adv(dev_id, phy_addr, FAL_PHY_ADV_1000T_FD);
+	else
+		hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_FALSE, 0);
+
+	malibu_phy_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL, phy_data);
 	return SW_OK;
 
 }
@@ -1775,26 +1762,19 @@ malibu_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 * specified device.
 */
 sw_error_t
-malibu_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_id,
+malibu_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
 		      fal_port_duplex_t duplex)
 {
 	a_uint16_t phy_data = 0;
 	fal_port_speed_t old_speed;
 
-	if (phy_id == COMBO_PHY_ID) {
-
+	if (phy_addr == COMBO_PHY_ID) {
 		if (MALIBU_PHY_MEDIUM_COPPER !=
-		    __phy_active_medium_get(dev_id, phy_id)) {
-
-			__phy_reg_pages_sel(dev_id, phy_id,
-					    MALIBU_PHY_SGBX_PAGES);
-
-			phy_data =
-			    malibu_phy_reg_read(dev_id, phy_id,
-						MALIBU_PHY_CONTROL);
-
-			if (__medium_is_fiber_100fx(dev_id, phy_id)) {
-
+			__phy_active_medium_get(dev_id, phy_addr)) {
+				__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_SGBX_PAGES);
+				phy_data = malibu_phy_reg_read(dev_id, phy_addr,
+					MALIBU_PHY_CONTROL);
+			if (__medium_is_fiber_100fx(dev_id, phy_addr)) {
 				if (duplex == FAL_FULL_DUPLEX) {
 					phy_data |= MALIBU_CTRL_FULL_DUPLEX;
 				} else if (duplex == FAL_HALF_DUPLEX) {
@@ -1802,8 +1782,7 @@ malibu_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_id,
 				} else {
 					return SW_BAD_PARAM;
 				}
-				} else {
-
+			} else {
 					if (duplex == FAL_FULL_DUPLEX) {
 					phy_data |= MALIBU_CTRL_FULL_DUPLEX;
 					phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
@@ -1813,70 +1792,56 @@ malibu_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_id,
 				} else {
 					return SW_BAD_PARAM;
 				}
-					}
-				malibu_phy_reg_write(dev_id, phy_id,
-						     MALIBU_PHY_CONTROL,
-						     phy_data);
-
-				return SW_OK;
 			}
-			__phy_reg_pages_sel(dev_id, phy_id,
-					    MALIBU_PHY_COPPER_PAGES);
+			malibu_phy_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL,
+				phy_data);
+			return SW_OK;
 		}
+		__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
+	}
 
-	phy_data = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_CONTROL);
+	phy_data = malibu_phy_reg_read(dev_id, phy_addr, MALIBU_PHY_CONTROL);
 
-       malibu_phy_get_speed(dev_id, phy_id, &old_speed);
+	malibu_phy_get_speed(dev_id, phy_addr, &old_speed);
 
-       if (old_speed == FAL_SPEED_1000) {
-
-	    phy_data |= MALIBU_CTRL_SPEED_1000;
-	    phy_data &= ~MALIBU_CTRL_SPEED_100;
-	    phy_data |= MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
-
+	if (old_speed == FAL_SPEED_1000) {
+		phy_data |= MALIBU_CTRL_SPEED_1000;
+		phy_data &= ~MALIBU_CTRL_SPEED_100;
+		phy_data |= MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
+		phy_data |= MALIBU_CTRL_RESTART_AUTONEGOTIATION;
 		if (duplex == FAL_FULL_DUPLEX) {
-		phy_data |= MALIBU_CTRL_FULL_DUPLEX;
-
-		} else if (duplex == FAL_HALF_DUPLEX) {
-
+			phy_data |= MALIBU_CTRL_FULL_DUPLEX;
+		} else {
+			return SW_NOT_SUPPORTED;
+		}
+	} else if (old_speed == FAL_SPEED_100) {
+		phy_data |= MALIBU_CTRL_SPEED_100;
+		phy_data &= ~MALIBU_CTRL_SPEED_1000;
+		phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
+		if (duplex == FAL_FULL_DUPLEX) {
+			phy_data |= MALIBU_CTRL_FULL_DUPLEX;
+		} else {
+			phy_data &= ~MALIBU_CTRL_FULL_DUPLEX;
+		}
+	} else if (old_speed == FAL_SPEED_10) {
+		phy_data &= ~MALIBU_CTRL_SPEED_100;
+		phy_data &= ~MALIBU_CTRL_SPEED_1000;
+		phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
+		if (duplex == FAL_FULL_DUPLEX) {
+			phy_data |= MALIBU_CTRL_FULL_DUPLEX;
+		} else {
+			phy_data &= ~MALIBU_CTRL_FULL_DUPLEX;
+		}
+	} else {
 		return SW_NOT_SUPPORTED;
-		} else {
-		return SW_BAD_PARAM;
-		}
-         } else if (old_speed == FAL_SPEED_100) {
-	       phy_data |= MALIBU_CTRL_SPEED_100;
-		phy_data &= ~MALIBU_CTRL_SPEED_1000;
-		phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
+	}
 
-         if (duplex == FAL_FULL_DUPLEX) {
-		phy_data |= MALIBU_CTRL_FULL_DUPLEX;
-		
-		} else if (duplex == FAL_HALF_DUPLEX) {
+	if(old_speed == FAL_SPEED_1000)
+		malibu_phy_set_autoneg_adv(dev_id, phy_addr, FAL_PHY_ADV_1000T_FD);
+	else
+		hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_FALSE, 0);
 
-		phy_data &= ~MALIBU_CTRL_FULL_DUPLEX;
-
-		} else {
-		return SW_BAD_PARAM;
-		} 
-          } else if (old_speed == FAL_SPEED_10) {
-          	phy_data &= ~MALIBU_CTRL_SPEED_100;
-		phy_data &= ~MALIBU_CTRL_SPEED_1000;
-		phy_data &= ~MALIBU_CTRL_AUTONEGOTIATION_ENABLE;
-
-         if (duplex == FAL_FULL_DUPLEX) {
-		phy_data |= MALIBU_CTRL_FULL_DUPLEX;
-		
-		} else if (duplex == FAL_HALF_DUPLEX) {
-
-		phy_data &= ~MALIBU_CTRL_FULL_DUPLEX;
-
-		} else {
-		return SW_BAD_PARAM;
-		}
-          } else {
-             return SW_FAIL;
-          }
-		malibu_phy_reg_write(dev_id, phy_id, MALIBU_PHY_CONTROL, phy_data);
+	malibu_phy_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL, phy_data);
 
 	return SW_OK;
 }
@@ -2078,6 +2043,8 @@ malibu_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_id, fal_port_int
 			MALIBU_PHY_CHIP_CONFIG, MALIBU_MODECTRL_DFLT);
 		malibu_phy_reg_write(dev_id, first_phy_addr + MALIBU_PHY_MAX_ADDR_INC,
 			MALIBU_PHY_CONTROL, MALIBU_MIICTRL_DFLT);
+		hsl_phy_phydev_autoneg_update(dev_id,
+			first_phy_addr + MALIBU_PHY_MAX_ADDR_INC, A_FALSE, 0);
 	}
 
 	return SW_OK;
@@ -2109,20 +2076,26 @@ malibu_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_id, fal_port_int
 		case MALIBU_PHY_PSGMII_BASET:
 			*interface_mode = PHY_PSGMII_BASET;
 			break;
-		case  MALIBU_PHY_PSGMII_BX1000:
-			*interface_mode = PHY_PSGMII_BX1000;
+		case MALIBU_PHY_PSGMII_BX1000:
+			if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
+				*interface_mode = PHY_PSGMII_BX1000;
+			else
+				*interface_mode = PHY_PSGMII_BASET;
 			break;
 		case MALIBU_PHY_PSGMII_FX100:
-			*interface_mode = PHY_PSGMII_FX100;
+			if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
+				*interface_mode = PHY_PSGMII_FX100;
+			else
+				*interface_mode = PHY_PSGMII_BASET;
 			break;
 		case MALIBU_PHY_PSGMII_AMDET:
 			if (copper_mode) {
-				*interface_mode = PHY_PSGMII_AMDET;
+				*interface_mode = PHY_PSGMII_BASET;
 			 } else {
 				if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
 					*interface_mode = PHY_PSGMII_FIBER;
 				else
-					*interface_mode = PHY_PSGMII_AMDET;
+					*interface_mode = PHY_PSGMII_BASET;
 			 }
 			break;
 		case MALIBU_PHY_SGMII_BASET:
@@ -2148,7 +2121,7 @@ malibu_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_id, fal_port_int
 sw_error_t
 malibu_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id, fal_port_interface_mode_t *interface_mode_status)
 {
-	a_uint16_t phy_data;
+	a_uint16_t phy_data, phy_mode, phy_mode_status;
 	a_uint16_t copper_mode;
 
 	if ((phy_id < first_phy_addr) ||
@@ -2159,38 +2132,45 @@ malibu_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id, fal_p
 	phy_data = malibu_phy_reg_read(dev_id,
 		first_phy_addr + MALIBU_PHY_MAX_ADDR_INC, MALIBU_PHY_CHIP_CONFIG);
 	copper_mode = ((phy_data & MALIBU_PHY_COPPER_MODE) >> 0xf);
-	phy_data &= 0x00f0;
-	phy_data = (phy_data >>4);
+	phy_mode = phy_data & 0x000f;
+	phy_mode_status = (phy_data & 0x00f0) >> 0x4;
 
-	switch (phy_data) {
-		case MALIBU_PHY_PSGMII_BASET:
+	if (phy_mode == MALIBU_PHY_PSGMII_AMDET) {
+		if (copper_mode) {
 			*interface_mode_status = PHY_PSGMII_BASET;
-			break;
-		case  MALIBU_PHY_PSGMII_BX1000:
-			*interface_mode_status = PHY_PSGMII_BX1000;
-			break;
-		case MALIBU_PHY_PSGMII_FX100:
-			*interface_mode_status = PHY_PSGMII_FX100;
-			break;
-		case MALIBU_PHY_PSGMII_AMDET:
-			if (copper_mode) {
+		} else {
+			if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
+				*interface_mode_status = PHY_PSGMII_FIBER;
+			else
 				*interface_mode_status = PHY_PSGMII_BASET;
-			} else {
+		}
+	} else {
+		switch (phy_mode_status) {
+			case MALIBU_PHY_PSGMII_BASET:
+				*interface_mode_status = PHY_PSGMII_BASET;
+				break;
+			case MALIBU_PHY_PSGMII_BX1000:
 				if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-					*interface_mode_status = PHY_PSGMII_FIBER;
+					*interface_mode_status = PHY_PSGMII_BX1000;
 				else
 					*interface_mode_status = PHY_PSGMII_BASET;
-			}
-			break;
-		case MALIBU_PHY_SGMII_BASET:
-			if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-				*interface_mode_status = PHY_SGMII_BASET;
-			else
-				*interface_mode_status = PORT_QSGMII;
-			break;
-		default:
-			*interface_mode_status = PORT_INTERFACE_MODE_MAX;
-			break;
+				break;
+			case MALIBU_PHY_PSGMII_FX100:
+				if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
+					*interface_mode_status = PHY_PSGMII_FX100;
+				else
+					*interface_mode_status = PHY_PSGMII_BASET;
+				break;
+			case MALIBU_PHY_SGMII_BASET:
+				if (phy_id == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
+					*interface_mode_status = PHY_SGMII_BASET;
+				else
+					*interface_mode_status = PORT_QSGMII;
+				break;
+			default:
+				*interface_mode_status = PORT_INTERFACE_MODE_MAX;
+				break;
+		}
 	}
 
 	return SW_OK;

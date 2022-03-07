@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2021 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -1675,6 +1675,14 @@ extern "C" {
 		    sizeof(fal_vport_type_t), SW_PARAM_IN, "vport_type "),\
     SW_PARAM_DEF(SW_API_ACL_VPGROUP_GET, SW_UINT32, \
 		    sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "vpgroup_id"),
+
+#define SW_API_ACL_MAC_ENTRY_SET_DESC \
+    SW_PARAM_DEF(SW_API_ACL_MAC_ENTRY_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_ACL_MAC_ENTRY_SET, SW_ACL_MAC_ENTRY, \
+        sizeof(fal_acl_mac_entry_t), SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "entry"),
+
+#define SW_API_ACL_MAC_ENTRY_DUMP_DESC \
+    SW_PARAM_DEF(SW_API_ACL_MAC_ENTRY_DUMP, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),
 
 #define SW_API_QOS_SCH_MODE_SET_DESC \
     SW_PARAM_DEF(SW_API_QOS_SCH_MODE_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\
@@ -3845,6 +3853,12 @@ extern "C" {
     SW_PARAM_DEF(SW_API_FLOW_COUNTER_GET, SW_ENTRY_COUNTER, \
 		    sizeof(fal_entry_counter_t), SW_PARAM_PTR|SW_PARAM_OUT, "Flow entry counter"),
 
+#define SW_API_FLOW_COUNTER_CLEANUP_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_COUNTER_CLEANUP, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_COUNTER_CLEANUP, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),
+
 #define SW_API_FLOW_ENTRY_EN_SET_DESC \
     SW_PARAM_DEF(SW_API_FLOW_ENTRY_EN_SET, SW_UINT32, \
 		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
@@ -4938,7 +4952,8 @@ extern "C" {
     SW_PARAM_DEF(SW_API_PTP_TIMESTAMP_GET, SW_PTP_DIRECTION, \
 		    sizeof(fal_ptp_direction_t), SW_PARAM_IN, "Direction"), \
     SW_PARAM_DEF(SW_API_PTP_TIMESTAMP_GET, SW_PTP_PKT_INFO, \
-		    sizeof(fal_ptp_pkt_info_t), SW_PARAM_PTR|SW_PARAM_IN, "Pkt Info"), \
+		    sizeof(fal_ptp_pkt_info_t), \
+		    SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "Pkt Info"), \
     SW_PARAM_DEF(SW_API_PTP_TIMESTAMP_GET, SW_PTP_TIME, \
 		    sizeof(fal_ptp_time_t), SW_PARAM_PTR|SW_PARAM_OUT, "Time"),
 
