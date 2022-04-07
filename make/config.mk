@@ -80,7 +80,10 @@ else
      ifneq (TRUE, $(FAL))
          $(error FAL must be TRUE when CHIP_TYPE is defined as ALL_CHIP!)
      endif
-     SUPPORT_CHIP = ISIS ISISC SHIVA DESS HPPE CPPE SCOMPHY MP
+     SUPPORT_CHIP := ISIS ISISC SHIVA DESS HPPE CPPE SCOMPHY MP
+     ifeq (ipq807x, $(SoC))
+	SUPPORT_CHIP := $(patsubst %CPPE,%,$(SUPPORT_CHIP))
+     endif
   endif
 
   ifeq (NONHK_CHIP, $(CHIP_TYPE))
