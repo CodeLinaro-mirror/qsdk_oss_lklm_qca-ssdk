@@ -173,6 +173,13 @@ static sw_error_t qca808x_phy_config_init(struct phy_device *phydev)
 	phydev->advertising = features;
 #else
 	linkmode_copy(phydev->supported, mask);
+	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->supported);
+	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->supported);
+
+	if(linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->advertising))
+		linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
+	if(linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->advertising))
+		linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
 	linkmode_copy(phydev->advertising, mask);
 #endif
 
@@ -580,7 +587,7 @@ static void qca808x_link_change_notify(struct phy_device *phydev)
 }
 #endif
 
-static int qca808x_phy_probe(struct phy_device *phydev)
+int qca808x_phy_probe(struct phy_device *phydev)
 {
 	qca808x_priv *priv;
 	int err = 0;
@@ -605,7 +612,7 @@ static int qca808x_phy_probe(struct phy_device *phydev)
 	return err;
 }
 
-static void qca808x_phy_remove(struct phy_device *phydev)
+void qca808x_phy_remove(struct phy_device *phydev)
 {
 	qca808x_priv *priv = phydev->priv;
 
@@ -618,7 +625,7 @@ static void qca808x_phy_remove(struct phy_device *phydev)
 struct phy_driver qca808x_phy_driver = {
 	.phy_id		= QCA8081_PHY_V1_1,
 	.phy_id_mask    = 0xffffff00,
-	.name		= "QCA808X ethernet",
+	.name		= "Qualcomm QCA8081",
 	.features	= PHY_GBIT_FEATURES,
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0))
 	.flags		= PHY_HAS_INTERRUPT,

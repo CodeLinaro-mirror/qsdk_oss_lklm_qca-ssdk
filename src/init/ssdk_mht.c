@@ -70,6 +70,7 @@ _qca_mht_interface_mode_init(a_uint32_t dev_id, a_uint32_t port_id,
 	a_bool_t force_en = A_FALSE;
 	a_uint32_t force_speed = FAL_SPEED_BUTT;
 	mht_work_mode_t work_mode = MHT_SWITCH_MODE;
+	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
 
 	force_en = ssdk_port_feature_get(dev_id, port_id, PHY_F_FORCE);
 	if (force_en == A_TRUE) {
@@ -87,11 +88,14 @@ _qca_mht_interface_mode_init(a_uint32_t dev_id, a_uint32_t port_id,
 		ssdk_mht_gcc_port_clk_parent_set(dev_id, work_mode, port_id);
 	}
 
-
-	if(mac_mode == PORT_WRAPPER_SGMII_PLUS)
+	if(mac_mode == PORT_WRAPPER_SGMII_PLUS) {
 		mac_config.mac_mode = FAL_MAC_MODE_SGMII_PLUS;
-	else if(mac_mode == PORT_WRAPPER_SGMII_CHANNEL0)
+		phy_info->port_mode[port_id] = PORT_SGMII_PLUS;
+	}
+	else if(mac_mode == PORT_WRAPPER_SGMII_CHANNEL0) {
 		mac_config.mac_mode = FAL_MAC_MODE_SGMII;
+		phy_info->port_mode[port_id] = PHY_SGMII_BASET;
+	}
 	else
 		return SW_NOT_SUPPORTED;
 	mac_config.config.sgmii.clock_mode = FAL_INTERFACE_CLOCK_MAC_MODE;
@@ -190,6 +194,7 @@ qca_mht_sw_mac_polling_task(struct qca_phy_priv *priv)
 	struct port_phy_status phy_status = {0};
 
 	portbmp = qca_ssdk_port_bmp_get(priv->device_id);
+	SSDK_DEBUG("mht sw mac polling task portbmp value is 0x%x\n", portbmp);
 	for (port_id = 1; port_id < SW_MAX_NR_PORT; port_id++) {
 		if(!(portbmp & (0x1 << port_id)))
 			continue;
@@ -206,10 +211,13 @@ qca_mht_sw_mac_polling_task(struct qca_phy_priv *priv)
 			(phy_status.link_status == PORT_LINK_DOWN)) {
 			/* disable mac rx function */
 			rv = fal_port_rxmac_status_set(priv->device_id, port_id, A_FALSE);
-			SW_RTN_ON_ERROR (rv);
+			SW_RTN_ON_ERROR(rv);
+			/* disable mac tx function */
+			rv = fal_port_txmac_status_set(priv->device_id, port_id, A_FALSE);
+			SW_RTN_ON_ERROR(rv);
 			/* update gcc, mac speed, mac duplex and phy stauts */
 			rv = mht_port_link_update(priv, port_id, phy_status);
-			SW_RTN_ON_ERROR (rv);
+			SW_RTN_ON_ERROR(rv);
 			priv->port_old_link[port_id] = phy_status.link_status;
 			ssdk_port_link_notify(port_id, 0, 0, 0);
 #ifdef IN_FDB
@@ -220,18 +228,15 @@ qca_mht_sw_mac_polling_task(struct qca_phy_priv *priv)
 		/* Down --> Up */
 		if ((priv->port_old_link[port_id] == PORT_LINK_DOWN) &&
 			(phy_status.link_status == PORT_LINK_UP)) {
-			/* disable mac tx function */
-			rv = fal_port_txmac_status_set(priv->device_id, port_id, A_FALSE);
-			SW_RTN_ON_ERROR (rv);
 			/* update gcc, mac speed, mac duplex and phy stauts */
 			rv = mht_port_link_update(priv, port_id, phy_status);
-			SW_RTN_ON_ERROR (rv);
+			SW_RTN_ON_ERROR(rv);
 			/* enable mac tx function */
 			rv = fal_port_txmac_status_set(priv->device_id, port_id, A_TRUE);
-			SW_RTN_ON_ERROR (rv);
+			SW_RTN_ON_ERROR(rv);
 			/* enable mac rx function */
 			rv = fal_port_rxmac_status_set(priv->device_id, port_id, A_TRUE);
-			SW_RTN_ON_ERROR (rv);
+			SW_RTN_ON_ERROR(rv);
 			/* save the current link status */
 			priv->port_old_link[port_id] = phy_status.link_status;
 			ssdk_port_link_notify(port_id, phy_status.link_status,

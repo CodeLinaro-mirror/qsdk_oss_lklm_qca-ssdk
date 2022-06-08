@@ -1,10 +1,12 @@
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  *
+ * Permission to use, copy, modify, and/or distribute this software for
+ * any purpose with or without fee is hereby granted, provided that the
+ * above copyright notice and this permission notice appear in all copies.
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -213,7 +215,46 @@ adpt_mp_port_rxmac_status_get(a_uint32_t dev_id, fal_port_t port_id,
 #endif
 
 static sw_error_t
-adpt_mp_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
+adpt_mp_port_flowctrl_forcemode_set(a_uint32_t dev_id,
+	fal_port_t port_id, a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	MP_PORT_ID_CHECK(port_id);
+	ADPT_NULL_POINT_CHECK(priv);
+
+	if(!_adpt_mp_port_phy_connected(dev_id, port_id) && !enable)
+		return SW_NOT_SUPPORTED;
+
+	priv->port_tx_flowctrl_forcemode[port_id - 1] = enable;
+	priv->port_rx_flowctrl_forcemode[port_id - 1] = enable;
+
+	return rv;
+}
+
+static sw_error_t
+adpt_mp_port_flowctrl_forcemode_get(a_uint32_t dev_id,
+	fal_port_t port_id, a_bool_t *enable)
+{
+	sw_error_t rv = SW_OK;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	MP_PORT_ID_CHECK(port_id);
+	ADPT_NULL_POINT_CHECK(enable);
+	ADPT_NULL_POINT_CHECK(priv);
+
+	*enable = (priv->port_tx_flowctrl_forcemode[port_id - 1] &
+		priv->port_rx_flowctrl_forcemode[port_id - 1]);
+
+	return rv;
+}
+
+static sw_error_t
+_adpt_mp_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
@@ -270,6 +311,35 @@ adpt_mp_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	return rv;
 }
 
+static sw_error_t
+adpt_mp_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+	a_bool_t force_mode = A_FALSE;
+
+	if(A_FALSE == _adpt_mp_port_phy_connected (dev_id, port_id))
+	{
+		rv = _adpt_mp_port_txfc_status_set(dev_id, port_id, enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+	else
+	{
+		/*if force mode is enabled, need to configure mac manually*/
+		rv = adpt_mp_port_flowctrl_forcemode_get(dev_id, port_id, &force_mode);
+		SW_RTN_ON_ERROR (rv);
+		if(force_mode)
+		{
+			rv = _adpt_mp_port_txfc_status_set(dev_id, port_id, enable);
+			SW_RTN_ON_ERROR(rv);
+		}
+		rv = hsl_port_phy_txfc_set(dev_id, port_id, enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+
+	return SW_OK;
+}
+
 #ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 adpt_mp_port_txfc_status_get(a_uint32_t dev_id, fal_port_t port_id,
@@ -300,7 +370,7 @@ adpt_mp_port_txfc_status_get(a_uint32_t dev_id, fal_port_t port_id,
 #endif
 
 static sw_error_t
-adpt_mp_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_mp_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
@@ -329,6 +399,35 @@ adpt_mp_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	priv->port_old_rx_flowctrl[port_id - 1] = enable;
 
 	return rv;
+}
+
+static sw_error_t
+adpt_mp_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+	a_bool_t force_mode = A_FALSE;
+
+	if(A_FALSE == _adpt_mp_port_phy_connected (dev_id, port_id))
+	{
+		rv = _adpt_mp_port_rxfc_status_set(dev_id, port_id, enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+	else
+	{
+		/*if force mode is enabled, need to configure mac manually*/
+		rv = adpt_mp_port_flowctrl_forcemode_get(dev_id, port_id, &force_mode);
+		SW_RTN_ON_ERROR (rv);
+		if(force_mode)
+		{
+			rv = _adpt_mp_port_rxfc_status_set(dev_id, port_id, enable);
+			SW_RTN_ON_ERROR(rv);
+		}
+		rv = hsl_port_phy_rxfc_set(dev_id, port_id, enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+
+	return SW_OK;
 }
 
 #ifndef IN_PORTCONTROL_MINI
@@ -365,20 +464,14 @@ adpt_mp_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
-	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	MP_PORT_ID_CHECK(port_id);
-	ADPT_NULL_POINT_CHECK(priv);
 
 	rv = adpt_mp_port_txfc_status_set(dev_id, port_id, enable);
 	SW_RTN_ON_ERROR(rv);
 
 	rv = adpt_mp_port_rxfc_status_set(dev_id, port_id, enable);
-	SW_RTN_ON_ERROR(rv);
-
-	priv->port_old_tx_flowctrl[port_id - 1] = enable;
-	priv->port_old_rx_flowctrl[port_id - 1] = enable;
 
 	return rv;
 }
@@ -401,44 +494,6 @@ adpt_mp_port_flowctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	SW_RTN_ON_ERROR(rv);
 
 	*enable = txfc_enable & rxfc_enable;
-
-	return rv;
-}
-#endif
-
-static sw_error_t
-adpt_mp_port_flowctrl_forcemode_set(a_uint32_t dev_id,
-	fal_port_t port_id, a_bool_t enable)
-{
-	sw_error_t rv = SW_OK;
-	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	MP_PORT_ID_CHECK(port_id);
-	ADPT_NULL_POINT_CHECK(priv);
-
-	priv->port_tx_flowctrl_forcemode[port_id - 1] = enable;
-	priv->port_rx_flowctrl_forcemode[port_id - 1] = enable;
-
-	return rv;
-}
-
-#ifndef IN_PORTCONTROL_MINI
-static sw_error_t
-adpt_mp_port_flowctrl_forcemode_get(a_uint32_t dev_id,
-	fal_port_t port_id, a_bool_t *enable)
-{
-	sw_error_t rv = SW_OK;
-	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
-
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	MP_PORT_ID_CHECK(port_id);
-	ADPT_NULL_POINT_CHECK(enable);
-	ADPT_NULL_POINT_CHECK(priv);
-
-	*enable = (priv->port_tx_flowctrl_forcemode[port_id - 1] &
-		priv->port_rx_flowctrl_forcemode[port_id - 1]);
 
 	return rv;
 }
@@ -872,19 +927,12 @@ adpt_mp_port_interface_mode_status_get(a_uint32_t dev_id,
 	a_uint32_t port_id, fal_port_interface_mode_t * mode)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t phy_id = 0;
-	hsl_phy_ops_t *phy_drv;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mode);
 
-	SW_RTN_ON_NULL(phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-	SW_RTN_ON_NULL(phy_drv->phy_interface_mode_status_get);
-
-	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
-	SW_RTN_ON_ERROR (rv);
-
-	rv = phy_drv->phy_interface_mode_status_get(dev_id, phy_id,mode);
+	rv = hsl_port_phy_interface_mode_status_get(dev_id, port_id, mode);
+	SW_RTN_ON_ERROR(rv);
 
 	return rv;
 }
@@ -1031,7 +1079,7 @@ adpt_mp_port_link_up_change_update(struct qca_phy_priv *priv,
 		}
 		if (phy_status.tx_flowctrl !=
 			priv->port_old_tx_flowctrl[port_id - 1]) {
-			rv = adpt_mp_port_txfc_status_set(priv->device_id,
+			rv = _adpt_mp_port_txfc_status_set(priv->device_id,
 				port_id, phy_status.tx_flowctrl);
 			SW_RTN_ON_ERROR (rv);
 			priv->port_old_tx_flowctrl[port_id - 1] =
@@ -1049,7 +1097,7 @@ adpt_mp_port_link_up_change_update(struct qca_phy_priv *priv,
 		}
 		if (phy_status.rx_flowctrl !=
 			priv->port_old_rx_flowctrl[port_id - 1]) {
-			rv = adpt_mp_port_rxfc_status_set(priv->device_id,
+			rv = _adpt_mp_port_rxfc_status_set(priv->device_id,
 				port_id, phy_status.rx_flowctrl);
 			SW_RTN_ON_ERROR (rv);
 			priv->port_old_rx_flowctrl[port_id - 1] =
@@ -1119,6 +1167,12 @@ adpt_mp_port_netdev_change_notify(struct qca_phy_priv *priv,
 	sw_error_t rv = 0;
 	struct port_phy_status phy_status = {0};
 	a_uint32_t portbmp[SW_MAX_NR_DEV] = {0};
+
+	/*if uniphy is not used, no need to configure mac and gcc*/
+	if(port_id == SSDK_PHYSICAL_PORT2 &&
+		ssdk_dt_global_get_mac_mode(priv->device_id, SSDK_UNIPHY_INSTANCE0) ==
+		PORT_WRAPPER_MAX)
+		return SW_OK;
 
 	portbmp[priv->device_id] = qca_ssdk_port_bmp_get(priv->device_id);
 

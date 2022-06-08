@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,6 +22,7 @@
  */
 #include "sw.h"
 #include "fal_port_ctrl.h"
+#include "hsl_phy.h"
 #include "hsl_api.h"
 /*qca808x_end*/
 #include "adpt.h"
@@ -29,6 +30,8 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 /*qca808x_start*/
+#include "hsl_phy.h"
+
 static sw_error_t
 _fal_port_duplex_set (a_uint32_t dev_id, fal_port_t port_id,
 		      fal_port_duplex_t duplex)
@@ -201,24 +204,7 @@ _fal_port_autoneg_enable (a_uint32_t dev_id, fal_port_t port_id)
 static sw_error_t
 _fal_port_autoneg_restart (a_uint32_t dev_id, fal_port_t port_id)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_autoneg_restart != NULL) {
-        rv = p_adpt_api->adpt_port_autoneg_restart(dev_id, port_id);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_autoneg_restart)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_autoneg_restart (dev_id, port_id);
-  return rv;
+	return hsl_port_phy_autoneg_restart(dev_id, port_id);
 }
 
 
@@ -226,24 +212,7 @@ static sw_error_t
 _fal_port_autoneg_adv_set (a_uint32_t dev_id, fal_port_t port_id,
 			   a_uint32_t autoadv)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_autoneg_adv_set != NULL) {
-        rv = p_adpt_api->adpt_port_autoneg_adv_set(dev_id, port_id, autoadv);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_autoneg_adv_set)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_autoneg_adv_set (dev_id, port_id, autoadv);
-  return rv;
+	return hsl_port_phy_autoadv_set(dev_id, port_id, autoadv);
 }
 
 static sw_error_t
@@ -274,24 +243,7 @@ static sw_error_t
 _fal_port_autoneg_adv_get (a_uint32_t dev_id, fal_port_t port_id,
 			   a_uint32_t * autoadv)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_autoneg_adv_get != NULL) {
-        rv = p_adpt_api->adpt_port_autoneg_adv_get(dev_id, port_id, autoadv);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_autoneg_adv_get)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_autoneg_adv_get (dev_id, port_id, autoadv);
-  return rv;
+  return hsl_port_phy_autoadv_get(dev_id, port_id, autoadv);
 }
 /*qca808x_end*/
 #ifndef IN_PORTCONTROL_MINI
@@ -853,6 +805,39 @@ _fal_port_link_forcemode_get (a_uint32_t dev_id, fal_port_t port_id,
   rv = p_api->port_link_forcemode_get (dev_id, port_id, enable);
   return rv;
 }
+
+static sw_error_t
+_fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id,
+			       a_uint32_t queue_id, a_bool_t enable)
+{
+  sw_error_t rv;
+  hsl_api_t *p_api;
+
+  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
+
+  if (NULL == p_api->port_congestion_drop_set)
+    return SW_NOT_SUPPORTED;
+
+  rv = p_api->port_congestion_drop_set (dev_id, port_id, queue_id, enable);
+  return rv;
+}
+
+static sw_error_t
+_fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id,
+			       a_uint16_t on_thres, a_uint16_t off_thres)
+{
+  sw_error_t rv;
+  hsl_api_t *p_api;
+
+  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
+
+  if (NULL == p_api->ring_flow_ctrl_thres_set)
+    return SW_NOT_SUPPORTED;
+
+  rv = p_api->ring_flow_ctrl_thres_set (dev_id, ring_id, on_thres, off_thres);
+  return rv;
+}
+
 #ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 _fal_port_txmac_status_get (a_uint32_t dev_id, fal_port_t port_id,
@@ -1008,22 +993,6 @@ _fal_port_mac_loopback_get (a_uint32_t dev_id, fal_port_t port_id,
 }
 
 static sw_error_t
-_fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id,
-			       a_uint32_t queue_id, a_bool_t enable)
-{
-  sw_error_t rv;
-  hsl_api_t *p_api;
-
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_congestion_drop_set)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_congestion_drop_set (dev_id, port_id, queue_id, enable);
-  return rv;
-}
-
-static sw_error_t
 _fal_port_congestion_drop_get (a_uint32_t dev_id, fal_port_t port_id,
 			       a_uint32_t queue_id, a_bool_t * enable)
 {
@@ -1036,22 +1005,6 @@ _fal_port_congestion_drop_get (a_uint32_t dev_id, fal_port_t port_id,
     return SW_NOT_SUPPORTED;
 
   rv = p_api->port_congestion_drop_get (dev_id, port_id, queue_id, enable);
-  return rv;
-}
-
-static sw_error_t
-_fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id,
-			       a_uint16_t on_thres, a_uint16_t off_thres)
-{
-  sw_error_t rv;
-  hsl_api_t *p_api;
-
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->ring_flow_ctrl_thres_set)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->ring_flow_ctrl_thres_set (dev_id, ring_id, on_thres, off_thres);
   return rv;
 }
 
@@ -1612,24 +1565,7 @@ _fal_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_
 static sw_error_t
 _fal_port_counter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_counter_set != NULL) {
-        rv = p_adpt_api->adpt_port_counter_set(dev_id, port_id, enable);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_counter_set)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_counter_set (dev_id, port_id, enable);
-  return rv;
+  return hsl_port_phy_counter_set(dev_id, port_id, enable);
 }
 
 
@@ -1637,47 +1573,13 @@ static sw_error_t
 _fal_port_counter_get (a_uint32_t dev_id, fal_port_t port_id,
 		      a_bool_t * enable)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_counter_get != NULL) {
-        rv = p_adpt_api->adpt_port_counter_get(dev_id, port_id, enable);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_counter_get)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_counter_get (dev_id, port_id, enable);
-  return rv;
+  return hsl_port_phy_counter_get(dev_id, port_id, enable);
 }
 
 static sw_error_t
 _fal_port_counter_show (a_uint32_t dev_id, fal_port_t port_id, fal_port_counter_info_t * counter_info)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_counter_show != NULL) {
-        rv = p_adpt_api->adpt_port_counter_show(dev_id, port_id, counter_info);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_counter_show)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_counter_show (dev_id, port_id, counter_info);
-  return rv;
+  return hsl_port_phy_counter_show(dev_id, port_id, counter_info);
 }
 /*qca808x_end*/
 #endif
@@ -2998,6 +2900,46 @@ fal_port_link_forcemode_get (a_uint32_t dev_id, fal_port_t port_id,
   FAL_API_UNLOCK;
   return rv;
 }
+
+/**
+ * @brief Set congestion drop on a particular port queue.
+ * @param[in] dev_id device id
+ * @param[in] port_id port id
+ * @param[in] enable A_TRUE or A_FALSE
+ * @return SW_OK or error code
+ */
+sw_error_t
+fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id,
+			      a_uint32_t queue_id, a_bool_t enable)
+{
+  sw_error_t rv;
+
+  FAL_API_LOCK;
+  rv = _fal_port_congestion_drop_set (dev_id, port_id, queue_id, enable);
+  FAL_API_UNLOCK;
+  return rv;
+}
+
+/**
+ * @brief Set flow control threshold on a DMA ring.
+ * @param[in] dev_id device id
+ * @param[in] ring_id ring_id
+ * @param[in] on_thres on_thres
+ * @param[in] off_thres on_thres
+ * @return SW_OK or error code
+ */
+sw_error_t
+fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id,
+			      a_uint16_t on_thres, a_uint16_t off_thres)
+{
+  sw_error_t rv;
+
+  FAL_API_LOCK;
+  rv = _fal_ring_flow_ctrl_thres_set (dev_id, ring_id, on_thres, off_thres);
+  FAL_API_UNLOCK;
+  return rv;
+}
+
 #ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Set status of back pressure on a particular port.
@@ -3094,25 +3036,6 @@ fal_port_mac_loopback_get (a_uint32_t dev_id, fal_port_t port_id,
 }
 
 /**
- * @brief Set congestion drop on a particular port queue.
- * @param[in] dev_id device id
- * @param[in] port_id port id
- * @param[in] enable A_TRUE or A_FALSE
- * @return SW_OK or error code
- */
-sw_error_t
-fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id,
-			      a_uint32_t queue_id, a_bool_t enable)
-{
-  sw_error_t rv;
-
-  FAL_API_LOCK;
-  rv = _fal_port_congestion_drop_set (dev_id, port_id, queue_id, enable);
-  FAL_API_UNLOCK;
-  return rv;
-}
-
-/**
  * @brief Get congestion drop on a particular port queue.
  * @param[in] dev_id device id
  * @param[in] port_id port id
@@ -3128,26 +3051,6 @@ fal_port_congestion_drop_get (a_uint32_t dev_id, fal_port_t port_id,
 
   FAL_API_LOCK;
   rv = _fal_port_congestion_drop_get (dev_id, port_id, queue_id, enable);
-  FAL_API_UNLOCK;
-  return rv;
-}
-
-/**
- * @brief Set flow control threshold on a DMA ring.
- * @param[in] dev_id device id
- * @param[in] ring_id ring_id
- * @param[in] on_thres on_thres
- * @param[in] off_thres on_thres
- * @return SW_OK or error code
- */
-sw_error_t
-fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id,
-			      a_uint16_t on_thres, a_uint16_t off_thres)
-{
-  sw_error_t rv;
-
-  FAL_API_LOCK;
-  rv = _fal_ring_flow_ctrl_thres_set (dev_id, ring_id, on_thres, off_thres);
   FAL_API_UNLOCK;
   return rv;
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,6 +22,7 @@
 #include "adpt.h"
 #include "ssdk_led.h"
 #include "ssdk_clk.h"
+#include "hsl_phy.h"
 
 #ifdef IN_PORTCONTROL
 sw_error_t
@@ -43,14 +45,15 @@ qca_mp_portctrl_hw_init(a_uint32_t dev_id)
 			fal_port_interface_eee_cfg_get(dev_id, i, &port_eee_cfg);
 			port_eee_cfg.lpi_wakeup_timer = MP_LPI_WAKEUP_TIMER;
 			fal_port_interface_eee_cfg_set(dev_id, i, &port_eee_cfg);
+			fal_port_rxfc_status_set(dev_id, i, A_TRUE);
+			fal_port_txfc_status_set(dev_id, i, A_TRUE);
 		} else {
 			fal_port_txmac_status_set (dev_id, i, A_TRUE);
 			fal_port_rxmac_status_set (dev_id, i, A_TRUE);
+			fal_port_rxfc_status_set(dev_id, i, A_FALSE);
+			fal_port_txfc_status_set(dev_id, i, A_FALSE);
 		}
-		fal_port_rxfc_status_set(dev_id, i, A_FALSE);
-		fal_port_txfc_status_set(dev_id, i, A_FALSE);
-		fal_port_max_frame_size_set(dev_id, i,
-			FAL_DEFAULT_MAX_FRAME_SIZE);
+		fal_port_max_frame_size_set(dev_id, i, FAL_DEFAULT_MAX_FRAME_SIZE);
 		fal_port_promisc_mode_set(dev_id, i, A_TRUE);
 		/* init software level port status */
 		qca_mac_port_status_init(dev_id, i);
@@ -81,6 +84,11 @@ qca_mp_interface_mode_init(a_uint32_t dev_id)
 	SW_RTN_ON_ERROR(rv);
 
 	for (i = SSDK_PHYSICAL_PORT1; i <= SSDK_PHYSICAL_PORT2; i++) {
+		/*if uniphy is not uesed, no need to configure por2's mac*/
+		if(i == SSDK_PHYSICAL_PORT2 &&
+			ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0) ==
+			PORT_WRAPPER_MAX)
+			continue;
 		force_port = ssdk_port_feature_get(dev_id, i, PHY_F_FORCE);
 		if (force_port == A_TRUE) {
 			force_speed = ssdk_port_force_speed_get(dev_id, i);
