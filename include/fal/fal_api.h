@@ -2080,7 +2080,9 @@ extern "C" {
     SW_API_DEF(SW_API_PORT_VLAN_VSI_GET, ppe_port_vlan_vsi_get), \
     SW_API_DEF(SW_API_VSI_TBL_DUMP, ppe_vsi_tbl_dump), \
     SW_API_DEF(SW_API_VSI_NEWADDR_LRN_SET, fal_vsi_newaddr_lrn_set), \
+    SW_API_DEF(SW_API_VSI_NEWADDR_LRN_GET, fal_vsi_newaddr_lrn_get), \
     SW_API_DEF(SW_API_VSI_STAMOVE_SET, fal_vsi_stamove_set), \
+    SW_API_DEF(SW_API_VSI_STAMOVE_GET,fal_vsi_stamove_get),  \
     SW_API_DEF(SW_API_VSI_MEMBER_SET, fal_vsi_member_set), \
     SW_API_DEF(SW_API_VSI_MEMBER_GET, fal_vsi_member_get), \
     SW_API_DEF(SW_API_VSI_BRIDGE_VSI_GET,fal_vsi_bridge_vsi_get), \
@@ -2096,7 +2098,9 @@ extern "C" {
     SW_API_DESC(SW_API_PORT_VLAN_VSI_GET)  \
     SW_API_DESC(SW_API_VSI_TBL_DUMP) \
     SW_API_DESC(SW_API_VSI_NEWADDR_LRN_SET) \
+    SW_API_DESC(SW_API_VSI_NEWADDR_LRN_GET) \
     SW_API_DESC(SW_API_VSI_STAMOVE_SET) \
+    SW_API_DESC(SW_API_VSI_STAMOVE_GET) \
     SW_API_DESC(SW_API_VSI_MEMBER_SET) \
     SW_API_DESC(SW_API_VSI_MEMBER_GET) \
     SW_API_DESC(SW_API_VSI_BRIDGE_VSI_GET) \
@@ -2592,12 +2596,14 @@ extern "C" {
     SW_API_DEF(SW_API_POLICER_TIMESLOT_SET, fal_policer_timeslot_set), \
     SW_API_DEF(SW_API_POLICER_COMPENSATION_SET, fal_port_policer_compensation_byte_set), \
     SW_API_DEF(SW_API_POLICER_ACL_ENTRY_SET, fal_acl_policer_entry_set), \
+    SW_API_DEF(SW_API_POLICER_PORT_ENTRY_SET, fal_port_policer_entry_set), \
     SW_API_DEF(SW_API_POLICER_BYPASS_EN_SET, fal_policer_bypass_en_set), \
     SW_API_DEF(SW_API_POLICER_CTRL_SET, fal_policer_ctrl_set),
 
 #define POLICER_API_PARAM \
     SW_API_DESC(SW_API_POLICER_TIMESLOT_SET)  \
     SW_API_DESC(SW_API_POLICER_COMPENSATION_SET) \
+    SW_API_DESC(SW_API_POLICER_PORT_ENTRY_SET) \
     SW_API_DESC(SW_API_POLICER_ACL_ENTRY_SET) \
     SW_API_DESC(SW_API_POLICER_BYPASS_EN_SET) \
     SW_API_DESC(SW_API_POLICER_CTRL_SET)
@@ -2653,7 +2659,9 @@ extern "C" {
     SW_API_DEF(SW_API_PTP_CAPTURE_SET, fal_ptp_capture_set), \
     SW_API_DEF(SW_API_PTP_CAPTURE_GET, fal_ptp_capture_get), \
     SW_API_DEF(SW_API_PTP_INTERRUPT_SET, fal_ptp_interrupt_set), \
-    SW_API_DEF(SW_API_PTP_INTERRUPT_GET, fal_ptp_interrupt_get),
+    SW_API_DEF(SW_API_PTP_INTERRUPT_GET, fal_ptp_interrupt_get), \
+    SW_API_DEF(SW_API_PTP_RTC_SYNC_SET, fal_ptp_rtc_sync_set), \
+    SW_API_DEF(SW_API_PTP_RTC_SYNC_GET, fal_ptp_rtc_sync_get),
 
 #define PTP_API_PARAM \
     SW_API_DESC(SW_API_PTP_CONFIG_SET) \
@@ -2698,7 +2706,9 @@ extern "C" {
     SW_API_DESC(SW_API_PTP_CAPTURE_SET) \
     SW_API_DESC(SW_API_PTP_CAPTURE_GET) \
     SW_API_DESC(SW_API_PTP_INTERRUPT_SET) \
-    SW_API_DESC(SW_API_PTP_INTERRUPT_GET)
+    SW_API_DESC(SW_API_PTP_INTERRUPT_GET) \
+    SW_API_DESC(SW_API_PTP_RTC_SYNC_SET) \
+    SW_API_DESC(SW_API_PTP_RTC_SYNC_GET)
 #else
 #define PTP_API
 #define PTP_API_PARAM
