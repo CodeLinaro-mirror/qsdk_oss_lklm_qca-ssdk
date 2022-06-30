@@ -39,6 +39,24 @@
 #include <soc/qcom/socinfo.h>
 #endif
 
+#if defined(SSDK_RAW_CLOCK)
+#include <dt-bindings/reset/qcom,nsscc-devsoc.h>
+#include <dt-bindings/reset/qcom,gcc-devsoc.h>
+#include <linux/reset-controller.h>
+
+struct reset_control {
+	struct reset_controller_dev *rcdev;
+	struct list_head list;
+	unsigned int id;
+	struct kref refcnt;
+	bool acquired;
+	bool shared;
+	bool array;
+	atomic_t deassert_count;
+	atomic_t triggered_count;
+};
+#endif
+
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 struct device_node *clock_node = NULL;
 static struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX] = {0};
@@ -48,6 +66,124 @@ struct reset_control *uniphy_rsts[UNIPHY_RST_MAX] = {0};
 struct reset_control *port_rsts[SSDK_MAX_PORT_NUM] = {0};
 #if defined(APPE)
 struct reset_control *port_mac_rsts[SSDK_MAX_PORT_NUM] = {0};
+#endif
+
+#if defined(SSDK_RAW_CLOCK)
+#define RST_LOOKUP(_cbc, _node_name, _rst_index, _rst_bits)	\
+{					\
+	.cbc = _cbc,			\
+	.node_name = _node_name,	\
+	.rst_index = _rst_index,	\
+	.rst_bits = _rst_bits,		\
+}
+
+struct rst_data_t {
+	const char *node_name;
+	unsigned int rst_index;
+	unsigned int cbc;
+	unsigned int rst_bits;
+};
+
+#define GCC_BASE_ADDR	0x1800000
+#define GCC_SIZE	0x80000
+#define NSSCC_BASE_ADDR	0x39b00000
+#define NSSCC_SIZE	0x80000
+#define GCC_NODE_NAME	"gcc"
+#define NSSCC_NODE_NAME	"nsscc"
+#define RST_BIT0	BIT(0)
+#define RST_BIT		BIT(2)
+void __iomem *gcc_clk_base_g = NULL;
+void __iomem *nsscc_clk_base_g = NULL;
+
+static struct rst_data_t mppe_rst_tbl[] = {
+       RST_LOOKUP(0x16000, GCC_NODE_NAME, GCC_UNIPHY0_BCR, RST_BIT0),
+       RST_LOOKUP(0x16014, GCC_NODE_NAME, GCC_UNIPHY1_BCR, RST_BIT0),
+       RST_LOOKUP(0x17050, GCC_NODE_NAME, GCC_UNIPHY0_XPCS_ARES, RST_BIT0),
+       RST_LOOKUP(0x17060, GCC_NODE_NAME, GCC_UNIPHY1_XPCS_ARES, RST_BIT0),
+       RST_LOOKUP(0x16010, GCC_NODE_NAME, GCC_UNIPHY0_AHB_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x1601C, GCC_NODE_NAME, GCC_UNIPHY1_AHB_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x1600C, GCC_NODE_NAME, GCC_UNIPHY0_SYS_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x16018, GCC_NODE_NAME, GCC_UNIPHY1_SYS_CLK_ARES, RST_BIT),
+
+       RST_LOOKUP(0x3e4, NSSCC_NODE_NAME, NSS_CC_PPE_BCR, RST_BIT0),
+       RST_LOOKUP(0x4b4, NSSCC_NODE_NAME, NSS_CC_UNIPHY_PORT1_RX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x4b8, NSSCC_NODE_NAME, NSS_CC_UNIPHY_PORT1_TX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x4bc, NSSCC_NODE_NAME, NSS_CC_UNIPHY_PORT2_RX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x4c0, NSSCC_NODE_NAME, NSS_CC_UNIPHY_PORT2_TX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x480, NSSCC_NODE_NAME, NSS_CC_PORT1_RX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x488, NSSCC_NODE_NAME, NSS_CC_PORT1_TX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x490, NSSCC_NODE_NAME, NSS_CC_PORT2_RX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x498, NSSCC_NODE_NAME, NSS_CC_PORT2_TX_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x428, NSSCC_NODE_NAME, NSS_CC_PORT1_MAC_CLK_ARES, RST_BIT),
+       RST_LOOKUP(0x430, NSSCC_NODE_NAME, NSS_CC_PORT2_MAC_CLK_ARES, RST_BIT),
+};
+
+a_bool_t ssdk_reset_control(struct reset_control *rst, a_uint32_t action)
+{
+	int i = 0;
+	struct rst_data_t *rst_inst = NULL;
+	a_bool_t is_found = A_FALSE;
+	void __iomem *clk_base = NULL;
+	struct device_node *clk_node = NULL;
+	struct reset_controller_dev *rcdev = NULL;
+
+	if (!rst) {
+		SSDK_ERROR("reset_control is null\n");
+		return A_FALSE;
+	}
+
+	rcdev = rst->rcdev;
+	clk_node = rcdev->of_node;
+	if (!clk_node) {
+		SSDK_ERROR("clock node is null\n");
+		return A_FALSE;
+	}
+
+	if (of_node_name_eq(clk_node, GCC_NODE_NAME)) {
+		clk_base = gcc_clk_base_g;
+	} else if (of_node_name_eq(clk_node, NSSCC_NODE_NAME)) {
+		clk_base = nsscc_clk_base_g;
+	} else {
+		SSDK_ERROR("Unknown Reset Name: %s\n", clk_node->full_name);
+		return A_FALSE;
+	}
+
+	if (!clk_base) {
+		SSDK_ERROR("clk_base is not ioremap_nocache on %s\n", clk_node->full_name);
+		return A_FALSE;
+	}
+
+	for (i = 0; i < ARRAY_SIZE(mppe_rst_tbl); i++) {
+		rst_inst = &mppe_rst_tbl[i];
+		if (!of_node_name_eq(clk_node, rst_inst->node_name)) {
+			continue;
+		}
+
+		if (rst->id == rst_inst->rst_index)
+			break;
+	}
+
+	if (i < ARRAY_SIZE(mppe_rst_tbl)) {
+		uint32_t reg_val = readl(clk_base + rst_inst->cbc);
+
+		if (action == SSDK_RESET_ASSERT)
+			reg_val |= rst_inst->rst_bits;
+		else
+			reg_val &= ~rst_inst->rst_bits;
+
+		writel(reg_val, clk_base + rst_inst->cbc);
+		SSDK_INFO("%s reset_id: %d CBC reg: 0x%x, val: 0x%x\n",
+				action == SSDK_RESET_ASSERT ? "Assert" : "Deassert",
+				rst->id, rst_inst->cbc, reg_val);
+
+		is_found = A_TRUE;
+	} else {
+		SSDK_ERROR("Can't find the reset ID %d\n", rst->id);
+		is_found = A_FALSE;
+	}
+
+	return is_found;
+}
 #endif
 
 /* below 3 routines to be used as common */
@@ -83,10 +219,10 @@ void ssdk_clock_rate_set_and_enable(
 
 void ssdk_gcc_reset(struct reset_control *rst, a_uint32_t action)
 {
-	if(ssdk_is_emulation(0)){
-		SSDK_INFO("action %d on emulation platform\n",action);
+#if defined(SSDK_RAW_CLOCK)
+	if (ssdk_reset_control(rst, action))
 		return;
-	}
+#endif
 
 	if (action == SSDK_RESET_ASSERT)
 		reset_control_assert(rst);
@@ -1161,6 +1297,15 @@ void ssdk_gcc_appe_clock_init(enum cmnblk_clk_type mode)
 void ssdk_gcc_mppe_clock_init(enum cmnblk_clk_type mode)
 {
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
+#if defined(SSDK_RAW_CLOCK)
+	gcc_clk_base_g = ioremap_nocache(GCC_BASE_ADDR, GCC_SIZE);
+	if (!gcc_clk_base_g)
+		SSDK_ERROR("ioremap error on base 0x%x\n", GCC_BASE_ADDR);
+
+	nsscc_clk_base_g = ioremap_nocache(NSSCC_BASE_ADDR, NSSCC_SIZE);
+	if (!nsscc_clk_base_g)
+		SSDK_ERROR("ioremap error on base 0x%x\n", NSSCC_BASE_ADDR);
+#endif
 	ssdk_appe_fixed_clock_init(MPPE_REVISION);
 	ssdk_ppe_uniphy_clock_init(CHIP_APPE, MPPE_REVISION);
 	ssdk_cmnblk_init(mode);
@@ -1273,6 +1418,17 @@ void ssdk_gcc_clock_init(void)
 #endif
 
 	SSDK_INFO("SSDK gcc clock init successfully!\n");
+}
+
+void ssdk_gcc_clock_exit(void)
+{
+#if defined(SSDK_RAW_CLOCK)
+	if (gcc_clk_base_g)
+		iounmap(gcc_clk_base_g);
+
+	if (nsscc_clk_base_g)
+		iounmap(nsscc_clk_base_g);
+#endif
 }
 
 void
