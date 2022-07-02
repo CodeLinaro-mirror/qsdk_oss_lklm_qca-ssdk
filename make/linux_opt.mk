@@ -384,6 +384,7 @@ ifneq (,$(findstring MPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/mppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/mppe
   MODULE_CFLAG += -DMPPE
+  MODULE_CFLAG += -DSSDK_RAW_CLOCK
 endif
 
 ifneq (,$(findstring SCOMPHY, $(SUPPORT_CHIP)))
