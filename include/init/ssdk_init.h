@@ -47,6 +47,7 @@ extern "C" {
 #define SSDK_SP_MAX_PRIORITY            8
 #define SSDK_MAX_FRAME_SIZE             0x3000
 #define SSDK_ACL_POLICER_CFG_MAX        512
+#define SSDK_MAX_MTU                    0x3FFF
 
 #define PORT_GMAC_TYPE                  1
 #define PORT_XGMAC_TYPE                 2
