@@ -945,13 +945,7 @@ struct in_flow_tbl_1 {
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
-#if defined(MPPE)
-	a_uint32_t  next_hop4_valid:1;
-	a_uint32_t  next_hop4:12;
-	a_uint32_t  _reserved0:4;
-#else
 	a_uint32_t  _reserved0:17;
-#endif
 #else
 	a_uint32_t  _reserved0:20;
 #endif
@@ -1293,13 +1287,7 @@ struct in_flow_3tuple_tbl_1 {
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
-#if defined(MPPE)
-	a_uint32_t  next_hop4_valid:1;
-	a_uint32_t  next_hop4:12;
-	a_uint32_t  _reserved0:4;
-#else
 	a_uint32_t  _reserved0:17;
-#endif
 #else
 	a_uint32_t  _reserved0:20;
 #endif
@@ -1584,13 +1572,7 @@ struct in_flow_ipv6_5tuple_tbl_1 {
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
-#if defined(MPPE)
-	a_uint32_t  next_hop4_valid:1;
-	a_uint32_t  next_hop4:12;
-	a_uint32_t  _reserved0:4;
-#else
 	a_uint32_t  _reserved0:17;
-#endif
 #else
 	a_uint32_t  _reserved0:20;
 #endif
@@ -1759,7 +1741,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 /*[table] IN_FLOW_TBL*/
 #define IN_FLOW_TBL
 #define IN_FLOW_TBL_ADDRESS 0x40000
-#if defined(MPPE) || defined(CPPE)
+#if defined(CPPE)
 #define IN_FLOW_TBL_NUM     2048
 #else
 #define IN_FLOW_TBL_NUM     4096
@@ -2020,13 +2002,7 @@ struct in_flow_ipv6_3tuple_tbl_0 {
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
-#if defined(MPPE)
-	a_uint32_t  next_hop4_valid:1;
-	a_uint32_t  next_hop4:12;
-	a_uint32_t  _reserved0:4;
-#else
 	a_uint32_t  _reserved0:17;
-#endif
 #else
 	a_uint32_t  _reserved0:20;
 #endif
@@ -2144,12 +2120,7 @@ struct eg_flow_tree_map_tbl {
 #if defined(APPE)
 	a_uint32_t  wifi_qos:8;
 	a_uint32_t  wifi_qos_flag:1;
-#if defined(MPPE)
-	a_uint32_t  type:2;
-	a_uint32_t  _reserved0:29;
-#else
 	a_uint32_t  _reserved0:31;
-#endif
 #else
 	a_uint32_t  _reserved0:8;
 #endif

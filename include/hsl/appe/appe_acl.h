@@ -27,16 +27,6 @@
 #define IPR_UDF_PROFILE_BASE_MAX_ENTRY	8
 #define IPR_UDF_PROFILE_OFFSET_MAX_ENTRY	8
 
-#if defined(MPPE)
-#define EG_IPO_EXT_TBL_MAX_ENTRY	256
-#define PRE_IPO_RULE_REG_MAX_ENTRY	128
-#define PRE_IPO_MASK_REG_MAX_ENTRY	128
-#define PRE_IPO_RULE_EXT_1_MAX_ENTRY	16
-#define PRE_IPO_RULE_EXT_2_MAX_ENTRY	16
-#define PRE_IPO_RULE_EXT_4_MAX_ENTRY	16
-#define PRE_IPO_ACTION_MAX_ENTRY	128
-#define PRE_IPO_CNT_TBL_MAX_ENTRY	128
-#else
 #define EG_IPO_EXT_TBL_MAX_ENTRY	1024
 #define PRE_IPO_RULE_REG_MAX_ENTRY	512
 #define PRE_IPO_MASK_REG_MAX_ENTRY	512
@@ -45,7 +35,6 @@
 #define PRE_IPO_RULE_EXT_4_MAX_ENTRY	64
 #define PRE_IPO_ACTION_MAX_ENTRY	512
 #define PRE_IPO_CNT_TBL_MAX_ENTRY	512
-#endif
 
 sw_error_t
 appe_ipr_udf_ctrl_get(
@@ -276,31 +265,6 @@ appe_eg_ipo_ext_tbl_policy_id_set(
 		a_uint32_t value);
 
 #if 0
-#if defined(MPPE)
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-#endif
 #endif
 
 sw_error_t

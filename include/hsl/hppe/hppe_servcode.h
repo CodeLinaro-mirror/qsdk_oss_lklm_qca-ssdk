@@ -215,6 +215,5 @@ hppe_eg_service_tbl_get(
 		a_uint32_t index,
 		union eg_service_tbl_u *value);
 
-
 #endif
 

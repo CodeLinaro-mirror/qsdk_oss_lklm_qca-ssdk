@@ -2299,24 +2299,11 @@ union eg_header_data_u {
 	#define EG_XLAT_TUN_CTRL_TYPE_F_OFFSET  0
 	#define EG_XLAT_TUN_CTRL_TYPE_F_LEN     1
 	#define EG_XLAT_TUN_CTRL_TYPE_F_DEFAULT 0x0
-#if defined(MPPE)
-	/*[field] MAPT_UDP_CSM0_DIS*/
-	#define EG_XLAT_TUN_CTRL_MAPT_UDP_CSM0_DIS
-	#define EG_XLAT_TUN_CTRL_MAPT_UDP_CSM0_DIS_OFFSET 1
-	#define EG_XLAT_TUN_CTRL_MAPT_UDP_CSM0_DIS_LEN 1
-	#define EG_XLAT_TUN_CTRL_MAPT_UDP_CSM0_DIS_DEFAULT 0x0
-	/*[field] RESV*/
-	#define EG_XLAT_TUN_CTRL_RESV
-	#define EG_XLAT_TUN_CTRL_RESV_OFFSET  2
-	#define EG_XLAT_TUN_CTRL_RESV_LEN     1
-	#define EG_XLAT_TUN_CTRL_RESV_DEFAULT 0x0
-#else
 	/*[field] RESV*/
 	#define EG_XLAT_TUN_CTRL_RESV
 	#define EG_XLAT_TUN_CTRL_RESV_OFFSET  1
 	#define EG_XLAT_TUN_CTRL_RESV_LEN     2
 	#define EG_XLAT_TUN_CTRL_RESV_DEFAULT 0x0
-#endif
 	/*[field] IPV4_DF_MODE_EXT*/
 	#define EG_XLAT_TUN_CTRL_IPV4_DF_EXT_MODE
 	#define EG_XLAT_TUN_CTRL_IPV4_DF_EXT_MODE_OFFSET  3
@@ -2470,12 +2457,7 @@ union eg_header_data_u {
 
 struct eg_xlat_tun_ctrl {
 	a_uint32_t  type:1;
-#if defined(MPPE)
-	a_uint32_t  mapt_udp_csm0_dis:1;
-	a_uint32_t  resv:1;
-#else
 	a_uint32_t  resv:2;
-#endif
 	a_uint32_t  ipv4_df_mode_ext:1;
 	a_uint32_t  edit_rule_id:4;
 	a_uint32_t  edit_rule_target:2;

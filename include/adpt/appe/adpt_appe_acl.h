@@ -27,11 +27,7 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#if defined(MPPE)
-#define ADPT_PRE_ACL_HW_LIST_NUM 16 /* hw list number */
-#else
 #define ADPT_PRE_ACL_HW_LIST_NUM 64
-#endif
 #define ADPT_PRE_ACL_ENTRY_NUM_PER_LIST 8 /* hw rule entries number per hw list */
 
 #define ADPT_ACL_APPE_TUNNEL_RULE 16

@@ -66,10 +66,6 @@ static const char *mapt_Decapentry[] = {
 	"src_info",
 	"edit_rule_id",
 	"exp_profile",
-#if defined(MPPE)
-	"service_code_en",
-	"service_code",
-#endif
 };
 
 int parse_mapt(const char *command_name, struct switch_val *val)
