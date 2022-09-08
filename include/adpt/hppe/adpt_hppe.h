@@ -93,13 +93,8 @@ sw_error_t adpt_hppe_ptp_init(a_uint32_t dev_id);
 #define HPPE_SHAPER_IPG_PREAMBLE_LEN_DFT 20
 
 /*BM*/
-#if defined(MPPE)
-#define PPE_BM_PORT_NUM		10
-#define PPE_BM_PHY_PORT_MAX	9
-#else
 #define PPE_BM_PORT_NUM		15
 #define PPE_BM_PHY_PORT_MAX	13
-#endif
 #define PPE_BM_PHY_PORT_OFFSET	8
 
 #define HPPE_REVISION              0x0

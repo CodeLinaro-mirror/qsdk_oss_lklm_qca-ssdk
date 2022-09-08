@@ -139,25 +139,6 @@ void ssdk_port_reset(
 	}
 #endif
 
-#if defined(MPPE)
-	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
-		/* reset RX */
-		rst = port_rsts[2 * (port_id - 1)];
-		if (IS_ERR(rst)) {
-			SSDK_ERROR("port RX reset(%d) not exist!\n", port_id);
-			return;
-		}
-		ssdk_gcc_reset(rst, action);
-
-		/* reset TX */
-		rst = port_rsts[2 * (port_id - 1) + 1];
-		if (IS_ERR(rst)) {
-			SSDK_ERROR("port TX reset(%d) not exist!\n", port_id);
-			return;
-		}
-		ssdk_gcc_reset(rst, action);
-	} else
-#endif
 	{
 		rst = port_rsts[port_id - 1];
 		if (IS_ERR(rst)) {
@@ -991,15 +972,6 @@ void ssdk_uniphy_raw_clock_set(
 	id = uniphy_index*2 + direction;
 	old_clock = clk_get_rate(uniphy_raw_clks[id]->clk);
 
-#if defined(MPPE)
-	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
-		if (clock != old_clock) {
-			if (clk_set_rate(uniphy_raw_clks[id]->clk, clock))
-				SSDK_ERROR("set clock rate: %d fail!\n", clock);
-		}
-		return;
-	}
-#endif
 
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx")) {
 		rate = NSS_APPE_PORT5_DFLT_RATE;
@@ -1083,10 +1055,6 @@ static void ssdk_appe_fixed_clock_init(a_uint8_t revision)
 {
 	a_uint32_t rate = 0;
 
-	/* Enable sleep clk for reset effect */
-	if (revision == MPPE_REVISION)
-		ssdk_clock_rate_set_and_enable(clock_node, GCC_IM_SLEEP_CLK, 0);
-
 	/* cmn ahb and sys clk */
 	ssdk_clock_rate_set_and_enable(clock_node, CMN_AHB_CLK, 0);
 	ssdk_clock_rate_set_and_enable(clock_node, CMN_SYS_CLK, 0);
@@ -1096,10 +1064,7 @@ static void ssdk_appe_fixed_clock_init(a_uint8_t revision)
 					NSS_NSSCC_CLK_RATE);
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_NSSCC_CLK,
 					NSS_NSSNOC_NSSCC_CLK_RATE);
-	if (revision == MPPE_REVISION)
-		rate = MPPE_NSS_NSSNOC_SNOC_CLK_RATE;
-	else
-		rate = NSS_NSSNOC_SNOC_CLK_RATE;
+	rate = NSS_NSSNOC_SNOC_CLK_RATE;
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_SNOC_CLK, rate);
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_SNOC_1_CLK, rate);
 
@@ -1108,32 +1073,25 @@ static void ssdk_appe_fixed_clock_init(a_uint8_t revision)
 					APPE_UNIPHY_SYS_CLK_RATE);
 	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_SYS_CLK,
 					APPE_UNIPHY_SYS_CLK_RATE);
-	if (revision != MPPE_REVISION)
-		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_SYS_CLK,
-				APPE_UNIPHY_SYS_CLK_RATE);
+	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_SYS_CLK,
+			APPE_UNIPHY_SYS_CLK_RATE);
 
 	/* GCC_PCNOC_BFDCD_CFG_RCGR init 100MHz */
 	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_AHB_CLK,
 					UNIPHY_AHB_CLK_RATE);
 	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_AHB_CLK,
 					UNIPHY_AHB_CLK_RATE);
-	if (revision != MPPE_REVISION)
-		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_AHB_CLK,
-				UNIPHY_AHB_CLK_RATE);
+	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_AHB_CLK,
+			UNIPHY_AHB_CLK_RATE);
 
-	if (revision == MPPE_REVISION)
-		rate = MPPE_CLK_RATE;
-	else
-		rate = APPE_CLK_RATE;
+	rate = APPE_CLK_RATE;
 	/* NSS_CC_PPE_CFG_RCGR init 353MHz for APPE, 200MHZ for MPPE */
 	ssdk_clock_rate_set_and_enable(clock_node, PORT1_MAC_CLK, rate);
 	ssdk_clock_rate_set_and_enable(clock_node, PORT2_MAC_CLK, rate);
-	if (revision != MPPE_REVISION) {
-		ssdk_clock_rate_set_and_enable(clock_node, PORT3_MAC_CLK, rate);
-		ssdk_clock_rate_set_and_enable(clock_node, PORT4_MAC_CLK, rate);
-		ssdk_clock_rate_set_and_enable(clock_node, PORT5_MAC_CLK, rate);
-		ssdk_clock_rate_set_and_enable(clock_node, PORT6_MAC_CLK, rate);
-	}
+	ssdk_clock_rate_set_and_enable(clock_node, PORT3_MAC_CLK, rate);
+	ssdk_clock_rate_set_and_enable(clock_node, PORT4_MAC_CLK, rate);
+	ssdk_clock_rate_set_and_enable(clock_node, PORT5_MAC_CLK, rate);
+	ssdk_clock_rate_set_and_enable(clock_node, PORT6_MAC_CLK, rate);
 	ssdk_clock_rate_set_and_enable(clock_node, NSS_PPE_CLK, rate);
 	ssdk_clock_rate_set_and_enable(clock_node, NSS_PPE_CFG_CLK, rate);
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_PPE_CLK, rate);
@@ -1157,16 +1115,6 @@ void ssdk_gcc_appe_clock_init(enum cmnblk_clk_type mode)
 }
 #endif
 
-#if defined(MPPE)
-void ssdk_gcc_mppe_clock_init(enum cmnblk_clk_type mode)
-{
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
-	ssdk_appe_fixed_clock_init(MPPE_REVISION);
-	ssdk_ppe_uniphy_clock_init(CHIP_APPE, MPPE_REVISION);
-	ssdk_cmnblk_init(mode);
-#endif
-}
-#endif
 
 #if defined(MP)
 void ssdk_gcc_mp_clock_init(enum cmnblk_clk_type mode)
@@ -1266,9 +1214,6 @@ void ssdk_gcc_clock_init(void)
 #endif
 	} else if (of_device_is_compatible(clock_node,
 			"qcom,ess-switch-ipq53xx")) {
-#if defined(MPPE)
-		ssdk_gcc_mppe_clock_init(cmnblk_clk_mode);
-#endif
 	}
 #endif
 

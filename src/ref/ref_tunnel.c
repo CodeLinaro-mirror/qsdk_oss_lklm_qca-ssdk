@@ -159,9 +159,6 @@ static const char *tunnel_encapentry[] = {
 	"pppoe_en",
 	"vport_en",
 	"cpu_vport",
-#if defined(MPPE)
-	"mapt_udp_csm0_keep",
-#endif
 	"eg_header_data",
 };
 

@@ -608,69 +608,6 @@ appe_eg_ipo_ext_tbl_policy_id_set(
 	return ret;
 }
 
-#if defined(MPPE)
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union eg_ipo_ext_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_eg_ipo_ext_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.cookie;
-	return ret;
-}
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union eg_ipo_ext_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_eg_ipo_ext_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.cookie = value;
-	ret = appe_eg_ipo_ext_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union eg_ipo_ext_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_eg_ipo_ext_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.cookie_pri;
-	return ret;
-}
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union eg_ipo_ext_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_eg_ipo_ext_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.cookie_pri = value;
-	ret = appe_eg_ipo_ext_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-#endif
 #endif
 
 sw_error_t
