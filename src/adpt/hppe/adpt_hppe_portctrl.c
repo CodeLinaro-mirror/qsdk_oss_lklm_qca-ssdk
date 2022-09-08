@@ -2708,14 +2708,6 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
 		else if (port_id >= SSDK_PHYSICAL_PORT1 && port_id <= SSDK_PHYSICAL_PORT4)
 		{
 			mode = mode0;
-#if defined(MPPE)
-			if (adpt_chip_type_get(dev_id) == CHIP_APPE &&
-				adpt_chip_revision_get(dev_id) == MPPE_REVISION &&
-				port_id == SSDK_PHYSICAL_PORT2)
-			{
-				mode = mode1;
-			}
-#endif
 		}
 #endif
 		else

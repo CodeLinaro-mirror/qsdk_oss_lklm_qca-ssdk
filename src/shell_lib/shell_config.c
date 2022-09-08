@@ -1299,10 +1299,6 @@ struct sub_cmd_des_t g_servcode_des[] =
 {
     {"config", "set", SW_API_SERVCODE_CONFIG_SET, NULL},
     {"loopcheck", "set", SW_API_SERVCODE_LOOPCHECK_EN, NULL},
-#if defined(MPPE)
-    {"portServcode", "set", SW_API_PORT_SERVCODE_SET, NULL},
-    {"athtag", "set", SW_API_SERVCODE_ATHTAG_SET, NULL},
-#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif

@@ -460,31 +460,5 @@ appe_tl_map_lpm_act_src_info_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#if 0
-#if defined(MPPE)
-sw_error_t
-mppe_tl_map_lpm_act_service_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-mppe_tl_map_lpm_act_service_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-mppe_tl_map_lpm_act_service_code_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-sw_error_t
-mppe_tl_map_lpm_act_service_code_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-#endif
-#endif
 #endif
 

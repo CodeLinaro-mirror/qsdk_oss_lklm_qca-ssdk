@@ -768,10 +768,6 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 			group_buf = 1400;
 			share_ceiling = 250;
 			break;
-		case MPPE_TYPE:
-			group_buf = 248;
-			share_ceiling = 20;
-			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
 			return SW_OUT_OF_RANGE;
@@ -809,15 +805,6 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 					react_buf = 128;
 				}
 				break;
-			case MPPE_TYPE:
-				if (i < PPE_BM_PHY_PORT_OFFSET) {
-					prealloc_buf = 10;
-					react_buf = 25;
-				} else {
-					prealloc_buf = 12;
-					react_buf = 24;
-				}
-				break;
 			default:
 				SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
 				return SW_OUT_OF_RANGE;
@@ -827,15 +814,9 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 	}
 
 	memset(&cfg, 0, sizeof(cfg));
-	if (chip_type == MPPE_TYPE) {
-		cfg.resume_min_thresh = 15;
-		cfg.resume_off = 6;
-		cfg.weight= 5;
-	} else {
-		cfg.resume_min_thresh = 0;
-		cfg.resume_off = 36;
-		cfg.weight= 4;
-	}
+	cfg.resume_min_thresh = 0;
+	cfg.resume_off = 36;
+	cfg.weight= 4;
 	cfg.shared_ceiling = share_ceiling;
 
 	for (i = 0; i < PPE_BM_PORT_NUM; i++) {
@@ -1014,11 +995,6 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 			total_buf = 1506;
 			ceiling = 216;
 			green_max = 144;
-			break;
-		case MPPE_TYPE:
-			total_buf = 500;
-			ceiling = 100;
-			green_max = 100;
 			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
