@@ -30,9 +30,6 @@
 #if defined(APPE)
 #include "adpt_appe_servcode.h"
 #endif
-#if defined(MPPE)
-#include "adpt_mppe_servcode.h"
-#endif
 
 #define MAX_PHYSICAL_PORT 8
 
@@ -67,14 +64,7 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	service_tbl.bf.rx_counting_en = entry->bypass_bitmap[2] & 0x1;
 	SW_RTN_ON_ERROR(hppe_service_tbl_set(dev_id, servcode_index, &service_tbl));
 
-#if defined(MPPE)
-	/*do not touch the athtag configurations*/
-	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
-	eg_service_tbl.bf.field_update_action &= ATHTAG_UPDATE;
-	eg_service_tbl.bf.field_update_action |= entry->field_update_bitmap;
-#else
 	eg_service_tbl.bf.field_update_action = entry->field_update_bitmap;
-#endif
 	eg_service_tbl.bf.next_service_code = entry->next_service_code;
 	eg_service_tbl.bf.hw_services = entry->hw_services;
 	eg_service_tbl.bf.offset_sel = entry->offset_sel;
@@ -163,15 +153,6 @@ void adpt_hppe_servcode_func_bitmap_init(a_uint32_t dev_id)
 						(1<<FUNC_SERVCODE_CONFIG_GET) |
 						(1<<FUNC_SERVCODE_LOOPCHECK_EN) |
 						(1<<FUNC_SERVCODE_LOOPCHECK_STATUS_GET));
-#if defined(MPPE)
-	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
-	{
-		p_adpt_api->adpt_servcode_func_bitmap |= ((1<<FUNC_PORT_SERVCODE_SET) |
-						(1<<FUNC_PORT_SERVCODE_GET));
-		p_adpt_api->adpt_servcode_func_bitmap |= ((1<<FUNC_SERVCODE_ATHTAG_SET) |
-						(1<<FUNC_SERVCODE_ATHTAG_GET));
-	}
-#endif
 
 	return;
 }
@@ -212,19 +193,6 @@ sw_error_t adpt_hppe_servcode_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_servcode_loopcheck_en = adpt_hppe_servcode_loopcheck_en;
 	if(p_adpt_api->adpt_servcode_func_bitmap & (1<<FUNC_SERVCODE_LOOPCHECK_STATUS_GET))
 		p_adpt_api->adpt_servcode_loopcheck_status_get = adpt_hppe_servcode_loopcheck_status_get;
-#if defined(MPPE)
-	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
-	{
-		if(p_adpt_api->adpt_servcode_func_bitmap & (1<<FUNC_PORT_SERVCODE_SET))
-			p_adpt_api->adpt_port_servcode_set = adpt_mppe_port_servcode_set;
-		if(p_adpt_api->adpt_servcode_func_bitmap & (1<<FUNC_PORT_SERVCODE_GET))
-			p_adpt_api->adpt_port_servcode_get = adpt_mppe_port_servcode_get;
-		if(p_adpt_api->adpt_servcode_func_bitmap & (1<<FUNC_SERVCODE_ATHTAG_SET))
-			p_adpt_api->adpt_servcode_athtag_set = adpt_mppe_servcode_athtag_set;
-		if(p_adpt_api->adpt_servcode_func_bitmap & (1<<FUNC_SERVCODE_ATHTAG_GET))
-			p_adpt_api->adpt_servcode_athtag_get = adpt_mppe_servcode_athtag_get;
-	}
-#endif
 
 	return SW_OK;
 }

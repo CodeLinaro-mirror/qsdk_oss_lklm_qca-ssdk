@@ -26,11 +26,7 @@ extern "C" {
 #define APPE_POLICER_ID_MIN                  0
 #define APPE_POLICER_ID_MAX                  511
 #define APPE_POLICER_TIME_SLOT_MAX           4095
-#if defined(MPPE)
-#define APPE_POLICER_TIME_SLOT_MIN           256
-#else
 #define APPE_POLICER_TIME_SLOT_MIN           1024
-#endif
 
 
 sw_error_t

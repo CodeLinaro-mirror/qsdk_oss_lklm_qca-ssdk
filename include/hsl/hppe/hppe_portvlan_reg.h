@@ -34,22 +34,10 @@
 	#define PORT_PARSING_REG_PORT_ROLE_OFFSET  0
 	#define PORT_PARSING_REG_PORT_ROLE_LEN     1
 	#define PORT_PARSING_REG_PORT_ROLE_DEFAULT 0x0
-#if defined(MPPE)
-	/*[field] SRC_PORT_SEL*/
-	#define PORT_PARSING_REG_SRC_PORT_SEL
-	#define PORT_PARSING_REG_SRC_PORT_SEL_OFFSET  1
-	#define PORT_PARSING_REG_SRC_PORT_SEL_LEN     1
-	#define PORT_PARSING_REG_SRC_PORT_SEL_DEFAULT 0x0
-#endif
 
 struct port_parsing_reg {
 	a_uint32_t  port_role:1;
-#if defined(MPPE)
-	a_uint32_t  src_port_sel:1;
-	a_uint32_t  _reserved0:30;
-#else
 	a_uint32_t  _reserved0:31;
-#endif
 };
 
 union port_parsing_reg_u {
