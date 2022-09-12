@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- *
  * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -2438,13 +2438,17 @@ extern "C" {
     SW_API_DEF(SW_API_SERVCODE_CONFIG_SET, fal_servcode_config_set), \
     SW_API_DEF(SW_API_SERVCODE_CONFIG_GET, fal_servcode_config_get), \
     SW_API_DEF(SW_API_SERVCODE_LOOPCHECK_EN, fal_servcode_loopcheck_en), \
-    SW_API_DEF(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, fal_servcode_loopcheck_status_get),
+    SW_API_DEF(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, fal_servcode_loopcheck_status_get), \
+    SW_API_DEF(SW_API_PORT_SERVCODE_SET, fal_port_servcode_set), \
+    SW_API_DEF(SW_API_PORT_SERVCODE_GET, fal_port_servcode_get),
 
 #define SERVCODE_API_PARAM \
     SW_API_DESC(SW_API_SERVCODE_CONFIG_SET) \
     SW_API_DESC(SW_API_SERVCODE_CONFIG_GET) \
     SW_API_DESC(SW_API_SERVCODE_LOOPCHECK_EN) \
-    SW_API_DESC(SW_API_SERVCODE_LOOPCHECK_STATUS_GET)
+    SW_API_DESC(SW_API_SERVCODE_LOOPCHECK_STATUS_GET) \
+    SW_API_DESC(SW_API_PORT_SERVCODE_SET) \
+    SW_API_DESC(SW_API_PORT_SERVCODE_GET)
 #else
 #define SERVCODE_API
 #define SERVCODE_API_PARAM
@@ -2972,6 +2976,30 @@ extern "C" {
 #define MAPT_API_PARAM
 #endif
 
+#ifdef IN_ATHTAG
+#define ATHTAG_API \
+	SW_API_DEF(SW_API_ATHTAG_PRI_MAPPING_SET, fal_athtag_pri_mapping_set), \
+	SW_API_DEF(SW_API_ATHTAG_PRI_MAPPING_GET, fal_athtag_pri_mapping_get), \
+	SW_API_DEF(SW_API_ATHTAG_PORT_MAPPING_SET, fal_athtag_port_mapping_set), \
+	SW_API_DEF(SW_API_ATHTAG_PORT_MAPPING_GET, fal_athtag_port_mapping_get), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_RX_SET, fal_port_athtag_rx_set), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_RX_GET, fal_port_athtag_rx_get), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_TX_SET, fal_port_athtag_tx_set), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_TX_GET, fal_port_athtag_tx_get),
+#define ATHTAG_API_PARAM \
+	SW_API_DESC(SW_API_ATHTAG_PRI_MAPPING_SET) \
+	SW_API_DESC(SW_API_ATHTAG_PRI_MAPPING_GET) \
+	SW_API_DESC(SW_API_ATHTAG_PORT_MAPPING_SET) \
+	SW_API_DESC(SW_API_ATHTAG_PORT_MAPPING_GET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_RX_SET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_RX_GET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_TX_SET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_TX_GET)
+#else
+#define ATHTAG_API
+#define ATHTAG_API_PARAM
+#endif
+
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3024,6 +3052,7 @@ extern "C" {
     GENEVE_API \
     TUNNEL_PROGRAM_API \
     MAPT_API \
+    ATHTAG_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3089,6 +3118,7 @@ extern "C" {
     GENEVE_API_PARAM \
     TUNNEL_PROGRAM_API_PARAM \
     MAPT_API_PARAM \
+    ATHTAG_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),
