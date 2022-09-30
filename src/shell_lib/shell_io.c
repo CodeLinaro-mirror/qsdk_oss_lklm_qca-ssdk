@@ -4552,12 +4552,6 @@ cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size)
 				    &(pEntry->tunnel_port_role), sizeof(a_uint32_t));
 	    }
     } while (talk_mode && (SW_OK != rv));
-#if defined(MPPE)
-	cmd_data_check_element("tunnel_ingress_port_select", "tnl_decap_src_vp",
-					"usage: tnl_decap_src_vp or org_src_port\n",
-					cmd_data_check_attr, ("port_select", cmd,
-					&(pEntry->ingress_port_sel), sizeof(pEntry->ingress_port_sel)));
-#endif
 #endif
 
     return SW_OK;
@@ -12487,23 +12481,6 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
 	    }
     } while (talk_mode && (SW_OK != rv));
 #endif
-#if defined(MPPE)
-    cmd_data_check_element("qos_type", "0",
-		    "usage: 0 for tree_id, 1 for flowcookie\n",
-		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
-    flow_qos->qos_type = tmp;
-
-    rv = __cmd_data_check_boolean("bridge_nexthop_valid", "no",
-		    "usage: <yes/no/y/n>\n",
-		    cmd_data_check_confirm, A_FALSE, &(entry.bridge_nexthop_valid),
-		    sizeof (a_bool_t));
-    SW_RTN_ON_ERROR(rv);
-
-    cmd_data_check_element("bridge_nexthop", "0",
-		    "usage: next hop of bridge type\n",
-		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
-    entry.bridge_nexthop = tmp;
-#endif
 
     *(fal_flow_entry_t *)val = entry;
     return SW_OK;
@@ -18155,13 +18132,6 @@ cmd_data_check_tunnel_encap_entry(char *cmd_str, fal_tunnel_encap_cfg_t *arg_val
 			"usage:  virtual port carried to cpu\n",
 			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
 	entry.vport = tmp;
-#if defined(MPPE)
-	rv = __cmd_data_check_boolean("mapt_udp_csm0_keep", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &(entry.mapt_udp_csm0_keep),
-			sizeof (a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-#endif
 	do {
 		cmd = get_sub_cmd("eg_header_data", "0x0");
 		SW_RTN_ON_NULL_PARAM(cmd);
@@ -18844,18 +18814,6 @@ cmd_data_check_mapt_decap_entry(char *cmd_str, void *arg_val, a_uint32_t size)
 			cmd_data_check_uint32, (cmd, &tmp,
 				sizeof(a_uint32_t)));
 	entry.exp_profile = tmp;
-#if defined(MPPE)
-	rv = __cmd_data_check_boolean("service_code_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &(entry.service_code_en),
-			sizeof (a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	cmd_data_check_element("service_code", "0",
-		"usage: updated service code\n",
-		cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-		entry.service_code = tmp;
-#endif
 
 	*(fal_mapt_decap_entry_t *)arg_val = entry;
 

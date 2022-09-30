@@ -3195,11 +3195,6 @@ parse_portvlan_ptqinqmode(struct switch_val *val)
 		else if (!strcmp(ext_value_p->option_name, "tunnel_qinq_role")) {
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		}
-#if defined(MPPE)
-		else if (!strcmp(ext_value_p->option_name, "tunnel_ingress_port_select")) {
-			val_ptr[5] = (char*)ext_value_p->option_value;
-		}
-#endif
 #endif
 		else {
 			rv = -1;
@@ -8809,21 +8804,6 @@ parse_acl_action_field(struct switch_ext *ext_value_p, fal_acl_rule_t *rule)
 		rule->policy_id = tmpdata & 0xffff;
 	}
 #endif
-#if defined(MPPE)
-	else if(!strcmp(ext_value_p->option_name, "metadata_pri")) {
-		cmd_data_check_uint8((char*)ext_value_p->option_value,
-			&tmpdata, sizeof(tmpdata));
-		rule->metadata_pri = tmpdata & 0xf;
-	} else if(!strcmp(ext_value_p->option_name, "cookie_val")) {
-		cmd_data_check_uint16((char*)ext_value_p->option_value,
-			&(tmpdata), sizeof(tmpdata));
-		rule->cookie_val = tmpdata & 0xffff;
-	} else if(!strcmp(ext_value_p->option_name, "cookie_pri")) {
-		cmd_data_check_uint8((char*)ext_value_p->option_value,
-			&tmpdata, sizeof(tmpdata));
-		rule->cookie_pri = tmpdata & 0xf;
-	}
-#endif
 	return SW_OK;
 }
 
@@ -9797,15 +9777,6 @@ parse_flow_entry(struct switch_val *val)
 			val_ptr[34] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "wifi_qos")) {
 			val_ptr[35] = (char*)ext_value_p->option_value;
-		}
-#endif
-#if defined(MPPE)
-		else if (!strcmp(ext_value_p->option_name, "qos_type")) {
-			val_ptr[36] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "bridge_nexthop_valid")) {
-			val_ptr[37] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "bridge_nexthop")) {
-			val_ptr[38] = (char*)ext_value_p->option_value;
 		}
 #endif
 		else {

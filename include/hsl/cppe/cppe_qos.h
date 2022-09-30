@@ -23,10 +23,7 @@
 #ifndef _CPPE_QOS_H_
 #define _CPPE_QOS_H_
 
-#if defined(MPPE)
-#define QOS_MAPPING_TBL_MAX_ENTRY	2592
-#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	2048
-#elif defined(APPE)
+#if defined(APPE)
 #define QOS_MAPPING_TBL_MAX_ENTRY	4640
 #define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	4096
 #else
@@ -193,20 +190,5 @@ cppe_qos_mapping_tbl_int_dscp_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
-#if defined(MPPE)
-sw_error_t
-mppe_qos_mapping_tbl_flow_policer_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *policer_en,
-		a_uint32_t *policer_index);
-
-sw_error_t
-mppe_qos_mapping_tbl_flow_policer_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t policer_en,
-		a_uint32_t policer_index);
-#endif
 
 #endif

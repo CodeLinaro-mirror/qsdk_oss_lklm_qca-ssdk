@@ -686,12 +686,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			SW_RTN_ON_ERROR(rtn);
 
 			vp_parsing_reg.bf.port_role = mode->ingress_port_role;
-#if defined(MPPE)
-			if(adpt_ppe_type_get(dev_id) == MPPE_TYPE) {
-				vp_parsing_reg.bf.src_port_sel =
-					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
-			}
-#endif
 			rtn = appe_ipr_vp_parsing_set(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -712,12 +706,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			SW_RTN_ON_ERROR(rtn);
 
 			port_parsing_reg.bf.port_role = mode->ingress_port_role;
-#if defined(MPPE)
-			if(adpt_ppe_type_get(dev_id) == MPPE_TYPE) {
-				port_parsing_reg.bf.src_port_sel =
-					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
-			}
-#endif
 			rtn = hppe_port_parsing_reg_set(dev_id, port_value, &port_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -755,12 +743,6 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		SW_RTN_ON_ERROR(rtn);
 
 		mode->ingress_port_role = (fal_qinq_port_role_t)vp_parsing_reg.bf.port_role;
-#if defined(MPPE)
-		if(adpt_ppe_type_get(dev_id) == MPPE_TYPE) {
-			mode->ingress_port_sel =
-				vp_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
-		}
-#endif
 
 		rtn = appe_eg_vp_tbl_port_vlan_type_get(dev_id, port_value,
 				(a_uint32_t *)&mode->egress_port_role);
@@ -775,12 +757,6 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		SW_RTN_ON_ERROR(rtn);
 
 		mode->ingress_port_role = (fal_qinq_port_role_t)port_parsing_reg.bf.port_role;
-#if defined(MPPE)
-		if(adpt_ppe_type_get(dev_id) == MPPE_TYPE) {
-			mode->ingress_port_sel =
-				port_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
-		}
-#endif
 
 		SW_RTN_ON_ERROR(hppe_port_eg_vlan_port_vlan_type_get(dev_id, port_value,
 					(a_uint32_t *)&mode->egress_port_role));
