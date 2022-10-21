@@ -24,6 +24,57 @@
 #include "mht_interface_ctrl.h"
 #include "ssdk_mht_clk.h"
 
+static a_uint32_t
+qca8084_phy_icc[SSDK_PHYSICAL_PORT4+1];
+
+static sw_error_t
+qca8084_phy_icc_init(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t icc_value = 0, mht_port_id = 0;
+
+	rv = qca_mht_port_id_get(dev_id, phy_addr, &mht_port_id);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca_mht_ethphy_icc_efuse_get(dev_id, mht_port_id, &icc_value);
+	SW_RTN_ON_ERROR(rv);
+
+	qca8084_phy_icc[mht_port_id] = icc_value;
+	SSDK_DEBUG("dev_id %d, mht_port_id %d icc value is 0x%x\n",
+		dev_id, mht_port_id, icc_value);
+
+	return SW_OK;
+}
+
+static sw_error_t
+qca8084_phy_icc_fix_up(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_speed_t speed)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t icc_value = 0, mht_port_id = 0;
+
+	rv = qca_mht_port_id_get(dev_id, phy_addr, &mht_port_id);
+	SW_RTN_ON_ERROR(rv);
+	/*retrim icc value for link up 100M, and set orginal icc value for link down
+		and other speeds*/
+	if(speed == FAL_SPEED_100)
+	{
+		if(qca8084_phy_icc[mht_port_id] < (0x1f-3))
+			icc_value = qca8084_phy_icc[mht_port_id]+3;
+		else
+			icc_value = 0x1f;
+	}
+	else
+	{
+		icc_value = qca8084_phy_icc[mht_port_id];
+	}
+	SSDK_DEBUG("dev_id:%d mht_port_id:%d icc value is 0x%x\n", dev_id, mht_port_id, icc_value);
+	rv = qca808x_phy_modify_debug(dev_id, phy_addr, QCA8084_PHY_DEBUG_ANA_ICC,
+		QCA8084_PHY_DEBUG_ANA_ICC_MASK, icc_value);
+	aos_mdelay(10);
+
+	return rv;
+}
+
 sw_error_t
 qca8084_phy_ipg_config(a_uint32_t dev_id, a_uint32_t phy_id,
 	fal_port_speed_t speed)
@@ -141,6 +192,26 @@ qca8084_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id,
 		dev_id, phy_id, *interface_mode_status);
 
 	return SW_OK;
+}
+
+sw_error_t
+qca8084_phy_fifo_reset(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+	a_uint16_t phy_data = 0;
+
+	phy_data = qca808x_phy_reg_read (dev_id, phy_addr, QCA8084_PHY_FIFO_CONTROL);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if(enable)
+		phy_data &= ~QCA8084_PHY_FIFO_RESET;
+	else
+		phy_data |= QCA8084_PHY_FIFO_RESET;
+
+	rv = qca808x_phy_reg_write(dev_id, phy_addr, QCA8084_PHY_FIFO_CONTROL,
+		phy_data);
+
+	return rv;
 }
 
 static sw_error_t
@@ -441,21 +512,14 @@ static sw_error_t
 qca8084_phy_function_reset(a_uint32_t dev_id, a_uint32_t phy_id,
 	hsl_phy_function_reset_t phy_reset_type)
 {
-	a_uint16_t phy_data = 0;
 	sw_error_t rv = SW_OK;
 
-	phy_data = qca808x_phy_reg_read (dev_id, phy_id, QCA8084_PHY_FIFO_CONTROL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	rv = qca808x_phy_reg_write(dev_id, phy_id, QCA8084_PHY_FIFO_CONTROL,
-		phy_data & (~QCA8084_PHY_FIFO_RESET));
+	rv = qca8084_phy_fifo_reset(dev_id, phy_id, A_TRUE);
 	SW_RTN_ON_ERROR(rv);
 
 	aos_mdelay(50);
 
-	rv = qca808x_phy_reg_write(dev_id, phy_id, QCA8084_PHY_FIFO_CONTROL,
-	phy_data | QCA8084_PHY_FIFO_RESET);
-	SW_RTN_ON_ERROR(rv);
+	rv = qca8084_phy_fifo_reset(dev_id, phy_id, A_FALSE);
 
 	return rv;
 }
@@ -491,6 +555,9 @@ _qca8084_phy_uqxgmii_speed_fixup(a_uint32_t dev_id, a_uint32_t phy_addr,
 	rv = ssdk_mht_port_clk_en_set(dev_id, mht_port_id,
 		MHT_CLK_TYPE_UNIPHY|MHT_CLK_TYPE_EPHY, port_clock_en);
 	SW_RTN_ON_ERROR(rv);
+	/*delay 100ms after enable/disable clock*/
+	SSDK_DEBUG("delay 100ms after enable/disable clock\n");
+	aos_mdelay(100);
 	/*GMII/XGMII interface and ETHPHY GMII interface reset and release*/
 	SSDK_DEBUG("UNIPHY GMII/XGMII interface and ETHPHY GMII interface reset and release\n");
 	rv = ssdk_mht_port_clk_reset(dev_id, mht_port_id, MHT_CLK_TYPE_UNIPHY|MHT_CLK_TYPE_EPHY);
@@ -501,8 +568,16 @@ _qca8084_phy_uqxgmii_speed_fixup(a_uint32_t dev_id, a_uint32_t phy_addr,
 	SW_RTN_ON_ERROR(rv);
 	/*do ethphy function reset*/
 	SSDK_DEBUG("do ethphy function reset\n");
-	rv = qca8084_phy_function_reset(dev_id, phy_addr, PHY_FIFO_RESET);
-	SW_RTN_ON_ERROR(rv);
+	if(link)
+	{
+		rv = qca8084_phy_function_reset(dev_id, phy_addr, PHY_FIFO_RESET);
+		SW_RTN_ON_ERROR(rv);
+	}
+	else
+	{
+		rv = qca8084_phy_fifo_reset(dev_id, phy_addr, A_TRUE);
+		SW_RTN_ON_ERROR(rv);
+	}
 	/*change IPG from 10 to 11 for 1G speed*/
 	rv = qca8084_phy_ipg_config(dev_id, phy_addr, new_speed);
 
@@ -597,6 +672,7 @@ qca8084_phy_speed_fixup(a_uint32_t dev_id, a_uint32_t phy_addr,
 			phy_info->port_link_status[port_id] ? "link up" :"link down",
 			phy_status->link_status ? "link up" : "link down",
 			phy_status->speed);
+		qca8084_phy_icc_fix_up(dev_id, phy_addr, phy_status->speed);
 		_qca8084_phy_speed_fixup(dev_id, phy_addr, phy_status->link_status,
 			phy_info->port_mode[port_id], phy_status->speed);
 		phy_info->port_link_status[port_id] = phy_status->link_status;
@@ -643,6 +719,15 @@ qca8084_phy_hw_init(a_uint32_t dev_id, a_uint32_t phy_addr)
 	SW_RTN_ON_ERROR(rv);
 	/*invert ADC clock edge as falling edge to fix link issue*/
 	rv = qca8084_phy_adc_edge_set(dev_id, phy_addr, ADC_FALLING);
+	SW_RTN_ON_ERROR(rv);
+	/*configure signal energy detect threshold to fix link issue
+		for some chips*/
+	rv = qca808x_phy_mmd_write(dev_id, phy_addr, QCA8084_PHY_MMD1_NUM,
+		QCA8084_PHY_MMD1_MSE_THRESH_DEBUG_12,
+		QCA8084_PHY_MMD1_MSE_THRESH_ENERGY_DETECT);
+	SW_RTN_ON_ERROR(rv);
+	/*init icc value*/
+	rv = qca8084_phy_icc_init(dev_id, phy_addr);
 
 	return rv;
 }

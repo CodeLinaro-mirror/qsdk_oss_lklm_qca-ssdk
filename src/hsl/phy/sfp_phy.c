@@ -27,10 +27,12 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/phy.h>
+#include <linux/gpio.h>
 #include "ssdk_plat.h"
 #include "ssdk_phy_i2c.h"
 #include "ssdk_dts.h"
-
+#include "hppe_uniphy_reg.h"
+#include "hppe_uniphy.h"
 /******************************************************************************
 *
 * sfp_phy_init -
@@ -39,7 +41,9 @@
 #if (LINUX_VERSION_CODE < KERNEL_VERSION (5, 0, 0))
 #define SFP_PHY_FEATURES        (SUPPORTED_FIBRE | \
                                 SUPPORTED_1000baseT_Full | \
+#ifndef MP
                                 SUPPORTED_10000baseT_Full | \
+#endif
                                 SUPPORTED_Pause | \
                                 SUPPORTED_Asym_Pause) | \
                                 SUPPORTED_2500baseX_Full
@@ -89,12 +93,109 @@ sfp_phy_aneg_done(struct phy_device *pdev)
 	return SFP_ANEG_DONE;
 }
 
+sw_error_t
+sfp_port_status_get_from_uniphy(a_uint32_t dev_id, a_uint32_t port_id,
+	struct port_phy_status *phy_status)
+{
+	phy_info_t *phy_info = NULL;
+	union uniphy_channel0_input_output_6_u uniphy_channel0_input_output_6 = {0};
+	union sr_xs_pcs_kr_sts1_u sr_xs_pcs_kr_sts1 = {0};
+	a_bool_t rx_los_status = A_TRUE;
+	a_uint32_t uniphy_index = 0, link_status = 0;
+	sw_error_t rv = SW_OK;
+
+	phy_status->link_status = PORT_LINK_DOWN;
+	phy_status->speed = FAL_SPEED_BUTT;
+	phy_status->duplex = FAL_DUPLEX_BUTT;
+
+	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+	if(uniphy_index == SSDK_MAX_UNIPHY_INSTANCE)
+		return SW_FAIL;
+	phy_info = hsl_phy_info_get(dev_id);
+	SW_RTN_ON_NULL(phy_info);
+	if(phy_info->port_mode[port_id] == PORT_10GBASE_R)
+	{
+		rv = hppe_sr_xs_pcs_kr_sts1_get(dev_id, uniphy_index, &sr_xs_pcs_kr_sts1);
+		SW_RTN_ON_ERROR(rv);
+		link_status = sr_xs_pcs_kr_sts1.bf.plu;
+	}
+	else
+	{
+		hppe_uniphy_channel0_input_output_6_get(dev_id, uniphy_index,
+			&uniphy_channel0_input_output_6);
+		link_status =
+			uniphy_channel0_input_output_6.bf.newaddedfromhere_ch0_link;
+	}
+	/*1G SFP would get link info from uniphy register directly,
+	2.5G SFP and 10G SFP would get link info from rx los and uniphy*/
+	if(link_status)
+	{
+		switch(phy_info->port_mode[port_id])
+		{
+			case PORT_SGMII_PLUS:
+			case PORT_10GBASE_R:
+				sfp_phy_rx_los_status_get(dev_id, port_id, &rx_los_status);
+				SSDK_DEBUG("port %d rx_los_status is %x\n", port_id, rx_los_status);
+				/*if uniphy is link up and rx los is 0, then link up,
+				if uniphy is link up but rx los is 1, this is fake link*/
+				if(rx_los_status)
+				{
+					return SW_OK;
+				}
+				phy_status->link_status = PORT_LINK_UP;
+				phy_status->duplex = FAL_FULL_DUPLEX;
+				if(phy_info->port_mode[port_id] == PORT_SGMII_PLUS)
+					phy_status->speed = FAL_SPEED_2500;
+				else
+					phy_status->speed = FAL_SPEED_10000;
+				return SW_OK;
+			default:
+				break;
+		}
+		phy_status->link_status = PORT_LINK_UP;
+		switch(uniphy_channel0_input_output_6.bf.newaddedfromhere_ch0_speed_mode)
+		{
+			case UNIPHY_SPEED_1000M:
+				phy_status->speed = FAL_SPEED_1000;
+				break;
+			case UNIPHY_SPEED_100M:
+				phy_status->speed = FAL_SPEED_100;
+				break;
+			case UNIPHY_SPEED_10M:
+				phy_status->speed = FAL_SPEED_10;
+				break;
+			default:
+				phy_status->speed = FAL_SPEED_BUTT;
+				break;
+		}
+		if(uniphy_channel0_input_output_6.bf.newaddedfromhere_ch0_duplex_mode)
+		{
+			phy_status->duplex = FAL_FULL_DUPLEX;
+		}
+		else
+		{
+			phy_status->duplex = FAL_HALF_DUPLEX;
+		}
+	}
+	SSDK_DEBUG("phy_status->link_status:%d, phy_status->speed:%d, "
+	"phy_status->duplex:%d\n", phy_status->link_status, phy_status->speed,
+	phy_status->duplex);
+
+	return SW_OK;
+}
+
 static int
 sfp_read_status(struct phy_device *pdev)
 {
 	fal_port_t port;
-	a_uint32_t addr;
+	a_uint32_t addr = 0;
 	struct qca_phy_priv *priv = pdev->priv;
+#ifdef MP
+	a_uint32_t port_mode = 0, uniphy_index = 0, uniphy_mode = 0;
+	adpt_api_t *p_api = NULL;
+	struct port_phy_status phy_status = {0};
+	phy_info_t *phy_info = NULL;
+#endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
 	addr = pdev->mdio.addr;
@@ -102,10 +203,34 @@ sfp_read_status(struct phy_device *pdev)
 	addr = pdev->addr;
 #endif
 	port = qca_ssdk_phy_addr_to_port(priv->device_id, addr);
+#ifdef MP
+	phy_info = hsl_phy_info_get(priv->device_id);
+	if(!phy_info)
+		return -1;
+	port_mode = phy_info->port_mode[port];
+	sfp_phy_interface_get_mode_status(priv->device_id, port, &port_mode);
+	SSDK_DEBUG("new port mode:0x%x, old port mode:%x\n", port_mode,
+		phy_info->port_mode[port]);
+	uniphy_index = hsl_port_to_uniphy(priv->device_id, port);
+	if(port_mode != phy_info->port_mode[port])
+	{
+		uniphy_mode = hsl_port_mode_to_uniphy_mode(priv->device_id, port_mode);
+		p_api = adpt_api_ptr_get(priv->device_id);
+		if(!p_api)
+			return -1;
+		p_api->adpt_uniphy_mode_set(priv->device_id, uniphy_index, uniphy_mode);
+		phy_info->port_mode[port] = port_mode;
+		pdev->interface = hsl_port_mode_to_phydev_interface(priv->device_id, port_mode);
+	}
+	sfp_port_status_get_from_uniphy(priv->device_id, port, &phy_status);
+	pdev->link = phy_status.link_status;
+	pdev->speed = phy_status.speed;
+	pdev->duplex = phy_status.duplex;
+#else
 	pdev->link = priv->port_old_link[port - 1];
 	pdev->speed = priv->port_old_speed[port - 1];
 	pdev->duplex = priv->port_old_duplex[port - 1];
-
+#endif
 	return 0;
 }
 
@@ -159,7 +284,7 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id)
 	{
 		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
 	}
-	bus = ssdk_miibus_get_by_device(dev_id);
+	bus = ssdk_phy_miibus_get(dev_id, addr);
 	phydev = phy_device_create(bus, addr, phy_id, false, NULL);
 	if (IS_ERR(phydev) || phydev == NULL) {
 		SSDK_ERROR("Failed to create phy device!\n");
@@ -209,7 +334,9 @@ static void sfp_features_init(void)
 		ETHTOOL_LINK_MODE_FIBRE_BIT,
 		ETHTOOL_LINK_MODE_100baseT_Full_BIT,
 		ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+#ifndef MP
 		ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
+#endif
 		ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
 		ETHTOOL_LINK_MODE_Pause_BIT,
 		ETHTOOL_LINK_MODE_Asym_Pause_BIT,
@@ -226,7 +353,7 @@ int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
 	a_uint32_t port_id = 0;
 
-	SSDK_INFO("sfp phy init for port 0x%x!\n", port_bmp);
+	SSDK_INFO("sfp phy init for port_bmp 0x%x!\n", port_bmp);
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++) {
 		if (port_bmp & (0x1 << port_id)) {
@@ -266,7 +393,22 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 	a_uint16_t sfp_type = 0;
 	struct phy_device *phydev;
 	ssdk_port_phyinfo *port_phyinfo;
+	a_bool_t mod_present_status = A_FALSE;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
+	/*if sfp_mode_present_pin is available, then need to check it*/
+	if(priv && priv->sfp_mod_present_pin[port_id] != SSDK_INVALID_GPIO)
+	{
+		rv = sfp_phy_mod_present_status_get(dev_id, port_id,
+			&mod_present_status);
+		SW_RTN_ON_ERROR(rv);
+		/*if sfp mod is not present, so no need to read SFP module with I2C*/
+		if(!mod_present_status)
+		{
+			SSDK_DEBUG("port%d sfp mod is not present now\n", port_id);
+			return SW_OK;
+		}
+	}
 	port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
 	SW_RTN_ON_NULL(port_phyinfo);
 	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
@@ -323,8 +465,9 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 					if (*interface_mode_status == PHY_SGMII_BASET) {
 						*interface_mode_status = PORT_SGMII_PLUS;
 					} else {
+						/* sfp copper module interface is serdes mode */
 						*interface_mode_status = PHY_SGMII_BASET;
-						port_phyinfo->phy_features |= PHY_F_SFP_SGMII;
+						port_phyinfo->phy_features &= ~PHY_F_SFP_SGMII;
 					}
 				}
 			} else {
@@ -367,4 +510,104 @@ sfp_phy_phydev_adv_update(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t adv
 	rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, new_adv);
 
 	return rv;
+}
+
+sw_error_t
+sfp_phy_rx_los_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *rx_los_status)
+{
+	a_uint32_t rx_los_pin = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	rx_los_pin = priv->sfp_rx_los_pin[port_id];
+	if(rx_los_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	*rx_los_status = gpio_get_value(rx_los_pin);
+	SSDK_DEBUG("port%d sfp rx_los_pin is %d, the rx_los_status is %d",
+		port_id, rx_los_pin, *rx_los_status);
+
+	return SW_OK;
+}
+
+sw_error_t
+sfp_phy_tx_dis_status_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t tx_dis_status)
+{
+	a_uint32_t tx_dis_pin = 0;
+	int ret = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	tx_dis_pin = priv->sfp_tx_dis_pin[port_id];
+	if(tx_dis_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	ret = gpio_request(tx_dis_pin, "sfp_tx_dis_pin");
+	if(ret)
+	{
+		SSDK_ERROR("tx_dis_pin request failed, ret:%d\n", ret);
+		return SW_FAIL;
+	}
+	ret = gpio_direction_output(tx_dis_pin, tx_dis_status);
+	gpio_free(tx_dis_pin);
+	if(ret)
+	{
+		SSDK_ERROR("tx_dis_pin configure faied, ret:%d\n", ret);
+		return SW_FAIL;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+sfp_phy_tx_dis_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *tx_dis_status)
+{
+	a_uint32_t tx_dis_pin = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	tx_dis_pin = priv->sfp_tx_dis_pin[port_id];
+	if(tx_dis_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	*tx_dis_status = gpio_get_value(tx_dis_pin);
+	SSDK_DEBUG("port%d sfp tx_dis_pin is %d, the tx_dis_status is %d",
+		port_id, tx_dis_pin, *tx_dis_status);
+
+	return SW_OK;
+}
+
+sw_error_t
+sfp_phy_mod_present_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *mod_present_status)
+{
+	a_uint32_t mod_present_pin = 0;
+	a_bool_t mod_present_pin_status = A_FALSE;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	mod_present_pin = priv->sfp_mod_present_pin[port_id];
+	if(mod_present_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	mod_present_pin_status = gpio_get_value(mod_present_pin);
+	SSDK_DEBUG("port%d sfp mod_present_pin is %d, mod_present_pin_status is %d",
+		port_id, mod_present_pin, mod_present_pin_status);
+	if(mod_present_pin_status)
+		*mod_present_status = A_FALSE;
+	else
+		*mod_present_status = A_TRUE;
+
+	return SW_OK;
 }

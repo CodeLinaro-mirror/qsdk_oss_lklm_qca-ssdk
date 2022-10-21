@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- *
  * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -807,16 +807,6 @@ extern "C" {
 		    sizeof(fal_pbmp_t), SW_PARAM_PTR|SW_PARAM_OUT, \
 		    "Member Port Bitmap"),
 
-#define SW_API_PT_DEF_VID_SET_DESC \
-    SW_PARAM_DEF(SW_API_PT_DEF_VID_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
-    SW_PARAM_DEF(SW_API_PT_DEF_VID_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID."),  \
-    SW_PARAM_DEF(SW_API_PT_DEF_VID_SET, SW_UINT32, 4, SW_PARAM_IN, "Vlan Id"),
-
-#define SW_API_PT_DEF_VID_GET_DESC \
-    SW_PARAM_DEF(SW_API_PT_DEF_VID_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
-    SW_PARAM_DEF(SW_API_PT_DEF_VID_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID."),  \
-    SW_PARAM_DEF(SW_API_PT_DEF_VID_GET, SW_UINT32, 4, SW_PARAM_PTR|SW_PARAM_OUT, "Vlan Id"),
-
 #define SW_API_PT_FORCE_DEF_VID_SET_DESC \
     SW_PARAM_DEF(SW_API_PT_FORCE_DEF_VID_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
     SW_PARAM_DEF(SW_API_PT_FORCE_DEF_VID_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),    \
@@ -836,16 +826,6 @@ extern "C" {
     SW_PARAM_DEF(SW_API_PT_FORCE_PORTVLAN_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
     SW_PARAM_DEF(SW_API_PT_FORCE_PORTVLAN_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),    \
     SW_PARAM_DEF(SW_API_PT_FORCE_PORTVLAN_GET, SW_ENABLE, 4, SW_PARAM_PTR|SW_PARAM_OUT, "Force"),
-
-#define SW_API_PT_NESTVLAN_SET_DESC \
-    SW_PARAM_DEF(SW_API_PT_NESTVLAN_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
-    SW_PARAM_DEF(SW_API_PT_NESTVLAN_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),   \
-    SW_PARAM_DEF(SW_API_PT_NESTVLAN_SET, SW_ENABLE, 4, SW_PARAM_IN, "Nestvlan"),
-
-#define SW_API_PT_NESTVLAN_GET_DESC \
-    SW_PARAM_DEF(SW_API_PT_NESTVLAN_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
-    SW_PARAM_DEF(SW_API_PT_NESTVLAN_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),    \
-    SW_PARAM_DEF(SW_API_PT_NESTVLAN_GET, SW_ENABLE, 4, SW_PARAM_PTR|SW_PARAM_OUT, "Nestvlan"),
 
 #define SW_API_NESTVLAN_TPID_SET_DESC \
     SW_PARAM_DEF(SW_API_NESTVLAN_TPID_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
@@ -1805,11 +1785,15 @@ extern "C" {
     SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\
     SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),\
     SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_SET, SW_UINT32, 4, \
-		    SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "Buffer Number"),
+		    SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "Buffer Number"),\
+    SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_SET, SW_UINT32, 4, \
+		    SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "React Buffer Number"),
 
 #define SW_API_QOS_PT_RX_BUF_NR_GET_DESC \
     SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\
     SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),\
+    SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_GET, SW_UINT32, 4, \
+		    SW_PARAM_PTR|SW_PARAM_OUT, "Buffer Number"),\
     SW_PARAM_DEF(SW_API_QOS_PT_RX_BUF_NR_GET, SW_UINT32, 4, \
 		    SW_PARAM_PTR|SW_PARAM_OUT, "Buffer Number"),
 
@@ -4651,6 +4635,33 @@ extern "C" {
     SW_PARAM_DEF(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, SW_ENABLE, 4, \
 		    SW_PARAM_PTR|SW_PARAM_OUT, "Enable"),
 
+#define SW_API_PORT_SERVCODE_SET_DESC \
+    SW_PARAM_DEF(SW_API_PORT_SERVCODE_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PORT_SERVCODE_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_PORT_SERVCODE_SET, SW_UINT32, 4, SW_PARAM_IN, "Servcode Value"),
+
+#define SW_API_PORT_SERVCODE_GET_DESC \
+    SW_PARAM_DEF(SW_API_PORT_SERVCODE_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PORT_SERVCODE_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_PORT_SERVCODE_GET, SW_UINT32, 4, \
+		    SW_PARAM_PTR|SW_PARAM_OUT, "Servcode Value"),
+
+#define SW_API_SERVCODE_ATHTAG_SET_DESC \
+	SW_PARAM_DEF(SW_API_SERVCODE_ATHTAG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),\
+	SW_PARAM_DEF(SW_API_SERVCODE_ATHTAG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Index"), \
+	SW_PARAM_DEF(SW_API_SERVCODE_ATHTAG_SET, SW_SERVCODE_ATHTAG, \
+			sizeof(fal_servcode_athtag_t), SW_PARAM_PTR|SW_PARAM_IN, "Servcode Athtag"),
+
+#define SW_API_SERVCODE_ATHTAG_GET_DESC \
+	SW_PARAM_DEF(SW_API_SERVCODE_ATHTAG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),\
+	SW_PARAM_DEF(SW_API_SERVCODE_ATHTAG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Index"), \
+	SW_PARAM_DEF(SW_API_SERVCODE_ATHTAG_GET, SW_SERVCODE_ATHTAG, \
+			sizeof(fal_servcode_athtag_t), SW_PARAM_PTR|SW_PARAM_OUT, "Servcode Athtag"),
+
 #define SW_API_BM_CTRL_SET_DESC \
     SW_PARAM_DEF(SW_API_BM_CTRL_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_BM_CTRL_SET, SW_UINT32, 4, SW_PARAM_IN, "port id"), \
@@ -5980,6 +5991,73 @@ extern "C" {
 			sizeof(a_uint32_t), SW_PARAM_IN, "Mapt Entry Index "),\
 	SW_PARAM_DEF(SW_API_MAPT_DECAP_EN_GET, SW_ENABLE, \
 			sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "Decap enable"),
+
+#define SW_API_ATHTAG_PRI_MAPPING_SET_DESC \
+	SW_PARAM_DEF(SW_API_ATHTAG_PRI_MAPPING_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_ATHTAG_PRI_MAPPING_SET, SW_DIRECTION, \
+			sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+	SW_PARAM_DEF(SW_API_ATHTAG_PRI_MAPPING_SET, SW_ATHTAG_PRI_MAPPING, \
+			sizeof(fal_athtag_pri_mapping_t), SW_PARAM_PTR|SW_PARAM_IN, "Pri Mapping"),
+
+#define SW_API_ATHTAG_PRI_MAPPING_GET_DESC \
+	SW_PARAM_DEF(SW_API_ATHTAG_PRI_MAPPING_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_ATHTAG_PRI_MAPPING_GET, SW_DIRECTION, \
+			sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+	SW_PARAM_DEF(SW_API_ATHTAG_PRI_MAPPING_GET, SW_ATHTAG_PRI_MAPPING, \
+			sizeof(fal_athtag_pri_mapping_t), \
+			SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "Pri Mapping"),
+
+#define SW_API_ATHTAG_PORT_MAPPING_SET_DESC \
+	SW_PARAM_DEF(SW_API_ATHTAG_PORT_MAPPING_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_ATHTAG_PORT_MAPPING_SET, SW_DIRECTION, \
+			sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+	SW_PARAM_DEF(SW_API_ATHTAG_PORT_MAPPING_SET, SW_ATHTAG_PORT_MAPPING, \
+			sizeof(fal_athtag_port_mapping_t), \
+			SW_PARAM_PTR|SW_PARAM_IN, "Port Mapping"),
+
+#define SW_API_ATHTAG_PORT_MAPPING_GET_DESC \
+	SW_PARAM_DEF(SW_API_ATHTAG_PORT_MAPPING_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_ATHTAG_PORT_MAPPING_GET, SW_DIRECTION, \
+			sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+	SW_PARAM_DEF(SW_API_ATHTAG_PORT_MAPPING_GET, SW_ATHTAG_PORT_MAPPING, \
+			sizeof(fal_athtag_port_mapping_t), \
+			SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, "Port Mapping"),
+
+#define SW_API_PORT_ATHTAG_RX_SET_DESC \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_RX_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_PORT_ATHTAG_RX_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Port Id"), \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_RX_SET, SW_ATHTAG_RX_CFG, \
+			sizeof(fal_athtag_rx_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, "Rx Cfg"),
+
+#define SW_API_PORT_ATHTAG_RX_GET_DESC \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_RX_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_PORT_ATHTAG_RX_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Port Id"), \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_RX_GET, SW_ATHTAG_RX_CFG, \
+			sizeof(fal_athtag_rx_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, "Rx Cfg"),
+
+#define SW_API_PORT_ATHTAG_TX_SET_DESC \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_TX_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_PORT_ATHTAG_TX_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Port Id"), \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_TX_SET, SW_ATHTAG_TX_CFG, \
+			sizeof(fal_athtag_tx_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, "Tx Cfg"),
+
+#define SW_API_PORT_ATHTAG_TX_GET_DESC \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_TX_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF( SW_API_PORT_ATHTAG_TX_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Port Id"), \
+	SW_PARAM_DEF(SW_API_PORT_ATHTAG_TX_GET, SW_ATHTAG_TX_CFG, \
+			sizeof(fal_athtag_tx_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, "Tx Cfg"),
 
 /* auto_insert_flag */
 /*qca808x_start*/

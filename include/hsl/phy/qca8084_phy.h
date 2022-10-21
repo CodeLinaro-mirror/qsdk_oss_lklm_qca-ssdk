@@ -19,6 +19,9 @@
 #define QCA8084_PHY_FIFO_RESET                                           0x3
 /*MMD1 register*/
 #define QCA8084_PHY_MMD1_NUM                                             0x1
+#define QCA8084_PHY_MMD1_MSE_THRESH_DEBUG_12                             0x800a
+/*MMD1 register field*/
+#define QCA8084_PHY_MMD1_MSE_THRESH_ENERGY_DETECT                        0x51c6
 /*MMD3 register*/
 #define QCA8084_PHY_MMD3_NUM                                             0x3
 #define QCA8084_PHY_MMD3_ADDR_8023AZ_EEE_2500M_CAPABILITY                0x15
@@ -58,6 +61,8 @@
 #define QCA8084_PHY_AFE25_CMN_6_MII_VAL                                  0x1640
 #define QCA8084_PHY_AFE25_CMN_9_MII                                      0x680
 #define QCA8084_PHY_AFE25_CMN_9_MII_VAL                                  0xc
+#define QCA8084_PHY_DEBUG_ANA_ICC                                        0x280
+#define QCA8084_PHY_DEBUG_ANA_ICC_MASK                                   0x1f
 
 typedef enum {
 	ADC_RISING = 0,
@@ -112,3 +117,5 @@ qca8084_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_id);
 sw_error_t
 qca8084_phy_speed_fixup(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct port_phy_status *phy_status);
+sw_error_t
+qca8084_phy_fifo_reset(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable);

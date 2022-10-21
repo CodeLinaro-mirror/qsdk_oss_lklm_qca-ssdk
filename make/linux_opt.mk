@@ -129,6 +129,10 @@ ifeq (TRUE, $(IN_SEC))
   MODULE_CFLAG += -DIN_SEC
 endif
 
+ifeq (TRUE, $(IN_SEC_MINI))
+  MODULE_CFLAG += -DIN_SEC_MINI
+endif
+
 ifeq (TRUE, $(IN_QM))
   MODULE_CFLAG += -DIN_QM
 endif
@@ -378,6 +382,7 @@ endif
 
 ifneq (,$(findstring MPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/mppe
+  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/mppe
   MODULE_CFLAG += -DMPPE
 endif
 

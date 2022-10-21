@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2013, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- *
  * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -711,10 +711,8 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"member", "add",   SW_API_PT_VLAN_MEM_ADD, NULL},
 	{"member", "del",   SW_API_PT_VLAN_MEM_DEL, NULL},
 	{"member", "update",   SW_API_PT_VLAN_MEM_UPDATE, NULL},
-	{"defaultVid", "set",   SW_API_PT_DEF_VID_SET, NULL},
 	{"forceVid", "set",   SW_API_PT_FORCE_DEF_VID_SET, NULL},
 	{"forceMode", "set",   SW_API_PT_FORCE_PORTVLAN_SET, NULL},
-	{"nestVlan", "set",   SW_API_PT_NESTVLAN_SET, NULL},
 	{"sVlanTPID", "set",   SW_API_NESTVLAN_TPID_SET, NULL},
 	{"invlan", "set",   SW_API_PT_IN_VLAN_MODE_SET, NULL},
 	{"globalQinQMode", "set", SW_API_GLOBAL_QINQ_MODE_SET, NULL},
@@ -736,13 +734,13 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"Isol", "set", SW_API_PT_VLAN_ISOL_SET, NULL},
 	{"IsolGroup", "set", SW_API_PT_VLAN_ISOL_GROUP_SET, NULL},
 #endif
-	#ifndef IN_PORTVLAN_MINI
+#ifndef IN_PORTVLAN_MINI
 	{"tlsMode", "set",   SW_API_PT_TLS_SET, NULL},
 	{"priPropagation", "set",   SW_API_PT_PRI_PROPAGATION_SET, NULL},
-	#endif
+#endif
 	{"defaultSVid", "set",   SW_API_PT_DEF_SVID_SET, NULL},
 	{"defaultCVid", "set",   SW_API_PT_DEF_CVID_SET, NULL},
-	#ifndef IN_PORTVLAN_MINI
+#ifndef IN_PORTVLAN_MINI
 	{"vlanPropagation", "set",   SW_API_PT_VLAN_PROPAGATION_SET, NULL},
 	{"translation", "set",   SW_API_PT_VLAN_TRANS_ADD, NULL},
 	{"translation", "add",   SW_API_PT_VLAN_TRANS_ADD, NULL},
@@ -752,8 +750,10 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"macvlanxlt", "set",   SW_API_PT_MAC_VLAN_XLT_SET, NULL},
 	{"netiso", "set",   SW_API_NETISOLATE_SET, NULL},
 	{"egbypass", "set",   SW_API_EG_FLTR_BYPASS_EN_SET, NULL},
+#ifdef DESS
 	{"ptvrfid", "set",   SW_API_PT_VRF_ID_SET, NULL},
-	#endif
+#endif
+#endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
@@ -948,14 +948,18 @@ struct sub_cmd_des_t g_sec_des[] =
 	{"icmp4", "set", SW_API_SEC_ICMP4_SET, NULL},
 	{"icmp6", "set", SW_API_SEC_ICMP6_SET, NULL},
 #endif
+#ifndef IN_SEC_MINI
 	{"l3parser", "set", SW_API_SEC_L3_PARSER_CTRL_SET, NULL},
+#endif
 	{"l4parser", "set", SW_API_SEC_L4_PARSER_CTRL_SET, NULL},
 	{"expctrl", "set", SW_API_SEC_EXP_CTRL_SET, NULL},
+#ifndef IN_SEC_MINI
 	{"l2expctrl", "set", SW_API_SEC_L2_EXP_CTRL_SET, NULL},
 	{"tunnelexpctrl", "set", SW_API_SEC_TUNNEL_EXP_CTRL_SET, NULL},
 	{"tunnell3parser", "set", SW_API_SEC_TUNNEL_L3_PARSER_CTRL_SET, NULL},
 	{"tunnell4parser", "set", SW_API_SEC_TUNNEL_L4_PARSER_CTRL_SET, NULL},
 	{"tunnelflagsparser", "set", SW_API_SEC_TUNNEL_FLAGS_PARSER_CTRL_SET, NULL},
+#endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
@@ -1295,6 +1299,10 @@ struct sub_cmd_des_t g_servcode_des[] =
 {
     {"config", "set", SW_API_SERVCODE_CONFIG_SET, NULL},
     {"loopcheck", "set", SW_API_SERVCODE_LOOPCHECK_EN, NULL},
+#if defined(MPPE)
+    {"portServcode", "set", SW_API_PORT_SERVCODE_SET, NULL},
+    {"athtag", "set", SW_API_SERVCODE_ATHTAG_SET, NULL},
+#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
@@ -1399,6 +1407,17 @@ struct sub_cmd_des_t g_vport_des[] =
 {
     {"Phyport", "set", SW_API_VPORT_PHYSICAL_PORT_SET, NULL},
     {"Statecheck", "set", SW_API_VPORT_STATE_CHECK_SET, NULL},
+    {NULL, NULL, 0, NULL},/*end of desc*/
+};
+#endif
+
+#ifdef IN_ATHTAG
+struct sub_cmd_des_t g_athtag_des[] =
+{
+    {"primapping", "set", SW_API_ATHTAG_PRI_MAPPING_SET, NULL},
+    {"portmapping", "set", SW_API_ATHTAG_PORT_MAPPING_SET, NULL},
+    {"rx", "set", SW_API_PORT_ATHTAG_RX_SET, NULL},
+    {"tx", "set", SW_API_PORT_ATHTAG_TX_SET, NULL},
     {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
@@ -1632,6 +1651,11 @@ struct cmd_des_t gcmd_des[] =
 #ifdef IN_VPORT
     {
         "vport", g_vport_des,
+    },
+#endif
+#ifdef IN_ATHTAG
+    {
+        "athtag", g_athtag_des,
     },
 #endif
     {NULL, NULL} /*end of desc*/

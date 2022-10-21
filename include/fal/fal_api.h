@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- *
  * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -418,14 +418,10 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_MEM_DEL, fal_portvlan_member_del), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_UPDATE, fal_portvlan_member_update), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_GET, fal_portvlan_member_get), \
-    SW_API_DEF(SW_API_PT_DEF_VID_SET, fal_port_default_vid_set), \
-    SW_API_DEF(SW_API_PT_DEF_VID_GET, fal_port_default_vid_get), \
     SW_API_DEF(SW_API_PT_FORCE_DEF_VID_SET, fal_port_force_default_vid_set), \
     SW_API_DEF(SW_API_PT_FORCE_DEF_VID_GET, fal_port_force_default_vid_get), \
     SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_SET, fal_port_force_portvlan_set), \
     SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_GET, fal_port_force_portvlan_get), \
-    SW_API_DEF(SW_API_PT_NESTVLAN_SET, fal_port_nestvlan_set), \
-    SW_API_DEF(SW_API_PT_NESTVLAN_GET, fal_port_nestvlan_get), \
     SW_API_DEF(SW_API_NESTVLAN_TPID_SET, fal_nestvlan_tpid_set), \
     SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_SET, fal_port_invlan_mode_set), \
@@ -502,14 +498,10 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_MEM_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_UPDATE) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_GET)    \
-    SW_API_DESC(SW_API_PT_DEF_VID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_VID_GET)    \
     SW_API_DESC(SW_API_PT_FORCE_DEF_VID_SET)    \
     SW_API_DESC(SW_API_PT_FORCE_DEF_VID_GET)    \
     SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_SET)    \
     SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_GET)    \
-    SW_API_DESC(SW_API_PT_NESTVLAN_SET)    \
-    SW_API_DESC(SW_API_PT_NESTVLAN_GET)    \
     SW_API_DESC(SW_API_NESTVLAN_TPID_SET)    \
     SW_API_DESC(SW_API_NESTVLAN_TPID_GET)    \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_SET)   \
@@ -576,7 +568,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_ISOL_GROUP_GET) \
     SW_API_DESC(SW_API_PT_EGRESS_VLAN_FILTER_SET) \
     SW_API_DESC(SW_API_PT_EGRESS_VLAN_FILTER_GET)
-
 #else
 #define PORTVLAN_API \
     SW_API_DEF(SW_API_GLOBAL_QINQ_MODE_SET, fal_global_qinq_mode_set), \
@@ -584,8 +575,9 @@ extern "C" {
     SW_API_DEF(SW_API_PORT_QINQ_MODE_SET, fal_port_qinq_mode_set), \
     SW_API_DEF(SW_API_PORT_QINQ_MODE_GET, fal_port_qinq_mode_get), \
     SW_API_DEF(SW_API_QINQ_MODE_SET, fal_qinq_mode_set), \
+    SW_API_DEF(SW_API_QINQ_MODE_GET, fal_qinq_mode_get), \
     SW_API_DEF(SW_API_PT_QINQ_ROLE_SET, fal_port_qinq_role_set), \
-    SW_API_DEF(SW_API_PT_VLAN_TRANS_ADD, fal_port_vlan_trans_add), \
+    SW_API_DEF(SW_API_PT_QINQ_ROLE_GET, fal_port_qinq_role_get), \
     SW_API_DEF(SW_API_TPID_SET, fal_ingress_tpid_set), \
     SW_API_DEF(SW_API_TPID_GET, fal_ingress_tpid_get), \
     SW_API_DEF(SW_API_EGRESS_TPID_SET, fal_egress_tpid_set), \
@@ -594,8 +586,6 @@ extern "C" {
     SW_API_DEF(SW_API_PT_INGRESS_VLAN_FILTER_GET, fal_port_ingress_vlan_filter_get), \
     SW_API_DEF(SW_API_PT_DEFAULT_VLANTAG_SET, fal_port_default_vlantag_set), \
     SW_API_DEF(SW_API_PT_DEFAULT_VLANTAG_GET, fal_port_default_vlantag_get), \
-    SW_API_DEF(SW_API_PT_TAG_PROPAGATION_SET, fal_port_tag_propagation_set), \
-    SW_API_DEF(SW_API_PT_TAG_PROPAGATION_GET, fal_port_tag_propagation_get), \
     SW_API_DEF(SW_API_PT_VLANTAG_EGMODE_SET, fal_port_vlantag_egmode_set), \
     SW_API_DEF(SW_API_PT_VLANTAG_EGMODE_GET, fal_port_vlantag_egmode_get), \
     SW_API_DEF(SW_API_PT_VLAN_XLT_MISS_CMD_SET, fal_port_vlan_xlt_miss_cmd_set), \
@@ -608,21 +598,22 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_DEL, fal_port_vlan_trans_adv_del), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETFIRST, fal_port_vlan_trans_adv_getfirst), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETNEXT, fal_port_vlan_trans_adv_getnext), \
-    SW_API_DEF(SW_API_PT_VLAN_COUNTER_GET, fal_port_vlan_counter_get), \
-    SW_API_DEF(SW_API_PT_VLAN_COUNTER_CLEANUP, fal_port_vlan_counter_cleanup), \
     SW_API_DEF(SW_API_PT_ING_MODE_SET, fal_port_1qmode_set), \
+    SW_API_DEF(SW_API_PT_ING_MODE_GET, fal_port_1qmode_get), \
     SW_API_DEF(SW_API_PT_EG_MODE_SET, fal_port_egvlanmode_set), \
+    SW_API_DEF(SW_API_PT_EG_MODE_GET, fal_port_egvlanmode_get), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_ADD, fal_portvlan_member_add), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_DEL, fal_portvlan_member_del), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_UPDATE, fal_portvlan_member_update), \
-    SW_API_DEF(SW_API_PT_DEF_VID_SET, fal_port_default_vid_set), \
-    SW_API_DEF(SW_API_PT_FORCE_DEF_VID_SET, fal_port_force_default_vid_set), \
-    SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_SET, fal_port_force_portvlan_set), \
-    SW_API_DEF(SW_API_PT_NESTVLAN_SET, fal_port_nestvlan_set), \
+    SW_API_DEF(SW_API_PT_VLAN_MEM_GET, fal_portvlan_member_get), \
     SW_API_DEF(SW_API_NESTVLAN_TPID_SET, fal_nestvlan_tpid_set), \
+    SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_SET, fal_port_invlan_mode_set), \
+    SW_API_DEF(SW_API_PT_IN_VLAN_MODE_GET, fal_port_invlan_mode_get), \
     SW_API_DEF(SW_API_PT_DEF_SVID_SET, fal_port_default_svid_set), \
-    SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set),
+    SW_API_DEF(SW_API_PT_DEF_SVID_GET, fal_port_default_svid_get), \
+    SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set), \
+    SW_API_DEF(SW_API_PT_DEF_CVID_GET, fal_port_default_cvid_get), \
 
 #define PORTVLAN_API_PARAM \
     SW_API_DESC(SW_API_GLOBAL_QINQ_MODE_SET)  \
@@ -630,8 +621,9 @@ extern "C" {
     SW_API_DESC(SW_API_PORT_QINQ_MODE_SET)  \
     SW_API_DESC(SW_API_PORT_QINQ_MODE_GET) \
     SW_API_DESC(SW_API_QINQ_MODE_SET)    \
+    SW_API_DESC(SW_API_QINQ_MODE_GET)    \
     SW_API_DESC(SW_API_PT_QINQ_ROLE_SET) \
-    SW_API_DESC(SW_API_PT_VLAN_TRANS_ADD) \
+    SW_API_DESC(SW_API_PT_QINQ_ROLE_GET) \
     SW_API_DESC(SW_API_TPID_SET)  \
     SW_API_DESC(SW_API_TPID_GET) \
     SW_API_DESC(SW_API_EGRESS_TPID_SET)  \
@@ -640,8 +632,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_INGRESS_VLAN_FILTER_GET) \
     SW_API_DESC(SW_API_PT_DEFAULT_VLANTAG_SET)  \
     SW_API_DESC(SW_API_PT_DEFAULT_VLANTAG_GET) \
-    SW_API_DESC(SW_API_PT_TAG_PROPAGATION_SET)  \
-    SW_API_DESC(SW_API_PT_TAG_PROPAGATION_GET) \
     SW_API_DESC(SW_API_PT_VLANTAG_EGMODE_SET)  \
     SW_API_DESC(SW_API_PT_VLANTAG_EGMODE_GET) \
     SW_API_DESC(SW_API_PT_VLAN_XLT_MISS_CMD_SET)  \
@@ -654,24 +644,23 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETFIRST) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETNEXT) \
-    SW_API_DESC(SW_API_PT_VLAN_COUNTER_GET) \
-    SW_API_DESC(SW_API_PT_VLAN_COUNTER_CLEANUP) \
     SW_API_DESC(SW_API_PT_ING_MODE_SET) \
+    SW_API_DESC(SW_API_PT_ING_MODE_GET) \
     SW_API_DESC(SW_API_PT_EG_MODE_SET) \
+    SW_API_DESC(SW_API_PT_EG_MODE_GET) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_ADD) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_UPDATE) \
-    SW_API_DESC(SW_API_PT_DEF_VID_SET)    \
-    SW_API_DESC(SW_API_PT_FORCE_DEF_VID_SET)    \
-    SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_SET)    \
-    SW_API_DESC(SW_API_PT_NESTVLAN_SET)    \
+    SW_API_DESC(SW_API_PT_VLAN_MEM_GET)    \
     SW_API_DESC(SW_API_NESTVLAN_TPID_SET)    \
+    SW_API_DESC(SW_API_NESTVLAN_TPID_GET)    \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_SET)   \
+    SW_API_DESC(SW_API_PT_IN_VLAN_MODE_GET)   \
     SW_API_DESC(SW_API_PT_DEF_SVID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_CVID_SET)
-
+    SW_API_DESC(SW_API_PT_DEF_SVID_GET)    \
+    SW_API_DESC(SW_API_PT_DEF_CVID_SET)    \
+    SW_API_DESC(SW_API_PT_DEF_CVID_GET)
 #endif
-
 #else
 #define PORTVLAN_API
 #define PORTVLAN_API_PARAM
@@ -1452,6 +1441,7 @@ extern "C" {
 #endif
 
 #ifdef IN_SEC
+#ifndef IN_SEC_MINI
 #define SEC_API \
     SW_API_DEF(SW_API_SEC_NORM_SET, fal_sec_norm_item_set), \
     SW_API_DEF(SW_API_SEC_NORM_GET, fal_sec_norm_item_get), \
@@ -1523,6 +1513,19 @@ extern "C" {
     SW_API_DESC(SW_API_SEC_TUNNEL_L4_PARSER_CTRL_GET) \
     SW_API_DESC(SW_API_SEC_TUNNEL_FLAGS_PARSER_CTRL_SET) \
     SW_API_DESC(SW_API_SEC_TUNNEL_FLAGS_PARSER_CTRL_GET)
+#else
+#define SEC_API \
+    SW_API_DEF(SW_API_SEC_L4_PARSER_CTRL_GET, fal_sec_l4_excep_parser_ctrl_get), \
+    SW_API_DEF(SW_API_SEC_L4_PARSER_CTRL_SET, fal_sec_l4_excep_parser_ctrl_set), \
+    SW_API_DEF(SW_API_SEC_EXP_CTRL_GET, fal_sec_l3_excep_ctrl_get), \
+    SW_API_DEF(SW_API_SEC_EXP_CTRL_SET, fal_sec_l3_excep_ctrl_set),
+
+#define SEC_API_PARAM \
+    SW_API_DESC(SW_API_SEC_L4_PARSER_CTRL_GET) \
+    SW_API_DESC(SW_API_SEC_L4_PARSER_CTRL_SET) \
+    SW_API_DESC(SW_API_SEC_EXP_CTRL_GET) \
+    SW_API_DESC(SW_API_SEC_EXP_CTRL_SET)
+#endif
 #else
 #define SEC_API
 #define SEC_API_PARAM
@@ -2438,13 +2441,21 @@ extern "C" {
     SW_API_DEF(SW_API_SERVCODE_CONFIG_SET, fal_servcode_config_set), \
     SW_API_DEF(SW_API_SERVCODE_CONFIG_GET, fal_servcode_config_get), \
     SW_API_DEF(SW_API_SERVCODE_LOOPCHECK_EN, fal_servcode_loopcheck_en), \
-    SW_API_DEF(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, fal_servcode_loopcheck_status_get),
+    SW_API_DEF(SW_API_SERVCODE_LOOPCHECK_STATUS_GET, fal_servcode_loopcheck_status_get), \
+    SW_API_DEF(SW_API_PORT_SERVCODE_SET, fal_port_servcode_set), \
+    SW_API_DEF(SW_API_PORT_SERVCODE_GET, fal_port_servcode_get), \
+    SW_API_DEF(SW_API_SERVCODE_ATHTAG_SET, fal_servcode_athtag_set), \
+    SW_API_DEF(SW_API_SERVCODE_ATHTAG_GET, fal_servcode_athtag_get),
 
 #define SERVCODE_API_PARAM \
     SW_API_DESC(SW_API_SERVCODE_CONFIG_SET) \
     SW_API_DESC(SW_API_SERVCODE_CONFIG_GET) \
     SW_API_DESC(SW_API_SERVCODE_LOOPCHECK_EN) \
-    SW_API_DESC(SW_API_SERVCODE_LOOPCHECK_STATUS_GET)
+    SW_API_DESC(SW_API_SERVCODE_LOOPCHECK_STATUS_GET) \
+    SW_API_DESC(SW_API_PORT_SERVCODE_SET) \
+    SW_API_DESC(SW_API_PORT_SERVCODE_GET) \
+    SW_API_DESC(SW_API_SERVCODE_ATHTAG_SET) \
+    SW_API_DESC(SW_API_SERVCODE_ATHTAG_GET)
 #else
 #define SERVCODE_API
 #define SERVCODE_API_PARAM
@@ -2594,19 +2605,31 @@ extern "C" {
 #else
 #define POLICER_API \
     SW_API_DEF(SW_API_POLICER_TIMESLOT_SET, fal_policer_timeslot_set), \
+    SW_API_DEF(SW_API_POLICER_TIMESLOT_GET, fal_policer_timeslot_get), \
     SW_API_DEF(SW_API_POLICER_COMPENSATION_SET, fal_port_policer_compensation_byte_set), \
+    SW_API_DEF(SW_API_POLICER_COMPENSATION_GET, fal_port_policer_compensation_byte_get), \
     SW_API_DEF(SW_API_POLICER_ACL_ENTRY_SET, fal_acl_policer_entry_set), \
+    SW_API_DEF(SW_API_POLICER_ACL_ENTRY_GET,fal_acl_policer_entry_get), \
     SW_API_DEF(SW_API_POLICER_PORT_ENTRY_SET, fal_port_policer_entry_set), \
+    SW_API_DEF(SW_API_POLICER_PORT_ENTRY_GET, fal_port_policer_entry_get), \
     SW_API_DEF(SW_API_POLICER_BYPASS_EN_SET, fal_policer_bypass_en_set), \
-    SW_API_DEF(SW_API_POLICER_CTRL_SET, fal_policer_ctrl_set),
+    SW_API_DEF(SW_API_POLICER_BYPASS_EN_GET, fal_policer_bypass_en_get), \
+    SW_API_DEF(SW_API_POLICER_CTRL_SET, fal_policer_ctrl_set), \
+    SW_API_DEF(SW_API_POLICER_CTRL_GET, fal_policer_ctrl_get),
 
 #define POLICER_API_PARAM \
     SW_API_DESC(SW_API_POLICER_TIMESLOT_SET)  \
+    SW_API_DESC(SW_API_POLICER_TIMESLOT_GET)  \
     SW_API_DESC(SW_API_POLICER_COMPENSATION_SET) \
+    SW_API_DESC(SW_API_POLICER_COMPENSATION_GET) \
     SW_API_DESC(SW_API_POLICER_PORT_ENTRY_SET) \
+    SW_API_DESC(SW_API_POLICER_PORT_ENTRY_GET) \
     SW_API_DESC(SW_API_POLICER_ACL_ENTRY_SET) \
+    SW_API_DESC(SW_API_POLICER_ACL_ENTRY_GET) \
     SW_API_DESC(SW_API_POLICER_BYPASS_EN_SET) \
-    SW_API_DESC(SW_API_POLICER_CTRL_SET)
+    SW_API_DESC(SW_API_POLICER_BYPASS_EN_GET) \
+    SW_API_DESC(SW_API_POLICER_CTRL_SET) \
+    SW_API_DESC(SW_API_POLICER_CTRL_GET)
 #endif
 #else
 #define POLICER_API
@@ -2972,6 +2995,30 @@ extern "C" {
 #define MAPT_API_PARAM
 #endif
 
+#ifdef IN_ATHTAG
+#define ATHTAG_API \
+	SW_API_DEF(SW_API_ATHTAG_PRI_MAPPING_SET, fal_athtag_pri_mapping_set), \
+	SW_API_DEF(SW_API_ATHTAG_PRI_MAPPING_GET, fal_athtag_pri_mapping_get), \
+	SW_API_DEF(SW_API_ATHTAG_PORT_MAPPING_SET, fal_athtag_port_mapping_set), \
+	SW_API_DEF(SW_API_ATHTAG_PORT_MAPPING_GET, fal_athtag_port_mapping_get), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_RX_SET, fal_port_athtag_rx_set), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_RX_GET, fal_port_athtag_rx_get), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_TX_SET, fal_port_athtag_tx_set), \
+	SW_API_DEF(SW_API_PORT_ATHTAG_TX_GET, fal_port_athtag_tx_get),
+#define ATHTAG_API_PARAM \
+	SW_API_DESC(SW_API_ATHTAG_PRI_MAPPING_SET) \
+	SW_API_DESC(SW_API_ATHTAG_PRI_MAPPING_GET) \
+	SW_API_DESC(SW_API_ATHTAG_PORT_MAPPING_SET) \
+	SW_API_DESC(SW_API_ATHTAG_PORT_MAPPING_GET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_RX_SET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_RX_GET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_TX_SET) \
+	SW_API_DESC(SW_API_PORT_ATHTAG_TX_GET)
+#else
+#define ATHTAG_API
+#define ATHTAG_API_PARAM
+#endif
+
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3024,6 +3071,7 @@ extern "C" {
     GENEVE_API \
     TUNNEL_PROGRAM_API \
     MAPT_API \
+    ATHTAG_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3089,6 +3137,7 @@ extern "C" {
     GENEVE_API_PARAM \
     TUNNEL_PROGRAM_API_PARAM \
     MAPT_API_PARAM \
+    ATHTAG_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

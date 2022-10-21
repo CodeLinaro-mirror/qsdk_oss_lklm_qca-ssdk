@@ -1,20 +1,23 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 
 /**
- * @defgroup fal_gen FAL_SERVCODE
+ * @defgroup fal_servcode FAL_SERVCODE
  * @{
  */
 #ifndef _FAL_SERVCODE_H_
@@ -26,6 +29,7 @@ extern "C" {
 
 #include "sw.h"
 #include "fal/fal_type.h"
+#include "fal_athtag.h"
 
 #if defined(SW_API_LOCK) && (!defined(HSL_STANDALONG))
 #define FAL_SERVCODE_API_LOCK
@@ -36,6 +40,7 @@ extern "C" {
 #endif
 
 #define SERVICE_BYP_NUM 4
+#define FAL_SERVCODE_INVALID 0xffff
 
 /* field_update_bitmap */
 enum {
@@ -58,10 +63,22 @@ enum {
 	FLD_UPDATE_WIFI_QOS,
 	FLD_UPDATE_TREE_QOS,
 	FLD_UPDATE_FLOW_IDX,
+	FLD_UPDATE_CONTEXT_TYPE0 = 18, /*new add for IPQ53xx*/
+	FLD_UPDATE_CONTEXT_TYPE1, /*new add for IPQ53xx*/
+	FLD_UPDATE_FLOW_COOKIE, /*new add for IPQ53xx*/
 	FLD_UPDATE_SRC_INFO_BYPASS = 24,
 	FLD_UPDATE_DST_INFO_BYPASS,
 	FLD_UPDATE_MAC_HDR_BYPASS,
 	FLD_UPDATE_FAKE_MAC_CLEAR,
+};
+
+/* athtag field update bitmap, new add for IPQ53xx */
+enum {
+	FLD_UPDATE_ATH_TAG_INSERT, /*update insert athtag or not*/
+	FLD_UPDATE_ATH_TAG_ACTION, /*update athtag action*/
+	FLD_UPDATE_ATH_TAG_BYPASS_FWD_EN, /*update bypass fwd en*/
+	FLD_UPDATE_ATH_TAG_DEST_PORT, /*update dest portid or portmap*/
+	FLD_UPDATE_ATH_TAG_FIELD_DISABLE, /*update field disable*/
 };
 
 /* bypss_bitmap_0 */
@@ -121,6 +138,8 @@ enum {
 	/* new add for IPQ95xx */
 	FAKE_MAC_DROP_BYP,
 	TUNL_CONTEXT_BYP,
+	/* new add for IPQ53xx */
+	FLOW_POLICER_BYP,
 };
 
 /* bypss_bitmap_2 */
@@ -166,6 +185,15 @@ typedef struct {
 	a_uint32_t  offset_sel; /* Select the offset value to IP-197:0: l3_offset, 1:l4_offset */
 } fal_servcode_config_t;
 
+typedef struct {
+	a_uint32_t athtag_update_bitmap;
+	a_bool_t athtag_en; /*updated athtag_en*/
+	fal_athtag_action_t action; /*updated action field*/
+	a_bool_t bypass_fwd_en; /*updated bypass fwd en field*/
+	a_bool_t field_disable; /*updated ver3 field disable*/
+	a_uint8_t dest_port; /*updated dest portid or portmap field*/
+} fal_servcode_athtag_t;
+
 enum
 {
 	/*servcode*/
@@ -173,12 +201,24 @@ enum
 	FUNC_SERVCODE_CONFIG_GET,
 	FUNC_SERVCODE_LOOPCHECK_EN,
 	FUNC_SERVCODE_LOOPCHECK_STATUS_GET,
+	FUNC_PORT_SERVCODE_SET,
+	FUNC_PORT_SERVCODE_GET,
+	FUNC_SERVCODE_ATHTAG_SET,
+	FUNC_SERVCODE_ATHTAG_GET,
 };
 
-sw_error_t fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_config_t *entry);
-sw_error_t fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_config_t *entry);
+sw_error_t
+fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_config_t *entry);
+sw_error_t
+fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_config_t *entry);
 sw_error_t fal_servcode_loopcheck_en(a_uint32_t dev_id, a_bool_t enable);
 sw_error_t fal_servcode_loopcheck_status_get(a_uint32_t dev_id, a_bool_t *enable);
+sw_error_t fal_port_servcode_set(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t servcode_index);
+sw_error_t fal_port_servcode_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t *servcode_index);
+sw_error_t
+fal_servcode_athtag_set(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_athtag_t *entry);
+sw_error_t
+fal_servcode_athtag_get(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_athtag_t *entry);
 
 #ifdef __cplusplus
 }

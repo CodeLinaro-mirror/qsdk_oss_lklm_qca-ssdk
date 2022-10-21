@@ -49,6 +49,8 @@ typedef enum {
 	FAL_FLOW_DNAT,
 	FAL_FLOW_ROUTE,
 	FAL_FLOW_BRIDGE,
+	FAL_FLOW_DROP,
+	FAL_FLOW_RDT_TO_CPU,
 } fal_flow_fwd_type_t;
 
 /* FLOW entry type field */
@@ -95,7 +97,7 @@ typedef struct {
 	a_uint8_t age; /*aging value*/
 	a_bool_t src_intf_valid; /*source interface check valid*/
 	a_uint8_t src_intf_index; /*souce l3 interface*/
-	a_uint8_t fwd_type; /*forward type*/
+	fal_flow_fwd_type_t fwd_type; /*forward type*/
 	a_uint16_t snat_nexthop; /*nexthop index for snat*/
 	a_uint16_t snat_srcport; /*new source l4 port*/
 	a_uint16_t dnat_nexthop; /*nexthop index for dnat*/
@@ -128,6 +130,8 @@ typedef struct {
 	a_bool_t bridge_nexthop_valid; /*bridge nexthop valid, added for ipq53xx */
 	a_uint16_t bridge_nexthop; /*nexthop index for bridge, added for ipq53xx */
 	a_bool_t invalid; /* added for host data path */
+	a_bool_t policer_valid; /* flow based policer valid or not, added for ipq53xx */
+	a_uint32_t policer_index; /* flow based policer index, added for ipq53xx */
 } fal_flow_entry_t;
 
 typedef struct {
@@ -156,6 +160,7 @@ typedef struct {
 			     * added for ipq95xx */
 	a_bool_t l3_vpn_en; /* enable vrf(vpn_id configured by ip globalctrl) as flow key or not
 			     * added for ipq95xx */
+	a_uint8_t flow_cookie_pri; /* flow cookie priority compared with IPO, added for ipq53xx */
 } fal_flow_global_cfg_t;
 
 typedef struct {

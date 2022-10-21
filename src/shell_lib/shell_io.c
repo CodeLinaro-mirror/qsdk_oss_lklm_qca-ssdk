@@ -425,7 +425,37 @@ struct attr_des_t g_attr_des[] =
 			{NULL, INVALID_ARRT_VALUE}
 		}
 	},
+	{
 
+		"direction",
+		{
+			{"both", FAL_DIR_BOTH},
+			{"ingress", FAL_DIR_INGRESS},
+			{"egress", FAL_DIR_EGRESS},
+			{NULL, INVALID_ARRT_VALUE}
+		}
+	},
+#ifdef IN_ATHTAG
+	{
+		"athtag_version",
+		{
+			{"v2", FAL_ATHTAG_VER2},
+			{"v3", FAL_ATHTAG_VER3},
+			{NULL, INVALID_ARRT_VALUE}
+		}
+	},
+	{
+		"athtag_action",
+		{
+			{"normal", FAL_ATHTAG_ACTION_NORMAL},
+			{"read_write_reg", FAL_ATHTAG_ACTION_READ_WRITE_REG},
+			{"disable_learn", FAL_ATHTAG_ACTION_DISABLE_LEARN},
+			{"disable_offload", FAL_ATHTAG_ACTION_DISABLE_OFFLOAD},
+			{"disable_learn_offload", FAL_ATHTAG_ACTION_DISABLE_LEARN_OFFLOAD},
+			{NULL, INVALID_ARRT_VALUE}
+		}
+	},
+#endif
 	{NULL, {{NULL, INVALID_ARRT_VALUE}}}
 };
 
@@ -704,13 +734,17 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_SEC_ICMP4, cmd_data_check_sec_icmp4, NULL),
     SW_TYPE_DEF(SW_SEC_ICMP6, cmd_data_check_sec_icmp6, NULL),
 #ifdef HPPE
+#ifndef IN_SEC_MINI
     SW_TYPE_DEF(SW_L3_PARSER, (param_check_t)cmd_data_check_l3_parser, NULL),
+#endif
     SW_TYPE_DEF(SW_L4_PARSER, (param_check_t)cmd_data_check_l4_parser, NULL),
     SW_TYPE_DEF(SW_EXP_CTRL, (param_check_t)cmd_data_check_exp_ctrl, NULL),
 #endif
+#ifndef IN_SEC_MINI
     SW_TYPE_DEF(SW_L2_EXP_CTRL, (param_check_t)cmd_data_check_l2_exp_ctrl, NULL),
     SW_TYPE_DEF(SW_TUNNEL_EXP_CTRL, (param_check_t)cmd_data_check_tunnel_exp_ctrl, NULL),
     SW_TYPE_DEF(SW_TUNNEL_FLAGS_PARSER, (param_check_t)cmd_data_check_tunnel_flags_parser, NULL),
+#endif
 #endif
 #ifdef IN_COSMAP
 #ifndef IN_COSMAP_MINI
@@ -812,8 +846,10 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_POLICER_PORT_CONFIG, (param_check_t)cmd_data_check_port_policer_config, NULL),
     SW_TYPE_DEF(SW_POLICER_CMD_CONFIG, (param_check_t)cmd_data_check_policer_cmd_config, NULL),
 #if defined(APPE)
+#ifndef IN_POLICER_MINI
     SW_TYPE_DEF(SW_POLICER_REMAP, (param_check_t)cmd_data_check_policer_remap, NULL),
     SW_TYPE_DEF(SW_POLICER_PRIORITY, (param_check_t)cmd_data_check_policer_priority, NULL),
+#endif
     SW_TYPE_DEF(SW_POLICER_CTRL, (param_check_t)cmd_data_check_policer_ctrl, NULL),
 #endif
 #endif
@@ -889,7 +925,61 @@ static sw_data_type_t sw_data_type[] =
 #ifdef IN_VPORT
     SW_TYPE_DEF(SW_VPORT_STATE, (param_check_t)cmd_data_check_vport_state, NULL),
 #endif
+#ifdef IN_ATHTAG
+    SW_TYPE_DEF(SW_DIRECTION, cmd_data_check_direction, NULL),
+    SW_TYPE_DEF(SW_ATHTAG_PRI_MAPPING, (param_check_t)cmd_data_check_athtag_pri_mapping, NULL),
+    SW_TYPE_DEF(SW_ATHTAG_PORT_MAPPING, (param_check_t)cmd_data_check_athtag_port_mapping, NULL),
+    SW_TYPE_DEF(SW_ATHTAG_RX_CFG, (param_check_t)cmd_data_check_athtag_rx_cfg, NULL),
+    SW_TYPE_DEF(SW_ATHTAG_TX_CFG, (param_check_t)cmd_data_check_athtag_tx_cfg, NULL),
+#endif
 };
+
+sw_error_t
+cmd_sscanf(const char *buf, const char *fmt, void *arg_val)
+{
+	char fmt_tmp[5] = {0};
+
+	if(strspn(buf, "1234567890abcdefABCDEFXx") != strlen(buf))
+	{
+		return SW_BAD_VALUE;
+	}
+	if(buf[0] == '0' && (buf[1] == 'x' || buf[1] == 'X'))
+	{
+		if(!fmt)
+			strlcpy(fmt_tmp, "%x", sizeof(fmt_tmp));
+		else
+		{
+			if(strspn(fmt, "%lLxXhH") != strlen(fmt))
+				return SW_BAD_VALUE;
+			if(fmt[0] == '%' && ((fmt[1] == 'l' || fmt[1] == 'L') &&
+				(fmt[2] == 'l' || fmt[2] == 'L')))
+				strlcpy(fmt_tmp, "%llx", sizeof(fmt_tmp));
+			else
+				strlcpy(fmt_tmp, fmt, sizeof(fmt_tmp));
+		}
+	}
+	else
+	{
+		if(strspn(buf, "1234567890") != strlen(buf))
+			return SW_BAD_VALUE;
+		if(!fmt)
+			strlcpy(fmt_tmp, "%d", sizeof(fmt_tmp));
+		else
+		{
+			if(strspn(fmt, "%lLdD") != strlen(fmt))
+				return SW_BAD_VALUE;
+			if(fmt[0] == '%' && ((fmt[1] == 'l' || fmt[1] == 'L') &&
+				(fmt[2] == 'l' || fmt[2] == 'L')))
+				strlcpy(fmt_tmp, "%lld", sizeof(fmt_tmp));
+			else
+				strlcpy(fmt_tmp, fmt, sizeof(fmt_tmp));
+		}
+	}
+	if(sscanf(buf, fmt_tmp, arg_val) != 1)
+		return SW_FAIL;
+
+	return SW_OK;
+}
 
 sw_data_type_t *
 cmd_data_type_find(sw_data_type_e type)
@@ -996,10 +1086,7 @@ cmd_data_check_uint8(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
         return SW_BAD_VALUE;
     }
 
-    if (cmd_str[0] == '0' && (cmd_str[1] == 'x' || cmd_str[1] == 'X'))
-        sscanf(cmd_str, "%x", arg_val);
-    else
-        sscanf(cmd_str, "%d", arg_val);
+    SW_RTN_ON_ERROR(cmd_sscanf(cmd_str, NULL, arg_val));
 
     if (255 < *arg_val)
     {
@@ -1020,14 +1107,7 @@ cmd_data_check_uint64(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
         return SW_BAD_VALUE;
     }
 
-    if (strspn(cmd_str, "1234567890abcdefABCDEFXx") != strlen(cmd_str)){
-        return SW_BAD_VALUE;
-    }
-
-    if (cmd_str[0] == '0' && (cmd_str[1] == 'x' || cmd_str[1] == 'X'))
-        sscanf(cmd_str, "%llx", (a_uint64_t *)arg_val);
-    else
-        sscanf(cmd_str, "%lld", (a_uint64_t *)arg_val);
+    SW_RTN_ON_ERROR(cmd_sscanf(cmd_str, "%ll", arg_val));
 
     return SW_OK;
 }
@@ -1043,14 +1123,7 @@ cmd_data_check_uint32(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
         return SW_BAD_VALUE;
     }
 
-    if (strspn(cmd_str, "1234567890abcdefABCDEFXx") != strlen(cmd_str)){
-        return SW_BAD_VALUE;
-    }
-
-    if (cmd_str[0] == '0' && (cmd_str[1] == 'x' || cmd_str[1] == 'X'))
-        sscanf(cmd_str, "%x", arg_val);
-    else
-        sscanf(cmd_str, "%d", arg_val);
+    SW_RTN_ON_ERROR(cmd_sscanf(cmd_str, NULL, arg_val));
 
     return SW_OK;
 }
@@ -1066,10 +1139,7 @@ cmd_data_check_uint16(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
         return SW_BAD_VALUE;
     }
 
-    if (cmd_str[0] == '0' && (cmd_str[1] == 'x' || cmd_str[1] == 'X'))
-        sscanf(cmd_str, "%x", arg_val);
-    else
-        sscanf(cmd_str, "%d", arg_val);
+    SW_RTN_ON_ERROR(cmd_sscanf(cmd_str, NULL, arg_val));
 
     if (65535 < *arg_val)
     {
@@ -1085,10 +1155,7 @@ cmd_data_check_pbmp(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
     if (cmd_str == NULL)
         return SW_BAD_PARAM;
 
-    if (cmd_str[0] == '0' && (cmd_str[1] == 'x' || cmd_str[1] == 'X'))
-        sscanf(cmd_str, "%x", arg_val);
-    else
-        sscanf(cmd_str, "%d", arg_val);
+    SW_RTN_ON_ERROR(cmd_sscanf(cmd_str, NULL, arg_val));
 
     return SW_OK;
 
@@ -3132,7 +3199,7 @@ cmd_data_check_uinta(char *cmdstr, a_uint32_t * val, a_uint32_t size)
             return SW_BAD_VALUE;
         }
 
-        sscanf(tmp_str, "%d", tmp_ptr);
+        SW_RTN_ON_ERROR(cmd_sscanf(tmp_str, "%d", tmp_ptr));
         tmp_ptr++;
 
         i++;
@@ -3306,7 +3373,7 @@ cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size)
             return SW_BAD_VALUE;
         }
 
-        sscanf(tmp, "%d", &port);
+        SW_RTN_ON_ERROR(cmd_sscanf(tmp, "%d", &port));
         if (SW_MAX_NR_PORT <= port)
         {
             return cmd_data_check_uint32(tmp_str, val, sizeof(a_uint32_t));
@@ -3590,7 +3657,6 @@ cmd_data_check_integer(char *cmd_str, a_uint32_t * arg_val, a_uint32_t max_val,
                        a_uint32_t min_val)
 {
     a_uint32_t tmp;
-    a_uint32_t i;
 
     if (NULL == cmd_str)
     {
@@ -3602,28 +3668,7 @@ cmd_data_check_integer(char *cmd_str, a_uint32_t * arg_val, a_uint32_t max_val,
         return SW_BAD_PARAM;
     }
 
-    if ((cmd_str[0] == '0') && ((cmd_str[1] == 'x') || (cmd_str[1] == 'X')))
-    {
-        for (i = 2; i < strlen(cmd_str); i++)
-        {
-            if (A_FALSE == is_hex(cmd_str[i]))
-            {
-                return SW_BAD_VALUE;
-            }
-        }
-        sscanf(cmd_str, "%x", &tmp);
-    }
-    else
-    {
-        for (i = 0; i < strlen(cmd_str); i++)
-        {
-            if (A_FALSE == is_dec(cmd_str[i]))
-            {
-                return SW_BAD_VALUE;
-            }
-        }
-        sscanf(cmd_str, "%d", &tmp);
-    }
+    SW_RTN_ON_ERROR(cmd_sscanf(cmd_str, NULL, &tmp));
 
     if ((tmp > max_val) || (tmp < min_val))
         return SW_BAD_PARAM;
@@ -8089,6 +8134,7 @@ cmd_data_check_sec_icmp6(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
     return SW_OK;
 }
 #ifdef HPPE
+#ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_l3_parser(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -8151,6 +8197,7 @@ cmd_data_check_l3_parser(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 
 }
+#endif
 
 sw_error_t
 cmd_data_check_l4_parser(char *cmd_str, void * val, a_uint32_t size)
@@ -8745,6 +8792,8 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 #endif
+
+#ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_l2_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -8991,6 +9040,7 @@ cmd_data_check_tunnel_flags_parser(char *cmd_str, void * val, a_uint32_t size)
     *(fal_tunnel_flags_excep_parser_ctrl_t *)val = entry;
     return SW_OK;
 }
+#endif
 #endif
 #ifdef IN_COSMAP
 #ifndef IN_COSMAP_MINI
@@ -11786,6 +11836,13 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
     } while (talk_mode && (SW_OK != rv));
 #endif
 
+#if defined(MPPE)
+    cmd_data_check_element("flow_cookie_pri", "0",
+		    "usage: flow cookie priority\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.flow_cookie_pri = tmp;
+#endif
+
     *(fal_flow_global_cfg_t *)val = entry;
     return SW_OK;
 
@@ -12501,6 +12558,17 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
 		    "usage: next hop of bridge type\n",
 		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
     entry.bridge_nexthop = tmp;
+
+    rv = __cmd_data_check_boolean("policer_valid", "no",
+		    "usage: <yes/no/y/n>\n",
+		    cmd_data_check_confirm, A_FALSE, &(entry.policer_valid),
+		    sizeof (a_bool_t));
+    SW_RTN_ON_ERROR(rv);
+
+    cmd_data_check_element("policer_index", "0",
+		    "usage: flow based policer index\n",
+		    cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+    entry.policer_index = tmp;
 #endif
 
     *(fal_flow_entry_t *)val = entry;
@@ -15537,6 +15605,7 @@ cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size)
 }
 
 #if defined(APPE)
+#ifndef IN_POLICER_MINI
 sw_error_t
 cmd_data_check_policer_remap(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -15668,6 +15737,7 @@ cmd_data_check_policer_priority(char *cmd_str, void * val, a_uint32_t size)
     *(fal_policer_priority_t *)val = entry;
     return SW_OK;
 }
+#endif
 
 sw_error_t
 cmd_data_check_policer_ctrl(char *cmd_str, void * val, a_uint32_t size)
@@ -16850,6 +16920,10 @@ cmd_data_check_module(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 		*arg_val = FAL_MODULE_MAPT;
 	} else if (!strcasecmp(cmd_str, "tunnelprogram")){
 		*arg_val = FAL_MODULE_TUNNEL_PROGRAM;
+#endif
+#ifdef MPPE
+	} else if (!strcasecmp(cmd_str, "athtag")){
+		*arg_val = FAL_MODULE_ATHTAG;
 #endif
 	}
 	else
@@ -18933,5 +19007,131 @@ cmd_data_check_tunnel_action(char *cmd_str, fal_tunnel_action_t *arg_val, a_uint
 	*arg_val = entry_action;
 	return rv;
 }
+#endif
 
+sw_error_t
+cmd_data_check_direction(char * cmd_str, a_uint32_t * arg_val, a_uint32_t size)
+{
+    return cmd_data_check_attr("direction", cmd_str,
+                    arg_val, sizeof(*arg_val));
+}
+
+#ifdef IN_ATHTAG
+sw_error_t
+cmd_data_check_athtag_pri_mapping(char * cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    fal_athtag_pri_mapping_t entry;
+    a_uint32_t tmpdata = 0;
+
+    memset(&entry, 0, sizeof (fal_athtag_pri_mapping_t));
+
+    cmd_data_check_element("ath pri", "0",
+                       "usage: priority in ath header,"
+                       "the format is 0x0-0x7 or 0-7\n",
+                       cmd_data_check_integer, (cmd, &tmpdata,
+                               0x7, 0x0));
+    entry.ath_pri = tmpdata;
+
+    cmd_data_check_element("int pri", "0",
+                       "usage: internal priority,"
+                       "the format is 0x0-0xf or 0-15\n",
+                       cmd_data_check_integer, (cmd, &tmpdata,
+                               0xf, 0x0));
+    entry.int_pri = tmpdata;
+
+    *(fal_athtag_pri_mapping_t *) val = entry;
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_athtag_port_mapping(char * cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    fal_athtag_port_mapping_t entry;
+    a_uint32_t tmpdata = 0;
+
+    memset(&entry, 0, sizeof (fal_athtag_port_mapping_t));
+
+    cmd_data_check_element("ath port", "0",
+                       "usage: input port number such as 1,2\n",
+                       cmd_data_check_portmap, (cmd, &entry.ath_port,
+                       sizeof(fal_pbmp_t)));
+
+    cmd_data_check_element("int port", "0",
+                       "usage: port or vport number\n",
+                       cmd_data_check_integer, (cmd, &tmpdata,
+                               0xffffffff, 0x0));
+    entry.int_port = tmpdata;
+
+    *(fal_athtag_port_mapping_t *) val = entry;
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_athtag_rx_cfg(char * cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    fal_athtag_rx_cfg_t entry;
+    a_uint32_t tmpdata = 0;
+
+    memset(&entry, 0, sizeof (fal_athtag_rx_cfg_t));
+
+    cmd_data_check_element("athtag enable", "no",
+                           "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+                           (cmd, A_FALSE, &entry.athtag_en, sizeof (a_bool_t)));
+
+    cmd_data_check_element("athtag type", "0x0",
+                       "usage: the format is 0x0-0xffff or 0-65535\n",
+                       cmd_data_check_integer, (cmd, &tmpdata, 0xffff,
+                               0x0));
+    entry.athtag_type = tmpdata & 0xffff;
+
+    *(fal_athtag_rx_cfg_t *) val = entry;
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_athtag_tx_cfg(char * cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    fal_athtag_tx_cfg_t entry;
+    a_uint32_t tmpdata = 0;
+
+    memset(&entry, 0, sizeof (fal_athtag_tx_cfg_t));
+
+    cmd_data_check_element("athtag enable", "no",
+                           "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+                           (cmd, A_FALSE, &entry.athtag_en, sizeof (a_bool_t)));
+
+    cmd_data_check_element("athtag type", "0x0",
+                       "usage: the format is 0x0-0xffff or 0-65535\n",
+                       cmd_data_check_integer, (cmd, &tmpdata, 0xffff,
+                               0x0));
+    entry.athtag_type = tmpdata & 0xffff;
+
+    cmd_data_check_element("athtag version", "v3",
+                       "usage: v2 or v3\n",
+                       cmd_data_check_attr, ("athtag_version", cmd,
+                               &tmpdata, sizeof(tmpdata)));
+    entry.version = tmpdata & 0x3;
+
+    cmd_data_check_element("athtag action", "normal",
+                       "usage: normal, read_write_reg, disable_learn, disable_offload "
+                       "or disable_learn_offload\n",
+                       cmd_data_check_attr, ("athtag_action", cmd,
+                               &tmpdata, sizeof(tmpdata)));
+    entry.action = tmpdata & 0x7;
+
+    cmd_data_check_element("bypass fwd_en", "no",
+                           "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+                           (cmd, A_FALSE, &entry.bypass_fwd_en, sizeof (a_bool_t)));
+
+    cmd_data_check_element("disable field", "no",
+                           "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+                           (cmd, A_FALSE, &entry.field_disable, sizeof (a_bool_t)));
+
+    *(fal_athtag_tx_cfg_t *) val = entry;
+    return SW_OK;
+}
 #endif

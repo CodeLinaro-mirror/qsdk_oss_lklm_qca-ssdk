@@ -48,6 +48,21 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_i
 sw_error_t
 sfp_phy_phydev_adv_update(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t adv_mask,
 	a_uint32_t adv);
+sw_error_t
+sfp_phy_rx_los_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *rx_los_status);
+sw_error_t
+sfp_phy_tx_dis_status_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t tx_dis_status);
+sw_error_t
+sfp_phy_tx_dis_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *tx_dis_status);
+sw_error_t
+sfp_phy_mod_present_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *mod_present_status);
+sw_error_t
+sfp_port_status_get_from_uniphy(a_uint32_t dev_id, a_uint32_t port_id,
+	struct port_phy_status *phy_status);
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */

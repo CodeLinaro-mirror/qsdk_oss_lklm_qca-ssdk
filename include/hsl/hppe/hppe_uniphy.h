@@ -30,6 +30,10 @@
 #define UNIPHY_CHANNEL2_INPUT_OUTPUT_4_MAX_ENTRY        3
 #define UNIPHY_CHANNEL3_INPUT_OUTPUT_4_MAX_ENTRY        3
 #define UNIPHY_CHANNEL4_INPUT_OUTPUT_4_MAX_ENTRY        3
+#define UNIPHY_CHANNEL0_INPUT_OUTPUT_6_MAX_ENTRY        3
+#define UNIPHY_SPEED_1000M                              2
+#define UNIPHY_SPEED_100M                               1
+#define UNIPHY_SPEED_10M                                0
 #define SR_XS_PCS_KR_STS1_MAX_ENTRY                     3
 #define VR_XS_PCS_DIG_CTRL1_MAX_ENTRY                   3
 #define SR_MII_CTRL_MAX_ENTRY                           3
@@ -142,6 +146,12 @@ hppe_uniphy_channel4_input_output_4_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union uniphy_channel4_input_output_4_u *value);
+
+sw_error_t
+hppe_uniphy_channel0_input_output_6_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniphy_channel0_input_output_6_u *value);
 
 sw_error_t
 hppe_uniphy_instance_link_detect_get(

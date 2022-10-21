@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- *
  * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -187,14 +187,10 @@ extern "C" {
 #define SW_API_PT_VLAN_MEM_DEL       (5  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_VLAN_MEM_UPDATE    (6  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_VLAN_MEM_GET       (7  + SW_API_PORTVLAN_OFFSET)
-#define SW_API_PT_DEF_VID_GET        (8  + SW_API_PORTVLAN_OFFSET)
-#define SW_API_PT_DEF_VID_SET        (9  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_FORCE_DEF_VID_SET  (10  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_FORCE_DEF_VID_GET  (11  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_FORCE_PORTVLAN_SET (12  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_FORCE_PORTVLAN_GET (13  + SW_API_PORTVLAN_OFFSET)
-#define SW_API_PT_NESTVLAN_SET       (14  + SW_API_PORTVLAN_OFFSET)
-#define SW_API_PT_NESTVLAN_GET       (15  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_NESTVLAN_TPID_SET     (16  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_NESTVLAN_TPID_GET     (17  + SW_API_PORTVLAN_OFFSET)
 #define SW_API_PT_IN_VLAN_MODE_SET   (18  + SW_API_PORTVLAN_OFFSET)
@@ -909,6 +905,10 @@ extern "C" {
 #define SW_API_SERVCODE_CONFIG_GET	(1  + SW_API_SERVCODE_OFFSET)
 #define SW_API_SERVCODE_LOOPCHECK_EN	(2  + SW_API_SERVCODE_OFFSET)
 #define SW_API_SERVCODE_LOOPCHECK_STATUS_GET	(3  + SW_API_SERVCODE_OFFSET)
+#define SW_API_PORT_SERVCODE_SET	(4  + SW_API_SERVCODE_OFFSET)
+#define SW_API_PORT_SERVCODE_GET	(5  + SW_API_SERVCODE_OFFSET)
+#define SW_API_SERVCODE_ATHTAG_SET	(6  + SW_API_SERVCODE_OFFSET)
+#define SW_API_SERVCODE_ATHTAG_GET	(7  + SW_API_SERVCODE_OFFSET)
 
 	/* POLICER */
 #define SW_API_POLICER_OFFSET        2800
@@ -1140,6 +1140,17 @@ extern "C" {
 #define SW_API_MAPT_DECAP_ENTRY_GETNEXT		(8 + SW_API_MAPT_OFFSET)
 #define SW_API_MAPT_DECAP_EN_SET		(9 + SW_API_MAPT_OFFSET)
 #define SW_API_MAPT_DECAP_EN_GET		(10 + SW_API_MAPT_OFFSET)
+
+/* athtag */
+#define SW_API_ATHTAG_OFFSET			3900
+#define SW_API_ATHTAG_PRI_MAPPING_SET		(0 + SW_API_ATHTAG_OFFSET)
+#define SW_API_ATHTAG_PRI_MAPPING_GET		(1 + SW_API_ATHTAG_OFFSET)
+#define SW_API_ATHTAG_PORT_MAPPING_SET		(2 + SW_API_ATHTAG_OFFSET)
+#define SW_API_ATHTAG_PORT_MAPPING_GET		(3 + SW_API_ATHTAG_OFFSET)
+#define SW_API_PORT_ATHTAG_RX_SET		(4 + SW_API_ATHTAG_OFFSET)
+#define SW_API_PORT_ATHTAG_RX_GET		(5 + SW_API_ATHTAG_OFFSET)
+#define SW_API_PORT_ATHTAG_TX_SET		(6 + SW_API_ATHTAG_OFFSET)
+#define SW_API_PORT_ATHTAG_TX_GET		(7 + SW_API_ATHTAG_OFFSET)
 
 /* auto_insert_flag */
 /*qca808x_start*/
