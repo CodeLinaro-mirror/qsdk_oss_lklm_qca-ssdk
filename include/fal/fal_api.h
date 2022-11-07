@@ -147,7 +147,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_CNT_CFG_SET, fal_port_cnt_cfg_set), \
     SW_API_DEF(SW_API_PT_CNT_CFG_GET, fal_port_cnt_cfg_get), \
     SW_API_DEF(SW_API_PT_CNT_GET, fal_port_cnt_get), \
-    SW_API_DEF(SW_API_PT_CNT_FLUSH, fal_port_cnt_flush),
+    SW_API_DEF(SW_API_PT_CNT_FLUSH, fal_port_cnt_flush), \
+    SW_API_DEF(SW_API_PT_COMBO_LINK_STATUS_GET, fal_port_combo_link_status_get ),
 /*qca808x_start*/
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
@@ -271,7 +272,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_CNT_CFG_SET) \
     SW_API_DESC(SW_API_PT_CNT_CFG_GET) \
     SW_API_DESC(SW_API_PT_CNT_GET) \
-    SW_API_DESC(SW_API_PT_CNT_FLUSH)
+    SW_API_DESC(SW_API_PT_CNT_FLUSH) \
+    SW_API_DESC(SW_API_PT_COMBO_LINK_STATUS_GET)
 /*qca808x_start*/
 /*end of PORTCONTROL_API_PARAM*/
 /*qca808x_end*/
@@ -294,12 +296,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_POWER_ON, fal_port_power_on), \
     SW_API_DEF(SW_API_TXFC_STATUS_SET, fal_port_txfc_status_set), \
     SW_API_DEF(SW_API_RXFC_STATUS_SET, fal_port_rxfc_status_set), \
-    SW_API_DEF(SW_API_PT_CONGESTION_DROP_SET, fal_port_congestion_drop_set), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_SET, fal_ring_flow_ctrl_thres_set), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_STATUS_GET, fal_ring_flow_ctrl_status_get), \
-    SW_API_DEF(SW_API_PT_RING_UNION_SET, fal_ring_union_set), \
     SW_API_DEF(SW_API_PT_FLOW_CTRL_THRES_SET, fal_port_flow_ctrl_thres_set), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_SET, fal_ring_flow_ctrl_config_set), \
+    SW_API_DEF(SW_API_PT_FLOW_CTRL_THRES_GET, fal_port_flow_ctrl_thres_get), \
     SW_API_DEF(SW_API_PT_SWITCH_PORT_LOOPBACK_SET, fal_switch_port_loopback_set),  \
     SW_API_DEF(SW_API_PT_SWITCH_PORT_LOOPBACK_GET, fal_switch_port_loopback_get), \
     SW_API_DEF(SW_API_PT_CNT_CFG_SET, fal_port_cnt_cfg_set), \
@@ -320,6 +318,9 @@ extern "C" {
     SW_API_DEF(SW_API_PT_SOURCE_FILTER_CONFIG_SET, fal_port_source_filter_config_set), \
     SW_API_DEF(SW_API_PT_PROMISC_MODE_SET, fal_port_promisc_mode_set), \
     SW_API_DEF(SW_API_PT_PROMISC_MODE_GET, fal_port_promisc_mode_get), \
+    SW_API_DEF(SW_API_PT_COMBO_LINK_STATUS_GET, fal_port_combo_link_status_get ), \
+    SW_API_DEF(SW_API_PT_COMBO_PREFER_MEDIUM_SET, fal_port_combo_prefer_medium_set), \
+    SW_API_DEF(SW_API_PT_COMBO_PREFER_MEDIUM_GET, fal_port_combo_prefer_medium_get),
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
     SW_API_DESC(SW_API_PT_DUPLEX_SET) \
@@ -339,12 +340,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_POWER_ON) \
     SW_API_DESC(SW_API_TXFC_STATUS_SET) \
     SW_API_DESC(SW_API_RXFC_STATUS_SET) \
-    SW_API_DESC(SW_API_PT_CONGESTION_DROP_SET) \
-    SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_THRES_SET) \
-    SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_STATUS_GET) \
-    SW_API_DESC(SW_API_PT_RING_UNION_SET) \
     SW_API_DESC(SW_API_PT_FLOW_CTRL_THRES_SET) \
-    SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_SET) \
+    SW_API_DESC(SW_API_PT_FLOW_CTRL_THRES_GET) \
     SW_API_DESC(SW_API_PT_SWITCH_PORT_LOOPBACK_SET)  \
     SW_API_DESC(SW_API_PT_SWITCH_PORT_LOOPBACK_GET) \
     SW_API_DESC(SW_API_PT_CNT_CFG_SET) \
@@ -364,7 +361,10 @@ extern "C" {
     SW_API_DESC(SW_API_PT_SOURCE_FILTER_CONFIG_GET) \
     SW_API_DESC(SW_API_PT_SOURCE_FILTER_CONFIG_SET) \
     SW_API_DESC(SW_API_PT_PROMISC_MODE_SET) \
-    SW_API_DESC(SW_API_PT_PROMISC_MODE_GET)
+    SW_API_DESC(SW_API_PT_PROMISC_MODE_GET) \
+    SW_API_DESC(SW_API_PT_COMBO_LINK_STATUS_GET) \
+    SW_API_DESC(SW_API_PT_COMBO_PREFER_MEDIUM_SET) \
+    SW_API_DESC(SW_API_PT_COMBO_PREFER_MEDIUM_GET)
 /*end of PORTCONTROL_API_PARAM*/
 #endif
 
@@ -1011,11 +1011,42 @@ extern "C" {
     SW_API_DESC(SW_API_QOS_PORT_SCHEDULER_RESOURCE_GET)
 #else
 #define QOS_API \
-    SW_API_DEF(SW_API_QOS_PT_MODE_SET, fal_qos_port_mode_set),
-
+    SW_API_DEF(SW_API_QOS_PT_MODE_SET, fal_qos_port_mode_set), \
+    SW_API_DEF(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET, fal_scheduler_dequeue_ctrl_get), \
+    SW_API_DEF(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, fal_scheduler_dequeue_ctrl_set), \
+    SW_API_DEF(SW_API_QOS_QUEUE_SCHEDULER_GET, fal_queue_scheduler_get), \
+    SW_API_DEF(SW_API_QOS_QUEUE_SCHEDULER_SET, fal_queue_scheduler_set), \
+    SW_API_DEF(SW_API_QOS_PORT_PRI_GET, fal_qos_port_pri_precedence_get), \
+    SW_API_DEF(SW_API_QOS_PORT_PRI_SET, fal_qos_port_pri_precedence_set), \
+    SW_API_DEF(SW_API_QOS_PORT_GROUP_GET, fal_qos_port_group_get), \
+    SW_API_DEF(SW_API_QOS_PORT_GROUP_SET, fal_qos_port_group_set), \
+    SW_API_DEF(SW_API_QOS_FLOW_MAP_GET, fal_qos_cosmap_flow_get), \
+    SW_API_DEF(SW_API_QOS_FLOW_MAP_SET, fal_qos_cosmap_flow_set), \
+    SW_API_DEF(SW_API_QOS_DSCP_MAP_GET, fal_qos_cosmap_dscp_get), \
+    SW_API_DEF(SW_API_QOS_DSCP_MAP_SET, fal_qos_cosmap_dscp_set), \
+    SW_API_DEF(SW_API_QOS_RING_QUEUE_MAP_GET, fal_edma_ring_queue_map_get), \
+    SW_API_DEF(SW_API_QOS_RING_QUEUE_MAP_SET, fal_edma_ring_queue_map_set), \
+    SW_API_DEF(SW_API_QOS_PORT_SCHEDULER_CFG_RESET, fal_port_scheduler_cfg_reset), \
+    SW_API_DEF(SW_API_QOS_PORT_SCHEDULER_RESOURCE_GET, fal_port_scheduler_resource_get),
 
 #define QOS_API_PARAM \
-    SW_API_DESC(SW_API_QOS_PT_MODE_SET)
+    SW_API_DESC(SW_API_QOS_PT_MODE_SET) \
+    SW_API_DESC(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET) \
+    SW_API_DESC(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET) \
+    SW_API_DESC(SW_API_QOS_QUEUE_SCHEDULER_GET) \
+    SW_API_DESC(SW_API_QOS_QUEUE_SCHEDULER_SET) \
+    SW_API_DESC(SW_API_QOS_PORT_PRI_GET) \
+    SW_API_DESC(SW_API_QOS_PORT_PRI_SET) \
+    SW_API_DESC(SW_API_QOS_PORT_GROUP_GET) \
+    SW_API_DESC(SW_API_QOS_PORT_GROUP_SET) \
+    SW_API_DESC(SW_API_QOS_FLOW_MAP_GET) \
+    SW_API_DESC(SW_API_QOS_FLOW_MAP_SET) \
+    SW_API_DESC(SW_API_QOS_DSCP_MAP_GET) \
+    SW_API_DESC(SW_API_QOS_DSCP_MAP_SET) \
+    SW_API_DESC(SW_API_QOS_RING_QUEUE_MAP_GET) \
+    SW_API_DESC(SW_API_QOS_RING_QUEUE_MAP_SET) \
+    SW_API_DESC(SW_API_QOS_PORT_SCHEDULER_CFG_RESET) \
+    SW_API_DESC(SW_API_QOS_PORT_SCHEDULER_RESOURCE_GET)
 
 #endif
 #else
@@ -2200,8 +2231,6 @@ extern "C" {
     SW_API_DEF(SW_API_QUEUE_FLUSH, fal_queue_flush), \
     SW_API_DEF(SW_API_UCAST_HASH_MAP_SET, fal_ucast_hash_map_set), \
     SW_API_DEF(SW_API_UCAST_HASH_MAP_GET, fal_ucast_hash_map_get), \
-    SW_API_DEF(SW_API_UCAST_DFLT_HASH_MAP_SET, fal_ucast_default_hash_set), \
-    SW_API_DEF(SW_API_UCAST_DFLT_HASH_MAP_GET, fal_ucast_default_hash_get), \
     SW_API_DEF(SW_API_AC_CTRL_SET, fal_ac_ctrl_set), \
     SW_API_DEF(SW_API_AC_CTRL_GET, fal_ac_ctrl_get), \
     SW_API_DEF(SW_API_AC_PRE_BUFFER_SET, fal_ac_prealloc_buffer_set), \
@@ -2218,12 +2247,8 @@ extern "C" {
     SW_API_DEF(SW_API_QUEUE_CNT_CTRL_SET, fal_queue_counter_ctrl_set), \
     SW_API_DEF(SW_API_QUEUE_CNT_GET, fal_queue_counter_get), \
     SW_API_DEF(SW_API_QUEUE_CNT_CLEANUP, fal_queue_counter_cleanup), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CTRL_SET, fal_qm_enqueue_ctrl_set), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CTRL_GET, fal_qm_enqueue_ctrl_get), \
     SW_API_DEF(SW_API_QM_SOURCE_PROFILE_SET, fal_qm_port_source_profile_set), \
-    SW_API_DEF(SW_API_QM_SOURCE_PROFILE_GET, fal_qm_port_source_profile_get), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_GET, fal_qm_enqueue_config_get), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_SET, fal_qm_enqueue_config_set),
+    SW_API_DEF(SW_API_QM_SOURCE_PROFILE_GET, fal_qm_port_source_profile_get),
 
 #define QM_API_PARAM \
     SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_SET) \
@@ -2233,8 +2258,6 @@ extern "C" {
     SW_API_DESC(SW_API_QUEUE_FLUSH) \
     SW_API_DESC(SW_API_UCAST_HASH_MAP_SET) \
     SW_API_DESC(SW_API_UCAST_HASH_MAP_GET) \
-    SW_API_DESC(SW_API_UCAST_DFLT_HASH_MAP_SET) \
-    SW_API_DESC(SW_API_UCAST_DFLT_HASH_MAP_GET) \
     SW_API_DESC(SW_API_AC_CTRL_SET) \
     SW_API_DESC(SW_API_AC_CTRL_GET) \
     SW_API_DESC(SW_API_AC_PRE_BUFFER_SET) \
@@ -2251,12 +2274,8 @@ extern "C" {
     SW_API_DESC(SW_API_QUEUE_CNT_CTRL_SET) \
     SW_API_DESC(SW_API_QUEUE_CNT_GET) \
     SW_API_DESC(SW_API_QUEUE_CNT_CLEANUP) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CTRL_SET) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CTRL_GET) \
     SW_API_DESC(SW_API_QM_SOURCE_PROFILE_SET) \
-    SW_API_DESC(SW_API_QM_SOURCE_PROFILE_GET) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_GET) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_SET)
+    SW_API_DESC(SW_API_QM_SOURCE_PROFILE_GET)
 #endif
 #else
 #define QM_API

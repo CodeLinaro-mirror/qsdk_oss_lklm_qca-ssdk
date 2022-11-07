@@ -81,6 +81,7 @@
 #define MAC_SPEED_1000M 2
 #define MAC_SPEED_10000M 3
 #define MAC_SPEED_2500M 4
+#define MAC_SPEED_5000M 5
 
 #define XGMAC_USXGMII_ENABLE 1
 #define XGMAC_USXGMII_CLEAR 0
@@ -199,6 +200,9 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 				break;
 			case MAC_SPEED_2500M:
 				phy_status->speed = FAL_SPEED_2500;
+				break;
+			case MAC_SPEED_5000M:
+				phy_status->speed = FAL_SPEED_5000;
 				break;
 			default:
 				phy_status->speed = FAL_SPEED_BUTT;
@@ -1806,6 +1810,26 @@ adpt_hppe_port_powersave_get(a_uint32_t dev_id, fal_port_t port_id,
 	return rv;
 
 }
+#endif
+
+sw_error_t
+_adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
+					     a_uint32_t port_id,
+					     fal_port_medium_t *medium)
+{
+	phy_info_t * phy_info = hsl_phy_info_get(dev_id);
+	SW_RTN_ON_NULL(phy_info);
+
+	if (phy_info->phy_type[port_id] == SFP_PHY_CHIP)
+	{
+		*medium = PHY_MEDIUM_FIBER;
+	}
+	else
+	{
+		*medium = PHY_MEDIUM_COPPER;
+	}
+	return SW_OK;
+}
 
 sw_error_t
 adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
@@ -1821,25 +1845,32 @@ adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
 	ADPT_NULL_POINT_CHECK(medium);
 
 	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
-	  {
+	{
 		return SW_BAD_PARAM;
-	  }
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
+	}
+
+	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id) &&
+		A_FALSE == hsl_port_is_sfp(dev_id, port_id))
+	{
 		return SW_NOT_SUPPORTED;
+	}
 
-	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_combo_prefer_medium_get)
-		return SW_NOT_SUPPORTED;
-
-	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-	SW_RTN_ON_ERROR (rv);
-
-	rv = phy_drv->phy_combo_prefer_medium_get (dev_id, phy_id, medium);
+	phy_drv = hsl_phy_api_ops_get (dev_id, port_id);
+	if (phy_drv && phy_drv->phy_combo_prefer_medium_get)
+	{
+		rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
+		SW_RTN_ON_ERROR (rv);
+		rv = phy_drv->phy_combo_prefer_medium_get (dev_id, phy_id, medium);
+	}
+	else
+	{
+		rv = _adpt_hppe_port_combo_prefer_medium_get(dev_id, port_id, medium);
+	}
 
 	return rv;
 
 }
-#endif
+
 sw_error_t
 adpt_hppe_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t *max_frame)
@@ -1883,39 +1914,6 @@ adpt_ppe_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
 
 }
 
-#ifndef IN_PORTCONTROL_MINI
-sw_error_t
-adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
-					     a_uint32_t port_id,
-					     fal_port_medium_t medium)
-{
-
-	sw_error_t rv = 0;
-	a_uint32_t phy_id = 0;
-	hsl_phy_ops_t *phy_drv;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
-	  {
-		return SW_BAD_PARAM;
-	  }
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
-		return SW_NOT_SUPPORTED;
-
-	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_combo_prefer_medium_set)
-		return SW_NOT_SUPPORTED;
-
-	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-	SW_RTN_ON_ERROR (rv);
-
-	rv = phy_drv->phy_combo_prefer_medium_set (dev_id, phy_id, medium);
-
-	return rv;
-
-}
-#endif
 sw_error_t
 adpt_hppe_port_power_off(a_uint32_t dev_id, fal_port_t port_id)
 {
@@ -2159,6 +2157,86 @@ adpt_hppe_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 
 	return SW_OK;
+}
+
+sw_error_t
+_adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
+					     a_uint32_t port_id,
+					     fal_port_medium_t medium)
+{
+	struct qca_phy_priv *priv = NULL;
+	sw_error_t rv = SW_OK;
+
+	if (A_TRUE != hsl_port_phy_combo_capability_get(dev_id, port_id))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	if ((hsl_phy_type_get(dev_id, port_id) == SFP_PHY_CHIP && medium == PHY_MEDIUM_FIBER) ||
+		(hsl_phy_type_get(dev_id, port_id) != SFP_PHY_CHIP && medium == PHY_MEDIUM_COPPER))
+	{
+		return SW_OK;
+	}
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	mutex_lock(&priv->mac_sw_sync_lock);
+	qca_mac_sw_sync_work_stop(priv);
+
+	rv = hsl_port_combo_phy_driver_update(dev_id, port_id, medium);
+	if (rv == SW_OK)
+	{
+		/*init port status to triger polling*/
+		if(_adpt_hppe_port_phy_connected(dev_id, port_id) == A_TRUE)
+		{
+			_adpt_hppe_port_txfc_status_set(dev_id, port_id, A_FALSE);
+			_adpt_hppe_port_rxfc_status_set(dev_id, port_id, A_FALSE);
+		}
+		qca_mac_port_status_init(dev_id, port_id);
+	}
+
+	qca_mac_sw_sync_work_resume(priv);
+	mutex_unlock(&priv->mac_sw_sync_lock);
+	return SW_OK;
+}
+
+sw_error_t
+adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
+					     a_uint32_t port_id,
+					     fal_port_medium_t medium)
+{
+	sw_error_t rv = 0;
+	a_uint32_t phy_id = 0;
+	hsl_phy_ops_t *phy_drv;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id) &&
+		A_FALSE == hsl_port_is_sfp(dev_id, port_id))
+	{
+		return SW_NOT_SUPPORTED;
+	}
+
+	phy_drv = hsl_phy_api_ops_get (dev_id, port_id);
+	if (phy_drv && phy_drv->phy_combo_prefer_medium_set)
+	{
+		rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
+		SW_RTN_ON_ERROR (rv);
+		rv = phy_drv->phy_combo_prefer_medium_set (dev_id, phy_id, medium);
+	}
+	else
+	{
+		rv = _adpt_hppe_port_combo_prefer_medium_set(dev_id, port_id, medium);
+	}
+
+	return rv;
+
 }
 
 #ifndef IN_PORTCONTROL_MINI
@@ -3304,6 +3382,10 @@ _adpt_hppe_sfp_copper_phydriver_switch(a_uint32_t dev_id, a_uint32_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
+	if (A_TRUE == hsl_port_phy_combo_capability_get(dev_id, port_id))
+	{
+		return rv;
+	}
 	rv = _adpt_hppe_port_phyaddr_update(dev_id, port_id, mode);
 	SW_RTN_ON_ERROR(rv);
 	rv = hsl_phydriver_update(dev_id, port_id, mode);
@@ -4681,9 +4763,21 @@ adpt_hppe_port_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	/* for those ports without PHY device should be sfp port or a internal port*/
 	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id)) {
 		if (port_id != SSDK_PHYSICAL_PORT0) {
-			rv = _adpt_phy_status_get_from_ppe(dev_id,
-				port_id, phy_status);
-			SW_RTN_ON_ERROR (rv);
+			fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
+			rv = adpt_hppe_port_interface_mode_get(dev_id, port_id,
+				&mode);
+			SW_RTN_ON_ERROR(rv);
+			if ((A_TRUE == hsl_port_is_sfp(dev_id, port_id)) &&
+				(mode == PORT_USXGMII)) {
+#if defined(IN_SFP_PHY)
+				rv = sfp_phy_port_status_get(dev_id, port_id, phy_status);
+				SW_RTN_ON_ERROR (rv);
+#endif
+			} else {
+				rv = _adpt_phy_status_get_from_ppe(dev_id,
+					port_id, phy_status);
+				SW_RTN_ON_ERROR (rv);
+			}
 		} else {
 			return SW_NOT_SUPPORTED;
 		}
@@ -5479,7 +5573,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 					/* configure gcc speed clock according to current speed */
 					adpt_hppe_gcc_port_speed_clock_set(priv->device_id, port_id,
 							phy_status.speed);
-					aos_mdelay(100);
+					aos_mdelay(10);
 					/* config uniphy speed to usxgmii mode */
 					adpt_hppe_uniphy_speed_set(priv->device_id, port_id,
 							phy_status.speed);
@@ -5491,12 +5585,12 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 							priv->device_id, port_id, A_TRUE);
 						adpt_hppe_uniphy_port_adapter_reset(priv->device_id,
 							port_id);
-						aos_mdelay(100);
+						aos_mdelay(10);
 					}
 					/* reset port mac when speed change under usxgmii mode */
 					adpt_hppe_port_speed_change_mac_reset(priv->device_id,
 						port_id);
-					aos_mdelay(100);
+					aos_mdelay(10);
 					/* config mac speed */
 					adpt_hppe_port_mac_speed_set(priv->device_id, port_id,
 							phy_status.speed);
@@ -5779,6 +5873,62 @@ adpt_ppe_port_cnt_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cf
 	return rv;
 }
 
+#if defined(IN_QM)
+sw_error_t
+_adpt_hppe_pport_tx_cnt_update(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t *port_cnt,
+										a_bool_t is_get)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t q_idx = 0, i = 0;
+	ssdk_dt_scheduler_cfg *dt_cfg = NULL;
+	ssdk_dt_portscheduler_cfg *ptscheduler = NULL;
+	adpt_api_t *p_adpt_api = NULL;
+	fal_queue_stats_t queue_stats;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (!ADPT_IS_PPORT(port_id))
+		return SW_OUT_OF_RANGE;
+
+	/*
+	 * update port tx counter by getting/resetting corresponding queue counter.
+	 */
+	dt_cfg = ssdk_bootup_shceduler_cfg_get(dev_id);
+	ADPT_NULL_POINT_CHECK(dt_cfg);
+
+	ptscheduler = &dt_cfg->pool[FAL_PORT_ID_VALUE(port_id)];
+
+	p_adpt_api = adpt_api_ptr_get(dev_id);
+	ADPT_NULL_POINT_CHECK(p_adpt_api);
+	ADPT_NULL_POINT_CHECK(p_adpt_api->adpt_queue_counter_get);
+	ADPT_NULL_POINT_CHECK(p_adpt_api->adpt_queue_counter_cleanup);
+
+	for (q_idx = ptscheduler->ucastq_start;
+		q_idx <= ptscheduler->mcastq_end;
+		(q_idx == ptscheduler->ucastq_end) ? (q_idx = ptscheduler->mcastq_start) : (q_idx++)) {
+		aos_mem_zero(&queue_stats, sizeof(fal_queue_stats_t));
+
+		if (is_get) {
+			ADPT_NULL_POINT_CHECK(port_cnt);
+			rv = p_adpt_api->adpt_queue_counter_get(dev_id, q_idx, &queue_stats);
+			SW_RTN_ON_ERROR(rv);
+
+			/* adding queue drop counter which indipendent with PORT_TX_DROP_CNT_TBL */
+			for (i = 0; i < FAL_QM_DROP_ITEMS; i++) {
+				port_cnt->tx_drop_pkt_cnt += queue_stats.drop_packets[i];
+				port_cnt->tx_drop_byte_cnt += queue_stats.drop_bytes[i];
+			}
+		} else {
+			/* reset port releated queue counter */
+			rv = p_adpt_api->adpt_queue_counter_cleanup(dev_id, q_idx);
+			SW_RTN_ON_ERROR(rv);
+		}
+	}
+
+	return rv;
+}
+#endif
+
 sw_error_t
 _adpt_hppe_port_tx_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t *port_cnt)
 {
@@ -5812,6 +5962,10 @@ _adpt_hppe_port_tx_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t
 		port_cnt->tx_drop_byte_cnt = ((a_uint64_t)phy_port_tx_drop_cnt.bf.tx_drop_byte_cnt_1 <<
 			SW_FIELD_OFFSET_IN_WORD(PORT_TX_DROP_CNT_TBL_TX_DROP_BYTE_CNT_OFFSET)) |
 			phy_port_tx_drop_cnt.bf.tx_drop_byte_cnt_0;
+#if defined(IN_QM)
+		rv = _adpt_hppe_pport_tx_cnt_update(dev_id, port_id, port_cnt, A_TRUE);
+		SW_RTN_ON_ERROR(rv);
+#endif
 	}
 	else
 	{
@@ -5857,6 +6011,10 @@ _adpt_hppe_port_tx_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 
 		rv = hppe_port_tx_drop_cnt_tbl_set(dev_id, port_value, &phy_port_tx_drop_cnt);
 		SW_RTN_ON_ERROR(rv);
+#if defined(IN_QM)
+		rv = _adpt_hppe_pport_tx_cnt_update(dev_id, port_id, NULL, A_FALSE);
+		SW_RTN_ON_ERROR(rv);
+#endif
 	}
 	else
 	{
@@ -6271,6 +6429,7 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_powersave_get = adpt_hppe_port_powersave_get;
 	}
+#endif
 	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
 		(1 <<  (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_GET % 32)))
 	{
@@ -6283,7 +6442,6 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_port_combo_prefer_medium_set =
 			adpt_hppe_port_combo_prefer_medium_set;
 	}
-#endif
 	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_POWER_OFF % 32)))
 	{
 		p_adpt_api->adpt_port_power_off = adpt_hppe_port_power_off;

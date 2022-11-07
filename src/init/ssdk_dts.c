@@ -201,6 +201,30 @@ a_bool_t ssdk_port_feature_get(a_uint32_t dev_id, a_uint32_t port_id, phy_featur
 	return A_FALSE;
 }
 
+sw_error_t
+ssdk_port_feature_set(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature)
+{
+	ssdk_port_phyinfo *phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+	if (phyinfo)
+	{
+		phyinfo->phy_features |= feature;
+		return SW_OK;
+	}
+	return SW_FAIL;
+}
+
+sw_error_t
+ssdk_port_feature_clear(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature)
+{
+	ssdk_port_phyinfo *phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+	if (phyinfo)
+	{
+		phyinfo->phy_features &= ~feature;
+		return SW_OK;
+	}
+	return SW_FAIL;
+}
+
 a_uint32_t ssdk_port_force_speed_get(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	ssdk_port_phyinfo *phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
@@ -627,7 +651,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	sw_error_t rv = SW_OK;
 	struct device_node *mdio_node;
 	int phy_reset_gpio = 0, sfp_rx_los_pin = 0, sfp_tx_dis_pin = 0,
-		sfp_mod_present_pin = 0;
+		sfp_mod_present_pin = 0, sfp_medium_pin = 0;
 	phy_dac_t phy_dac = {0};
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
@@ -768,12 +792,19 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					priv->sfp_tx_dis_pin[port_id] = sfp_tx_dis_pin;
 				}
 				sfp_mod_present_pin = of_get_named_gpio(port_node,
-					"sfp_mod_present_pin",0);
+					"sfp_mod_present_pin", 0);
 				if(sfp_mod_present_pin > 0)
 				{
 					SSDK_INFO("port%d sfp_mod_present_pin is GPIO%d\n", port_id,
 						sfp_mod_present_pin);
 					priv->sfp_mod_present_pin[port_id] = sfp_mod_present_pin;
+				}
+				sfp_medium_pin = of_get_named_gpio(port_node, "sfp_medium_pin", 0);
+				if(sfp_medium_pin > 0)
+				{
+					SSDK_INFO("port%d sfp_medium_pin is GPIO%d\n", port_id,
+						sfp_medium_pin);
+					priv->sfp_medium_pin[port_id] = sfp_medium_pin;
 				}
 			}
 		}

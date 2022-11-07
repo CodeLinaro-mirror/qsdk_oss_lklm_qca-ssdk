@@ -805,7 +805,7 @@ _fal_port_link_forcemode_get (a_uint32_t dev_id, fal_port_t port_id,
   rv = p_api->port_link_forcemode_get (dev_id, port_id, enable);
   return rv;
 }
-
+#ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 _fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id,
 			       a_uint32_t queue_id, a_bool_t enable)
@@ -838,7 +838,6 @@ _fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id,
   return rv;
 }
 
-#ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 _fal_port_txmac_status_get (a_uint32_t dev_id, fal_port_t port_id,
 			    a_bool_t * enable)
@@ -1144,6 +1143,8 @@ _fal_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id,
   return rv;
 }
 /*qca808x_end*/
+#endif
+
 static sw_error_t
 _fal_port_combo_prefer_medium_set (a_uint32_t dev_id, fal_port_t port_id,
 				   fal_port_medium_t medium)
@@ -1190,6 +1191,7 @@ _fal_port_combo_prefer_medium_get (a_uint32_t dev_id, fal_port_t port_id,
   return rv;
 }
 
+#ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 _fal_port_combo_medium_status_get (a_uint32_t dev_id, fal_port_t port_id,
 				   fal_port_medium_t * medium)
@@ -1563,21 +1565,21 @@ _fal_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_
 }
 
 static sw_error_t
-_fal_port_counter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
+_fal_debug_phycounter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
   return hsl_port_phy_counter_set(dev_id, port_id, enable);
 }
 
 
 static sw_error_t
-_fal_port_counter_get (a_uint32_t dev_id, fal_port_t port_id,
+_fal_debug_phycounter_get (a_uint32_t dev_id, fal_port_t port_id,
 		      a_bool_t * enable)
 {
   return hsl_port_phy_counter_get(dev_id, port_id, enable);
 }
 
 static sw_error_t
-_fal_port_counter_show (a_uint32_t dev_id, fal_port_t port_id, fal_port_counter_info_t * counter_info)
+_fal_debug_phycounter_show (a_uint32_t dev_id, fal_port_t port_id, fal_port_counter_info_t * counter_info)
 {
   return hsl_port_phy_counter_show(dev_id, port_id, counter_info);
 }
@@ -1981,7 +1983,6 @@ _fal_port_8023ah_get(a_uint32_t dev_id, fal_port_t port_id,
 	return rv;
 
 }
-#endif
 
 sw_error_t
 _fal_ring_flow_ctrl_status_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *status)
@@ -2030,7 +2031,7 @@ _fal_ring_union_get(a_uint32_t dev_id, a_bool_t *en)
 
 	return rv;
 }
-
+#endif
 sw_error_t
 _fal_port_flow_ctrl_thres_set(a_uint32_t dev_id, a_uint32_t port_id,
 		a_uint16_t on_thres, a_uint16_t off_thres)
@@ -2096,7 +2097,7 @@ _fal_port_flow_ctrl_thres_get(a_uint32_t dev_id, a_uint32_t port_id,
 
 	return rv;
 }
-
+#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 _fal_ring_flow_ctrl_config_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *status)
 {
@@ -2111,7 +2112,7 @@ _fal_ring_flow_ctrl_config_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *
 	rv = p_api->ring_flow_ctrl_get(dev_id, ring_id, status);
 	return rv;
 }
-
+#endif
 sw_error_t
 _fal_port_cnt_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cfg_t *cnt_cfg)
 {
@@ -2141,7 +2142,7 @@ _fal_port_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t *port_cn
 	rv = p_api->adpt_port_cnt_get(dev_id, port_id, port_cnt);
 	return rv;
 }
-
+#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 _fal_ring_flow_ctrl_config_set(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t status)
 {
@@ -2156,7 +2157,7 @@ _fal_ring_flow_ctrl_config_set(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t s
 	rv = p_api->ring_flow_ctrl_set(dev_id, ring_id, status);
 	return rv;
 }
-
+#endif
 sw_error_t
 _fal_port_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 {
@@ -2170,6 +2171,13 @@ _fal_port_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 
 	rv = p_api->adpt_port_cnt_flush(dev_id, port_id);
 	return rv;
+}
+
+static sw_error_t
+_fal_port_combo_link_status_get (a_uint32_t dev_id, fal_port_t port_id,
+				fal_port_combo_link_status_t * status)
+{
+	return hsl_port_combo_phy_link_status_get(dev_id, port_id, status);;
 }
 
 /*qca808x_start*/
@@ -2917,7 +2925,7 @@ fal_port_link_forcemode_get (a_uint32_t dev_id, fal_port_t port_id,
   FAL_API_UNLOCK;
   return rv;
 }
-
+#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Set congestion drop on a particular port queue.
  * @param[in] dev_id device id
@@ -2957,7 +2965,6 @@ fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id,
   return rv;
 }
 
-#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Set status of back pressure on a particular port.
  * @param[in] dev_id device id
@@ -3185,6 +3192,8 @@ fal_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id,
   return rv;
 }
 /*qca808x_end*/
+#endif
+
 /**
  * @brief Set combo prefer medium  on a particular port.
  * @param[in] dev_id device id
@@ -3223,6 +3232,7 @@ fal_port_combo_prefer_medium_get (a_uint32_t dev_id, a_uint32_t port_id,
   return rv;
 }
 
+#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Get combo  medium  status on a particular port.
  * @param[in] dev_id device id
@@ -3564,7 +3574,7 @@ fal_debug_phycounter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable
   sw_error_t rv;
 
   FAL_API_LOCK;
-  rv = _fal_port_counter_set (dev_id, port_id, enable);
+  rv = _fal_debug_phycounter_set (dev_id, port_id, enable);
   FAL_API_UNLOCK;
   return rv;
 }
@@ -3582,7 +3592,7 @@ fal_debug_phycounter_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enab
   sw_error_t rv;
 
   FAL_API_LOCK;
-  rv = _fal_port_counter_get (dev_id, port_id, enable);
+  rv = _fal_debug_phycounter_get (dev_id, port_id, enable);
   FAL_API_UNLOCK;
   return rv;
 }
@@ -3600,7 +3610,7 @@ fal_debug_phycounter_show (a_uint32_t dev_id, fal_port_t port_id, fal_port_count
   sw_error_t rv;
 
   FAL_API_LOCK;
-  rv = _fal_port_counter_show (dev_id, port_id, port_counter_info);
+  rv = _fal_debug_phycounter_show (dev_id, port_id, port_counter_info);
   FAL_API_UNLOCK;
   return rv;
 }
@@ -3889,7 +3899,6 @@ fal_port_8023ah_get(a_uint32_t dev_id, fal_port_t port_id,
     FAL_API_UNLOCK;
     return rv;
 }
-#endif
 
 sw_error_t
 fal_ring_flow_ctrl_status_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *status)
@@ -3923,7 +3932,7 @@ fal_ring_union_get(a_uint32_t dev_id, a_bool_t *en)
     FAL_API_UNLOCK;
     return rv;
 }
-
+#endif
 sw_error_t
 fal_port_flow_ctrl_thres_set(a_uint32_t dev_id, a_uint32_t port_id,
 		a_uint16_t on_thres, a_uint16_t off_thres)
@@ -3947,7 +3956,7 @@ fal_port_flow_ctrl_thres_get(a_uint32_t dev_id, a_uint32_t port_id,
     FAL_API_UNLOCK;
     return rv;
 }
-
+#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 fal_ring_flow_ctrl_config_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *status)
 {
@@ -3969,6 +3978,7 @@ fal_ring_flow_ctrl_config_set(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t st
     FAL_API_UNLOCK;
     return rv;
 }
+#endif
 
 sw_error_t
 fal_port_cnt_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cfg_t *cnt_cfg)
@@ -4016,6 +4026,25 @@ fal_port_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
     FAL_API_UNLOCK;
 
     return rv;
+}
+
+/**
+ * @brief Get combo fiber mode  on a particular port.
+ * @param[in] dev_id device id
+ * @param[in] port_id port id
+ * @param[in] get combo fiber mode [1000bx or 100fx]
+ * @return SW_OK or error code
+ */
+sw_error_t
+fal_port_combo_link_status_get (a_uint32_t dev_id,
+				fal_port_t port_id, fal_port_combo_link_status_t * status)
+{
+	sw_error_t rv;
+
+	FAL_API_LOCK;
+	rv = _fal_port_combo_link_status_get (dev_id, port_id, status);
+	FAL_API_UNLOCK;
+	return rv;
 }
 
 /*insert flag for outter fal, don't remove it*/
@@ -4074,8 +4103,6 @@ EXPORT_SYMBOL(fal_port_8023az_get);
 EXPORT_SYMBOL(fal_port_mdix_set);
 EXPORT_SYMBOL(fal_port_mdix_get);
 EXPORT_SYMBOL(fal_port_mdix_status_get);
-EXPORT_SYMBOL(fal_port_combo_prefer_medium_set);
-EXPORT_SYMBOL(fal_port_combo_prefer_medium_get);
 EXPORT_SYMBOL(fal_port_combo_medium_status_get);
 EXPORT_SYMBOL(fal_port_combo_fiber_mode_set);
 EXPORT_SYMBOL(fal_port_combo_fiber_mode_get);
@@ -4085,6 +4112,8 @@ EXPORT_SYMBOL(fal_port_remote_loopback_set);
 EXPORT_SYMBOL(fal_port_remote_loopback_get);
 EXPORT_SYMBOL(fal_port_reset);
 #endif
+EXPORT_SYMBOL(fal_port_combo_prefer_medium_set);
+EXPORT_SYMBOL(fal_port_combo_prefer_medium_get);
 EXPORT_SYMBOL(fal_port_power_off);
 EXPORT_SYMBOL(fal_port_power_on);
 #ifndef IN_PORTCONTROL_MINI
@@ -4122,13 +4151,18 @@ EXPORT_SYMBOL(fal_switch_port_loopback_get);
 #ifndef IN_PORTCONTROL_MINI
 EXPORT_SYMBOL(fal_port_8023ah_set);
 EXPORT_SYMBOL(fal_port_8023ah_get);
-#endif
+EXPORT_SYMBOL(fal_port_congestion_drop_set);
+EXPORT_SYMBOL(fal_port_congestion_drop_get);
+EXPORT_SYMBOL(fal_ring_flow_ctrl_thres_set);
+EXPORT_SYMBOL(fal_ring_flow_ctrl_thres_get);
 EXPORT_SYMBOL(fal_ring_flow_ctrl_status_get);
 EXPORT_SYMBOL(fal_ring_union_set);
 EXPORT_SYMBOL(fal_ring_union_get);
 EXPORT_SYMBOL(fal_ring_flow_ctrl_config_get);
 EXPORT_SYMBOL(fal_ring_flow_ctrl_config_set);
+#endif
 EXPORT_SYMBOL(fal_port_cnt_cfg_set);
 EXPORT_SYMBOL(fal_port_cnt_cfg_get);
 EXPORT_SYMBOL(fal_port_cnt_get);
 EXPORT_SYMBOL(fal_port_cnt_flush);
+EXPORT_SYMBOL(fal_port_combo_link_status_get);
