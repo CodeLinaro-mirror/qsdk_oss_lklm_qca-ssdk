@@ -2108,19 +2108,19 @@ static char *ppe_rst_ids[UNIPHY_RST_MAX] = {
 
 #if defined(MPPE)
 static char *port_rst_ids[] = {
+	SSDK_PORT1_RX_RESET_ID,
+	SSDK_PORT1_TX_RESET_ID,
+	SSDK_PORT2_RX_RESET_ID,
+	SSDK_PORT2_TX_RESET_ID
+};
+#else
+static char *port_rst_ids[] = {
 	SSDK_PORT1_RESET_ID,
 	SSDK_PORT2_RESET_ID,
 	SSDK_PORT3_RESET_ID,
 	SSDK_PORT4_RESET_ID,
 	SSDK_PORT5_RESET_ID,
 	SSDK_PORT6_RESET_ID
-};
-#else
-static char *port_rst_ids[] = {
-	SSDK_PORT1_RX_RESET_ID,
-	SSDK_PORT1_TX_RESET_ID,
-	SSDK_PORT2_RX_RESET_ID,
-	SSDK_PORT2_TX_RESET_ID
 };
 #endif
 
