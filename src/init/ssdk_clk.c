@@ -55,6 +55,17 @@ struct reset_control {
 	atomic_t deassert_count;
 	atomic_t triggered_count;
 };
+
+struct clk {
+	struct clk_core	*core;
+	struct device *dev;
+	const char *dev_id;
+	const char *con_id;
+	unsigned long min_rate;
+	unsigned long max_rate;
+	unsigned int exclusive_count;
+	struct hlist_node clks_node;
+};
 #endif
 
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
@@ -77,6 +88,34 @@ struct reset_control *port_mac_rsts[SSDK_MAX_PORT_NUM] = {0};
 	.rst_bits = _rst_bits,		\
 }
 
+#define CLK_LOOKUP(_rcg, _rcg_val, _cdiv, _cdiv_val, _cbc, _clk_id, _en_bit, _rate, _prate, _is_gcc)	\
+{					\
+	.rcg = _rcg,			\
+	.rcg_val = _rcg_val,		\
+	.cdiv = _cdiv,			\
+	.cdiv_val = _cdiv_val,		\
+	.cbc = _cbc,			\
+	.clk_id = _clk_id,		\
+	.en_bit = _en_bit,		\
+	.rate = _rate,			\
+	.prate = _prate,		\
+	.is_gcc = _is_gcc,		\
+}
+
+struct clk_data_t {
+	const char *clk_id;
+	unsigned int rcg;
+	unsigned int rcg_val;
+	unsigned int cdiv;
+	unsigned int cdiv_val;
+	unsigned int cbc;
+	unsigned int cbc_val;
+	unsigned int rate;
+	unsigned int prate;
+	unsigned int en_bit;
+	bool is_gcc;
+};
+
 struct rst_data_t {
 	const char *node_name;
 	unsigned int rst_index;
@@ -92,6 +131,8 @@ struct rst_data_t {
 #define NSSCC_NODE_NAME	"nsscc"
 #define RST_BIT0	BIT(0)
 #define RST_BIT		BIT(2)
+#define EN_BIT		BIT(0)
+#define RCGR_CMD_UPDATE	BIT(0)
 void __iomem *gcc_clk_base_g = NULL;
 void __iomem *nsscc_clk_base_g = NULL;
 
@@ -117,6 +158,326 @@ static struct rst_data_t mppe_rst_tbl[] = {
        RST_LOOKUP(0x428, NSSCC_NODE_NAME, NSS_CC_PORT1_MAC_CLK_ARES, RST_BIT),
        RST_LOOKUP(0x430, NSSCC_NODE_NAME, NSS_CC_PORT2_MAC_CLK_ARES, RST_BIT),
 };
+
+#define PPE_CLK_UNAWARE_RATE	0
+static struct clk_data_t mppe_clk_tbl[] = {
+	/* gcc clock */
+	CLK_LOOKUP(0, 0, 0, 0, 0x34020, GCC_IM_SLEEP_CLK, EN_BIT, 0, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0, 0, 0, 0, 0x3A004, CMN_AHB_CLK, EN_BIT, 0, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0, 0, 0, 0, 0x3A008, CMN_SYS_CLK, EN_BIT, 0, PPE_CLK_UNAWARE_RATE, A_TRUE),
+
+	/* gcc bfdcd clock */
+	CLK_LOOKUP(0x31008, 0x10f, 0, 0, 0x17034, NSSCC_CLK, EN_BIT,
+			NSS_NSSCC_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0x31008, 0x10f, 0, 0, 0x17030, NSSNOC_NSSCC_CLK, EN_BIT,
+			NSS_NSSNOC_NSSCC_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0x31008, 0x10f, 0, 0, 0x16010, UNIPHY0_AHB_CLK, EN_BIT,
+			UNIPHY_AHB_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0x31008, 0x10f, 0, 0, 0x1601C, UNIPHY1_AHB_CLK, EN_BIT,
+			UNIPHY_AHB_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+
+	/* gcc noc & uniphy clock */
+	CLK_LOOKUP(0x2E008, 0x208, 0, 0, 0x17028, NSSNOC_SNOC_CLK, EN_BIT,
+			MPPE_NSS_NSSNOC_SNOC_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0x2E008, 0x208, 0, 0, 0x1707C, NSSNOC_SNOC_1_CLK, EN_BIT,
+			MPPE_NSS_NSSNOC_SNOC_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0x16008, 0x1, 0, 0, 0x1600C, UNIPHY0_SYS_CLK, EN_BIT,
+			APPE_UNIPHY_SYS_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+	CLK_LOOKUP(0x16008, 0x1, 0, 0, 0x16018, UNIPHY1_SYS_CLK, EN_BIT,
+			APPE_UNIPHY_SYS_CLK_RATE, PPE_CLK_UNAWARE_RATE, A_TRUE),
+
+	/* nss ppe clock */
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x428, PORT1_MAC_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x430, PORT2_MAC_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x408, NSS_PPE_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x410, NSS_PPE_CFG_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x420, NSSNOC_PPE_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x424, NSSNOC_PPE_CFG_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x414, NSS_EDMA_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x41C, NSS_EDMA_CFG_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x3F8, NSS_PPE_IPE_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+	CLK_LOOKUP(0x3EC, 0x601, 0, 0, 0x400, NSS_PPE_BTQ_CLK, EN_BIT, MPPE_CLK_RATE,
+			PPE_CLK_UNAWARE_RATE, A_FALSE),
+
+	/* nss port & uniphy port clock */
+	CLK_LOOKUP(0x454, 0x301, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x301, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x303, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x303, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x307, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x307, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x304, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x304, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x318, 0x458, 1, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x318, 0x458, 1, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	/* GMAC used, so 2.5M for 10Mbps 312.5/12.5/10 */
+	CLK_LOOKUP(0x454, 0x318, 0x458, 9, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x318, 0x458, 9, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x301, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x301, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x301, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x301, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x309, 0x458, 0, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x309, 0x458, 0, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x454, 0x318, 0x458, 3, 0x480, NSS_PORT1_RX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x454, 0x318, 0x458, 3, 0x4B4, UNIPHY0_PORT1_RX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x401, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x401, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x403, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x403, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x407, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x407, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x404, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x404, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x418, 0x464, 1, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x418, 0x464, 1, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	/* GMAC used, so 2.5M for 10Mbps 312.5/12.5/10 */
+	CLK_LOOKUP(0x460, 0x418, 0x464, 9, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x418, 0x464, 9, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+
+	CLK_LOOKUP(0x460, 0x401, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x401, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x401, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x401, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x409, 0x464, 0, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x409, 0x464, 0, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x460, 0x418, 0x464, 3, 0x488, NSS_PORT1_TX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x460, 0x418, 0x464, 3, 0x4B8, UNIPHY0_PORT1_TX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	/* port 2 */
+	CLK_LOOKUP(0x46C, 0x301, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x301, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x303, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x303, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x307, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x307, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x304, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x304, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x318, 0x470, 1, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x318, 0x470, 1, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	/* GMAC used, so 2.5M for 10Mbps 312.5/12.5/10 */
+	CLK_LOOKUP(0x46C, 0x318, 0x470, 9, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x318, 0x470, 9, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x301, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x301, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x301, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x301, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x309, 0x470, 0, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x309, 0x470, 0, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x46C, 0x318, 0x470, 3, 0x490, NSS_PORT2_RX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x46C, 0x318, 0x470, 3, 0x4BC, UNIPHY1_PORT5_RX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x401, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x401, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x403, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x403, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			USXGMII_SPEED_5000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x407, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x407, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			USXGMII_SPEED_2500M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x404, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x404, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			USXGMII_SPEED_1000M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x418, 0x47C, 1, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x418, 0x47C, 1, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			USXGMII_SPEED_100M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	/* GMAC used, so 2.5M for 10Mbps 312.5/12.5/10 */
+	CLK_LOOKUP(0x478, 0x418, 0x47C, 9, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x418, 0x47C, 9, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			USXGMII_SPEED_10M_CLK, USXGMII_SPEED_10000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x401, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x401, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			SGMII_PLUS_SPEED_2500M_CLK, SGMII_PLUS_SPEED_2500M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x401, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x401, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			SGMII_SPEED_1000M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x409, 0x47C, 0, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x409, 0x47C, 0, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			SGMII_SPEED_100M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+
+	CLK_LOOKUP(0x478, 0x418, 0x47C, 3, 0x498, NSS_PORT2_TX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+	CLK_LOOKUP(0x478, 0x418, 0x47C, 3, 0x4C0, UNIPHY1_PORT5_TX_CLK, EN_BIT,
+			SGMII_SPEED_10M_CLK, SGMII_SPEED_1000M_CLK, A_FALSE),
+};
+
+struct clk_data_t *ssdk_clock_find(struct clk *clk, unsigned int rate, unsigned int prate)
+{
+	int i = 0;
+	struct clk_data_t *clk_inst = NULL;
+
+	for (i = 0; i < ARRAY_SIZE(mppe_clk_tbl); i++) {
+		clk_inst = &mppe_clk_tbl[i];
+
+		if (!strncmp(clk->con_id, clk_inst->clk_id, strlen(clk->con_id)))
+			if (rate == 0 || (clk_inst->rate == rate &&
+						(clk_inst->prate == PPE_CLK_UNAWARE_RATE ||
+						 clk_inst->prate == prate)))
+					break;
+		clk_inst = NULL;
+	}
+
+	return clk_inst;
+}
+
+a_bool_t ssdk_clock_en_set(struct clk *clk, a_bool_t enable)
+{
+	struct clk_data_t *clk_inst = NULL;
+
+	clk_inst = ssdk_clock_find(clk, 0, PPE_CLK_UNAWARE_RATE);
+	if (!clk_inst) {
+		SSDK_ERROR("Cant find the clock %s\n", clk->con_id);
+		return A_FALSE;
+	}
+
+	if (clk_inst->cbc != 0 && clk_inst->en_bit != 0) {
+		void __iomem *reg_addr = NULL;
+		uint32_t reg_val = 0, reg_val_old = 0;
+
+		if (clk_inst->is_gcc)
+			reg_addr = gcc_clk_base_g + clk_inst->cbc;
+		else
+			reg_addr = nsscc_clk_base_g + clk_inst->cbc;
+
+		reg_val_old = readl(reg_addr);
+		if (enable)
+			reg_val = reg_val_old | clk_inst->en_bit;
+		else
+			reg_val = reg_val_old & ~clk_inst->en_bit;
+
+		if (reg_val_old == reg_val) {
+			SSDK_INFO("%s CLK %s reg: 0x%x, val: 0x%x has no change\n",
+					enable ? "Enable" : "Disable",
+					clk_inst->clk_id, clk_inst->cbc, reg_val);
+		} else {
+			writel(reg_val, reg_addr);
+			SSDK_INFO("%s CLK %s reg: 0x%x, val: 0x%x\n",
+					enable ? "Enable" : "Disable",
+					clk_inst->clk_id, clk_inst->cbc, reg_val);
+		}
+		return A_TRUE;
+	}
+	SSDK_ERROR("CLK %s CBC REG or EN_BIT is not available\n", clk->con_id);
+
+	return A_FALSE;
+}
+
+a_bool_t ssdk_clock_rate_set(struct clk *clk, unsigned int rate);
 
 a_bool_t ssdk_reset_control(struct reset_control *rst, a_uint32_t action)
 {
@@ -210,10 +571,17 @@ void ssdk_clock_rate_set_and_enable(
 #endif
 	clk = of_clk_get_by_name(node, clock_id);
 	if (!IS_ERR(clk)) {
-		if (rate)
-			clk_set_rate(clk, rate);
+		if (rate) {
+#if defined(SSDK_RAW_CLOCK)
+			if (!ssdk_clock_rate_set(clk, rate))
+#endif
+				clk_set_rate(clk, rate);
+		}
 
-		clk_prepare_enable(clk);
+#if defined(SSDK_RAW_CLOCK)
+		if (!ssdk_clock_en_set(clk, A_TRUE))
+#endif
+			clk_prepare_enable(clk);
 	}
 }
 
@@ -313,11 +681,14 @@ void ssdk_uniphy_clock_rate_set(
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	struct clk *uniphy_clk;
 
+#if 0
 	if(ssdk_is_emulation(dev_id)){
 		SSDK_INFO("clock_type %d rate %d on emulation platform\n",
 					clock_type, rate);
 		return;
 	}
+#endif
+
 #if defined(APPE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0))
 	if ((clock_type == NSS_PORT5_RX_CLK_E) ||
 		(clock_type == NSS_PORT5_TX_CLK_E)) {
@@ -340,9 +711,13 @@ void ssdk_uniphy_clock_rate_set(
 #endif
 	uniphy_clk = uniphy_port_clks[clock_type];
 	if (!IS_ERR(uniphy_clk)) {
-		if (rate)
-			if (clk_set_rate(uniphy_clk, rate))
-				SSDK_INFO("%d set rate=%d fail\n", clock_type, rate);
+		if (rate) {
+#if defined(SSDK_RAW_CLOCK)
+			if (!ssdk_clock_rate_set(uniphy_clk, rate))
+#endif
+				if (clk_set_rate(uniphy_clk, rate))
+					SSDK_INFO("%d set rate=%d fail\n", clock_type, rate);
+		}
 	} else
 		SSDK_INFO("%d set rate %x fail!\n", clock_type, rate);
 #endif
@@ -357,11 +732,14 @@ void ssdk_uniphy_clock_enable(
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	struct clk *uniphy_clk;
 
+#if 0
 	if(ssdk_is_emulation(dev_id)){
 		SSDK_INFO("clock_type %d enable %d on emulation platform\n",
 					clock_type, enable);
 		return;
 	}
+#endif
+
 #if defined(APPE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0))
 	if ((clock_type == UNIPHY0_PORT5_RX_CLK_E) ||
 		(clock_type == UNIPHY0_PORT5_TX_CLK_E)) {
@@ -384,11 +762,16 @@ void ssdk_uniphy_clock_enable(
 #endif
 	uniphy_clk = uniphy_port_clks[clock_type];
 	if (!IS_ERR(uniphy_clk)) {
-		if (enable) {
-			if (clk_prepare_enable(uniphy_clk))
-				SSDK_ERROR("clock enable fail!\n");
-		} else
-			clk_disable_unprepare(uniphy_clk);
+#if defined(SSDK_RAW_CLOCK)
+		if (!ssdk_clock_en_set(uniphy_clk, enable))
+#endif
+		{
+			if (enable) {
+				if (clk_prepare_enable(uniphy_clk))
+					SSDK_ERROR("clock enable fail!\n");
+			} else
+				clk_disable_unprepare(uniphy_clk);
+		}
 	} else {
 		SSDK_DEBUG("clock_type= %d enable=%d not find\n",
 				clock_type, enable);
@@ -598,6 +981,75 @@ static void ssdk_ppe_uniphy_clock_init(ssdk_chip_type chip_ver,
 
 	return;
 }
+
+#if defined(SSDK_RAW_CLOCK)
+a_bool_t ssdk_clock_rate_set(struct clk *clk, unsigned int rate)
+{
+	struct clk_data_t *clk_inst = NULL;
+	void __iomem *clk_base = NULL;
+	uint32_t reg_val = 0, clk_id = 0xff;
+	unsigned int prate = PPE_CLK_UNAWARE_RATE;
+
+	if (strstr(clk->con_id, "port1_rx"))
+		clk_id = SSDK_UNIPHY_INSTANCE0 * 2 + UNIPHY_RX;
+	else if (strstr(clk->con_id, "port1_tx"))
+		clk_id = SSDK_UNIPHY_INSTANCE0 * 2 + UNIPHY_TX;
+	else if (strstr(clk->con_id, "port2_rx"))
+		clk_id = SSDK_UNIPHY_INSTANCE1 * 2 + UNIPHY_RX;
+	else if (strstr(clk->con_id, "port2_tx"))
+		clk_id = SSDK_UNIPHY_INSTANCE1 * 2 + UNIPHY_TX;
+
+	if (clk_id != 0xff) {
+		prate = clk_get_rate(uniphy_raw_clks[clk_id]->clk);
+		SSDK_INFO("UNIPHY CLK %s prate: %d for the clock %s rate %d set\n",
+				__clk_get_name(uniphy_raw_clks[clk_id]->clk), prate,
+				clk->con_id, rate);
+	}
+
+	clk_inst = ssdk_clock_find(clk, rate, prate);
+	if (!clk_inst) {
+		SSDK_ERROR("Cant find the clock %s\n", clk->con_id);
+		return A_FALSE;
+	}
+
+	if (clk_inst->is_gcc)
+		clk_base = gcc_clk_base_g;
+	else
+		clk_base = nsscc_clk_base_g;
+
+	if (clk_inst->rcg != 0) {
+		reg_val = readl(clk_base + clk_inst->rcg);
+
+		if (reg_val != clk_inst->rcg_val) {
+			writel(clk_inst->rcg_val, clk_base + clk_inst->rcg);
+			SSDK_INFO("CLK %s rate: %d RCG: 0x%x, val: 0x%x\n", clk_inst->clk_id,
+					rate, clk_inst->rcg, clk_inst->rcg_val);
+
+			/* Update cmd register */
+			reg_val = readl(clk_base + clk_inst->rcg - 4);
+			reg_val |= RCGR_CMD_UPDATE;
+			writel(reg_val, clk_base + clk_inst->rcg - 4);
+			usleep_range(1000, 1100);
+			SSDK_INFO("CLK %s rate: %d CMD: 0x%x, write val: 0x%x read val: 0x%x\n",
+					clk_inst->clk_id, rate, clk_inst->rcg - 4,
+					reg_val, readl(clk_base + clk_inst->rcg - 4));
+		}
+
+	}
+
+	if (clk_inst->cdiv != 0) {
+		reg_val = readl(clk_base + clk_inst->cdiv);
+
+		if (reg_val != clk_inst->cdiv_val) {
+			writel(clk_inst->cdiv_val, clk_base + clk_inst->cdiv);
+			SSDK_INFO("CLK %s rate: %d CDIV: 0x%x, val: 0x%x\n", clk_inst->clk_id,
+					rate, clk_inst->cdiv, clk_inst->cdiv_val);
+		}
+	}
+
+	return A_TRUE;
+}
+#endif
 
 static void ssdk_ppe_fixed_clock_init(a_uint32_t revision)
 {
