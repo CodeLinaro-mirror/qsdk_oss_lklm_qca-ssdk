@@ -2203,23 +2203,8 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	}
 
 	if (uniphy_index > uniphy_max) {
-		SSDK_ERROR("Unsupported uniphy index: %d\n", uniphy_index);
 		return;
 	}
-
-#if defined(APPE)
-	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") &&
-			uniphy_index == SSDK_UNIPHY_INSTANCE1) {
-		a_uint32_t mode0, mode1;
-
-		mode0 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
-		mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
-		if ((mode0 == PORT_WRAPPER_PSGMII) && (mode1 == PORT_WRAPPER_MAX)) {
-			SSDK_INFO("Uniphy instance %d unavailable\n", uniphy_index);
-			return;
-		}
-	}
-#endif
 
 #if defined(MPPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
@@ -2230,6 +2215,19 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 #endif
 	{
 		rst_type[index++] = uniphy_soft_rst[uniphy_index];
+#if defined(APPE)
+		if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") &&
+				uniphy_index == SSDK_UNIPHY_INSTANCE1) {
+			a_uint32_t mode0, mode1;
+
+			mode0 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
+			mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
+			if ((mode0 == PORT_WRAPPER_PSGMII) && (mode1 == PORT_WRAPPER_MAX)) {
+				/* do not reset uniphy_port5 as it's used by uniphy0 */
+				index--;
+			}
+		}
+#endif
 	}
 
 #if defined(APPE)
