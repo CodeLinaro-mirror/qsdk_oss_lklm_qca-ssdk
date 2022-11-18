@@ -2799,6 +2799,13 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
 		{
 			rv = adpt_hppe_port_mac_speed_set(dev_id, port_id, FAL_SPEED_2500);
 			rv = adpt_hppe_port_mac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
+#if defined(MPPE)
+			if (adpt_ppe_type_get(dev_id) == MPPE_TYPE)
+			{
+				rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id, port_id);
+				SW_RTN_ON_ERROR(rv);
+			}
+#endif
 		}
 		else
 		{
