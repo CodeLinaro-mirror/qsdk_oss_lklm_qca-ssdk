@@ -264,10 +264,6 @@ ifeq ($(SoC),$(filter $(SoC),ipq40xx ipq806x))
 	CHIP_TYPE=NONHK_CHIP
 endif
 
-ifeq ($(SoC),$(filter $(SoC),ipq53xx))
-	PTP_FEATURE=disable
-endif
-
 #############################################
 # PHY CHIP Features According To Switch     #
 #############################################
