@@ -461,12 +461,12 @@ a_bool_t ssdk_clock_en_set(struct clk *clk, a_bool_t enable)
 			reg_val = reg_val_old & ~clk_inst->en_bit;
 
 		if (reg_val_old == reg_val) {
-			SSDK_INFO("%s CLK %s reg: 0x%x, val: 0x%x has no change\n",
+			SSDK_DEBUG("%s CLK %s reg: 0x%x, val: 0x%x has no change\n",
 					enable ? "Enable" : "Disable",
 					clk_inst->clk_id, clk_inst->cbc, reg_val);
 		} else {
 			writel(reg_val, reg_addr);
-			SSDK_INFO("%s CLK %s reg: 0x%x, val: 0x%x\n",
+			SSDK_DEBUG("%s CLK %s reg: 0x%x, val: 0x%x\n",
 					enable ? "Enable" : "Disable",
 					clk_inst->clk_id, clk_inst->cbc, reg_val);
 		}
@@ -533,7 +533,7 @@ a_bool_t ssdk_reset_control(struct reset_control *rst, a_uint32_t action)
 			reg_val &= ~rst_inst->rst_bits;
 
 		writel(reg_val, clk_base + rst_inst->cbc);
-		SSDK_INFO("%s reset_id: %d CBC reg: 0x%x, val: 0x%x\n",
+		SSDK_DEBUG("%s reset_id: %d CBC reg: 0x%x, val: 0x%x\n",
 				action == SSDK_RESET_ASSERT ? "Assert" : "Deassert",
 				rst->id, rst_inst->cbc, reg_val);
 
@@ -1001,7 +1001,7 @@ a_bool_t ssdk_clock_rate_set(struct clk *clk, unsigned int rate)
 
 	if (clk_id != 0xff) {
 		prate = clk_get_rate(uniphy_raw_clks[clk_id]->clk);
-		SSDK_INFO("UNIPHY CLK %s prate: %d for the clock %s rate %d set\n",
+		SSDK_DEBUG("UNIPHY CLK %s prate: %d for the clock %s rate %d set\n",
 				__clk_get_name(uniphy_raw_clks[clk_id]->clk), prate,
 				clk->con_id, rate);
 	}
@@ -1022,7 +1022,7 @@ a_bool_t ssdk_clock_rate_set(struct clk *clk, unsigned int rate)
 
 		if (reg_val != clk_inst->rcg_val) {
 			writel(clk_inst->rcg_val, clk_base + clk_inst->rcg);
-			SSDK_INFO("CLK %s rate: %d RCG: 0x%x, val: 0x%x\n", clk_inst->clk_id,
+			SSDK_DEBUG("CLK %s rate: %d RCG: 0x%x, val: 0x%x\n", clk_inst->clk_id,
 					rate, clk_inst->rcg, clk_inst->rcg_val);
 
 			/* Update cmd register */
@@ -1030,7 +1030,7 @@ a_bool_t ssdk_clock_rate_set(struct clk *clk, unsigned int rate)
 			reg_val |= RCGR_CMD_UPDATE;
 			writel(reg_val, clk_base + clk_inst->rcg - 4);
 			usleep_range(1000, 1100);
-			SSDK_INFO("CLK %s rate: %d CMD: 0x%x, write val: 0x%x read val: 0x%x\n",
+			SSDK_DEBUG("CLK %s rate: %d CMD: 0x%x, write val: 0x%x read val: 0x%x\n",
 					clk_inst->clk_id, rate, clk_inst->rcg - 4,
 					reg_val, readl(clk_base + clk_inst->rcg - 4));
 		}
@@ -1042,7 +1042,7 @@ a_bool_t ssdk_clock_rate_set(struct clk *clk, unsigned int rate)
 
 		if (reg_val != clk_inst->cdiv_val) {
 			writel(clk_inst->cdiv_val, clk_base + clk_inst->cdiv);
-			SSDK_INFO("CLK %s rate: %d CDIV: 0x%x, val: 0x%x\n", clk_inst->clk_id,
+			SSDK_DEBUG("CLK %s rate: %d CDIV: 0x%x, val: 0x%x\n", clk_inst->clk_id,
 					rate, clk_inst->cdiv, clk_inst->cdiv_val);
 		}
 	}
