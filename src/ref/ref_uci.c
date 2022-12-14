@@ -3200,11 +3200,6 @@ parse_portvlan_ptqinqmode(struct switch_val *val)
 		else if (!strcmp(ext_value_p->option_name, "tunnel_qinq_role")) {
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		}
-#if defined(MPPE)
-		else if (!strcmp(ext_value_p->option_name, "tunnel_ingress_port_select")) {
-			val_ptr[5] = (char*)ext_value_p->option_value;
-		}
-#endif
 #endif
 		else {
 			rv = -1;
@@ -8819,21 +8814,6 @@ parse_acl_action_field(struct switch_ext *ext_value_p, fal_acl_rule_t *rule)
 		rule->policy_id = tmpdata & 0xffff;
 	}
 #endif
-#if defined(MPPE)
-	else if(!strcmp(ext_value_p->option_name, "metadata_pri")) {
-		cmd_data_check_uint8((char*)ext_value_p->option_value,
-			&tmpdata, sizeof(tmpdata));
-		rule->metadata_pri = tmpdata & 0xf;
-	} else if(!strcmp(ext_value_p->option_name, "cookie_val")) {
-		cmd_data_check_uint16((char*)ext_value_p->option_value,
-			&(tmpdata), sizeof(tmpdata));
-		rule->cookie_val = tmpdata & 0xffff;
-	} else if(!strcmp(ext_value_p->option_name, "cookie_pri")) {
-		cmd_data_check_uint8((char*)ext_value_p->option_value,
-			&tmpdata, sizeof(tmpdata));
-		rule->cookie_pri = tmpdata & 0xf;
-	}
-#endif
 	return SW_OK;
 }
 
@@ -9809,19 +9789,6 @@ parse_flow_entry(struct switch_val *val)
 			val_ptr[35] = (char*)ext_value_p->option_value;
 		}
 #endif
-#if defined(MPPE)
-		else if (!strcmp(ext_value_p->option_name, "qos_type")) {
-			val_ptr[36] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "bridge_nexthop_valid")) {
-			val_ptr[37] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "bridge_nexthop")) {
-			val_ptr[38] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "policer_valid")) {
-			val_ptr[39] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "policer_index")) {
-			val_ptr[40] = (char*)ext_value_p->option_value;
-		}
-#endif
 		else {
 			rv = -1;
 			break;
@@ -10006,9 +9973,6 @@ static const char *flow_global[] = {
 	"ptmu_fail_df_deacclr_en",
 	"l2_vpn_en",
 	"l3_vpn_en",
-#endif
-#if defined(MPPE)
-	"flow_cookie_pri",
 #endif
 };
 
@@ -10705,7 +10669,6 @@ parse_qm_cnt(struct switch_val *val)
 	return rv;
 }
 
-#if !defined(IN_QM_MINI)
 static int
 parse_qm_enqueue(struct switch_val *val)
 {
@@ -10734,7 +10697,6 @@ parse_qm_enqueue(struct switch_val *val)
 
 	return rv;
 }
-#endif
 
 static int
 parse_qm_srcprofile(struct switch_val *val)
@@ -10845,84 +10807,6 @@ parse_servcode_loopcheck(struct switch_val *val)
 	return rv;
 }
 
-#if defined(MPPE)
-static int
-parse_servcode_portservcode(struct switch_val *val)
-{
-	struct switch_ext *switch_ext_p, *ext_value_p;
-	int rv = 0;
-
-	switch_ext_p = val->value.ext_val;
-	while (switch_ext_p) {
-		ext_value_p = switch_ext_p;
-
-		if (!strcmp(ext_value_p->option_name, "name")) {
-			switch_ext_p = switch_ext_p->next;
-			continue;
-		} else if (!strcmp(ext_value_p->option_name, "port_id")) {
-			val_ptr[0] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "servcode_id")) {
-			val_ptr[1] = (char*)ext_value_p->option_value;
-		}  else {
-			rv = -1;
-			break;
-		}
-
-		parameter_length++;
-		switch_ext_p = switch_ext_p->next;
-	}
-
-	return rv;
-}
-
-static int
-parse_servcode_athtag(a_uint32_t dev_id, struct switch_val *val)
-{
-	struct switch_ext *switch_ext_p, *ext_value_p;
-	int rv = 0;
-	a_uint32_t tmpdata = 0, servcode_index = 0;
-	fal_servcode_athtag_t entry = {0};
-
-	switch_ext_p = val->value.ext_val;
-	while (switch_ext_p) {
-		ext_value_p = switch_ext_p;
-
-		if (!strcmp(ext_value_p->option_name, "name")) {
-			switch_ext_p = switch_ext_p->next;
-			continue;
-		} else if (!strcmp(ext_value_p->option_name, "servcode_id")) {
-			cmd_data_check_uint32((char*)ext_value_p->option_value,
-						&servcode_index, sizeof(a_uint32_t));
-		} else if(!strcmp(ext_value_p->option_name, "athtag_en")) {
-			cmd_data_check_confirm((char*)ext_value_p->option_value, A_FALSE,
-						&(entry.athtag_en), sizeof(entry.athtag_en));
-			entry.athtag_update_bitmap |= BIT(FLD_UPDATE_ATH_TAG_INSERT);
-		} else if (!strcmp(ext_value_p->option_name, "athtag_action")) {
-			cmd_data_check_attr("athtag_action", (char*)ext_value_p->option_value,
-						&tmpdata, sizeof(tmpdata));
-			entry.action = tmpdata & 0x7;
-			entry.athtag_update_bitmap |= BIT(FLD_UPDATE_ATH_TAG_ACTION);
-		} else if(!strcmp(ext_value_p->option_name, "athtag_bypass_fwd_en")) {
-			cmd_data_check_confirm((char*)ext_value_p->option_value, A_FALSE,
-					&(entry.bypass_fwd_en), sizeof(entry.bypass_fwd_en));
-			entry.athtag_update_bitmap |= BIT(FLD_UPDATE_ATH_TAG_BYPASS_FWD_EN);
-		} else if(!strcmp(ext_value_p->option_name, "athtag_dest_port")) {
-			cmd_data_check_uint8((char*)ext_value_p->option_value,
-					&tmpdata, sizeof(a_uint32_t));
-			entry.dest_port = tmpdata & 0x7f;
-			entry.athtag_update_bitmap |= BIT(FLD_UPDATE_ATH_TAG_DEST_PORT);
-		}  else if(!strcmp(ext_value_p->option_name, "athtag_field_disable")) {
-			cmd_data_check_confirm((char*)ext_value_p->option_value, A_FALSE,
-					&(entry.field_disable), sizeof(entry.field_disable));
-			entry.athtag_update_bitmap |= BIT(FLD_UPDATE_ATH_TAG_FIELD_DISABLE);
-		}
-		switch_ext_p = switch_ext_p->next;
-	}
-	rv = fal_servcode_athtag_set(dev_id, servcode_index, &entry);
-	SSDK_DEBUG("uci set servcode athtag rv %d\n", rv);
-	return rv;
-}
-#endif
 #endif
 
 #ifdef IN_CTRLPKT
@@ -12888,10 +12772,8 @@ parse_qm(const char *command_name, struct switch_val *val)
 		rv = parse_qm_cntctrl(val);
 	} else if (!strcmp(command_name, "Cnt")) {
 		rv = parse_qm_cnt(val);
-#if !defined(IN_QM_MINI)
 	} else if (!strcmp(command_name, "Enqueue")) {
 		rv = parse_qm_enqueue(val);
-#endif
 	} else if (!strcmp(command_name, "Srcprofile")) {
 		rv = parse_qm_srcprofile(val);
 	}
@@ -12916,12 +12798,6 @@ parse_servcode(a_uint32_t dev_id, const char *command_name, struct switch_val *v
 		rv = parse_servcode_config(val);
 	} else if (!strcmp(command_name, "Loopcheck")) {
 		rv = parse_servcode_loopcheck(val);
-#if defined(MPPE)
-	} else if (!strcmp(command_name, "PortServcode")) {
-		rv = parse_servcode_portservcode(val);
-	} else if (!strcmp(command_name, "Athtag")) {
-		rv = parse_servcode_athtag(dev_id, val);
-#endif
 	}
 
 	return rv;

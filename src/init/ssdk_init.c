@@ -2033,12 +2033,6 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 		}
 #endif
 	} else {
-#ifdef MPPE
-		if (chip_type == CHIP_APPE &&
-			adpt_chip_revision_get(priv->device_id) == MPPE_REVISION) {
-			priv->ports = 3;
-		} else
-#endif
 			priv->ports = SSDK_MAX_PORT_NUM;
 	}
 

@@ -176,13 +176,6 @@ _adpt_appe_acl_ext_set(a_uint32_t dev_id, fal_acl_rule_t * rule,
 				hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index,
 				&reg_val);
 			reg_val.bf.policy_id = rule->policy_id;
-#if defined(MPPE)
-			if(adpt_chip_revision_get(dev_id) == MPPE_REVISION)
-			{
-				reg_val.bf.cookie = rule->cookie_val;
-				reg_val.bf.cookie_pri = rule->cookie_pri;
-			}
-#endif
 			rv = appe_eg_ipo_ext_tbl_set(dev_id,
 				hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index,
 				&reg_val);
@@ -205,13 +198,6 @@ _adpt_appe_acl_ext_get(a_uint32_t dev_id,
 			hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index, &reg_val);
 
 	rule->policy_id = reg_val.bf.policy_id;
-#if defined(MPPE)
-	if(adpt_chip_revision_get(dev_id) == MPPE_REVISION)
-	{
-		rule->cookie_val = reg_val.bf.cookie;
-		rule->cookie_pri = reg_val.bf.cookie_pri;
-	}
-#endif
 	return rv;
 }
 
@@ -465,12 +451,6 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_METADATA_EN))
 	{
 		hw_act->bf.metadata_en = 1;
-#if defined(MPPE)
-		if(adpt_chip_revision_get(dev_id) == MPPE_REVISION)
-		{
-			hw_act->bf.metadata_pri = rule->metadata_pri;
-		}
-#endif
 	}
 
 	hw_act->bf.qos_res_prec = rule->qos_res_prec;
@@ -807,12 +787,6 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.metadata_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_METADATA_EN);
-#if defined(MPPE)
-		if(adpt_chip_revision_get(dev_id) == MPPE_REVISION)
-		{
-			rule->metadata_pri = hw_act->bf.metadata_pri;
-		}
-#endif
 	}
 
 	rule->qos_res_prec = hw_act->bf.qos_res_prec;
