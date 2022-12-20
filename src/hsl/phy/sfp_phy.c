@@ -24,6 +24,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/phy.h>
+#include <linux/gpio.h>
 #include "ssdk_plat.h"
 #include "ssdk_phy_i2c.h"
 #include "ssdk_dts.h"
@@ -208,6 +209,7 @@ static void sfp_features_init(void)
 		ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
 		ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
 		ETHTOOL_LINK_MODE_2500baseX_Full_BIT,
+		ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
 		ETHTOOL_LINK_MODE_Pause_BIT,
 		ETHTOOL_LINK_MODE_Asym_Pause_BIT,
 		ETHTOOL_LINK_MODE_Autoneg_BIT,
@@ -255,6 +257,70 @@ void sfp_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 }
 
+static a_uint16_t sfp_part_num[5] = {0x3330, 0x2d31, 0x3539, 0x392d, 0x3032};
+
+a_bool_t
+sfp_phy_part_number_check(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint16_t reg_data[5] = {0}, i = 0;
+
+	for (i = 0; i < 5; i++) {
+		rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_ADDR,
+			SFP_E2PROM_PART_NUM_OFFSET + i *2, &reg_data[i]);
+		if (rv != SW_OK)
+			return A_FALSE;
+		if (sfp_part_num[i] != reg_data[i])
+			return A_FALSE;
+	}
+	return A_TRUE;
+}
+
+a_bool_t
+sfp_phy_usxgmii_check(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	if (sfp_phy_part_number_check(dev_id, port_id) == A_TRUE) {
+		sw_error_t rv = SW_OK;
+		a_uint16_t reg_data = 0;
+		rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+			SFP_EXTEND_USXGMII_OFFSET, &reg_data);
+		if (rv != SW_OK)
+			return A_FALSE;
+		if ((reg_data >> 8) & 0x1) {
+			return A_TRUE;
+		}
+	}
+	return A_FALSE;
+}
+
+a_bool_t
+sfp_phy_present_status_check(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_bool_t mod_present_status = A_FALSE;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	/*if sfp_mode_present_pin is available, then need to check it*/
+	if(priv && priv->sfp_mod_present_pin[port_id] != SSDK_INVALID_GPIO)
+	{
+		rv = sfp_phy_mod_present_status_get(dev_id, port_id,
+			&mod_present_status);
+		if (rv != SW_OK)
+			return A_FALSE;
+		/*if sfp mod is not present, so no need to read SFP module with I2C*/
+		if(!mod_present_status)
+		{
+			SSDK_DEBUG("port%d sfp mod is not present now\n", port_id);
+			return A_FALSE;
+		} else {
+			return A_TRUE;
+		}
+	} else {
+		/* backword compatible without present_pin case */
+		return A_TRUE;
+	}
+}
+
 sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 	a_uint32_t port_id, fal_port_interface_mode_t *interface_mode_status)
 {
@@ -263,6 +329,10 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 	a_uint16_t sfp_type = 0;
 	struct phy_device *phydev;
 	ssdk_port_phyinfo *port_phyinfo;
+
+	if (sfp_phy_present_status_check(dev_id, port_id) == A_FALSE) {
+		return SW_OK;
+	}
 
 	port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
 	SW_RTN_ON_NULL(port_phyinfo);
@@ -301,7 +371,10 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 	}
 	else if(sfp_speed >= SFP_SPEED_10000M)
 	{
-		*interface_mode_status =  PORT_10GBASE_R;
+		*interface_mode_status = PORT_10GBASE_R;
+		if (sfp_phy_usxgmii_check(dev_id, port_id) == A_TRUE) {
+			*interface_mode_status = PORT_USXGMII;
+		}
 	}
 	else if(sfp_speed >= SFP_SPEED_2500M &&
 		sfp_speed < SFP_SPEED_5000M)
@@ -345,3 +418,181 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+
+sw_error_t
+sfp_phy_rx_los_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *rx_los_status)
+{
+	a_uint32_t rx_los_pin = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	rx_los_pin = priv->sfp_rx_los_pin[port_id];
+	if(rx_los_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	*rx_los_status = gpio_get_value(rx_los_pin);
+	SSDK_DEBUG("port%d sfp rx_los_pin is %d, the rx_los_status is %d",
+		port_id, rx_los_pin, *rx_los_status);
+
+	return SW_OK;
+}
+
+sw_error_t
+sfp_phy_tx_dis_status_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t tx_dis_status)
+{
+	a_uint32_t tx_dis_pin = 0;
+	int ret = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	tx_dis_pin = priv->sfp_tx_dis_pin[port_id];
+	if(tx_dis_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	ret = gpio_request(tx_dis_pin, "sfp_tx_dis_pin");
+	if(ret)
+	{
+		SSDK_ERROR("tx_dis_pin request failed, ret:%d\n", ret);
+		return SW_FAIL;
+	}
+	ret = gpio_direction_output(tx_dis_pin, tx_dis_status);
+	gpio_free(tx_dis_pin);
+	if(ret)
+	{
+		SSDK_ERROR("tx_dis_pin configure faied, ret:%d\n", ret);
+		return SW_FAIL;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+sfp_phy_tx_dis_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *tx_dis_status)
+{
+	a_uint32_t tx_dis_pin = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	tx_dis_pin = priv->sfp_tx_dis_pin[port_id];
+	if(tx_dis_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	*tx_dis_status = gpio_get_value(tx_dis_pin);
+	SSDK_DEBUG("port%d sfp tx_dis_pin is %d, the tx_dis_status is %d",
+		port_id, tx_dis_pin, *tx_dis_status);
+
+	return SW_OK;
+}
+
+sw_error_t
+sfp_phy_mod_present_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t *mod_present_status)
+{
+	a_uint32_t mod_present_pin = 0;
+	a_bool_t mod_present_pin_status = A_FALSE;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if(!priv)
+		return SW_NOT_INITIALIZED;
+	mod_present_pin = priv->sfp_mod_present_pin[port_id];
+	if(mod_present_pin == SSDK_INVALID_GPIO)
+	{
+		return SW_NOT_FOUND;
+	}
+	mod_present_pin_status = gpio_get_value(mod_present_pin);
+	SSDK_DEBUG("port%d sfp mod_present_pin is %d, mod_present_pin_status is %d",
+		port_id, mod_present_pin, mod_present_pin_status);
+	if(mod_present_pin_status)
+		*mod_present_status = A_FALSE;
+	else
+		*mod_present_status = A_TRUE;
+
+	return SW_OK;
+}
+
+
+sw_error_t
+sfp_phy_port_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+		struct port_phy_status *phy_status)
+{
+	sw_error_t rv = SW_OK;
+	a_uint16_t reg_data = 0, phy_link = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (sfp_phy_present_status_check(dev_id, port_id) == A_FALSE) {
+		return SW_OK;
+	}
+
+	if (sfp_phy_part_number_check(dev_id, port_id) == A_TRUE) {
+		rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+			SFP_EXTEND_LINK_OFFSET, &reg_data);
+		SW_RTN_ON_ERROR(rv);
+
+		phy_link = (reg_data >> 8) & 0x1;
+		if (phy_link) {
+			a_uint16_t speed_data = 0xff, retries = 50;
+			phy_status->link_status = PORT_LINK_UP;
+			if (reg_data & 0x1) {
+				phy_status->duplex = FAL_HALF_DUPLEX;
+			} else {
+				phy_status->duplex = FAL_FULL_DUPLEX;
+			}
+			rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+					SFP_EXTEND_SPEED_OFFSET, &reg_data);
+			SW_RTN_ON_ERROR(rv);
+			speed_data = (reg_data >> 0x8) & 0x7;
+			while ((speed_data != SFP_PHY_SPEED_10000M) &&
+				(speed_data != SFP_PHY_SPEED_5000M) &&
+				(speed_data != SFP_PHY_SPEED_2500M) &&
+				(speed_data != SFP_PHY_SPEED_1000M) &&
+				(speed_data != SFP_PHY_SPEED_100M)) {
+				aos_mdelay(10);
+				if (retries-- == 0) {
+					SSDK_ERROR("usxgmii sfp port speed sync failed!\n");
+					break;
+				}
+				rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+					SFP_EXTEND_SPEED_OFFSET, &reg_data);
+				SW_RTN_ON_ERROR(rv);
+				speed_data = (reg_data >> 0x8) & 0x7;
+			}
+			switch (speed_data) {
+				case SFP_PHY_SPEED_10000M:
+					phy_status->speed = FAL_SPEED_10000;
+					break;
+				case SFP_PHY_SPEED_5000M:
+					phy_status->speed = FAL_SPEED_5000;
+					break;
+				case SFP_PHY_SPEED_2500M:
+					phy_status->speed = FAL_SPEED_2500;
+					break;
+				case SFP_PHY_SPEED_1000M:
+					phy_status->speed = FAL_SPEED_1000;
+					break;
+				case SFP_PHY_SPEED_100M:
+					phy_status->speed = FAL_SPEED_100;
+					break;
+				default:
+					phy_status->speed = FAL_SPEED_BUTT;
+					break;
+			}
+		} else {
+			phy_status->link_status = PORT_LINK_DOWN;
+			phy_status->speed = FAL_SPEED_BUTT;
+			phy_status->duplex = FAL_DUPLEX_BUTT;
+		}
+	}
+
+	return rv;
+}
+
