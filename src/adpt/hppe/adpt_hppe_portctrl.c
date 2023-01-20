@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -149,8 +149,7 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 	if (port_id == SSDK_PHYSICAL_PORT5)
 	{
 #if defined(CPPE)
-		if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-			adpt_chip_revision_get(dev_id) == CPPE_REVISION)
+		if (adpt_ppe_type_get(dev_id) == CPPE_TYPE)
 		{
 			rv = cppe_port5_pcs1_phy_status_get(dev_id,
 					&reg_field);
@@ -164,6 +163,23 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 			SW_RTN_ON_ERROR(rv);
 		}
 	} else if (port_id == SSDK_PHYSICAL_PORT1) {
+#if defined(MPPE)
+		/*MPPE need to check rx los by software when port 1 is SFP port*/
+		/*because hw only support one rx los function*/
+		if(adpt_ppe_type_get(dev_id) == MPPE_TYPE && hsl_port_is_sfp(dev_id, port_id))
+		{
+			a_bool_t rx_los_status = A_TRUE;
+			rv = sfp_phy_rx_los_status_get(dev_id, port_id, &rx_los_status);
+			SW_RTN_ON_ERROR(rv);
+			if(rx_los_status)
+			{
+				phy_status->link_status = PORT_LINK_DOWN;
+				phy_status->speed = FAL_SPEED_BUTT;
+				phy_status->duplex = FAL_DUPLEX_BUTT;
+				return SW_OK;
+			}
+		}
+#endif
 		/*mac0 port1 as 1G sfp mode*/
 		rv = hppe_port_phy_status_0_port1_phy_status_get(dev_id,
 				&reg_field);
@@ -1203,8 +1219,7 @@ adpt_ppe_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t max_frame)
 {
 #ifdef CPPE
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION &&
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
 		port_id == SSDK_PHYSICAL_PORT6)
 	{
 		return adpt_cppe_lpbk_max_frame_size_set(dev_id, port_id, max_frame);
@@ -1903,8 +1918,7 @@ adpt_ppe_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t *max_frame)
 {
 #ifdef CPPE
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION &&
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE&&
 		port_id == SSDK_PHYSICAL_PORT6)
 	{
 		return adpt_cppe_lpbk_max_frame_size_get(dev_id, port_id, max_frame);
@@ -2043,6 +2057,8 @@ adpt_hppe_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	{
 		rv = _adpt_hppe_port_txfc_status_set(dev_id, port_id, enable);
 		SW_RTN_ON_ERROR(rv);
+
+#if defined(IN_SFP_PHY)
 		if(hsl_port_is_sfp(dev_id, port_id))
 		{
 			rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_addr);
@@ -2059,8 +2075,8 @@ adpt_hppe_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 					FAL_PHY_ADV_ASY_PAUSE, 0);
 				SW_RTN_ON_ERROR(rv);
 			}
-
 		}
+#endif
 	}
 	else
 	{
@@ -2127,6 +2143,7 @@ adpt_hppe_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 		{
 			rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_addr);
 			SW_RTN_ON_ERROR(rv);
+#if defined(IN_SFP_PHY)
 			if(enable)
 			{
 				rv = sfp_phy_phydev_adv_update(dev_id, phy_addr, FAL_PHY_ADV_PAUSE |
@@ -2140,6 +2157,7 @@ adpt_hppe_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 					FAL_PHY_ADV_ASY_PAUSE, 0);
 				SW_RTN_ON_ERROR(rv);
 			}
+#endif
 		}
 	}
 	else
@@ -2403,8 +2421,7 @@ adpt_hppe_port_flowctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t txfc_enable, rxfc_enable;
 
 #if defined(CPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION &&
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
 		port_id == SSDK_PHYSICAL_PORT6) {
 		return adpt_cppe_switch_port_loopback_flowctrl_get(dev_id,
 				port_id, enable);
@@ -2763,14 +2780,15 @@ adpt_hppe_port_mac_speed_set(a_uint32_t dev_id, a_uint32_t port_id,
 	return rv;
 }
 static sw_error_t
-_adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
-	a_uint32_t mode0, a_uint32_t mode1, a_uint32_t mode2)
+_adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 {
-	a_uint32_t mode = 0, port_type;
 	sw_error_t rv = SW_OK;
-	a_uint32_t xgmac_port = 0;
+	a_uint32_t xgmac_port = 0, port_type = 0;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
 
 	port_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+	SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode));
+
 	if (port_type == PORT_GMAC_TYPE)
 	{
 		rv = adpt_hppe_port_mac_speed_set(dev_id, port_id, FAL_SPEED_1000);
@@ -2778,29 +2796,7 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else if (port_type == PORT_XGMAC_TYPE)
 	{
-		if (port_id == HPPE_MUX_PORT1)
-			mode = mode1;
-		else if (port_id == HPPE_MUX_PORT2)
-			mode = mode2;
-#if defined(APPE)
-		else if (port_id >= SSDK_PHYSICAL_PORT1 && port_id <= SSDK_PHYSICAL_PORT4)
-		{
-			mode = mode0;
-#if defined(MPPE)
-			if (adpt_chip_type_get(dev_id) == CHIP_APPE &&
-				adpt_chip_revision_get(dev_id) == MPPE_REVISION &&
-				port_id == SSDK_PHYSICAL_PORT2)
-			{
-				mode = mode1;
-			}
-#endif
-		}
-#endif
-		else
-			return SW_NOT_SUPPORTED;
-
-		if ((mode == PORT_WRAPPER_SGMII_PLUS) || (mode == PORT_WRAPPER_UQXGMII) ||
-			(mode == PORT_WRAPPER_UDXGMII))
+		if ((port_mode == PORT_SGMII_PLUS) || (port_mode == PORT_UQXGMII))
 		{
 			rv = adpt_hppe_port_mac_speed_set(dev_id, port_id, FAL_SPEED_2500);
 			rv = adpt_hppe_port_mac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
@@ -2901,8 +2897,7 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 		case PORT_WRAPPER_SGMII_FIBER:
 		case PORT_WRAPPER_SGMII_PLUS:
 #ifdef CPPE
-			if(adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-				adpt_chip_revision_get(dev_id) == CPPE_REVISION &&
+			if(adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
 				port_id == SSDK_PHYSICAL_PORT4)
 			{
 				qca_hppe_port_mac_type_set(dev_id, port_id,
@@ -3014,12 +3009,9 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 		default:
 			break;
 	}
-	if(port_id == SSDK_PHYSICAL_PORT5 || port_id == SSDK_PHYSICAL_PORT6 ||
-		(adpt_chip_type_get(dev_id) == CHIP_APPE &&
-		adpt_chip_revision_get(dev_id)== MPPE_REVISION &&
-		port_id == SSDK_PHYSICAL_PORT2))
+	if(port_id == HPPE_UNIPHY1_PORT || port_id == SSDK_PHYSICAL_PORT6)
 	{
-		if(port_id == SSDK_PHYSICAL_PORT5 || port_id == SSDK_PHYSICAL_PORT2)
+		if(port_id == HPPE_UNIPHY1_PORT)
 			mode_tmp = mode1;
 		else
 			mode_tmp = mode2;
@@ -3064,7 +3056,7 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 		}
 	}
 
-	rv = _adpt_hppe_port_mux_set(dev_id, port_id, mode0, mode1, mode2);
+	rv = _adpt_hppe_port_mux_set(dev_id, port_id);
 
 	return rv;
 }
@@ -3073,12 +3065,8 @@ static sw_error_t
 _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 {
 	a_uint32_t port_id = 0;
-	a_uint32_t chip_type = 0, chip_ver = 0;
 
-	chip_type = adpt_chip_type_get(dev_id);
-	chip_ver = adpt_chip_revision_get(dev_id);
-
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT5; port_id++)
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id <= HPPE_UNIPHY0_PORT_MAX; port_id++)
 	{
 		if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
 		{
@@ -3117,7 +3105,7 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 			*mode0 = PORT_WRAPPER_QSGMII;
 		}
 #if defined(APPE)
-		if (chip_type == CHIP_APPE && chip_ver == APPE_REVISION) {
+		if (adpt_ppe_type_get(dev_id) == APPE_TYPE) {
 			if(port_interface_mode[dev_id][port_id] == PORT_UQXGMII)
 			{
 				if((*mode0 != PORT_WRAPPER_MAX && *mode0 != PORT_WRAPPER_UQXGMII) ||
@@ -3167,8 +3155,7 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 					break;
 #ifdef CPPE
 				case SSDK_PHYSICAL_PORT4:
-					if(adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-						adpt_chip_revision_get(dev_id) == CPPE_REVISION)
+					if(adpt_ppe_type_get(dev_id) == CPPE_TYPE)
 					{
 						*mode0 = PORT_WRAPPER_SGMII_CHANNEL0;
 					}
@@ -3196,8 +3183,7 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 			if(port_interface_mode[dev_id][port_id] == PORT_SGMII_PLUS)
 			{
 #ifdef CPPE
-				if(adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-					adpt_chip_revision_get(dev_id) == CPPE_REVISION &&
+				if(adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
 					port_id == SSDK_PHYSICAL_PORT4)
 				{
 					*mode0 = PORT_WRAPPER_SGMII_PLUS;
@@ -3298,7 +3284,7 @@ _adpt_hppe_instance_mode_get(a_uint32_t dev_id, a_uint32_t uniphy_index,
 			SW_RTN_ON_ERROR(rv);
 			break;
 		case SSDK_UNIPHY_INSTANCE1:
-			rv =_adpt_hppe_instance1_mode_get(dev_id, SSDK_PHYSICAL_PORT5,
+			rv =_adpt_hppe_instance1_mode_get(dev_id, HPPE_UNIPHY1_PORT,
 				interface_mode);
 			SW_RTN_ON_ERROR(rv);
 			break;
@@ -3425,8 +3411,7 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 			case PORT_WRAPPER_10GBASE_R:
 #endif
 #ifdef CPPE
-				if(adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-					adpt_chip_revision_get(dev_id) == CPPE_REVISION)
+				if(adpt_ppe_type_get(dev_id) == CPPE_TYPE)
 				{
 					a_uint32_t mode_tmp = 0;
 					mode_tmp = mode[SSDK_UNIPHY_INSTANCE0];
@@ -3463,8 +3448,8 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 	}
 	else if(mode_index == SSDK_UNIPHY_INSTANCE1)
 	{
-		port_id_from = SSDK_PHYSICAL_PORT5;
-		port_id_end = SSDK_PHYSICAL_PORT5;
+		port_id_from = HPPE_UNIPHY1_PORT;
+		port_id_end = HPPE_UNIPHY1_PORT;
 	}
 	else if(mode_index == SSDK_UNIPHY_INSTANCE2)
 	{
@@ -3856,9 +3841,12 @@ adpt_hppe_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 	{
 		return SW_BAD_PARAM;
 	}
+	if (A_TRUE == ssdk_port_feature_get(dev_id, port_id, PHY_F_FORCE))
+	{
+		return adpt_hppe_port_interface_mode_get(dev_id, port_id, mode);
+	}
 
-	/* for those ports without PHY device should be sfp port */
-	if (A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id)) {
+	if (A_TRUE == hsl_port_is_sfp(dev_id, port_id)) {
 #if defined(IN_SFP_PHY)
 		rv = sfp_phy_interface_get_mode_status(dev_id, port_id, mode);
 #endif
@@ -3911,8 +3899,7 @@ adpt_hppe_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
 		return SW_BAD_VALUE;
 #if defined(CPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION &&
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
 		port_id == SSDK_PHYSICAL_PORT6) {
 		return adpt_cppe_switch_port_loopback_flowctrl_set(dev_id,
 				port_id, enable);
@@ -4173,8 +4160,7 @@ adpt_ppe_port_source_filter_get(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if ((adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION) ||
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
 		adpt_chip_type_get(dev_id) == CHIP_APPE){
 		return _adpt_ppe_port_source_filter_get(dev_id, port_id, enable);
 	}
@@ -4189,8 +4175,7 @@ adpt_ppe_port_source_filter_set(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if ((adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION) ||
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
 		adpt_chip_type_get(dev_id) == CHIP_APPE){
 		return _adpt_ppe_port_source_filter_set(dev_id, port_id, enable);
 	}
@@ -4204,8 +4189,7 @@ adpt_ppe_port_source_filter_config_get(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if ((adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION) ||
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
 		adpt_chip_type_get(dev_id) == CHIP_APPE){
 		return _adpt_ppe_port_source_filter_config_get(dev_id, port_id,
 				src_filter_config);
@@ -4221,8 +4205,7 @@ adpt_ppe_port_source_filter_config_set(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if ((adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION) ||
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
 		adpt_chip_type_get(dev_id) == CHIP_APPE){
 		return _adpt_ppe_port_source_filter_config_set(dev_id, port_id, src_filter_config);
 	}
@@ -4927,7 +4910,7 @@ adpt_hppe_uniphy_usxgmii_port_reset(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	memset(&vr_mii_dig_ctrl1, 0, sizeof(vr_mii_dig_ctrl1));
 #endif
 
-	if ((port_id == SSDK_PHYSICAL_PORT1) || (port_id == SSDK_PHYSICAL_PORT5) ||
+	if ((port_id == SSDK_PHYSICAL_PORT1) || (port_id == HPPE_UNIPHY1_PORT) ||
 		(port_id == SSDK_PHYSICAL_PORT6)) {
 		hppe_vr_xs_pcs_dig_ctrl1_get(dev_id, uniphy_index,
 				&vr_xs_pcs_dig_ctrl1);
@@ -4969,71 +4952,103 @@ adpt_hppe_uniphy_usxgmii_port_reset(a_uint32_t dev_id, a_uint32_t uniphy_index,
 static void
 adpt_hppe_uniphy_port_adapter_reset(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	a_uint32_t uniphy_index, mode = 0, mode1;
+	a_uint32_t uniphy_index = 0;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
 #if defined(CPPE)
 	a_uint32_t channel_id = 0;
 #endif
 
-	if (port_id < HPPE_MUX_PORT1)
-	{
-		uniphy_index = SSDK_UNIPHY_INSTANCE0;
+	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+	SSDK_DEBUG("port %d, uniphy_index %d, port_mode 0x%x\n", port_id, uniphy_index, port_mode);
+
 #if defined(CPPE)
+	if (uniphy_index == SSDK_UNIPHY_INSTANCE0)
+	{
 		adpt_cppe_port_to_channel_convert(dev_id, port_id,
 				&channel_id);
 		port_id = channel_id;
-#endif
-		adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
-		SSDK_DEBUG ("port %d interface mode is 0x%x\n", port_id, mode);
-		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII)) {
-			adpt_hppe_uniphy_usxgmii_port_reset(dev_id, uniphy_index,
-				port_id);
-			adpt_hppe_uniphy_usxgmii_port_ipg_tune_reset(dev_id, uniphy_index,
-				port_id);
-		} else if ((mode == PHY_PSGMII_BASET) || (mode == PHY_PSGMII_FIBER) ||
-				(mode == PORT_QSGMII) || (mode == PHY_SGMII_BASET) ||
-				(mode == PORT_SGMII_FIBER) || (mode == PORT_SGMII_PLUS)) {
-			adpt_hppe_uniphy_psgmii_port_reset(dev_id, uniphy_index,
-				port_id);
-		}
 	}
-	else
+#endif
+	switch (port_mode)
 	{
-		if (port_id == HPPE_MUX_PORT1)
-		{
-			mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
-			mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
-			if ((((mode == PORT_WRAPPER_PSGMII) ||
-			      (mode == PORT_WRAPPER_PSGMII_FIBER)) &&
-			     (mode1 == PORT_WRAPPER_MAX)) ||
-			    ((mode == PORT_WRAPPER_SGMII4_RGMII4) && (mode1 == PORT_WRAPPER_MAX)))
+		case PORT_USXGMII:
+		case PORT_UQXGMII:
+			adpt_hppe_uniphy_usxgmii_port_reset(dev_id, uniphy_index, port_id);
+			if (port_mode == PORT_UQXGMII)
 			{
-				uniphy_index = SSDK_UNIPHY_INSTANCE0;
-				adpt_hppe_uniphy_psgmii_port_reset(dev_id, uniphy_index,
-						port_id);
-				return;
+				adpt_hppe_uniphy_usxgmii_port_ipg_tune_reset(dev_id,
+						uniphy_index, port_id);
+			}
+			break;
+		case PHY_PSGMII_BASET:
+		case PHY_PSGMII_FIBER:
+		case PORT_QSGMII:
+		case PHY_SGMII_BASET:
+		case PORT_SGMII_FIBER:
+		case PORT_SGMII_PLUS:
+			if(uniphy_index == SSDK_UNIPHY_INSTANCE0)
+			{
+				adpt_hppe_uniphy_psgmii_port_reset(dev_id, uniphy_index, port_id);
 			}
 			else
-				uniphy_index = SSDK_UNIPHY_INSTANCE1;
-		}
-		else
-			uniphy_index = SSDK_UNIPHY_INSTANCE2;
+			{
+				if ((port_mode == PHY_SGMII_BASET) ||
+					(port_mode == PORT_SGMII_FIBER) ||
+					(port_mode == PORT_SGMII_PLUS))
+				{
+					/* only reset channel 0 */
+					adpt_hppe_uniphy_psgmii_port_reset(dev_id,
+							uniphy_index, SSDK_PHYSICAL_PORT1);
+				}
+			}
+			break;
+		default:
+			break;
+	}
+	return;
+}
 
-		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+static void
+adpt_hppe_uniphy_usxgmii_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id,
+		fal_port_speed_t speed)
+{
+	a_uint32_t uniphy_index = SSDK_MAX_UNIPHY_INSTANCE;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	union vr_mii_an_ctrl_u vr_mii_an_ctrl;
 
-		if ((mode == PORT_WRAPPER_SGMII_PLUS) || (mode == PORT_WRAPPER_SGMII0_RGMII4)
-				|| (mode == PORT_WRAPPER_SGMII_CHANNEL0)
-				|| (mode == PORT_WRAPPER_SGMII_FIBER))
+	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+	memset(&vr_mii_an_ctrl, 0, sizeof(vr_mii_an_ctrl));
+
+#if defined(MPPE)
+	if (adpt_ppe_type_get(dev_id) == MPPE_TYPE)
+	{
+		if (port_mode == PORT_USXGMII)
 		{
-			/* only reset channel 0 */
-			adpt_hppe_uniphy_psgmii_port_reset(dev_id, uniphy_index, 1);
-		}
-		else if (mode == PORT_WRAPPER_USXGMII)
-		{
-			adpt_hppe_uniphy_usxgmii_port_reset(dev_id, uniphy_index,
-						port_id);
+			if (speed == FAL_SPEED_10)
+			{
+				/* sel gmac */
+				qca_hppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
+				_adpt_appe_port_mux_mac_set(dev_id, port_id, PORT_GMAC_TYPE);
+				/* gmac use 4-bits MII width */
+				hppe_vr_mii_an_ctrl_get(dev_id, uniphy_index, &vr_mii_an_ctrl);
+				vr_mii_an_ctrl.bf.mii_ctrl = 0;
+				hppe_vr_mii_an_ctrl_set(dev_id, uniphy_index, &vr_mii_an_ctrl);
+			}
+			else
+			{
+				/* sel xgmac */
+				qca_hppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
+				_adpt_appe_port_mux_mac_set(dev_id, port_id, PORT_XGMAC_TYPE);
+				/* xgmac use 8-bits MII width */
+				hppe_vr_mii_an_ctrl_get(dev_id, uniphy_index, &vr_mii_an_ctrl);
+				vr_mii_an_ctrl.bf.mii_ctrl = 1;
+				hppe_vr_mii_an_ctrl_set(dev_id, uniphy_index, &vr_mii_an_ctrl);
+			}
 		}
 	}
-
+#endif
 	return;
 }
 
@@ -5143,7 +5158,7 @@ adpt_hppe_uniphy_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 {
 	a_uint32_t uniphy_index = 0, mode = 0;
 
-	if (port_id == HPPE_MUX_PORT1)
+	if (port_id == HPPE_UNIPHY1_PORT)
 		uniphy_index = SSDK_UNIPHY_INSTANCE1;
 	else if (port_id == HPPE_MUX_PORT2)
 		uniphy_index = SSDK_UNIPHY_INSTANCE2;
@@ -5165,7 +5180,7 @@ adpt_hppe_uniphy_duplex_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_dupl
 {
 	a_uint32_t uniphy_index = 0, mode = 0;
 
-	if (port_id == HPPE_MUX_PORT1)
+	if (port_id == HPPE_UNIPHY1_PORT)
 		uniphy_index = SSDK_UNIPHY_INSTANCE1;
 	else if (port_id == HPPE_MUX_PORT2)
 		uniphy_index = SSDK_UNIPHY_INSTANCE2;
@@ -5187,7 +5202,7 @@ adpt_hppe_uniphy_autoneg_status_check(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	a_uint32_t uniphy_index = 0, mode = 0;
 
-	if (port_id == HPPE_MUX_PORT1)
+	if (port_id == HPPE_UNIPHY1_PORT)
 		uniphy_index = SSDK_UNIPHY_INSTANCE1;
 	else if (port_id == HPPE_MUX_PORT2)
 		uniphy_index = SSDK_UNIPHY_INSTANCE2;
@@ -5300,62 +5315,30 @@ void
 adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id, a_uint32_t port_id,
 				fal_port_speed_t phy_speed)
 {
-	a_uint32_t  mode = 0, uniphy_index = 0, mode1 = 0;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
 
-	if (port_id < HPPE_MUX_PORT1)
+	switch (port_mode)
 	{
-#if defined(CPPE)
-		if (port_id == SSDK_PHYSICAL_PORT4) {
-			mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
-			if (mode == PORT_WRAPPER_SGMII_PLUS) {
-				adpt_hppe_sgmiiplus_speed_clock_set(dev_id, port_id, phy_speed);
-				return;
-			}
-		}
-#endif
-		mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
-		if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_USXGMII) ||
-			(mode == PORT_WRAPPER_UDXGMII) || (mode == PORT_WRAPPER_10GBASE_R)) {
-#if defined(APPE)
-			adpt_hppe_usxgmii_speed_clock_set(dev_id,port_id, phy_speed);
-#endif
-		} else if (mode == PORT_WRAPPER_SGMII_PLUS) {
+		case PORT_SGMII_PLUS:
 			adpt_hppe_sgmiiplus_speed_clock_set(dev_id, port_id, phy_speed);
-		} else {
-			adpt_hppe_pqsgmii_speed_clock_set(dev_id, port_id, phy_speed);
-		}
-	}
-	else
-	{
-		if (port_id == HPPE_MUX_PORT1)
-		{
-			uniphy_index = SSDK_UNIPHY_INSTANCE0;
-			mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-			mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
-			if ((((mode == PORT_WRAPPER_PSGMII) ||
-			      (mode == PORT_WRAPPER_PSGMII_FIBER)) &&
-			     (mode1 == PORT_WRAPPER_MAX)) ||
-			    ((mode == PORT_WRAPPER_SGMII4_RGMII4 ||
-			        mode == PORT_WRAPPER_SGMII_CHANNEL4)
-			        && (mode1 == PORT_WRAPPER_MAX)))
-			{
-				adpt_hppe_pqsgmii_speed_clock_set(dev_id, port_id, phy_speed);
-				return;
-			}
-		}
-		if (port_id == HPPE_MUX_PORT1)
-			uniphy_index = SSDK_UNIPHY_INSTANCE1;
-		else
-			uniphy_index = SSDK_UNIPHY_INSTANCE2;
-
-		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-		if (mode == PORT_WRAPPER_SGMII0_RGMII4 || mode == PORT_WRAPPER_SGMII_CHANNEL0
-			|| mode == PORT_WRAPPER_SGMII_FIBER)
+			break;
+		case PORT_USXGMII:
+		case PORT_10GBASE_R:
+		case PORT_UQXGMII:
+			adpt_hppe_usxgmii_speed_clock_set(dev_id, port_id, phy_speed);
+			break;
+		case PHY_SGMII_BASET:
+		case PORT_SGMII_FIBER:
 			adpt_hppe_sgmii_speed_clock_set(dev_id, port_id, phy_speed);
-		else if (mode == PORT_WRAPPER_SGMII_PLUS)
-			adpt_hppe_sgmiiplus_speed_clock_set(dev_id, port_id, phy_speed);
-		else if ((mode == PORT_WRAPPER_USXGMII) || (mode == PORT_WRAPPER_10GBASE_R))
-			adpt_hppe_usxgmii_speed_clock_set(dev_id,port_id, phy_speed);
+			break;
+		case PHY_PSGMII_BASET:
+		case PHY_PSGMII_FIBER:
+		case PORT_QSGMII:
+			adpt_hppe_pqsgmii_speed_clock_set(dev_id, port_id, phy_speed);
+			break;
+		default:
+			break;
 	}
 	return;
 }
@@ -5364,49 +5347,21 @@ void
 adpt_hppe_gcc_uniphy_clock_status_set(a_uint32_t dev_id, a_uint32_t port_id,
 				a_bool_t enable)
 {
-	a_uint32_t mode = 0, uniphy_index = 0, mode1 = 0;
+	a_uint32_t uniphy_index = 0;
 #if defined(CPPE)
 	a_uint32_t channel_id = 0;
 #endif
 
-	if (port_id < HPPE_MUX_PORT1)
-	{
-		uniphy_index = SSDK_UNIPHY_INSTANCE0;
-#if defined(CPPE)
-		adpt_cppe_port_to_channel_convert(dev_id, port_id,
-				&channel_id);
-		port_id = channel_id;
-#endif
-		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
-				port_id, enable);
-	}
-	else
-	{
-		if (port_id == HPPE_MUX_PORT1)
-		{
-			uniphy_index = SSDK_UNIPHY_INSTANCE0;
-			mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-			mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
-			if ((((mode == PORT_WRAPPER_PSGMII) ||
-			      (mode == PORT_WRAPPER_PSGMII_FIBER)) &&
-			     (mode1 == PORT_WRAPPER_MAX)) ||
-			    ((mode == PORT_WRAPPER_SGMII4_RGMII4 ||
-			        mode == PORT_WRAPPER_SGMII_CHANNEL4)
-			        && (mode1 == PORT_WRAPPER_MAX)))
-			{
-				qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
-				port_id, enable);
-				return;
-			}
-		}
-		if (port_id == HPPE_MUX_PORT1)
-			uniphy_index = SSDK_UNIPHY_INSTANCE1;
-		else
-			uniphy_index = SSDK_UNIPHY_INSTANCE2;
+	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
 
-		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
-				1, enable);
+#if defined(CPPE)
+	if (uniphy_index == SSDK_UNIPHY_INSTANCE0)
+	{
+		adpt_cppe_port_to_channel_convert(dev_id, port_id, &channel_id);
+		port_id = channel_id;
 	}
+#endif
+	qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index, port_id, enable);
 	return;
 }
 
@@ -5566,6 +5521,9 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				if ((a_uint32_t)phy_status.speed !=
 						priv->port_old_speed[port_id - 1])
 				{
+					/* configure 4bit-GMAC or 8bit-XGMAC for usxgmii mode */
+					adpt_hppe_uniphy_usxgmii_mac_type_set(priv->device_id,
+							port_id, phy_status.speed);
 					/* configure gcc speed clock according to current speed */
 					adpt_hppe_gcc_port_speed_clock_set(priv->device_id, port_id,
 							phy_status.speed);
@@ -5804,8 +5762,7 @@ adpt_ppe_port_cnt_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cf
 
 	/* set counter enable configs */
 #if defined(CPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION)
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE)
 	{
 		rv = adpt_cppe_port_cnt_enable_set(dev_id, port_id, cnt_cfg);
 		SW_RTN_ON_ERROR(rv);
@@ -5844,8 +5801,7 @@ adpt_ppe_port_cnt_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cf
 
 	/* get counter enable configs */
 #if defined(CPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION)
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE)
 	{
 		rv = adpt_cppe_port_cnt_enable_get(dev_id, port_id, cnt_cfg);
 		SW_RTN_ON_ERROR(rv);
@@ -6077,6 +6033,45 @@ adpt_ppe_port_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 	return rv;
 }
 
+#ifndef IN_PORTCONTROL_MINI
+sw_error_t adpt_hppe_port_rx_buff_thresh_get(a_uint32_t dev_id,
+		a_uint32_t port, a_uint16_t *thresh)
+{
+	sw_error_t rv = SW_OK;
+	union rx_fifo_cfg_u rx_thresh;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(thresh);
+
+	memset(&rx_thresh, 0, sizeof(union rx_fifo_cfg_u));
+
+	rv = hppe_rx_fifo_cfg_get(dev_id, port, &rx_thresh);
+	SW_RTN_ON_ERROR(rv);
+
+	*thresh = rx_thresh.bf.rx_fifo_thres;
+	return rv;
+}
+#endif
+
+sw_error_t adpt_hppe_port_rx_buff_thresh_set(a_uint32_t dev_id,
+		a_uint32_t port, a_uint16_t thresh)
+{
+	sw_error_t rv = SW_OK;
+	union rx_fifo_cfg_u rx_thresh;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	memset(&rx_thresh, 0, sizeof(union rx_fifo_cfg_u));
+
+	rv = hppe_rx_fifo_cfg_get(dev_id, port, &rx_thresh);
+	SW_RTN_ON_ERROR(rv);
+
+	rx_thresh.bf.rx_fifo_thres = thresh;
+
+	rv = hppe_rx_fifo_cfg_set(dev_id, port, &rx_thresh);
+	return rv;
+}
+
 void adpt_hppe_port_ctrl_func_bitmap_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
@@ -6173,7 +6168,9 @@ void adpt_hppe_port_ctrl_func_bitmap_init(a_uint32_t dev_id)
 		(1<< (FUNC_ADPT_PORT_MRU_MTU_SET% 32)) |
 		(1<< (FUNC_ADPT_PORT_MRU_MTU_GET% 32)) |
 		(1<< (FUNC_ADPT_PORT_TX_BUFF_THRESH_SET% 32)) |
-		(1<< (FUNC_ADPT_PORT_TX_BUFF_THRESH_GET% 32)));
+		(1<< (FUNC_ADPT_PORT_TX_BUFF_THRESH_GET% 32)) |
+		(1<< (FUNC_ADPT_PORT_RX_BUFF_THRESH_SET% 32)) |
+		(1<< (FUNC_ADPT_PORT_RX_BUFF_THRESH_GET% 32)));
 
 	return;
 
@@ -6267,6 +6264,8 @@ static void adpt_hppe_port_ctrl_func_unregister(a_uint32_t dev_id, adpt_api_t *p
 	p_adpt_api->adpt_port_mru_mtu_get = NULL;
 	p_adpt_api->adpt_port_tx_buff_thresh_set = NULL;
 	p_adpt_api->adpt_port_tx_buff_thresh_get = NULL;
+	p_adpt_api->adpt_port_rx_buff_thresh_set = NULL;
+	p_adpt_api->adpt_port_rx_buff_thresh_get = NULL;
 
 	return;
 
@@ -6623,8 +6622,7 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_interface_eee_cfg_get = adpt_hppe_port_interface_eee_cfg_get;
 	p_adpt_api->adpt_port_phy_status_get = adpt_hppe_port_phy_status_get;
 #if defined(CPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-		adpt_chip_revision_get(dev_id) == CPPE_REVISION) {
+	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE) {
 		p_adpt_api->adpt_switch_port_loopback_set = adpt_cppe_switch_port_loopback_set;
 		p_adpt_api->adpt_switch_port_loopback_get = adpt_cppe_switch_port_loopback_get;
 	}
@@ -6686,6 +6684,20 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_mru_mtu_get = adpt_ppe_port_mru_mtu_get;
 	}
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+			(1 << (FUNC_ADPT_PORT_RX_BUFF_THRESH_SET % 32)))
+	{
+		p_adpt_api->adpt_port_rx_buff_thresh_set =
+			adpt_hppe_port_rx_buff_thresh_set;
+	}
+#ifndef IN_PORTCONTROL_MINI
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+			(1 << (FUNC_ADPT_PORT_RX_BUFF_THRESH_GET % 32)))
+	{
+		p_adpt_api->adpt_port_rx_buff_thresh_get =
+			adpt_hppe_port_rx_buff_thresh_get;
+	}
+#endif
 	return SW_OK;
 }
 

@@ -351,22 +351,24 @@ fal_port_tdm_tick_cfg_t mppe_port_tdm0_tbl[] = {
 	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2},
 	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0},
 	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0},
-	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1},
-	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1},
-	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2},
-	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2},
-	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0},
-	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0},
-	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2},
-	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1},
-	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1},
-	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2},
-	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2},
-	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0},
 	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0},
 	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1},
 	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2},
 	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1},
+	{A_FALSE, FAL_PORT_TDB_DIR_INGRESS, 0},
 };
 
 fal_port_scheduler_cfg_t mppe_port_scheduler0_tbl[] = {
@@ -482,38 +484,37 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 static sw_error_t
 qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 {
-	a_uint32_t i = 0, port_max = SSDK_PHYSICAL_PORT7;
-	a_bool_t force_port = 0;
+	a_uint32_t i = 0, port_max = SSDK_PHYSICAL_PORT7, mac_type_org = 0, mac_type = 0;
 	fal_port_cnt_cfg_t init_cnt_cfg;
 
 #if defined(MPPE)
-	if (adpt_chip_revision_get(dev_id) == MPPE_REVISION)
-	{
+	if (adpt_chip_revision_get(dev_id) == MPPE_REVISION) {
 		port_max = SSDK_PHYSICAL_PORT3;
-	}
-#endif
-	for(i = SSDK_PHYSICAL_PORT1; i < port_max; i++) {
-		force_port = ssdk_port_feature_get(dev_id, i, PHY_F_FORCE);
-		if(force_port) {
-			fal_port_txmac_status_set(dev_id, i, A_TRUE);
-			fal_port_rxmac_status_set(dev_id, i, A_TRUE);
-			SSDK_INFO("appe port %d is force port\n", i);
-		} else {
-			fal_port_txmac_status_set(dev_id, i, A_FALSE);
-			fal_port_rxmac_status_set(dev_id, i, A_FALSE);
-		}
-		fal_port_rxfc_status_set(dev_id, i, A_FALSE);
-		fal_port_txfc_status_set(dev_id, i, A_FALSE);
-		fal_port_max_frame_size_set(dev_id, i, SSDK_MAX_FRAME_SIZE);
-#if defined(MPPE)
-		if (adpt_chip_revision_get(dev_id) == MPPE_REVISION) {
+
+		for(i = SSDK_PHYSICAL_PORT0; i < port_max; i++) {
 			/* PTX buffer threshold need to be updated to 3 on MPPE
 			 * for fixing tunnel perfomance issue where MAPT inbound case,
 			 * only the buffer size >= 48 can be transmitted out.
 			 */
 			fal_port_flow_ctrl_thres_set(dev_id, i, 3, 3);
+
+			/* Fix 147B line rate on physical port1 */
+			if (i != SSDK_PHYSICAL_PORT0)
+				fal_port_rx_fifo_thres_set(dev_id, i, 7);
 		}
+	}
 #endif
+	for(i = SSDK_PHYSICAL_PORT1; i < port_max; i++) {
+		mac_type_org = qca_hppe_port_mac_type_get(dev_id, i);
+		for(mac_type = PORT_GMAC_TYPE; mac_type <= PORT_XGMAC_TYPE; mac_type++) {
+			qca_hppe_port_mac_type_set(dev_id, i, mac_type);
+			fal_port_txmac_status_set(dev_id, i, A_FALSE);
+			fal_port_rxmac_status_set(dev_id, i, A_FALSE);
+			fal_port_rxfc_status_set(dev_id, i, A_FALSE);
+			fal_port_txfc_status_set(dev_id, i, A_FALSE);
+			fal_port_max_frame_size_set(dev_id, i, SSDK_MAX_FRAME_SIZE);
+		}
+		qca_hppe_port_mac_type_set(dev_id, i, mac_type_org);
 	}
 
 	aos_mem_zero(&init_cnt_cfg, sizeof(init_cnt_cfg));

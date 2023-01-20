@@ -55,7 +55,7 @@ typedef enum {
 	(BITS(MEM_CTRL_DVS_SA_RELAX_BOFFSET, MEM_CTRL_DVS_SA_RELAX_BLEN+1))
 
 #define MHT_MEM_CTRL_DVS_PHY_MODE \
-	BIT(MEM_CTRL_DVS_RAWA_ASSERT_BOFFSET)
+	(BIT(MEM_CTRL_DVS_SA_RELAX_BOFFSET) | BIT(MEM_CTRL_DVS_RAWA_ASSERT_BOFFSET))
 #define MHT_MEM_CTRL_DVS_SWITCH_MODE \
 	BIT(MEM_CTRL_DVS_RAWA_ASSERT_BOFFSET)
 
@@ -128,6 +128,8 @@ qca_mht_sku_switch_core_enabled(a_uint32_t dev_id);
 sw_error_t
 qca_mht_ethphy_icc_efuse_get(a_uint32_t dev_id, a_uint32_t mht_port_id,
 	a_uint32_t *icc_value);
+sw_error_t
+qca_mht_mdio_cfg(a_uint32_t dev_id, a_uint32_t div, a_uint32_t timer, a_uint32_t preamble_length);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -446,13 +446,14 @@ qca_mht_mem_ctrl_set(a_uint32_t dev_id, a_uint32_t dvs_value, a_uint32_t acc_val
 a_bool_t
 qca_mht_sku_check(a_uint32_t dev_id, a_uint32_t mht_sku)
 {
-	a_uint32_t data = 0, sku_value = 0;
+	a_uint32_t data = 0, sku_value = 0, freq = 0;
 
+	ssdk_miibus_freq_get(dev_id, &freq);
 	/*fuse register need use lower mdio clock to read*/
 	ssdk_miibus_freq_set(dev_id, 0xff);
 	data = qca_mht_mii_read(dev_id, QFPROM_RAW_PTE_ROW0_LSB_OFFSET);
 	/*after read fuse, need recovery the mdio clock*/
-	ssdk_miibus_freq_set(dev_id, 0xf);
+	ssdk_miibus_freq_set(dev_id, freq);
 
 	sku_value = data & MHT_SKU_MASK;
 	SSDK_DEBUG("MHT SKU is 0x%x\n", sku_value);
@@ -529,6 +530,41 @@ qca_mht_ethphy_icc_efuse_get(a_uint32_t dev_id, a_uint32_t mht_port_id,
 	}
 	SSDK_DEBUG("mht port%d efuse version is %d, icc value is 0x%x\n",
 		mht_port_id, efuse_ver, *icc_value);
+
+	return SW_OK;
+}
+
+sw_error_t
+qca_mht_mdio_cfg(a_uint32_t dev_id, a_uint32_t div, a_uint32_t timer, a_uint32_t preamble_length)
+{
+	a_uint32_t mdio_ctrl0= 0;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	mdio_ctrl0 = qca_mht_mii_read(dev_id, MDIO_CTRL0_OFFSET);
+
+	/* Enable control timmer or not */
+	if (!timer)
+		mdio_ctrl0 &= ~BIT(MDIO_CTRL0_TIMER_EN_BOFFSET);
+	else
+		mdio_ctrl0 |= BIT(MDIO_CTRL0_TIMER_EN_BOFFSET);
+
+	/* Configure the MDIO frequency */
+	mdio_ctrl0 &= ~BITS(MDIO_CTRL0_DIV_FACTOR_BOFFSET, MDIO_CTRL0_DIV_FACTOR_BLEN);
+	mdio_ctrl0 |= (div << MDIO_CTRL0_DIV_FACTOR_BOFFSET) &
+		BITS(MDIO_CTRL0_DIV_FACTOR_BOFFSET, MDIO_CTRL0_DIV_FACTOR_BLEN);
+
+	/* Trigger MDIO transmission */
+	mdio_ctrl0 |= BIT(MDIO_CTRL0_TRIGGER_BOFFSET);
+
+	/* Configure the preamble length of MDIO frame */
+	mdio_ctrl0 |= (preamble_length << MDIO_CTRL0_PREAMBLE_BITS_BOFFSET) &
+		BITS(MDIO_CTRL0_PREAMBLE_BITS_BOFFSET, MDIO_CTRL0_PREAMBLE_BITS_BLEN);
+
+	qca_mht_mii_write(dev_id, MDIO_CTRL0_OFFSET, mdio_ctrl0);
+
+	/* Configure the timmer counter cycles(1/mdio_frequency)*/
+	qca_mht_mii_write(dev_id, MDIO_CTRL1_OFFSET, timer);
 
 	return SW_OK;
 }
