@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017, 2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -1040,7 +1040,8 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 static void
 adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 {
-	a_uint64_t rx_value;
+	a_uint64_t rx_value = 0;
+	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
@@ -1048,17 +1049,20 @@ adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
-			appe_port_rx_cnt_tbl_rx_pkt_cnt_get(dev_id, i, (a_uint32_t*)(&rx_value));
+			appe_port_rx_cnt_tbl_rx_pkt_cnt_get(dev_id, i, &rx_pkt);
 		else
 			appe_port_rx_cnt_tbl_rx_byte_cnt_get(dev_id, i, &rx_value);
-		if (rx_value > 0)
+		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
 				printk(KERN_CONT "\n");
 				printk(KERN_CONT "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+			if (show_type == A_FALSE)
+				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+			else
+				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
@@ -1069,7 +1073,8 @@ adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 static void
 adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 {
-	a_uint64_t rx_value;
+	a_uint64_t rx_value = 0;
+	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
@@ -1077,18 +1082,20 @@ adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
-			appe_port_rx_cnt_tbl_rx_drop_pkt_cnt_get(dev_id, i,
-					(a_uint32_t*)(&rx_value));
+			appe_port_rx_cnt_tbl_rx_drop_pkt_cnt_get(dev_id, i, &rx_pkt);
 		else
 			appe_port_rx_cnt_tbl_rx_drop_byte_cnt_get(dev_id, i, &rx_value);
-		if (rx_value > 0)
+		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
 				printk(KERN_CONT "\n");
 				printk(KERN_CONT "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+			if (show_type == A_FALSE)
+				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+			else
+				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
@@ -1099,7 +1106,8 @@ adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 static void
 adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 {
-	a_uint64_t rx_value;
+	a_uint64_t rx_value = 0;
+	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
@@ -1107,18 +1115,20 @@ adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
-			appe_phy_port_rx_cnt_tbl_rx_pkt_cnt_get(dev_id, i,
-					(a_uint32_t*)(&rx_value));
+			appe_phy_port_rx_cnt_tbl_rx_pkt_cnt_get(dev_id, i, &rx_pkt);
 		else
 			appe_phy_port_rx_cnt_tbl_rx_byte_cnt_get(dev_id, i, &rx_value);
-		if (rx_value > 0)
+		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
 				printk(KERN_CONT "\n");
 				printk(KERN_CONT "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+			if (show_type == A_FALSE)
+				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+			else
+				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
@@ -1129,7 +1139,8 @@ adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 static void
 adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 {
-	a_uint64_t rx_value;
+	a_uint64_t rx_value = 0;
+	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
@@ -1137,19 +1148,21 @@ adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
-			appe_phy_port_rx_cnt_tbl_rx_drop_pkt_cnt_get(dev_id, i,
-				(a_uint32_t*)(&rx_value));
+			appe_phy_port_rx_cnt_tbl_rx_drop_pkt_cnt_get(dev_id, i, &rx_pkt);
 		else
 			appe_phy_port_rx_cnt_tbl_rx_drop_byte_cnt_get(dev_id, i,
 				&rx_value);
-		if (rx_value > 0)
+		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
 				printk(KERN_CONT "\n");
 				printk(KERN_CONT "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+			if (show_type == A_FALSE)
+				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+			else
+				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
