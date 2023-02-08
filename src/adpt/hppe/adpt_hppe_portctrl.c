@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -95,6 +95,8 @@
 #define PASS_CONTROL_PACKET 0x2
 #define XGMAC_PAUSE_TIME	0xffff
 #define CARRIER_SENSE_SIGNAL_FROM_MAC        0x0
+#define XGMAC_PWE_ENABLE	0x1
+#define XGMAC_WTO_LIMIT_13K	0xb
 
 #define PHY_PORT_TO_BM_PORT(port)	(port + 7)
 #define GMAC_IPG_CHECK          0xc
@@ -326,12 +328,14 @@ _adpt_xgmac_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t max_frame)
 {
 	sw_error_t rv = SW_OK;
+	a_uint32_t index = HPPE_TO_XGMAC_PORT_ID(port_id);
 
-	a_uint32_t index  = HPPE_TO_XGMAC_PORT_ID(port_id);
 	rv |= hppe_mac_tx_configuration_jd_set(dev_id, index, (a_uint32_t)A_TRUE);
 	rv |= hppe_mac_rx_configuration_gpsl_set(dev_id, index, max_frame);
-	rv |= hppe_mac_rx_configuration_wd_set(dev_id, index, 1);
-	rv |= hppe_mac_rx_configuration_gmpslce_set(dev_id, index, 1);
+	rv |= hppe_mac_rx_configuration_wd_set(dev_id, index, (a_uint32_t)A_FALSE);
+	rv |= hppe_mac_rx_configuration_gmpslce_set(dev_id, index, (a_uint32_t)A_TRUE);
+	rv |= hppe_mac_watchdog_timeout_wto_set(dev_id, index, XGMAC_WTO_LIMIT_13K);
+	rv |= hppe_mac_watchdog_timeout_pwe_set(dev_id, index, XGMAC_PWE_ENABLE);
 	rv |= adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id, port_id);
 
 	return rv;
@@ -630,6 +634,33 @@ _adpt_gmac_port_rxfc_status_set(a_uint32_t dev_id,fal_port_t port_id, a_bool_t e
 	rv |= hppe_mac_enable_set(dev_id, port_id, &gmac_rxfc_enable);
 
 	return SW_OK;
+}
+
+static sw_error_t
+adpt_hppe_port_xgmac_reconfig(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t rxfc_status = 0, txfc_status = 0;
+	a_uint32_t index = HPPE_TO_XGMAC_PORT_ID(port_id);
+
+	rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id, port_id);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = hppe_mac_watchdog_timeout_wto_set(dev_id, index, XGMAC_WTO_LIMIT_13K);
+	SW_RTN_ON_ERROR(rv);
+	rv = hppe_mac_watchdog_timeout_pwe_set(dev_id, index, XGMAC_PWE_ENABLE);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = _adpt_xgmac_port_rxfc_status_get(dev_id, port_id, &rxfc_status);
+	SW_RTN_ON_ERROR(rv);
+	rv = _adpt_xgmac_port_rxfc_status_set(dev_id, port_id, rxfc_status);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = _adpt_xgmac_port_txfc_status_get(dev_id, port_id, &txfc_status);
+	SW_RTN_ON_ERROR(rv);
+	rv = _adpt_xgmac_port_txfc_status_set(dev_id, port_id, txfc_status);
+
+	return rv;
 }
 
 #ifndef IN_PORTCONTROL_MINI
@@ -2595,7 +2626,6 @@ static sw_error_t
 adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
-	a_uint32_t rxfc_status = 0, txfc_status = 0;
 	sw_error_t rv = 0;
 
 	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
@@ -2603,23 +2633,10 @@ adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 	if (mode == PORT_USXGMII || mode == PORT_UQXGMII) {
 		SSDK_DEBUG("xgmac reset for port%d\n", port_id);
 		ssdk_port_mac_clock_reset(dev_id, port_id);
-		/*restore xgmac's pr and pcf setting after reset operation*/
-		rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id,
-			port_id);
+		/*restore xgmac's pr and pcf setting, re-config flowctrl after reset
+		operation*/
+		rv = adpt_hppe_port_xgmac_reconfig(dev_id, port_id);
 		SW_RTN_ON_ERROR(rv);
-		/*flowctrl need to be configured when reset XGMAC*/
-		rv = _adpt_xgmac_port_rxfc_status_get(dev_id, port_id,
-			&rxfc_status);
-		SW_RTN_ON_ERROR(rv);
-		rv = _adpt_xgmac_port_rxfc_status_set(dev_id, port_id,
-			rxfc_status);
-		SW_RTN_ON_ERROR(rv);
-
-		rv = _adpt_xgmac_port_txfc_status_get(dev_id, port_id,
-			&txfc_status);
-		SW_RTN_ON_ERROR(rv);
-		rv = _adpt_xgmac_port_txfc_status_set(dev_id, port_id,
-			txfc_status);
 	}
 	return rv;
 }
@@ -2627,37 +2644,28 @@ static sw_error_t
 adpt_hppe_port_interface_mode_switch_mac_reset(a_uint32_t dev_id,
 	a_uint32_t port_id)
 {
-	a_uint32_t uniphy_index = 0, mode = 0;
 	sw_error_t rv = 0;
 	phy_type_t phy_type;
 	a_uint32_t port_mac_type;
+	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
 
 	phy_type = hsl_phy_type_get(dev_id, port_id);
 	if (phy_type != AQUANTIA_PHY_CHIP && phy_type != SFP_PHY_CHIP) {
 		return SW_OK;
 	}
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
+	SW_RTN_ON_ERROR(rv);
 
-	if (port_id == HPPE_MUX_PORT1) {
-		uniphy_index = SSDK_UNIPHY_INSTANCE1;
-	} else if (port_id == HPPE_MUX_PORT2) {
-		uniphy_index = SSDK_UNIPHY_INSTANCE2;
-	} else {
-		return SW_OK;
-	}
-
-	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-	if ((mode == PORT_WRAPPER_USXGMII) ||
-		(mode == PORT_WRAPPER_SGMII_CHANNEL0) ||
-		(mode == PORT_WRAPPER_SGMII0_RGMII4) ||
-		(mode == PORT_WRAPPER_SGMII_FIBER) ||
-		(mode == PORT_WRAPPER_10GBASE_R) ||
-		(mode == PORT_WRAPPER_SGMII_PLUS)) {
+	if ((mode == PORT_USXGMII) || (mode == PHY_SGMII_BASET) ||
+		(mode == PORT_SGMII_FIBER) || (mode == PORT_10GBASE_R) ||
+		(mode == PORT_SGMII_PLUS)) {
 		ssdk_port_mac_clock_reset(dev_id, port_id);
 		port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
 		if (port_mac_type == PORT_XGMAC_TYPE) {
-			/*restore xgmac's pr and pcf setting after reset operation*/
-			rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id,
-			port_id);
+			/*restore xgmac's pr and pcf setting, re-config flowctrl after reset
+			operation*/
+			rv = adpt_hppe_port_xgmac_reconfig(dev_id, port_id);
+			SW_RTN_ON_ERROR(rv);
 		}
 	}
 	return rv;
