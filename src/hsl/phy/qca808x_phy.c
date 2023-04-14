@@ -36,7 +36,6 @@
 #endif
 
 static a_bool_t qca808x_ssdk_phy_drv_registered = A_FALSE;
-static a_bool_t qca808x_std_phy_drv_registered = A_FALSE;
 /*qca808x_start*/
 static a_bool_t phy_ops_flag = A_FALSE;
 
@@ -46,6 +45,19 @@ static struct mutex qca808x_reg_lock;
 #define QCA808X_REG_LOCK		mutex_lock(&qca808x_reg_lock)
 #define QCA808X_REG_UNLOCK		mutex_unlock(&qca808x_reg_lock)
 
+a_uint32_t
+qca808x_phy_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	a_uint32_t port_id = 0;
+
+	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
+	if(port_id == SSDK_PHYSICAL_PORT0)
+	{
+		port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr - 1);
+	}
+
+	return port_id;
+}
 /******************************************************************************
 *
 * qca808x_phy_mii_read - mii register read
@@ -58,7 +70,7 @@ qca808x_phy_reg_read(a_uint32_t dev_id, a_uint32_t phy_id, a_uint32_t reg_id)
 	sw_error_t rv = SW_OK;
 	a_uint16_t phy_data = 0;
 #if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_id);
+	a_uint32_t port_id = qca808x_phy_addr_to_port(dev_id, phy_id);
 	a_uint8_t phy_access_type = hsl_port_phy_access_type_get(dev_id, port_id);
 
 	if (phy_access_type == PHY_I2C_ACCESS) {
@@ -89,7 +101,7 @@ qca808x_phy_reg_write(a_uint32_t dev_id, a_uint32_t phy_id, a_uint32_t reg_id,
 {
 	sw_error_t rv;
 #if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_id);
+	a_uint32_t port_id = qca808x_phy_addr_to_port(dev_id, phy_id);
 	a_uint8_t phy_access_type = hsl_port_phy_access_type_get(dev_id, port_id);
 
 	if (phy_access_type == PHY_I2C_ACCESS) {
@@ -181,7 +193,7 @@ qca808x_phy_mmd_write(a_uint32_t dev_id, a_uint32_t phy_id,
 	sw_error_t rv;
 	a_uint32_t reg_id_c45 = QCA808X_REG_C45_ADDRESS(mmd_num, reg_id);
 #if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_id);
+	a_uint32_t port_id = qca808x_phy_addr_to_port(dev_id, phy_id);
 	a_uint8_t phy_access_type = hsl_port_phy_access_type_get(dev_id, port_id);
 
 	if (phy_access_type == PHY_I2C_ACCESS) {
@@ -210,7 +222,7 @@ qca808x_phy_mmd_read(a_uint32_t dev_id, a_uint32_t phy_id,
 	a_uint16_t phy_data = 0;
 	a_uint32_t reg_id_c45 = QCA808X_REG_C45_ADDRESS(mmd_num, reg_id);
 #if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_id);
+	a_uint32_t port_id = qca808x_phy_addr_to_port(dev_id, phy_id);
 	a_uint8_t phy_access_type = hsl_port_phy_access_type_get(dev_id, port_id);
 
 	if (phy_access_type == PHY_I2C_ACCESS) {
@@ -237,7 +249,7 @@ qca808x_phy_modify_mmd(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct mii_bus *bus = NULL;
 	a_uint32_t reg_id_c45 = QCA808X_REG_C45_ADDRESS(mmd_num, mmd_reg);
 
-	bus = ssdk_phy_miibus_get(dev_id, phy_addr);
+	bus = hsl_phy_miibus_get(dev_id, phy_addr);
 	if (!bus)
 		return SW_NOT_SUPPORTED;
 
@@ -635,6 +647,7 @@ qca808x_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
 {
 	a_uint16_t phy_data = 0;
 	fal_port_duplex_t old_duplex = QCA808X_CTRL_FULL_DUPLEX;
+	a_uint32_t ability = 0;
 	sw_error_t rv = SW_OK;
 
 	phy_data = qca808x_phy_reg_read(dev_id, phy_addr, QCA808X_PHY_CONTROL);
@@ -647,7 +660,7 @@ qca808x_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
 			if (speed == FAL_SPEED_2500) {
 				if(!qca808x_phy_2500caps(dev_id, phy_addr))
 					return SW_NOT_SUPPORTED;
-				rv = _qca808x_phy_set_autoneg_adv_ext(dev_id, phy_addr,
+				rv = qca808x_phy_set_autoneg_adv(dev_id, phy_addr,
 					FAL_PHY_ADV_2500T_FD);
 				PHY_RTN_ON_ERROR(rv);
 			} else {
@@ -671,7 +684,15 @@ qca808x_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
 				phy_data |= QCA808X_CTRL_FULL_DUPLEX;
 			}
 			else if (old_duplex == FAL_HALF_DUPLEX) {
-				phy_data &= ~QCA808X_CTRL_FULL_DUPLEX;
+				rv = qca808x_phy_get_ability(dev_id, phy_addr, &ability);
+				PHY_RTN_ON_ERROR(rv);
+				if((speed == FAL_SPEED_10 &&
+				(ability & FAL_PHY_ADV_10T_HD)) ||
+				(speed == FAL_SPEED_100 &&
+				(ability & FAL_PHY_ADV_100TX_HD)))
+					phy_data &= ~QCA808X_CTRL_FULL_DUPLEX;
+				else
+					phy_data |= QCA808X_CTRL_FULL_DUPLEX;
 			}
 			phy_data &= ~QCA808X_CTRL_AUTONEGOTIATION_ENABLE;
 			break;
@@ -694,8 +715,9 @@ qca808x_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
 		      fal_port_duplex_t duplex)
 {
 	a_uint16_t phy_data = 0;
-	fal_port_speed_t old_speed;
+	fal_port_speed_t old_speed = FAL_SPEED_BUTT;
 	sw_error_t rv = SW_OK;
+	a_uint32_t ability = 0;
 
 	phy_data = qca808x_phy_reg_read(dev_id, phy_addr, QCA808X_PHY_CONTROL);
 	PHY_RTN_ON_READ_ERROR(phy_data);
@@ -733,6 +755,13 @@ qca808x_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
 			if (duplex == FAL_FULL_DUPLEX) {
 				phy_data |= QCA808X_CTRL_FULL_DUPLEX;
 			} else {
+				rv = qca808x_phy_get_ability(dev_id, phy_addr, &ability);
+				PHY_RTN_ON_ERROR(rv);
+				if((old_speed == FAL_SPEED_10 &&
+				!(ability & FAL_PHY_ADV_10T_HD)) ||
+				(old_speed == FAL_SPEED_100 &&
+				!(ability & FAL_PHY_ADV_100TX_HD)))
+					return SW_NOT_SUPPORTED;
 				phy_data &= ~QCA808X_CTRL_FULL_DUPLEX;
 			}
 			break;
@@ -1163,38 +1192,97 @@ qca808x_phy_get_partner_ability(a_uint32_t dev_id, a_uint32_t phy_id,
 	PHY_RTN_ON_READ_ERROR(phy_data);
 
 	if(phy_data & QCA808X_LINK_10BASETX_HALF_DUPLEX)
-		*ability |= FAL_PHY_PART_10T_HD;
+		*ability |= FAL_PHY_ADV_10T_HD;
 
 	if(phy_data & QCA808X_LINK_10BASETX_FULL_DUPLEX)
-		*ability |= FAL_PHY_PART_10T_FD;
+		*ability |= FAL_PHY_ADV_10T_FD;
 
 	if(phy_data & QCA808X_LINK_100BASETX_HALF_DUPLEX)
-		*ability |= FAL_PHY_PART_100TX_HD;
+		*ability |= FAL_PHY_ADV_100TX_HD;
 
 	if(phy_data & QCA808X_LINK_100BASETX_FULL_DUPLEX)
-		*ability |= FAL_PHY_PART_100TX_FD;
+		*ability |= FAL_PHY_ADV_100TX_FD;
 
 	if(phy_data & QCA808X_LINK_PAUSE)
-		*ability |= FAL_PHY_PART_PAUSE;
+		*ability |= FAL_PHY_ADV_PAUSE;
 
 	if(phy_data & QCA808X_LINK_ASYPAUSE)
-		*ability |= FAL_PHY_PART_ASY_PAUSE;
+		*ability |= FAL_PHY_ADV_ASY_PAUSE;
 
 	if(phy_data & QCA808X_LINK_LPACK)
-		*ability |= FAL_PHY_PART_AUTONEG;
+		*ability |= FAL_PHY_ADV_AUTONEG;
 
 	phy_data = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_1000BASET_STATUS);
 	PHY_RTN_ON_READ_ERROR(phy_data);
 	if(phy_data & QCA808X_LINK_1000BASETX_FULL_DUPLEX)
-		*ability |= FAL_PHY_PART_1000T_FD;
+		*ability |= FAL_PHY_ADV_1000T_FD;
 
 	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
 		QCA808X_PHY_MMD7_LP_2500M_ABILITY);
 	PHY_RTN_ON_READ_ERROR(phy_data);
 	if(phy_data & QCA808X_LINK_2500BASETX_FULL_DUPLEX)
-		*ability |= FAL_PHY_PART_2500T_FD;
+		*ability |= FAL_PHY_ADV_2500T_FD;
 
 	return SW_OK;
+}
+
+sw_error_t
+qca808x_phy_get_ability(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *ability)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*ability = 0;
+
+	phy_data = qca808x_phy_reg_read(dev_id, phy_addr, QCA808X_PHY_STATUS);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if (phy_data & QCA808X_STATUS_AUTONEG_CAPS)
+		*ability |= FAL_PHY_ADV_AUTONEG;
+
+	if (phy_data & QCA808X_STATUS_10T_HD_CAPS)
+		*ability |= FAL_PHY_ADV_10T_HD;
+
+	if (phy_data & QCA808X_STATUS_10T_FD_CAPS)
+		*ability |= FAL_PHY_ADV_10T_FD;
+
+	if (phy_data & QCA808X_STATUS_100TX_HD_CAPS)
+		*ability |= FAL_PHY_ADV_100TX_HD;
+
+	if (phy_data & QCA808X_STATUS_100TX_FD_CAPS)
+		*ability |= FAL_PHY_ADV_100TX_FD;
+
+	if (phy_data & QCA808X_STATUS_EXTENDED_STATUS)
+	{
+		phy_data = qca808x_phy_reg_read(dev_id, phy_addr,
+			QCA808X_EXTENDED_STATUS);
+		PHY_RTN_ON_READ_ERROR(phy_data);
+
+		if (phy_data & QCA808X_STATUS_1000T_FD_CAPS)
+		{
+			*ability |= FAL_PHY_ADV_1000T_FD;
+		}
+	}
+	if(qca808x_phy_2500caps(dev_id, phy_addr))
+	{
+		phy_data = qca808x_phy_mmd_read(dev_id, phy_addr, QCA808X_PHY_MMD1_NUM,
+			QCA808X_MMD1_PMA_CAP_REG);
+		PHY_RTN_ON_READ_ERROR(phy_data);
+		if (phy_data & QCA808X_STATUS_2500T_FD_CAPS)
+		{
+			*ability |= FAL_PHY_ADV_2500T_FD;
+		}
+	}
+	*ability |= (FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE);
+#ifdef MHT
+	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
+	{
+		rv = qca8084_phy_fixup_ability(dev_id, phy_addr, ability);
+	}
+#endif
+
+	return rv;
 }
 
 /******************************************************************************
@@ -1208,7 +1296,12 @@ qca808x_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
 {
 	a_uint16_t phy_data = 0;
 	sw_error_t rv = SW_OK;
+	a_uint32_t ability = 0;
 
+	rv = qca808x_phy_get_ability(dev_id, phy_addr, &ability);
+	SW_RTN_ON_ERROR(rv);
+	if((autoneg & ability) != autoneg)
+		return SW_NOT_SUPPORTED;
 /*qca808x_end*/
 	rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, autoneg);
 	SW_RTN_ON_ERROR(rv);
@@ -2607,7 +2700,6 @@ int qca808x_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
 /*qca808x_end*/
 	a_uint32_t port_id = 0;
-	struct device_driver *drv = NULL;
 /*qca808x_start*/
 	int ret = 0;
 
@@ -2627,18 +2719,10 @@ int qca808x_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 	}
 
 	if (qca808x_ssdk_phy_drv_registered == A_FALSE) {
-		drv = driver_find(QCA808X_PHY_DRIVER_NAME, &mdio_bus_type);
-		if (drv) {
-			/* qca808x phy driver is already registered */
 #if defined(IN_LINUX_STD_PTP)
-			ret = qca808x_ptp_hook_init();
+		ret = qca808x_ptp_hook_init();
 #endif
-			qca808x_std_phy_drv_registered = A_TRUE;
-		}
-	}
-
-	if (qca808x_std_phy_drv_registered == A_FALSE) {
-		ret = qca808x_phy_driver_register();
+		ret |= qca808x_phy_driver_register();
 		qca808x_ssdk_phy_drv_registered = A_TRUE;
 	}
 
@@ -2653,14 +2737,10 @@ void qca808x_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 	if (qca808x_ssdk_phy_drv_registered == A_TRUE) {
 		qca808x_phy_driver_unregister();
-		qca808x_ssdk_phy_drv_registered = A_FALSE;
-	}
-
-	if (qca808x_std_phy_drv_registered == A_TRUE) {
 #if defined(IN_LINUX_STD_PTP)
 		qca808x_ptp_hook_cleanup();
 #endif
-		qca808x_std_phy_drv_registered = A_FALSE;
+		qca808x_ssdk_phy_drv_registered = A_FALSE;
 	}
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++)

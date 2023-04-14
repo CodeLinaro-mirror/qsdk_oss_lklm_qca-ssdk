@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, 2014-2015, 2017-2020, The Linux Foundation. All rights reserved.
- *
  * Copyright (c) 2021-2023, Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -330,6 +330,7 @@ struct qca_phy_priv {
 	struct mii_bus *miibus;
 /*qca808x_end*/
 	u64 *mib_counters;
+	a_uint32_t mib_loop_cnt;
 	/* dump buf */
 	a_uint8_t  buf[2048];
 	a_uint32_t link_polling_required;
@@ -451,11 +452,8 @@ qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 sw_error_t
 qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len);
-
-struct mii_bus *ssdk_miibus_get_by_device(a_uint32_t dev_id);
 /*qca808x_start*/
-struct mii_bus *
-ssdk_phy_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr);
+struct mii_bus *ssdk_miibus_get_by_device(a_uint32_t dev_id);
 /*qca808x_end*/
 sw_error_t ssdk_miibus_freq_set(a_uint32_t dev_id, a_uint32_t freq);
 sw_error_t ssdk_miibus_freq_get(a_uint32_t dev_id, a_uint32_t *freq);

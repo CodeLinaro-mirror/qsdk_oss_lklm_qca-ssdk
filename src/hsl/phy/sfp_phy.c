@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -60,7 +60,7 @@ sfp_phy_probe(struct phy_device *pdev)
 	addr = pdev->addr;
 #endif
 	port = qca_ssdk_phy_addr_to_port(priv->device_id, addr);
-	if (A_TRUE == ssdk_port_feature_get(priv->device_id, port, PHY_F_SFP_SGMII)) {
+	if (A_TRUE == hsl_port_feature_get(priv->device_id, port, PHY_F_SFP_SGMII)) {
 		pdev->autoneg = AUTONEG_ENABLE;
 	} else {
 		pdev->autoneg = AUTONEG_DISABLE;
@@ -199,6 +199,8 @@ sfp_read_status(struct phy_device *pdev)
 	addr = pdev->addr;
 #endif
 	port = qca_ssdk_phy_addr_to_port(priv->device_id, addr);
+	if(port == 0)
+		return -ENXIO;
 #ifdef MP
 	phy_info = hsl_phy_info_get(priv->device_id);
 	if(!phy_info)
@@ -310,7 +312,7 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id)
 	{
 		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
 	}
-	bus = ssdk_phy_miibus_get(dev_id, addr);
+	bus = hsl_phy_miibus_get(dev_id, addr);
 	phydev = phy_device_create(bus, addr, phy_id, false, NULL);
 	if (IS_ERR(phydev) || phydev == NULL) {
 		SSDK_ERROR("Failed to create phy device!\n");
@@ -320,6 +322,12 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id)
 	phy_device_register(phydev);
 
 	phydev->priv = priv;
+#if defined(IN_PHY_I2C_MODE)
+	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
+		if(phydev->drv)
+			phy_driver_unregister(phydev->drv);
+	}
+#endif
 #endif
 	return 0;
 }
@@ -479,13 +487,10 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 	a_uint16_t reg_data = 0, sfp_speed = 0;
 	a_uint16_t sfp_type = 0;
 	struct phy_device *phydev;
-	ssdk_port_phyinfo *port_phyinfo;
 
 	if (sfp_phy_present_status_check(dev_id, port_id) == A_FALSE) {
 		return SW_OK;
 	}
-	port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
-	SW_RTN_ON_NULL(port_phyinfo);
 	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
 	SW_RTN_ON_ERROR(rv);
 	rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_ADDR, SFP_SPEED_ADDR,
@@ -507,16 +512,16 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 			if (phydev->autoneg == AUTONEG_ENABLE) {
 				/* sfp copper module interface is sgmii mode */
 				*interface_mode_status = PHY_SGMII_BASET;
-				port_phyinfo->phy_features |= PHY_F_SFP_SGMII;
+				hsl_port_feature_set(dev_id, port_id, PHY_F_SFP_SGMII);
 			} else {
 				/* sfp copper module interface is serdes mode */
 				*interface_mode_status = PORT_SGMII_FIBER;
-				port_phyinfo->phy_features &= ~PHY_F_SFP_SGMII;
+				hsl_port_feature_clear(dev_id, port_id, PHY_F_SFP_SGMII);
 			}
 		} else {
 			/* sfp fiber module mode */
 			*interface_mode_status = PORT_SGMII_FIBER;
-			port_phyinfo->phy_features &= ~PHY_F_SFP_SGMII;
+			hsl_port_feature_clear(dev_id, port_id, PHY_F_SFP_SGMII);
 		}
 	}
 	else if(sfp_speed >= SFP_SPEED_10000M)
@@ -545,7 +550,8 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 					} else {
 						/* sfp copper module interface is serdes mode */
 						*interface_mode_status = PHY_SGMII_BASET;
-						port_phyinfo->phy_features &= ~PHY_F_SFP_SGMII;
+						hsl_port_feature_clear(dev_id, port_id,
+							PHY_F_SFP_SGMII);
 					}
 				}
 			} else {

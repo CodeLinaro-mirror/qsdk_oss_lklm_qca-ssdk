@@ -50,7 +50,7 @@ sw_error_t qca_hppe_fdb_hw_init(a_uint32_t dev_id)
 		}
 		fal_portvlan_member_update(dev_id, port, 0x7f);
 		if (port == SSDK_PHYSICAL_PORT0 || port == SSDK_PHYSICAL_PORT7 ||
-		(ssdk_port_feature_get(dev_id, port, PHY_F_FORCE) == A_TRUE)) {
+		(hsl_port_feature_get(dev_id, port, PHY_F_FORCE) == A_TRUE)) {
 			p_api->adpt_port_bridge_txmac_set(dev_id, port, A_TRUE);
 		} else {
 			p_api->adpt_port_bridge_txmac_set(dev_id, port, A_FALSE);
@@ -169,7 +169,7 @@ qca_hppe_portctrl_hw_init(a_uint32_t dev_id)
 		qca_hppe_port_mac_type_set(dev_id, i, PORT_GMAC_TYPE);
 		fal_port_txmac_status_set (dev_id, i, A_FALSE);
 		fal_port_rxmac_status_set (dev_id, i, A_FALSE);
-		force_port = ssdk_port_feature_get(dev_id, i, PHY_F_FORCE);
+		force_port = hsl_port_feature_get(dev_id, i, PHY_F_FORCE);
 		if(force_port)
 		{
 			fal_port_rxfc_status_set(dev_id, i, A_FALSE);
@@ -187,13 +187,13 @@ qca_hppe_portctrl_hw_init(a_uint32_t dev_id)
 		qca_hppe_port_mac_type_set(dev_id, i, PORT_XGMAC_TYPE);
 		fal_port_txmac_status_set (dev_id, i, A_FALSE);
 		fal_port_rxmac_status_set (dev_id, i, A_FALSE);
-		force_port = ssdk_port_feature_get(dev_id, i, PHY_F_FORCE);
+		force_port = hsl_port_feature_get(dev_id, i, PHY_F_FORCE);
 		if(force_port)
 		{
 			fal_port_rxfc_status_set(dev_id, i, A_FALSE);
 			fal_port_txfc_status_set(dev_id, i, A_FALSE);
 		}
-		sfp_port = ssdk_port_feature_get(dev_id, i, PHY_F_SFP);
+		sfp_port = hsl_port_feature_get(dev_id, i, PHY_F_SFP);
 		if(sfp_port)
 		{
 			fal_port_rxfc_status_set(dev_id, i, A_TRUE);
@@ -797,23 +797,15 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 	switch (chip_type) {
 		case HPPE_TYPE:
 			group_buf = 1400;
-			share_ceiling = 250;
-			phyport_share_ceiling = 250;
 			break;
 		case CPPE_TYPE:
 			group_buf = 1024;
-			share_ceiling = 216;
-			phyport_share_ceiling = 216;
 			break;
 		case APPE_TYPE:
-			group_buf = 1400;
-			share_ceiling = 250;
-			phyport_share_ceiling = 250;
+			group_buf = 1550;
 			break;
 		case MPPE_TYPE:
 			group_buf = 240;
-			share_ceiling = 30;
-			phyport_share_ceiling = 48;
 			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
@@ -858,7 +850,7 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 					react_buf = 40;
 				} else {
 					prealloc_buf = 12;
-					react_buf = 80;
+					react_buf = 128;
 				}
 				break;
 			default:
@@ -869,18 +861,50 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 		fal_bm_port_reserved_buffer_set(dev_id, i, prealloc_buf, react_buf);
 	}
 
+	/* set dynamic threshold */
 	memset(&cfg, 0, sizeof(cfg));
-	if (chip_type == MPPE_TYPE) {
-		cfg.resume_min_thresh = 20;
-		cfg.resume_off = 5;
-		cfg.weight= 7;
-	} else {
-		cfg.resume_min_thresh = 0;
-		cfg.resume_off = 36;
-		cfg.weight= 4;
-	}
-
 	for (i = 0; i < PPE_BM_PORT_NUM; i++) {
+		switch (chip_type) {
+			case HPPE_TYPE:
+				share_ceiling = 250;
+				phyport_share_ceiling = 250;
+				cfg.resume_min_thresh = 0;
+				cfg.resume_off = 36;
+				cfg.weight= 4;
+				break;
+			case CPPE_TYPE:
+				share_ceiling = 216;
+				phyport_share_ceiling = 216;
+				cfg.resume_min_thresh = 0;
+				cfg.resume_off = 36;
+				cfg.weight= 4;
+				break;
+			case APPE_TYPE:
+				if (i == PPE_BM_PORT_MIN) {
+					share_ceiling = 1146;
+					cfg.resume_min_thresh = 0;
+					cfg.resume_off = 8;
+					cfg.weight= 7;
+				} else {
+					share_ceiling = 250;
+					phyport_share_ceiling = 250;
+					cfg.resume_min_thresh = 0;
+					cfg.resume_off = 36;
+					cfg.weight= 4;
+				}
+				break;
+			case MPPE_TYPE:
+				share_ceiling = 30;
+				phyport_share_ceiling = 48;
+				cfg.resume_min_thresh = 20;
+				cfg.resume_off = 5;
+				cfg.weight= 7;
+				break;
+			default:
+				SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
+				return SW_OUT_OF_RANGE;
+		}
+
 		if (i < PPE_BM_PHY_PORT_OFFSET)
 			cfg.shared_ceiling = share_ceiling;
 		else
@@ -994,11 +1018,14 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 			a_uint32_t hash = 0;
 			/*
 			 * For CPU port, we need to initialize the hash map offset to 0 for the
-			 * PO profile.
+			 * PO and cpu code profile.
 			 */
-			for (hash = 0; hash < FAL_QM_PROFILE_PO_RSS_HASH_MAX; hash++)
+			for (hash = 0; hash < FAL_QM_PROFILE_PO_RSS_HASH_MAX; hash++) {
 				fal_ucast_hash_map_set(dev_id, FAL_QM_PROFILE_PO_ID,
 						hash, FAL_QM_PROFILE_PO_RSS_HASH_CLASS);
+				fal_ucast_hash_map_set(dev_id, FAL_QM_PROFILE_CPU_CODE_ID,
+						hash, FAL_QM_PROFILE_PO_RSS_HASH_CLASS);
+			}
 		}
 	}
 
@@ -1139,7 +1166,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 sw_error_t
 qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 {
-	a_uint32_t i = 0;
+	a_uint32_t i = 0, port_id = 0;
 	fal_qos_scheduler_cfg_t cfg;
 	fal_queue_bmp_t queue_bmp;
 	fal_qos_group_t group_sel;
@@ -1151,7 +1178,16 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 	/* L1 shceduler */
 	for (i = 0; i < SSDK_L1SCHEDULER_CFG_MAX; i++) {
 		if (dt_cfg->l1cfg[i].valid) {
-			cfg.sp_id = dt_cfg->l1cfg[i].port_id;
+			port_id = dt_cfg->l1cfg[i].port_id;
+#if defined(IN_ATHTAG)
+#if defined(MPPE)
+			if (port_id >= SSDK_PHYSICAL_PORT3 &&
+				port_id <= SSDK_PHYSICAL_PORT6) {
+				port_id = SSDK_PHYSICAL_PORT1;
+			}
+#endif
+#endif
+			cfg.sp_id = port_id;
 			cfg.c_pri = dt_cfg->l1cfg[i].cpri;
 			cfg.e_pri = dt_cfg->l1cfg[i].epri;
 			cfg.c_drr_id = dt_cfg->l1cfg[i].cdrr_id;
@@ -1159,13 +1195,22 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 			cfg.c_drr_wt = 1;
 			cfg.e_drr_wt = 1;
 			fal_queue_scheduler_set(dev_id, i, 1,
-					dt_cfg->l1cfg[i].port_id, &cfg);
+					port_id, &cfg);
 		}
 	}
 
 	/* L0 shceduler */
 	for (i = 0; i < SSDK_L0SCHEDULER_CFG_MAX; i++) {
 		if (dt_cfg->l0cfg[i].valid) {
+			port_id = dt_cfg->l0cfg[i].port_id;
+#if defined(IN_ATHTAG)
+#if defined(MPPE)
+			if (port_id >= SSDK_PHYSICAL_PORT3 &&
+				port_id <= SSDK_PHYSICAL_PORT6) {
+				port_id = SSDK_PHYSICAL_PORT1;
+			}
+#endif
+#endif
 			cfg.sp_id = dt_cfg->l0cfg[i].sp_id;
 			cfg.c_pri = dt_cfg->l0cfg[i].cpri;
 			cfg.e_pri = dt_cfg->l0cfg[i].epri;
@@ -1174,7 +1219,7 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 			cfg.c_drr_wt = 1;
 			cfg.e_drr_wt = 1;
 			fal_queue_scheduler_set(dev_id, i,
-					0, dt_cfg->l0cfg[i].port_id, &cfg);
+					0, port_id, &cfg);
 		}
 	}
 
