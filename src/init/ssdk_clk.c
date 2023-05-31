@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1216,8 +1216,6 @@ void ssdk_gcc_clock_init(void)
 #endif
 	}
 #endif
-
-	SSDK_INFO("SSDK gcc clock init successfully!\n");
 }
 
 void
@@ -1475,7 +1473,6 @@ void ssdk_ppe_reset_init(void)
 	ssdk_gcc_reset(rst, SSDK_RESET_DEASSERT);
 	msleep(100);
 	reset_control_put(rst);
-	SSDK_INFO("ppe reset successfully!\n");
 
 	for (i = UNIPHY0_SOFT_RESET_E; i < UNIPHY_RST_MAX; i++)
 		uniphy_rsts[i] = of_reset_control_get(rst_node,

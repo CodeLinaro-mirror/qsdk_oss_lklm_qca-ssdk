@@ -1,16 +1,20 @@
 /*
  * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+* Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 #include <linux/kconfig.h>
 #include <linux/types.h>
 #if defined(CONFIG_OF)
@@ -301,7 +305,6 @@ static void ssdk_dt_parse_mac_mode(a_uint32_t dev_id,
 		SSDK_INFO("mac mode doesn't exit!\n");
 	else {
 		cfg->mac_mode = be32_to_cpup(mac_mode);
-		SSDK_INFO("mac mode = 0x%x\n", be32_to_cpup(mac_mode));
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->mac_mode = cfg->mac_mode;
 	}
 
@@ -310,7 +313,6 @@ static void ssdk_dt_parse_mac_mode(a_uint32_t dev_id,
 		SSDK_INFO("mac mode1 doesn't exit!\n");
 	else {
 		cfg->mac_mode1 = be32_to_cpup(mac_mode);
-		SSDK_INFO("mac mode1 = 0x%x\n", be32_to_cpup(mac_mode));
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->mac_mode1 = cfg->mac_mode1;
 	}
 
@@ -319,7 +321,6 @@ static void ssdk_dt_parse_mac_mode(a_uint32_t dev_id,
 		SSDK_INFO("mac mode2 doesn't exit!\n");
 	else {
 		cfg->mac_mode2 = be32_to_cpup(mac_mode);
-		SSDK_INFO("mac mode2 = 0x%x\n", be32_to_cpup(mac_mode));
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->mac_mode2 = cfg->mac_mode2;
 	}
 
@@ -338,7 +339,6 @@ static void ssdk_dt_parse_uniphy(a_uint32_t dev_id)
 	if (!uniphy_node)
 		SSDK_INFO("ess-uniphy DT doesn't exist!\n");
 	else {
-		SSDK_INFO("ess-uniphy DT exist!\n");
 		cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 		reg_cfg = of_get_property(uniphy_node, "reg", &len);
 		if(!reg_cfg)
@@ -610,7 +610,6 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 
 	phy_info_node = of_get_child_by_name(switch_node, "qcom,port_phyinfo");
 	if (!phy_info_node) {
-		SSDK_INFO("qcom,port_phyinfo DT doesn't exist!\n");
 		return SW_NOT_FOUND;
 	}
 
@@ -779,7 +778,6 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 		SSDK_INFO("mdio DT doesn't exist!\n");
 	}
 	else {
-		SSDK_INFO("mdio DT exist!\n");
 		for_each_available_child_of_node(mdio_node, child) {
 			phy_addr = of_get_property(child, "reg", &len);
 			if (phy_addr) {
@@ -869,9 +867,6 @@ static void ssdk_dt_parse_intf_mac(void)
 #endif
 			ssdk_dt_global.num_intf_mac++;
 			ether_addr_copy(ssdk_dt_global.intf_mac[dp-1].uc, maddr);
-			SSDK_INFO("%s MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
-				dp_name, maddr[0], maddr[1], maddr[2], maddr[3],
-				maddr[4], maddr[5]);
 		}
 	}
 	return;
@@ -925,8 +920,6 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 			        switch_node->name);
 		return SW_BAD_PARAM;
 	}
-
-	SSDK_INFO("switch_access_mode: %s\n", ssdk_dt_priv->reg_access_mode);
 	if(!strcmp(ssdk_dt_priv->reg_access_mode, "local bus")) {
 		ssdk_dt_priv->switch_reg_access_mode = HSL_REG_LOCAL_BUS;
 
@@ -1039,9 +1032,6 @@ static sw_error_t ssdk_dt_get_switch_node(struct device_node **switch_node,
 		SSDK_WARN("cannot find ess-switch node\n");
 		return SW_BAD_PARAM;
 	}
-
-	SSDK_INFO("ess-switch DT exist!\n");
-
 	if (!of_device_is_available(*switch_node))
 	{
 		SSDK_WARN("ess-switch node[%s] is disabled\n", ess_switch_name);
@@ -1235,7 +1225,6 @@ int ssdk_switch_device_num_init(void)
 	}
 
 	ssdk_dt_global.num_devices = dev_num;
-	SSDK_INFO("ess-switch dts node number: %d\n", dev_num);
 
 	return 0;
 }
