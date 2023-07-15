@@ -570,7 +570,12 @@ extern "C"
     typedef sw_error_t
     (*hsl_port_erp_power_mode_set)(a_uint32_t dev_id,
 			      fal_port_t port_id, fal_port_erp_power_mode_t power_mode);
-
+  typedef sw_error_t
+    (*hsl_port_interface_eee_cfg_set)(a_uint32_t dev_id,
+			    fal_port_t port_id, fal_port_eee_cfg_t *port_eee_cfg);
+  typedef sw_error_t
+    (*hsl_port_interface_eee_cfg_get)(a_uint32_t dev_id,
+			    fal_port_t port_id, fal_port_eee_cfg_t *port_eee_cfg);
   /* VLAN */
 #define VLAN_FUNC_PROTOTYPE_DEF
   typedef sw_error_t
@@ -1902,14 +1907,6 @@ typedef sw_error_t
 				   fal_mac_config_t * config);
 
   typedef sw_error_t
-    (*hsl_port_3az_status_set) (a_uint32_t dev_id, fal_port_t port_id,
-				a_bool_t enable);
-
-  typedef sw_error_t
-    (*hsl_port_3az_status_get) (a_uint32_t dev_id, fal_port_t port_id,
-				a_bool_t * enable);
-
-  typedef sw_error_t
     (*hsl_interface_phy_mode_set) (a_uint32_t dev_id, a_uint32_t phy_id,
 				   fal_phy_config_t * config);
 
@@ -2179,8 +2176,9 @@ typedef sw_error_t
     hsl_port_counter_get port_counter_get;
     hsl_port_counter_show port_counter_show;
 /*qca808x_end*/
-
     hsl_port_erp_power_mode_set port_erp_power_mode_set;
+    hsl_port_interface_eee_cfg_set port_interface_eee_cfg_set;
+    hsl_port_interface_eee_cfg_get port_interface_eee_cfg_get;
     /* VLAN */
     hsl_vlan_entry_append vlan_entry_append;
     hsl_vlan_create vlan_creat;
@@ -2559,8 +2557,6 @@ typedef sw_error_t
     /* Interface Control */
     hsl_interface_mac_mode_set interface_mac_mode_set;
     hsl_interface_mac_mode_get interface_mac_mode_get;
-    hsl_port_3az_status_set port_3az_status_set;
-    hsl_port_3az_status_get port_3az_status_get;
     hsl_interface_phy_mode_set interface_phy_mode_set;
     hsl_interface_phy_mode_get interface_phy_mode_get;
     hsl_interface_fx100_ctrl_set interface_fx100_ctrl_set;
