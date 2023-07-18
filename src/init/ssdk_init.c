@@ -1492,7 +1492,6 @@ static int qca_link_polling_select(struct qca_phy_priv *priv)
 	link_polling_required = of_get_property(np, "link-polling-required", &len);
 	if (!link_polling_required )
 	{
-		SSDK_INFO("link-polling-required node does not exist\n");
 		return -1;
 	}
 	priv->link_polling_required  = be32_to_cpup(link_polling_required);
@@ -1517,7 +1516,6 @@ static int qca_link_polling_select(struct qca_phy_priv *priv)
 		if(config_gpio(intr_gpio_num))
 			return -1;
 		priv->link_interrupt_no = gpio_to_irq (intr_gpio_num);
-		SSDK_INFO("the interrupt number is:%x\n",priv->link_interrupt_no);
 	}
 
 	return 0;
@@ -2054,7 +2052,6 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 	if(chip_type == CHIP_SCOMPHY)
 	{
 		priv->version = QCA_VER_SCOMPHY;
-		SSDK_INFO("Chip version 0x%02x\n", priv->version);
 	}
 	else
 #endif
@@ -2062,7 +2059,6 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 		if (fal_reg_get(dev_id, 0, (a_uint8_t *)&chip_id, 4) == SW_OK) {
 			priv->version = ((chip_id >> 8) & 0xff);
 			priv->revision = (chip_id & 0xff);
-			SSDK_INFO("Chip version 0x%02x%02x\n", priv->version, priv->revision);
 		}
 	}
 
@@ -2088,7 +2084,6 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 		priv->link_polling_required = 1;
 	if(priv->link_polling_required)
 	{
-		SSDK_INFO("polling is selected\n");
 		ret = qm_err_check_work_start(priv);
 		if (ret != 0)
 		{
@@ -2396,7 +2391,6 @@ static int ssdk_probe(struct platform_device *pdev)
 	ess_mac_clock_disable[4] = devm_reset_control_get(&pdev->dev, "ess_mac5_clk_dis");
 
 	if (IS_ERR(ess_rst)) {
-		SSDK_INFO("ess_rst doesn't exist!\n");
 		return 0;
 	}
 	if (!ess_mac_clock_disable[0]) {
@@ -3970,7 +3964,6 @@ static int __init regi_init(void)
 			case CHIP_ISISC:
 #if defined (ISISC) || defined (ISIS)
 				if (qca_phy_priv_global[dev_id]->ess_switch_flag == A_TRUE) {
-					SSDK_INFO("Initializing ISISC!!\n");
 					qca_ar8327_gpio_reset(qca_phy_priv_global[dev_id]);
 					rv = ssdk_switch_register(dev_id, cfg.chip_type);
 					SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
@@ -3981,7 +3974,6 @@ static int __init regi_init(void)
 				break;
 			case CHIP_MHT:
 #if defined(MHT)
-				SSDK_INFO("Initializing MHT!!\n");
 				rv = qca_mht_hw_init(&cfg, dev_id);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
@@ -3991,7 +3983,6 @@ static int __init regi_init(void)
 				break;
 			case CHIP_APPE:
 #if defined(APPE)
-				SSDK_INFO("Initializing APPE!!\n");
 				qca_appe_hw_init(&cfg, dev_id);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
@@ -4000,7 +3991,6 @@ static int __init regi_init(void)
 				break;
 			case CHIP_HPPE:
 #if defined(HPPE)
-				SSDK_INFO("Initializing HPPE!!\n");
 				qca_hppe_hw_init(&cfg, dev_id);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
@@ -4010,8 +4000,6 @@ static int __init regi_init(void)
 
 			case CHIP_DESS:
 #if defined(DESS)
-				SSDK_INFO("Initializing DESS!!\n");
-
 				qca_dess_hw_init(&cfg, dev_id);
 				qca_dess_rfs_init();
 
@@ -4031,7 +4019,6 @@ static int __init regi_init(void)
 				break;
 			case CHIP_SCOMPHY:
 #if defined(SCOMPHY)
-					SSDK_INFO("Initializing SCOMPHY!\n");
 					rv = qca_scomphy_hw_init(&cfg, dev_id);
 					SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 #if defined(MP)
