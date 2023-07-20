@@ -972,3 +972,35 @@ sw_error_t ssdk_phy_driver_cleanup(a_uint32_t dev_id)
 	return SW_OK;
 }
 /*qca808x_end*/
+sw_error_t
+hsl_phy_linkmode_adv_to_adv(a_ulong_t *advertising, a_uint32_t *autoadv)
+{
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_PAUSE;
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_ASY_PAUSE;
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_10T_HD;
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_10T_FD;
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_100TX_HD;
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_100TX_FD;
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_1000T_FD;
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_2500T_FD;
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_5000T_FD;
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, advertising))
+		*autoadv |= FAL_PHY_ADV_10000T_FD;
+
+	return SW_OK;
+}
