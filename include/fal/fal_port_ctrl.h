@@ -260,6 +260,8 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 				/**<PORT_UQXGMII mode*/
 		PORT_UQXGMII_3CHANNELS,
 				/**<PORT_UQXGMII 3 port mode*/
+		PORT_INTERFACE_MODE_AUTO,
+				/**PORT AUTO INTERFACE MODE*/
 		PORT_INTERFACE_MODE_MAX = 0xFF
 	} fal_port_interface_mode_t;
 
@@ -668,13 +670,12 @@ fal_port_hibernate_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_hibernate_get(a_uint32_t dev_id, fal_port_t port_id,
 			  a_bool_t * enable);
-
+#endif
 sw_error_t
 fal_port_cdt(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t mdi_pair, fal_cable_status_t * cable_status,
 		a_uint32_t * cable_len);
-
-
+#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 fal_port_8023az_set(a_uint32_t dev_id, fal_port_t port_id,
 				a_bool_t enable);

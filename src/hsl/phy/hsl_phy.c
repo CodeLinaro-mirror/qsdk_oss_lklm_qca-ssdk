@@ -54,6 +54,8 @@
 #include "ssdk_plat.h"
 #include "hsl_port_prop.h"
 #include <linux/netdevice.h>
+#include <linux/i2c.h>
+#include "ssdk_phy_i2c.h"
 
 phy_info_t *phy_info[SW_MAX_NR_DEV] = {0};
 a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
@@ -507,20 +509,6 @@ void qca_ssdk_phy_mdio_fake_address_set(a_uint32_t dev_id, a_uint32_t i,
 
 	return;
 }
-
-a_uint32_t
-qca_ssdk_phy_mdio_fake_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_mdio_fake_addr)
-{
-	a_uint32_t i = 0;
-
-	for (i = 0; i < SW_MAX_NR_PORT; i ++)
-	{
-		if (phy_info[dev_id]->phy_mdio_fake_address[i] == phy_mdio_fake_addr)
-			return i;
-	}
-	SSDK_ERROR("doesn't match port_id to specified phy_mdio_fake_addr !\n");
-	return 0;
-}
 #endif
 /*qca808x_start*/
 a_uint32_t
@@ -538,6 +526,12 @@ qca_ssdk_phy_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr)
 	{
 		if (phy_info[dev_id]->phy_address[i] == phy_addr)
 			return i;
+#if defined(IN_PHY_I2C_MODE)
+		/*for the case that IN_PHY_I2C_MODE was enabled,
+		if port id was not found, the mdio fake address can be used*/
+		if (phy_info[dev_id]->phy_mdio_fake_address[i] == TO_PHY_ADDR(phy_addr))
+			return i;
+#endif
 	}
 	SSDK_DEBUG("doesn't match port_id to specified phy_addr !\n");
 	return 0;
@@ -689,8 +683,8 @@ hsl_port_phy_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t phy_addr = 0;
 	hsl_phy_ops_t *phy_drv;
 
-	SW_RTN_ON_NULL(phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_interface_mode_set)
+	phy_drv = hsl_phy_api_ops_get (dev_id, port_id);
+	if (NULL == phy_drv || NULL == phy_drv->phy_interface_mode_set)
 	{
 		/*PHY driver did not register phy_interface_mode_set,
 		so no need to configure PHY interface mode*/
@@ -1215,6 +1209,55 @@ a_uint32_t hsl_port_mode_to_uniphy_mode(a_uint32_t dev_id,
 	}
 
 	return uniphy_mode;
+}
+
+a_uint32_t hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t uniphy_mode)
+{
+	a_uint32_t port_mode = 0;
+
+	switch(uniphy_mode)
+	{
+		case PORT_WRAPPER_PSGMII:
+		case PORT_WRAPPER_PSGMII_FIBER:
+			if(port_id >= SSDK_PHYSICAL_PORT1 && port_id <= SSDK_PHYSICAL_PORT4)
+				port_mode = PHY_PSGMII_BASET;
+			if(port_id == SSDK_PHYSICAL_PORT5) {
+				if(uniphy_mode == PORT_WRAPPER_PSGMII)
+					port_mode = PHY_PSGMII_BASET;
+				else
+					port_mode = PHY_PSGMII_FIBER;
+			}
+			break;
+		case PORT_WRAPPER_QSGMII:
+			port_mode = PORT_QSGMII;
+			break;
+		case PORT_WRAPPER_SGMII_PLUS:
+			port_mode = PORT_SGMII_PLUS;
+			break;
+		case PORT_WRAPPER_USXGMII:
+			port_mode = PORT_USXGMII;
+			break;
+		case PORT_WRAPPER_10GBASE_R:
+			port_mode = PORT_10GBASE_R;
+			break;
+		case PORT_WRAPPER_SGMII_CHANNEL0:
+		case PORT_WRAPPER_SGMII_CHANNEL1:
+		case PORT_WRAPPER_SGMII_CHANNEL4:
+			port_mode = PHY_SGMII_BASET;
+			break;
+		case PORT_WRAPPER_SGMII_FIBER:
+			port_mode = PORT_SGMII_FIBER;
+			break;
+		case PORT_WRAPPER_UQXGMII:
+		case PORT_WRAPPER_UDXGMII:
+			port_mode = PORT_UQXGMII;
+			break;
+		default:
+			return SW_NOT_SUPPORTED;
+	}
+
+	return port_mode;
 }
 
 a_uint32_t hsl_port_to_uniphy(a_uint32_t dev_id, a_uint32_t port_id)
@@ -1779,6 +1822,1172 @@ sw_error_t
 hsl_port_feature_clear(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature)
 {
 	phy_info[dev_id]->phy_features[port_id] &= ~feature;
+
+	return SW_OK;
+}
+/*********************APIs to access PHY with MDIO and I2C*********************/
+static sw_error_t
+hsl_phy_lock(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
+{
+#if defined(IN_PHY_I2C_MODE)
+	if(IS_I2C_PHY_ADDR(phy_addr))
+	{
+		struct i2c_adapter *adapt = i2c_get_adapter(I2C_ADAPTER_DEFAULT_ID);
+		SW_RTN_ON_NULL(adapt);
+		if(enable)
+			i2c_lock_bus(adapt, I2C_LOCK_SEGMENT);
+		else
+			i2c_unlock_bus(adapt, I2C_LOCK_SEGMENT);
+	}
+	else
+#endif
+	{
+		struct mii_bus *miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
+		SW_RTN_ON_NULL(miibus);
+		if(enable)
+			mutex_lock(&miibus->mdio_lock);
+		else
+			mutex_unlock(&miibus->mdio_lock);
+	}
+
+	return SW_OK;
+}
+/*
+ * @brief read mii register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mii_reg mii register id
+ * @return mii register value
+ */
+a_uint16_t
+__hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg)
+{
+	a_uint16_t phy_data = 0;
+
+#if defined(IN_PHY_I2C_MODE)
+	if(IS_I2C_PHY_ADDR(phy_addr))
+	{
+		if(__qca_phy_i2c_read(dev_id, phy_addr, mii_reg, &phy_data))
+			return PHY_INVALID_DATA;
+	}
+	else
+#endif
+	{
+		struct mii_bus *miibus = NULL;
+
+		miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
+		if(!miibus)
+			return PHY_INVALID_DATA;
+		phy_data = __mdiobus_read(miibus, phy_addr, mii_reg);
+	}
+
+	return phy_data;
+}
+/*
+ * @brief write mii register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mii_reg mii register id
+ * @param[in] reg_val write to mii register
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t reg_val)
+{
+	struct mii_bus *miibus = NULL;
+
+#if defined(IN_PHY_I2C_MODE)
+	if(IS_I2C_PHY_ADDR(phy_addr))
+	{
+		if(__qca_phy_i2c_write(dev_id, phy_addr, mii_reg, reg_val))
+			return SW_WRITE_ERROR;
+	}
+	else
+#endif
+	{
+		miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
+		SW_RTN_ON_NULL(miibus);
+		if(__mdiobus_write(miibus, phy_addr, mii_reg, reg_val))
+			return SW_WRITE_ERROR;
+	}
+
+	return SW_OK;
+}
+/*
+ * @brief modify mii register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mii_reg mii register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_modify_mii(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t mask, a_uint16_t value)
+{
+	a_uint16_t phy_data = 0, new_phy_data = 0;
+
+	phy_data = __hsl_phy_mii_reg_read(dev_id, phy_addr, mii_reg);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+	new_phy_data = (phy_data & ~mask) | value;
+	return __hsl_phy_mii_reg_write(dev_id, phy_addr, mii_reg, new_phy_data);
+}
+/*
+ * @brief read mii register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mii_reg mii register id
+ * @return mii register value
+ */
+a_uint16_t
+hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg)
+{
+	a_uint16_t phy_data = 0;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	phy_data = __hsl_phy_mii_reg_read(dev_id, phy_addr, mii_reg);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return phy_data;
+}
+/*
+ * @brief write mii register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mii_reg mii register id
+ * @param[in] reg_val write to mii register
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t mii_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_mii_reg_write(dev_id, phy_addr, mii_reg, reg_val);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+/*
+ * @brief modify mii register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mii_reg mii register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_modify_mii(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t mask, a_uint16_t value)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_modify_mii(dev_id, phy_addr, mii_reg, mask, value);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+
+static a_uint16_t
+__hsl_phy_c45_mmd_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg)
+{
+	return __hsl_phy_mii_reg_read(dev_id, phy_addr,
+		HSL_PHY_REG_C45_ADDR(mmd_num, mmd_reg));
+}
+
+static a_uint16_t
+__hsl_phy_c22_mmd_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_CTRL_REG, mmd_num);
+	rv |= __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_DATA_REG, mmd_reg);
+	rv |= __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_CTRL_REG,
+		0x4000 | mmd_num);
+	if(rv != SW_OK)
+		return PHY_INVALID_DATA;
+	return __hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_MMD_DATA_REG);
+}
+
+static sw_error_t
+__hsl_phy_c45_mmd_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint16_t mmd_num, a_uint16_t mmd_reg, a_uint16_t reg_val)
+{
+	return __hsl_phy_mii_reg_write(dev_id, phy_addr,
+		HSL_PHY_REG_C45_ADDR(mmd_num, mmd_reg), reg_val);
+}
+
+static a_uint16_t
+__hsl_phy_c22_mmd_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_CTRL_REG, mmd_num);
+	rv |= __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_DATA_REG, mmd_reg);
+	rv |= __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_CTRL_REG,
+		0x4000 | mmd_num);
+	rv |= __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_MMD_DATA_REG, reg_val);
+
+	return rv;
+}
+/*
+ * @brief read mmd register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] is_c45 is c45 access or not
+ * @param[in] mmd_num mmd number
+ * @param[in] mmd_reg mmd register id
+ * @return mmd register value
+ */
+a_uint16_t
+__hsl_phy_mmd_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg)
+{
+	if(is_c45)
+		return __hsl_phy_c45_mmd_reg_read(dev_id, phy_addr, mmd_num, mmd_reg);
+	else
+		return __hsl_phy_c22_mmd_reg_read(dev_id, phy_addr, mmd_num, mmd_reg);
+}
+/*
+ * @brief write mmd register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] is_c45 is c45 access or not
+ * @param[in] mmd_num mmd number
+ * @param[in] mmd_reg mmd register id
+ * @param[in] reg_val write to mmd register
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_mmd_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t reg_val)
+{
+	if(is_c45)
+		return __hsl_phy_c45_mmd_reg_write(dev_id, phy_addr, mmd_num, mmd_reg,
+			reg_val);
+	else
+		return __hsl_phy_c22_mmd_reg_write(dev_id, phy_addr, mmd_num, mmd_reg,
+			reg_val);
+}
+/*
+ * @brief modify mmd register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] is_c45 is c45 access or not
+ * @param[in] mmd_num mmd number
+ * @param[in] mmd_reg mmd register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_modify_mmd(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t mask, a_uint16_t value)
+{
+	a_uint16_t phy_data = 0, new_phy_data = 0;
+
+	phy_data = __hsl_phy_mmd_reg_read(dev_id, phy_addr, is_c45, mmd_num, mmd_reg);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+	new_phy_data = (phy_data & ~mask) | value;
+	return __hsl_phy_mmd_reg_write(dev_id, phy_addr, is_c45, mmd_num, mmd_reg,
+		new_phy_data);
+}
+/*
+ * @brief read mmd register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] is_c45 is c45 access or not
+ * @param[in] mmd_num mmd number
+ * @param[in] mmd_reg mmd register id
+ * @return mmd register value
+ */
+a_uint16_t
+hsl_phy_mmd_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg)
+{
+	a_uint16_t phy_data = 0;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	phy_data = __hsl_phy_mmd_reg_read(dev_id, phy_addr, is_c45, mmd_num,
+		mmd_reg);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return phy_data;
+}
+/*
+ * @brief write mmd register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] is_c45 is c45 access or not
+ * @param[in] mmd_num mmd number
+ * @param[in] mmd_reg mmd register id
+ * @param[in] reg_val write to mmd register
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_mmd_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_mmd_reg_write(dev_id, phy_addr, is_c45, mmd_num, mmd_reg,
+		reg_val);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+/*
+ * @brief modify mmd register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] is_c45 is c45 access or not
+ * @param[in] mmd_num mmd number
+ * @param[in] mmd_reg mmd register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_modify_mmd(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t mask, a_uint16_t value)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_modify_mmd(dev_id, phy_addr, is_c45, mmd_num, mmd_reg,
+		mask, value);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+/*
+ * @brief read debug register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @return debug register value
+ */
+a_uint16_t
+__hsl_phy_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = __hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_DEBUG_PORT_ADDRESS,
+		debug_reg);
+	if(rv != SW_OK)
+		return PHY_INVALID_DATA;
+	return __hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_DEBUG_PORT_DATA);
+}
+/*
+ * @brief write debug register without lock.
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] reg_val write to debug register
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t debug_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = __hsl_phy_mii_reg_write(dev_id, phy_id, HSL_PHY_DEBUG_PORT_ADDRESS,
+		debug_reg);
+
+	rv |= __hsl_phy_mii_reg_write(dev_id, phy_id, HSL_PHY_DEBUG_PORT_DATA,
+		reg_val);
+
+	return rv;
+}
+/*
+ * @brief modify debug register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value)
+{
+	a_uint16_t phy_data = 0, new_phy_data = 0;
+
+	phy_data = __hsl_phy_debug_reg_read(dev_id, phy_addr, debug_reg);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+	new_phy_data = (phy_data & ~mask) | value;
+	return __hsl_phy_debug_reg_write (dev_id, phy_addr, debug_reg,
+		new_phy_data);
+}
+/*
+ * @brief read debug register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @return debug register value
+ */
+a_uint16_t
+hsl_phy_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg)
+{
+	a_uint16_t phy_data = 0;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	phy_data = __hsl_phy_debug_reg_read(dev_id, phy_addr, debug_reg);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return phy_data;
+}
+/*
+ * @brief write debug register with lock.
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] reg_val write to debug register
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_debug_reg_write(dev_id, phy_addr, debug_reg, reg_val);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+/*
+ * @brief modify debug register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_modify_debug(dev_id, phy_addr, debug_reg, mask, value);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+/*********************the function for GE PHY mii registers*********************/
+/*
+ * @brief reset phy
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_sw_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	return hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL,
+		HSL_PHY_CTRL_SOFTWARE_RESET, HSL_PHY_CTRL_SOFTWARE_RESET);
+}
+/*
+ * @brief set local loopback
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] enable A_TRUE or A_FALSE
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_bool_t enable)
+{
+	a_uint16_t phy_data = 0;
+	fal_port_speed_t cur_speed = 0;
+	sw_error_t rv = SW_OK;
+
+	if (enable == A_TRUE) {
+		rv = hsl_phy_get_speed(dev_id, phy_addr, &cur_speed);
+		PHY_RTN_ON_ERROR(rv);
+		if (cur_speed == FAL_SPEED_1000) {
+			phy_data = HSL_1000M_LOOPBACK;
+		} else if (cur_speed == FAL_SPEED_100) {
+			phy_data = HSL_100M_LOOPBACK;
+		} else if (cur_speed == FAL_SPEED_10) {
+			phy_data = HSL_10M_LOOPBACK;
+		} else {
+			return SW_FAIL;
+		}
+	} else {
+		phy_data = HSL_COMMON_CTRL;
+	}
+
+	return hsl_phy_mii_reg_write(dev_id, phy_addr, HSL_PHY_CONTROL, phy_data);
+}
+/*
+ * @brief get local loopback status
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] enable A_TRUE or A_FALSE
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_bool_t *enable)
+{
+	a_uint16_t phy_data = 0;
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_CONTROL);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if (phy_data & HSL_LOCAL_LOOPBACK_ENABLE) {
+		*enable = A_TRUE;
+	} else {
+		*enable = A_FALSE;
+	}
+
+	return SW_OK;
+}
+/*
+ * @brief configure the force speed
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] speed force speed
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_speed_t speed)
+{
+	a_uint16_t phy_data = 0, mask = 0;
+	fal_port_duplex_t cur_duplex = HSL_CTRL_FULL_DUPLEX;
+	sw_error_t rv = SW_OK;
+
+	switch(speed)
+	{
+		case FAL_SPEED_1000:
+			rv = hsl_phy_set_autoneg_adv(dev_id, phy_addr,
+				FAL_PHY_ADV_1000T_FD);
+			PHY_RTN_ON_ERROR(rv);
+			phy_data |= HSL_CTRL_FULL_DUPLEX;
+			phy_data |= HSL_CTRL_AUTONEGOTIATION_ENABLE;
+			phy_data |= HSL_CTRL_RESTART_AUTONEGOTIATION;
+			mask = phy_data;
+			break;
+		case FAL_SPEED_100:
+		case FAL_SPEED_10:
+			mask = HSL_CONTROL_SPEED_MASK | HSL_CTRL_FULL_DUPLEX |
+				HSL_CTRL_AUTONEGOTIATION_ENABLE;
+			if (speed == FAL_SPEED_100) {
+				phy_data |= HSL_CONTROL_SPEED_100M;
+			} else {
+				phy_data |= HSL_CONTROL_SPEED_10M;
+			}
+			rv = hsl_phy_get_duplex(dev_id, phy_addr, &cur_duplex);
+			PHY_RTN_ON_ERROR(rv);
+
+			if (cur_duplex == FAL_FULL_DUPLEX) {
+				phy_data |= HSL_CTRL_FULL_DUPLEX;
+			}
+			break;
+		default:
+			return SW_BAD_PARAM;
+	}
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL, mask, phy_data);
+	PHY_RTN_ON_ERROR(rv);
+/*qca808x_end*/
+	if(speed < FAL_SPEED_1000) {
+		rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_FALSE, 0);
+		PHY_RTN_ON_ERROR(rv);
+	}
+/*qca808x_start*/
+
+	return SW_OK;
+}
+/*
+ * @brief configure the force speed
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] speed force duplex as full or half
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_duplex_t duplex)
+{
+	a_uint16_t phy_data = 0, mask = 0;
+	fal_port_speed_t cur_speed = 0;
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_get_speed(dev_id, phy_addr, &cur_speed);
+	PHY_RTN_ON_ERROR(rv);
+
+	switch(cur_speed)
+	{
+		case FAL_SPEED_1000:
+			if (duplex == FAL_FULL_DUPLEX) {
+				phy_data |= HSL_CTRL_FULL_DUPLEX;
+			} else {
+				return SW_NOT_SUPPORTED;
+			}
+			rv = hsl_phy_set_autoneg_adv(dev_id, phy_addr,
+				FAL_PHY_ADV_1000T_FD);
+			PHY_RTN_ON_ERROR(rv);
+			phy_data |= HSL_CTRL_AUTONEGOTIATION_ENABLE;
+			phy_data |= HSL_CTRL_RESTART_AUTONEGOTIATION;
+			mask = phy_data;
+			break;
+		case FAL_SPEED_100:
+		case FAL_SPEED_10:
+			mask = HSL_CONTROL_SPEED_MASK | HSL_CTRL_AUTONEGOTIATION_ENABLE
+				| HSL_CTRL_FULL_DUPLEX;
+			if (cur_speed == FAL_SPEED_100) {
+				phy_data |= HSL_CONTROL_SPEED_100M;
+			} else {
+				phy_data |= HSL_CONTROL_SPEED_10M;
+			}
+			if (duplex == FAL_FULL_DUPLEX) {
+				phy_data |= HSL_CTRL_FULL_DUPLEX;
+			}
+			break;
+		default:
+			return SW_FAIL;
+	}
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL, mask,
+		phy_data);
+	PHY_RTN_ON_ERROR(rv);
+/*qca808x_end*/
+	if(cur_speed < FAL_SPEED_1000) {
+		rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_FALSE, 0);
+		PHY_RTN_ON_ERROR(rv);
+	}
+/*qca808x_start*/
+
+	return SW_OK;
+}
+/*
+ * @brief enable autoneg
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_autoneg_enable(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL,
+		HSL_CTRL_AUTONEGOTIATION_ENABLE, HSL_CTRL_AUTONEGOTIATION_ENABLE);
+	PHY_RTN_ON_ERROR(rv);
+/*qca808x_end*/
+	rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, 0);
+/*qca808x_start*/
+
+	return rv;
+}
+/*
+ * @brief power off the phy
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return SW_OK or error code
+ */
+a_bool_t
+hsl_phy_autoneg_status(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	a_uint16_t phy_data;
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_CONTROL);
+
+	if (phy_data & HSL_CTRL_AUTONEGOTIATION_ENABLE) {
+		return A_TRUE;
+	}
+
+	return A_FALSE;
+}
+/*
+ * @brief power off the phy
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	return hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL,
+		HSL_CTRL_POWER_MASK, HSL_CTRL_POWER_DOWN);
+}
+/*
+ * @brief power on the phy
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_poweron(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL,
+		HSL_CTRL_POWER_MASK, HSL_CTRL_POWER_UP);
+	PHY_RTN_ON_ERROR(rv);
+	aos_mdelay(200);
+
+	return SW_OK;
+}
+/*
+ * @brief restart autoneg
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_autoneg_restart(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_CONTROL,
+		HSL_CTRL_AUTONEGOTIATION_ENABLE | HSL_CTRL_RESTART_AUTONEGOTIATION,
+		HSL_CTRL_AUTONEGOTIATION_ENABLE | HSL_CTRL_RESTART_AUTONEGOTIATION);
+	PHY_RTN_ON_ERROR(rv);
+/*qca808x_end*/
+	rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, 0);
+/*qca808x_start*/
+
+	return rv;
+}
+/*
+ * @brief get phy support ability
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] ability support ability
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_capability(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *cap)
+{
+	a_uint16_t phy_data = 0;
+
+	*cap = 0;
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_STATUS);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if (phy_data & HSL_STATUS_AUTONEG_CAPS) {
+		*cap |= FAL_PHY_ADV_AUTONEG;
+	}
+	if (phy_data & HSL_STATUS_10T_HD_CAPS) {
+		*cap |= FAL_PHY_ADV_10T_HD;
+	}
+	if (phy_data & HSL_STATUS_10T_FD_CAPS) {
+		*cap |= FAL_PHY_ADV_10T_FD;
+	}
+	if (phy_data & HSL_STATUS_100TX_HD_CAPS) {
+		*cap |= FAL_PHY_ADV_100TX_HD;
+	}
+	if (phy_data & HSL_STATUS_100TX_FD_CAPS) {
+		*cap |= FAL_PHY_ADV_100TX_FD;
+	}
+	if (phy_data & HSL_STATUS_EXTENDED_STATUS) {
+		phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr,
+			HSL_EXTENDED_STATUS);
+		PHY_RTN_ON_READ_ERROR(phy_data);
+		if (phy_data & HSL_STATUS_1000T_FD_CAPS)
+			*cap |= FAL_PHY_ADV_1000T_FD;
+	}
+	*cap |= (FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE);
+
+	return SW_OK;
+}
+/*
+ * @brief get phy id
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] phy_id phy id
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *phy_id)
+{
+	a_uint16_t org_id = 0, rev_id = 0;
+	org_id = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_ID1);
+	PHY_RTN_ON_READ_ERROR(org_id);
+
+	rev_id = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_ID2);
+	PHY_RTN_ON_READ_ERROR(rev_id);
+
+	*phy_id = ((org_id & 0xffff) << 16) | (rev_id & 0xffff);
+
+	return SW_OK;
+}
+/*
+ * @brief set phy autoadv
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] autoneg_adv auto-negotiation adv bitmap
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t autoneg_adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	if (autoneg_adv & FAL_PHY_ADV_100TX_FD) {
+		phy_data |= HSL_ADVERTISE_100FULL;
+	}
+
+	if (autoneg_adv & FAL_PHY_ADV_100TX_HD) {
+		phy_data |= HSL_ADVERTISE_100HALF;
+	}
+
+	if (autoneg_adv & FAL_PHY_ADV_10T_FD) {
+		phy_data |= HSL_ADVERTISE_10FULL;
+	}
+
+	if (autoneg_adv & FAL_PHY_ADV_10T_HD) {
+		phy_data |= HSL_ADVERTISE_10HALF;
+	}
+
+	if (autoneg_adv & FAL_PHY_ADV_PAUSE) {
+		phy_data |= HSL_ADVERTISE_PAUSE;
+	}
+
+	if (autoneg_adv & FAL_PHY_ADV_ASY_PAUSE) {
+		phy_data |= HSL_ADVERTISE_ASYM_PAUSE;
+	}
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_AUTONEG_ADVERT,
+		HSL_ADVERTISE_MEGA_ALL, phy_data);
+
+	phy_data = 0;
+	if (autoneg_adv & FAL_PHY_ADV_1000T_FD) {
+		phy_data |= HSL_ADVERTISE_1000FULL;
+	}
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_1000BASET_CONTROL,
+		HSL_ADVERTISE_1000FULL | HSL_ADVERTISE_1000FULL, phy_data);
+	PHY_RTN_ON_ERROR(rv);
+
+/*qca808x_end*/
+	rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE, autoneg_adv);
+/*qca808x_start*/
+
+	return rv;
+}
+/*
+ * @brief set phy autoadv
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] autoneg_adv auto-negotiation adv bitmap
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *autoneg_adv)
+{
+	a_uint16_t phy_data = 0;
+
+	*autoneg_adv = 0;
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_AUTONEG_ADVERT);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if (phy_data & HSL_ADVERTISE_100FULL) {
+		*autoneg_adv |= FAL_PHY_ADV_100TX_FD;
+	}
+
+	if (phy_data & HSL_ADVERTISE_100HALF) {
+		*autoneg_adv |= FAL_PHY_ADV_100TX_HD;
+	}
+
+	if (phy_data & HSL_ADVERTISE_10FULL) {
+		*autoneg_adv |= FAL_PHY_ADV_10T_FD;
+	}
+
+	if (phy_data & HSL_ADVERTISE_10HALF) {
+		*autoneg_adv |= FAL_PHY_ADV_10T_HD;
+	}
+
+	if (phy_data & HSL_ADVERTISE_PAUSE) {
+		*autoneg_adv |= FAL_PHY_ADV_PAUSE;
+	}
+
+	if (phy_data & HSL_ADVERTISE_ASYM_PAUSE) {
+		*autoneg_adv |= FAL_PHY_ADV_ASY_PAUSE;
+	}
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_1000BASET_CONTROL);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if (phy_data & HSL_ADVERTISE_1000FULL) {
+		*autoneg_adv |= FAL_PHY_ADV_1000T_FD;
+	}
+
+	return SW_OK;
+}
+/*
+ * @brief get link partner ability
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] link partner ability bitmap
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_lp_capability_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *cap)
+{
+	a_uint16_t phy_data = 0;
+
+	*cap = 0;
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_LINK_PARTNER_ABILITY);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if(phy_data & HSL_LINK_10BASETX_HALF_DUPLEX)
+		*cap |= FAL_PHY_ADV_10T_HD;
+
+	if(phy_data & HSL_LINK_10BASETX_FULL_DUPLEX)
+		*cap |= FAL_PHY_ADV_10T_FD;
+
+	if(phy_data & HSL_LINK_100BASETX_HALF_DUPLEX)
+		*cap |= FAL_PHY_ADV_100TX_HD;
+
+	if(phy_data & HSL_LINK_100BASETX_FULL_DUPLEX)
+		*cap |= FAL_PHY_ADV_100TX_FD;
+
+	if(phy_data & HSL_LINK_PAUSE)
+		*cap |= FAL_PHY_ADV_PAUSE;
+
+	if(phy_data & HSL_LINK_ASYPAUSE)
+		*cap |= FAL_PHY_ADV_ASY_PAUSE;
+
+	if(phy_data & HSL_LINK_LPACK)
+		*cap |= FAL_PHY_ADV_AUTONEG;
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_1000BASET_STATUS);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+	if(phy_data & HSL_LINK_1000BASETX_FULL_DUPLEX)
+		*cap |= FAL_PHY_ADV_1000T_FD;
+
+	return SW_OK;
+}
+/*
+ * @brief set phy mdix mode
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] mdix mode
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_set_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_mdix_mode_t mode)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	if (mode == PHY_MDIX_AUTO) {
+		phy_data = HSL_PHY_MDIX_AUTO;
+	} else if (mode == PHY_MDIX_MDIX) {
+		phy_data = HSL_PHY_MDIX;
+	} else if (mode == PHY_MDIX_MDI) {
+		phy_data = HSL_PHY_MDI;
+	} else {
+		return SW_BAD_PARAM;
+	}
+
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, HSL_PHY_SPEC_CONTROL,
+		HSL_PHY_MDIX_AUTO, phy_data);
+	PHY_RTN_ON_ERROR(rv);
+
+	return hsl_phy_sw_reset(dev_id, phy_addr);
+}
+/*
+ * @brief get phy mdix mode
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] mdix mode
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_mdix_mode_t * mode)
+{
+	a_uint16_t phy_data = 0;
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_SPEC_CONTROL);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	if ((phy_data & HSL_PHY_MDIX_AUTO) == HSL_PHY_MDIX_AUTO) {
+		*mode = PHY_MDIX_AUTO;
+	} else if ((phy_data & HSL_PHY_MDIX_AUTO) == HSL_PHY_MDIX) {
+		*mode = PHY_MDIX_MDIX;
+	} else {
+		*mode = PHY_MDIX_MDI;
+	}
+
+	return SW_OK;
+
+}
+/*
+ * @brief get phy mdix mode status
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] mdix mode
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_mdix_status(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_mdix_status_t * mode)
+{
+	a_uint16_t phy_data = 0;
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_SPEC_STATUS);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	*mode = (phy_data & HSL_PHY_MDIX_STATUS) ? PHY_MDIX_STATUS_MDIX :
+		PHY_MDIX_STATUS_MDI;
+
+	return SW_OK;
+
+}
+/*
+ * @brief get phy status
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] phy_status phy status
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+	struct port_phy_status *phy_status)
+{
+	a_uint16_t phy_data;
+
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, HSL_PHY_SPEC_STATUS);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+
+	/*get phy link status*/
+	if (phy_data & HSL_STATUS_LINK_PASS) {
+		phy_status->link_status = PORT_LINK_UP;
+	} else {
+		phy_status->link_status = PORT_LINK_DOWN;
+		return SW_OK;
+	}
+	/*get phy speed*/
+	switch (phy_data & HSL_STATUS_SPEED_MASK) {
+		case HSL_STATUS_SPEED_2500MBS:
+			phy_status->speed = FAL_SPEED_2500;
+			break;
+		case HSL_STATUS_SPEED_1000MBS:
+			phy_status->speed = FAL_SPEED_1000;
+			break;
+		case HSL_STATUS_SPEED_100MBS:
+			phy_status->speed = FAL_SPEED_100;
+			break;
+		case HSL_STATUS_SPEED_10MBS:
+			phy_status->speed = FAL_SPEED_10;
+			break;
+		default:
+			return SW_READ_ERROR;
+	}
+	/*get phy duplex*/
+	if (phy_data & HSL_STATUS_FULL_DUPLEX) {
+		phy_status->duplex = FAL_FULL_DUPLEX;
+	} else {
+		phy_status->duplex = FAL_HALF_DUPLEX;
+	}
+	/* get phy flowctrl resolution status */
+	if (phy_data & HSL_PHY_RX_FLOWCTRL_STATUS) {
+		phy_status->rx_flowctrl = A_TRUE;
+	} else {
+		phy_status->rx_flowctrl = A_FALSE;
+	}
+	if (phy_data & HSL_PHY_TX_FLOWCTRL_STATUS) {
+		phy_status->tx_flowctrl = A_TRUE;
+	} else {
+		phy_status->tx_flowctrl = A_FALSE;
+	}
+
+	return SW_OK;
+}
+/*
+ * @brief get phy speed
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @return A_TRUE for link up, A_FALS for link down
+ */
+a_bool_t
+hsl_phy_get_link_status(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	struct port_phy_status phy_status = {0};
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_status_get(dev_id, phy_addr, &phy_status);
+	PHY_RTN_ON_ERROR(rv);
+	if(phy_status.link_status == PORT_LINK_UP)
+		return A_TRUE;
+	else
+		return A_FALSE;
+}
+/*
+ * @brief get phy speed
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] speed
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_speed_t * speed)
+{
+	sw_error_t rv = SW_OK;
+	struct port_phy_status phy_status = {0};
+
+	rv = hsl_phy_status_get(dev_id, phy_addr, &phy_status);
+	PHY_RTN_ON_ERROR(rv);
+
+	if (phy_status.link_status == PORT_LINK_UP) {
+		*speed = phy_status.speed;
+	} else {
+		*speed = FAL_SPEED_10;
+	}
+
+	return SW_OK;
+}
+/*
+ * @brief get phy duplex
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[out] speed
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_get_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_duplex_t * duplex)
+{
+	sw_error_t rv = SW_OK;
+	struct port_phy_status phy_status = {0};
+
+	rv = hsl_phy_status_get(dev_id, phy_addr, &phy_status);
+	PHY_RTN_ON_ERROR(rv);
+
+	if (phy_status.link_status == PORT_LINK_UP) {
+		*duplex = phy_status.duplex;
+	} else {
+		*duplex = FAL_HALF_DUPLEX;
+	}
 
 	return SW_OK;
 }

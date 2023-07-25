@@ -633,6 +633,9 @@ typedef struct {
 #define TO_PHY_ADDR(phy_addr_e) (phy_addr_e & 0x1f)
 #define TO_MIIBUS_INDEX(phy_addr_e) (phy_addr_e >> 8 & 0xf)
 
+#define TO_PHY_I2C_ADDR(phy_addr) (BIT(24) | phy_addr)
+#define TO_PHY_I2C_ADDR_VAL(i2c_addr) (i2c_addr & 0x7f)
+#define IS_I2C_PHY_ADDR(phy_addr) (phy_addr & BIT(24))
 sw_error_t
 hsl_phy_api_ops_register(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);
 
@@ -661,9 +664,6 @@ qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id);
 #if defined(IN_PHY_I2C_MODE)
 a_uint32_t
 qca_ssdk_port_to_phy_mdio_fake_addr(a_uint32_t dev_id, a_uint32_t port_id);
-
-a_uint32_t
-qca_ssdk_phy_mdio_fake_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr);
 
 void qca_ssdk_phy_mdio_fake_address_set(a_uint32_t dev_id, a_uint32_t i,
 				a_uint32_t value);
@@ -789,6 +789,9 @@ hsl_port_mode_to_phydev_interface(a_uint32_t dev_id, a_uint32_t port_mode);
 a_uint32_t
 hsl_port_mode_to_uniphy_mode(a_uint32_t dev_id, a_uint32_t port_mode);
 a_uint32_t
+hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t uniphy_mode);
+a_uint32_t
 hsl_port_to_uniphy(a_uint32_t dev_id, a_uint32_t port_id);
 sw_error_t
 hsl_port_combo_phy_link_status_get(a_uint32_t dev_id,
@@ -831,6 +834,201 @@ sw_error_t
 hsl_port_feature_set(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature);
 sw_error_t
 hsl_port_feature_clear(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature);
+/*********************APIs to access PHY with MDIO and I2C*********************/
+#define HSL_PHY_REG_C45_ADDR(mmd_num, reg_num) (BIT(30) | mmd_num << 16 | reg_num)
+#define HSL_PHY_MMD_CTRL_REG                                   13
+#define HSL_PHY_MMD_DATA_REG                                   14
+#define HSL_PHY_DEBUG_PORT_ADDRESS                             29
+#define HSL_PHY_DEBUG_PORT_DATA                                30
+#define I2C_ADAPTER_DEFAULT_ID                                 0
+
+/*APIs to access mii register*/
+a_uint16_t
+__hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg);
+sw_error_t
+__hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t reg_val);
+sw_error_t
+__hsl_phy_modify_mii(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t mask, a_uint16_t value);
+a_uint16_t
+hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg);
+sw_error_t
+hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t reg_val);
+sw_error_t
+hsl_phy_modify_mii(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
+	a_uint16_t mask, a_uint16_t value);
+/*APIs to access mmd register*/
+a_uint16_t
+__hsl_phy_mmd_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg);
+sw_error_t
+__hsl_phy_mmd_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t reg_val);
+sw_error_t
+__hsl_phy_modify_mmd(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t mask, a_uint16_t value);
+a_uint16_t
+hsl_phy_mmd_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg);
+sw_error_t
+hsl_phy_mmd_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t reg_val);
+sw_error_t
+hsl_phy_modify_mmd(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t is_c45,
+	a_uint32_t mmd_num, a_uint32_t mmd_reg, a_uint16_t mask, a_uint16_t value);
+/*APIs to access debug register*/
+a_uint16_t
+__hsl_phy_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg);
+sw_error_t
+__hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t debug_reg, a_uint16_t reg_val);
+sw_error_t
+__hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
+a_uint16_t
+hsl_phy_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg);
+sw_error_t
+hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t reg_val);
+sw_error_t
+hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
+/*MII register*/
+#define HSL_PHY_CONTROL                                         0
+#define HSL_PHY_STATUS                                          1
+#define HSL_PHY_ID1                                             2
+#define HSL_PHY_ID2                                             3
+#define HSL_AUTONEG_ADVERT                                      4
+#define HSL_LINK_PARTNER_ABILITY                                5
+#define HSL_1000BASET_CONTROL                                   9
+#define HSL_1000BASET_STATUS                                    10
+#define HSL_EXTENDED_STATUS                                     15
+#define HSL_PHY_SPEC_CONTROL                                    16
+#define HSL_PHY_SPEC_STATUS                                     17
+
+/*MII register field*/
+#define HSL_PHY_CTRL_SOFTWARE_RESET                             0x8000
+#define HSL_COMMON_CTRL                                         0x1040
+#define HSL_10M_LOOPBACK                                        0x4100
+#define HSL_100M_LOOPBACK                                       0x6100
+#define HSL_1000M_LOOPBACK                                      0x4140
+#define HSL_LOCAL_LOOPBACK_ENABLE                               0x4000
+
+#define HSL_CTRL_AUTONEGOTIATION_ENABLE                         0x1000
+#define HSL_CTRL_RESTART_AUTONEGOTIATION                        0x0200
+#define HSL_CTRL_FULL_DUPLEX                                    0x0100
+#define HSL_CONTROL_SPEED_MASK                                  0x2040
+#define HSL_CONTROL_SPEED_100M                                  0x2000
+#define HSL_CONTROL_SPEED_10M                                   0
+#define HSL_CTRL_AUTONEGOTIATION_ENABLE                         0x1000
+#define HSL_CTRL_POWER_MASK                                     0x0800
+#define HSL_CTRL_POWER_DOWN                                     0x0800
+#define HSL_CTRL_POWER_UP                                       0x0
+#define HSL_CTRL_AUTONEGOTIATION_ENABLE                         0x1000
+#define HSL_STATUS_AUTONEG_CAPS                                 0x0008
+#define HSL_STATUS_10T_HD_CAPS                                  0x0800
+#define HSL_STATUS_10T_FD_CAPS                                  0x1000
+#define HSL_STATUS_100TX_HD_CAPS                                0x2000
+#define HSL_STATUS_100TX_FD_CAPS                                0x4000
+#define HSL_STATUS_1000T_FD_CAPS                                0x2000
+#define HSL_STATUS_EXTENDED_STATUS                              0x0100
+#define HSL_ADVERTISE_1000FULL                                  0x0200
+#define HSL_ADVERTISE_100FULL                                   0x0100
+#define HSL_ADVERTISE_100HALF                                   0x0080
+#define HSL_ADVERTISE_10FULL                                    0x0040
+#define HSL_ADVERTISE_10HALF                                    0x0020
+#define HSL_ADVERTISE_PAUSE                                     0x0400
+#define HSL_ADVERTISE_ASYM_PAUSE                                0x0800
+#define HSL_ADVERTISE_MEGA_ALL \
+	(HSL_ADVERTISE_10HALF | HSL_ADVERTISE_10FULL | \
+	HSL_ADVERTISE_100HALF | HSL_ADVERTISE_100FULL | \
+	HSL_ADVERTISE_PAUSE | HSL_ADVERTISE_ASYM_PAUSE)
+#define HSL_LINK_10BASETX_HALF_DUPLEX                           0x0020
+#define HSL_LINK_10BASETX_FULL_DUPLEX                           0x0040
+#define HSL_LINK_100BASETX_HALF_DUPLEX                          0x0080
+#define HSL_LINK_100BASETX_FULL_DUPLEX                          0x0100
+#define HSL_LINK_1000BASETX_FULL_DUPLEX                         0x0800
+#define HSL_LINK_PAUSE                                          0x0400
+#define HSL_LINK_ASYPAUSE                                       0x0800
+#define HSL_LINK_LPACK                                          0x4000
+#define HSL_LINK_1000BASETX_FULL_DUPLEX                         0x0800
+#define HSL_PHY_MDI                                             0
+#define HSL_PHY_MDIX                                            0x0020
+#define HSL_PHY_MDIX_AUTO                                       0x0060
+#define HSL_PHY_MDIX_STATUS                                     0x0040
+#define HSL_STATUS_LINK_PASS                                    0x0400
+#define HSL_STATUS_SPEED_MASK                                   0x380
+#define HSL_STATUS_SPEED_2500MBS                                0x200
+#define HSL_STATUS_SPEED_1000MBS                                0x100
+#define HSL_STATUS_SPEED_100MBS                                 0x80
+#define HSL_STATUS_SPEED_10MBS                                  0
+#define HSL_STATUS_FULL_DUPLEX                                  0x2000
+#define HSL_PHY_RX_FLOWCTRL_STATUS                              0x4
+#define HSL_PHY_TX_FLOWCTRL_STATUS                              0x8
+
+sw_error_t
+hsl_phy_sw_reset(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t
+hsl_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_bool_t enable);
+sw_error_t
+hsl_phy_get_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_bool_t *enable);
+sw_error_t
+hsl_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_speed_t speed);
+sw_error_t
+hsl_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_duplex_t duplex);
+sw_error_t
+hsl_phy_autoneg_enable(a_uint32_t dev_id, a_uint32_t phy_addr);
+a_bool_t
+hsl_phy_autoneg_status(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t
+hsl_phy_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t
+hsl_phy_poweron(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t
+hsl_phy_autoneg_restart(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t
+hsl_phy_get_capability(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *cap);
+sw_error_t
+hsl_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *phy_id);
+sw_error_t
+hsl_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t autoneg_adv);
+sw_error_t
+hsl_phy_get_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *autoneg_adv);
+sw_error_t
+hsl_phy_lp_capability_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t *cap);
+sw_error_t
+hsl_phy_set_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_mdix_mode_t mode);
+sw_error_t
+hsl_phy_get_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_mdix_mode_t * mode);
+sw_error_t
+hsl_phy_get_mdix_status(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_mdix_status_t * mode);
+sw_error_t
+hsl_phy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+	struct port_phy_status *phy_status);
+a_bool_t
+hsl_phy_get_link_status(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t
+hsl_phy_get_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_speed_t * speed);
+sw_error_t
+hsl_phy_get_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
+	fal_port_duplex_t * duplex);
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */

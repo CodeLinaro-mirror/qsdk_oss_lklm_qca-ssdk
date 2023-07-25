@@ -54,14 +54,7 @@ extern struct list_head g_qca808x_phy_list;
 void qca808x_ptp_gm_gps_seconds_sync_enable(a_uint32_t dev_id,
 		a_uint32_t phy_addr, a_bool_t en)
 {
-	struct qca808x_phy_info *pdata;
-#if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id;
-	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
-	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS) {
-		phy_addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port_id);
-	}
-#endif
+	struct qca808x_phy_info *pdata = NULL;
 
 	pdata = qca808x_phy_info_get(phy_addr);
 	if (pdata) {
@@ -78,14 +71,7 @@ void qca808x_ptp_gm_gps_seconds_sync_enable(a_uint32_t dev_id,
 a_bool_t qca808x_ptp_gm_gps_seconds_sync_status_get(a_uint32_t dev_id,
 		a_uint32_t phy_addr)
 {
-	struct qca808x_phy_info *pdata;
-#if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id;
-	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
-	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS) {
-		phy_addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port_id);
-	}
-#endif
+	struct qca808x_phy_info *pdata = NULL;
 
 	pdata = qca808x_phy_info_get(phy_addr);
 	if (pdata) {
@@ -98,14 +84,7 @@ a_bool_t qca808x_ptp_gm_gps_seconds_sync_status_get(a_uint32_t dev_id,
 void qca808x_ptp_clock_mode_config(a_uint32_t dev_id,
 		a_uint32_t phy_addr, a_uint16_t clock_mode, a_uint16_t step_mode)
 {
-	struct qca808x_phy_info *pdata;
-#if defined(IN_PHY_I2C_MODE)
-	a_uint32_t port_id;
-	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
-	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS) {
-		phy_addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port_id);
-	}
-#endif
+	struct qca808x_phy_info *pdata = NULL;
 
 	pdata = qca808x_phy_info_get(phy_addr);
 
@@ -120,52 +99,37 @@ void qca808x_ptp_clock_mode_config(a_uint32_t dev_id,
 static sw_error_t qca808x_ptp_clock_synce_clock_enable(a_uint32_t dev_id,
 		a_uint32_t phy_id, a_bool_t enable)
 {
-	a_uint16_t phy_data, phy_data1;
+	a_uint16_t phy_data = 0, phy_data1 = 0;
 	sw_error_t ret = SW_OK;
-
-	phy_data = qca808x_phy_debug_read(dev_id, phy_id,
-			QCA808X_DEBUG_ANA_CLOCK_CTRL_REG);
-
-	phy_data1 = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
-			QCA808X_MMD7_CLOCK_CTRL_REG);
 
 	if (enable == A_TRUE) {
 		/* enable analog synce clock output */
 		phy_data |= QCA808X_ANALOG_PHY_SYNCE_CLOCK_EN;
 		/* enable digital synce clock output */
 		phy_data1 |= QCA808X_DIGITAL_PHY_SYNCE_CLOCK_EN;
-	} else {
-		phy_data &= ~QCA808X_ANALOG_PHY_SYNCE_CLOCK_EN;
-		phy_data1 &= ~QCA808X_DIGITAL_PHY_SYNCE_CLOCK_EN;
 	}
 
-	ret = qca808x_phy_debug_write(dev_id, phy_id,
-			QCA808X_DEBUG_ANA_CLOCK_CTRL_REG, phy_data);
+	ret = hsl_phy_modify_debug(dev_id, phy_id, QCA808X_DEBUG_ANA_CLOCK_CTRL_REG,
+		QCA808X_ANALOG_PHY_SYNCE_CLOCK_EN, phy_data);
 
-	ret |= qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
-			QCA808X_MMD7_CLOCK_CTRL_REG, phy_data1);
+	ret |= hsl_phy_modify_mmd(dev_id, phy_id, A_TRUE, QCA808X_PHY_MMD7_NUM,
+		QCA808X_MMD7_CLOCK_CTRL_REG, QCA808X_DIGITAL_PHY_SYNCE_CLOCK_EN,
+		phy_data1);
+
 	return ret;
 }
 
 static sw_error_t qca808x_ptp_clock_incval_mode_set(a_uint32_t dev_id,
 		a_uint32_t phy_id, a_bool_t enable)
 {
-	a_uint16_t phy_data;
-	sw_error_t ret = SW_OK;
-
-	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
-			PTP_RTC_EXT_CONF_REG_ADDRESS);
+	a_uint16_t phy_data = 0;
 
 	if (enable == A_TRUE) {
 		phy_data |= QCA808X_PTP_INCVAL_SYNC_MODE;
-	} else {
-		phy_data &= ~QCA808X_PTP_INCVAL_SYNC_MODE;
 	}
 
-	ret = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
-			PTP_RTC_EXT_CONF_REG_ADDRESS, phy_data);
-
-	return ret;
+	return hsl_phy_modify_mmd(dev_id, phy_id, A_TRUE, QCA808X_PHY_MMD3_NUM,
+		PTP_RTC_EXT_CONF_REG_ADDRESS, QCA808X_PTP_INCVAL_SYNC_MODE, phy_data);
 }
 
 sw_error_t qca808x_ptp_config_init(struct phy_device *phydev)
@@ -335,8 +299,8 @@ static void tx_timestamp_work(struct work_struct *work)
 			/* poll the seqid of the transmitted ptp packet to
 			 * acquire the correspoding tx time stamp.
 			 */
-			seqid = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
-					PTP_TX_SEQID_REG_ADDRESS);
+			seqid = hsl_phy_mmd_reg_read(dev_id, phy_id, A_TRUE,
+				QCA808X_PHY_MMD3_NUM, PTP_TX_SEQID_REG_ADDRESS);
 			udelay(1);
 			times++;
 		} while (seqid != pkt_info.sequence_id && times < 100);

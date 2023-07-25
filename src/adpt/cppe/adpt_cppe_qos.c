@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -62,12 +62,16 @@ static sw_error_t
 adpt_cppe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
 			fal_qos_cosmap_t *cosmap)
 {
+	sw_error_t rv = SW_OK;
 	union qos_mapping_tbl_u qos_mapping_tbl;
 
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(cosmap);
 
 	memset(&qos_mapping_tbl, 0, sizeof(qos_mapping_tbl));
+	rv = cppe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
+	if (rv != SW_OK)
+		return rv;
 
 	qos_mapping_tbl.bf.int_pcp = cosmap->internal_pcp;
 	qos_mapping_tbl.bf.int_dei = cosmap->internal_dei;

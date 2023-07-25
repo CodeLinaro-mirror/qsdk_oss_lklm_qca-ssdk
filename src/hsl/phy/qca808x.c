@@ -31,25 +31,8 @@ struct qca808x_phy_info* qca808x_phy_info_get(a_uint32_t phy_addr)
 {
 	struct qca808x_phy_info *pdata = NULL;
 	list_for_each_entry(pdata, &g_qca808x_phy_list, list) {
-		if (pdata->phydev_addr == phy_addr) {
+		if (pdata->phy_addr == phy_addr) {
 			return pdata;
-		}
-	}
-
-	return NULL;
-}
-
-static struct qca808x_phy_info* qca808x_phy_info_get_by_phydev(
-	struct phy_device *phydev)
-{
-	struct qca808x_phy_info *pdata = NULL;
-	a_uint32_t miibus_index = 0;
-
-	list_for_each_entry(pdata, &g_qca808x_phy_list, list) {
-		if (phydev->mdio.addr == pdata->phydev_addr) {
-			miibus_index = TO_MIIBUS_INDEX(pdata->phy_addr);
-			if(ssdk_miibus_get(pdata->dev_id, miibus_index) == phydev->mdio.bus)
-				return pdata;
 		}
 	}
 
@@ -67,7 +50,7 @@ static a_bool_t qca808x_sfp_present(struct phy_device *phydev)
 		SSDK_ERROR("pdata is null\n");
 		return A_FALSE;
 	}
-	rv = qca808x_phy_get_phy_id(pdata->dev_id, pdata->phy_addr, &phy_id);
+	rv = hsl_phy_get_phy_id(pdata->dev_id, pdata->phy_addr, &phy_id);
 	if(rv == SW_READ_ERROR) {
 		return A_FALSE;
 	}
@@ -218,7 +201,7 @@ static int qca808x_ack_interrupt(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	err = qca808x_phy_reg_read(dev_id, phy_id,
+	err = hsl_phy_mii_reg_read(dev_id, phy_id,
 			QCA808X_PHY_INTR_STATUS);
 
 	return (err < 0) ? err : 0;
@@ -239,7 +222,7 @@ static int qca808x_config_intr(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	phy_data = qca808x_phy_reg_read(dev_id, phy_id,
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_id,
 			QCA808X_PHY_INTR_MASK);
 
 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
@@ -248,11 +231,11 @@ static int qca808x_config_intr(struct phy_device *phydev)
 		if (err < 0)
 			return err;
 #endif
-		err = qca808x_phy_reg_write(dev_id, phy_id,
+		err = hsl_phy_mii_reg_write(dev_id, phy_id,
 				QCA808X_PHY_INTR_MASK,
 				phy_data | QCA808X_INTR_INIT);
 	} else {
-		err = qca808x_phy_reg_write(dev_id, phy_id,
+		err = hsl_phy_mii_reg_write(dev_id, phy_id,
 				QCA808X_PHY_INTR_MASK, 0);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0))
 		if (err)
@@ -338,7 +321,7 @@ static a_uint32_t qca808x_negtiation_cap_get(struct phy_device *phydev)
 static int qca808x_config_aneg(struct phy_device *phydev)
 {
 	a_uint32_t advertise = 0, advertise_old = 0;
-	a_uint16_t phy_data = 0;
+	a_uint16_t phy_data = 0, mask = 0;
 	int err = 0;
 	a_uint32_t dev_id = 0, phy_id = 0;
 	qca808x_priv *priv = phydev->priv;
@@ -361,14 +344,12 @@ static int qca808x_config_aneg(struct phy_device *phydev)
 		phydev->pause = 0;
 		phydev->asym_pause = 0;
 
-		phy_data = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_PHY_CONTROL);
-		phy_data &= ~QCA808X_CTRL_AUTONEGOTIATION_ENABLE;
+		mask = QCA808X_CTRL_AUTONEGOTIATION_ENABLE | QCA808X_CTRL_FULL_DUPLEX;
 		if (phydev->duplex == FAL_FULL_DUPLEX) {
 			phy_data |= QCA808X_CTRL_FULL_DUPLEX;
-		} else {
-			phy_data &= ~QCA808X_CTRL_FULL_DUPLEX;
 		}
-		qca808x_phy_reg_write(dev_id, phy_id, QCA808X_PHY_CONTROL, phy_data);
+		hsl_phy_modify_mii(dev_id, phy_id, QCA808X_PHY_CONTROL, mask,
+			phy_data);
 		err = qca808x_phy_set_force_speed(dev_id, phy_id, phydev->speed);
 	} else {
 		/* autoneg enabled */
@@ -404,7 +385,7 @@ static int qca808x_aneg_done(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	phy_data = qca808x_phy_reg_read(dev_id, phy_id,
+	phy_data = hsl_phy_mii_reg_read(dev_id, phy_id,
 			QCA808X_PHY_STATUS);
 
 	return (phy_data < 0) ? phy_data : (phy_data & QCA808X_STATUS_AUTO_NEG_DONE);
@@ -559,7 +540,7 @@ static int qca808x_resume(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	return qca808x_phy_poweron(dev_id, phy_id);
+	return hsl_phy_poweron(dev_id, phy_id);
 }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
@@ -593,29 +574,11 @@ static void qca808x_link_change_notify(struct phy_device *phydev)
 
 int qca808x_phy_probe(struct phy_device *phydev)
 {
-	qca808x_priv *priv;
 	int err = 0;
 
-	priv = kzalloc(sizeof(qca808x_priv), GFP_KERNEL);
-	if (!priv) {
-		return -ENOMEM;
-	}
-
-	priv->phydev = phydev;
-
-	priv->phy_info = qca808x_phy_info_get_by_phydev(phydev);
-	/*for switch ports, the phys may also be probed here, but
-	* failed because switch phys are init on another device, so
-	* return ok for the case.
-	*/
-	if(!priv->phy_info) {
-		kfree(priv);
-		return 0;
-	}
-	phydev->priv = priv;
-
 #if defined(IN_LINUX_STD_PTP)
-	err = qca808x_ptp_init(priv);
+	if(phydev->priv != NULL)
+		err = qca808x_ptp_init((qca808x_priv*)(phydev->priv));
 #endif
 
 	return err;
@@ -708,7 +671,10 @@ void qca808x_phy_driver_unregister(void)
 
 void qca808x_phydev_init(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	struct qca808x_phy_info *pdata;
+	struct phy_device *phydev = NULL;
+	qca808x_priv *priv = NULL;
+
+	struct qca808x_phy_info *pdata = NULL;
 	pdata = kzalloc(sizeof(struct qca808x_phy_info), GFP_KERNEL);
 
 	if (!pdata) {
@@ -721,18 +687,29 @@ void qca808x_phydev_init(a_uint32_t dev_id, a_uint32_t port_id)
 	/* the phy address may be the i2c slave addr or mdio addr */
 	pdata->phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
 	pdata->phydev_addr = TO_PHY_ADDR(pdata->phy_addr);
+
+	hsl_port_phydev_get(dev_id, port_id, &phydev);
+	if(phydev) {
+		priv = kzalloc(sizeof(qca808x_priv), GFP_KERNEL);
+		if (!priv) {
+			return;
+		}
+		priv->phydev = phydev;
+		priv->phy_info = pdata;
+		phydev->priv = priv;
+	}
 #if defined(IN_PHY_I2C_MODE)
 	/* in i2c mode, need to register a fake phy device
 	 * before the phy driver register */
 	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS) {
 		a_uint32_t phy_id = QCA8081_PHY_V1_1;
-		qca808x_phy_get_phy_id(dev_id, pdata->phy_addr, &phy_id);
+		hsl_phy_get_phy_id(dev_id, pdata->phy_addr, &phy_id);
 		if(phy_id != QCA8081_PHY_V1_1 && phy_id != INVALID_PHY_ID) {
 			SSDK_ERROR("phy id 0x%x is not supported\n", phy_id);
 			return;
 		}
 		pdata->phydev_addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port_id);
-		sfp_phy_device_setup(dev_id, port_id, phy_id);
+		sfp_phy_device_setup(dev_id, port_id, phy_id, pdata);
 	}
 #endif
 }
