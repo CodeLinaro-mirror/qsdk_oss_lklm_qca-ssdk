@@ -694,61 +694,7 @@ _scomphy_port_remote_loopback_get (a_uint32_t dev_id, fal_port_t port_id,
 
 	return rv;
 }
-#endif
 
-static sw_error_t
-_scomphy_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
-{
-	sw_error_t rv;
-	a_uint32_t phy_id = 0;
-	hsl_phy_ops_t *phy_drv;
-
-	HSL_DEV_ID_CHECK (dev_id);
-
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
-	{
-		return SW_BAD_PARAM;
-	}
-
-	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_power_off)
-		return SW_NOT_SUPPORTED;
-
-	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-	SW_RTN_ON_ERROR (rv);
-
-	rv = phy_drv->phy_power_off(dev_id, phy_id);
-
-	return rv;
-}
-
-static sw_error_t
-_scomphy_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
-{
-	sw_error_t rv;
-	a_uint32_t phy_id = 0;
-	hsl_phy_ops_t *phy_drv;
-
-	HSL_DEV_ID_CHECK (dev_id);
-
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
-	{
-		return SW_BAD_PARAM;
-	}
-
-	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_power_on)
-		return SW_NOT_SUPPORTED;
-
-	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-	SW_RTN_ON_ERROR (rv);
-
-	rv = phy_drv->phy_power_on(dev_id, phy_id);
-
-	return rv;
-}
-
-#ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 _scomphy_port_wol_status_set (a_uint32_t dev_id, fal_port_t port_id,
 				a_bool_t enable)
@@ -1577,43 +1523,7 @@ scomphy_port_remote_loopback_get (a_uint32_t dev_id, fal_port_t port_id,
 	HSL_API_UNLOCK;
 	return rv;
 }
-#endif
 
-/**
- * @brief phy power off on a particular port.
- * @param[in] dev_id device id
- * @param[in] port_id port id
- * @param[in]
- * @return SW_OK or error code
- */
-HSL_LOCAL sw_error_t
-scomphy_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
-{
-	sw_error_t rv;
-	HSL_API_LOCK;
-	rv = _scomphy_port_power_off (dev_id, port_id);
-	HSL_API_UNLOCK;
-	return rv;
-}
-
-/**
- * @brief phy power on on a particular port.
- * @param[in] dev_id device id
- * @param[in] port_id port id
- * @param[in]
- * @return SW_OK or error code
- */
-HSL_LOCAL sw_error_t
-scomphy_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
-{
-	sw_error_t rv;
-	HSL_API_LOCK;
-	rv = _scomphy_port_power_on (dev_id, port_id);
-	HSL_API_UNLOCK;
-	return rv;
-}
-
-#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Set phy wol enable on a particular port.
  * @param[in] dev_id device id
@@ -1898,10 +1808,6 @@ scomphy_port_ctrl_init(a_uint32_t dev_id)
 	p_api->port_local_loopback_get = scomphy_port_local_loopback_get;
 	p_api->port_remote_loopback_set = scomphy_port_remote_loopback_set;
 	p_api->port_remote_loopback_get = scomphy_port_remote_loopback_get;
-#endif
-	p_api->port_power_off = scomphy_port_power_off;
-	p_api->port_power_on = scomphy_port_power_on;
-#ifndef IN_PORTCONTROL_MINI
 	p_api->port_wol_status_set = scomphy_port_wol_status_set;
 	p_api->port_wol_status_get = scomphy_port_wol_status_get;
 	p_api->port_magic_frame_mac_set = scomphy_port_magic_frame_mac_set;

@@ -260,6 +260,8 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 				/**<PORT_UQXGMII mode*/
 		PORT_UQXGMII_3CHANNELS,
 				/**<PORT_UQXGMII 3 port mode*/
+		PORT_INTERFACE_MODE_AUTO,
+				/**PORT AUTO INTERFACE MODE*/
 		PORT_INTERFACE_MODE_MAX = 0xFF
 	} fal_port_interface_mode_t;
 
@@ -455,6 +457,11 @@ typedef struct {
 	a_bool_t  copper_link_status; /*copper link status*/
 	a_bool_t  fiber_link_status; /*fiber link status*/
 } fal_port_combo_link_status_t;
+
+typedef enum {
+	FAL_ERP_ACTIVE = 0, /* erp active mode */
+	FAL_ERP_LOW_POWER = 1, /* erp low power mode */
+} fal_port_erp_power_mode_t;
 
 sw_error_t
 fal_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -891,6 +898,9 @@ fal_ring_flow_ctrl_thres_set(a_uint32_t dev_id, a_uint32_t ring_id,
 #endif
 sw_error_t fal_port_combo_link_status_get (a_uint32_t dev_id,
 		fal_port_t port_id, fal_port_combo_link_status_t * status);
+sw_error_t
+fal_port_erp_power_mode_set(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_erp_power_mode_t power_mode);
 /*qca808x_start*/
 #ifdef __cplusplus
 }

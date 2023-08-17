@@ -1260,8 +1260,6 @@ sw_error_t malibu_phy_poweron(a_uint32_t dev_id, a_uint32_t phy_id)
 				     phy_data & ~MALIBU_CTRL_POWER_DOWN);
 	}
 
-	aos_mdelay(200);
-
 	return SW_OK;
 }
 #if 0
@@ -2818,7 +2816,7 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_reset = malibu_phy_reset;
 #endif
 	malibu_phy_api_ops->phy_power_off = malibu_phy_poweroff;
-	malibu_phy_api_ops->phy_power_on = 	malibu_phy_poweron;
+	malibu_phy_api_ops->phy_power_on = malibu_phy_poweron;
 	malibu_phy_api_ops->phy_id_get = malibu_phy_get_phy_id;
 	malibu_phy_api_ops->phy_reg_write = malibu_phy_reg_write;
 	malibu_phy_api_ops->phy_reg_read = malibu_phy_reg_read;

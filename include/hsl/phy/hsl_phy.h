@@ -253,6 +253,8 @@ extern "C" {
 					      a_uint32_t phy_id,
 					      a_uint32_t source_id,
 					      led_ctrl_pattern_t * pattern);
+	typedef sw_error_t(*hsl_phy_pll_on) (a_uint32_t dev_id, a_uint32_t phy_id);
+	typedef sw_error_t(*hsl_phy_pll_off) (a_uint32_t dev_id, a_uint32_t phy_id);
 	typedef sw_error_t(*hsl_phy_ptp_security_set) (a_uint32_t dev_id,
 				a_uint32_t phy_id, fal_ptp_security_t *sec);
 
@@ -520,6 +522,8 @@ extern "C" {
 		hsl_phy_led_ctrl_pattern_set phy_led_ctrl_pattern_set;
 		hsl_phy_led_ctrl_pattern_get phy_led_ctrl_pattern_get;
 		hsl_phy_led_ctrl_source_set phy_led_ctrl_source_set;
+		hsl_phy_pll_on phy_pll_on;
+		hsl_phy_pll_off phy_pll_off;
 		hsl_phy_ptp_ops_t phy_ptp_ops;
 /*qca808x_start*/
 	} hsl_phy_ops_t;
@@ -752,6 +756,10 @@ hsl_port_phy_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
 sw_error_t
 hsl_port_phy_led_ctrl_source_set(a_uint32_t dev_id, a_uint32_t source_id,
 	led_ctrl_pattern_t *pattern);
+sw_error_t
+hsl_port_phy_pll_on(a_uint32_t dev_id, a_uint32_t port_id);
+sw_error_t
+hsl_port_phy_pll_off(a_uint32_t dev_id, a_uint32_t port_id);
 phy_info_t *hsl_phy_info_get(a_uint32_t dev_id);
 
 sw_error_t
@@ -784,6 +792,9 @@ hsl_port_mode_to_phydev_interface(a_uint32_t dev_id, a_uint32_t port_mode);
 a_uint32_t
 hsl_port_mode_to_uniphy_mode(a_uint32_t dev_id, a_uint32_t port_mode);
 a_uint32_t
+hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t uniphy_mode);
+a_uint32_t
 hsl_port_to_uniphy(a_uint32_t dev_id, a_uint32_t port_id);
 sw_error_t
 hsl_port_combo_phy_link_status_get(a_uint32_t dev_id,
@@ -810,6 +821,10 @@ hsl_port_phy_autoadv_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t autoadv);
 sw_error_t
 hsl_port_phy_autoneg_restart(a_uint32_t dev_id, a_uint32_t port_id);
+sw_error_t
+hsl_port_phy_power_on(a_uint32_t dev_id, fal_port_t port_id);
+sw_error_t
+hsl_port_phy_power_off(a_uint32_t dev_id, fal_port_t port_id);
 /*qca808x_end*/
 a_uint32_t
 hsl_port_force_speed_get(a_uint32_t dev_id, a_uint32_t port_id);

@@ -1548,58 +1548,6 @@ _isisc_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * st
 }
 
 static sw_error_t
-_isisc_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
-{
-  sw_error_t rv;
-  a_uint32_t phy_id = 0;
-  hsl_phy_ops_t *phy_drv;
-
-  HSL_DEV_ID_CHECK (dev_id);
-
-  if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
-    {
-      return SW_BAD_PARAM;
-    }
-
-  SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-  if (NULL == phy_drv->phy_power_off)
-    return SW_NOT_SUPPORTED;
-
-  rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-  SW_RTN_ON_ERROR (rv);
-
-  rv = phy_drv->phy_power_off(dev_id, phy_id);
-
-  return rv;
-}
-
-static sw_error_t
-_isisc_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
-{
-  sw_error_t rv;
-  a_uint32_t phy_id = 0;
-  hsl_phy_ops_t *phy_drv;
-
-  HSL_DEV_ID_CHECK (dev_id);
-
-  if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
-    {
-      return SW_BAD_PARAM;
-    }
-
-  SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-  if (NULL == phy_drv->phy_power_on)
-    return SW_NOT_SUPPORTED;
-
-  rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-  SW_RTN_ON_ERROR (rv);
-
-  rv = phy_drv->phy_power_on(dev_id, phy_id);
-
-  return rv;
-}
-
-static sw_error_t
 _isisc_port_link_forcemode_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
     sw_error_t rv;
@@ -2652,40 +2600,6 @@ isisc_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * sta
 }
 
 /**
- * @brief phy power off on a particular port.
- * @param[in] dev_id device id
- * @param[in] port_id port id
- * @param[in]
- * @return SW_OK or error code
- */
-HSL_LOCAL sw_error_t
-isisc_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
-{
-  sw_error_t rv;
-  HSL_API_LOCK;
-  rv = _isisc_port_power_off (dev_id, port_id);
-  HSL_API_UNLOCK;
-  return rv;
-}
-
-/**
- * @brief phy power on on a particular port.
- * @param[in] dev_id device id
- * @param[in] port_id port id
- * @param[in]
- * @return SW_OK or error code
- */
-HSL_LOCAL sw_error_t
-isisc_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
-{
-  sw_error_t rv;
-  HSL_API_LOCK;
-  rv = _isisc_port_power_on (dev_id, port_id);
-  HSL_API_UNLOCK;
-  return rv;
-}
-
-/**
  * @brief Set link force mode on a particular port.
  * @param[in] dev_id device id
  * @param[in] port_id port id
@@ -2941,8 +2855,6 @@ isisc_port_ctrl_init(a_uint32_t dev_id)
         p_api->port_txmac_status_set = isisc_port_txmac_status_set;
         p_api->port_rxmac_status_set = isisc_port_rxmac_status_set;
         p_api->port_link_status_get = isisc_port_link_status_get;
-        p_api->port_power_off = isisc_port_power_off;
-        p_api->port_power_on = isisc_port_power_on;
         p_api->port_link_forcemode_set = isisc_port_link_forcemode_set;
         p_api->port_link_forcemode_get = isisc_port_link_forcemode_get;
 #ifndef IN_PORTCONTROL_MINI
@@ -2972,6 +2884,7 @@ isisc_port_ctrl_init(a_uint32_t dev_id)
 	p_api->ring_flow_ctrl_set = mht_ring_flow_ctrl_config_set;
 	p_api->ring_flow_ctrl_get = mht_ring_flow_ctrl_config_get;
 #endif
+	p_api->port_erp_power_mode_set= mht_port_erp_power_mode_set;
 #endif
 
     }

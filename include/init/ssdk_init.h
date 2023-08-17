@@ -214,6 +214,8 @@ enum {
 	QCA_PHY_F_FORCE_BIT,
 	QCA_PHY_F_SFP_BIT,
 	QCA_PHY_F_SFP_SGMII_BIT,
+	QCA_PHY_F_FORCE_INTERFACE_MODE_BIT,
+	QCA_PHY_F_ERP_LOW_POWER_BIT,
 	QCA_PHY_FEATURE_MAX
 };
 
@@ -221,15 +223,17 @@ enum {
 #define __PHY_F_BIT(bit)    ((phy_features_t)1 << (bit))
 #define _PHY_F(name)       __PHY_F_BIT(QCA_PHY_F_##name##_BIT)
 
-#define PHY_F_CLAUSE45     _PHY_F(CLAUSE45)
-#define PHY_F_COMBO        _PHY_F(COMBO)
-#define PHY_F_QGMAC        _PHY_F(QGMAC)
-#define PHY_F_XGMAC        _PHY_F(XGMAC)
-#define PHY_F_I2C          _PHY_F(I2C)
-#define PHY_F_INIT         _PHY_F(INIT)
-#define PHY_F_FORCE        _PHY_F(FORCE)
-#define PHY_F_SFP          _PHY_F(SFP)
-#define PHY_F_SFP_SGMII    _PHY_F(SFP_SGMII)
+#define PHY_F_CLAUSE45                _PHY_F(CLAUSE45)
+#define PHY_F_COMBO                   _PHY_F(COMBO)
+#define PHY_F_QGMAC                   _PHY_F(QGMAC)
+#define PHY_F_XGMAC                   _PHY_F(XGMAC)
+#define PHY_F_I2C                     _PHY_F(I2C)
+#define PHY_F_INIT                    _PHY_F(INIT)
+#define PHY_F_FORCE                   _PHY_F(FORCE)
+#define PHY_F_SFP                     _PHY_F(SFP)
+#define PHY_F_SFP_SGMII               _PHY_F(SFP_SGMII)
+#define PHY_F_FORCE_INTERFACE_MODE    _PHY_F(FORCE_INTERFACE_MODE)
+#define PHY_F_ERP_LOW_POWER           _PHY_F(ERP_LOW_POWER)
 
 typedef struct
 {
@@ -406,6 +410,9 @@ sw_error_t ssdk_mac_sw_sync_work_start(a_uint32_t dev_id);
 int qca_mac_sw_sync_work_init(struct qca_phy_priv *priv);
 int qca_fdb_sw_sync_work_start(struct qca_phy_priv *priv, fal_pbmp_t port_map);
 void qca_fdb_sw_sync_work_stop(struct qca_phy_priv *priv, fal_pbmp_t port_map);
+void qca_phy_mib_work_pause(struct qca_phy_priv *priv);
+int qca_phy_mib_work_resume(struct qca_phy_priv *priv);
+
 /*qca808x_start*/
 #ifdef __cplusplus
 }
