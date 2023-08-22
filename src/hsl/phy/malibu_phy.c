@@ -2456,9 +2456,23 @@ malibu_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
 		struct port_phy_status *phy_status)
 {
 	a_uint16_t phy_data;
+	struct phy_device *phydev = NULL;
+	a_uint32_t old_adv = 0, new_adv = 0;
+	sw_error_t rv = SW_OK;
 
 	if (phy_id == COMBO_PHY_ID) {
 		__phy_reg_pages_sel_by_active_medium(dev_id, phy_id);
+	}
+
+	rv = hsl_phy_phydev_get(dev_id, phy_id, &phydev);
+	PHY_RTN_ON_ERROR(rv);
+	rv = hsl_phy_linkmode_adv_to_adv(phydev->advertising, &old_adv);
+	SW_RTN_ON_ERROR (rv);
+	rv = malibu_phy_get_autoneg_adv(dev_id, phy_id, &new_adv);
+	PHY_RTN_ON_ERROR(rv);
+	if(new_adv != old_adv) {
+		rv = hsl_phy_phydev_autoneg_update(dev_id, phy_id, A_TRUE, new_adv);
+		PHY_RTN_ON_ERROR(rv);
 	}
 
 	phy_data = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_SPEC_STATUS);
