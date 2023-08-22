@@ -2466,15 +2466,16 @@ malibu_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
 
 	rv = hsl_phy_phydev_get(dev_id, phy_id, &phydev);
 	PHY_RTN_ON_ERROR(rv);
-	rv = hsl_phy_linkmode_adv_to_adv(phydev->advertising, &old_adv);
-	SW_RTN_ON_ERROR (rv);
-	rv = malibu_phy_get_autoneg_adv(dev_id, phy_id, &new_adv);
-	PHY_RTN_ON_ERROR(rv);
-	if(new_adv != old_adv) {
-		rv = hsl_phy_phydev_autoneg_update(dev_id, phy_id, A_TRUE, new_adv);
+	if(phydev->autoneg == AUTONEG_ENABLE) {
+		rv = hsl_phy_linkmode_adv_to_adv(phydev->advertising, &old_adv);
+		SW_RTN_ON_ERROR (rv);
+		rv = malibu_phy_get_autoneg_adv(dev_id, phy_id, &new_adv);
 		PHY_RTN_ON_ERROR(rv);
+		if(new_adv != old_adv) {
+			rv = hsl_phy_phydev_autoneg_update(dev_id, phy_id, A_TRUE, new_adv);
+			PHY_RTN_ON_ERROR(rv);
+		}
 	}
-
 	phy_data = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_SPEC_STATUS);
 
 	/*get phy link status*/
