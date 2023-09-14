@@ -733,47 +733,13 @@ _fal_port_link_status_get (a_uint32_t dev_id, fal_port_t port_id,
 static sw_error_t
 _fal_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_power_off != NULL) {
-        rv = p_adpt_api->adpt_port_power_off(dev_id, port_id);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_power_off)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_power_off (dev_id, port_id);
-  return rv;
+	return hsl_port_phy_power_off(dev_id, port_id);
 }
 
 static sw_error_t
 _fal_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
 {
-  sw_error_t rv;
-  hsl_api_t *p_api;
-/*qca808x_end*/
-    adpt_api_t *p_adpt_api;
-
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
-        p_adpt_api->adpt_port_power_on != NULL) {
-        rv = p_adpt_api->adpt_port_power_on(dev_id, port_id);
-        return rv;
-    }
-/*qca808x_start*/
-  SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
-
-  if (NULL == p_api->port_power_on)
-    return SW_NOT_SUPPORTED;
-
-  rv = p_api->port_power_on (dev_id, port_id);
-  return rv;
+	return hsl_port_phy_power_on(dev_id, port_id);
 }
 /*qca808x_end*/
 static sw_error_t
@@ -2213,6 +2179,31 @@ _fal_port_combo_link_status_get (a_uint32_t dev_id, fal_port_t port_id,
 				fal_port_combo_link_status_t * status)
 {
 	return hsl_port_combo_phy_link_status_get(dev_id, port_id, status);;
+}
+
+static sw_error_t
+_fal_port_erp_power_mode_set (a_uint32_t dev_id, fal_port_t port_id,
+				fal_port_erp_power_mode_t power_mode)
+{
+	sw_error_t rv;
+	hsl_api_t *p_api;
+	adpt_api_t *p_adpt_api;
+
+	if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL) {
+		if (NULL == p_adpt_api->adpt_port_erp_power_mode_set)
+			return SW_NOT_SUPPORTED;
+
+		rv = p_adpt_api->adpt_port_erp_power_mode_set(dev_id, port_id, power_mode);
+		return rv;
+	}
+
+	SW_RTN_ON_NULL (p_api = hsl_api_ptr_get (dev_id));
+
+	if (NULL == p_api->port_erp_power_mode_set)
+		return SW_NOT_SUPPORTED;
+
+	rv = p_api->port_erp_power_mode_set (dev_id, port_id, power_mode);
+	return rv;
 }
 
 /*qca808x_start*/
@@ -4106,6 +4097,18 @@ fal_port_combo_link_status_get (a_uint32_t dev_id,
 	return rv;
 }
 
+sw_error_t
+fal_port_erp_power_mode_set (a_uint32_t dev_id, fal_port_t port_id,
+				fal_port_erp_power_mode_t power_mode)
+{
+	sw_error_t rv;
+
+	FAL_API_LOCK;
+	rv = _fal_port_erp_power_mode_set (dev_id, port_id, power_mode);
+	FAL_API_UNLOCK;
+	return rv;
+}
+
 /*insert flag for outter fal, don't remove it*/
 /**
  * @}
@@ -4225,3 +4228,4 @@ EXPORT_SYMBOL(fal_port_cnt_cfg_get);
 EXPORT_SYMBOL(fal_port_cnt_get);
 EXPORT_SYMBOL(fal_port_cnt_flush);
 EXPORT_SYMBOL(fal_port_combo_link_status_get);
+EXPORT_SYMBOL(fal_port_erp_power_mode_set);

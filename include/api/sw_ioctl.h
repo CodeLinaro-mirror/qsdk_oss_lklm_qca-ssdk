@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -142,6 +142,7 @@ extern "C" {
 #define SW_API_PT_CNT_GET		(94 + SW_API_PORT_OFFSET)
 #define SW_API_PT_CNT_FLUSH		(95 + SW_API_PORT_OFFSET)
 #define SW_API_PT_COMBO_LINK_STATUS_GET	(96 + SW_API_PORT_OFFSET)
+#define SW_API_PT_ERP_POWER_MODE_SET	(97 + SW_API_PORT_OFFSET)
 
     /*vlan*/
 #define SW_API_VLAN_OFFSET         130

@@ -677,8 +677,8 @@ hsl_port_phy_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t phy_addr = 0;
 	hsl_phy_ops_t *phy_drv;
 
-	SW_RTN_ON_NULL(phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_interface_mode_set)
+	phy_drv = hsl_phy_api_ops_get (dev_id, port_id);
+	if (NULL == phy_drv || NULL == phy_drv->phy_interface_mode_set)
 	{
 		/*PHY driver did not register phy_interface_mode_set,
 		so no need to configure PHY interface mode*/
@@ -1203,6 +1203,58 @@ a_uint32_t hsl_port_mode_to_uniphy_mode(a_uint32_t dev_id,
 	return uniphy_mode;
 }
 
+a_uint32_t hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t uniphy_mode)
+{
+	a_uint32_t port_mode = 0;
+
+	switch(uniphy_mode)
+	{
+		case PORT_WRAPPER_PSGMII:
+		case PORT_WRAPPER_PSGMII_FIBER:
+			if(port_id >= SSDK_PHYSICAL_PORT1 && port_id <= SSDK_PHYSICAL_PORT4)
+				port_mode = PHY_PSGMII_BASET;
+			if(port_id == SSDK_PHYSICAL_PORT5) {
+				if(uniphy_mode == PORT_WRAPPER_PSGMII)
+					port_mode = PHY_PSGMII_BASET;
+				else
+					port_mode = PHY_PSGMII_FIBER;
+			}
+			break;
+		case PORT_WRAPPER_QSGMII:
+			port_mode = PORT_QSGMII;
+			break;
+		case PORT_WRAPPER_SGMII_PLUS:
+			port_mode = PORT_SGMII_PLUS;
+			break;
+		case PORT_WRAPPER_USXGMII:
+			port_mode = PORT_USXGMII;
+			break;
+		case PORT_WRAPPER_10GBASE_R:
+			port_mode = PORT_10GBASE_R;
+			break;
+		case PORT_WRAPPER_SGMII_CHANNEL0:
+		case PORT_WRAPPER_SGMII_CHANNEL1:
+		case PORT_WRAPPER_SGMII_CHANNEL4:
+			port_mode = PHY_SGMII_BASET;
+			break;
+		case PORT_WRAPPER_SGMII_FIBER:
+			port_mode = PORT_SGMII_FIBER;
+			break;
+		case PORT_WRAPPER_UQXGMII:
+		case PORT_WRAPPER_UDXGMII:
+			port_mode = PORT_UQXGMII;
+			break;
+		case PORT_WRAPPER_MAX:
+			port_mode = PORT_INTERFACE_MODE_MAX;
+			break;
+		default:
+			return SW_NOT_SUPPORTED;
+	}
+
+	return port_mode;
+}
+
 a_uint32_t hsl_port_to_uniphy(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	a_uint32_t uniphy_index = SSDK_MAX_UNIPHY_INSTANCE;
@@ -1312,6 +1364,101 @@ hsl_port_phy_interface_mode_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	return SW_OK;
 }
 
+sw_error_t
+hsl_port_phy_power_on(a_uint32_t dev_id, fal_port_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t phy_addr = 0;
+	hsl_phy_ops_t *phy_drv = NULL;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+	if (NULL == phy_drv->phy_power_on)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr);
+	SW_RTN_ON_ERROR (rv);
+
+	return phy_drv->phy_power_on(dev_id, phy_addr);
+}
+
+sw_error_t
+hsl_port_phy_power_off(a_uint32_t dev_id, fal_port_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t phy_addr = 0;
+	hsl_phy_ops_t *phy_drv = NULL;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+	if (NULL == phy_drv->phy_power_off)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr);
+	SW_RTN_ON_ERROR (rv);
+
+	return phy_drv->phy_power_off(dev_id, phy_addr);
+
+}
+/*qca808x_end*/
+sw_error_t
+hsl_port_phy_pll_on(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t phy_addr = 0;
+	hsl_phy_ops_t *phy_drv = NULL;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+		return SW_BAD_PARAM;
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
+	if (NULL == phy_drv->phy_pll_on)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_addr);
+	SW_RTN_ON_ERROR (rv);
+
+	rv = phy_drv->phy_pll_on(dev_id, phy_addr);
+	return rv;
+}
+
+sw_error_t
+hsl_port_phy_pll_off(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t phy_addr = 0;
+	hsl_phy_ops_t *phy_drv = NULL;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+		return SW_BAD_PARAM;
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
+	if (NULL == phy_drv->phy_pll_off)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_addr);
+	SW_RTN_ON_ERROR (rv);
+
+	rv = phy_drv->phy_pll_off(dev_id, phy_addr);
+	return rv;
+}
+/*qca808x_start*/
 sw_error_t
 hsl_port_phy_counter_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
 {
