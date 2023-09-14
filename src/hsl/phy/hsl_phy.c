@@ -1458,6 +1458,29 @@ hsl_port_phy_pll_off(a_uint32_t dev_id, a_uint32_t port_id)
 	rv = phy_drv->phy_pll_off(dev_id, phy_addr);
 	return rv;
 }
+
+sw_error_t
+hsl_port_phy_ldo_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t phy_addr = 0;
+	hsl_phy_ops_t *phy_drv = NULL;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+		return SW_BAD_PARAM;
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
+	if (NULL == phy_drv->phy_ldo_set)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_addr);
+	SW_RTN_ON_ERROR (rv);
+
+	rv = phy_drv->phy_ldo_set(dev_id, phy_addr, enable);
+	return rv;
+}
 /*qca808x_start*/
 sw_error_t
 hsl_port_phy_counter_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
