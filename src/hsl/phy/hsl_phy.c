@@ -521,6 +521,13 @@ qca_ssdk_phy_mdio_fake_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_mdio_fake_
 	return 0;
 }
 #endif
+
+a_bool_t
+qca_ssdk_gpio_is_invalid(a_uint32_t dev_id, a_uint32_t gpio_num)
+{
+	return ((gpio_num == SSDK_MAX_GPIO) || (gpio_num == SSDK_INVALID_GPIO));
+}
+
 /*qca808x_start*/
 a_uint32_t
 qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id)
@@ -720,7 +727,7 @@ void hsl_port_phy_gpio_reset(a_uint32_t dev_id, a_uint32_t port_id)
 
 	gpio_num = hsl_port_phy_reset_gpio_get(dev_id, port_id);
 
-	if(gpio_num == SSDK_INVALID_GPIO)
+	if(qca_ssdk_gpio_is_invalid(dev_id, gpio_num))
 	{
 		return;
 	}
