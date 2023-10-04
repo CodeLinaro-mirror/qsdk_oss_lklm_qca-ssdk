@@ -659,6 +659,10 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				hsl_port_phy_reset_gpio_set(dev_id, port_id,
 					(a_uint32_t)phy_reset_gpio);
 			}
+			else
+			{
+				hsl_port_phy_reset_gpio_set(dev_id, port_id, SSDK_INVALID_GPIO);
+			}
 		}
 		phy_addr = 0xff;
 		phy_features = 0;
@@ -734,12 +738,26 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					{
 						priv->sfp_rx_los_pin[port_id] = sfp_rx_los_pin;
 					}
+					else if(sfp_rx_los_pin == -EPROBE_DEFER)
+					{
+						priv->sfp_rx_los_pin[port_id] = SSDK_MAX_GPIO;
+					}
+					else
+					{
+						priv->sfp_rx_los_pin[port_id] = SSDK_INVALID_GPIO;
+					}
+
 					sfp_tx_dis_pin = of_get_named_gpio(port_node,
 						"sfp_tx_dis_pin", 0);
 					if(sfp_tx_dis_pin > 0)
 					{
 						priv->sfp_tx_dis_pin[port_id] = sfp_tx_dis_pin;
 					}
+					else
+					{
+						priv->sfp_tx_dis_pin[port_id] = SSDK_INVALID_GPIO;
+					}
+
 					sfp_mod_present_pin = of_get_named_gpio(port_node,
 						"sfp_mod_present_pin", 0);
 					if(sfp_mod_present_pin > 0)
@@ -747,11 +765,21 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 						priv->sfp_mod_present_pin[port_id] =
 							sfp_mod_present_pin;
 					}
+					else
+					{
+						priv->sfp_mod_present_pin[port_id] =
+							SSDK_INVALID_GPIO;
+					}
+
 					sfp_medium_pin = of_get_named_gpio(port_node,
 						"sfp_medium_pin", 0);
 					if(sfp_medium_pin > 0)
 					{
 						priv->sfp_medium_pin[port_id] = sfp_medium_pin;
+					}
+					else
+					{
+						priv->sfp_medium_pin[port_id] = SSDK_INVALID_GPIO;
 					}
 				}
 			}
@@ -864,6 +892,59 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 	}
 	return;
 }
+
+static sw_error_t
+ssdk_dt_parse_interrupt(a_uint32_t dev_id, struct device_node *switch_node)
+{
+	const __be32 *link_polling_required = NULL;
+	a_int32_t len = 0, intr_gpio_num = 0;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	const char *fdb_sync = NULL;
+
+	SW_RTN_ON_NULL(priv);
+	intr_gpio_num = of_get_named_gpio(switch_node, "intr-gpio", 0);
+	if(intr_gpio_num < 0) {
+		intr_gpio_num = of_get_named_gpio(switch_node, "link-intr-gpio", 0);
+		if(intr_gpio_num < 0) {
+			SSDK_INFO("intr-gpio does not exist\n");
+		}
+	}
+	if(intr_gpio_num > 0) {
+		if(gpio_is_valid(intr_gpio_num))
+		{
+			if(gpio_request_one(intr_gpio_num, GPIOF_IN, "ssdk interrupt") < 0) {
+				SSDK_ERROR("gpio request faild \n");
+				return SW_FAIL;
+			}
+			priv->interrupt_no = gpio_to_irq (intr_gpio_num);
+			SSDK_INFO("interrupt gpio:0x%x, interrupt number: 0x%x\n",
+				intr_gpio_num, priv->interrupt_no);
+		}
+	}
+
+	link_polling_required = of_get_property(switch_node, "link-polling-required", &len);
+	if (!link_polling_required)
+		priv->link_polling_required = A_TRUE;
+	else
+		priv->link_polling_required  = be32_to_cpup(link_polling_required);
+
+
+	if(of_property_read_string(switch_node, "fdb_sync", &fdb_sync))
+		priv->fdb_sync = FDB_SYNC_DIS;
+	else {
+		if(!strcmp(fdb_sync, "disable"))
+			priv->fdb_sync = FDB_SYNC_DIS;
+		else if(!strcmp(fdb_sync, "interrupt"))
+			priv->fdb_sync = FDB_SYNC_INTR;
+		else if(!strcmp(fdb_sync, "polling"))
+			priv->fdb_sync = FDB_SYNC_POLLING;
+		else
+			return SW_NOT_SUPPORTED;
+	}
+
+	return SW_OK;
+}
+
 #if 0
 #if defined(MHT)
 void ssdk_clk_mode_set(a_uint32_t dev_id, mht_work_mode_t clk_mode)
@@ -1213,6 +1294,7 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 	ssdk_dt_parse_mac_mode(*dev_id, switch_node, cfg);
 	ssdk_dt_parse_mdio(*dev_id, switch_node, cfg);
 	ssdk_dt_parse_port_bmp(*dev_id, switch_node, cfg);
+	ssdk_dt_parse_interrupt(*dev_id, switch_node);
 #if 0
 #if defined(MHT)
 	ssdk_dt_parse_clk(*dev_id, switch_node);

@@ -4113,7 +4113,7 @@ parse_fdb_entry(struct switch_val *val)
 		if(!strcmp(ext_value_p->option_name, "name")) {
 			switch_ext_p = switch_ext_p->next;
 			continue;
-		} else if(!strcmp(ext_value_p->option_name, "addr")) {
+		}else if(!strcmp(ext_value_p->option_name, "addr")) {
 			val_ptr[0] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "fid")) {
 			val_ptr[1] = (char*)ext_value_p->option_value;
@@ -4129,7 +4129,7 @@ parse_fdb_entry(struct switch_val *val)
 			val_ptr[6] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "mirror")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "clone")) {
+		} else if(!strcmp(ext_value_p->option_name, "entry_ver")) {
 			val_ptr[8] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "queue_override")) {
 			val_ptr[9] = (char*)ext_value_p->option_value;
@@ -4141,6 +4141,8 @@ parse_fdb_entry(struct switch_val *val)
 			val_ptr[12] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "load_balance")) {
 			val_ptr[13] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "type")) {
+			val_ptr[14] = (char*)ext_value_p->option_value;
 		}  else {
 			rv = -1;
 			break;
