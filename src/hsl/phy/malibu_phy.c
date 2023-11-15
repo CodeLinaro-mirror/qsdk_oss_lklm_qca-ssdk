@@ -2675,6 +2675,139 @@ malibu_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
 
 	return rv;
 }
+
+static sw_error_t
+malibu_phy_led_pattern_map_from_phy(a_uint32_t dev_id, a_uint32_t phy_addr,
+	led_ctrl_pattern_t *pattern, a_uint16_t *phy_data)
+{
+	if(*phy_data & MALIBU_PHY_LINK_1000M_LIGHT_EN)
+	{
+		pattern->map |= BIT(LINK_1000M_LIGHT_EN);
+	}
+	if(*phy_data & MALIBU_PHY_LINK_100M_LIGHT_EN)
+	{
+		pattern->map |= BIT(LINK_100M_LIGHT_EN);
+	}
+	if(*phy_data & MALIBU_PHY_LINK_10M_LIGHT_EN)
+	{
+		pattern->map |= BIT(LINK_10M_LIGHT_EN);
+	}
+	if (*phy_data & MALIBU_PHY_RX_TRAFFIC_BLINK_EN)
+	{
+		pattern->map |= BIT(RX_TRAFFIC_BLINK_EN);
+	}
+	if (*phy_data & MALIBU_PHY_TX_TRAFFIC_BLINK_EN)
+	{
+		pattern->map |= BIT(TX_TRAFFIC_BLINK_EN);
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+malibu_phy_led_pattern_map_to_phy(a_uint32_t dev_id, a_uint32_t phy_addr,
+	led_ctrl_pattern_t *pattern, a_uint32_t *led_map)
+{
+	if (pattern->map & BIT(LINK_1000M_LIGHT_EN))
+	{
+		*led_map |=  MALIBU_PHY_LINK_1000M_LIGHT_EN;
+	}
+	if (pattern->map & BIT(LINK_100M_LIGHT_EN))
+	{
+		*led_map |=  MALIBU_PHY_LINK_100M_LIGHT_EN;
+	}
+	if (pattern->map & BIT(LINK_10M_LIGHT_EN))
+	{
+		*led_map |=  MALIBU_PHY_LINK_10M_LIGHT_EN;
+	}
+	if (pattern->map & BIT(RX_TRAFFIC_BLINK_EN))
+	{
+		*led_map |=  MALIBU_PHY_RX_TRAFFIC_BLINK_EN;
+	}
+	if (pattern->map & BIT(TX_TRAFFIC_BLINK_EN))
+	{
+		*led_map |=  MALIBU_PHY_TX_TRAFFIC_BLINK_EN;
+	}
+
+	return SW_OK;
+}
+
+a_uint32_t
+malibu_phy_led_source_mmd_reg_get(a_uint32_t dev_id, a_uint32_t source_id)
+{
+	a_uint16_t mmd_reg = 0;
+
+	switch(source_id)
+	{
+		case MALIBU_PHY_LED_SOURCE0:
+			mmd_reg = MALIBU_PHY_MMD7_LED0_CTRL;
+			break;
+		case MALIBU_PHY_LED_SOURCE1:
+			mmd_reg = MALIBU_PHY_MMD7_LED1_CTRL;
+			break;
+		default:
+			SSDK_ERROR("source %d is not support\n", source_id);
+			break;
+	}
+
+	return mmd_reg;
+}
+
+sw_error_t
+malibu_phy_led_ctrl_source_set(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t source_id, led_ctrl_pattern_t *pattern)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t led_map = 0, mmd_reg = 0;
+
+	MALIBU_PHY_LED_PATTERN_MODE_CHECK(pattern->mode);
+	rv = malibu_phy_led_pattern_map_to_phy(dev_id, phy_addr, pattern,
+		&led_map);
+	PHY_RTN_ON_ERROR(rv);
+	mmd_reg = malibu_phy_led_source_mmd_reg_get(dev_id, source_id);
+	return malibu_phy_mmd_write(dev_id, phy_addr, MALIBU_PHY_MMD7_NUM,
+		mmd_reg, led_map);
+}
+
+sw_error_t
+malibu_phy_led_ctrl_source_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t source_id, led_ctrl_pattern_t *pattern)
+{
+	a_uint16_t led_map = 0, mmd_reg = 0;
+
+	pattern->map = 0;
+	pattern->mode = LED_PATTERN_MAP_EN;
+
+	mmd_reg = malibu_phy_led_source_mmd_reg_get(dev_id, source_id);
+	led_map = malibu_phy_mmd_read(dev_id, phy_addr, MALIBU_PHY_MMD7_NUM,
+		mmd_reg);
+
+	return malibu_phy_led_pattern_map_from_phy(dev_id, phy_addr, pattern,
+		&led_map);
+}
+
+sw_error_t
+malibu_phy_led_ctrl_pattern_set(a_uint32_t dev_id, a_uint32_t phy_addr,
+	led_ctrl_pattern_t *pattern)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = malibu_phy_led_ctrl_source_set (dev_id, phy_addr, MALIBU_PHY_LED_SOURCE0,
+		pattern);
+	PHY_RTN_ON_ERROR(rv);
+
+	return malibu_phy_led_ctrl_source_set (dev_id, phy_addr, MALIBU_PHY_LED_SOURCE1,
+		pattern);
+}
+
+sw_error_t
+malibu_phy_led_ctrl_pattern_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+	led_ctrl_pattern_t *pattern)
+{
+	return malibu_phy_led_ctrl_source_get(dev_id, phy_addr,
+		MALIBU_PHY_LED_SOURCE0, pattern);
+}
+
 /******************************************************************************
 *
 * malibu_phy_hw_register init
@@ -2835,6 +2968,9 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_eee_partner_adv_get = malibu_phy_get_eee_partner_adv;
 	malibu_phy_api_ops->phy_eee_cap_get = malibu_phy_get_eee_cap;
 	malibu_phy_api_ops->phy_eee_status_get = malibu_phy_get_eee_status;
+	malibu_phy_api_ops->phy_led_ctrl_pattern_get = malibu_phy_led_ctrl_pattern_get;
+	malibu_phy_api_ops->phy_led_ctrl_pattern_set = malibu_phy_led_ctrl_pattern_set;
+	malibu_phy_api_ops->phy_led_ctrl_source_set = malibu_phy_led_ctrl_source_set;
 
 	ret = hsl_phy_api_ops_register(MALIBU_PHY_CHIP, malibu_phy_api_ops);
 

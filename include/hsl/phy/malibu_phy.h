@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, 2017, 2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -547,14 +547,27 @@ extern "C"
 #define MALIBU_INTR_DUPLEX_CHANGE             0x2000
 #define MALIBU_INTR_STATUS_UP_CHANGE          0x0400
 #define MALIBU_INTR_STATUS_DOWN_CHANGE        0x0800
-#define MALIBU_INTR_BX_FX_STATUS_DOWN_CHANGE        0x0100
-#define MALIBU_INTR_BX_FX_STATUS_UP_CHANGE        0x0080
-#define MALIBU_INTR_MEDIA_STATUS_CHANGE             0x1000
-#define MALIBU_INTR_WOL             0x0001
-#define MALIBU_INTR_POE             0x0002
+#define MALIBU_INTR_BX_FX_STATUS_DOWN_CHANGE  0x0100
+#define MALIBU_INTR_BX_FX_STATUS_UP_CHANGE    0x0080
+#define MALIBU_INTR_MEDIA_STATUS_CHANGE       0x1000
+#define MALIBU_INTR_WOL                       0x0001
+#define MALIBU_INTR_POE                       0x0002
 
-#define RUN_CDT 0x8000
-#define CABLE_LENGTH_UNIT 0x0400
+#define RUN_CDT                               0x8000
+#define CABLE_LENGTH_UNIT                     0x0400
+#define MALIBU_PHY_LINK_1000M_LIGHT_EN        0x40
+#define MALIBU_PHY_LINK_100M_LIGHT_EN         0x20
+#define MALIBU_PHY_LINK_10M_LIGHT_EN          0x10
+#define MALIBU_PHY_RX_TRAFFIC_BLINK_EN        0x200
+#define MALIBU_PHY_TX_TRAFFIC_BLINK_EN        0x400
+
+#define MALIBU_PHY_LED_SOURCE0                0x0
+#define MALIBU_PHY_LED_SOURCE1                0x1
+#define MALIBU_PHY_MMD7_LED0_CTRL             0x8074
+#define MALIBU_PHY_MMD7_LED1_CTRL             0x8076
+
+#define MALIBU_PHY_LED_PATTERN_MODE_CHECK(mode) \
+do { if(LED_PATTERN_MAP_EN != mode) return SW_NOT_SUPPORTED; } while(0)
 
 /** Phy preferred medium type */
   typedef enum

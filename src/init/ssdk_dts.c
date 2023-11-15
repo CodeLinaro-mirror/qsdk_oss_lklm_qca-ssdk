@@ -985,71 +985,101 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 }
 #if (defined(DESS) || defined(MP) || defined(APPE) || defined(MHT))
 #ifdef IN_LED
-static void ssdk_dt_parse_led(struct device_node *switch_node,
+static void ssdk_dt_parse_led_source(struct device_node *led_device_node,
 		ssdk_init_cfg *cfg)
 {
 	struct device_node *child = NULL;
-	const __be32 *led_source, *led_number;
-	a_uint8_t *led_str;
-	a_uint32_t len = 0, i = 0;
+	a_uint8_t *led_str = NULL;
+	a_uint32_t i = 0, led_speed_index = 0, source_id = 0, port_id = 0;
 
-	for_each_available_child_of_node(switch_node, child) {
-
-		led_source = of_get_property(child, "source", &len);
-		if (!led_source) {
+	if(!of_property_read_u32(led_device_node, "port", &port_id)) {
+		if(port_id == SSDK_PHYSICAL_PORT0)
+			return;
+	}
+	i = cfg->led_source_num;
+	for_each_available_child_of_node(led_device_node, child) {
+		if(of_property_read_u32(child, "source", &source_id))
 			continue;
+		if(port_id != SSDK_PHYSICAL_PORT0) {
+			cfg->led_source_cfg[i].led_source_id =
+				(port_id - 1) * PORT_LED_SOURCE_MAX + source_id;
 		}
-		cfg->led_source_cfg[i].led_source_id = be32_to_cpup(led_source);
-		led_number = of_get_property(child, "led", &len);
-		if (led_number)
-			cfg->led_source_cfg[i].led_num = be32_to_cpup(led_number);
+		else
+			cfg->led_source_cfg[i].led_source_id = source_id;
 		if (!of_property_read_string(child, "mode", (const char **)&led_str)) {
 			if (!strcmp(led_str, "normal"))
-			cfg->led_source_cfg[i].led_pattern.mode = LED_PATTERN_MAP_EN;
+				cfg->led_source_cfg[i].led_pattern.mode = LED_PATTERN_MAP_EN;
 			if (!strcmp(led_str, "on"))
-			cfg->led_source_cfg[i].led_pattern.mode = LED_ALWAYS_ON;
+				cfg->led_source_cfg[i].led_pattern.mode = LED_ALWAYS_ON;
 			if (!strcmp(led_str, "blink"))
-			cfg->led_source_cfg[i].led_pattern.mode = LED_ALWAYS_BLINK;
+				cfg->led_source_cfg[i].led_pattern.mode = LED_ALWAYS_BLINK;
 			if (!strcmp(led_str, "off"))
-			cfg->led_source_cfg[i].led_pattern.mode = LED_ALWAYS_OFF;
+				cfg->led_source_cfg[i].led_pattern.mode = LED_ALWAYS_OFF;
 		}
-		if (!of_property_read_string(child, "speed", (const char **)&led_str)) {
+		led_speed_index = 0;
+		while(!of_property_read_string_index(child, "speed", led_speed_index,
+			(const char **)&led_str)) {
 			if (!strcmp(led_str, "10M"))
-			cfg->led_source_cfg[i].led_pattern.map = LED_MAP_10M_SPEED;
+				cfg->led_source_cfg[i].led_pattern.map |= LED_MAP_10M_SPEED;
 			if (!strcmp(led_str, "100M"))
-			cfg->led_source_cfg[i].led_pattern.map = LED_MAP_100M_SPEED;
+				cfg->led_source_cfg[i].led_pattern.map |= LED_MAP_100M_SPEED;
 			if (!strcmp(led_str, "1000M"))
-			cfg->led_source_cfg[i].led_pattern.map = LED_MAP_1000M_SPEED;
+				cfg->led_source_cfg[i].led_pattern.map |= LED_MAP_1000M_SPEED;
 			if (!strcmp(led_str, "2500M"))
-			cfg->led_source_cfg[i].led_pattern.map = LED_MAP_2500M_SPEED;
+				cfg->led_source_cfg[i].led_pattern.map |= LED_MAP_2500M_SPEED;
 			if (!strcmp(led_str, "all"))
-			cfg->led_source_cfg[i].led_pattern.map = LED_MAP_ALL_SPEED;
+				cfg->led_source_cfg[i].led_pattern.map |= LED_MAP_ALL_SPEED;
+
+			led_speed_index++;
 		}
 		if (!of_property_read_string(child, "freq", (const char **)&led_str)) {
 			if (!strcmp(led_str, "2Hz"))
-			cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_2HZ;
+				cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_2HZ;
 			if (!strcmp(led_str, "4Hz"))
-			cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_4HZ;
+				cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_4HZ;
 			if (!strcmp(led_str, "8Hz"))
-			cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_8HZ;
+				cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_8HZ;
 			if (!strcmp(led_str, "auto"))
-			cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_TXRX;
+				cfg->led_source_cfg[i].led_pattern.freq = LED_BLINK_TXRX;
 		}
 		if (!of_property_read_string(child, "active", (const char **)&led_str)) {
 			if (!strcmp(led_str, "high"))
-			cfg->led_source_cfg[i].led_pattern.map |= BIT(LED_ACTIVE_HIGH);
+				cfg->led_source_cfg[i].led_pattern.map |= BIT(LED_ACTIVE_HIGH);
 		}
 		if (!of_property_read_string(child, "blink_en", (const char **)&led_str)) {
 			if (!strcmp(led_str, "disable"))
-			cfg->led_source_cfg[i].led_pattern.map &= ~(BIT(RX_TRAFFIC_BLINK_EN)|
-				BIT(TX_TRAFFIC_BLINK_EN));
+				cfg->led_source_cfg[i].led_pattern.map &= ~(BIT(RX_TRAFFIC_BLINK_EN)|
+					BIT(TX_TRAFFIC_BLINK_EN));
 		}
 		i++;
 	}
 	cfg->led_source_num = i;
-	SSDK_INFO("current dts led_source_num is %d\n",cfg->led_source_num);
 
 	return;
+}
+
+static sw_error_t ssdk_dt_parse_port_ledinfo(struct device_node *switch_node,
+	ssdk_init_cfg *cfg)
+{
+	struct device_node *port_ledinfo_node = NULL, *port_node = NULL;
+
+	port_ledinfo_node = of_get_child_by_name(switch_node, "qcom,port_ledinfo");
+	if (!port_ledinfo_node) {
+		return SW_NOT_FOUND;
+	}
+	for_each_available_child_of_node(port_ledinfo_node, port_node) {
+		ssdk_dt_parse_led_source(port_node, cfg);
+	}
+
+	return SW_OK;
+}
+
+static void ssdk_dt_parse_led(struct device_node *switch_node, ssdk_init_cfg *cfg)
+{
+	if(!ssdk_dt_parse_port_ledinfo(switch_node, cfg))
+		return;
+
+	return ssdk_dt_parse_led_source(switch_node, cfg);
 }
 #endif
 #endif

@@ -253,7 +253,7 @@ typedef struct
 	ssdk_port_cfg   port_cfg;
 	a_uint32_t      mac_mode;
 	a_uint32_t led_source_num;
-	led_source_cfg_t led_source_cfg[15];
+	led_source_cfg_t led_source_cfg[SSDK_MAX_PORT_NUM * PORT_LED_SOURCE_MAX];
 /*qca808x_start*/
 	a_uint32_t      phy_id;
 	a_uint32_t      mac_mode1;
