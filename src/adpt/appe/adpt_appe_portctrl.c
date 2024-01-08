@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -504,6 +504,10 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 			return SW_OK;
 		}
 
+		/* disable port bridge mac tx en */
+		adpt_hppe_port_bridge_txmac_set(dev_id, port_id, A_FALSE);
+		msleep(1);
+
 		/* off phy */
 		hsl_port_phy_pll_off(dev_id, port_id);
 		hsl_port_phy_power_off(dev_id, port_id);
@@ -524,6 +528,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 			}
 		}
 
+		msleep(1);
 		/* manually excute polling task to finish all ports up to down sequence */
 		mutex_lock(&priv->mac_sw_sync_lock);
 		qca_hppe_mac_sw_sync_task(priv);
