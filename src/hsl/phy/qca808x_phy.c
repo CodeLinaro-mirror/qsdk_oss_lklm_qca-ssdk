@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -348,31 +348,31 @@ qca808x_phy_ms_seed_enable(a_uint32_t dev_id, a_uint32_t phy_id,
 }
 
 a_bool_t
-qca808x_phy_2500caps(a_uint32_t dev_id, a_uint32_t phy_id)
+qca808x_phy_2500caps(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
+#if 0
 	a_uint16_t phy_data;
 
-	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD1_NUM,
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_addr, QCA808X_PHY_MMD1_NUM,
 							QCA808X_MMD1_PMA_CAP_REG);
 
 /*qca808x_end*/
 #ifdef MHT
 	/*the bit0 of mmd7 reg0x901d is used for ipq runing and 1G napa flag,
 	and qca8084 support 2.5G always*/
-	if(qca808x_phy_id_check(dev_id, phy_id, QCA8084_PHY))
+	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
 		return A_TRUE;
 #endif
 /*qca808x_start*/
 
 	if (phy_data & QCA808X_STATUS_2500T_FD_CAPS) {
-		phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+		phy_data = qca808x_phy_mmd_read(dev_id, phy_addr, QCA808X_PHY_MMD7_NUM,
 			QCA808X_PHY_MMD7_CHIP_TYPE);
 		if(!(phy_data & QCA808X_PHY_1G_CHIP_TYPE))
 			return A_TRUE;
 	}
-
-	return A_FALSE;
-
+#endif
+	return hsl_phy_autoneg_adv_check(dev_id, phy_addr, FAL_PHY_ADV_2500T_FD);
 }
 
 a_bool_t
@@ -1263,15 +1263,12 @@ qca808x_phy_get_ability(a_uint32_t dev_id, a_uint32_t phy_addr,
 			*ability |= FAL_PHY_ADV_1000T_FD;
 		}
 	}
-	if(qca808x_phy_2500caps(dev_id, phy_addr))
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_addr, QCA808X_PHY_MMD1_NUM,
+		QCA808X_MMD1_PMA_CAP_REG);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+	if (phy_data & QCA808X_STATUS_2500T_FD_CAPS)
 	{
-		phy_data = qca808x_phy_mmd_read(dev_id, phy_addr, QCA808X_PHY_MMD1_NUM,
-			QCA808X_MMD1_PMA_CAP_REG);
-		PHY_RTN_ON_READ_ERROR(phy_data);
-		if (phy_data & QCA808X_STATUS_2500T_FD_CAPS)
-		{
-			*ability |= FAL_PHY_ADV_2500T_FD;
-		}
+		*ability |= FAL_PHY_ADV_2500T_FD;
 	}
 	*ability |= (FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE);
 #ifdef MHT
@@ -1425,12 +1422,10 @@ qca808x_phy_get_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 		*autoneg |= FAL_PHY_ADV_1000T_FD;
 	}
 
-	if (qca808x_phy_2500caps(dev_id, phy_id) == A_TRUE) {
-		rv = _qca808x_phy_get_autoneg_adv_ext(dev_id, phy_id, &phy_data);
-		if ((rv == SW_OK) &&
-				(phy_data & QCA808X_ADVERTISE_2500FULL)) {
-			*autoneg |= FAL_PHY_ADV_2500T_FD;
-		}
+	rv = _qca808x_phy_get_autoneg_adv_ext(dev_id, phy_id, &phy_data);
+	if ((rv == SW_OK) &&
+			(phy_data & QCA808X_ADVERTISE_2500FULL)) {
+		*autoneg |= FAL_PHY_ADV_2500T_FD;
 	}
 
 	return rv;
