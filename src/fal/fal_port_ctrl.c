@@ -367,6 +367,7 @@ _fal_port_txhdr_mode_get (a_uint32_t dev_id, fal_port_t port_id,
   rv = p_api->port_txhdr_mode_get (dev_id, port_id, mode);
   return rv;
 }
+#endif
 static sw_error_t
 _fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
 {
@@ -381,7 +382,6 @@ _fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
   rv = p_api->header_type_get (dev_id, enable, type);
   return rv;
 }
-#endif
 static sw_error_t
 _fal_port_rxhdr_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 			  fal_port_header_mode_t mode)
@@ -2136,6 +2136,7 @@ fal_port_txhdr_mode_get (a_uint32_t dev_id, fal_port_t port_id,
   FAL_API_UNLOCK;
   return rv;
 }
+#endif
 /**
  * @brief Get status of Atheros header type value on a particular device.
  * @param[in] dev_id device id
@@ -2153,6 +2154,7 @@ fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
   FAL_API_UNLOCK;
   return rv;
 }
+#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Get status of txmac on a particular port.
  * @param[in] dev_id device id

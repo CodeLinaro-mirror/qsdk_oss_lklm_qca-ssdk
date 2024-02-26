@@ -146,6 +146,7 @@
 #ifdef IN_LED
 #include "ssdk_led.h"
 #endif
+#include "ssdk_plat.h"
 
 #ifdef IN_RFS
 struct rfs_device rfs_dev;
@@ -2325,6 +2326,10 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 			}
 			break;
 #endif
+		case NETDEV_REGISTER:
+			if (strstr(dev->name, "eth"))
+				ssdk_netdev_switch_init(dev);
+			break;
 	}
 
 	return NOTIFY_DONE;
