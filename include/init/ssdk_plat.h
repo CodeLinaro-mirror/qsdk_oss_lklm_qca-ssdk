@@ -518,5 +518,6 @@ void ssdk_plat_exit(a_uint32_t dev_id);
 #define qca_mht_mii_read qca_mii_read
 #define qca_mht_mii_write qca_mii_write
 #define qca_mht_mii_update qca_mii_update
+sw_error_t ssdk_netdev_switch_init(struct net_device *dev);
 #endif
 /*qca808x_end*/
