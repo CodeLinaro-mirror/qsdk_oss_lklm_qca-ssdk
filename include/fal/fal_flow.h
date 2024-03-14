@@ -26,8 +26,8 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 #include "sw.h"
-#include "fal/fal_type.h"
-#include "fal/fal_ip.h"
+#include "fal_type.h"
+#include "fal_ip.h"
 
 typedef enum {
 	FAL_FLOW_L3_UNICAST = 0,
@@ -71,14 +71,28 @@ typedef enum {
 #define FAL_FLOW_PKT_CNT_MASK	0xFFFFFFFFULL
 #define FAL_FLOW_BYTE_CNT_MASK	0xFFFFFFFFFFULL
 
-#define FAL_FLOW_QOS_TYPE_TREE_ID	0
-#define FAL_FLOW_QOS_TYPE_COOKIE	1
+#define FAL_FLOW_TREE_ID_MAX		3
+#define FAL_FLOW_COOKIE_16B_MAX		2
+#define FAL_FLOW_COOKIE_40B_MAX		5
+#define FAL_FLOW_COOKIE_48B_MAX		6
+
+typedef enum {
+	FAL_FLOW_QOS_TYPE_TREE_ID = 0,
+	FAL_FLOW_QOS_TYPE_COOKIE_16B,
+	FAL_FLOW_QOS_TYPE_COOKIE_40B,
+	FAL_FLOW_QOS_TYPE_COOKIE_48B,
+} fal_flow_cookie_type_t;
+
 typedef struct {
-	a_uint32_t tree_id; /*for qos for flow cookie */
-	a_uint32_t flow_cookie_ext; /* flow_cookie_ext, added for ipq54xx */
-	a_bool_t wifi_qos_en; /* enable wifi qos or not, added for ipq95xx */
-	a_uint32_t wifi_qos; /* wifi qos value, added for ipq95xx */
-	a_uint8_t qos_type; /* wifi qos value, added for ipq53xx */
+	fal_flow_cookie_type_t type; /* added for ipq53xx */
+	a_uint8_t qos;	/* added for ipq95xx */
+	a_bool_t qos_valid; /* added for ipq95xx */
+	union {
+		a_uint8_t tree_id[FAL_FLOW_TREE_ID_MAX];
+		a_uint8_t cookie_16b[FAL_FLOW_COOKIE_16B_MAX];
+		a_uint8_t cookie_40b[FAL_FLOW_COOKIE_40B_MAX];
+		a_uint8_t cookie_48b[FAL_FLOW_COOKIE_48B_MAX];
+	};
 } fal_flow_qos_t;
 
 typedef struct {

@@ -42,6 +42,19 @@
 #define FLOW_ENTRY_TYPE_IPV6 1
 #define FLOW_TUPLE_TYPE_3    0
 
+#define FLOW_COOKIE_48BIT_LOW		GENMASK_ULL(15, 0)
+#define FLOW_COOKIE_48BIT_MIDDLE	GENMASK_ULL(23, 16)
+#define FLOW_COOKIE_48BIT_HIGH_16BIT_L	GENMASK_ULL(39, 24)
+#define FLOW_COOKIE_48BIT_HIGH_8BIT_H	GENMASK_ULL(47, 40)
+
+#define FLOW_COOKIE_40BIT_LOW		GENMASK_ULL(15, 0)
+#define FLOW_COOKIE_40BIT_HIGH_16BIT_L	GENMASK_ULL(31, 16)
+#define FLOW_COOKIE_40BIT_HIGH_8BIT_H	GENMASK_ULL(39, 32)
+
+#define FLOW_COOKIE_16BIT		GENMASK_ULL(15, 0)
+
+#define FLOW_TREE_ID_24BIT		GENMASK_ULL(23, 0)
+
 sw_error_t
 adpt_hppe_ip_flow_host_data_rd_add(a_uint32_t dev_id, fal_host_entry_t * host_entry)
 
@@ -249,6 +262,158 @@ adpt_hppe_ip_flow_host_data_del(a_uint32_t dev_id, a_uint32_t del_mode,
 	return rv;
 }
 
+static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
+					   union eg_flow_tree_map_tbl_u *eg_treemap,
+					   fal_flow_cookie_type_t type,
+					   a_bool_t to_hsl)
+{
+	a_uint64_t tmp = 0;
+
+	switch (type) {
+	case FAL_FLOW_QOS_TYPE_TREE_ID:
+		if (to_hsl == A_TRUE) {
+			memcpy(&tmp, flow_qos->tree_id, sizeof(flow_qos->tree_id));
+			eg_treemap->bf.tree_id = FIELD_GET(FLOW_TREE_ID_24BIT, tmp);
+#if defined(MPPE)
+			eg_treemap->bf.type = 0;
+#endif
+		} else {
+			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT, eg_treemap->bf.tree_id);
+			memcpy(flow_qos->tree_id, &tmp, sizeof(flow_qos->tree_id));
+		}
+		break;
+#if defined(MRPPE)
+	case FAL_FLOW_QOS_TYPE_COOKIE_40B:
+		if (to_hsl == A_TRUE) {
+			memcpy(&tmp, flow_qos->cookie_40b, sizeof(flow_qos->cookie_40b));
+			eg_treemap->bf1.flow_cookie_low = FIELD_GET(FLOW_COOKIE_40BIT_LOW, tmp);
+			eg_treemap->bf1.flow_cookie_high_0 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_16BIT_L, tmp);
+			eg_treemap->bf1.flow_cookie_high_1 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_8BIT_H, tmp);
+			eg_treemap->bf1.type = 1;
+		} else {
+			tmp = FIELD_PREP(FLOW_COOKIE_40BIT_LOW, eg_treemap->bf1.flow_cookie_low);
+			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_high_0);
+			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_high_1);
+			memcpy(flow_qos->cookie_40b, &tmp, sizeof(flow_qos->cookie_40b));
+		}
+		break;
+	case FAL_FLOW_QOS_TYPE_COOKIE_48B:
+		if (to_hsl == A_TRUE) {
+			memcpy(&tmp, flow_qos->cookie_48b, sizeof(flow_qos->cookie_48b));
+			eg_treemap->bf1.flow_cookie_low = FIELD_GET(FLOW_COOKIE_48BIT_LOW, tmp);
+			eg_treemap->bf1.wifi_qos = FIELD_GET(FLOW_COOKIE_48BIT_MIDDLE, tmp);
+			eg_treemap->bf1.flow_cookie_high_0 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
+			eg_treemap->bf1.flow_cookie_high_1 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
+
+			/* wifi qos is invalid when 48 bit flow cookie used. */
+			eg_treemap->bf1.wifi_qos_flag = false;
+			eg_treemap->bf1.type = 1;
+		} else {
+			tmp = FIELD_PREP(FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie_low);
+			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_MIDDLE, eg_treemap->bf1.wifi_qos);
+			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_high_0);
+			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_high_1);
+			memcpy(flow_qos->cookie_48b, &tmp, sizeof(flow_qos->cookie_48b));
+
+			/* qos is used as the middle 8 bits of flow cookie. */
+			flow_qos->qos = 0;
+			flow_qos->qos_valid = false;
+		}
+		break;
+#elif defined(MPPE)
+	case FAL_FLOW_QOS_TYPE_COOKIE_16B:
+		if (to_hsl == A_TRUE) {
+			memcpy(&tmp, flow_qos->cookie_16b, sizeof(flow_qos->cookie_16b));
+			eg_treemap->bf2.flow_cookie = FIELD_GET(FLOW_COOKIE_16BIT, tmp);
+			eg_treemap->bf2.type = 1;
+		} else {
+			tmp = FIELD_PREP(FLOW_COOKIE_16BIT, eg_treemap->bf2.flow_cookie);
+			memcpy(flow_qos->cookie_16b, &tmp, sizeof(flow_qos->cookie_16b));
+		}
+		break;
+#endif
+	default:
+		break;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_hppe_flow_qos_set(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_qos_t *flow_qos)
+{
+	sw_error_t rv = SW_OK;
+	union eg_flow_tree_map_tbl_u eg_treemap;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(flow_qos);
+
+	if (flow_index >= EG_FLOW_TREE_MAP_TBL_NUM)
+		return SW_OUT_OF_RANGE;
+
+	aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
+
+	rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_index, &eg_treemap);
+	SW_RTN_ON_ERROR(rv);
+
+#if defined(APPE)
+	eg_treemap.bf.wifi_qos_flag = flow_qos->qos_valid;
+	eg_treemap.bf.wifi_qos = flow_qos->qos;
+#endif
+	adpt_flow_cookie_convert(flow_qos, &eg_treemap, flow_qos->type, A_TRUE);
+
+	rv = hppe_eg_flow_tree_map_tbl_set(dev_id, flow_index, &eg_treemap);
+	return rv;
+}
+
+sw_error_t
+adpt_hppe_flow_qos_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_qos_t *flow_qos)
+{
+	sw_error_t rv = SW_OK;
+	union eg_flow_tree_map_tbl_u eg_treemap;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(flow_qos);
+
+	if (flow_index >= EG_FLOW_TREE_MAP_TBL_NUM)
+		return SW_OUT_OF_RANGE;
+
+	aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
+	aos_mem_zero(flow_qos, sizeof(*flow_qos));
+
+	rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_index, &eg_treemap);
+	SW_RTN_ON_ERROR(rv);
+
+#if defined(APPE)
+	flow_qos->qos_valid = eg_treemap.bf.wifi_qos_flag;
+	flow_qos->qos = eg_treemap.bf.wifi_qos;
+#endif
+
+	/* For legacy chip HPPE/APPE, only tree id supported. */
+	flow_qos->type = FAL_FLOW_QOS_TYPE_TREE_ID;
+
+#if defined(MPPE)
+	/* For MPPE, only 16B flow cookie supported. */
+	if (eg_treemap.bf.type)
+		flow_qos->type = FAL_FLOW_QOS_TYPE_COOKIE_16B;
+#endif
+
+#if defined(MRPPE)
+	/* For MRPPE, flow cookie supports 40B and 48B. the additional 8 bit
+	 * from qos.
+	 */
+	if (flow_qos->type) {
+		if (flow_qos->qos_valid)
+			flow_qos->type = FAL_FLOW_QOS_TYPE_COOKIE_40B;
+		else
+			flow_qos->type = FAL_FLOW_QOS_TYPE_COOKIE_48B;
+	}
+#endif
+
+	adpt_flow_cookie_convert(flow_qos, &eg_treemap, flow_qos->type, A_FALSE);
+
+	return rv;
+}
 
 sw_error_t
 adpt_hppe_flow_entry_host_op_add(
@@ -478,38 +643,18 @@ adpt_hppe_flow_entry_host_op_add(
 		rv = hppe_flow_entry_host_op_ipv6_3tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
 	} else
 		return SW_FAIL;
-	if (rv == SW_OK) {
-		union eg_flow_tree_map_tbl_u eg_treemap;
-		fal_flow_qos_t *flow_qos = &(flow_entry->flow_qos);
-		aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
 
-		rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_entry->entry_id, &eg_treemap);
-		SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		return rv;
 
 #if defined(MPPE)
-		mppe_qos_mapping_tbl_flow_policer_set(dev_id, flow_entry->entry_id,
-				flow_entry->policer_valid, flow_entry->policer_index);
+	rv = mppe_qos_mapping_tbl_flow_policer_set(dev_id, flow_entry->entry_id,
+			flow_entry->policer_valid, flow_entry->policer_index);
 
-		eg_treemap.bf.type = flow_qos->qos_type;
-		/* flow cookies only has 16bits */
-		if (flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE)
-			flow_qos->tree_id &= 0xffff;
+	if (rv)
+		return rv;
 #endif
-		eg_treemap.bf.tree_id = flow_qos->tree_id;
-#if defined(APPE)
-#if defined(MRPPE)
-		if(flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE) {
-			eg_treemap.bf.tree_id |= (flow_qos->flow_cookie_ext&0xff)<<16;
-			eg_treemap.bf.flow_cookie_ext_0 = (flow_qos->flow_cookie_ext>>8)&0xff;
-			eg_treemap.bf.flow_cookie_ext_1 = (flow_qos->flow_cookie_ext>>16)&0xff;
-		}
-#endif
-		eg_treemap.bf.wifi_qos_flag = flow_qos->wifi_qos_en;
-		eg_treemap.bf.wifi_qos = flow_qos->wifi_qos;
-#endif
-		rv = hppe_eg_flow_tree_map_tbl_set(dev_id, flow_entry->entry_id, &eg_treemap);
-	}
-	return rv;
+	return adpt_hppe_flow_qos_set(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
 sw_error_t
@@ -521,8 +666,12 @@ adpt_hppe_flow_entry_host_op_get(
 	sw_error_t rv = SW_OK;
 	a_uint32_t type = 0;
 	a_uint32_t entry_id = flow_entry->entry_id;
+	union in_flow_cnt_tbl_u cnt;
+
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(flow_entry);
+
+	aos_mem_zero(&cnt, sizeof(cnt));
 
 	type = flow_entry->entry_type;
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
@@ -794,41 +943,24 @@ adpt_hppe_flow_entry_host_op_get(
 	} else
 		return SW_FAIL;
 
-	if (rv == SW_OK) {
-		union eg_flow_tree_map_tbl_u eg_treemap;
-		union in_flow_cnt_tbl_u cnt;
-		fal_flow_qos_t *flow_qos = &(flow_entry->flow_qos);
-		aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
-		aos_mem_zero(&cnt, sizeof(cnt));
+	if (rv)
+		return rv;
 
-		rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_entry->entry_id, &eg_treemap);
-		flow_qos->tree_id = eg_treemap.bf.tree_id;
-#if defined(APPE)
-#if defined(MRPPE)
-		if(eg_treemap.bf.type == FAL_FLOW_QOS_TYPE_COOKIE) {
-			flow_qos->flow_cookie_ext = (eg_treemap.bf.flow_cookie_ext_1<<16) | 
-										(eg_treemap.bf.flow_cookie_ext_0<<8) | 
-										((eg_treemap.bf.tree_id>>16)&0xff) ;
-		}
-#endif
-		flow_qos->wifi_qos_en = eg_treemap.bf.wifi_qos_flag;
-		flow_qos->wifi_qos = eg_treemap.bf.wifi_qos;
-#endif
+	rv = hppe_in_flow_cnt_tbl_get(dev_id, flow_entry->entry_id, &cnt);
+	if (rv)
+		return rv;
+
+	flow_entry->pkt_counter = cnt.bf.hit_pkt_counter;
+	flow_entry->byte_counter = cnt.bf.hit_byte_counter_0 | \
+				   ((a_uint64_t)cnt.bf.hit_byte_counter_1 << 32);
+
 #if defined(MPPE)
-		mppe_qos_mapping_tbl_flow_policer_get(dev_id, flow_entry->entry_id,
-				&(flow_entry->policer_valid), &(flow_entry->policer_index));
-
-		flow_qos->qos_type = eg_treemap.bf.type;
-		/* flow cookies only has 16bits */
-		if (flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE)
-			flow_qos->tree_id &= 0xffff;
+	rv = mppe_qos_mapping_tbl_flow_policer_get(dev_id, flow_entry->entry_id,
+			&(flow_entry->policer_valid), &(flow_entry->policer_index));
+	if (rv)
+		return rv;
 #endif
-		rv = hppe_in_flow_cnt_tbl_get(dev_id, flow_entry->entry_id, &cnt);
-		flow_entry->pkt_counter = cnt.bf.hit_pkt_counter;
-		flow_entry->byte_counter = cnt.bf.hit_byte_counter_0 | \
-					((a_uint64_t)cnt.bf.hit_byte_counter_1 << 32);
-	}
-	return rv;
+	return adpt_hppe_flow_qos_get(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
 sw_error_t
@@ -1135,9 +1267,10 @@ adpt_hppe_flow_entry_get(
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t type = 0;
+	union in_flow_cnt_tbl_u cnt;
+
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(flow_entry);
-
 
 	type = flow_entry->entry_type;
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
@@ -1446,41 +1579,25 @@ adpt_hppe_flow_entry_get(
 	} else
 		return SW_FAIL;
 
-	if (rv == SW_OK) {
-		union eg_flow_tree_map_tbl_u eg_treemap;
-		union in_flow_cnt_tbl_u cnt;
-		fal_flow_qos_t *flow_qos = &(flow_entry->flow_qos);
-		aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
-		aos_mem_zero(&cnt, sizeof(cnt));
+	if (rv)
+		return rv;
 
-		rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_entry->entry_id, &eg_treemap);
-		flow_qos->tree_id = eg_treemap.bf.tree_id;
-#if defined(APPE)
-#if defined(MRPPE)
-		if(eg_treemap.bf.type == FAL_FLOW_QOS_TYPE_COOKIE) {
-			flow_qos->flow_cookie_ext = (eg_treemap.bf.flow_cookie_ext_1<<16) | 
-										(eg_treemap.bf.flow_cookie_ext_0<<8) | 
-										((eg_treemap.bf.tree_id>>16)&0xff) ;
-		}
-#endif
-		flow_qos->wifi_qos_en = eg_treemap.bf.wifi_qos_flag;
-		flow_qos->wifi_qos = eg_treemap.bf.wifi_qos;
-#endif
+	aos_mem_zero(&cnt, sizeof(cnt));
+	rv = hppe_in_flow_cnt_tbl_get(dev_id, flow_entry->entry_id, &cnt);
+	if (rv)
+		return rv;
+
+	flow_entry->pkt_counter = cnt.bf.hit_pkt_counter;
+	flow_entry->byte_counter = cnt.bf.hit_byte_counter_0 | \
+				   ((a_uint64_t)cnt.bf.hit_byte_counter_1 << 32);
+
 #if defined(MPPE)
-		mppe_qos_mapping_tbl_flow_policer_get(dev_id, flow_entry->entry_id,
-				&(flow_entry->policer_valid), &(flow_entry->policer_index));
-
-		flow_qos->qos_type = eg_treemap.bf.type;
-		/* flow cookies only has 16bits */
-		if (flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE)
-			flow_qos->tree_id &= 0xffff;
+	rv = mppe_qos_mapping_tbl_flow_policer_get(dev_id, flow_entry->entry_id,
+			&(flow_entry->policer_valid), &(flow_entry->policer_index));
+	if (rv)
+		return rv;
 #endif
-		rv = hppe_in_flow_cnt_tbl_get(dev_id, flow_entry->entry_id, &cnt);
-		flow_entry->pkt_counter = cnt.bf.hit_pkt_counter;
-		flow_entry->byte_counter = cnt.bf.hit_byte_counter_0 | \
-					((a_uint64_t)cnt.bf.hit_byte_counter_1 << 32);
-	}
-	return rv;
+	return adpt_hppe_flow_qos_get(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
 sw_error_t
@@ -2169,38 +2286,18 @@ adpt_hppe_flow_entry_add(
 		rv = hppe_flow_ipv6_3tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
 	} else
 		return SW_FAIL;
-	if (rv == SW_OK) {
-		union eg_flow_tree_map_tbl_u eg_treemap;
-		fal_flow_qos_t *flow_qos = &(flow_entry->flow_qos);
-		aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
 
-		rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_entry->entry_id, &eg_treemap);
-		SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		return rv;
 
 #if defined(MPPE)
-		mppe_qos_mapping_tbl_flow_policer_set(dev_id, flow_entry->entry_id,
-				flow_entry->policer_valid, flow_entry->policer_index);
+	rv = mppe_qos_mapping_tbl_flow_policer_set(dev_id, flow_entry->entry_id,
+			flow_entry->policer_valid, flow_entry->policer_index);
 
-		eg_treemap.bf.type = flow_qos->qos_type;
-		/* flow cookies only has 16bits */
-		if (flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE)
-			flow_qos->tree_id &= 0xffff;
+	if (rv)
+		return rv;
 #endif
-		eg_treemap.bf.tree_id = flow_qos->tree_id;
-#if defined(APPE)
-#if defined(MRPPE)
-		if(flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE) {
-			eg_treemap.bf.tree_id |= (flow_qos->flow_cookie_ext&0xff)<<16;
-			eg_treemap.bf.flow_cookie_ext_0 = (flow_qos->flow_cookie_ext>>8)&0xff;
-			eg_treemap.bf.flow_cookie_ext_1 = (flow_qos->flow_cookie_ext>>16)&0xff;
-		}
-#endif
-		eg_treemap.bf.wifi_qos_flag = flow_qos->wifi_qos_en;
-		eg_treemap.bf.wifi_qos = flow_qos->wifi_qos;
-#endif
-		rv = hppe_eg_flow_tree_map_tbl_set(dev_id, flow_entry->entry_id, &eg_treemap);
-	}
-	return rv;
+	return adpt_hppe_flow_qos_set(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
 sw_error_t
@@ -2286,86 +2383,6 @@ adpt_hppe_flow_entry_en_get(a_uint32_t dev_id, a_uint32_t flow_index, a_bool_t *
 	SW_RTN_ON_ERROR(rv);
 
 	*enable = entry.bf0.valid;
-	return rv;
-}
-
-sw_error_t
-adpt_hppe_flow_qos_set(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_qos_t *flow_qos)
-{
-	sw_error_t rv = SW_OK;
-	union eg_flow_tree_map_tbl_u eg_treemap;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(flow_qos);
-
-	if (flow_index >= EG_FLOW_TREE_MAP_TBL_NUM)
-		return SW_OUT_OF_RANGE;
-
-	aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
-
-	rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_index, &eg_treemap);
-	SW_RTN_ON_ERROR(rv);
-
-#if defined(MPPE)
-	eg_treemap.bf.type = flow_qos->qos_type;
-	/* flow cookies only has 16bits */
-	if (flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE)
-		flow_qos->tree_id &= 0xffff;
-#endif
-	eg_treemap.bf.tree_id = flow_qos->tree_id;
-#if defined(APPE)
-#if defined(MRPPE)
-	if(flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE) {
-		eg_treemap.bf.tree_id |= (flow_qos->flow_cookie_ext&0xff)<<16;
-		eg_treemap.bf.flow_cookie_ext_0 = (flow_qos->flow_cookie_ext>>8)&0xff;
-		eg_treemap.bf.flow_cookie_ext_1 = (flow_qos->flow_cookie_ext>>16)&0xff;
-	}
-#endif
-	eg_treemap.bf.wifi_qos_flag = flow_qos->wifi_qos_en;
-	eg_treemap.bf.wifi_qos = flow_qos->wifi_qos;
-#endif
-
-	rv = hppe_eg_flow_tree_map_tbl_set(dev_id, flow_index, &eg_treemap);
-	return rv;
-}
-
-sw_error_t
-adpt_hppe_flow_qos_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_qos_t *flow_qos)
-{
-	sw_error_t rv = SW_OK;
-	union eg_flow_tree_map_tbl_u eg_treemap;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(flow_qos);
-
-	if (flow_index >= EG_FLOW_TREE_MAP_TBL_NUM)
-		return SW_OUT_OF_RANGE;
-
-	aos_mem_zero(&eg_treemap, sizeof(eg_treemap));
-
-	rv = hppe_eg_flow_tree_map_tbl_get(dev_id, flow_index, &eg_treemap);
-	SW_RTN_ON_ERROR(rv);
-
-	flow_qos->tree_id = eg_treemap.bf.tree_id;
-#if defined(APPE)
-#if defined(MRPPE)
-	if(eg_treemap.bf.type == FAL_FLOW_QOS_TYPE_COOKIE) {
-		flow_qos->flow_cookie_ext = (eg_treemap.bf.flow_cookie_ext_1<<16) | 
-									(eg_treemap.bf.flow_cookie_ext_0<<8) | 
-									((eg_treemap.bf.tree_id>>16)&0xff) ;
-	}
-
-#endif
-	flow_qos->wifi_qos_en = eg_treemap.bf.wifi_qos_flag;
-	flow_qos->wifi_qos = eg_treemap.bf.wifi_qos;
-#endif
-#if defined(MPPE)
-	flow_qos->qos_type = eg_treemap.bf.type;
-	/* flow cookies only has 16bits */
-	if (flow_qos->qos_type == FAL_FLOW_QOS_TYPE_COOKIE)
-		flow_qos->tree_id &= 0xffff;
-#endif
-
 	return rv;
 }
 

@@ -2163,30 +2163,56 @@ union in_flow_ipv6_3tuple_tbl_u {
 #endif
 #endif
 
-struct eg_flow_tree_map_tbl {
-	a_uint32_t  tree_id:24;//TYPE==1 flow_cookie 16bits + flow_cookie_ext:8bits
-#if defined(APPE)
 #if defined(MRPPE)
-	a_uint32_t	flow_cookie_ext_0:8;
-	a_uint32_t	flow_cookie_ext_1:8;
+struct eg_flow_tree_map_tbl {
+	a_uint32_t  tree_id:24;
+	a_uint32_t  _reserved0:8;
+	a_uint32_t  _reserved1:8;
+	a_uint32_t  wifi_qos:8;
+	a_uint32_t  wifi_qos_flag:1;
+	a_uint32_t  type:2;
+	a_uint32_t  _reserved2:13;
+};
+
+struct eg_flow_tree_map_tbl_1 {
+	a_uint32_t  flow_cookie_low:16;
+	a_uint32_t  flow_cookie_high_0:16;
+	a_uint32_t  flow_cookie_high_1:8;
 	a_uint32_t  wifi_qos:8;
 	a_uint32_t  wifi_qos_flag:1;
 	a_uint32_t  type:2;
 	a_uint32_t  _reserved0:13;
-#else
+};
+#elif defined(MPPE)
+struct eg_flow_tree_map_tbl {
+	a_uint32_t  tree_id:24;
 	a_uint32_t  wifi_qos:8;
 	a_uint32_t  wifi_qos_flag:1;
-#if defined(MPPE)
 	a_uint32_t  type:2;
 	a_uint32_t  _reserved0:29;
-#else
-	a_uint32_t  _reserved0:31;
-#endif
-#endif
-#else
-	a_uint32_t  _reserved0:8;
-#endif
 };
+
+struct eg_flow_tree_map_tbl_2 {
+	a_uint32_t  flow_cookie:16;
+	a_uint32_t  _reserved0:8;
+	a_uint32_t  wifi_qos:8;
+	a_uint32_t  wifi_qos_flag:1;
+	a_uint32_t  type:2;
+	a_uint32_t  _reserved1:29;
+};
+#elif defined(APPE)
+struct eg_flow_tree_map_tbl {
+	a_uint32_t  tree_id:24;
+	a_uint32_t  wifi_qos:8;
+	a_uint32_t  wifi_qos_flag:1;
+	a_uint32_t  _reserved0:31;
+};
+#else
+struct eg_flow_tree_map_tbl {
+	a_uint32_t  tree_id:24;
+	a_uint32_t  _reserved0:8;
+};
+#endif
 
 union eg_flow_tree_map_tbl_u {
 #if defined(APPE)
@@ -2195,6 +2221,11 @@ union eg_flow_tree_map_tbl_u {
 	a_uint32_t val;
 #endif
 	struct eg_flow_tree_map_tbl bf;
+#if defined(MRPPE)
+	struct eg_flow_tree_map_tbl_1 bf1;
+#elif defined(MPPE)
+	struct eg_flow_tree_map_tbl_2 bf2;
+#endif
 };
 
 /*[table] IN_FLOW_CNT_TBL*/
