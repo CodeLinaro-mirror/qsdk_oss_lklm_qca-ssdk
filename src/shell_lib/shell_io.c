@@ -9172,7 +9172,9 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         cmd = get_sub_cmd("tree id", "0");
         SW_RTN_ON_NULL_PARAM(cmd);
 
-        rv = cmd_data_check_uint32(cmd, &(flow_qos->tree_id), sizeof (a_uint32_t));
+        rv = cmd_data_check_uint32(cmd, &tmp, sizeof(a_uint32_t));
+
+	memcpy(flow_qos->tree_id, &tmp, sizeof(flow_qos->tree_id));
     }
     while (talk_mode && (SW_OK != rv));
 
@@ -9226,7 +9228,7 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
 	    cmd = get_sub_cmd("wifi_qos_en", "no");
 	    SW_RTN_ON_NULL_PARAM(cmd);
 
-	    rv = cmd_data_check_confirm(cmd, A_TRUE, &(flow_qos->wifi_qos_en),
+	    rv = cmd_data_check_confirm(cmd, A_TRUE, &(flow_qos->qos_valid),
 			    sizeof (a_bool_t));
     } while (talk_mode && (SW_OK != rv));
 
@@ -9234,14 +9236,38 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
 	    cmd = get_sub_cmd("wifi_qos", "0");
 	    SW_RTN_ON_NULL_PARAM(cmd);
 
-	    rv = cmd_data_check_uint32(cmd, &(flow_qos->wifi_qos), sizeof(a_uint32_t));
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint8_t));
+	    flow_qos->qos = tmp;
     } while (talk_mode && (SW_OK != rv));
 #endif
 #if defined(MPPE)
     cmd_data_check_element("qos_type", "0",
-		    "usage: 0 for tree_id, 1 for flowcookie\n",
+		    "usage: 0 for tree_id, 1 for flowcookie 16 bits,"
+		    "2 for flowcookie 40 bits, 3 for flowcookie 48 bits\n",
 		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
-    flow_qos->qos_type = tmp;
+    flow_qos->type = tmp;
+    if (flow_qos->type != FAL_FLOW_QOS_TYPE_TREE_ID) {
+	    a_uint64_t cookie_tmp;
+
+	    cmd_data_check_element("flow_cookie", "0",
+			    "usage: flow cookie\n",
+			    cmd_data_check_uint64, (cmd, &cookie_tmp, sizeof(a_uint64_t)));
+	    switch (flow_qos->type) {
+	    case FAL_FLOW_QOS_TYPE_COOKIE_16B:
+		    memcpy(flow_qos->cookie_16b, &cookie_tmp, sizeof(flow_qos->cookie_16b));
+		    break;
+#if defined(MRPPE)
+	    case FAL_FLOW_QOS_TYPE_COOKIE_40B:
+		    memcpy(flow_qos->cookie_40b, &cookie_tmp, sizeof(flow_qos->cookie_40b));
+		    break;
+	    case FAL_FLOW_QOS_TYPE_COOKIE_48B:
+		    memcpy(flow_qos->cookie_48b, &cookie_tmp, sizeof(flow_qos->cookie_48b));
+		    break;
+#endif
+	    default:
+		    return SW_BAD_PARAM;
+	    }
+    }
 
     rv = __cmd_data_check_boolean("bridge_nexthop_valid", "no",
 		    "usage: <yes/no/y/n>\n",
