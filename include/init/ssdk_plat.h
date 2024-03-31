@@ -210,7 +210,6 @@ enum {
 #define QCA_MIB_ITEM_NUMBER \
 	(sizeof(fal_mib_counter_t)/sizeof(a_uint64_t))
 
-#define SSDK_MAX_UNIPHY_INSTANCE        3
 #define SSDK_UNIPHY_INSTANCE0           0
 #define SSDK_UNIPHY_INSTANCE1           1
 #define SSDK_UNIPHY_INSTANCE2           2
