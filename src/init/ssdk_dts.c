@@ -45,6 +45,9 @@
 #if defined(IN_SFP_PHY)
 #include "sfp_phy.h"
 #endif
+#ifdef MRPPE
+#include <linux/nvmem-consumer.h>
+#endif
 
 static ssdk_dt_global_t ssdk_dt_global = {0};
 #ifdef HPPE
@@ -104,6 +107,12 @@ a_uint32_t ssdk_intf_mac_num_get(void)
 a_uint8_t* ssdk_intf_macaddr_get(a_uint32_t index)
 {
 	return ssdk_dt_global.intf_mac[index].uc;
+}
+
+a_bool_t ssdk_uniphy_check_by_softsku(a_uint32_t dev_id,
+		a_uint32_t index)
+{
+	return ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[index];
 }
 
 a_uint32_t ssdk_dt_global_get_mac_mode(a_uint32_t dev_id, a_uint32_t index)
@@ -347,6 +356,37 @@ static void ssdk_dt_parse_mac_mode(a_uint32_t dev_id,
 	return;
 }
 #ifdef IN_UNIPHY
+#ifdef MRPPE
+static void ssdk_softsku_uniphy_parse(a_uint32_t dev_id,
+		struct device_node *uniphy_node)
+{
+	char uniphy_name[][20] = {"uniphy0_disable", "uniphy1_disable", "uniphy2_disable"};
+	a_uint32_t i = 0, uniphy_id = sizeof(uniphy_name) / sizeof(uniphy_name[0]); 
+	struct nvmem_cell *uniphy_nvmem;
+	u8 *disable_status;
+	size_t uniphy_len;
+
+	for (i = 0; i < uniphy_id; i++) {
+		uniphy_nvmem = of_nvmem_cell_get(uniphy_node, uniphy_name[i]);
+		if (IS_ERR(uniphy_nvmem)) {
+			if (PTR_ERR(uniphy_nvmem) == -EPROBE_DEFER)
+				SSDK_ERROR("mrppe uniphy%d nvmem cell probe fail!\n", i);
+		} else {
+			disable_status = nvmem_cell_read(uniphy_nvmem, &uniphy_len);
+			if (!IS_ERR(disable_status)) {
+				if (*disable_status == 1) {
+					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_FALSE;
+					SSDK_INFO("IPQ54xx uniphy%d is disabled by softsku!\n", i);
+				} else {
+					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_TRUE;
+				}
+				kfree(disable_status);
+			}
+			nvmem_cell_put(uniphy_nvmem);
+		}
+	}
+}
+#endif
 static void ssdk_dt_parse_uniphy(a_uint32_t dev_id)
 {
 	struct device_node *uniphy_node = NULL;
@@ -374,6 +414,10 @@ static void ssdk_dt_parse_uniphy(a_uint32_t dev_id)
 			if(!strcmp(cfg->uniphy_access_mode, "local bus"))
 				cfg->uniphy_reg_access_mode = HSL_REG_LOCAL_BUS;
 		}
+#ifdef MRPPE
+		/* parse uniphy disable status by softsku register */
+		ssdk_softsku_uniphy_parse(dev_id, uniphy_node);
+#endif
 	}
 
 	return;
