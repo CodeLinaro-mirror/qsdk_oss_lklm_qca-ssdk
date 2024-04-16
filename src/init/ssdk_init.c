@@ -1479,7 +1479,6 @@ _ssdk_mac_sw_sync_chip_check(struct qca_phy_priv *priv)
 	switch (priv->version) {
 		case QCA_VER_HPPE:
 		case QCA_VER_SCOMPHY:
-		case QCA_VER_MRPPE:
 		case QCA_VER_APPE:
 			break;
 		default:
@@ -1557,7 +1556,7 @@ int
 qca_fdb_sw_sync_work_init(struct qca_phy_priv *priv)
 {
 	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE) &&
-		(priv->version != QCA_VER_MRPPE) && (priv->version != QCA_VER_MHT))
+		(priv->version != QCA_VER_MHT))
 	{
 		return 0;
 	}
@@ -1574,7 +1573,7 @@ int
 qca_fdb_sw_sync_work_start(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 {
 	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE) &&
-		(priv->version != QCA_VER_MRPPE) && (priv->version != QCA_VER_MHT))
+		(priv->version != QCA_VER_MHT))
 	{
 		return 0;
 	}
@@ -1602,8 +1601,7 @@ qca_fdb_sw_sync_work_start(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 void
 qca_fdb_sw_sync_work_stop(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 {
-	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE) &&
-		(priv->version != QCA_VER_MRPPE))
+	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE))
 	{
 		return;
 	}
@@ -1711,7 +1709,6 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 			sw_dev->alias = "QCA DESS";
 			break;
 		case QCA_VER_APPE:
-		case QCA_VER_MRPPE:
 		case QCA_VER_HPPE:
 #ifdef HPPE
 			sw_dev->name = "QCA "PPE_STR;
@@ -1774,8 +1771,6 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 			priv->ports = 3;
 		}
 #endif
-	} else if (chip_type == CHIP_MRPPE) {
-		priv->ports = 4;
 	} else {
 #ifdef MPPE
 		if (chip_type == CHIP_APPE &&
@@ -2198,9 +2193,6 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 			cfg->chip_type = CHIP_APPE;
 			cfg->chip_revision = chip_revision;
 			break;
-		case QCA_VER_MRPPE:
-			cfg->chip_type = CHIP_MRPPE;
-			break;
 		case QCA_VER_MHT:
 			cfg->chip_type = CHIP_MHT;
 			break;
@@ -2520,12 +2512,9 @@ static int __init regi_init(void)
 				SSDK_INFO("Initializing MHT Done!!\n");
 #endif
 				break;
-			case CHIP_MRPPE:
 			case CHIP_APPE:
 #if defined(APPE)
-				if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
-					qca_phy_priv_global[dev_id]->ports = SSDK_PHYSICAL_PORT4;
-				else if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
+				if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
 					qca_phy_priv_global[dev_id]->ports = SSDK_PHYSICAL_PORT3;
 				qca_appe_hw_init(dev_id);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
