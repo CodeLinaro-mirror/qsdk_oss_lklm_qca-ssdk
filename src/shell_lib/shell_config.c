@@ -1428,6 +1428,14 @@ struct sub_cmd_des_t g_athtag_des[] =
 };
 #endif
 
+#ifdef IN_PKTEDIT
+struct sub_cmd_des_t g_pktedit_des[] =
+{
+	{"padding", "set", SW_API_PKTEDIT_PADDING_SET, NULL},
+	{NULL, NULL, 0, NULL},/*end of desc*/
+};
+#endif
+
 struct cmd_des_t gcmd_des[] =
 {
     /*port ctrl*/
@@ -1659,6 +1667,11 @@ struct cmd_des_t gcmd_des[] =
 #ifdef IN_ATHTAG
     {
         "athtag", g_athtag_des,
+    },
+#endif
+#ifdef IN_PKTEDIT
+    {
+	    "pktedit", g_pktedit_des,
     },
 #endif
     {NULL, NULL} /*end of desc*/

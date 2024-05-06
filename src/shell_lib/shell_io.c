@@ -953,6 +953,9 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_ATHTAG_RX_CFG, (param_check_t)cmd_data_check_athtag_rx_cfg, NULL),
     SW_TYPE_DEF(SW_ATHTAG_TX_CFG, (param_check_t)cmd_data_check_athtag_tx_cfg, NULL),
 #endif
+#ifdef IN_PKTEDIT
+    SW_TYPE_DEF(SW_PKTEDIT_PADDING, (param_check_t)cmd_data_check_pktedit_padding, NULL),
+#endif
 };
 
 sw_error_t
@@ -13882,6 +13885,51 @@ cmd_data_check_athtag_tx_cfg(char * cmd_str, void * val, a_uint32_t size)
 
     *(fal_athtag_tx_cfg_t *) val = entry;
     return SW_OK;
+}
+#endif
+#ifdef IN_PKTEDIT
+sw_error_t
+cmd_data_check_pktedit_padding(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_pktedit_padding_t entry;
+
+	memset(&entry, 0, sizeof (fal_pktedit_padding_t));
+
+	cmd_data_check_element("srip padding enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.strip_padding_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("srip padding route enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.strip_padding_route_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("srip padding bridge enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.strip_padding_bridge_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("srip padding checksum enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.strip_padding_checksum_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("srip padding snap enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.strip_padding_snap_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("srip tunnel inner padding enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.strip_tunnel_inner_padding_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("tunnel inner padding exception enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.tunnel_inner_padding_exp_en, sizeof (a_bool_t)));
+
+	cmd_data_check_element("tunnel ip length gap enable", "no",
+		"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+		(cmd, A_FALSE, &entry.tunnel_ip_len_gap_exp_en, sizeof (a_bool_t)));
+
+	*(fal_pktedit_padding_t *) val = entry;
+	return SW_OK;
 }
 #endif
 

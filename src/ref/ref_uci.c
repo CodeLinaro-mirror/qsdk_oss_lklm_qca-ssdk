@@ -13951,6 +13951,10 @@ qca_ar8327_sw_switch_ext(struct switch_dev *dev,
 #ifdef IN_ATHTAG
 		rv = parse_athtag(command_name, val);
 #endif
+	} else if(!strcmp(module_name, "Pktedit")) {
+#ifdef IN_PKTEDIT
+		rv = parse_pktedit(command_name, val);
+#endif
 	}
 
 	if(!rv) {
