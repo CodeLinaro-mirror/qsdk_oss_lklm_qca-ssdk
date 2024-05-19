@@ -4367,11 +4367,12 @@ _adpt_hppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id
 	lpi_enable.val &= ~(0x1 << (port_id - 1));
 	lpi_enable.val |= (enable << (port_id - 1));
 	hppe_lpi_enable_set(dev_id, port_id, &lpi_enable);
-
-	lpi_port_timer.bf.lpi_port_wakeup_timer =
-		(port_eee_cfg->lpi_wakeup_timer * LPI_EEE_TIMER_FREQUENCY) /LPI_EEE_TIMER_UNIT;
-	lpi_port_timer.bf.lpi_port_sleep_timer =
-		(port_eee_cfg->lpi_sleep_timer * LPI_EEE_TIMER_FREQUENCY) /LPI_EEE_TIMER_UNIT;
+	if(port_eee_cfg->lpi_wakeup_timer != 0)
+		lpi_port_timer.bf.lpi_port_wakeup_timer =
+			(port_eee_cfg->lpi_wakeup_timer * LPI_EEE_TIMER_FREQUENCY) /LPI_EEE_TIMER_UNIT;
+	if(port_eee_cfg->lpi_sleep_timer != 0)
+		lpi_port_timer.bf.lpi_port_sleep_timer =
+			(port_eee_cfg->lpi_sleep_timer * LPI_EEE_TIMER_FREQUENCY) /LPI_EEE_TIMER_UNIT;
 	rv = hppe_lpi_timer_set(dev_id, port_id, &lpi_port_timer);
 	SW_RTN_ON_ERROR (rv);
 	port_lpi_wakeup_timer[dev_id][port_id - 1] = port_eee_cfg->lpi_wakeup_timer;
@@ -4496,9 +4497,11 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 	rv = hppe_mac_lpi_timers_control_get(dev_id, xgmac_id, &mac_lpi_timers_control);
 	SW_RTN_ON_ERROR (rv);
 	/*sleep timer as 100us*/
-	mac_lpi_timers_control.bf.lst = port_eee_cfg->lpi_sleep_timer;
+	if(port_eee_cfg->lpi_sleep_timer)
+		mac_lpi_timers_control.bf.lst = port_eee_cfg->lpi_sleep_timer;
 	/*wake up timer, 2.5G:40us, 1G:22us, 100M:28us*/
-	mac_lpi_timers_control.bf.twt = port_eee_cfg->lpi_wakeup_timer;
+	if(port_eee_cfg->lpi_wakeup_timer != 0)
+		mac_lpi_timers_control.bf.twt = port_eee_cfg->lpi_wakeup_timer;
 	rv = hppe_mac_lpi_timers_control_set(dev_id, xgmac_id, &mac_lpi_timers_control);
 	SW_RTN_ON_ERROR (rv);
 
