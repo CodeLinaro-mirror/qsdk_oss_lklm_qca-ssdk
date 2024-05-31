@@ -738,6 +738,31 @@ __adpt_hppe_uniphy_rxlos_check(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	return A_FALSE;
 }
 
+#ifdef MRPPE
+static sw_error_t
+__adpt_hppe_uniphy_rxlos_sel(a_uint32_t dev_id, a_uint32_t uniphy_index)
+{
+	a_uint32_t rx_los_fun = 0;
+
+	switch (uniphy_index) {
+	case SSDK_UNIPHY_INSTANCE0:
+		rx_los_fun = UNIPHY_SEL_RX_LOS0;
+		break;
+	case SSDK_UNIPHY_INSTANCE1:
+		rx_los_fun = UNIPHY_SEL_RX_LOS1;
+		break;
+	case SSDK_UNIPHY_INSTANCE2:
+		rx_los_fun = UNIPHY_SEL_RX_LOS2;
+		break;
+	default:
+		return SW_NOT_SUPPORTED;
+	}
+
+	return mrppe_uniphy_rx_los_sel_set(dev_id, uniphy_index,
+		rx_los_fun);
+}
+#endif
+
 static sw_error_t
 __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
@@ -774,6 +799,12 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 	if(__adpt_hppe_uniphy_rxlos_check(dev_id, uniphy_index))
 	{
+#ifdef MRPPE
+		if (adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
+			rv = __adpt_hppe_uniphy_rxlos_sel(dev_id, uniphy_index);
+			SW_RTN_ON_ERROR(rv);
+		}
+#endif
 		hppe_uniphy_instance_link_detect_get(dev_id, uniphy_index,
 			&uniphy_instance_link_detect);
 		uniphy_instance_link_detect.bf.detect_los_from_sfp = UNIPHY_10GR_LINK_LOSS;

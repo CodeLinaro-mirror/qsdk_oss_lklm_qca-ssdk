@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017, 2019-2020, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -6851,5 +6851,80 @@ mppe_uniphy_calib_ctrl_set(
 				NSS_UNIPHY_BASE_ADDR +UNIPHY_VCO_CALIBRATION_CONTROL_ADDRESS,
 				index * UNIPHY_VCO_CALIBRATION_CONTROL_INC,
 				value->val);
+}
+#endif
+#ifdef MRPPE
+sw_error_t
+mrppe_uniphy_rx_los_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniphy_rx_los_u *value)
+{
+	if (index >= UNIPHY_RX_LOS_NUM)
+		return SW_OUT_OF_RANGE;
+	return hppe_uniphy_reg_get(
+				dev_id,
+				NSS_UNIPHY_BASE_ADDR +UNIPHY_RX_LOS_ADDRESS,
+				index * UNIPHY_RX_LOS_INC,
+				&value->val);
+}
+
+sw_error_t
+mrppe_uniphy_rx_los_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniphy_rx_los_u *value)
+{
+	if (index >= UNIPHY_RX_LOS_NUM)
+		return SW_OUT_OF_RANGE;
+	return hppe_uniphy_reg_set(
+				dev_id,
+				NSS_UNIPHY_BASE_ADDR +UNIPHY_RX_LOS_ADDRESS,
+				index * UNIPHY_RX_LOS_INC,
+				value->val);
+}
+sw_error_t
+mrppe_uniphy_rx_los_sel_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union uniphy_rx_los_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = mrppe_uniphy_rx_los_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.rx_los_sel = value;
+	ret = mrppe_uniphy_rx_los_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+mrppe_uniphy_rx_los_sel_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union uniphy_rx_los_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = mrppe_uniphy_rx_los_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.rx_los_sel;
+	return ret;
+}
+
+sw_error_t
+mrppe_uniphy_rx_los_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union uniphy_rx_los_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = mrppe_uniphy_rx_los_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.rx_los_status;
+	return ret;
 }
 #endif

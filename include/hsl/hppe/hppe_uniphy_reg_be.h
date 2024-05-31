@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017, 2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1876,4 +1876,35 @@ union uniphy_misc2_phy_mode_u {
 	struct uniphy_misc2_phy_mode bf;
 };
 
+#ifdef MRPPE
+/*[register] UNIPHY_RX_LOS REGISTER*/
+#define UNIPHY_RX_LOS
+#define UNIPHY_RX_LOS_ADDRESS 0x584
+#define UNIPHY_RX_LOS_NUM 3
+#define UNIPHY_RX_LOS_INC 0x1
+#define UNIPHY_RX_LOS_TYPE REG_TYPE_RW
+#define UNIPHY_RX_LOS_DEFAULT 0x8
+	/*[field] UNIPHY_RX_LOS_SEL*/
+	#define UNIPHY_RX_LOS_SEL
+	#define UNIPHY_RX_LOS_SEL_OFFSET 0
+	#define UNIPHY_RX_LOS_SEL_LEN 4
+	#define UNIPHY_RX_LOS_SEL_DEFAULT 8
+	/*[field] UNIPHY_RX_LOS_STATUS*/
+	#define UNIPHY_RX_LOS_STATUS
+	#define UNIPHY_RX_LOS_STATUS_OFFSET 8
+	#define UNIPHY_RX_LOS_STATUS_LEN 1
+	#define UNIPHY_RX_LOS_STATUS_DEFAULT 0
+
+struct uniphy_rx_los {
+	a_uint32_t _reserved1:23;
+	a_uint32_t rx_los_status:1;
+	a_uint32_t _reserved0:4;
+	a_uint32_t rx_los_sel:4;
+};
+
+union uniphy_rx_los_u {
+	a_uint32_t val;
+	struct uniphy_rx_los bf;
+};
+#endif
 #endif
