@@ -606,7 +606,7 @@ sw_error_t
 cmd_data_check_mapt_decap_entry(char *info, void *val, a_uint32_t size);
 #endif
 
-#if defined(IN_MAPT)
+#if defined(IN_VPORT)
 sw_error_t
 cmd_data_check_vport_state(char *cmd_str, fal_vport_state_t *arg_val, a_uint32_t size);
 #endif

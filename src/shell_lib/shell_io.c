@@ -13720,42 +13720,6 @@ cmd_data_check_vport_state(char *cmd_str, fal_vport_state_t *arg_val, a_uint32_t
 
 	return SW_OK;
 }
-
-sw_error_t
-cmd_data_check_tunnel_action(char *cmd_str, fal_tunnel_action_t *arg_val, a_uint32_t size)
-{
-	char *cmd;
-	sw_error_t rv = SW_OK;
-	fal_tunnel_action_t entry_action;
-	a_uint32_t tmp = 0;
-
-	aos_mem_zero(&entry_action, sizeof(fal_tunnel_action_t));
-
-	cmd_data_check_element("update_fields", "0",
-			"usage: such as updating svlan & cvlan, input 3 "
-			"bit0: SVLAN_UPDATE "
-			"bit1: CVLAN_UPDATE "
-			"bit2: L3IF_UPDATE "
-			"bit3: DECAP_UPDATE "
-			"bit4: DEACCE_UPDATE "
-			"bit5: SRCINFO_UPDATE "
-			"bit6: PKT_MODE_UPDATE"
-			"bit7: SERVICE_CODE_UPDATE"
-			"bit8: UDP_CSUM_ZERO_UPDATE"
-			"bit9: EXP_PROFILE_UPDATE"
-			"bit10: FWD_CMD_UPDATE\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-
-	rv = cmd_data_check_tunnel_decap_action_entry(cmd_str,
-			&entry_action, sizeof(fal_tunnel_action_t));
-	SW_RTN_ON_ERROR(rv);
-
-	/* update the update_bmp field */
-	entry_action.update_bmp = tmp;
-
-	*arg_val = entry_action;
-	return rv;
-}
 #endif
 
 sw_error_t
