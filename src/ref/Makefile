@@ -51,6 +51,10 @@ ifeq (TRUE, $(IN_ATHTAG))
 	SRC_LIST_TMP += ref_athtag.c
 endif
 
+ifeq (TRUE, $(IN_PKTEDIT))
+	SRC_LIST_TMP += ref_pktedit.c
+endif
+
 ifeq (FALSE, $(SWCONFIG))
 	SRC_LIST=$(filter-out $(SRC_SW_LIST), $(SRC_LIST_TMP))
 else

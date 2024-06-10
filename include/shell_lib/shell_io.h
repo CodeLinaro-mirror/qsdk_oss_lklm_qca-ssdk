@@ -634,20 +634,17 @@ sw_error_t
 cmd_data_check_direction(char * cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 sw_error_t
 cmd_data_check_athtag_pri_mapping(char * cmd_str, void * val, a_uint32_t size);
-void
-cmd_data_print_athtag_pri_mapping(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 sw_error_t
 cmd_data_check_athtag_port_mapping(char * cmd_str, void * val, a_uint32_t size);
-void
-cmd_data_print_athtag_port_mapping(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 sw_error_t
 cmd_data_check_athtag_rx_cfg(char * cmd_str, void * val, a_uint32_t size);
-void
-cmd_data_print_athtag_rx_cfg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 sw_error_t
 cmd_data_check_athtag_tx_cfg(char * cmd_str, void * val, a_uint32_t size);
-void
-cmd_data_print_athtag_tx_cfg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+#endif
+
+#ifdef IN_PKTEDIT
+sw_error_t
+cmd_data_check_pktedit_padding(char *cmd_str, void *val, a_uint32_t size);
 #endif
 #endif
 
