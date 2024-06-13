@@ -110,9 +110,9 @@ extern "C" {
 /* Exception:  Tunnel */
 #define FAL_SEC_EXP_TUNNEL_DECAP_ECN                 70
 #define FAL_SEC_EXP_INNER_PACKET_TOO_SHORT           71
-#define FAL_SEC_EXP_RESERVE2                         72
-#define FAL_SEC_EXP_RESERVE3                         73
-#define FAL_SEC_EXP_RESERVE4                         74
+#define FAL_SEC_EXP_VXLAN_HDR                        72
+#define FAL_SEC_EXP_VXLAN_GPE_HDR                    73
+#define FAL_SEC_EXP_GENEVE_HDR                       74
 #define FAL_SEC_EXP_GRE_HDR                          75
 #define FAL_SEC_EXP_GRE_CHECKSUM_ERR                 76
 #define FAL_SEC_EXP_UNKNOWN_INNER_TYPE               77
