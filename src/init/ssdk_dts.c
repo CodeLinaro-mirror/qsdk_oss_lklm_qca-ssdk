@@ -38,6 +38,13 @@
 #include <linux/of.h>
 #include <linux/of_mdio.h>
 #include <linux/of_platform.h>
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+#include <linux/mdio/mdio-i2c.h>
+#include <linux/i2c.h>
+#endif
+#if defined(IN_SFP_PHY)
+#include "sfp_phy.h"
+#endif
 
 static ssdk_dt_global_t ssdk_dt_global = {0};
 #ifdef HPPE
@@ -642,6 +649,45 @@ static struct device_node *ssdk_dt_get_mdio_node(a_uint32_t dev_id)
 	return mdio_node;
 }
 
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+static struct mii_bus *ssdk_mdio_i2c_bus_register(a_uint32_t dev_id,
+	struct device_node *port_node)
+{
+	int ret;
+	struct i2c_adapter *i2c_adpt;
+	struct mii_bus *mdio_i2c;
+	struct device_node *i2c_node;
+
+	i2c_node = of_parse_phandle(port_node, "i2c-bus", 0);
+	if(!i2c_node) {
+		SSDK_ERROR("i2c device node was not found\n");
+		return NULL;
+	}
+
+	i2c_adpt = of_find_i2c_adapter_by_node(i2c_node);
+	of_node_put(i2c_node);
+	if(!i2c_adpt) {
+		SSDK_ERROR("i2c adpt was not found\n");
+		return NULL;
+	}
+	mdio_i2c = mdio_i2c_alloc(&(i2c_adpt->dev), i2c_adpt, MDIO_I2C_NONE);
+	if (!mdio_i2c) {
+		SSDK_ERROR("mdio_i2c bus alloc failed\n");
+		return NULL;
+	}
+	mdio_i2c->name = SSDK_MDIO_I2C;
+	snprintf(mdio_i2c->id, MII_BUS_ID_SIZE, SSDK_MDIO_I2C);
+	ret = of_mdiobus_register(mdio_i2c, i2c_node);
+	if (ret < 0) {
+		SSDK_ERROR("mdio_i2c bus register failed\n");
+		mdiobus_free(mdio_i2c);
+		return NULL;
+	}
+
+	return mdio_i2c;
+}
+#endif
+
 static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint32_t dev_id,
 		ssdk_init_cfg *cfg)
 {
@@ -665,6 +711,10 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	phy_features_t phy_features = 0;
 	ssdk_netdev_switch_t *netdev_switch = NULL;
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+	struct device_node *i2c_node = NULL;
+	struct mii_bus *mdio_i2c = NULL;
+#endif
 
 	phy_info_node = of_get_child_by_name(switch_node, "qcom,port_phyinfo");
 	if (!phy_info_node) {
@@ -700,6 +750,13 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				hsl_port_phy_reset_gpio_set(dev_id, port_id, SSDK_INVALID_GPIO);
 			}
 		}
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+		i2c_node = of_parse_phandle(port_node, "i2c-bus", 0);
+		if(i2c_node) {
+			mdio_i2c = ssdk_mdio_i2c_bus_register(dev_id, port_node);
+			ssdk_miibus_add(dev_id, mdio_i2c, &miibus_index);
+		}
+#endif
 		phy_addr = 0xff;
 		phy_features = 0;
 		of_property_read_u32(port_node, "phy_address", &phy_addr);
@@ -819,6 +876,10 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					priv->sfp_medium_pin[port_id] = SSDK_INVALID_GPIO;
 				}
 			}
+			/*register PHY device and PHY driver for SFP port*/
+#ifdef IN_SFP_PHY
+			sfp_phy_init(dev_id, port_id);
+#endif
 		}
 		hsl_port_feature_set(dev_id, port_id, phy_features | PHY_F_INIT);
 		/*parse the switch external node*/

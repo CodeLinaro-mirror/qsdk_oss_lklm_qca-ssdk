@@ -252,7 +252,7 @@ enum {
 #define SSDK_LOG_LEVEL_INFO     2
 #define SSDK_LOG_LEVEL_DEBUG    3
 #define SSDK_LOG_LEVEL_DEFAULT  SSDK_LOG_LEVEL_INFO
-#define SSDK_MII_BUS_MAX           2
+#define SSDK_MII_BUS_MAX           4
 #define SSDK_MII_INVALID_BUS_ID    SSDK_MII_BUS_MAX
 #define SSDK_MII_DEFAULT_BUS_ID    0
 
