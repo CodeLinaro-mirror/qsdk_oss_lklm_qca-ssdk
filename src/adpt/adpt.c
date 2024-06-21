@@ -100,6 +100,18 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 	return ppe_type;
 }
 
+a_uint32_t
+adpt_ppe_uniphy_number_get(a_uint32_t dev_id)
+{
+#if defined(MPPE) || defined (CPPE)
+	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == CPPE_TYPE)
+		return (SSDK_UNIPHY_INSTANCE1+1);
+#endif
+
+	return (SSDK_UNIPHY_INSTANCE2+1);
+}
+
 a_uint32_t adpt_chip_type_get(a_uint32_t dev_id)
 {
 	return g_chip_ver[dev_id].chip_type;
