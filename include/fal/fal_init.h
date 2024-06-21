@@ -86,6 +86,8 @@ typedef struct
 	a_uint32_t service_code_caps;
 	a_uint32_t pppoe_session_caps;
 	a_uint32_t policer_caps;
+	a_uint32_t ipv6_prefix_caps;
+	a_uint32_t ipv6_iid_caps;
 } fal_ppe_tbl_caps_t;
 
 /*qca808x_start*/
