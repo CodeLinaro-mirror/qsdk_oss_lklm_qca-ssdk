@@ -905,7 +905,7 @@ ssdk_dt_parse_interrupt(a_uint32_t dev_id, struct device_node *switch_node)
 	if(intr_gpio_num < 0) {
 		intr_gpio_num = of_get_named_gpio(switch_node, "link-intr-gpio", 0);
 		if(intr_gpio_num < 0) {
-			SSDK_INFO("intr-gpio does not exist\n");
+			SSDK_INFO("link-intr-gpio isn’t defined, enabling link polling\n");
 		}
 	}
 	if(intr_gpio_num > 0) {
