@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022,2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,238 +25,27 @@
 #include "hsl_api.h"
 #include "adpt.h"
 
-#include <linux/kernel.h>
-#include <linux/module.h>
+sw_error_t fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_config_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(servcode_config_set, dev_id, servcode_index, entry)
 
+sw_error_t fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_config_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(servcode_config_get, dev_id, servcode_index, entry)
 
-/**
- * @}
- */
-sw_error_t
-_fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_config_t *entry)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
+sw_error_t fal_servcode_loopcheck_en(a_uint32_t dev_id, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(servcode_loopcheck_en, dev_id, enable)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_servcode_loopcheck_status_get(a_uint32_t dev_id, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(servcode_loopcheck_status_get, dev_id, enable)
 
-    if (NULL == p_api->adpt_servcode_config_set)
-        return SW_NOT_SUPPORTED;
+sw_error_t fal_port_servcode_set(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t servcode_index)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_servcode_set, dev_id, port_id, servcode_index)
 
-    rv = p_api->adpt_servcode_config_set(dev_id, servcode_index, entry);
-    return rv;
-}
+sw_error_t fal_port_servcode_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t *servcode_index)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_servcode_get, dev_id, port_id, servcode_index)
 
-sw_error_t
-_fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_config_t *entry)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
+sw_error_t fal_servcode_athtag_set(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_athtag_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(servcode_athtag_set, dev_id, servcode_index, entry)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_servcode_athtag_get(a_uint32_t dev_id, a_uint32_t servcode_index, fal_servcode_athtag_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(servcode_athtag_get, dev_id, servcode_index, entry)
 
-    if (NULL == p_api->adpt_servcode_config_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_servcode_config_get(dev_id, servcode_index, entry);
-    return rv;
-}
-
-sw_error_t
-_fal_servcode_loopcheck_en(a_uint32_t dev_id, a_bool_t enable)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_servcode_loopcheck_en)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_servcode_loopcheck_en(dev_id, enable);
-    return rv;
-}
-
-sw_error_t
-_fal_servcode_loopcheck_status_get(a_uint32_t dev_id, a_bool_t *enable)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_servcode_loopcheck_status_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_servcode_loopcheck_status_get(dev_id, enable);
-    return rv;
-}
-
-sw_error_t
-_fal_port_servcode_set(a_uint32_t dev_id, fal_port_t port_id,
-			a_uint32_t servcode_index)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_port_servcode_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_port_servcode_set(dev_id, port_id, servcode_index);
-    return rv;
-}
-
-sw_error_t
-_fal_port_servcode_get(a_uint32_t dev_id, fal_port_t port_id,
-			a_uint32_t *servcode_index)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_port_servcode_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_port_servcode_get(dev_id, port_id, servcode_index);
-    return rv;
-}
-
-sw_error_t
-_fal_servcode_athtag_set(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_athtag_t *entry)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_servcode_athtag_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_servcode_athtag_set(dev_id, servcode_index, entry);
-    return rv;
-}
-
-sw_error_t
-_fal_servcode_athtag_get(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_athtag_t *entry)
-{
-    sw_error_t rv;
-    adpt_api_t *p_api;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_servcode_athtag_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_servcode_athtag_get(dev_id, servcode_index, entry);
-    return rv;
-}
-
-sw_error_t
-fal_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_config_t *entry)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_servcode_config_set(dev_id, servcode_index, entry);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_config_t *entry)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_servcode_config_get(dev_id, servcode_index, entry);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_servcode_loopcheck_en(a_uint32_t dev_id, a_bool_t enable)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_servcode_loopcheck_en(dev_id, enable);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_servcode_loopcheck_status_get(a_uint32_t dev_id, a_bool_t *enable)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_servcode_loopcheck_status_get(dev_id, enable);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_port_servcode_set(a_uint32_t dev_id, fal_port_t port_id,
-			a_uint32_t servcode_index)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_port_servcode_set(dev_id, port_id, servcode_index);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_port_servcode_get(a_uint32_t dev_id, fal_port_t port_id,
-			a_uint32_t *servcode_index)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_port_servcode_get(dev_id, port_id, servcode_index);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_servcode_athtag_set(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_athtag_t *entry)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_servcode_athtag_set(dev_id, servcode_index, entry);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_servcode_athtag_get(a_uint32_t dev_id, a_uint32_t servcode_index,
-			fal_servcode_athtag_t *entry)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_SERVCODE_API_LOCK;
-    rv = _fal_servcode_athtag_get(dev_id, servcode_index, entry);
-    FAL_SERVCODE_API_UNLOCK;
-    return rv;
-}
-
-EXPORT_SYMBOL(fal_servcode_config_set);
-EXPORT_SYMBOL(fal_servcode_config_get);
-EXPORT_SYMBOL(fal_servcode_loopcheck_en);
-EXPORT_SYMBOL(fal_servcode_loopcheck_status_get);
-EXPORT_SYMBOL(fal_port_servcode_set);
-EXPORT_SYMBOL(fal_port_servcode_get);
-EXPORT_SYMBOL(fal_servcode_athtag_set);
-EXPORT_SYMBOL(fal_servcode_athtag_get);

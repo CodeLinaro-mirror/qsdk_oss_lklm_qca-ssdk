@@ -24,70 +24,9 @@
 #include "hsl_api.h"
 #include "adpt.h"
 
-sw_error_t
-_fal_pktedit_padding_set(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
-{
-    adpt_api_t *p_api;
-    sw_error_t rv = SW_OK;
+sw_error_t fal_pktedit_padding_set(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(pktedit_padding_set, dev_id, padding)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_pktedit_padding_get(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(pktedit_padding_get, dev_id, padding)
 
-    if (NULL == p_api->adpt_pktedit_padding_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_pktedit_padding_set(dev_id, padding);
-    return rv;
-}
-
-sw_error_t
-_fal_pktedit_padding_get(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
-{
-    adpt_api_t *p_api;
-    sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_pktedit_padding_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_pktedit_padding_get(dev_id, padding);
-    return rv;
-}
-
-
-/**
- * @brief Set pktedit padding
- * @param[in] dev_id device id
- * @param[in] padding pktedit padding
- * @return SW_OK or error code
- */
-sw_error_t
-fal_pktedit_padding_set(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
-{
-    sw_error_t rv;
-
-    FAL_API_LOCK;
-    rv = _fal_pktedit_padding_set(dev_id, padding);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-/**
- * @brief Get pktedit padding configuration
- * @param[in] dev_id device id
- * @param[in|out] padding pktedit padding
- * @return SW_OK or error code
- */
-sw_error_t
-fal_pktedit_padding_get(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
-{
-    sw_error_t rv;
-
-    FAL_API_LOCK;
-    rv = _fal_pktedit_padding_get(dev_id, padding);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-EXPORT_SYMBOL(fal_pktedit_padding_set);
-EXPORT_SYMBOL(fal_pktedit_padding_get);

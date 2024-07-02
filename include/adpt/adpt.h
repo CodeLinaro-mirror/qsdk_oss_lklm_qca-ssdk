@@ -2387,6 +2387,110 @@ a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id);
 #endif
 a_uint32_t
 adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
+
+/*Common Macro*/
+#define DEFINE_FAL_FUNC_ADPT(func, dev_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			adpt_api_t *p_adpt_api = adpt_api_ptr_get(dev_id); \
+			FAL_API_LOCK; \
+			if (p_adpt_api && p_adpt_api->adpt_##func) { \
+				rv = p_adpt_api->adpt_##func(dev_id, ##__VA_ARGS__); \
+			} \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
+#define DEFINE_FAL_FUNC_HSL(func, dev_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			hsl_api_t *p_api = hsl_api_ptr_get(dev_id); \
+			FAL_API_LOCK; \
+			if (p_api && p_api->func) { \
+				rv = p_api->func(dev_id, ##__VA_ARGS__); \
+			} \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
+#define DEFINE_FAL_FUNC_ADPT_HSL(func, hsl_func, dev_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			adpt_api_t *p_adpt_api = adpt_api_ptr_get(dev_id); \
+			hsl_api_t *p_api = hsl_api_ptr_get(dev_id); \
+			FAL_API_LOCK; \
+			if (p_adpt_api && p_adpt_api->adpt_##func) { \
+				rv = p_adpt_api->adpt_##func(dev_id, ##__VA_ARGS__); \
+			} else if (p_api && p_api->hsl_func) { \
+				rv = p_api->hsl_func(dev_id, ##__VA_ARGS__); \
+			} \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
+#define DEFINE_FAL_FUNC(func, dev_id, ...) \
+		DEFINE_FAL_FUNC_ADPT_HSL(func, func, dev_id, ##__VA_ARGS__)
+
+#define DEFINE_FAL_FUNC_ADPT_EXPORT(func, dev_id, ...)  { \
+			DEFINE_FAL_FUNC_ADPT(func, dev_id, ##__VA_ARGS__) \
+		} \
+		EXPORT_SYMBOL(fal_##func);
+
+#define DEFINE_FAL_FUNC_HSL_EXPORT(func, dev_id, ...)  { \
+			DEFINE_FAL_FUNC_HSL(func, dev_id, ##__VA_ARGS__) \
+		} \
+		EXPORT_SYMBOL(fal_##func);
+
+#define DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(func, hsl_func, dev_id, ...)  { \
+			DEFINE_FAL_FUNC_ADPT_HSL(func, hsl_func, dev_id, ##__VA_ARGS__) \
+		} \
+		EXPORT_SYMBOL(fal_##func);
+
+#define DEFINE_FAL_FUNC_EXPORT(func, dev_id, ...)  { \
+			DEFINE_FAL_FUNC(func, dev_id, ##__VA_ARGS__) \
+		} \
+		EXPORT_SYMBOL(fal_##func);
+
+
+/*Special Macro*/
+#define DEFINE_FAL_FUNC_HSL_DIRECT(func, dev_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			FAL_API_LOCK; \
+			rv = hsl_##func(dev_id, ##__VA_ARGS__); \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
+#define DEFINE_FAL_FUNC_ADPT_HSL_ENDFUNC(func, hsl_func, end_func, dev_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			adpt_api_t *p_adpt_api = adpt_api_ptr_get(dev_id); \
+			hsl_api_t *p_api = hsl_api_ptr_get(dev_id); \
+			FAL_API_LOCK; \
+			if (p_adpt_api && p_adpt_api->adpt_##func) { \
+				rv = p_adpt_api->adpt_##func(dev_id, ##__VA_ARGS__); \
+			} else if (p_api && p_api->hsl_func) { \
+				rv = p_api->hsl_func(dev_id, ##__VA_ARGS__); \
+			} \
+			FAL_API_UNLOCK; \
+			SW_RTN_ON_ERROR(rv);\
+			return end_func(dev_id); \
+		}
+
+#define DEFINE_FAL_FUNC_HSL_ENDFUNC(func, end_func, dev_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			hsl_api_t *p_api = hsl_api_ptr_get(dev_id); \
+			FAL_API_LOCK; \
+			if (p_api && p_api->func) { \
+				rv = p_api->func(dev_id, ##__VA_ARGS__); \
+			} \
+			FAL_API_UNLOCK; \
+			SW_RTN_ON_ERROR(rv);\
+			return end_func(dev_id); \
+		}
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

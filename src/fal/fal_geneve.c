@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,135 +26,15 @@
 #include "hsl_api.h"
 #include "adpt.h"
 
-sw_error_t
-_fal_geneve_entry_add(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    adpt_api_t *p_api;
-    sw_error_t rv = SW_OK;
+sw_error_t fal_geneve_entry_add(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(geneve_entry_add, dev_id, entry)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_geneve_entry_del(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(geneve_entry_del, dev_id, entry)
 
-    if (NULL == p_api->adpt_geneve_entry_add)
-        return SW_NOT_SUPPORTED;
+sw_error_t fal_geneve_entry_getfirst(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(geneve_entry_getfirst, dev_id, entry)
 
-    rv = p_api->adpt_geneve_entry_add(dev_id, entry);
-    return rv;
-}
+sw_error_t fal_geneve_entry_getnext(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(geneve_entry_getnext, dev_id, entry)
 
-sw_error_t
-_fal_geneve_entry_del(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    adpt_api_t *p_api;
-    sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_geneve_entry_del)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_geneve_entry_del(dev_id, entry);
-    return rv;
-}
-
-sw_error_t
-_fal_geneve_entry_getfirst(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    adpt_api_t *p_api;
-    sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_geneve_entry_getfirst)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_geneve_entry_getfirst(dev_id, entry);
-    return rv;
-}
-
-sw_error_t
-_fal_geneve_entry_getnext(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    adpt_api_t *p_api;
-    sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_geneve_entry_getnext)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_geneve_entry_getnext(dev_id, entry);
-    return rv;
-}
-
-/**
- * @brief Add one tunnel udp entry for geneve
- * @param[in] dev_id device id
- * @param[in] entry tunnel udp entry
- * @return SW_OK or error code
- */
-sw_error_t
-fal_geneve_entry_add(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    sw_error_t rv;
-
-    FAL_API_LOCK;
-    rv = _fal_geneve_entry_add(dev_id, entry);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-/**
- * @brief Delete one tunnel udp entry for geneve
- * @param[in] dev_id device id
- * @param[in] entry tunnel udp entry
- * @return SW_OK or error code
- */
-sw_error_t
-fal_geneve_entry_del(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    sw_error_t rv;
-
-    FAL_API_LOCK;
-    rv = _fal_geneve_entry_del(dev_id, entry);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-/**
- * @brief Get the first tunnel udp entry for geneve
- * @param[in] dev_id device id
- * @param[out] entry tunnel udp entry
- * @return SW_OK or error code
- */
-sw_error_t
-fal_geneve_entry_getfirst(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    sw_error_t rv;
-
-    FAL_API_LOCK;
-    rv = _fal_geneve_entry_getfirst(dev_id, entry);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-/**
- * @brief Get next tunnel udp entry for geneve
- * @param[in] dev_id device id
- * @param[in/out] entry tunnel udp entry
- * @return SW_OK or error code
- */
-sw_error_t
-fal_geneve_entry_getnext(a_uint32_t dev_id, fal_tunnel_udp_entry_t * entry)
-{
-    sw_error_t rv;
-
-    FAL_API_LOCK;
-    rv = _fal_geneve_entry_getnext(dev_id, entry);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-EXPORT_SYMBOL(fal_geneve_entry_add);
-EXPORT_SYMBOL(fal_geneve_entry_del);
-EXPORT_SYMBOL(fal_geneve_entry_getfirst);
-EXPORT_SYMBOL(fal_geneve_entry_getnext);

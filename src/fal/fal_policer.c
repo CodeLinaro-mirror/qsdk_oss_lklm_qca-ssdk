@@ -24,502 +24,60 @@
 #include "hsl_api.h"
 #include "adpt.h"
 
-#include <linux/kernel.h>
-#include <linux/module.h>
+sw_error_t fal_acl_policer_counter_get(a_uint32_t dev_id, a_uint32_t index, fal_policer_counter_t *counter)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_policer_counter_get, dev_id, index, counter)
 
+sw_error_t fal_port_policer_counter_get(a_uint32_t dev_id, fal_port_t port_id, fal_policer_counter_t *counter)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_policer_counter_get, dev_id, port_id, counter)
 
-sw_error_t
-_fal_acl_policer_counter_get(a_uint32_t dev_id, a_uint32_t index,
-		fal_policer_counter_t *counter)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
+sw_error_t fal_port_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id, fal_policer_config_t *policer, fal_policer_action_t *action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_policer_entry_get, dev_id, port_id, policer, action)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index, fal_policer_config_t *policer, fal_policer_action_t *action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_policer_entry_get, dev_id, index, policer, action)
 
-    if (NULL == p_api->adpt_acl_policer_counter_get)
-        return SW_NOT_SUPPORTED;
+sw_error_t fal_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id, fal_policer_config_t *policer, fal_policer_action_t *action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_policer_entry_set, dev_id, port_id, policer, action)
 
-    rv = p_api->adpt_acl_policer_counter_get(dev_id, index, counter);
-    return rv;
-}
-sw_error_t
-_fal_port_policer_counter_get(a_uint32_t dev_id, fal_port_t port_id,
-		fal_policer_counter_t *counter)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
+sw_error_t fal_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index, fal_policer_config_t *policer, fal_policer_action_t *action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_policer_entry_set, dev_id, index, policer, action)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_policer_timeslot_get(a_uint32_t dev_id, a_uint32_t *timeslot)
+    DEFINE_FAL_FUNC_ADPT(policer_time_slot_get, dev_id, timeslot)
+    EXPORT_SYMBOL(fal_policer_timeslot_get);
 
-    if (NULL == p_api->adpt_port_policer_counter_get)
-        return SW_NOT_SUPPORTED;
+sw_error_t fal_policer_bypass_en_get(a_uint32_t dev_id, fal_policer_frame_type_t frame_type, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_bypass_en_get, dev_id, frame_type, enable)
 
-    rv = p_api->adpt_port_policer_counter_get(dev_id, port_id, counter);
-    return rv;
-}
+sw_error_t fal_policer_timeslot_set(a_uint32_t dev_id, a_uint32_t timeslot)
+    DEFINE_FAL_FUNC_ADPT(policer_time_slot_set, dev_id, timeslot)
+    EXPORT_SYMBOL(fal_policer_timeslot_set);
 
-sw_error_t
-_fal_port_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
+sw_error_t fal_policer_bypass_en_set(a_uint32_t dev_id, fal_policer_frame_type_t frame_type, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_bypass_en_set, dev_id, frame_type, enable)
 
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_port_policer_compensation_byte_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t *length)
+    DEFINE_FAL_FUNC_ADPT(port_compensation_byte_get, dev_id, port_id, length)
+    EXPORT_SYMBOL(fal_port_policer_compensation_byte_get);
 
-    if (NULL == p_api->adpt_port_policer_entry_get)
-        return SW_NOT_SUPPORTED;
+sw_error_t fal_port_policer_compensation_byte_set(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t length)
+    DEFINE_FAL_FUNC_ADPT(port_compensation_byte_set, dev_id, port_id, length)
+    EXPORT_SYMBOL(fal_port_policer_compensation_byte_set);
 
-    rv = p_api->adpt_port_policer_entry_get(dev_id, port_id, policer, action);
-    return rv;
-}
+sw_error_t fal_policer_ctrl_get(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_ctrl_get, dev_id, ctrl)
 
-sw_error_t
-_fal_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_acl_policer_entry_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_acl_policer_entry_get(dev_id, index, policer, action);
-    return rv;
-}
-
-sw_error_t
-_fal_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_port_policer_entry_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_port_policer_entry_set(dev_id, port_id, policer, action);
-    return rv;
-}
-
-sw_error_t
-_fal_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_acl_policer_entry_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_acl_policer_entry_set(dev_id, index, policer, action);
-    return rv;
-}
-
-sw_error_t
-_fal_policer_timeslot_get(a_uint32_t dev_id, a_uint32_t *timeslot)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_policer_time_slot_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_policer_time_slot_get(dev_id, timeslot);
-    return rv;
-}
-
-sw_error_t
-_fal_policer_bypass_en_get(a_uint32_t dev_id, fal_policer_frame_type_t frame_type,
-	a_bool_t *enable)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-	if (NULL == p_api->adpt_policer_bypass_en_get)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_bypass_en_get(dev_id, frame_type, enable);
-	return rv;
-}
+sw_error_t fal_policer_ctrl_set(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_ctrl_set, dev_id, ctrl)
 
 #ifndef IN_POLICER_MINI
-sw_error_t
-_fal_policer_priority_remap_get(a_uint32_t dev_id, fal_policer_priority_t *priority,
-		fal_policer_remap_t *remap)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
+sw_error_t fal_policer_global_counter_get(a_uint32_t dev_id, fal_policer_global_counter_t *counter)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_global_counter_get, dev_id, counter)
 
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+sw_error_t fal_policer_priority_remap_get(a_uint32_t dev_id, fal_policer_priority_t *priority, fal_policer_remap_t *remap)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_priority_remap_get, dev_id, priority, remap)
 
-	if (NULL == p_api->adpt_policer_priority_remap_get)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_priority_remap_get(dev_id, priority, remap);
-	return rv;
-}
-
-sw_error_t
-_fal_policer_priority_remap_set(a_uint32_t dev_id, fal_policer_priority_t *priority,
-		fal_policer_remap_t *remap)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-	if (NULL == p_api->adpt_policer_priority_remap_set)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_priority_remap_set(dev_id, priority, remap);
-	return rv;
-}
+sw_error_t fal_policer_priority_remap_set(a_uint32_t dev_id, fal_policer_priority_t *priority, fal_policer_remap_t *remap)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(policer_priority_remap_set, dev_id, priority, remap)
 #endif
 
-sw_error_t
-_fal_policer_ctrl_get(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-	if (NULL == p_api->adpt_policer_ctrl_get)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_ctrl_get(dev_id, ctrl);
-	return rv;
-}
-
-sw_error_t
-_fal_policer_timeslot_set(a_uint32_t dev_id, a_uint32_t timeslot)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_policer_time_slot_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_policer_time_slot_set(dev_id, timeslot);
-    return rv;
-}
-
-sw_error_t
-_fal_policer_bypass_en_set(a_uint32_t dev_id, fal_policer_frame_type_t frame_type,
-	a_bool_t enable)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-	if (NULL == p_api->adpt_policer_bypass_en_set)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_bypass_en_set(dev_id, frame_type, enable);
-	return rv;
-}
-
-sw_error_t
-_fal_port_policer_compensation_byte_get(a_uint32_t dev_id, a_uint32_t port_id,
-		a_uint32_t *length)
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_port_compensation_byte_get)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_port_compensation_byte_get(dev_id, port_id, length);
-    return rv;
-}
-
-sw_error_t
-_fal_port_policer_compensation_byte_set(a_uint32_t dev_id, a_uint32_t port_id,
-			a_uint32_t length)
-
-{
-    adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-    SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-    if (NULL == p_api->adpt_port_compensation_byte_set)
-        return SW_NOT_SUPPORTED;
-
-    rv = p_api->adpt_port_compensation_byte_set(dev_id, port_id, length);
-    return rv;
-}
-
-sw_error_t
-_fal_policer_ctrl_set(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-	if (NULL == p_api->adpt_policer_ctrl_set)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_ctrl_set(dev_id, ctrl);
-	return rv;
-}
-
-#ifndef IN_POLICER_MINI
-sw_error_t
-_fal_policer_global_counter_get(a_uint32_t dev_id,
-		fal_policer_global_counter_t *counter)
-{
-	adpt_api_t *p_api;
-	sw_error_t rv = SW_OK;
-
-	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
-
-	if (NULL == p_api->adpt_policer_global_counter_get)
-		return SW_NOT_SUPPORTED;
-
-	rv = p_api->adpt_policer_global_counter_get(dev_id, counter);
-	return rv;
-}
-
-/*insert flag for inner fal, don't remove it*/
-#endif
-
-sw_error_t
-fal_acl_policer_counter_get(a_uint32_t dev_id, a_uint32_t index,
-		fal_policer_counter_t *counter)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_acl_policer_counter_get(dev_id, index, counter);
-    FAL_API_UNLOCK;
-    return rv;
-}
-sw_error_t
-fal_port_policer_counter_get(a_uint32_t dev_id, fal_port_t port_id,
-		fal_policer_counter_t *counter)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_port_policer_counter_get(dev_id, port_id, counter);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_port_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_port_policer_entry_get(dev_id, port_id, policer, action);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_acl_policer_entry_get(dev_id, index, policer, action);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_port_policer_entry_set(dev_id, port_id, policer, action);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
-		fal_policer_config_t *policer, fal_policer_action_t *action)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_acl_policer_entry_set(dev_id, index, policer, action);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_timeslot_get(a_uint32_t dev_id, a_uint32_t *timeslot)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_timeslot_get(dev_id, timeslot);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_bypass_en_get(a_uint32_t dev_id, fal_policer_frame_type_t frame_type,
-	a_bool_t *enable)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_bypass_en_get(dev_id, frame_type, enable);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_timeslot_set(a_uint32_t dev_id, a_uint32_t timeslot)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_timeslot_set(dev_id, timeslot);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_bypass_en_set(a_uint32_t dev_id, fal_policer_frame_type_t frame_type,
-	a_bool_t enable)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_bypass_en_set(dev_id, frame_type, enable);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_port_policer_compensation_byte_get(a_uint32_t dev_id, fal_port_t port_id,
-				a_uint32_t *length)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_port_policer_compensation_byte_get(dev_id, port_id, length);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_port_policer_compensation_byte_set(a_uint32_t dev_id, fal_port_t port_id,
-			a_uint32_t length)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_port_policer_compensation_byte_set(dev_id, port_id, length);
-    FAL_API_UNLOCK;
-    return rv;
-}
-#ifndef IN_POLICER_MINI
-sw_error_t
-fal_policer_global_counter_get(a_uint32_t dev_id,
-		fal_policer_global_counter_t *counter)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_global_counter_get(dev_id, counter);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_priority_remap_get(a_uint32_t dev_id, fal_policer_priority_t *priority,
-		fal_policer_remap_t *remap)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_priority_remap_get(dev_id, priority, remap);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_priority_remap_set(a_uint32_t dev_id, fal_policer_priority_t *priority,
-		fal_policer_remap_t *remap)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_priority_remap_set(dev_id, priority, remap);
-    FAL_API_UNLOCK;
-    return rv;
-}
-#endif
-
-sw_error_t
-fal_policer_ctrl_get(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_ctrl_get(dev_id, ctrl);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-sw_error_t
-fal_policer_ctrl_set(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl)
-{
-    sw_error_t rv = SW_OK;
-
-    FAL_API_LOCK;
-    rv = _fal_policer_ctrl_set(dev_id, ctrl);
-    FAL_API_UNLOCK;
-    return rv;
-}
-
-#ifndef IN_POLICER_MINI
-EXPORT_SYMBOL(fal_policer_global_counter_get);
-EXPORT_SYMBOL(fal_policer_priority_remap_get);
-EXPORT_SYMBOL(fal_policer_priority_remap_set);
-#endif
-EXPORT_SYMBOL(fal_acl_policer_counter_get);
-EXPORT_SYMBOL(fal_port_policer_counter_get);
-EXPORT_SYMBOL(fal_port_policer_entry_set);
-EXPORT_SYMBOL(fal_port_policer_entry_get);
-EXPORT_SYMBOL(fal_acl_policer_entry_set);
-EXPORT_SYMBOL(fal_acl_policer_entry_get);
-EXPORT_SYMBOL(fal_policer_timeslot_set);
-EXPORT_SYMBOL(fal_policer_timeslot_get);
-EXPORT_SYMBOL(fal_port_policer_compensation_byte_set);
-EXPORT_SYMBOL(fal_port_policer_compensation_byte_get);
-EXPORT_SYMBOL(fal_policer_bypass_en_set);
-EXPORT_SYMBOL(fal_policer_bypass_en_get);
-EXPORT_SYMBOL(fal_policer_ctrl_set);
-EXPORT_SYMBOL(fal_policer_ctrl_get);
-
-/*insert flag for outter fal, don't remove it*/
