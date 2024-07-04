@@ -669,8 +669,8 @@ a_bool_t ssdk_raw_reset_control(const char *node_name, unsigned int reset_index,
 #endif
 
 a_bool_t ssdk_reset_find(struct reset_control *rst,
-			 struct rst_data_t *rst_inst,
-			 void __iomem *clk_base)
+			 struct rst_data_t **rst_inst,
+			 void __iomem **clk_base)
 {
 	struct device_node *clk_node = NULL;
 	struct reset_controller_dev *rcdev = NULL;
@@ -685,15 +685,15 @@ a_bool_t ssdk_reset_find(struct reset_control *rst,
 	}
 
 	if (of_node_name_eq(clk_node, GCC_NODE_NAME)) {
-		clk_base = gcc_clk_base_g;
+		*clk_base = gcc_clk_base_g;
 	} else if (of_node_name_eq(clk_node, NSSCC_NODE_NAME)) {
-		clk_base = nsscc_clk_base_g;
+		*clk_base = nsscc_clk_base_g;
 	} else {
 		SSDK_DEBUG("Unknown Reset Name: %s\n", clk_node->full_name);
 		return A_FALSE;
 	}
 
-	if (!clk_base) {
+	if (!(*clk_base)) {
 		SSDK_DEBUG("clk_base is not ioremap_nocache on %s\n", clk_node->full_name);
 		return A_FALSE;
 	}
@@ -704,8 +704,8 @@ a_bool_t ssdk_reset_find(struct reset_control *rst,
 			continue;
 		}
 
-		if (rst->id == rst_inst->rst_index) {
-			rst_inst = rst_inst_tmp;
+		if (rst->id == rst_inst_tmp->rst_index) {
+			*rst_inst = rst_inst_tmp;
 			return A_TRUE;
 		}
 	}
@@ -724,7 +724,7 @@ a_bool_t ssdk_reset_control(struct reset_control *rst, a_uint32_t action)
 		return A_FALSE;
 	}
 
-	if (!ssdk_reset_find(rst, rst_inst, clk_base)) {
+	if (!ssdk_reset_find(rst, &rst_inst, &clk_base)) {
 		SSDK_DEBUG("Can't find the reset ID %d\n", rst->id);
 		return A_FALSE;
 	}
