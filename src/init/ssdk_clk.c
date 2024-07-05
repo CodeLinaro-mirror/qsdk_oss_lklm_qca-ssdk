@@ -38,10 +38,10 @@
 #endif
 
 #if defined(SSDK_RAW_CLOCK)
-#include <dt-bindings/reset/qcom,devsoc-nsscc.h>
-#include <dt-bindings/clock/qcom,devsoc-nsscc.h>
-#include <dt-bindings/reset/qcom,devsoc-gcc.h>
-#include <dt-bindings/clock/qcom,devsoc-gcc.h>
+#include <dt-bindings/reset/qcom,ipq5424-nsscc.h>
+#include <dt-bindings/clock/qcom,ipq5424-nsscc.h>
+#include <dt-bindings/reset/qcom,ipq5424-gcc.h>
+#include <dt-bindings/clock/qcom,ipq5424-gcc.h>
 #include <linux/reset-controller.h>
 
 struct reset_control {
