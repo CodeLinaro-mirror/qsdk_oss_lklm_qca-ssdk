@@ -729,6 +729,8 @@ typedef sw_error_t (*adpt_qm_enqueue_config_get_func)(a_uint32_t dev_id,
 		fal_enqueue_cfg_t *enqueue_cfg);
 typedef sw_error_t (*adpt_qm_enqueue_config_set_func)(a_uint32_t dev_id,
 		fal_enqueue_cfg_t *enqueue_cfg);
+typedef sw_error_t (*adpt_qm_threshold_reset_func)(a_uint32_t dev_id,
+		a_uint32_t queue_id);
 
 
 /*portvlan module begin*/
@@ -1809,6 +1811,7 @@ typedef struct
 	adpt_qm_port_source_profile_get_func adpt_qm_port_source_profile_get;
 	adpt_qm_enqueue_config_get_func adpt_qm_enqueue_config_get;
 	adpt_qm_enqueue_config_set_func adpt_qm_enqueue_config_set;
+	adpt_qm_threshold_reset_func adpt_qm_threshold_reset;
 
 	/*portvlan module begin*/
 	adpt_global_qinq_mode_set_func adpt_global_qinq_mode_set;

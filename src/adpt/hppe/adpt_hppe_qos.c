@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -979,12 +979,17 @@ sw_error_t
 adpt_hppe_port_scheduler_cfg_reset(a_uint32_t dev_id,
 				fal_port_t port_id)
 {
+	adpt_api_t *p_adpt_api = NULL;
 	ssdk_dt_scheduler_cfg *dt_cfg;
 	fal_qos_scheduler_cfg_t cfg;
 	a_uint32_t i;
 
 	dt_cfg = ssdk_bootup_shceduler_cfg_get(dev_id);
 	if (!dt_cfg)
+		return SW_FAIL;
+
+	p_adpt_api = adpt_api_ptr_get(dev_id);
+	if(!p_adpt_api)
 		return SW_FAIL;
 
 	/* L1 shceduler */
@@ -1014,6 +1019,12 @@ adpt_hppe_port_scheduler_cfg_reset(a_uint32_t dev_id,
 			cfg.e_drr_wt = 1;
 			adpt_hppe_queue_scheduler_set(dev_id, i,
 					0, dt_cfg->l0cfg[i].port_id, &cfg);
+
+#if defined(IN_QM)
+			/* Recovery the threshold configs of queue */
+			if (p_adpt_api->adpt_qm_threshold_reset != NULL)
+				p_adpt_api->adpt_qm_threshold_reset(dev_id, i);
+#endif
 		}
 	}
 

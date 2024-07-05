@@ -938,19 +938,17 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 #define SSDK_PRI_MAX		16
 #define SSDK_CPU_PRI_NUM	1
 #define SSDK_MGMT_ARP_REP_CPU_CODE	101
+
 sw_error_t
 qca_hppe_qm_hw_init(a_uint32_t dev_id)
 {
-	a_uint32_t i;
+	a_uint32_t i, total_buf;
 	fal_ucast_queue_dest_t queue_dst;
 	fal_ac_obj_t obj;
 	fal_ac_ctrl_t ac_ctrl;
 	fal_ac_group_buffer_t group_buff;
-	fal_ac_dynamic_threshold_t  dthresh_cfg;
-	fal_ac_static_threshold_t sthresh_cfg;
 	a_uint32_t qbase = 0;
 	a_uint32_t chip_ver = 0;
-	a_uint16_t total_buf = 0, ceiling = 0, green_max = 0, weight = 0, resume_offset = 0;
 	a_uint32_t max_pri_supported, pri, class;
 	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
 
@@ -1129,24 +1127,12 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		case MRPPE_TYPE:
 		case APPE_TYPE:
 			total_buf = 2000;
-			ceiling = 400;
-			weight = 4;
-			resume_offset = 36;
-			green_max = 250;
 			break;
 		case CPPE_TYPE:
 			total_buf = 1506;
-			ceiling = 216;
-			weight = 4;
-			resume_offset = 36;
-			green_max = 144;
 			break;
 		case MPPE_TYPE:
 			total_buf = 500;
-			ceiling = 50;
-			weight = 5;
-			resume_offset = 18;
-			green_max = 50;
 			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
@@ -1157,22 +1143,8 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	group_buff.total_buffer = total_buf;
 	fal_ac_group_buffer_set(dev_id, 0, &group_buff);
 
-	memset(&dthresh_cfg, 0, sizeof(dthresh_cfg));
-	dthresh_cfg.shared_weight = weight;
-	dthresh_cfg.ceiling = ceiling;
-	dthresh_cfg.green_resume_off = resume_offset;
-	for (i = 0; i < SSDK_L0SCHEDULER_UCASTQ_CFG_MAX; i++) {
-		fal_ac_dynamic_threshold_set(dev_id, i, &dthresh_cfg);
-	}
-
-	memset(&sthresh_cfg, 0, sizeof(sthresh_cfg));
-	sthresh_cfg.green_max = green_max;
-	sthresh_cfg.green_resume_off = resume_offset;
-	for (i = SSDK_L0SCHEDULER_UCASTQ_CFG_MAX; i < SSDK_L0SCHEDULER_CFG_MAX; i++) {
-		obj.type = FAL_AC_QUEUE;
-		obj.obj_id = i;
-		fal_ac_static_threshold_set(dev_id, &obj, &sthresh_cfg);
-	}
+	for (i = 0; i < SSDK_L0SCHEDULER_CFG_MAX; i++)
+		fal_qm_threshold_reset(dev_id, i);
 
 	/* enable the queue counter */
 	fal_queue_counter_ctrl_set(dev_id, A_TRUE);
