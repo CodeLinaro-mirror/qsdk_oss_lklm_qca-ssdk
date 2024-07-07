@@ -687,6 +687,25 @@ extern "C" {
     SW_PARAM_DEF(SW_API_PT_ERP_POWER_MODE_SET, SW_ERP_POWER_MODE, \
 		    sizeof(fal_port_erp_power_mode_t), SW_PARAM_IN, "Power Mode"),
 
+#define SW_API_PT_ERP_POWER_MODE_GET_DESC \
+    SW_PARAM_DEF(SW_API_PT_ERP_POWER_MODE_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PT_ERP_POWER_MODE_GET, SW_UINT32, \
+	 	    sizeof(a_uint32_t), SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_PT_ERP_POWER_MODE_GET, SW_ERP_POWER_MODE, \
+		    sizeof(fal_port_erp_power_mode_t), \
+		    SW_PARAM_PTR|SW_PARAM_OUT, "Power Mode"),
+
+#define SW_API_PT_ERP_STANDBY_ENTER_DESC \
+    SW_PARAM_DEF(SW_API_PT_ERP_STANDBY_ENTER, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PT_ERP_STANDBY_ENTER, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Active Portmap"),
+
+#define SW_API_PT_ERP_STANDBY_EXIT_DESC \
+    SW_PARAM_DEF(SW_API_PT_ERP_STANDBY_EXIT, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),
+
 #define SW_API_VLAN_ADD_DESC \
     SW_PARAM_DEF(SW_API_VLAN_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_VLAN_ADD, SW_UINT32, 4, SW_PARAM_IN, "Vlan Id"),
