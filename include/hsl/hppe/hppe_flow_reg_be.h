@@ -2369,7 +2369,7 @@ union in_flow_cnt_tbl_u {
 #define EG_FLOW_IPV6_IID_TBL_INC     0x4
 
 
-#define EG_FLOW_IPV6_IID_TBL_NUM     2047
+#define EG_FLOW_IPV6_IID_TBL_NUM     2048
 #define EG_FLOW_IPV6_IID_TBL_TYPE    REG_TYPE_RW
 #define EG_FLOW_IPV6_IID_TBL_DEFAULT 0x0
 	/*[field] IID*/

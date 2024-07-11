@@ -350,6 +350,13 @@ sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capa
 		ppe_capacity->service_code_caps = SERVICE_TBL_NUM;
 		ppe_capacity->pppoe_session_caps = PPPOE_SESSION_NUM;
 		ppe_capacity->policer_caps = IN_ACL_METER_CFG_TBL_NUM;
+#if defined(MRPPE)
+		ppe_capacity->ipv6_prefix_caps = EG_IPV6_PREFIX_TBL_NUM;
+		ppe_capacity->ipv6_iid_caps = EG_FLOW_IPV6_IID_TBL_NUM;
+#else
+		ppe_capacity->ipv6_prefix_caps = 0;
+		ppe_capacity->ipv6_iid_caps = 0;
+#endif
 	}
 
 	return SW_OK;
