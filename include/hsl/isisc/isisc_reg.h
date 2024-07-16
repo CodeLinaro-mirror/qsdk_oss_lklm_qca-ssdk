@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021,2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021,2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1185,8 +1185,34 @@ extern "C" {
 #define EEE_CTL_LPI_EN_1_BLEN                                  1
 #define EEE_CTL_LPI_EN_1_FLAG                                  HSL_RW
 
+#define EEE_CPU_CHANGE_EN
+#define EEE_CTL_CPU_CHANGE_EN_BOFFSET                          3
+#define EEE_CTL_CPU_CHANGE_EN_BLEN                             1
+#define EEE_CTL_CPU_CHANGE_EN_FLAG                             HSL_RW
 
+/* EEE sleep timer register*/
+#define EEE_GLOBAL_SLEEP_TIMER
+#define EEE_GLOBAL_SLEEP_TIMER_OFFSET    0x00d8
+#define EEE_GLOBAL_SLEEP_TIMER_E_LENGTH  4
+#define EEE_GLOBAL_SLEEP_TIMER_E_OFFSET  0
+#define EEE_GLOBAL_SLEEP_TIMER_NR_E      1
 
+#define EEE_SLEEP_TIMER_VALUE
+#define EEE_SLEEP_TIMER_VALUE_BOFFSET                          0
+#define EEE_SLEEP_TIMER_VALUE_BLEN                             16
+#define EEE_SLEEP_TIMER_VALUE_FLAG                             HSL_RW
+
+/* EEE wake up timer Register */
+#define EEE_RES_VALUE_1
+#define EEE_RES_VALUE_1_OFFSET    0x0128
+#define EEE_RES_VALUE_1_E_LENGTH  4
+#define EEE_RES_VALUE_1_E_OFFSET  0
+#define EEE_RES_VALUE_1_NR_E      1
+
+#define EEE_RES_VALUE_1_LOC_TX_VALUE
+#define EEE_RES_VALUE_1_LOC_TX_VALUE_BOFFSET                   0
+#define EEE_RES_VALUE_1_LOC_TX_VALUE_BLEN                      16
+#define EEE_RES_VALUE_1_LOC_TX_VALUE_FLAG                      HSL_RW
 
     /* Frame Ack Ctl0 Register */
 #define FRAME_ACK_CTL0
