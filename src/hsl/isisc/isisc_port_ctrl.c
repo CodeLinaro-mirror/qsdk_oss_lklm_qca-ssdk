@@ -1075,6 +1075,46 @@ _isisc_port_link_forcemode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *
 #define ISISC_LPI_BIT_STEP     2
 
 static sw_error_t
+_isisc_port_interface_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t reg_addr = 0;
+
+	/*config sleep timer*/
+	if(port_eee_cfg->lpi_sleep_timer != 0) {
+		rv = qca_mii_update(dev_id, EEE_GLOBAL_SLEEP_TIMER_OFFSET, BITS(0, 16),
+			port_eee_cfg->lpi_sleep_timer);
+		SW_RTN_ON_ERROR(rv);
+	}
+	/*config wake up timer, 2.5G is 0x58, 1G and 100M is 0x24*/
+	if(port_eee_cfg->lpi_wakeup_timer != 0) {
+		reg_addr = EEE_RES_VALUE_1_OFFSET + (port_id - 1) * 0x10;
+		rv = qca_mii_update(dev_id, reg_addr, BITS(0, 16),
+			port_eee_cfg->lpi_wakeup_timer);
+		SW_RTN_ON_ERROR(rv);
+	}
+
+	return SW_OK;
+}
+
+static sw_error_t
+_isisc_port_interface_eee_timer_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	a_uint32_t reg_addr = 0, reg_val = 0;
+
+	reg_val = qca_mii_read(dev_id, EEE_GLOBAL_SLEEP_TIMER_OFFSET);
+	port_eee_cfg->lpi_sleep_timer = (reg_val & BITS(0, 16));
+
+	reg_addr = EEE_RES_VALUE_1_OFFSET + (port_id - 1) * 0x10;
+	reg_val = qca_mii_read(dev_id, reg_addr);
+	port_eee_cfg->lpi_wakeup_timer = (reg_val & BITS(0, 16));
+
+	return SW_OK;
+}
+
+static sw_error_t
 _isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
@@ -1136,9 +1176,14 @@ _isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
     offset = (port_id - 1) * ISISC_LPI_BIT_STEP + ISISC_LPI_PORT1_OFFSET;
     reg &= (~(eee_mask << offset));
     reg |= (field << offset);
+    /*enable to change eee timer*/
+    reg |= BIT(EEE_CTL_CPU_CHANGE_EN_BOFFSET);
 
     HSL_REG_ENTRY_SET(rv, dev_id, EEE_CTL, 0,
                       (a_uint8_t *) (&reg), sizeof (a_uint32_t));
+    SW_RTN_ON_ERROR(rv);
+    rv = _isisc_port_interface_eee_timer_set(dev_id, port_id, port_eee_cfg);
+
     return rv;
 }
 
@@ -1216,6 +1261,8 @@ _isisc_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
     {
        port_eee_cfg->lpi_tx_enable = A_FALSE;
     }
+
+    _isisc_port_interface_eee_timer_get(dev_id, port_id, port_eee_cfg);
 
     return SW_OK;
 }
