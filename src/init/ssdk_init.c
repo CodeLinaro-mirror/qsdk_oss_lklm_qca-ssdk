@@ -157,7 +157,9 @@ ssdk_rfs_intf_t rfs_intf_tbl[SSDK_RFS_INTF_MAX] = {{0}};
 //#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 struct notifier_block ssdk_dev_notifier;
 //#endif
-
+#ifdef IN_SFP_PHY
+#include "sfp_phy.h"
+#endif
 
 extern a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id);
 extern void dess_rgmii_sw_mac_polling_task(struct qca_phy_priv *priv);
@@ -2616,9 +2618,9 @@ regi_exit(void)
 		if (qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered == A_TRUE)
 			ssdk_switch_unregister(dev_id);
 #endif
-	}
-/*qca808x_start*/
-	for (dev_id = 0; dev_id < dev_num; dev_id++) {
+#ifdef IN_SFP_PHY
+		sfp_phy_exit(dev_id);
+#endif
 		rv = ssdk_cleanup(dev_id);
 	}
 
