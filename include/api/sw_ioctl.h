@@ -146,7 +146,7 @@ extern "C" {
 #define SW_API_PT_ERP_STANDBY_EXIT	(100 + SW_API_PORT_OFFSET)
 
     /*vlan*/
-#define SW_API_VLAN_OFFSET         130
+#define SW_API_VLAN_OFFSET         140
 #define SW_API_VLAN_ADD            (0 + SW_API_VLAN_OFFSET)
 #define SW_API_VLAN_DEL            (1 + SW_API_VLAN_OFFSET)
 #define SW_API_VLAN_MEM_UPDATE     (2 + SW_API_VLAN_OFFSET)

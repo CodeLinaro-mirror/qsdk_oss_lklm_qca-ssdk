@@ -642,10 +642,12 @@ extern "C" {
     SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_SET, fal_port_invlan_mode_set), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_GET, fal_port_invlan_mode_get), \
+    SW_API_DEF(SW_API_PT_TLS_SET, fal_port_tls_set), \
     SW_API_DEF(SW_API_PT_DEF_SVID_SET, fal_port_default_svid_set), \
     SW_API_DEF(SW_API_PT_DEF_SVID_GET, fal_port_default_svid_get), \
     SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set), \
     SW_API_DEF(SW_API_PT_DEF_CVID_GET, fal_port_default_cvid_get), \
+    SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_SET, fal_port_vlan_propagation_set),
 
 #define PORTVLAN_API_PARAM \
     SW_API_DESC(SW_API_GLOBAL_QINQ_MODE_SET)  \
@@ -688,10 +690,12 @@ extern "C" {
     SW_API_DESC(SW_API_NESTVLAN_TPID_GET)    \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_SET)   \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_GET)   \
+    SW_API_DESC(SW_API_PT_TLS_SET)   \
     SW_API_DESC(SW_API_PT_DEF_SVID_SET)    \
     SW_API_DESC(SW_API_PT_DEF_SVID_GET)    \
     SW_API_DESC(SW_API_PT_DEF_CVID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_CVID_GET)
+    SW_API_DESC(SW_API_PT_DEF_CVID_GET)    \
+    SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_SET)
 #endif
 #else
 #define PORTVLAN_API
