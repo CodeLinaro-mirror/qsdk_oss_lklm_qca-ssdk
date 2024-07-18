@@ -1244,6 +1244,62 @@ adpt_hppe_qm_port_source_profile_get(
 				src_profile);
 }
 
+static sw_error_t
+adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
+{
+	a_uint16_t ceiling, green_max, weight, resume_offset;
+	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
+
+	switch (chip_type) {
+		case HPPE_TYPE:
+		case MRPPE_TYPE:
+		case APPE_TYPE:
+			ceiling = 400;
+			weight = 4;
+			resume_offset = 36;
+			green_max = 250;
+			break;
+		case CPPE_TYPE:
+			ceiling = 216;
+			weight = 4;
+			resume_offset = 36;
+			green_max = 144;
+			break;
+		case MPPE_TYPE:
+			ceiling = 50;
+			weight = 5;
+			resume_offset = 18;
+			green_max = 50;
+			break;
+		default:
+			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
+			return SW_OUT_OF_RANGE;
+	}
+
+	if (queue_id < SSDK_L0SCHEDULER_UCASTQ_CFG_MAX) {
+		fal_ac_dynamic_threshold_t  dthresh_cfg;
+
+		memset(&dthresh_cfg, 0, sizeof(dthresh_cfg));
+		dthresh_cfg.shared_weight = weight;
+		dthresh_cfg.ceiling = ceiling;
+		dthresh_cfg.green_resume_off = resume_offset;
+
+		return adpt_hppe_ac_dynamic_threshold_set(dev_id, queue_id, &dthresh_cfg);
+	} else {
+		fal_ac_static_threshold_t sthresh_cfg;
+		fal_ac_obj_t obj;
+
+		memset(&sthresh_cfg, 0, sizeof(sthresh_cfg));
+		sthresh_cfg.green_max = green_max;
+		sthresh_cfg.green_resume_off = resume_offset;
+
+		obj.type = FAL_AC_QUEUE;
+		obj.obj_id = queue_id;
+
+		return adpt_hppe_ac_static_threshold_set(dev_id, &obj, &sthresh_cfg);
+	}
+}
+
 sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
@@ -1292,6 +1348,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_enqueue_ctrl_get = adpt_hppe_qm_enqueue_ctrl_get;
 	p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
 	p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
+	p_adpt_api->adpt_qm_threshold_reset = adpt_ppe_qm_threshold_reset;
 #if defined(APPE)
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;

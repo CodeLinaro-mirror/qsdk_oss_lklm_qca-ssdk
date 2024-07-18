@@ -580,6 +580,19 @@ _fal_qm_enqueue_config_get(a_uint32_t dev_id,
 }
 
 sw_error_t
+_fal_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
+{
+	adpt_api_t *p_api;
+
+	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+
+	if (NULL == p_api->adpt_qm_threshold_reset)
+		return SW_NOT_SUPPORTED;
+
+	return p_api->adpt_qm_threshold_reset(dev_id, queue_id);
+}
+
+sw_error_t
 _fal_qm_enqueue_ctrl_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable)
 {
 	adpt_api_t *p_api;
@@ -1083,6 +1096,18 @@ fal_qm_enqueue_config_get(a_uint32_t dev_id,
 	return rv;
 }
 
+sw_error_t
+fal_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
+{
+	sw_error_t rv = SW_OK;
+
+	FAL_API_LOCK;
+	rv = _fal_qm_threshold_reset(dev_id, queue_id);
+	FAL_API_UNLOCK;
+
+	return rv;
+}
+
 EXPORT_SYMBOL(fal_ac_ctrl_set);
 
 EXPORT_SYMBOL(fal_ac_prealloc_buffer_set);
@@ -1155,5 +1180,7 @@ EXPORT_SYMBOL(fal_ucast_default_hash_get);
 EXPORT_SYMBOL(fal_qm_enqueue_config_set);
 
 EXPORT_SYMBOL(fal_qm_enqueue_config_get);
+
+EXPORT_SYMBOL(fal_qm_threshold_reset);
 
 /*insert flag for outter fal, don't remove it*/

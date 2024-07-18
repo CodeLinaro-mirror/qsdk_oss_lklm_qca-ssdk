@@ -330,6 +330,9 @@ fal_qm_enqueue_config_set(a_uint32_t dev_id,
 sw_error_t
 fal_qm_enqueue_config_get(a_uint32_t dev_id,
 		fal_enqueue_cfg_t *enqueue_cfg);
+
+sw_error_t
+fal_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
