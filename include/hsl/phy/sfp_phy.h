@@ -53,7 +53,7 @@ void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port);
 int sfp_phy_driver_register(void);
 void sfp_phy_driver_unregister(void);
 
-int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id);
+int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t bus_index);
 void sfp_phy_exit(a_uint32_t dev_id);
 
 sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id,
