@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
 *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -31,6 +31,9 @@ extern "C" {
 #define UNIPHY_UQXGMII_MODE           0x5
 #define UNIPHY_UDXGMII_MODE           0x3
 #define UNIPHY_UQXGMII_AM_COUNT       0x6018
+#define UNIPHY_SEL_RX_LOS0            0x1
+#define UNIPHY_SEL_RX_LOS1            0x2
+#define UNIPHY_SEL_RX_LOS2            0x4
 
 sw_error_t
 adpt_hppe_uniphy_usxgmii_status_get(a_uint32_t dev_id, a_uint32_t uniphy_index,

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017, 2019-2020, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2764,6 +2764,33 @@ mppe_uniphy_calib_ctrl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union uniphy_vco_cal_control_u *value);
+#endif
+#ifdef MRPPE
+sw_error_t
+mrppe_uniphy_rx_los_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniphy_rx_los_u *value);
+sw_error_t
+mrppe_uniphy_rx_los_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniphy_rx_los_u *value);
+sw_error_t
+mrppe_uniphy_rx_los_sel_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+sw_error_t
+mrppe_uniphy_rx_los_sel_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+sw_error_t
+mrppe_uniphy_rx_los_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
 #endif
 #endif
 
