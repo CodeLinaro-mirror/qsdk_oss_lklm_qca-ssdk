@@ -1973,15 +1973,6 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 	ssdk_clock_rate_set_and_enable(clock_node, NSS_PPE_IPE_CLK, ppe_rate);
 	ssdk_clock_rate_set_and_enable(clock_node, NSS_PPE_BTQ_CLK, ppe_rate);
 
-	if (ssdk_is_emulation(0)) {
-		ssdk_clock_rate_set_and_enable(clock_node, NSS_PORT1_RX_CLK, 0);
-		ssdk_clock_rate_set_and_enable(clock_node, NSS_PORT1_TX_CLK, 0);
-		ssdk_clock_rate_set_and_enable(clock_node, NSS_PORT2_RX_CLK, 0);
-		ssdk_clock_rate_set_and_enable(clock_node, NSS_PORT2_TX_CLK, 0);
-		ssdk_clock_rate_set_and_enable(clock_node, NSS_PORT3_RX_CLK, 0);
-		ssdk_clock_rate_set_and_enable(clock_node, NSS_PORT3_TX_CLK, 0);
-	}
-
 	return;
 }
 
@@ -2338,10 +2329,10 @@ void ssdk_gcc_reset_ids_init(void)
 
 	for (i = 0; i < ARRAY_SIZE(ppe_rst_ids); i++)
 		uniphy_rsts[i] = of_reset_control_get(rst_node, ppe_rst_ids[i]);
-	
+
 	for (i = 0; i < ARRAY_SIZE(port_rst_ids); i++)
 		port_rsts[i] = of_reset_control_get(rst_node, port_rst_ids[i]);
-	
+
 #if defined(APPE)
 	for (i = 0; i < ARRAY_SIZE(port_mac_rst_ids); i++)
 		port_mac_rsts[i] = of_reset_control_get(rst_node, port_mac_rst_ids[i]);
@@ -2359,19 +2350,19 @@ enum unphy_rst_type uniphy_sys_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
 
 #if defined(MRPPE)
 enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
-	UNIPHY0_PORT1_RX_DISABLE_E,
-	UNIPHY0_PORT1_TX_DISABLE_E,
-	UNIPHY1_PORT5_RX_DISABLE_E,
-	UNIPHY1_PORT5_TX_DISABLE_E,
-	UNIPHY2_PORT6_RX_DISABLE_E,
-	UNIPHY2_PORT6_TX_DISABLE_E
+	UNIPHY_PORT1_RX_RESET_E,
+	UNIPHY_PORT1_TX_RESET_E,
+	UNIPHY_PORT2_RX_RESET_E,
+	UNIPHY_PORT2_TX_RESET_E,
+	UNIPHY_PORT3_RX_RESET_E,
+	UNIPHY_PORT3_TX_RESET_E
 };
 #elif defined(MPPE)
 enum unphy_rst_type uniphy_soft_rst[SSDK_UNIPHY_INSTANCE2 * 2] = {
-	UNIPHY0_PORT1_RX_DISABLE_E,
-	UNIPHY0_PORT1_TX_DISABLE_E,
-	UNIPHY1_PORT5_RX_DISABLE_E,
-	UNIPHY1_PORT5_TX_DISABLE_E
+	UNIPHY_PORT1_RX_RESET_E,
+	UNIPHY_PORT1_TX_RESET_E,
+	UNIPHY_PORT2_RX_RESET_E,
+	UNIPHY_PORT2_TX_RESET_E
 };
 #else
 enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE] = {

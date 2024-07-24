@@ -1424,60 +1424,26 @@ qca_hppe_interface_mode_init(a_uint32_t dev_id)
 	adpt_api_t *p_api;
 	sw_error_t rv = SW_OK;
 	fal_port_t port_id;
-	a_uint32_t port_max = SSDK_PHYSICAL_PORT7;
-	a_uint32_t index = 0, mode[3] = {0};
-	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+	a_uint32_t index = 0, uniphy_num = 0, mode[SSDK_MAX_UNIPHY_INSTANCE] = {0};
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
 	SW_RTN_ON_NULL(p_api->adpt_port_mux_mac_type_set);
 	SW_RTN_ON_NULL(p_api->adpt_uniphy_mode_set);
 
-	for (index = SSDK_UNIPHY_INSTANCE0; index <= SSDK_UNIPHY_INSTANCE2; index ++) {
+	uniphy_num = adpt_ppe_uniphy_number_get(dev_id);
+
+	for (index = SSDK_UNIPHY_INSTANCE0; index < uniphy_num; index ++) {
 		mode[index] = ssdk_dt_global_get_mac_mode(dev_id, index);
-	}
 
-	rv = p_api->adpt_uniphy_mode_set(dev_id, SSDK_UNIPHY_INSTANCE0, mode[0]);
-	SW_RTN_ON_ERROR(rv);
-
-	rv = p_api->adpt_uniphy_mode_set(dev_id, SSDK_UNIPHY_INSTANCE1, mode[1]);
-	SW_RTN_ON_ERROR(rv);
-
-	if ((ppe_type == HPPE_TYPE) || (ppe_type == APPE_TYPE) ||
-		(ppe_type == MRPPE_TYPE)) {
-
-		rv = p_api->adpt_uniphy_mode_set(dev_id,
-				SSDK_UNIPHY_INSTANCE2, mode[2]);
+		rv = p_api->adpt_uniphy_mode_set(dev_id, index, mode[index]);
 		SW_RTN_ON_ERROR(rv);
-	}
 
-	for (index = SSDK_UNIPHY_INSTANCE0; index <= SSDK_UNIPHY_INSTANCE2; index ++) {
-		if (mode[index] == PORT_WRAPPER_MAX) {
+		if (mode[index] == PORT_WRAPPER_MAX)
 			ssdk_gcc_uniphy_sys_set(dev_id, index, A_FALSE);
-		}
 	}
 
-	switch (ppe_type) {
-		case HPPE_TYPE:
-			port_max = SSDK_PHYSICAL_PORT7;
-			break;
-		case CPPE_TYPE:
-			port_max = SSDK_PHYSICAL_PORT6;
-			break;
-		case APPE_TYPE:
-			port_max = SSDK_PHYSICAL_PORT7;
-			break;
-		case MPPE_TYPE:
-			port_max = SSDK_PHYSICAL_PORT3;
-			break;
-		case MRPPE_TYPE:
-			port_max = SSDK_PHYSICAL_PORT4;
-			SSDK_INFO("mrppe interface mode initialization\n");
-			break;
-		default:
-			SSDK_ERROR("Unknown chip type: %d\n", ppe_type);
-			break;
-	}
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id < port_max; port_id++) {
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports; port_id++) {
 		rv = p_api->adpt_port_mux_mac_type_set(dev_id, port_id, mode[0], mode[1], mode[2]);
 		if(rv != SW_OK) {
 			SSDK_ERROR("port_id:%d, mode0:%d, mode1:%d, mode2:%d\n", port_id,

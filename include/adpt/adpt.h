@@ -2385,6 +2385,8 @@ sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capa
 #ifdef SCOMPHY
 a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id);
 #endif
+a_uint32_t
+adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
