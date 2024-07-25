@@ -104,6 +104,18 @@ typedef struct
 
 #define SSDK_MAX_NR_ETH 6
 #define SSDK_PHY_RESET_GPIO_INDEX 0
+#define SSDK_NETDEV_SWITCH_NUM 2
+typedef struct
+{
+	char switch_netdev_name[IFNAMSIZ];
+	a_uint8_t switch_netdev_port;
+	a_bool_t switch_connected;
+	a_uint8_t switch_dev_id;
+	a_uint8_t switch_cpu_port;
+	a_uint8_t switch_port_bmp;
+	a_uint32_t switch_port_vid[SSDK_MAX_PORT_NUM];
+	a_uint32_t switch_athtag;
+} ssdk_netdev_switch_t;
 
 typedef struct
 {
@@ -111,6 +123,7 @@ typedef struct
 	ssdk_dt_cfg **ssdk_dt_switch_nodes;
 	a_uint32_t num_intf_mac;
 	fal_mac_addr_t intf_mac[SSDK_MAX_NR_ETH];
+	ssdk_netdev_switch_t netdev_switch[SSDK_NETDEV_SWITCH_NUM];
 } ssdk_dt_global_t;
 
 typedef struct
@@ -174,7 +187,9 @@ sw_error_t ssdk_dt_port_source_pattern_get(a_uint32_t dev_id, a_uint32_t port_id
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id);
 #endif
-
+a_uint32_t ssdk_dts_netdev_switch_alloc(ssdk_netdev_switch_t **netdev_switch);
+ssdk_netdev_switch_t *ssdk_dts_netdev_switch_get(a_uint32_t index);
+ssdk_netdev_switch_t *ssdk_dts_netdev_switch_find(a_uint32_t port_id);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

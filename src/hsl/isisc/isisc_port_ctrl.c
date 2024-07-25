@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -598,7 +598,6 @@ _isisc_header_type_set(a_uint32_t dev_id, a_bool_t enable, a_uint32_t type)
                       (a_uint8_t *) (&reg), sizeof (a_uint32_t));
     return rv;
 }
-#ifndef IN_PORTCONTROL_MINI
 static sw_error_t
 _isisc_header_type_get(a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
 {
@@ -626,7 +625,6 @@ _isisc_header_type_get(a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
 
     return SW_OK;
 }
-#endif
 static sw_error_t
 _isisc_port_txmac_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
@@ -1635,7 +1633,6 @@ isisc_header_type_set(a_uint32_t dev_id, a_bool_t enable, a_uint32_t type)
     HSL_API_UNLOCK;
     return rv;
 }
-#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Get status of Atheros header type value on a particular device.
  * @param[in] dev_id device id
@@ -1653,7 +1650,6 @@ isisc_header_type_get(a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
     HSL_API_UNLOCK;
     return rv;
 }
-#endif
 /**
  * @brief Set status of txmac on a particular port.
  * @param[in] dev_id device id
@@ -2018,7 +2014,9 @@ isisc_port_ctrl_init(a_uint32_t dev_id)
 #ifndef IN_PORTCONTROL_MINI
         p_api->port_rxhdr_mode_get = isisc_port_rxhdr_mode_get;
         p_api->port_txhdr_mode_get = isisc_port_txhdr_mode_get;
+#endif
         p_api->header_type_get = isisc_header_type_get;
+#ifndef IN_PORTCONTROL_MINI
         p_api->port_txmac_status_get = isisc_port_txmac_status_get;
         p_api->port_rxmac_status_get = isisc_port_rxmac_status_get;
 #endif

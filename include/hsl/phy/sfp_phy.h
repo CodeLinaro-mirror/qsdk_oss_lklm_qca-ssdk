@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -43,7 +43,7 @@ extern "C"
 #define SFP_PHY_SPEED_2500M            0x2
 #define SFP_PHY_SPEED_1000M            0x3
 #define SFP_PHY_SPEED_100M             0x4
-
+#define TO_MDIO_I2C_ADDR(addr)       (addr - 0x40)
 #define SFP_TO_SFP_SPEED(reg_data) ((reg_data >> 8) & 0xff)
 #define SFP_TO_SFP_TYPE(reg_data) ((reg_data >> 8) & 0xff)
 
@@ -53,8 +53,8 @@ void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port);
 int sfp_phy_driver_register(void);
 void sfp_phy_driver_unregister(void);
 
-int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
-void sfp_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp);
+int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id);
+void sfp_phy_exit(a_uint32_t dev_id);
 
 sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id,
 	fal_port_interface_mode_t *interface_mode);

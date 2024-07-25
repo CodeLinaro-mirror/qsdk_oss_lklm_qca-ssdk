@@ -46,7 +46,7 @@
 #include <linux/clk.h>
 #include <linux/delay.h>
 #include <linux/string.h>
-
+#include <linux/bitops.h>
 #if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
 #include <f1_phy.h>
 #endif
@@ -99,7 +99,14 @@
 #endif
 #include "hsl_port_prop.h"
 /*qca808x_start*/
-
+#ifdef HPPE
+#include "hppe_portctrl_reg.h"
+#include "hppe_xgportctrl_reg.h"
+#include "hppe_reg_access.h"
+#endif
+#ifdef MP
+#include "mp_portctrl_reg.h"
+#endif
 extern struct qca_phy_priv **qca_phy_priv_global;
 /*qca808x_end*/
 
@@ -1331,6 +1338,107 @@ parse_fail:
 }
 #endif
 
+#ifdef MP
+#define MP_GMAC_BASE_ADDR 0xc00000
+#endif
+
+static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
+{
+	a_uint32_t mac_reg = 0, port_id = 0;
+
+	mac_reg = dev->base_addr & 0xffffff;
+#ifdef HPPE
+	/*xgmac*/
+	if(mac_reg >= NSS_XGMAC_CSR_BASE_ADDR) {
+#ifdef APPE
+		port_id = (mac_reg - NSS_XGMAC_CSR_BASE_ADDR)/MAC_TX_CONFIGURATION_INC + 1;
+#else
+		port_id = (mac_reg - NSS_XGMAC_CSR_BASE_ADDR)/MAC_TX_CONFIGURATION_INC + 5;
+#endif
+	}
+	else
+#endif
+	{
+#ifdef MP
+		port_id = (mac_reg - MP_GMAC_BASE_ADDR)/MAC_CONFIGURATION_INC + 1;
+#else
+		port_id = (mac_reg - NSS_MAC_CSR_BASE_ADDR)/MAC_ENABLE_INC + 1;
+#endif
+	}
+
+	return port_id;
+}
+
+sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
+{
+	ssdk_netdev_switch_t *netdev_switch = NULL;
+
+	netdev_switch = ssdk_dts_netdev_switch_find(ssdk_netdev_to_portid(dev));
+	if(!netdev_switch)
+		return SW_NOT_FOUND;
+
+	strlcpy(netdev_switch->switch_netdev_name, dev->name,
+		sizeof(netdev_switch->switch_netdev_name));
+
+	return SW_OK;
+}
+
+static ssize_t ssdk_eth_switch_get(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	a_uint32_t index = 0, len = 0, dev_id = 0;
+	ssdk_netdev_switch_t *netdev_switch = NULL;
+	a_bool_t enable = A_FALSE;
+	a_ulong_t port = 0, switch_pbmp = 0;
+
+	len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+		"{\n \"switches\":\n [\n");
+	for (index = 0; index < SSDK_NETDEV_SWITCH_NUM; index++) {
+		netdev_switch = ssdk_dts_netdev_switch_get(index);
+		if(netdev_switch->switch_connected)
+		{
+			dev_id = netdev_switch->switch_dev_id;
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"   {\n"
+				"     \"name\":\"%s\",\n" \
+				"     \"switch_connected\":\"%s\",\n" \
+				"     \"switch_device_id\":\"%d\",\n" \
+				"     \"switch_cpu_port\":\"%d\",\n",
+				netdev_switch->switch_netdev_name,
+				netdev_switch->switch_connected ? "yes": "no",
+				dev_id,
+				netdev_switch->switch_cpu_port
+			);
+			fal_portvlan_member_get(dev_id, netdev_switch->switch_cpu_port,
+				(fal_pbmp_t*)&netdev_switch->switch_port_bmp);
+			switch_pbmp = netdev_switch->switch_port_bmp;
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"     \"switch_ports\":\"");
+			for_each_set_bit(port, &switch_pbmp, SSDK_MAX_PORT_NUM) {
+				len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"%ld,", port);
+			}
+			len += snprintf(buf + len - 1, (ssize_t)(PAGE_SIZE - len + 1),
+				"\",\n     \"switch_vlan_id\":\"");
+			for_each_set_bit(port, &switch_pbmp, SSDK_MAX_PORT_NUM) {
+				fal_port_default_cvid_get(dev_id, port,
+					&netdev_switch->switch_port_vid[port]);
+				len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len), "%d,",
+					netdev_switch->switch_port_vid[port]);
+			}
+			fal_header_type_get(dev_id, &enable, &netdev_switch->switch_athtag);
+			len += snprintf(buf + len - 1, (ssize_t)(PAGE_SIZE - len + 1),
+				"\",\n     \"switch_athtag\":\"0x%x\"\n   },\n",
+				netdev_switch->switch_athtag);
+			if (len >= PAGE_SIZE)
+				break;
+		}
+	}
+	len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len), " ]\n}\n");
+
+	return len;
+}
+
 static const struct device_attribute ssdk_dev_id_attr =
 	__ATTR(dev_id, 0660, ssdk_dev_id_get, ssdk_dev_id_set);
 static const struct device_attribute ssdk_log_level_attr =
@@ -1353,6 +1461,8 @@ static const struct device_attribute ssdk_ptp_counter_attr =
 static const struct device_attribute ssdk_clk_cfg_attr =
 	__ATTR(clk_cfg, 0660, ssdk_clk_show, ssdk_clk_store);
 #endif
+static const struct device_attribute ssdk_eth_switch_attr =
+	__ATTR(eth_switch, 0660, ssdk_eth_switch_get, NULL);
 
 struct kobject *ssdk_sys = NULL;
 
@@ -1433,8 +1543,17 @@ int ssdk_sysfs_init (void)
 		goto CLEANUP_9;
 	}
 #endif
+	/* create /sys/ssdk/switch_external*/
+	ret = sysfs_create_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
+	if (ret) {
+		printk("Failed to register switch_external file\n");
+		goto CLEANUP_10;
+	}
 
 	return 0;
+
+CLEANUP_10:
+	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 
 #if defined(MHT)
 CLEANUP_9:
@@ -1481,6 +1600,7 @@ void ssdk_sysfs_exit (void)
 	sysfs_remove_file(ssdk_sys, &ssdk_packet_counter_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_log_level_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dev_id_attr.attr);
+	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 	kobject_put(ssdk_sys);
 }
 

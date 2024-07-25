@@ -63,6 +63,8 @@ extern "C" {
 #define PPE_STR "HPPE"
 #endif
 
+#define SSDK_MDIO_I2C                   "ssdk_mdio_i2c"
+
 /*qca808x_start*/
     typedef enum {
         HSL_MDIO = 1,

@@ -367,6 +367,7 @@ _fal_port_txhdr_mode_get (a_uint32_t dev_id, fal_port_t port_id,
   rv = p_api->port_txhdr_mode_get (dev_id, port_id, mode);
   return rv;
 }
+#endif
 static sw_error_t
 _fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
 {
@@ -381,7 +382,6 @@ _fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
   rv = p_api->header_type_get (dev_id, enable, type);
   return rv;
 }
-#endif
 static sw_error_t
 _fal_port_rxhdr_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 			  fal_port_header_mode_t mode)
@@ -1764,6 +1764,18 @@ _fal_port_combo_link_status_get (a_uint32_t dev_id, fal_port_t port_id,
 }
 
 static sw_error_t
+_fal_port_erp_power_mode_get (a_uint32_t dev_id, fal_port_t port_id,
+				fal_port_erp_power_mode_t *power_mode)
+{
+	if (hsl_port_feature_get(dev_id, port_id, PHY_F_ERP_LOW_POWER))
+		*power_mode = FAL_ERP_LOW_POWER;
+	else
+		*power_mode = FAL_ERP_ACTIVE;
+
+	return SW_OK;
+}
+
+static sw_error_t
 _fal_port_erp_power_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 				fal_port_erp_power_mode_t power_mode)
 {
@@ -2136,6 +2148,7 @@ fal_port_txhdr_mode_get (a_uint32_t dev_id, fal_port_t port_id,
   FAL_API_UNLOCK;
   return rv;
 }
+#endif
 /**
  * @brief Get status of Atheros header type value on a particular device.
  * @param[in] dev_id device id
@@ -2153,6 +2166,7 @@ fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
   FAL_API_UNLOCK;
   return rv;
 }
+#ifndef IN_PORTCONTROL_MINI
 /**
  * @brief Get status of txmac on a particular port.
  * @param[in] dev_id device id
@@ -3680,6 +3694,18 @@ fal_port_combo_link_status_get (a_uint32_t dev_id,
 }
 
 sw_error_t
+fal_port_erp_power_mode_get (a_uint32_t dev_id, fal_port_t port_id,
+				fal_port_erp_power_mode_t *power_mode)
+{
+	sw_error_t rv;
+
+	FAL_API_LOCK;
+	rv = _fal_port_erp_power_mode_get (dev_id, port_id, power_mode);
+	FAL_API_UNLOCK;
+	return rv;
+}
+
+sw_error_t
 fal_port_erp_power_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 				fal_port_erp_power_mode_t power_mode)
 {
@@ -3851,5 +3877,6 @@ EXPORT_SYMBOL(fal_port_cnt_get);
 EXPORT_SYMBOL(fal_port_cnt_flush);
 EXPORT_SYMBOL(fal_port_combo_link_status_get);
 EXPORT_SYMBOL(fal_port_erp_power_mode_set);
+EXPORT_SYMBOL(fal_port_erp_power_mode_get);
 EXPORT_SYMBOL(fal_erp_standby_enter);
 EXPORT_SYMBOL(fal_erp_standby_exit);

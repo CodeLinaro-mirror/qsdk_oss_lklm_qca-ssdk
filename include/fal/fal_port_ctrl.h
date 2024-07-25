@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -497,11 +497,9 @@ fal_port_txhdr_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_header_type_set(a_uint32_t dev_id, a_bool_t enable,
 				a_uint32_t type);
-#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 fal_header_type_get(a_uint32_t dev_id, a_bool_t * enable,
 				a_uint32_t * type);
-#endif
 sw_error_t
 fal_port_txmac_status_set(a_uint32_t dev_id, fal_port_t port_id,
 				      a_bool_t enable);
@@ -812,6 +810,9 @@ sw_error_t fal_port_combo_link_status_get (a_uint32_t dev_id,
 sw_error_t
 fal_port_erp_power_mode_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_port_erp_power_mode_t power_mode);
+sw_error_t
+fal_port_erp_power_mode_get(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_erp_power_mode_t *power_mode);
 sw_error_t
 fal_erp_standby_enter(a_uint32_t dev_id, a_uint32_t active_pbmap);
 sw_error_t

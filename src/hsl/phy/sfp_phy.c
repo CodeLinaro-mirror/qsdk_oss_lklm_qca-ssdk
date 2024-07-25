@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -262,22 +262,41 @@ static int sfp_phy_read_abilities(struct phy_device *pdev)
 }
 #endif
 
-static sw_error_t
-sfp_phy_i2c_read(a_uint32_t dev_id, a_uint32_t i2c_slaver, a_uint32_t reg_addr,
-	a_uint16_t *reg_data)
+static a_uint16_t
+_sfp_phy_i2c_read(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t i2c_slaver,
+	a_uint32_t reg_addr)
 {
 	sw_error_t rv = SW_OK;
 	a_uint8_t rx[2] = { 0 };
+	a_uint16_t reg_data = 0;
 
 	rv = qca_i2c_data_get(dev_id, i2c_slaver, reg_addr & 0xff, rx, sizeof(rx));
 
 	if (rv == SW_OK) {
-		*reg_data = (rx[0] << 8) | rx[1];
+		reg_data = (rx[0] << 8) | rx[1];
 	} else {
-		*reg_data = 0xffff;
+		reg_data = 0xffff;
 	}
 
-	return rv;
+	return reg_data;
+}
+
+static sw_error_t
+sfp_phy_i2c_read(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t i2c_slaver,
+	a_uint32_t reg_addr, a_uint16_t *reg_data)
+{
+	struct mii_bus *miibus;
+
+	miibus = ssdk_port_miibus_get(dev_id, port_id);
+	SW_RTN_ON_NULL(miibus);
+
+	if(!strncmp(miibus->name, SSDK_MDIO_I2C, strlen(miibus->name)))
+		*reg_data  = miibus->read(miibus, TO_MDIO_I2C_ADDR(i2c_slaver),
+			reg_addr);
+	else
+		*reg_data = _sfp_phy_i2c_read(dev_id, port_id, i2c_slaver, reg_addr);
+
+	return SW_OK;
 }
 
 static struct phy_driver sfp_phy_driver = {
@@ -326,15 +345,15 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 	bus = ssdk_phy_miibus_get(dev_id, addr);
 	if(!bus)
 		return SW_NOT_FOUND;
+	addr = TO_PHY_ADDR(addr);
 	phydev = phy_device_create(bus, addr, phy_id, false, NULL);
 	if (IS_ERR(phydev) || phydev == NULL) {
 		SSDK_ERROR("Failed to create phy device!\n");
 		return SW_NOT_SUPPORTED;
 	}
+	phydev->priv = priv;
 	/*register phy device*/
 	phy_device_register(phydev);
-
-	phydev->priv = priv;
 #if defined(IN_PHY_I2C_MODE)
 	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
 		if(phydev->drv)
@@ -404,33 +423,34 @@ void sfp_phy_driver_unregister(void)
 	}
 }
 
-int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
+int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	a_uint32_t port_id = 0;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
 	SSDK_INFO("qca probe sfp phy driver succeeded!\n");
 
-	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++) {
-		if (port_bmp & (0x1 << port_id)) {
-			sfp_phy_device_setup(dev_id, port_id, SFP_PHY, priv);
-		}
-	}
+	sfp_phy_device_setup(dev_id, port_id, SFP_PHY, priv);
+
 	return sfp_phy_driver_register();
 }
 
-void sfp_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
+void sfp_phy_exit(a_uint32_t dev_id)
 {
 	a_uint32_t port_id = 0;
+	struct mii_bus *miibus = NULL;
 
 	sfp_phy_driver_unregister();
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++) {
-		if (port_bmp & (0x1 << port_id)) {
-			sfp_phy_device_remove(dev_id, port_id);
+		if (hsl_port_is_sfp(dev_id, port_id)) {
+				sfp_phy_device_remove(dev_id, port_id);
+				miibus = ssdk_port_miibus_get(dev_id, port_id);
+			if (miibus &&
+				!strncmp(miibus->name, SSDK_MDIO_I2C,strlen(miibus->name))) {
+				mdiobus_unregister(miibus);
+			}
 		}
 	}
-
 }
 
 static a_uint16_t sfp_part_num[5] = {0x3330, 0x2d31, 0x3539, 0x392d, 0x3032};
@@ -442,7 +462,7 @@ sfp_phy_part_number_check(a_uint32_t dev_id, a_uint32_t port_id)
 	a_uint16_t reg_data[5] = {0}, i = 0;
 
 	for (i = 0; i < 5; i++) {
-		rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_ADDR,
+		rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_ADDR,
 			SFP_E2PROM_PART_NUM_OFFSET + i *2, &reg_data[i]);
 		if (rv != SW_OK)
 			return A_FALSE;
@@ -458,7 +478,7 @@ sfp_phy_usxgmii_check(a_uint32_t dev_id, a_uint32_t port_id)
 	if (sfp_phy_part_number_check(dev_id, port_id) == A_TRUE) {
 		sw_error_t rv = SW_OK;
 		a_uint16_t reg_data = 0;
-		rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+		rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_EXTEND_ADDR,
 			SFP_EXTEND_USXGMII_OFFSET, &reg_data);
 		if (rv != SW_OK)
 			return A_FALSE;
@@ -509,7 +529,7 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 	}
 	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
 	SW_RTN_ON_ERROR(rv);
-	rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_ADDR, SFP_SPEED_ADDR,
+	rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_ADDR, SFP_SPEED_ADDR,
 		&reg_data);
 	SW_RTN_ON_ERROR(rv);
 	sfp_speed = SFP_TO_SFP_SPEED(reg_data);
@@ -519,7 +539,7 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 		sfp_speed < SFP_SPEED_2500M)
 	{
 		reg_data = 0;
-		rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_ADDR, SFP_TYPE_ADDR,
+		rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_ADDR, SFP_TYPE_ADDR,
 			&reg_data);
 		SW_RTN_ON_ERROR(rv);
 		sfp_type = SFP_TO_SFP_TYPE(reg_data);
@@ -759,7 +779,7 @@ sfp_phy_port_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 		return SW_OK;
 	}
 	if (sfp_phy_part_number_check(dev_id, port_id) == A_TRUE) {
-		rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+		rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_EXTEND_ADDR,
 			SFP_EXTEND_LINK_OFFSET, &reg_data);
 		SW_RTN_ON_ERROR(rv);
 
@@ -772,7 +792,7 @@ sfp_phy_port_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 			} else {
 				phy_status->duplex = FAL_FULL_DUPLEX;
 			}
-			rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+			rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_EXTEND_ADDR,
 					SFP_EXTEND_SPEED_OFFSET, &reg_data);
 			SW_RTN_ON_ERROR(rv);
 			speed_data = (reg_data >> 0x8) & 0x7;
@@ -786,7 +806,7 @@ sfp_phy_port_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 					SSDK_ERROR("usxgmii sfp port speed sync failed!\n");
 					break;
 				}
-				rv = sfp_phy_i2c_read(dev_id, SFP_E2PROM_EXTEND_ADDR,
+				rv = sfp_phy_i2c_read(dev_id, port_id, SFP_E2PROM_EXTEND_ADDR,
 					SFP_EXTEND_SPEED_OFFSET, &reg_data);
 				SW_RTN_ON_ERROR(rv);
 				speed_data = (reg_data >> 0x8) & 0x7;

@@ -252,7 +252,7 @@ enum {
 #define SSDK_LOG_LEVEL_INFO     2
 #define SSDK_LOG_LEVEL_DEBUG    3
 #define SSDK_LOG_LEVEL_DEFAULT  SSDK_LOG_LEVEL_INFO
-#define SSDK_MII_BUS_MAX           2
+#define SSDK_MII_BUS_MAX           4
 #define SSDK_MII_INVALID_BUS_ID    SSDK_MII_BUS_MAX
 #define SSDK_MII_DEFAULT_BUS_ID    0
 
@@ -518,5 +518,6 @@ void ssdk_plat_exit(a_uint32_t dev_id);
 #define qca_mht_mii_read qca_mii_read
 #define qca_mht_mii_write qca_mii_write
 #define qca_mht_mii_update qca_mii_update
+sw_error_t ssdk_netdev_switch_init(struct net_device *dev);
 #endif
 /*qca808x_end*/

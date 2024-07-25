@@ -89,11 +89,7 @@ phy_driver_instance_t ssdk_phy_driver[] =
 	#else
 	{QCA803X_PHY_CHIP, {0}, NULL, NULL, NULL},
 	#endif
-	#ifdef IN_SFP_PHY
-	{SFP_PHY_CHIP, {0}, NULL, sfp_phy_init, sfp_phy_exit},
-	#else
 	{SFP_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
 	#ifdef MP
 	{MPGE_PHY_CHIP, {0}, NULL, mpge_phy_init, NULL},
 	#else

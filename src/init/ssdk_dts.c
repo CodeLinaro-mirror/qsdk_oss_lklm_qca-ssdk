@@ -38,6 +38,13 @@
 #include <linux/of.h>
 #include <linux/of_mdio.h>
 #include <linux/of_platform.h>
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+#include <linux/mdio/mdio-i2c.h>
+#include <linux/i2c.h>
+#endif
+#if defined(IN_SFP_PHY)
+#include "sfp_phy.h"
+#endif
 
 static ssdk_dt_global_t ssdk_dt_global = {0};
 #ifdef HPPE
@@ -270,6 +277,40 @@ struct clk *ssdk_dts_cmnclk_get(a_uint32_t dev_id)
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
 	return cfg->cmnblk_clk;
+}
+
+a_uint32_t ssdk_dts_netdev_switch_alloc(ssdk_netdev_switch_t **netdev_switch)
+{
+	a_uint32_t index = 0;
+
+	for(index = 0; index < SSDK_NETDEV_SWITCH_NUM; index++) {
+		if(ssdk_dt_global.netdev_switch[index].switch_connected == A_FALSE) {
+			*netdev_switch = &ssdk_dt_global.netdev_switch[index];
+			break;
+		}
+	}
+
+	return index;
+}
+
+ssdk_netdev_switch_t *ssdk_dts_netdev_switch_get(a_uint32_t index)
+{
+	if(index >= SSDK_NETDEV_SWITCH_NUM)
+		return NULL;
+
+	return &ssdk_dt_global.netdev_switch[index];
+}
+
+ssdk_netdev_switch_t *ssdk_dts_netdev_switch_find(a_uint32_t port_id)
+{
+	a_uint32_t index = 0;
+
+	for(index = 0; index < SSDK_NETDEV_SWITCH_NUM; index++) {
+		if(ssdk_dt_global.netdev_switch[index].switch_netdev_port == port_id)
+			return &ssdk_dt_global.netdev_switch[index];
+	}
+
+	return NULL;
 }
 
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
@@ -608,12 +649,52 @@ static struct device_node *ssdk_dt_get_mdio_node(a_uint32_t dev_id)
 	return mdio_node;
 }
 
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+static struct mii_bus *ssdk_mdio_i2c_bus_register(a_uint32_t dev_id,
+	struct device_node *port_node)
+{
+	int ret;
+	struct i2c_adapter *i2c_adpt;
+	struct mii_bus *mdio_i2c;
+	struct device_node *i2c_node;
+
+	i2c_node = of_parse_phandle(port_node, "i2c-bus", 0);
+	if(!i2c_node) {
+		SSDK_ERROR("i2c device node was not found\n");
+		return NULL;
+	}
+
+	i2c_adpt = of_find_i2c_adapter_by_node(i2c_node);
+	of_node_put(i2c_node);
+	if(!i2c_adpt) {
+		SSDK_ERROR("i2c adpt was not found\n");
+		return NULL;
+	}
+	mdio_i2c = mdio_i2c_alloc(&(i2c_adpt->dev), i2c_adpt, MDIO_I2C_NONE);
+	if (!mdio_i2c) {
+		SSDK_ERROR("mdio_i2c bus alloc failed\n");
+		return NULL;
+	}
+	mdio_i2c->name = SSDK_MDIO_I2C;
+	snprintf(mdio_i2c->id, MII_BUS_ID_SIZE, SSDK_MDIO_I2C);
+	ret = of_mdiobus_register(mdio_i2c, i2c_node);
+	if (ret < 0) {
+		SSDK_ERROR("mdio_i2c bus register failed\n");
+		mdiobus_free(mdio_i2c);
+		return NULL;
+	}
+
+	return mdio_i2c;
+}
+#endif
+
 static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint32_t dev_id,
 		ssdk_init_cfg *cfg)
 {
 	struct device_node *phy_info_node = NULL, *port_node = NULL;
 	a_uint32_t port_id = 0, phy_addr = 0, forced_speed = 0,
-		forced_duplex = 0, len = 0, miibus_index = 0;
+		forced_duplex = 0, len = 0, miibus_index = 0,  device_id = 0,
+		switch_cpu_port = 0, index = 0;
 	const __be32 *paddr = NULL;
 	a_bool_t phy_c45 = A_FALSE, phy_combo = A_FALSE;
 #if defined(IN_PHY_I2C_MODE)
@@ -622,12 +703,18 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 #endif
 	const char *mac_type = NULL, *media_type = NULL;
 	sw_error_t rv = SW_OK;
-	struct device_node *mdio_node = NULL;
+	struct device_node *mdio_node = NULL, *switch_external_node = NULL,
+		*netdev_switch_node = NULL;
 	int phy_reset_gpio = 0, sfp_rx_los_pin = 0, sfp_tx_dis_pin = 0,
 		sfp_mod_present_pin = 0, sfp_medium_pin = 0;
 	phy_dac_t phy_dac = {0};
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	phy_features_t phy_features = 0;
+	ssdk_netdev_switch_t *netdev_switch = NULL;
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+	struct device_node *i2c_node = NULL;
+	struct mii_bus *mdio_i2c = NULL;
+#endif
 
 	phy_info_node = of_get_child_by_name(switch_node, "qcom,port_phyinfo");
 	if (!phy_info_node) {
@@ -663,6 +750,13 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				hsl_port_phy_reset_gpio_set(dev_id, port_id, SSDK_INVALID_GPIO);
 			}
 		}
+#if IS_ENABLED(CONFIG_MDIO_I2C)
+		i2c_node = of_parse_phandle(port_node, "i2c-bus", 0);
+		if(i2c_node) {
+			mdio_i2c = ssdk_mdio_i2c_bus_register(dev_id, port_node);
+			ssdk_miibus_add(dev_id, mdio_i2c, &miibus_index);
+		}
+#endif
 		phy_addr = 0xff;
 		phy_features = 0;
 		of_property_read_u32(port_node, "phy_address", &phy_addr);
@@ -782,8 +876,31 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					priv->sfp_medium_pin[port_id] = SSDK_INVALID_GPIO;
 				}
 			}
+			/*register PHY device and PHY driver for SFP port*/
+#ifdef IN_SFP_PHY
+			sfp_phy_init(dev_id, port_id);
+#endif
 		}
 		hsl_port_feature_set(dev_id, port_id, phy_features | PHY_F_INIT);
+		/*parse the switch external node*/
+		switch_external_node = of_get_child_by_name(port_node, "switch_external");
+		if(switch_external_node) {
+			index = ssdk_dts_netdev_switch_alloc(&netdev_switch);
+			if(index == SSDK_NETDEV_SWITCH_NUM)
+				return SW_NO_RESOURCE;
+			netdev_switch->switch_netdev_port = port_id;
+			netdev_switch->switch_connected = A_TRUE;
+			netdev_switch_node = of_parse_phandle(switch_external_node, "switch_handle",
+				0);
+			if(netdev_switch_node) {
+				if(!of_property_read_u32(netdev_switch_node, "device_id",
+					&device_id))
+					netdev_switch->switch_dev_id = device_id;
+			}
+			if(!of_property_read_u32(switch_external_node, "switch_cpu_port",
+				&switch_cpu_port))
+				netdev_switch->switch_cpu_port = switch_cpu_port;
+		}
 	}
 
 	return rv;
@@ -905,7 +1022,7 @@ ssdk_dt_parse_interrupt(a_uint32_t dev_id, struct device_node *switch_node)
 	if(intr_gpio_num < 0) {
 		intr_gpio_num = of_get_named_gpio(switch_node, "link-intr-gpio", 0);
 		if(intr_gpio_num < 0) {
-			SSDK_INFO("intr-gpio does not exist\n");
+			SSDK_INFO("link-intr-gpio isn’t defined, enabling link polling\n");
 		}
 	}
 	if(intr_gpio_num > 0) {
