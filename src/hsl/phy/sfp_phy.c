@@ -290,7 +290,7 @@ sfp_phy_i2c_read(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t i2c_slaver,
 	miibus = ssdk_port_miibus_get(dev_id, port_id);
 	SW_RTN_ON_NULL(miibus);
 
-	if(!strncmp(miibus->name, SSDK_MDIO_I2C, strlen(miibus->name)))
+	if(!strncmp(miibus->name, SFP_I2C_BUS, strlen(miibus->name)))
 		*reg_data  = miibus->read(miibus, TO_MDIO_I2C_ADDR(i2c_slaver),
 			reg_addr);
 	else
@@ -449,7 +449,7 @@ void sfp_phy_exit(a_uint32_t dev_id)
 				sfp_phy_device_remove(dev_id, port_id);
 				miibus = ssdk_port_miibus_get(dev_id, port_id);
 			if (miibus &&
-				!strncmp(miibus->name, SSDK_MDIO_I2C,strlen(miibus->name))) {
+				!strncmp(miibus->name, SFP_I2C_BUS, strlen(miibus->name))) {
 				mdiobus_unregister(miibus);
 			}
 		}
