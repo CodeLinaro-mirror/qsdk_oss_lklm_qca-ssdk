@@ -15,7 +15,7 @@ OBJ-SCOMPHY :=
 #                                 IN_ACL
 ###############################################################################
 ifeq (TRUE, $(IN_ACL))
-OBJ-COMMON += src/fal/fal_acl.o src/hsl/hsl_acl.o src/ref/ref_acl.o
+OBJ-COMMON += src/fal/fal_acl.o src/ref/ref_acl.o
 OBJ-ISISC  += src/hsl/isisc/isisc_acl.o src/hsl/isisc/isisc_acl_parse.o \
               src/hsl/isisc/isisc_multicast_acl.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_acl.o src/hsl/hppe/hppe_acl.o
