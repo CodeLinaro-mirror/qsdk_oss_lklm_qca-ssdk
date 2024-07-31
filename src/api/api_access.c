@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2012, 2017-2019, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -25,15 +25,7 @@
 /*qca808x_end*/
 #if (((!defined(USER_MODE)) && defined(KERNEL_MODULE)) || (defined(USER_MODE) && (!defined(KERNEL_MODULE))))
 #ifdef HSL_STANDALONG
-#if defined ATHENA
-#include "athena_api.h"
-#elif defined GARUDA
-#include "garuda_api.h"
-#elif defined SHIVA
-#include "shiva_api.h"
-#elif defined HORUS
-#include "horus_api.h"
-#elif defined ISIS
+#if defined ISIS
 #include "isis_api.h"
 #elif defined ISISC
 #include "isisc_api.h"
@@ -43,15 +35,7 @@
 #include "fal_api.h"
 #endif
 #elif (defined(USER_MODE))
-#if defined ATHENA
-#include "athena_api.h"
-#elif defined GARUDA
-#include "garuda_api.h"
-#elif defined SHIVA
-#include "shiva_api.h"
-#elif defined HORUS
-#include "horus_api.h"
-#elif defined ISIS
+#if defined ISIS
 #include "isis_api.h"
 #elif defined ISISC
 #include "isisc_api.h"

@@ -189,11 +189,7 @@ enum ssdk_port_wrapper_cfg {
     typedef enum
     {
         CHIP_UNSPECIFIED = 0,
-        CHIP_ATHENA,
-        CHIP_GARUDA,
-        CHIP_SHIVA,
-        CHIP_HORUS,
-        CHIP_ISIS,
+        CHIP_ISIS = 5,
         CHIP_ISISC,
         CHIP_DESS,
         CHIP_HPPE,

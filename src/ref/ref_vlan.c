@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2014, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -490,8 +490,6 @@ qca_ar8327_sw_hw_apply(struct switch_dev *dev)
                     portmask[i] |= vp & ~mask;
                 }
             }
-	    if (priv->version == CHIP_SHIVA)
-		    fal_vlan_member_update(priv->device_id,priv->vlan_id[j],vp,0);
         }
 
         /*Hanlde VLAN 0 entry*/
