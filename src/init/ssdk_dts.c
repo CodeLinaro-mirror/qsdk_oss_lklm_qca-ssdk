@@ -675,8 +675,7 @@ static struct mii_bus *ssdk_mdio_i2c_bus_register(a_uint32_t dev_id,
 		SSDK_ERROR("mdio_i2c bus alloc failed\n");
 		return NULL;
 	}
-	mdio_i2c->name = SSDK_MDIO_I2C;
-	snprintf(mdio_i2c->id, MII_BUS_ID_SIZE, SSDK_MDIO_I2C);
+	mdio_i2c->name = SFP_I2C_BUS;
 	ret = of_mdiobus_register(mdio_i2c, i2c_node);
 	if (ret < 0) {
 		SSDK_ERROR("mdio_i2c bus register failed\n");

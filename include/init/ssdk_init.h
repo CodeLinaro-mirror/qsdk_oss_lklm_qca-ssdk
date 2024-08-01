@@ -63,7 +63,7 @@ extern "C" {
 #define PPE_STR "HPPE"
 #endif
 
-#define SSDK_MDIO_I2C                   "ssdk_mdio_i2c"
+#define SFP_I2C_BUS                   "SFP I2C Bus"
 
 /*qca808x_start*/
     typedef enum {
