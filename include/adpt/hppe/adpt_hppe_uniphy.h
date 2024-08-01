@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-*
+ *
  * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -53,8 +53,6 @@ adpt_hppe_port_get_by_uniphy(a_uint32_t dev_id, a_uint32_t uniphy_index,
 a_bool_t
 adpt_hppe_uniphy_usxgmii_port_check(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		a_uint32_t port_id);
-a_uint32_t
-adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

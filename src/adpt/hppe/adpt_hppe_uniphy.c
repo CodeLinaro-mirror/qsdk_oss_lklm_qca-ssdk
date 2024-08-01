@@ -87,18 +87,6 @@ adpt_hppe_uniphy_usxgmii_port_check(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		SSDK_UNIPHY_CHANNEL0));
 }
 
-a_uint32_t
-adpt_ppe_uniphy_number_get(a_uint32_t dev_id)
-{
-#if defined(MPPE) || defined (CPPE)
-	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
-		adpt_ppe_type_get(dev_id) == CPPE_TYPE)
-		return (SSDK_UNIPHY_INSTANCE1+1);
-#endif
-
-	return (SSDK_UNIPHY_INSTANCE2+1);
-}
-
 sw_error_t
 adpt_hppe_uniphy_usxgmii_status_get(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		a_uint32_t port_id, union sr_mii_ctrl_u *sr_mii_ctrl)
@@ -360,12 +348,12 @@ __adpt_mppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	enum unphy_rst_type sys_type;
 
 	if (uniphy_index == SSDK_UNIPHY_INSTANCE0) {
-		port_rx_rst_type = UNIPHY0_PORT1_RX_DISABLE_E;
-		port_tx_rst_type = UNIPHY0_PORT1_TX_DISABLE_E;
+		port_rx_rst_type = UNIPHY_PORT1_RX_RESET_E;
+		port_tx_rst_type = UNIPHY_PORT1_TX_RESET_E;
 		sys_type = UNIPHY0_SYS_RESET_E;
 	} else if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
-		port_rx_rst_type = UNIPHY1_PORT5_RX_DISABLE_E;
-		port_tx_rst_type = UNIPHY1_PORT5_TX_DISABLE_E;
+		port_rx_rst_type = UNIPHY_PORT2_RX_RESET_E;
+		port_tx_rst_type = UNIPHY_PORT2_TX_RESET_E;
 		sys_type = UNIPHY1_SYS_RESET_E;
 	} else {
 		return;

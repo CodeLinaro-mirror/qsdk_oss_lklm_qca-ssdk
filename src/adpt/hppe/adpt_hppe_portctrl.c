@@ -114,6 +114,10 @@ _adpt_hppe_port_phy_connected (a_uint32_t dev_id, fal_port_t port_id)
 	if (dev_id >= SW_MAX_NR_DEV)
 		return A_FALSE;
 
+	/* CPU port and inner port without mac */
+	if (hppe_mac_port_valid_check (dev_id, port_id) == A_FALSE)
+		return A_FALSE;
+
 	/* force port which connect s17c or other device chip*/
 	force_port = hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE);
 	if (force_port == A_TRUE) {
@@ -125,12 +129,8 @@ _adpt_hppe_port_phy_connected (a_uint32_t dev_id, fal_port_t port_id)
 		SSDK_DEBUG("port_id %d is a SFP port!\n", port_id);
 		return A_FALSE;
 	}
-	/* cpu port and other ethernet port */
-	if ((SSDK_PHYSICAL_PORT0 == port_id) || (SSDK_PHYSICAL_PORT7 == port_id)) {
-		return A_FALSE;
-	} else {
-		return hppe_mac_port_valid_check (dev_id, port_id);
-	}
+
+	return A_TRUE;
 }
 
 static sw_error_t
@@ -2055,7 +2055,7 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv = SW_OK;
 	a_uint32_t mode_tmp = PORT_WRAPPER_MAX;
 
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
 	{
 		SSDK_DEBUG ("port %d need not to configure mux and mac type\n",
 			port_id);
@@ -2108,18 +2108,8 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 				if((mode0 == PORT_WRAPPER_SGMII0_RGMII4 ||
 					mode0 == PORT_WRAPPER_SGMII_CHANNEL0))
 				{
-					if(hsl_port_prop_check (dev_id, port_id,
-						HSL_PP_EXCL_CPU))
-					{
-						_adpt_hppe_port_interface_mode_set(dev_id, port_id,
-							PHY_SGMII_BASET);
-					}
-					else
-					{
-						SSDK_ERROR("Port bitmap is incorrect when port 4"
-							"support sgmii for CPPE\n");
-						return SW_NOT_SUPPORTED;
-					}
+					_adpt_hppe_port_interface_mode_set(dev_id, port_id,
+						PHY_SGMII_BASET);
 				}
 				else if(mode0 == PORT_WRAPPER_SGMII_PLUS)
 				{
@@ -4209,10 +4199,19 @@ adpt_hppe_usxgmii_speed_clock_set(
 	a_uint32_t port_id,
 	fal_port_speed_t phy_speed)
 {
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+
 	switch (phy_speed) {
 		case FAL_SPEED_10:
-			ssdk_port_speed_clock_set(dev_id,
-					port_id, USXGMII_SPEED_10M_CLK);
+			if (ppe_type == MPPE_TYPE) {
+				/* 4bit MII width */
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_10M_CLK*2);
+			} else {
+				/* 8bit MII width */
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_10M_CLK);
+			}
 			break;
 		case FAL_SPEED_100:
 			ssdk_port_speed_clock_set(dev_id,
