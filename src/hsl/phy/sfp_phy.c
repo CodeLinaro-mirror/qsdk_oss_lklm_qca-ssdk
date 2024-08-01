@@ -423,11 +423,14 @@ void sfp_phy_driver_unregister(void)
 	}
 }
 
-int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id)
+int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t bus_index)
 {
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
 	SSDK_INFO("qca probe sfp phy driver succeeded!\n");
+
+	hsl_phy_address_init(dev_id, port_id,
+		TO_PHY_ADDR_E(FAL_SFP_PHY_ADDR, bus_index));
 
 	sfp_phy_device_setup(dev_id, port_id, SFP_PHY, priv);
 

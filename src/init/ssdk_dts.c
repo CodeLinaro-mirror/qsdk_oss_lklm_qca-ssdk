@@ -877,7 +877,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 			}
 			/*register PHY device and PHY driver for SFP port*/
 #ifdef IN_SFP_PHY
-			sfp_phy_init(dev_id, port_id);
+			sfp_phy_init(dev_id, port_id, miibus_index);
 #endif
 		}
 		hsl_port_feature_set(dev_id, port_id, phy_features | PHY_F_INIT);
