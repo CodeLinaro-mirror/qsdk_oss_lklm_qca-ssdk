@@ -60,11 +60,8 @@
 #endif
 #endif
 
-#if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
+#if defined(ISIS) ||defined(ISISC)
 #include <f1_phy.h>
-#endif
-#if defined(ATHENA) ||defined(SHIVA) ||defined(HORUS)
-#include <f2_phy.h>
 #endif
 #ifdef IN_MALIBU_PHY
 #include <malibu_phy.h>
@@ -482,8 +479,6 @@ qca_switch_init(a_uint32_t dev_id)
 #endif
 
 			switch (chip_type) {
-				case CHIP_SHIVA:
-					return SW_OK;
 				case CHIP_ISISC:
 				case CHIP_ISIS:
 #if defined(ISISC) || defined(ISIS)
@@ -2180,9 +2175,6 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 	}
 /*qca808x_start*/
 	switch (chip_ver) {
-		case QCA_VER_AR8227:
-			cfg->chip_type = CHIP_SHIVA;
-			break;
 		case QCA_VER_AR8337:
 			cfg->chip_type = CHIP_ISISC;
 			break;
@@ -2449,7 +2441,6 @@ static int __init regi_init(void)
 	a_uint32_t num = 0, dev_id = 0, dev_num = 1;
 	ssdk_init_cfg cfg;
 /*qca808x_end*/
-	garuda_init_spec_cfg chip_spec_cfg;
 /*qca808x_start*/
 	int rv = 0;
 /*qca808x_end*/
@@ -2490,8 +2481,6 @@ static int __init regi_init(void)
 #ifdef IN_AQUANTIA_PHY
 		ssdk_miireg_ioctrl_register();
 #endif
-		memset(&chip_spec_cfg, 0, sizeof(garuda_init_spec_cfg));
-		cfg.chip_spec_cfg = &chip_spec_cfg;
 /*qca808x_start*/
 		rv = ssdk_init(dev_id, &cfg);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
@@ -2544,10 +2533,6 @@ static int __init regi_init(void)
 #endif
 				break;
 
-			case CHIP_SHIVA:
-			case CHIP_ATHENA:
-			case CHIP_GARUDA:
-			case CHIP_HORUS:
 			case CHIP_UNSPECIFIED:
 				break;
 			case CHIP_SCOMPHY:

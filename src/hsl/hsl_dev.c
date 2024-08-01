@@ -22,18 +22,6 @@
 #include "hsl_lock.h"
 #include "sd.h"
 /*qca808x_end*/
-#if defined ATHENA
-#include "athena_init.h"
-#endif
-#if defined GARUDA
-#include "garuda_init.h"
-#endif
-#if defined SHIVA
-#include "shiva_init.h"
-#endif
-#if defined HORUS
-#include "horus_init.h"
-#endif
 #if defined ISIS
 #include "isis_init.h"
 #endif
@@ -96,15 +84,7 @@ static inline sw_error_t hsl_set_current_chip_type(a_uint32_t dev_id, ssdk_chip_
 	if (SSDK_CURRENT_CHIP_TYPE[dev_id] == CHIP_UNSPECIFIED)
 	{
 		/*qca808x_end*/
-#if defined(ATHENA)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_ATHENA;
-#elif defined(GARUDA)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_GARUDA;
-#elif defined(SHIVA)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_SHIVA;
-#elif defined(HORUS)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_HORUS;
-#elif defined(ISIS)
+#if defined(ISIS)
 		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_ISIS;
 #elif defined(ISISC)
 		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_ISISC;
@@ -212,30 +192,6 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
     switch (cfg->chip_type)
     {
 /*qca808x_end*/
-        case CHIP_ATHENA:
-#if defined ATHENA
-            rv = athena_init(dev_id, cfg);
-#endif
-            break;
-
-        case CHIP_GARUDA:
-#if defined GARUDA
-            rv = garuda_init(dev_id, cfg);
-#endif
-            break;
-
-        case CHIP_SHIVA:
-#if defined SHIVA
-            rv = shiva_init(dev_id, cfg);
-#endif
-            break;
-
-        case CHIP_HORUS:
-#if defined HORUS
-            rv = horus_init(dev_id, cfg);
-#endif
-            break;
-
         case CHIP_ISIS:
 #if defined ISIS
             rv = isis_init(dev_id, cfg);
@@ -275,15 +231,7 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 	    break;
 /*qca808x_end*/
         case CHIP_UNSPECIFIED:
-#if defined ATHENA
-            rv = athena_init(dev_id, cfg);
-#elif defined GARUDA
-            rv = garuda_init(dev_id, cfg);
-#elif defined SHIVA
-            rv = shiva_init(dev_id, cfg);
-#elif defined HORUS
-            rv = horus_init(dev_id, cfg);
-#elif defined ISIS
+#if defined ISIS
             rv = isis_init(dev_id, cfg);
 #elif defined ISISC
             rv = isisc_init(dev_id, cfg);
@@ -328,22 +276,6 @@ hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
 
     switch (dev_ssdk_cfg[dev_id]->chip_type)
     {
-        case CHIP_ATHENA:
-            aos_mem_copy(ssdk_cfg->chip_type, "athena", sizeof("athena"));
-            break;
-
-        case CHIP_GARUDA:
-            aos_mem_copy(ssdk_cfg->chip_type, "garuda", sizeof("garuda"));
-            break;
-
-        case CHIP_SHIVA:
-            aos_mem_copy(ssdk_cfg->chip_type, "shiva", sizeof("shiva"));
-            break;
-
-        case CHIP_HORUS:
-            aos_mem_copy(ssdk_cfg->chip_type, "horus", sizeof("horus"));
-            break;
-
         case CHIP_ISIS:
             aos_mem_copy(ssdk_cfg->chip_type, "isis", sizeof("isis"));
             break;
@@ -382,15 +314,7 @@ hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
             break;
 
         case CHIP_UNSPECIFIED:
-#if defined ATHENA
-            aos_mem_copy(ssdk_cfg->chip_type, "athena", sizeof("athena"));
-#elif defined GARUDA
-            aos_mem_copy(ssdk_cfg->chip_type, "garuda", sizeof("garuda"));
-#elif defined SHIVA
-            aos_mem_copy(ssdk_cfg->chip_type, "shiva", sizeof("shiva"));
-#elif defined HORUS
-            aos_mem_copy(ssdk_cfg->chip_type, "horus", sizeof("horus"));
-#elif defined ISIS
+#if defined ISIS
             aos_mem_copy(ssdk_cfg->chip_type, "isis", sizeof("isis"));
 #elif defined ISISC
             aos_mem_copy(ssdk_cfg->chip_type, "isisc", sizeof("isisc"));
