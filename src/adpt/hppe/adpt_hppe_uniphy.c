@@ -347,17 +347,28 @@ __adpt_mppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	enum unphy_rst_type port_rx_rst_type, port_tx_rst_type;
 	enum unphy_rst_type sys_type;
 
-	if (uniphy_index == SSDK_UNIPHY_INSTANCE0) {
+	switch (uniphy_index) {
+	case SSDK_UNIPHY_INSTANCE0:
 		port_rx_rst_type = UNIPHY_PORT1_RX_RESET_E;
 		port_tx_rst_type = UNIPHY_PORT1_TX_RESET_E;
 		sys_type = UNIPHY0_SYS_RESET_E;
-	} else if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
+		break;
+	case SSDK_UNIPHY_INSTANCE1:
 		port_rx_rst_type = UNIPHY_PORT2_RX_RESET_E;
 		port_tx_rst_type = UNIPHY_PORT2_TX_RESET_E;
 		sys_type = UNIPHY1_SYS_RESET_E;
-	} else {
-		return;
+		break;
+#if defined(MRPPE)
+	case SSDK_UNIPHY_INSTANCE2:
+		port_rx_rst_type = UNIPHY_PORT3_RX_RESET_E;
+		port_tx_rst_type = UNIPHY_PORT3_TX_RESET_E;
+		sys_type = UNIPHY2_SYS_RESET_E;
+		break;
+#endif
+	default:
+		break;
 	}
+
 	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_ASSERT);
 	ssdk_uniphy_reset(dev_id, port_rx_rst_type, SSDK_RESET_ASSERT);
 	ssdk_uniphy_reset(dev_id, port_tx_rst_type, SSDK_RESET_ASSERT);
@@ -374,27 +385,31 @@ void
 __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 		a_uint32_t uniphy_index)
 {
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
-		if (adpt_chip_revision_get(dev_id) == MPPE_REVISION) {
-#if defined(MPPE)
-			__adpt_mppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-#endif
-		} else {
-#if defined(APPE)
-			__adpt_appe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-#endif
-		}
-	} else if (adpt_chip_type_get(dev_id) == CHIP_HPPE) {
-		if (adpt_chip_revision_get(dev_id) == CPPE_REVISION) {
-#if defined(CPPE)
-			__adpt_cppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-#endif
-		} else {
-			__adpt_hppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-		}
-	}
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
 
-	return;
+	switch (ppe_type) {
+	case HPPE_TYPE:
+		__adpt_hppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
+		break;
+#if defined(CPPE)
+	case CPPE_TYPE:
+		__adpt_cppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
+		break;
+#endif
+#if defined(APPE)
+	case APPE_TYPE:
+		__adpt_appe_gcc_uniphy_software_reset(dev_id, uniphy_index);
+		break;
+#endif
+#if defined(MPPE)
+	case MPPE_TYPE:
+	case MRPPE_TYPE:
+		__adpt_mppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
+		break;
+#endif
+	default:
+		break;
+	}
 }
 
 static sw_error_t
