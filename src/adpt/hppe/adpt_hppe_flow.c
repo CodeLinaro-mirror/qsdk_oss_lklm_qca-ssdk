@@ -317,7 +317,7 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 
 			/* qos is used as the middle 8 bits of flow cookie. */
 			flow_qos->qos = 0;
-			flow_qos->qos_valid = false;
+			flow_qos->qos_valid = A_FALSE;
 		}
 		break;
 #elif defined(MPPE)
