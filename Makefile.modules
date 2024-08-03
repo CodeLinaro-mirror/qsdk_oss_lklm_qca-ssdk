@@ -2,6 +2,7 @@
 # 			Add All Local Flags
 ####################################################################
 ccflags-y += $(LNX_LOCAL_CFLAGS)
+ccflags-y += -Wall -Werror
 
 ####################################################################
 # 			Build Object List
