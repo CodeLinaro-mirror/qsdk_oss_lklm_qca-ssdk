@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -792,4 +792,54 @@ mht_interface_mac_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 	rv = mht_uniphy_sgmii_function_reset(dev_id, uniphy_index);
 
 	return rv;
+}
+
+sw_error_t
+mht_interface_phy_mode_set(a_uint32_t dev_id,
+	fal_port_interface_mode_t interface_mode)
+{
+	sw_error_t rv = SW_OK;
+	fal_mac_config_t config = {0};
+
+	if(interface_mode == PHY_SGMII_BASET)
+		config.mac_mode = FAL_MAC_MODE_SGMII;
+	else if(interface_mode == PORT_SGMII_PLUS)
+		config.mac_mode = FAL_MAC_MODE_SGMII_PLUS;
+	else
+		return SW_NOT_SUPPORTED;
+	config.config.sgmii.clock_mode = FAL_INTERFACE_CLOCK_PHY_MODE;
+	config.config.sgmii.auto_neg = A_TRUE;
+
+	rv = mht_interface_sgmii_mode_set(dev_id, MHT_UNIPHY_SGMII_0,
+		SSDK_PHYSICAL_PORT4, &config);
+
+	return rv;
+}
+
+sw_error_t
+mht_interface_ops_init(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	struct phy_device *phydev = NULL;
+	struct mht_shared_priv *shared_priv;
+
+	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
+	SW_RTN_ON_ERROR(rv);
+
+	if (!phydev->shared) {
+		SSDK_ERROR("phydev->shared is null\n");
+		return SW_BAD_PTR;
+	}
+
+	if (!phydev->shared->priv) {
+		SSDK_ERROR("phydev->shared->priv is null\n");
+		return SW_BAD_PTR;
+	}
+
+	shared_priv = phydev->shared->priv;
+
+	shared_priv->phy_clk_init = ssdk_mht_gcc_clock_init;
+	shared_priv->phy_qusgmii_mode_set = mht_interface_uqxgmii_mode_set;
+
+	return SW_OK;
 }

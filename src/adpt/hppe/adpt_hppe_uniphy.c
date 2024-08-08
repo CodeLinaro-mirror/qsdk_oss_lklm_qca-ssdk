@@ -38,7 +38,9 @@
 #include "adpt_cppe_portctrl.h"
 #endif
 #include <linux/mdio-bitbang.h>
-
+#ifdef MHT
+#include "mht_interface_ctrl.h"
+#endif
 extern void adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id,
 				a_uint32_t port_id, fal_port_speed_t phy_speed);
 
@@ -470,7 +472,6 @@ static sw_error_t
 __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_uint32_t mode)
 {
-	sw_error_t rv = SW_OK;
 	a_uint32_t i = 0;
 
 	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
@@ -603,12 +604,6 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 
 	/* enable uniphy eee transparent mode*/
 	__adpt_hppe_uniphy_uqxgmii_eee_set(dev_id, uniphy_index);
-
-	if(mode == PORT_WRAPPER_UQXGMII)
-	{
-		rv = hsl_port_phy_mode_set(dev_id, SSDK_PHYSICAL_PORT1, PORT_UQXGMII);
-		SW_RTN_ON_ERROR (rv);
-	}
 
 	return SW_OK;
 }
@@ -1125,8 +1120,15 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 #ifdef MHT
 	if(hsl_port_phyid_get(dev_id, ssdk_port) == QCA8084_PHY)
 	{
-		rv = hsl_port_phy_mode_set(dev_id, ssdk_port, PHY_SGMII_BASET);
-		SW_RTN_ON_ERROR (rv);
+		static a_bool_t init = A_FALSE;
+
+		if (init == A_FALSE) {
+			/*Below SGMII is only configured when ssdk init,
+			and would not be configured in polling*/
+			rv = mht_interface_phy_mode_set(dev_id, PHY_SGMII_BASET);
+			init = A_TRUE;
+			SW_RTN_ON_ERROR (rv);
+		}
 	}
 #endif
 
