@@ -804,7 +804,7 @@ _isisc_port_vlan_propagation_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 static sw_error_t
 _isisc_vlan_trans_write(a_uint32_t dev_id, a_uint32_t entry_idx, fal_pbmp_t pbmp,
-                       fal_vlan_trans_entry_t entry)
+                       fal_vlan_trans_entry_t *entry)
 {
     sw_error_t rv;
     a_uint32_t i, addr, table[2] = { 0 };
@@ -813,31 +813,31 @@ _isisc_vlan_trans_write(a_uint32_t dev_id, a_uint32_t entry_idx, fal_pbmp_t pbmp
 
     if (0 != pbmp)
     {
-        table[0] = entry.o_vid & 0xfff;
-        table[0] |= ((entry.s_vid & 0xfff) << 12);
-        table[0] |= ((entry.c_vid & 0xff) << 24);
-        table[1] = (entry.c_vid >> 8) & 0xf;
+        table[0] = entry->o_vid & 0xfff;
+        table[0] |= ((entry->s_vid & 0xfff) << 12);
+        table[0] |= ((entry->c_vid & 0xff) << 24);
+        table[1] = (entry->c_vid >> 8) & 0xf;
 
-        if (A_TRUE == entry.bi_dir)
+        if (A_TRUE == entry->bi_dir)
         {
             table[1] |= (0x3 << 4);
         }
 
-        if (A_TRUE == entry.forward_dir)
+        if (A_TRUE == entry->forward_dir)
         {
             table[1] |= (0x1 << 4);
         }
 
-        if (A_TRUE == entry.reverse_dir)
+        if (A_TRUE == entry->reverse_dir)
         {
             table[1] |= (0x1 << 5);
         }
 
         table[1] |= (pbmp << 6);
-        table[1] |= ((0x1UL & entry.o_vid_is_cvid) << 13);
-        table[1] |= ((0x1UL & entry.s_vid_enable) << 14);
-        table[1] |= ((0x1UL & entry.c_vid_enable) << 15);
-        table[1] |= ((0x1UL & entry.one_2_one_vlan) << 16);
+        table[1] |= ((0x1UL & entry->o_vid_is_cvid) << 13);
+        table[1] |= ((0x1UL & entry->s_vid_enable) << 14);
+        table[1] |= ((0x1UL & entry->c_vid_enable) << 15);
+        table[1] |= ((0x1UL & entry->one_2_one_vlan) << 16);
     }
 
     /* set vlan trans table */
@@ -1046,7 +1046,7 @@ _isisc_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id,
         return SW_NO_RESOURCE;
     }
 
-    return _isisc_vlan_trans_write(dev_id, entry_idx, t_pbmp, local);
+    return _isisc_vlan_trans_write(dev_id, entry_idx, t_pbmp, &local);
 }
 
 #ifndef IN_PORTVLAN_MINI
@@ -1102,7 +1102,7 @@ _isisc_port_vlan_trans_del(a_uint32_t dev_id, fal_port_t port_id,
         return SW_NOT_FOUND;
     }
 
-    return _isisc_vlan_trans_write(dev_id, entry_idx, t_pbmp, local);
+    return _isisc_vlan_trans_write(dev_id, entry_idx, t_pbmp, &local);
 }
 
 static sw_error_t
@@ -2223,7 +2223,7 @@ isisc_portvlan_init(a_uint32_t dev_id)
 
     for (i = 0; i < ISISC_MAX_VLAN_TRANS; i++)
     {
-        rv = _isisc_vlan_trans_write(dev_id, i, 0, entry_init);
+        rv = _isisc_vlan_trans_write(dev_id, i, 0, &entry_init);
         SW_RTN_ON_ERROR(rv);
     }
 
