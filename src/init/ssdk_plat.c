@@ -1740,8 +1740,9 @@ int ssdk_uniphy_valid_check(a_uint32_t dev_id,
 		return A_TRUE;
 
 	/* TODO: Add sku check for MRPPE */
-	if (adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
-		return A_TRUE;
+#if defined(MRPPE)
+	return A_TRUE;
+#endif
 
 	if (index > SSDK_UNIPHY_INSTANCE2)
 		return A_FALSE;
