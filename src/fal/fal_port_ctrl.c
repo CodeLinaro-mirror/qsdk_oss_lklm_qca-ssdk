@@ -231,7 +231,7 @@ sw_error_t fal_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
     EXPORT_SYMBOL(fal_port_power_off);
 
 sw_error_t fal_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_power_on, dev_id, port_id)
+    DEFINE_FAL_PORT_PHY_FUNC(power_on, dev_id, port_id)
     EXPORT_SYMBOL(fal_port_power_on);
 
 sw_error_t fal_port_combo_link_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_combo_link_status_t * status)
@@ -340,11 +340,11 @@ sw_error_t fal_port_powersave_get (a_uint32_t dev_id, fal_port_t port_id, a_bool
     EXPORT_SYMBOL(fal_port_powersave_get);
 
 sw_error_t fal_port_hibernate_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_hibernate_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(hibernation_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_hibernate_set);
 
 sw_error_t fal_port_hibernate_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_hibernate_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(hibernation_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_hibernate_get);
 
 sw_error_t fal_port_combo_medium_status_get (a_uint32_t dev_id, a_uint32_t port_id, fal_port_medium_t * medium)

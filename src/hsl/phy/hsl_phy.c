@@ -253,8 +253,8 @@ phy_type_t hsl_phytype_get_by_phyid(a_uint32_t dev_id, a_uint32_t phy_id)
 		case F2V1_PHY:
 			phytype = F2_PHY_CHIP;
 			break;
-		case MALIBU2PORT_PHY:
-		case MALIBU5PORT_PHY:
+		case QCA8072_PHY:
+		case QCA8075_PHY:
 			phytype = MALIBU_PHY_CHIP;
 			break;
 		case AQUANTIA_PHY_107:
@@ -2259,7 +2259,7 @@ hsl_port_phy_magic_frame_mac_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_hibernate_set(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_hibernation_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
@@ -2284,7 +2284,7 @@ hsl_port_phy_hibernate_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_hibernate_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
+hsl_port_phy_hibernation_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -3436,5 +3436,81 @@ hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
 
 	return rv;
+}
+
+sw_error_t
+hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
+	struct nss_phy_device *nss_phydev, struct nss_phy_ops  **nss_phy_ops)
+{
+	struct phy_device *phydev = NULL;
+
+	SW_RTN_ON_ERROR(hsl_port_phydev_get(dev_id, port_id, &phydev));
+
+	SW_RTN_ON_NULL(nss_phydev);
+	nss_phydev->phydev = phydev;
+	*nss_phy_ops = (struct nss_phy_ops*)(phydev->drv->driver_data);
+	SW_RTN_ON_NULL(*nss_phy_ops);
+
+	return SW_OK;
+}
+
+static int
+hsl_port_phy_std_duplex_set(struct phy_device *phydev, a_uint32_t duplex)
+{
+	int ret;
+
+	mutex_lock(&phydev->lock);
+	phydev->autoneg = A_FALSE;
+	phydev->duplex = duplex;
+	ret = phy_config_aneg(phydev);
+	mutex_lock(&phydev->lock);
+
+	return ret;
+}
+
+static int
+hsl_port_phy_std_duplex_get(struct phy_device *phydev, a_uint32_t *duplex)
+{
+	if (phydev->link)
+		*duplex = (phydev->duplex ? FAL_FULL_DUPLEX : FAL_HALF_DUPLEX);
+
+	return 0;
+}
+
+static int
+hsl_port_phy_std_power_on(struct phy_device *phydev)
+{
+	return phy_resume(phydev);
+}
+
+static int
+hsl_port_phy_std_power_off(struct phy_device *phydev)
+{
+	return phy_suspend(phydev);
+}
+
+struct hsl_phy_api hsl_phy_api_table[] =
+{
+	{hibernation_set, NULL},
+	{hibernation_get, NULL},
+	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
+	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
+	{power_on, (void*)hsl_port_phy_std_power_on},
+	{power_off, (void*)hsl_port_phy_std_power_off},
+};
+
+struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id)
+{
+	int index =0;
+
+	for (index = 0; index < api_max; index++) {
+		if (hsl_phy_api_table[index].id == id)
+			return &hsl_phy_api_table[index];
+	}
+
+	if (index == api_max)
+		SSDK_ERROR("api was not found\n");
+
+	return NULL;
 }
 /*qca808x_end*/

@@ -2462,6 +2462,15 @@ adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
 			return rv; \
 		}
 
+#define DEFINE_FAL_PORT_PHY_FUNC(func, dev_id, port_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			FAL_API_LOCK; \
+			HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
 #define DEFINE_FAL_FUNC_ADPT_HSL_ENDFUNC(func, hsl_func, end_func, dev_id, ...) \
 		{ \
 			sw_error_t rv = SW_NOT_SUPPORTED; \
