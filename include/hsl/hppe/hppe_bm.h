@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -20,27 +22,40 @@
 #ifndef _HPPE_BM_H_
 #define _HPPE_BM_H_
 
-#define DEQ_FIFO_CFG_MAX_ENTRY	9
-#define PORT_FC_MODE_MAX_ENTRY	15
-#define PORT_FC_STATUS_MAX_ENTRY	15
-#define PORT_GROUP_ID_MAX_ENTRY	15
-#define PORT_CNT_MAX_ENTRY	15
-#define PORT_REACTED_CNT_MAX_ENTRY	15
-#define SHARED_GROUP_CNT_MAX_ENTRY	4
-#define SHARED_GROUP_CFG_MAX_ENTRY	4
-#define PORT_PROFILE_TH_CFG_MAX_ENTRY	15
-#define REACT_PROFILE_TH_CFG_MAX_ENTRY	15
-#define GRP_PROFILE_TH_CFG_MAX_ENTRY	4
-#define PORT_OUT_PROFILE_CNT_MAX_ENTRY	15
-#define PORT_IN_PROFILE_CNT_MAX_ENTRY	15
-#define REACT_OUT_PROFILE_CNT_MAX_ENTRY	15
-#define REACT_IN_PROFILE_CNT_MAX_ENTRY	15
-#define GRP_OUT_PROFILE_CNT_MAX_ENTRY	4
-#define GRP_IN_PROFILE_CNT_MAX_ENTRY	4
-#define PORT_FC_CFG_MAX_ENTRY	15
-#define LLM_MAX_ENTRY	2048
-#define RCM_MAX_ENTRY	2048
-#define DM_MAX_ENTRY	8192
+#if defined(MRPPE)
+#define BM_PORT_MAX		19
+#define BM_PHYSIC_PORT_MAX	4
+#elif defined(MPPE)
+#define BM_PORT_MAX		10
+#define BM_PHYSIC_PORT_MAX	3
+#else
+#define BM_PORT_MAX		15
+#define BM_PHYSIC_PORT_MAX	9
+#endif
+
+#define BM_GRP_MAX		4
+
+#define DEQ_FIFO_CFG_MAX_ENTRY		BM_PHYSIC_PORT_MAX
+#define PORT_FC_MODE_MAX_ENTRY		BM_PORT_MAX
+#define PORT_FC_STATUS_MAX_ENTRY	BM_PORT_MAX
+#define PORT_GROUP_ID_MAX_ENTRY		BM_PORT_MAX
+#define PORT_CNT_MAX_ENTRY		BM_PORT_MAX
+#define PORT_REACTED_CNT_MAX_ENTRY	BM_PORT_MAX
+#define SHARED_GROUP_CNT_MAX_ENTRY	BM_GRP_MAX
+#define SHARED_GROUP_CFG_MAX_ENTRY	BM_GRP_MAX
+#define PORT_PROFILE_TH_CFG_MAX_ENTRY	BM_PORT_MAX
+#define REACT_PROFILE_TH_CFG_MAX_ENTRY	BM_PORT_MAX
+#define GRP_PROFILE_TH_CFG_MAX_ENTRY	BM_GRP_MAX
+#define PORT_OUT_PROFILE_CNT_MAX_ENTRY	BM_PORT_MAX
+#define PORT_IN_PROFILE_CNT_MAX_ENTRY	BM_PORT_MAX
+#define REACT_OUT_PROFILE_CNT_MAX_ENTRY	BM_PORT_MAX
+#define REACT_IN_PROFILE_CNT_MAX_ENTRY	BM_PORT_MAX
+#define GRP_OUT_PROFILE_CNT_MAX_ENTRY	BM_GRP_MAX
+#define GRP_IN_PROFILE_CNT_MAX_ENTRY	BM_GRP_MAX
+#define PORT_FC_CFG_MAX_ENTRY		BM_PORT_MAX
+#define LLM_MAX_ENTRY			2048
+#define RCM_MAX_ENTRY			2048
+#define DM_MAX_ENTRY			8192
 
 
 sw_error_t
