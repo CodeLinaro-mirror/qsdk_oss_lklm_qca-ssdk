@@ -97,7 +97,7 @@
 #define XGMAC_PWE_ENABLE	0x1
 #define XGMAC_WTO_LIMIT_13K	0xb
 
-#define PHY_PORT_TO_BM_PORT(port)	(port + 7)
+#define PHY_PORT_TO_BM_PORT(port)	(PPE_BM_PHY_PORT_OFFSET + port - 1)
 #define GMAC_IPG_CHECK          0xc
 #define XGMAC_LPI_ENTRY_TIMER   0x2c
 
