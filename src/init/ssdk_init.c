@@ -1913,6 +1913,7 @@ static const struct of_device_id ssdk_of_mtable[] = {
 	{.compatible = "qcom,ess-switch-ipq807x" },
 	{.compatible = "qcom,ess-switch-ipq95xx" },
 	{.compatible = "qcom,ess-switch-ipq53xx" },
+	{.compatible = "qcom,ess-switch-ipq54xx" },
 	{.compatible = "qcom,ess-instance" },
 	{}
 };
