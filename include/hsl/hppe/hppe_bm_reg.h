@@ -265,10 +265,11 @@ union port_fc_status_u {
 
 /*[register] PORT_GROUP_ID*/
 #define PORT_GROUP_ID
-#define PORT_GROUP_ID_ADDRESS 0x180
 #if defined(MRPPE)
+#define PORT_GROUP_ID_ADDRESS 0x1c0
 #define PORT_GROUP_ID_NUM     19
 #else
+#define PORT_GROUP_ID_ADDRESS 0x180
 #define PORT_GROUP_ID_NUM     15
 #endif
 #define PORT_GROUP_ID_INC     0x4
@@ -292,10 +293,11 @@ union port_group_id_u {
 
 /*[register] PORT_CNT*/
 #define PORT_CNT
-#define PORT_CNT_ADDRESS 0x1c0
 #if defined(MRPPE)
 #define PORT_CNT_NUM     19
+#define PORT_CNT_ADDRESS 0x220
 #else
+#define PORT_CNT_ADDRESS 0x1c0
 #define PORT_CNT_NUM     15
 #endif
 #define PORT_CNT_INC     0x4
@@ -319,10 +321,11 @@ union port_cnt_u {
 
 /*[register] PORT_REACTED_CNT*/
 #define PORT_REACTED_CNT
-#define PORT_REACTED_CNT_ADDRESS 0x240
 #if defined(MRPPE)
+#define PORT_REACTED_CNT_ADDRESS 0x280
 #define PORT_REACTED_CNT_NUM     19
 #else
+#define PORT_REACTED_CNT_ADDRESS 0x240
 #define PORT_REACTED_CNT_NUM     15
 #endif
 #define PORT_REACTED_CNT_INC     0x4
@@ -369,7 +372,11 @@ union shared_group_cnt_u {
 
 /*[register] SHARED_GROUP_CFG*/
 #define SHARED_GROUP_CFG
+#if defined(MRPPE)
+#define SHARED_GROUP_CFG_ADDRESS 0x2f0
+#else
 #define SHARED_GROUP_CFG_ADDRESS 0x290
+#endif
 #define SHARED_GROUP_CFG_NUM     4
 #define SHARED_GROUP_CFG_INC     0x4
 #define SHARED_GROUP_CFG_TYPE    REG_TYPE_RW
