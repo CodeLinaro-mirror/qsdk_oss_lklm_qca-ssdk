@@ -835,13 +835,21 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 		switch (chip_type) {
 			case HPPE_TYPE:
 			case APPE_TYPE:
-			case MRPPE_TYPE:
 				if (i < PPE_BM_PHY_PORT_OFFSET) {
 					prealloc_buf = 0;
 					react_buf = 100;
 				} else if (i == PPE_BM_PORT_NUM-1) {
 					prealloc_buf = 0;
 					react_buf = 40;
+				} else {
+					prealloc_buf = 0;
+					react_buf = 128;
+				}
+				break;
+			case MRPPE_TYPE:
+				if (i < PPE_BM_PHY_PORT_OFFSET) {
+					prealloc_buf = 0;
+					react_buf = 100;
 				} else {
 					prealloc_buf = 0;
 					react_buf = 128;
