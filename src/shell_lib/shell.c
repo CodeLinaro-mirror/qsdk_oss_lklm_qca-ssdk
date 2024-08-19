@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,8 +21,8 @@
 #include "shell_config.h"
 #include "api_access.h"
 
-unsigned long ioctl_buf[IOCTL_BUF_SIZE];
-unsigned long ioctl_argp[CMDSTR_ARGS_MAX*4];
+unsigned long ioctl_buf[IOCTL_BUF_SIZE/4];
+unsigned long ioctl_argp[CMDSTR_ARGS_MAX];
 
 void
 cmd_print_error(sw_error_t rtn)
@@ -443,7 +443,7 @@ cmd_parse(char *cmd_str, int *cmd_index, int *cmd_index_sub)
     if (cmd_str == NULL)
         return NULL;
 
-    memset(arg_val, 0, CMDSTR_ARGS_MAX * sizeof (unsigned long));
+    memset(arg_val, 0, CMDSTR_ARGS_MAX);
 
     /* split string into array */
     if ((tmp_str[cmd_nr] = (void *) strsep(&cmd_str, " ")) == NULL)
