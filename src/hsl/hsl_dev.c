@@ -119,14 +119,6 @@ hsl_dev_ptr_get(a_uint32_t dev_id)
     return &dev_table[dev_id];
 }
 /*qca808x_end*/
-hsl_acl_func_t *
-hsl_acl_ptr_get(a_uint32_t dev_id)
-{
-    if (dev_id >= SW_MAX_NR_DEV)
-        return NULL;
-
-    return &(dev_table[dev_id].acl_func);
-}
 
 a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id)
 {

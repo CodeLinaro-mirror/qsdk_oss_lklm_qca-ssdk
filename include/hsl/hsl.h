@@ -25,24 +25,6 @@ extern "C" {
 
 #include "ssdk_init.h"
 #include "ssdk_plat.h"
-    typedef sw_error_t
-    (*hsl_acl_rule_copy) (a_uint32_t dev_id, a_uint32_t src_addr,
-                          a_uint32_t dest_addr, a_uint32_t size);
-
-    typedef sw_error_t
-    (*hsl_acl_rule_invalid) (a_uint32_t dev_id, a_uint32_t addr,
-                             a_uint32_t size);
-
-    typedef sw_error_t
-    (*hsl_acl_addr_update) (a_uint32_t dev_id, a_uint32_t old_addr,
-                            a_uint32_t new_addr, a_uint32_t info);
-
-    typedef struct
-    {
-        hsl_acl_rule_copy     acl_rule_copy;
-        hsl_acl_rule_invalid  acl_rule_invalid;
-        hsl_acl_addr_update   acl_addr_update;
-    } hsl_acl_func_t;
 /*qca808x_end*/
 
 #if 1
