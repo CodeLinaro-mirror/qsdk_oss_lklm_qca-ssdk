@@ -55,6 +55,10 @@
 
 #define FLOW_TREE_ID_24BIT		GENMASK_ULL(23, 0)
 
+#if defined(MRPPE)
+static DECLARE_BITMAP(flow_cookie_48bit, EG_FLOW_TREE_MAP_TBL_NUM);
+#endif
+
 sw_error_t
 adpt_hppe_ip_flow_host_data_rd_add(a_uint32_t dev_id, fal_host_entry_t * host_entry)
 
@@ -305,8 +309,8 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 			eg_treemap->bf1.flow_cookie_high_0 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
 			eg_treemap->bf1.flow_cookie_high_1 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
 
-			/* wifi qos is invalid when 48 bit flow cookie used. */
-			eg_treemap->bf1.wifi_qos_flag = false;
+			/* wifi qos is valid only when the flag is true. */
+			eg_treemap->bf1.wifi_qos_flag = true;
 			eg_treemap->bf1.type = 1;
 		} else {
 			tmp = FIELD_PREP(FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie_low);
@@ -315,9 +319,7 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_high_1);
 			memcpy(flow_qos->cookie_48b, &tmp, sizeof(flow_qos->cookie_48b));
 
-			/* qos is used as the middle 8 bits of flow cookie. */
-			flow_qos->qos = 0;
-			flow_qos->qos_valid = A_FALSE;
+			/* qos & qos_valid is already assigned before this function called. */
 		}
 		break;
 #elif defined(MPPE)
@@ -360,9 +362,18 @@ adpt_hppe_flow_qos_set(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_qos_t 
 	eg_treemap.bf.wifi_qos_flag = flow_qos->qos_valid;
 	eg_treemap.bf.wifi_qos = flow_qos->qos;
 #endif
+
 	adpt_flow_cookie_convert(flow_qos, &eg_treemap, flow_qos->type, A_TRUE);
 
 	rv = hppe_eg_flow_tree_map_tbl_set(dev_id, flow_index, &eg_treemap);
+	SW_RTN_ON_ERROR(rv);
+
+#if defined(MRPPE)
+	if (flow_qos->type == FAL_FLOW_QOS_TYPE_COOKIE_48B)
+		set_bit(flow_index, flow_cookie_48bit);
+	else
+		clear_bit(flow_index, flow_cookie_48bit);
+#endif
 	return rv;
 }
 
@@ -399,14 +410,15 @@ adpt_hppe_flow_qos_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_qos_t 
 #endif
 
 #if defined(MRPPE)
-	/* For MRPPE, flow cookie supports 40B and 48B. the additional 8 bit
-	 * from qos.
+	/* For MRPPE hardware config, 48 bit cookie and 40 bit cookie + 8 bit
+	 * qos can't be distinguished, Need to distinguish it from the software
+	 * cached bitmap.
 	 */
 	if (flow_qos->type) {
-		if (flow_qos->qos_valid)
-			flow_qos->type = FAL_FLOW_QOS_TYPE_COOKIE_40B;
-		else
+		if (test_bit(flow_index, flow_cookie_48bit))
 			flow_qos->type = FAL_FLOW_QOS_TYPE_COOKIE_48B;
+		else
+			flow_qos->type = FAL_FLOW_QOS_TYPE_COOKIE_40B;
 	}
 #endif
 
@@ -2860,6 +2872,10 @@ sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_flow_npt66_iid_del = adpt_hppe_flow_npt66_iid_del;
 	p_adpt_api->adpt_flow_npt66_status_set = adpt_hppe_flow_npt66_status_set;
 	p_adpt_api->adpt_flow_npt66_status_get = adpt_hppe_flow_npt66_status_get;
+
+#if defined(MRPPE)
+	bitmap_zero(flow_cookie_48bit, EG_FLOW_TREE_MAP_TBL_NUM);
+#endif
 
 	return SW_OK;
 }
