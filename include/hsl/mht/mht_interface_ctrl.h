@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -127,6 +127,23 @@ typedef enum {
 	MHT_UNIPHY_SGMII_PLUS = MHT_UNIPHY_MMD1_SGMII_PLUS_MODE,
 	MHT_UNIPHY_UQXGMII = MHT_UNIPHY_MMD1_XPCS_MODE,
 }mht_uniphy_mode_t;
+
+struct mht_shared_priv {
+	int work_mode;
+	int (*phy_qusgmii_mode_set)(u32 dev_id);
+	int (*phy_sgmii_mode_set)(u32 dev_id, u32 mode);
+	void (*phy_clk_init)(u32 dev_id, u32 clk_mode, u32 pbmp);
+	int (*phy_xpcs_autoneg_restart)(u32 dev_id, u32 phy_index);
+	int (*phy_speed_clk_set)(u32 dev_id, u32 phy_index, u32 speed);
+	int (*phy_clk_en_set)(u32 dev_id, u32 phy_index, u8 mask, a_bool_t enable);
+	int (*phy_clk_reset)(u32 dev_id, u32 phy_index, u8 mask);
+	int (*phy_xpcs_function_reset)(u32 dev_id, u32 phy_index);
+	int (*phy_sgmii_function_reset)(u32 dev_id, u32 uphy_index);
+};
+sw_error_t mht_interface_phy_mode_set(a_uint32_t dev_id,
+	fal_port_interface_mode_t interface_mode);
+
+sw_error_t mht_interface_ops_init(a_uint32_t dev_id, a_uint32_t port_id);
 
 a_bool_t mht_uniphy_mode_check(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	mht_uniphy_mode_t uniphy_mode);

@@ -56,6 +56,7 @@
 #include <linux/netdevice.h>
 #include <linux/i2c.h>
 #include "ssdk_phy_i2c.h"
+#include "mht_interface_ctrl.h"
 
 phy_info_t *phy_info[SW_MAX_NR_DEV] = {0};
 a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
@@ -328,6 +329,8 @@ int ssdk_phy_driver_init(a_uint32_t dev_id)
 			}
 /*qca808x_start*/
 			phy_id = hsl_phyid_get(dev_id, i);
+			if (phy_id == QCA8084_PHY)
+				mht_interface_ops_init(dev_id, i);
 			phytype = hsl_phytype_get_by_phyid(dev_id, phy_id);
 			if (MAX_PHY_CHIP != phytype) {
 				phy_info[dev_id]->phy_type[i] = phytype;
