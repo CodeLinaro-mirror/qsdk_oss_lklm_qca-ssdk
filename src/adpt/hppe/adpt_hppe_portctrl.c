@@ -683,16 +683,20 @@ sw_error_t
 adpt_hppe_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 				fal_port_duplex_t duplex)
 {
+	sw_error_t rv = SW_NOT_SUPPORTED;
+
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_INCL_CPU))
-	  {
+	{
 		return SW_BAD_PARAM;
-	  }
+	}
 	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
 		return SW_NOT_SUPPORTED;
 
-	return hsl_port_phy_duplex_set(dev_id, port_id, duplex);
+	HSL_PORT_PHY_API_RUN(duplex_set, dev_id, port_id, duplex);
+
+	return rv;
 }
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
@@ -1236,8 +1240,7 @@ adpt_hppe_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_duplex_get(dev_id, port_id, pduplex);
-		SW_RTN_ON_ERROR (rv);
+		HSL_PORT_PHY_API_RUN(duplex_get, dev_id, port_id, pduplex);
 	}
 
 	return rv;

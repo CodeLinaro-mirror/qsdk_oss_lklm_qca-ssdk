@@ -593,8 +593,6 @@ _mht_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_duplex_t duplex)
 {
 	sw_error_t rv;
-	a_uint32_t phy_id;
-	hsl_phy_ops_t *phy_drv;
 
 	HSL_DEV_ID_CHECK(dev_id);
 
@@ -611,17 +609,8 @@ _mht_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		SW_RTN_ON_NULL(phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-		if (NULL == phy_drv->phy_duplex_set)
-			return SW_NOT_SUPPORTED;
-		if (FAL_DUPLEX_BUTT <= duplex)
-		{
-			return SW_BAD_PARAM;
-		}
-		rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
-		SW_RTN_ON_ERROR (rv);
-		rv = phy_drv->phy_duplex_set(dev_id, phy_id, duplex);
-		SW_RTN_ON_ERROR (rv);
+		rv = hsl_port_phy_duplex_set(dev_id, port_id, duplex);
+		SW_RTN_ON_ERROR(rv);
 	}
 
 	return rv;
@@ -632,8 +621,6 @@ _mht_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_duplex_t * pduplex)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t phy_id;
-	hsl_phy_ops_t *phy_drv;
 
 	HSL_DEV_ID_CHECK (dev_id);
 
@@ -659,16 +646,11 @@ _mht_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-		if (NULL == phy_drv->phy_duplex_get)
-			return SW_NOT_SUPPORTED;
-		rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
-		SW_RTN_ON_ERROR (rv);
-		rv = phy_drv->phy_duplex_get(dev_id, phy_id, pduplex);
-		SW_RTN_ON_ERROR (rv);
+		rv = hsl_port_phy_duplex_get(dev_id, port_id, pduplex);
+		SW_RTN_ON_ERROR(rv);
 	}
 
-	return rv;
+	return SW_OK;
 }
 
 static sw_error_t
@@ -676,8 +658,6 @@ _mht_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_speed_t speed)
 {
 	sw_error_t rv;
-	a_uint32_t phy_id;
-	hsl_phy_ops_t *phy_drv;
 
 	HSL_DEV_ID_CHECK (dev_id);
 
@@ -693,17 +673,8 @@ _mht_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-		if (NULL == phy_drv->phy_speed_set)
-			return SW_NOT_SUPPORTED;
-		if (FAL_SPEED_2500 < speed)
-		{
-			return SW_BAD_PARAM;
-		}
-		rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
-		SW_RTN_ON_ERROR (rv);
-		rv = phy_drv->phy_speed_set(dev_id, phy_id, speed);
-		SW_RTN_ON_ERROR (rv);
+		rv = hsl_port_phy_speed_set(dev_id, port_id, speed);
+		SW_RTN_ON_ERROR(rv);
 	}
 	return rv;
 }
@@ -713,8 +684,6 @@ _mht_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_speed_t * pspeed)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t phy_id;
-	hsl_phy_ops_t *phy_drv;
 
 	HSL_DEV_ID_CHECK(dev_id);
 
@@ -744,13 +713,8 @@ _mht_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-		if (NULL == phy_drv->phy_speed_get)
-			return SW_NOT_SUPPORTED;
-		rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
-		SW_RTN_ON_ERROR (rv);
-		rv = phy_drv->phy_speed_get(dev_id, phy_id, pspeed);
-		SW_RTN_ON_ERROR (rv);
+		rv = hsl_port_phy_speed_get(dev_id, port_id, pspeed);
+		SW_RTN_ON_ERROR(rv);
 	}
 	return rv;
 }

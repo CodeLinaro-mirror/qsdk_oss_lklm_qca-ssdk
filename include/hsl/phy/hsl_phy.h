@@ -26,6 +26,7 @@ extern "C" {
 #include "fal.h"
 #include <linux/version.h>
 #include <linux/phy.h>
+#include "qca-nss-phy/nss_phy.h"
 
 	/** Phy function reset type */
 	typedef enum {
@@ -586,8 +587,6 @@ typedef struct {
 	a_uint32_t combo_phy_type[SW_MAX_NR_PORT];
 } phy_info_t;
 /*qca808x_end*/
-#define MALIBU5PORT_PHY         0x004DD0B1
-#define MALIBU2PORT_PHY         0x004DD0B2
 #define QCA8030_PHY             0x004DD076
 #define QCA8033_PHY             0x004DD074
 #define QCA8035_PHY             0x004DD072
@@ -595,7 +594,6 @@ typedef struct {
 #define QCA8081_PHY_V1_1        0x004DD101
 #define INVALID_PHY_ID          0xFFFFFFFF
 /*qca808x_end*/
-#define QCA8084_PHY             0x004DD180
 #define F1V1_PHY                0x004DD033
 #define F1V2_PHY                0x004DD034
 #define F1V3_PHY                0x004DD035
@@ -1002,10 +1000,10 @@ sw_error_t
 hsl_port_phy_powersave_get(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t * enable);
 sw_error_t
-hsl_port_phy_hibernate_set(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_hibernation_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t enable);
 sw_error_t
-hsl_port_phy_hibernate_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
+hsl_port_phy_hibernation_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
 sw_error_t
 hsl_port_phy_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 sw_error_t
@@ -1033,6 +1031,50 @@ sw_error_t
 hsl_port_phy_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_interface_mode_t *mode);
 #endif
+/*use the phy driver of nss ext or linux std for HSL APIs*/
+enum hsl_phy_api_id {
+	hibernation_set,
+	hibernation_get,
+	duplex_get,
+	duplex_set,
+	power_on,
+	power_off,
+	api_max,
+};
+
+struct hsl_phy_api {
+	enum hsl_phy_api_id id;
+	int (*phy_std)(struct phy_device*, ...);
+};
+
+sw_error_t hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
+	struct nss_phy_device *nss_phydev, struct nss_phy_ops  **nss_phy_ops);
+struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
+
+#define HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ...) \
+	{ \
+		struct nss_phy_ops *nss_phy_ops; \
+		struct nss_phy_device nss_phydev; \
+		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
+		if (nss_phy_ops && nss_phy_ops->func) { \
+			rv = nss_phy_ops->func(&nss_phydev, ##__VA_ARGS__); \
+		} else { \
+			rv = hsl_port_phy_##func(dev_id, port_id, ##__VA_ARGS__); \
+		} \
+	}
+
+#define HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ...) \
+	{ \
+		struct phy_device *phydev; \
+		struct hsl_phy_api *api; \
+		api = hsl_phy_api_get(func); \
+		hsl_port_phydev_get(dev_id, port_id, &phydev); \
+		if (api && api->phy_std && phydev) { \
+			rv = api->phy_std(phydev, ##__VA_ARGS__); \
+		} else { \
+			HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+		} \
+	}
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */
