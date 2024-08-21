@@ -1053,7 +1053,7 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 
 #define HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ...) \
 	{ \
-		struct nss_phy_ops *nss_phy_ops; \
+		struct nss_phy_ops *nss_phy_ops = NULL; \
 		struct nss_phy_device nss_phydev; \
 		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
 		if (nss_phy_ops && nss_phy_ops->func) { \
@@ -1065,8 +1065,8 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 
 #define HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ...) \
 	{ \
-		struct phy_device *phydev; \
-		struct hsl_phy_api *api; \
+		struct phy_device *phydev = NULL; \
+		struct hsl_phy_api *api = NULL; \
 		api = hsl_phy_api_get(func); \
 		hsl_port_phydev_get(dev_id, port_id, &phydev); \
 		if (api && api->phy_std && phydev) { \
