@@ -1101,14 +1101,16 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 
 #define HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ...) \
 	{ \
-		struct phy_device *phydev = NULL; \
-		struct hsl_phy_api *api = NULL; \
-		api = hsl_phy_api_get(func); \
-		hsl_port_phydev_get(dev_id, port_id, &phydev); \
-		if (api && api->phy_std && phydev) { \
-			rv = api->phy_std(phydev, ##__VA_ARGS__); \
-		} else { \
-			HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+		if (hsl_port_phy_connected(dev_id, port_id)) { \
+			struct phy_device *phydev = NULL; \
+			struct hsl_phy_api *api = NULL; \
+			api = hsl_phy_api_get(func); \
+			hsl_port_phydev_get(dev_id, port_id, &phydev); \
+			if (api && api->phy_std && phydev) { \
+				rv = api->phy_std(phydev, ##__VA_ARGS__); \
+			} else { \
+				HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+			} \
 		} \
 	}
 #ifdef __cplusplus
