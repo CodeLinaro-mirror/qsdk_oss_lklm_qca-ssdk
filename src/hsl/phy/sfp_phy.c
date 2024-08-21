@@ -420,6 +420,7 @@ void sfp_phy_driver_unregister(void)
 	if (sfp_phy_drv_registered == A_TRUE)
 	{
 		phy_driver_unregister(&sfp_phy_driver);
+		sfp_phy_drv_registered = A_FALSE;
 	}
 }
 
