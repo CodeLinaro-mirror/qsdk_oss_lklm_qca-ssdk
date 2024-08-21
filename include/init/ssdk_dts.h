@@ -92,7 +92,6 @@ typedef struct
 	ssdk_dt_scheduler_cfg scheduler_cfg;
 	a_uint8_t bm_tick_mode;
 	a_uint8_t tm_tick_mode;
-	a_bool_t ess_switch_flag;
 	a_uint32_t device_id;
 	struct device_node *of_node;
 	a_bool_t is_emulation;

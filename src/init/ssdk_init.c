@@ -238,7 +238,7 @@ ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 	struct device_node *np = NULL;
 	u32 rgmii_en = 0, tx_delay = 0, rx_delay = 0;
 
-	if (priv->ess_switch_flag == A_TRUE)
+	if (priv->of_node)
 		np = priv->of_node;
 	else
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
@@ -404,7 +404,6 @@ qca_switch_init(a_uint32_t dev_id)
 	int i = 0;
 	a_uint32_t port_bmp = 0;
 	hsl_reg_mode reg_mode = HSL_REG_MDIO;
-	a_bool_t flag = A_FALSE;
 	fal_port_eee_cfg_t port_eee_cfg = {0};
 	ssdk_chip_type chip_type = hsl_get_current_chip_type(dev_id);
 
@@ -428,10 +427,11 @@ qca_switch_init(a_uint32_t dev_id)
 	fal_igmp_mld_rp_set(dev_id, 0);
 #endif
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
-	flag = ssdk_ess_switch_flag_get(dev_id);
 
-	if (reg_mode == HSL_REG_MDIO && flag == A_FALSE) {
-		/* For legacy S17C without defining port bmp in dts */
+	if (reg_mode == HSL_REG_MDIO && ssdk_dts_node_get(dev_id) == NULL) {
+		/* For legacy S17C without defining ess-switch device node
+		 * and port bmp in DTS.
+		 */
 		port_bmp = 0x7f;
 	} else {
 		port_bmp = qca_ssdk_port_bmp_get(dev_id);
@@ -741,7 +741,7 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 	a_uint32_t reg, value, i;
 	a_int32_t len;
 
-	if (priv->ess_switch_flag == A_TRUE)
+	if (priv->of_node)
 		np = priv->of_node;
 	else
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
@@ -2374,7 +2374,6 @@ static int ssdk_alloc_priv(a_uint32_t dev_num)
 		}
 /*qca808x_end*/
 		qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered = A_FALSE;
-		qca_phy_priv_global[dev_id]->ess_switch_flag = A_FALSE;
 /*qca808x_start*/
 		qca_ssdk_port_bmp_init(dev_id);
 		qca_ssdk_phy_info_init(dev_id);
@@ -2394,7 +2393,7 @@ static void qca_ar8327_gpio_reset(struct qca_phy_priv *priv)
 	a_int32_t len;
 	int gpio_num = 0, ret = 0;
 
-	if (priv->ess_switch_flag == A_TRUE)
+	if (priv->of_node)
 		np = priv->of_node;
 	else
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
@@ -2466,7 +2465,6 @@ static int __init regi_init(void)
 
 		/* device id is the array index */
 		qca_phy_priv_global[dev_id]->device_id = ssdk_device_id_get(dev_id);
-		qca_phy_priv_global[dev_id]->ess_switch_flag = ssdk_ess_switch_flag_get(dev_id);
 		qca_phy_priv_global[dev_id]->of_node = ssdk_dts_node_get(dev_id);
 		INIT_LIST_HEAD(&(qca_phy_priv_global[dev_id]->sw_fdb_tbl));
 		qca_phy_priv_global[dev_id]->ports = SSDK_PHYSICAL_PORT7;
@@ -2493,7 +2491,7 @@ static int __init regi_init(void)
 			case CHIP_ISIS:
 			case CHIP_ISISC:
 #if defined (ISISC) || defined (ISIS)
-				if (qca_phy_priv_global[dev_id]->ess_switch_flag == A_TRUE) {
+				if (qca_phy_priv_global[dev_id]->of_node) {
 					qca_ar8327_gpio_reset(qca_phy_priv_global[dev_id]);
 					rv = ssdk_switch_register(dev_id, cfg.chip_type);
 					SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
