@@ -50,6 +50,8 @@ extern "C" {
 
 #define PORT_GMAC_TYPE                  1
 #define PORT_XGMAC_TYPE                 2
+#define SSDK_MAX_UNIPHY_INSTANCE        3
+
 #define IOCTL_COMPAT
 #if defined(MRPPE)
 #define PPE_STR "MRPPE"

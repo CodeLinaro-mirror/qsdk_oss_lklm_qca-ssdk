@@ -1728,25 +1728,14 @@ ssdk_plat_exit(a_uint32_t dev_id)
 }
 /*qca808x_end*/
 
-int ssdk_uniphy_valid_check(a_uint32_t dev_id,
+#if !defined(MRPPE)
+int ssdk_uniphy_check_by_socid(a_uint32_t dev_id,
 		a_uint32_t index, a_uint32_t mode)
 {
 	int ret = A_TRUE;
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
 	a_uint32_t soc_id = 0;
 	int rv = 0;
-#endif
-	if (ssdk_is_emulation(dev_id))
-		return A_TRUE;
 
-	/* TODO: Add sku check for MRPPE */
-#if defined(MRPPE)
-	return A_TRUE;
-#endif
-
-	if (index > SSDK_UNIPHY_INSTANCE2)
-		return A_FALSE;
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
 	rv = qcom_smem_get_soc_id(&soc_id);
 	if (rv)
 		return A_FALSE;
@@ -1823,61 +1812,22 @@ int ssdk_uniphy_valid_check(a_uint32_t dev_id,
 			ret = A_FALSE;
 			break;
 	}
-#else
-	switch(index) {
-		case SSDK_UNIPHY_INSTANCE0:
-			if ((cpu_is_ipq807x() == A_TRUE) ||
-				(cpu_is_ipq60xx() == A_TRUE)) {
-				if ((mode == PORT_WRAPPER_USXGMII) ||
-					(mode == PORT_WRAPPER_10GBASE_R) ||
-					(mode == PORT_WRAPPER_UQXGMII) ||
-					(mode == PORT_WRAPPER_UDXGMII))
-					ret = A_FALSE;
-			}
-			if (cpu_is_ipq53xx() == A_TRUE) {
-				if ((mode == PORT_WRAPPER_UQXGMII) ||
-				(mode == PORT_WRAPPER_UDXGMII)) {
-					ret = A_FALSE;
-				}
-				if ((cpu_is_ipq5302() == A_TRUE) ||
-					(cpu_is_ipq5312() == A_TRUE)) {
-					if ((mode == PORT_WRAPPER_10GBASE_R) ||
-						(mode == PORT_WRAPPER_USXGMII))
-						ret = A_FALSE;
-				}
-			}
-			break;
-		case SSDK_UNIPHY_INSTANCE1:
-			ret = cpu_is_uniphy1_enabled();
-			if ((cpu_is_ipq807x() == A_TRUE) ||
-				(cpu_is_ipq60xx() == A_TRUE) ||
-				(cpu_is_ipq53xx() == A_TRUE) ||
-				(cpu_is_ipq95xx() == A_TRUE)) {
-				if ((mode == PORT_WRAPPER_UQXGMII) ||
-				(mode == PORT_WRAPPER_UDXGMII))
-					ret = A_FALSE;
-			}
-			if ((cpu_is_ipq5302() == A_TRUE) ||
-				(cpu_is_ipq5312() == A_TRUE)) {
-				if ((mode == PORT_WRAPPER_10GBASE_R) ||
-					(mode == PORT_WRAPPER_USXGMII))
-					ret = A_FALSE;
-			}
-			break;
-		case SSDK_UNIPHY_INSTANCE2:
-			ret = cpu_is_uniphy2_enabled();
-			if ((cpu_is_ipq807x() == A_TRUE) ||
-				(cpu_is_ipq60xx() == A_TRUE) ||
-				(cpu_is_ipq95xx() == A_TRUE)) {
-				if ((mode == PORT_WRAPPER_UQXGMII) ||
-				(mode == PORT_WRAPPER_UDXGMII))
-					ret = A_FALSE;
-			}
-			break;
-		default:
-			ret = A_FALSE;
-			break;
-	}
-#endif
 	return ret;
+}
+#endif
+
+int ssdk_uniphy_valid_check(a_uint32_t dev_id,
+		a_uint32_t index, a_uint32_t mode)
+{
+	if (ssdk_is_emulation(dev_id))
+		return A_TRUE;
+
+	if (index > SSDK_UNIPHY_INSTANCE2)
+		return A_FALSE;
+
+#if defined(MRPPE)
+	return ssdk_uniphy_check_by_softsku(dev_id, index);
+#else
+	return ssdk_uniphy_check_by_socid(dev_id, index, mode);
+#endif
 }

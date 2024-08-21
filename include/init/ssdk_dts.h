@@ -100,6 +100,7 @@ typedef struct
 	a_uint32_t clk_mode;
 	a_uint32_t pcie_hw_base;
 	led_ctrl_pattern_t source_pattern[SSDK_MAX_PORT_NUM][PORT_LED_SOURCE_MAX];
+	a_bool_t uniphy_status[SSDK_MAX_UNIPHY_INSTANCE];
 } ssdk_dt_cfg;
 
 #define SSDK_MAX_NR_ETH 6
@@ -149,6 +150,7 @@ a_uint16_t ssdk_ucast_l0_cdrr_num_get(a_uint32_t dev_id, a_uint32_t port);
 #endif
 a_uint32_t ssdk_intf_mac_num_get(void);
 a_uint8_t* ssdk_intf_macaddr_get(a_uint32_t index);
+a_bool_t ssdk_uniphy_check_by_softsku(a_uint32_t dev_id, a_uint32_t index);
 a_uint32_t ssdk_dt_global_get_mac_mode(a_uint32_t dev_id, a_uint32_t index);
 a_uint32_t ssdk_dt_get_port_mode(a_uint32_t dev_id, a_uint32_t port_id);
 a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode);
