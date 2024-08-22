@@ -697,6 +697,29 @@ union qp_usxg_opiton1_u {
 	struct qp_usxg_opiton1  bf;
 };
 
+/*[register] SR_XS_PCS_EEE_ABL*/
+#define SR_XS_PCS_EEE_ABL
+#define SR_XS_PCS_EEE_ABL_ADDRESS 0x30014
+#define SR_XS_PCS_EEE_ABL_NUM     3
+#define SR_XS_PCS_EEE_ABL_INC     0x1
+#define SR_XS_PCS_EEE_ABL_TYPE    REG_TYPE_R
+#define SR_XS_PCS_EEE_ABL_DEFAULT 0x0
+	/*[field] KREEE*/
+	#define SR_XS_PCS_EEE_ABL_KREEE
+	#define SR_XS_PCS_EEE_ABL_KREEE_OFFSET  6
+	#define SR_XS_PCS_EEE_ABL_KREEE_LEN     1
+	#define SR_XS_PCS_EEE_ABL_KREEE_INC     0x1
+	#define SR_XS_PCS_EEE_ABL_KREEE_DEFAULT 0x0
+struct sr_xs_pcs_eee_abl {
+	a_uint32_t  _reserved0:6;
+	a_uint32_t  kreee:1;
+	a_uint32_t  _reserved1:25;
+};
+
+union sr_xs_pcs_eee_abl_u {
+	a_uint32_t val;
+	struct sr_xs_pcs_eee_abl bf;
+};
 
 /*[register] SR_XS_PCS_KR_STS1*/
 #define SR_XS_PCS_KR_STS1

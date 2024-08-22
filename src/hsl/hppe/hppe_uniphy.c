@@ -293,6 +293,21 @@ hppe_qp_usxg_opiton1_set(
 }
 
 sw_error_t
+hppe_sr_xs_pcs_eee_abl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sr_xs_pcs_eee_abl_u *value)
+{
+	if (index >= SR_XS_PCS_EEE_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_uniphy_reg_get(
+				dev_id,
+				NSS_UNIPHY_BASE_ADDR + SR_XS_PCS_EEE_ABL_ADDRESS,
+				index * SR_XS_PCS_EEE_ABL_INC,
+				&value->val);
+}
+
+sw_error_t
 hppe_sr_xs_pcs_kr_sts1_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

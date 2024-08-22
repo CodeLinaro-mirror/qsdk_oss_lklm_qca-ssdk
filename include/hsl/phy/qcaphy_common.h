@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -107,8 +107,8 @@ extern "C" {
 /*MMD register*/
 #define QCAPHY_MMD7_8023AZ_EEE_CTRL                                0x3c
 #define QCAPHY_MMD7_8023AZ_EEE_PARTNER                             0x3d
-#define QCAPHY_MMD7_8023AZ_EEE_PARTNER1                            0x3e
-#define QCAPHY_MMD7_8023AZ_EEE_CTRL1                               0x3f
+#define QCAPHY_MMD7_8023AZ_EEE_CTRL1                               0x3e
+#define QCAPHY_MMD7_8023AZ_EEE_PARTNER1                            0x3f
 #define QCAPHY_MMD7_8023AZ_EEE_STATUS                              0x8000
 #define QCAPHY_MMD3_8023AZ_EEE_CAPABILITY                          0x14
 #define QCAPHY_MMD3_8023AZ_EEE_CAPABILITY1                         0x15
