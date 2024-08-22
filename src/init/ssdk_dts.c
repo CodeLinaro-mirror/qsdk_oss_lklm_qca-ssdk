@@ -255,12 +255,6 @@ void ssdk_uniphy_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info)
 	info->size = cfg->uniphyreg_size;
 }
 #endif
-a_bool_t ssdk_ess_switch_flag_get(a_uint32_t dev_id)
-{
-	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
-
-	return cfg->ess_switch_flag;
-}
 
 a_uint32_t ssdk_device_id_get(a_uint32_t index)
 {
@@ -1494,7 +1488,6 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 
 	ssdk_dt_priv = ssdk_dt_global.ssdk_dt_switch_nodes[*dev_id];
 	ssdk_dt_priv->device_id = *dev_id;
-	ssdk_dt_priv->ess_switch_flag = A_TRUE;
 	ssdk_dt_priv->of_node = switch_node;
 	ssdk_dt_priv->ess_clk= ERR_PTR(-ENOENT);
 	ssdk_dt_priv->cmnblk_clk = ERR_PTR(-ENOENT);
@@ -1606,7 +1599,6 @@ int ssdk_switch_device_num_init(void)
 		}
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->switch_reg_access_mode = HSL_REG_MDIO;
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->psgmii_reg_access_mode = HSL_REG_MDIO;
-		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->ess_switch_flag = A_FALSE;
 	}
 
 	ssdk_dt_global.num_devices = dev_num;

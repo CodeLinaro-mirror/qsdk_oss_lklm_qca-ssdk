@@ -313,7 +313,6 @@ struct qca_phy_priv {
 	bool init;
 /*qca808x_end*/
 	a_bool_t qca_ssdk_sw_dev_registered;
-	a_bool_t ess_switch_flag;
 	struct mutex reg_mutex;
 	struct mutex mib_lock;
 	struct delayed_work mib_dwork;
