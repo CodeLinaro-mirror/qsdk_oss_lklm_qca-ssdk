@@ -367,6 +367,7 @@ struct qca_phy_priv {
 	a_uint32_t link_polling_required;
 	fdb_sync_t fdb_sync;
 	a_uint32_t interrupt_no;
+	a_uint32_t intr_gpio_num;
 	a_uint32_t interrupt_flag;
 	char intr_name[IFNAMSIZ];
 	/* VLAN database */

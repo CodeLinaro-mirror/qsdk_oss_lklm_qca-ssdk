@@ -1377,18 +1377,27 @@ qm_err_check_work_task_polling(struct work_struct *work)
 #endif
 }
 
-int
-qm_err_check_work_start(struct qca_phy_priv *priv)
+static sw_error_t
+_qm_err_work_chip_check(struct qca_phy_priv *priv)
 {
-	/*Only valid for S17c chip*/
-	if (priv->version != QCA_VER_AR8337 &&
-		priv->version != QCA_VER_AR8327 &&
-		priv->version != QCA_VER_DESS &&
-		priv->version != QCA_VER_MHT)
-	{
-		return 0;
+	sw_error_t rv = SW_OK;
+
+	switch (priv->version) {
+	case QCA_VER_AR8337:
+	case QCA_VER_AR8327:
+	case QCA_VER_DESS:
+	case QCA_VER_MHT:
+		break;
+	default:
+		SSDK_DEBUG("Unsupported chip version %d\n", priv->version);
+		rv = SW_NOT_SUPPORTED;
 	}
 
+	return rv;
+}
+
+void qm_err_check_work_start(struct qca_phy_priv *priv)
+{
 	mutex_init(&priv->qm_lock);
 	INIT_DELAYED_WORK(&priv->qm_dwork_polling, qm_err_check_work_task_polling);
 #ifndef SSDK_MIB_CHANGE_WQ
@@ -1398,20 +1407,11 @@ qm_err_check_work_start(struct qca_phy_priv *priv)
 	queue_delayed_work_on(0, system_long_wq, &priv->qm_dwork_polling,
 							msecs_to_jiffies(QCA_QM_WORK_DELAY));
 #endif
-
-	return 0;
 }
 
-void
-qm_err_check_work_stop(struct qca_phy_priv *priv)
+void qm_err_check_work_stop(struct qca_phy_priv *priv)
 {
-	/*Only valid for S17c chip*/
-	if (priv->version != QCA_VER_AR8337 &&
-		priv->version != QCA_VER_AR8327 &&
-		priv->version != QCA_VER_DESS) return;
-
-		cancel_delayed_work_sync(&priv->qm_dwork_polling);
-
+	cancel_delayed_work_sync(&priv->qm_dwork_polling);
 }
 
 void
@@ -1823,12 +1823,8 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 
 	if(priv->link_polling_required)
 	{
-		ret = qm_err_check_work_start(priv);
-		if (ret != 0)
-		{
-			SSDK_ERROR("qm_err_check_work_start failed for chip 0x%02x%02x\n", priv->version, priv->revision);
-			return ret;
-		}
+		if(_qm_err_work_chip_check(priv) == SW_OK)
+			qm_err_check_work_start(priv);
 #ifdef HPPE
 		if (_ssdk_mac_sw_sync_chip_check(priv) != SW_OK) {
 			SSDK_INFO("mac_sw_sync is not enabled on chip 0x%02x%02x\n",
@@ -1888,13 +1884,21 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 
 static int ssdk_switch_unregister(a_uint32_t dev_id)
 {
-	qca_phy_mib_work_stop(qca_phy_priv_global[dev_id]);
-	qm_err_check_work_stop(qca_phy_priv_global[dev_id]);
+	struct qca_phy_priv *priv = qca_phy_priv_global[dev_id];
+
+	qca_phy_mib_work_stop(priv);
+
+	if (priv->link_polling_required) {
+		if (_qm_err_work_chip_check(priv) == SW_OK)
+			qm_err_check_work_stop(priv);
 #ifdef HPPE
-	if(!ssdk_is_emulation(dev_id)) {
 		ssdk_mac_sw_sync_work_stop(dev_id);
-	}
 #endif
+	}
+
+	if (priv->interrupt_no > 0)
+		qca_intr_deinit(priv);
+
 #if defined(IN_SWCONFIG)
 	unregister_switch(&qca_phy_priv_global[dev_id]->sw_dev);
 #endif

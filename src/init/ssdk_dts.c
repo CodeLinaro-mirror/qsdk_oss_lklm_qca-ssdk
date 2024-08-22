@@ -1066,10 +1066,16 @@ ssdk_dt_parse_interrupt(a_uint32_t dev_id, struct device_node *switch_node)
 		if(gpio_is_valid(intr_gpio_num))
 		{
 			if(gpio_request_one(intr_gpio_num, GPIOF_IN, "ssdk interrupt") < 0) {
-				SSDK_ERROR("gpio request faild \n");
+				SSDK_ERROR("gpio request faild\n");
 				return SW_FAIL;
 			}
+			priv->intr_gpio_num = intr_gpio_num;
 			priv->interrupt_no = gpio_to_irq (intr_gpio_num);
+			if (priv->interrupt_no < 0) {
+				SSDK_ERROR("gpio to irq faild\n");
+				gpio_free(intr_gpio_num);
+				return SW_FAIL;
+			}
 			SSDK_INFO("interrupt gpio:0x%x, interrupt number: 0x%x\n",
 				intr_gpio_num, priv->interrupt_no);
 		}

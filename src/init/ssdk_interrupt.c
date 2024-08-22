@@ -242,7 +242,17 @@ void qca_intr_work_resume(struct qca_phy_priv *priv)
 	enable_irq(priv->interrupt_no);
 }
 
- int qca_intr_init(struct qca_phy_priv *priv)
+void qca_intr_deinit(struct qca_phy_priv *priv)
+{
+	if (!priv)
+		return;
+
+	flush_work(&priv->intr_workqueue);
+	free_irq(priv->interrupt_no, priv);
+	gpio_free(priv->intr_gpio_num);
+}
+
+int qca_intr_init(struct qca_phy_priv *priv)
 {
 	SSDK_DEBUG("start to  init the interrupt!\n");
 	mutex_init(&priv->qm_lock);
