@@ -413,7 +413,7 @@ __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 }
 
 static sw_error_t
-__adpt_hppe_uniphy_uqxgmii_eee_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
+__adpt_hppe_uniphy_xpcs_eee_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
 	sw_error_t rv = SW_OK;
 
@@ -421,12 +421,19 @@ __adpt_hppe_uniphy_uqxgmii_eee_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	union vr_xs_pcs_eee_txtimer_u vr_xs_pcs_eee_txtimer;
 	union vr_xs_pcs_eee_rxtimer_u vr_xs_pcs_eee_rxtimer;
 	union vr_xs_pcs_eee_ctrl1_u vr_xs_pcs_eee_ctrl1;
+	union sr_xs_pcs_eee_abl_u sr_xs_pcs_eee_abl;
 
 	memset(&vr_xs_pcs_eee_ctrl0, 0, sizeof(vr_xs_pcs_eee_ctrl0));
 	memset(&vr_xs_pcs_eee_txtimer, 0, sizeof(vr_xs_pcs_eee_txtimer));
 	memset(&vr_xs_pcs_eee_rxtimer, 0, sizeof(vr_xs_pcs_eee_rxtimer));
 	memset(&vr_xs_pcs_eee_ctrl1, 0, sizeof(vr_xs_pcs_eee_ctrl1));
+	memset(&sr_xs_pcs_eee_abl, 0, sizeof(sr_xs_pcs_eee_abl));
 	ADPT_DEV_ID_CHECK(dev_id);
+
+	rv = hppe_sr_xs_pcs_eee_abl_get(dev_id, uniphy_index, &sr_xs_pcs_eee_abl);
+	SW_RTN_ON_ERROR (rv);
+	if (sr_xs_pcs_eee_abl.bf.kreee == 0)
+		return SW_NOT_SUPPORTED;
 
 	/* configure eee related timer value */
 	rv = hppe_vr_xs_pcs_eee_ctrl0_get(dev_id, uniphy_index, &vr_xs_pcs_eee_ctrl0);
@@ -602,7 +609,7 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	hppe_sr_mii_ctrl_channel3_set(0, uniphy_index, &sr_mii_ctrl);
 
 	/* enable uniphy eee transparent mode*/
-	__adpt_hppe_uniphy_uqxgmii_eee_set(dev_id, uniphy_index);
+	__adpt_hppe_uniphy_xpcs_eee_set(dev_id, uniphy_index);
 
 	if(mode == PORT_WRAPPER_UQXGMII)
 	{
@@ -720,9 +727,9 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		hppe_qp_usxg_opiton1_get(dev_id, uniphy_index, &qp_usxg_opiton1);
 		qp_usxg_opiton1.bf.gmii_src_sel = 0x1;
 		hppe_qp_usxg_opiton1_set(dev_id, uniphy_index, &qp_usxg_opiton1);
-		/* enable uniphy eee transparent mode*/
-		__adpt_hppe_uniphy_uqxgmii_eee_set(dev_id, uniphy_index);
 	}
+	/* enable uniphy eee transparent mode*/
+	__adpt_hppe_uniphy_xpcs_eee_set(dev_id, uniphy_index);
 #endif
 	return rv;
 }
