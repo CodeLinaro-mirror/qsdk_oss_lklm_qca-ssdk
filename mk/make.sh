@@ -43,12 +43,19 @@ prepare_compile() {
   		echo "Error: toolchain not found in ${QSDK_DIR}"
   		exit 1
 	fi
-	export IN_COMPILE=$(ls -d ${QSDK_DIR}/staging_dir/toolchain*/bin/*linux-gcc | xargs -i basename {} | cut -d'-' -f1-3)-
+	export IN_COMPILE=$(ls -d ${QSDK_DIR}/staging_dir/toolchain*/bin/*linux-musl-gcc | xargs -i basename {} | cut -d'-' -f1-4)-
 	if [ -z "$IN_COMPILE" ]; then
   		echo "Error: gcc not found in ${QSDK_DIR}"
   		exit 1
 	fi
-	export IN_ARCH=$( [ $IN_COMPILE = "aarch64-openwrt-linux-" ] && echo "arm64" || echo "arm" )
+
+	export IN_INC=$(ls -d ${QSDK_DIR}/staging_dir/target*/usr/include| head -n 1)
+	if [ -z "$IN_INC" ]; then
+  		echo "Error: depend header file not found in ${QSDK_DIR}"
+  		exit 1
+	fi
+
+	export IN_ARCH=$( [ $IN_COMPILE = "aarch64-openwrt-linux-musl-" ] && echo "arm64" || echo "arm" )
 	export SYS_PATH=$(ls -d ${QSDK_DIR}/qca/src/linux* | head -n 1)
 	if [ -z "$SYS_PATH" ]; then
   		echo "Error: Linux not found in ${QSDK_DIR}"
@@ -99,7 +106,8 @@ ssdk_compile() {
     LNX_MAKEOPTS='-C ${SYS_PATH} KCFLAGS="-fno-caller-saves" HOSTCFLAGS="-O2 \
     -Wall -Wmissing-prototypes -Wstrict-prototypes" CROSS_COMPILE="${IN_COMPILE}" ARCH="${IN_ARCH}" \
     KBUILD_HAVE_NLS=no KBUILD_BUILD_USER="" KBUILD_BUILD_HOST="" KBUILD_BUILD_VERSION="0" \
-    CONFIG_SHELL="bash" V=''  cmd_syscalls= KBUILD_EXTRA_SYMBOLS="" MYSOC=${IN_SOC}' MAKEFLAGS=${makeflags}
+    CONFIG_SHELL="bash" V=''  cmd_syscalls= KBUILD_EXTRA_SYMBOLS="" MYSOC=${IN_SOC} \
+    EXTRA_CFLAGS=-I${IN_INC}' MAKEFLAGS=${makeflags}
 
 	wait
     if [ $? -ne 0 ]; then
