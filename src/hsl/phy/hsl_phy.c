@@ -162,31 +162,8 @@ phy_info_t *hsl_phy_info_get(a_uint32_t dev_id)
 
 a_bool_t hsl_port_is_sfp(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	a_bool_t sfp_port = 0;
-	a_uint32_t mode1, mode2;
 
-	sfp_port = hsl_port_feature_get(dev_id, port_id, PHY_F_SFP);
-	if (sfp_port == A_TRUE) {
-		return A_TRUE;
-	}
-	else if (A_TRUE == hsl_port_phy_combo_capability_get(dev_id, port_id))
-	{
-		/* combo port copper mode */
-		return A_FALSE;
-	}
-
-	mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
-	mode2 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE2);
-
-	if (((SSDK_PHYSICAL_PORT5 == port_id) &&
-			((mode1 == PORT_WRAPPER_10GBASE_R) ||
-			(mode1 == PORT_WRAPPER_SGMII_FIBER))) ||
-	    ((SSDK_PHYSICAL_PORT6 == port_id) &&
-			((mode2 == PORT_WRAPPER_10GBASE_R) ||
-			(mode2 == PORT_WRAPPER_SGMII_FIBER))))
-		return A_TRUE;
-	else
-		return A_FALSE;
+	return hsl_port_feature_get(dev_id, port_id, PHY_F_SFP);
 }
 
 a_bool_t hsl_port_phy_connected(a_uint32_t dev_id, fal_port_t port_id)
