@@ -210,113 +210,6 @@ qca803x_phy_get_powersave(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 /******************************************************************************
 *
-* qca803x_phy_set wol frame mac address
-*
-* set phy wol frame mac address
-*/
-sw_error_t
-qca803x_phy_set_magic_frame_mac(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_mac_addr_t * mac)
-{
-	a_uint16_t phy_data1;
-	a_uint16_t phy_data2;
-	a_uint16_t phy_data3;
-
-	phy_data1 = (mac->uc[0] << 8) | mac->uc[1];
-	phy_data2 = (mac->uc[2] << 8) | mac->uc[3];
-	phy_data3 = (mac->uc[4] << 8) | mac->uc[5];
-
-	hsl_phy_mmd_reg_write(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_MAGIC_MAC_CTRL1, phy_data1);
-
-	hsl_phy_mmd_reg_write(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_MAGIC_MAC_CTRL2, phy_data2);
-
-	hsl_phy_mmd_reg_write(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_MAGIC_MAC_CTRL3, phy_data3);
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* qca803x_phy_get wol frame mac address
-*
-* get phy wol frame mac address
-*/
-sw_error_t
-qca803x_phy_get_magic_frame_mac(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_mac_addr_t * mac)
-{
-	a_uint16_t phy_data1;
-	a_uint16_t phy_data2;
-	a_uint16_t phy_data3;
-
-	phy_data1 = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_MAGIC_MAC_CTRL1);
-
-	phy_data2 = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_MAGIC_MAC_CTRL2);
-
-	phy_data3 = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_MAGIC_MAC_CTRL3);
-
-	mac->uc[0] = (phy_data1 >> 8);
-	mac->uc[1] = (phy_data1 & 0x00ff);
-	mac->uc[2] = (phy_data2 >> 8);
-	mac->uc[3] = (phy_data2 & 0x00ff);
-	mac->uc[4] = (phy_data3 >> 8);
-	mac->uc[5] = (phy_data3 & 0x00ff);
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* qca803x_phy_set wol enable or disable
-*
-* set phy wol enable or disable
-*/
-sw_error_t
-qca803x_phy_set_wol_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE) {
-		phy_data |= 0x0020;
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_CTRL, BIT(5), phy_data);
-}
-
-/******************************************************************************
-*
-* qca803x_phy_get_wol status
-*
-* get wol status
-*/
-sw_error_t
-qca803x_phy_get_wol_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data = 0;
-
-	*enable = A_FALSE;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_WOL_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & 0x0020)
-		*enable = A_TRUE;
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
 * qca803x_phy_set_hibernate - set hibernate status
 *
 * set hibernate status
@@ -885,10 +778,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_8023az_get = qcaphy_get_8023az;
 	qca803x_phy_api_ops->phy_hibernation_set = qca803x_phy_set_hibernate;
 	qca803x_phy_api_ops->phy_hibernation_get = qca803x_phy_get_hibernate;
-	qca803x_phy_api_ops->phy_magic_frame_mac_set = qca803x_phy_set_magic_frame_mac;
-	qca803x_phy_api_ops->phy_magic_frame_mac_get = qca803x_phy_get_magic_frame_mac;
-	qca803x_phy_api_ops->phy_wol_status_set = qca803x_phy_set_wol_status;
-	qca803x_phy_api_ops->phy_wol_status_get = qca803x_phy_get_wol_status;
 #endif
 	qca803x_phy_api_ops->phy_interface_mode_set = qca803x_phy_interface_set_mode;
 	qca803x_phy_api_ops->phy_interface_mode_get = qca803x_phy_interface_get_mode;

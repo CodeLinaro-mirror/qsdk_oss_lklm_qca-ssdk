@@ -988,10 +988,10 @@ sw_error_t
 hsl_port_phy_combo_medium_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_medium_t *medium);
 sw_error_t
-hsl_port_phy_magic_frame_mac_set(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_magic_frame_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_mac_addr_t * mac);
 sw_error_t
-hsl_port_phy_magic_frame_mac_get(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_magic_frame_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_mac_addr_t * mac);
 sw_error_t
 hsl_port_phy_powersave_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -1024,9 +1024,9 @@ sw_error_t
 hsl_port_phy_phyid_get(a_uint32_t dev_id, fal_port_t port_id, a_uint16_t * org_id,
 	a_uint16_t * rev_id);
 sw_error_t
-hsl_port_phy_wol_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
+hsl_port_phy_wol_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 sw_error_t
-hsl_port_phy_wol_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
+hsl_port_phy_wol_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
 sw_error_t
 hsl_port_phy_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_interface_mode_t *mode);
@@ -1044,6 +1044,10 @@ enum hsl_phy_api_id {
 	stats_get,
 	duplex_get,
 	duplex_set,
+	wol_set,
+	wol_get,
+	magic_frame_set,
+	magic_frame_get,
 	power_on,
 	power_off,
 	api_max,

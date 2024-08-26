@@ -384,19 +384,19 @@ sw_error_t fal_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id, a_uint16_
     EXPORT_SYMBOL(fal_port_phy_id_get);
 
 sw_error_t fal_port_wol_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_wol_status_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(wol_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_wol_status_set);
 
 sw_error_t fal_port_wol_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_wol_status_get , dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(wol_get , dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_wol_status_get);
 
 sw_error_t fal_port_magic_frame_mac_set (a_uint32_t dev_id, fal_port_t port_id, fal_mac_addr_t * mac)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_magic_frame_mac_set, dev_id, port_id, mac)
+    DEFINE_FAL_PORT_PHY_FUNC(magic_frame_set, dev_id, port_id, (void*)mac)
     EXPORT_SYMBOL(fal_port_magic_frame_mac_set);
 
 sw_error_t fal_port_magic_frame_mac_get (a_uint32_t dev_id, fal_port_t port_id, fal_mac_addr_t * mac)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_magic_frame_mac_get, dev_id, port_id, mac)
+    DEFINE_FAL_PORT_PHY_FUNC(magic_frame_get, dev_id, port_id, (void*)mac)
     EXPORT_SYMBOL(fal_port_magic_frame_mac_get);
 
 sw_error_t fal_debug_phycounter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)

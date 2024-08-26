@@ -2184,7 +2184,7 @@ hsl_port_phy_powersave_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 /*qca808x_start*/
 sw_error_t
-hsl_port_phy_magic_frame_mac_set(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_magic_frame_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_mac_addr_t * mac)
 {
 	sw_error_t rv = SW_OK;
@@ -2210,7 +2210,7 @@ hsl_port_phy_magic_frame_mac_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_magic_frame_mac_get(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_magic_frame_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_mac_addr_t * mac)
 {
 	sw_error_t rv = SW_OK;
@@ -2561,7 +2561,7 @@ hsl_port_phy_stats_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_wol_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
+hsl_port_phy_wol_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -2585,7 +2585,7 @@ hsl_port_phy_wol_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enab
 }
 
 sw_error_t
-hsl_port_phy_wol_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
+hsl_port_phy_wol_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -3479,6 +3479,10 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{stats_status_set, NULL},
 	{stats_status_get, NULL},
 	{stats_get, NULL},
+	{wol_set, NULL},
+	{wol_get, NULL},
+	{magic_frame_set, NULL},
+	{magic_frame_get, NULL},
 	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
 	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
 	{power_on, (void*)hsl_port_phy_std_power_on},
