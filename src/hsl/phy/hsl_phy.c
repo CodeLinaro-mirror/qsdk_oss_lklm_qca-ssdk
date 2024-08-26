@@ -2000,6 +2000,82 @@ hsl_port_phy_eee_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	return phy_drv->phy_eee_status_get (dev_id, phy_addr, status);
 }
 /*qca808x_end*/
+sw_error_t
+hsl_port_phy_intr_mask_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t intr_mask_flag)
+{
+	sw_error_t rv;
+	a_uint32_t phy_id;
+	hsl_phy_ops_t *phy_drv;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+	if (NULL == phy_drv->phy_intr_mask_set)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = phy_drv->phy_intr_mask_set(dev_id, phy_id, intr_mask_flag);
+
+	return rv;
+}
+
+sw_error_t
+hsl_port_phy_intr_mask_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t * intr_mask_flag)
+{
+	sw_error_t rv;
+	a_uint32_t phy_id;
+	hsl_phy_ops_t *phy_drv;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+	if (NULL == phy_drv->phy_intr_mask_get)
+		return SW_NOT_SUPPORTED;
+	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
+	SW_RTN_ON_ERROR(rv);
+	rv = phy_drv->phy_intr_mask_get(dev_id, phy_id, intr_mask_flag);
+
+    return rv;
+}
+
+sw_error_t
+hsl_port_phy_intr_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t * intr_mask_flag)
+{
+	sw_error_t rv;
+	a_uint32_t phy_id;
+	hsl_phy_ops_t *phy_drv;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+	if (NULL == phy_drv->phy_intr_status_get)
+		return SW_NOT_SUPPORTED;
+	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
+	SW_RTN_ON_ERROR(rv);
+	rv = phy_drv->phy_intr_status_get(dev_id, phy_id, intr_mask_flag);
+
+	return rv;
+}
 #ifndef IN_PORTCONTROL_MINI
 /*qca808x_start*/
 sw_error_t
@@ -3483,6 +3559,9 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{wol_get, NULL},
 	{magic_frame_set, NULL},
 	{magic_frame_get, NULL},
+	{intr_mask_set, NULL},
+	{intr_mask_get, NULL},
+	{intr_status_get, NULL},
 	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
 	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
 	{power_on, (void*)hsl_port_phy_std_power_on},

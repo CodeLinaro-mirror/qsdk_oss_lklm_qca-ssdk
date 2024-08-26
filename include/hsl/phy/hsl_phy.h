@@ -972,6 +972,15 @@ hsl_port_phy_eee_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 sw_error_t
 hsl_phydev_eee_update(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t adv);
 #endif
+sw_error_t
+hsl_port_phy_intr_mask_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t intr_mask_flag);
+sw_error_t
+hsl_port_phy_intr_mask_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t * intr_mask_flag);
+sw_error_t
+hsl_port_phy_intr_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t * intr_mask_flag);
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 hsl_port_phy_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
@@ -1042,6 +1051,9 @@ enum hsl_phy_api_id {
 	stats_status_set,
 	stats_status_get,
 	stats_get,
+	intr_mask_set,
+	intr_mask_get,
+	intr_status_get,
 	duplex_get,
 	duplex_set,
 	wol_set,

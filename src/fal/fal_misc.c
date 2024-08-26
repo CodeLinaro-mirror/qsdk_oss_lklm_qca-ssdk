@@ -25,6 +25,7 @@
 #include "fal_misc.h"
 #include "hsl_api.h"
 #include "adpt.h"
+#include "hsl_phy.h"
 
 sw_error_t fal_arp_status_set(a_uint32_t dev_id, a_bool_t enable)
     DEFINE_FAL_FUNC_HSL_EXPORT(arp_status_set, dev_id, enable)
@@ -72,13 +73,13 @@ sw_error_t fal_intr_status_clear(a_uint32_t dev_id, a_uint32_t intr_status)
     DEFINE_FAL_FUNC_HSL_EXPORT(intr_status_clear, dev_id, intr_status)
 
 sw_error_t fal_intr_port_link_mask_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t intr_mask_flag)
-    DEFINE_FAL_FUNC_EXPORT(intr_port_link_mask_set, dev_id, port_id, intr_mask_flag)
+    DEFINE_FAL_PORT_PHY_FUNC(intr_mask_set, dev_id, port_id, intr_mask_flag)
 
 sw_error_t fal_intr_port_link_mask_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t * intr_mask_flag)
-    DEFINE_FAL_FUNC_EXPORT(intr_port_link_mask_get, dev_id, port_id, intr_mask_flag)
+    DEFINE_FAL_PORT_PHY_FUNC(intr_mask_get, dev_id, port_id, intr_mask_flag)
 
 sw_error_t fal_intr_port_link_status_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t * intr_mask_flag)
-    DEFINE_FAL_FUNC_EXPORT(intr_port_link_status_get, dev_id, port_id, intr_mask_flag)
+    DEFINE_FAL_PORT_PHY_FUNC(intr_status_get, dev_id, port_id, intr_mask_flag)
 
 sw_error_t fal_intr_mask_mac_linkchg_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
     DEFINE_FAL_FUNC_HSL_EXPORT(intr_mask_mac_linkchg_set, dev_id, port_id, enable)

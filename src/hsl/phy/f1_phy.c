@@ -417,122 +417,6 @@ f1_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 /******************************************************************************
 *
-* f1_phy_intr_mask_set - Set interrupt mask with the
-* specified device.
-*/
-sw_error_t
-f1_phy_intr_mask_set(a_uint32_t dev_id, a_uint32_t phy_addr,
-    a_uint32_t intr_mask_flag)
-{
-    a_uint16_t phy_data = 0;
-    a_uint32_t mask = 0;
-
-    mask = F1_INTR_STATUS_UP_CHANGE | F1_INTR_STATUS_DOWN_CHANGE |
-        F1_INTR_SPEED_CHANGE | F1_INTR_DUPLEX_CHANGE;
-
-    if (FAL_PHY_INTR_STATUS_UP_CHANGE & intr_mask_flag)
-    {
-        phy_data |= F1_INTR_STATUS_UP_CHANGE;
-    }
-
-    if (FAL_PHY_INTR_STATUS_DOWN_CHANGE & intr_mask_flag)
-    {
-        phy_data |= F1_INTR_STATUS_DOWN_CHANGE;
-    }
-    else
-    {
-        phy_data &= (~F1_INTR_STATUS_DOWN_CHANGE);
-    }
-
-    if (FAL_PHY_INTR_SPEED_CHANGE & intr_mask_flag)
-    {
-        phy_data |= F1_INTR_SPEED_CHANGE;
-    }
-
-    if (FAL_PHY_INTR_DUPLEX_CHANGE & intr_mask_flag)
-    {
-        phy_data |= F1_INTR_DUPLEX_CHANGE;
-    }
-
-    return hsl_phy_modify_mii(dev_id, phy_addr, F1_PHY_INTR_MASK, mask, phy_data);
-}
-
-/******************************************************************************
-*
-* f1_phy_intr_mask_get - Get interrupt mask with the
-* specified device.
-*/
-sw_error_t
-f1_phy_intr_mask_get(a_uint32_t dev_id, a_uint32_t phy_addr,
-    a_uint32_t * intr_mask_flag)
-{
-    a_uint16_t phy_data = 0;
-
-    phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, F1_PHY_INTR_MASK);
-
-    *intr_mask_flag = 0;
-    if (F1_INTR_STATUS_UP_CHANGE & phy_data)
-    {
-        *intr_mask_flag |= FAL_PHY_INTR_STATUS_UP_CHANGE;
-    }
-
-    if (F1_INTR_STATUS_DOWN_CHANGE & phy_data)
-    {
-        *intr_mask_flag |= FAL_PHY_INTR_STATUS_DOWN_CHANGE;
-    }
-
-    if (F1_INTR_SPEED_CHANGE & phy_data)
-    {
-        *intr_mask_flag |= FAL_PHY_INTR_SPEED_CHANGE;
-    }
-
-    if (F1_INTR_DUPLEX_CHANGE & phy_data)
-    {
-        *intr_mask_flag |= FAL_PHY_INTR_DUPLEX_CHANGE;
-    }
-
-    return SW_OK;
-}
-
-/******************************************************************************
-*
-* f1_phy_intr_status_get - Get interrupt status with the
-* specified device.
-*/
-sw_error_t
-f1_phy_intr_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
-    a_uint32_t * intr_status_flag)
-{
-    a_uint16_t phy_data = 0;
-
-    phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, F1_PHY_INTR_STATUS);
-
-    *intr_status_flag = 0;
-    if (F1_INTR_STATUS_UP_CHANGE & phy_data)
-    {
-        *intr_status_flag |= FAL_PHY_INTR_STATUS_UP_CHANGE;
-    }
-
-    if (F1_INTR_STATUS_DOWN_CHANGE & phy_data)
-    {
-        *intr_status_flag |= FAL_PHY_INTR_STATUS_DOWN_CHANGE;
-    }
-
-    if (F1_INTR_SPEED_CHANGE & phy_data)
-    {
-        *intr_status_flag |= FAL_PHY_INTR_SPEED_CHANGE;
-    }
-
-    if (F1_INTR_DUPLEX_CHANGE & phy_data)
-    {
-        *intr_status_flag |= FAL_PHY_INTR_DUPLEX_CHANGE;
-    }
-
-    return SW_OK;
-}
-
-/******************************************************************************
-*
 * f1_phy_set_remote_loopback
 *
 * set phy remote loopback
@@ -613,9 +497,6 @@ static int f1_phy_api_ops_init(void)
 	f1_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
 	f1_phy_api_ops->phy_remote_loopback_set = f1_phy_set_remote_loopback;
 	f1_phy_api_ops->phy_remote_loopback_get = f1_phy_get_remote_loopback;
-	f1_phy_api_ops->phy_intr_mask_set = f1_phy_intr_mask_set;
-	f1_phy_api_ops->phy_intr_mask_get = f1_phy_intr_mask_get;
-	f1_phy_api_ops->phy_intr_status_get = f1_phy_intr_status_get;
 	f1_phy_api_ops->phy_8023az_set = qcaphy_set_8023az;
 	f1_phy_api_ops->phy_8023az_get = qcaphy_get_8023az;
 	f1_phy_api_ops->phy_eee_adv_set = qcaphy_set_eee_adv;
