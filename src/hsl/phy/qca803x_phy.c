@@ -820,106 +820,6 @@ qca803x_phy_get_combo_fiber_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	return SW_OK;
 }
-
-/******************************************************************************
-*
-* qca803x_phy_set_counter_status - set counter status
-*
-*/
-sw_error_t
-qca803x_phy_set_counter_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-	static a_uint16_t frame_dir = 0;
-
-	/*for qca803x phy, tx and rx cannot be all enabled one time,
-	  so we will enable tx or rx based current state, enable rx if
-	  current is tx and enable tx if current is rx*/
-	if (enable == A_TRUE)
-	{
-		phy_data |= QCA803X_PHY_MMD7_FRAME_CHECK;
-		/*enable RX counter*/
-		if(frame_dir)
-		{
-			SSDK_INFO("ENABLE QCA803X RX COUNTER\n");
-			phy_data &= ~QCA803X_PHY_MMD7_FRAME_DIR;
-			frame_dir = 0;
-		}
-		/*enable TX counter*/
-		else
-		{
-			SSDK_INFO("ENABLE QCA803X TX COUNTER\n");
-			phy_data |= QCA803X_PHY_MMD7_FRAME_DIR;
-			frame_dir = 1;
-		}
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD7_NUM,
-		QCA803X_PHY_MMD7_FRAME_CTRL,
-		QCA803X_PHY_MMD7_FRAME_CHECK | QCA803X_PHY_MMD7_FRAME_DIR, phy_data);
-}
-
-/******************************************************************************
-*
-* qca803x_phy_get_counter_status - get counter status
-*
-*/
-sw_error_t
-qca803x_phy_get_counter_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data;
-	*enable = A_FALSE;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr,  A_FALSE,
-		QCA803X_PHY_MMD7_NUM, QCA803X_PHY_MMD7_FRAME_CTRL);
-
-	if (phy_data & QCA803X_PHY_MMD7_FRAME_CHECK) {
-		*enable = A_TRUE;
-	}
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* qca803x_phy_show_counter - show counter statistics
-*
-*/
-sw_error_t
-qca803x_phy_show_counter(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_counter_info_t * counter_infor)
-{
-	a_uint16_t phy_data, phy_data1;
-	a_uint16_t frame_dir = 0;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr,  A_FALSE,
-		QCA803X_PHY_MMD7_NUM, QCA803X_PHY_MMD7_FRAME_CTRL);
-	phy_data1 = hsl_phy_mmd_reg_read(dev_id, phy_addr,  A_FALSE,
-		QCA803X_PHY_MMD7_NUM, QCA803X_PHY_MMD7_FRAME_DATA);
-	frame_dir = (phy_data & QCA803X_PHY_MMD7_FRAME_DIR) >> 14;
-
-	if(frame_dir)
-	{
-		/*get the counter of tx*/
-		counter_infor->TxGoodFrame = phy_data1 & QCA803X_PHY_FRAME_CNT;
-		counter_infor->TxBadCRC = (phy_data1 & QCA803X_PHY_FRAME_ERROR) >> 8;
-		counter_infor->RxGoodFrame = 0;
-		counter_infor->RxBadCRC = 0;
-	}
-	else
-	{
-		/*get the counter of rx*/
-		counter_infor->TxGoodFrame = 0;
-		counter_infor->TxBadCRC = 0;
-		counter_infor->RxGoodFrame = phy_data1 & QCA803X_PHY_FRAME_CNT;
-		counter_infor->RxBadCRC = (phy_data1 & QCA803X_PHY_FRAME_ERROR) >> 8;
-	}
-
-	return SW_OK;
-}
-
 #endif
 /******************************************************************************
 *
@@ -1002,9 +902,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_combo_medium_status_get = qca803x_phy_get_combo_current_medium_type;
 	qca803x_phy_api_ops->phy_combo_fiber_mode_set = qca803x_phy_set_combo_fiber_mode;
 	qca803x_phy_api_ops->phy_combo_fiber_mode_get = qca803x_phy_get_combo_fiber_mode;
-	qca803x_phy_api_ops->phy_counter_set = qca803x_phy_set_counter_status;
-	qca803x_phy_api_ops->phy_counter_get = qca803x_phy_get_counter_status;
-	qca803x_phy_api_ops->phy_counter_show = qca803x_phy_show_counter;
 #endif
 	qca803x_phy_api_ops->phy_get_status = qca803x_phy_get_status;
 	qca803x_phy_api_ops->phy_eee_adv_set = qcaphy_set_eee_adv;

@@ -2487,7 +2487,8 @@ hsl_port_phy_phyid_get(a_uint32_t dev_id, fal_port_t port_id, a_uint16_t * org_i
 }
 
 sw_error_t
-hsl_port_phy_counter_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
+hsl_port_phy_stats_status_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -2510,7 +2511,8 @@ hsl_port_phy_counter_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
 }
 
 sw_error_t
-hsl_port_phy_counter_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable)
+hsl_port_phy_stats_status_get(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t *enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -2534,7 +2536,7 @@ hsl_port_phy_counter_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable
 }
 
 sw_error_t
-hsl_port_phy_counter_show(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_stats_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_counter_info_t *counter_info)
 {
 	sw_error_t rv = SW_OK;
@@ -3474,6 +3476,9 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{mdix_set, NULL},
 	{mdix_get, NULL},
 	{mdix_status_get, NULL},
+	{stats_status_set, NULL},
+	{stats_status_get, NULL},
+	{stats_get, NULL},
 	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
 	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
 	{power_on, (void*)hsl_port_phy_std_power_on},

@@ -1189,87 +1189,6 @@ qca808x_phy_get_intr_status(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	return SW_OK;
 }
-
-/******************************************************************************
-*
-* qca808x_phy_set_counter - set counter status
-*
-* set counter  status
-*/
-sw_error_t
-qca808x_phy_set_counter(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE) {
-		phy_data |= QCA808X_PHY_FRAME_CHECK_EN;
-		phy_data |= QCA808X_PHY_XMIT_MAC_CNT_SELFCLR;
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD7_NUM,
-		QCA808X_PHY_MMD7_COUNTER_CTRL,
-		QCA808X_PHY_FRAME_CHECK_EN | QCA808X_PHY_XMIT_MAC_CNT_SELFCLR,
-		phy_data);
-}
-
-/******************************************************************************
-*
-* qca808x_phy_get_counter_status - get counter status
-*
-* set counter status
-*/
-sw_error_t
-qca808x_phy_get_counter(a_uint32_t dev_id, a_uint32_t phy_addr,
-			 a_bool_t * enable)
-{
-	a_uint16_t phy_data;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD7_NUM,
-		QCA808X_PHY_MMD7_COUNTER_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCA808X_PHY_FRAME_CHECK_EN) {
-		*enable = A_TRUE;
-	} else {
-		*enable = A_FALSE;
-	}
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* qca808x_phy_show show counter statistics
-*
-* show counter statistics
-*/
-sw_error_t
-qca808x_phy_show_counter(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_counter_info_t * counter_infor)
-{
-	a_uint16_t ingress_high_counter = 0;
-	a_uint16_t ingress_low_counter = 0;
-	a_uint16_t egress_high_counter = 0;
-	a_uint16_t egress_low_counter = 0;
-
-	ingress_high_counter = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD7_NUM, QCA808X_PHY_MMD7_INGRESS_COUNTER_HIGH);
-	ingress_low_counter = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD7_NUM, QCA808X_PHY_MMD7_INGRESS_COUNTER_LOW);
-	counter_infor->RxGoodFrame = (ingress_high_counter << 16 ) | ingress_low_counter;
-	counter_infor->RxBadCRC = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD7_NUM, QCA808X_PHY_MMD7_INGRESS_ERROR_COUNTER);
-
-	egress_high_counter = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD7_NUM, QCA808X_PHY_MMD7_EGRESS_COUNTER_HIGH);
-	egress_low_counter = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD7_NUM, QCA808X_PHY_MMD7_EGRESS_COUNTER_LOW);
-	counter_infor->TxGoodFrame = (egress_high_counter << 16 ) | egress_low_counter;
-	counter_infor->TxBadCRC = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD7_NUM, QCA808X_PHY_MMD7_EGRESS_ERROR_COUNTER);
-
-	return SW_OK;
-}
 #endif
 /******************************************************************************
 *
@@ -1679,9 +1598,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 	qca808x_phy_api_ops->phy_intr_mask_set = qca808x_phy_set_intr_mask;
 	qca808x_phy_api_ops->phy_intr_mask_get = qca808x_phy_get_intr_mask;
 	qca808x_phy_api_ops->phy_intr_status_get = qca808x_phy_get_intr_status;
-	qca808x_phy_api_ops->phy_counter_set = qca808x_phy_set_counter;
-	qca808x_phy_api_ops->phy_counter_get = qca808x_phy_get_counter;
-	qca808x_phy_api_ops->phy_counter_show = qca808x_phy_show_counter;
 #endif
 	qca808x_phy_api_ops->phy_eee_adv_set = qca808x_phy_set_eee_adv;
 	qca808x_phy_api_ops->phy_eee_adv_get = qca808x_phy_get_eee_adv;

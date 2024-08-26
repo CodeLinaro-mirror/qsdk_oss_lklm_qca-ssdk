@@ -1127,7 +1127,7 @@ _aquantia_phy_line_side_counter_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 		AQUANTIA_MMD_PCS_REGISTERS,
 		AQUANTIA_LINE_SIDE_TRANSMIT_ERROR_FRAME_COUNTER1);
 	PHY_RTN_ON_READ_ERROR(lsw_counter);
-	counter_infor->TxBadCRC = (msw_counter << 16) | lsw_counter;
+	counter_infor->TxFcsErr = (msw_counter << 16) | lsw_counter;
 
 	/*get line side rx good packets*/
 	msw_counter = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
@@ -1149,7 +1149,7 @@ _aquantia_phy_line_side_counter_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 		AQUANTIA_MMD_PCS_REGISTERS,
 		AQUANTIA_LINE_SIDE_RECEIVE_ERROR_FRAME_COUNTER1);
 	PHY_RTN_ON_READ_ERROR(lsw_counter);
-	counter_infor->RxBadCRC = (msw_counter << 16) | lsw_counter;
+	counter_infor->RxFcsErr = (msw_counter << 16) | lsw_counter;
 
 	return SW_OK;
 }
@@ -1181,7 +1181,7 @@ _aquantia_phy_system_side_counter_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 		AQUANTIA_MMD_PCS_REGISTERS,
 		AQUANTIA_SYSTEM_SIDE_TRANSMIT_ERROR_FRAME_COUNTER1);
 	PHY_RTN_ON_READ_ERROR(lsw_counter);
-	counter_infor->SysTxBadCRC = (msw_counter << 16) | lsw_counter;
+	counter_infor->SysTxFcsErr = (msw_counter << 16) | lsw_counter;
 
 	/*get system rx good packets*/
 	msw_counter = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
@@ -1203,7 +1203,7 @@ _aquantia_phy_system_side_counter_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 		AQUANTIA_MMD_PCS_REGISTERS,
 		AQUANTIA_SYSTEM_SIDE_RECEIVE_ERROR_FRAME_COUNTER1);
 	PHY_RTN_ON_READ_ERROR(lsw_counter);
-	counter_infor->SysRxBadCRC = (msw_counter << 16) | lsw_counter;
+	counter_infor->SysRxFcsErr = (msw_counter << 16) | lsw_counter;
 
 	return SW_OK;
 }

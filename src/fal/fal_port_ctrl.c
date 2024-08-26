@@ -400,15 +400,15 @@ sw_error_t fal_port_magic_frame_mac_get (a_uint32_t dev_id, fal_port_t port_id, 
     EXPORT_SYMBOL(fal_port_magic_frame_mac_get);
 
 sw_error_t fal_debug_phycounter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_counter_set , dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(stats_status_set , dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_debug_phycounter_set);
 
 sw_error_t fal_debug_phycounter_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_counter_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(stats_status_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_debug_phycounter_get);
 
 sw_error_t fal_debug_phycounter_show (a_uint32_t dev_id, fal_port_t port_id, fal_port_counter_info_t* port_counter_info)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_counter_show, dev_id, port_id, port_counter_info)
+    DEFINE_FAL_PORT_PHY_FUNC(stats_get, dev_id, port_id, (void*)port_counter_info)
     EXPORT_SYMBOL(fal_debug_phycounter_show);
 
 static sw_error_t

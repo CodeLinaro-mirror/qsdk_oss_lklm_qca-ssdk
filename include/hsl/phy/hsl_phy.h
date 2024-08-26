@@ -832,11 +832,11 @@ hsl_port_phydev_get_status(a_uint32_t dev_id, a_uint32_t port_id,
 	struct port_phy_status *phy_status);
 /*qca808x_start*/
 sw_error_t
-hsl_port_phy_counter_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable);
+hsl_port_phy_stats_status_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable);
 sw_error_t
-hsl_port_phy_counter_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
+hsl_port_phy_stats_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
 sw_error_t
-hsl_port_phy_counter_show(a_uint32_t dev_id, fal_port_t port_id,
+hsl_port_phy_stats_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_counter_info_t *counter_info);
 sw_error_t
 hsl_port_phy_autoadv_get(a_uint32_t dev_id, a_uint32_t port_id,
@@ -1039,6 +1039,9 @@ enum hsl_phy_api_id {
 	mdix_set,
 	mdix_get,
 	mdix_status_get,
+	stats_status_set,
+	stats_status_get,
+	stats_get,
 	duplex_get,
 	duplex_set,
 	power_on,
