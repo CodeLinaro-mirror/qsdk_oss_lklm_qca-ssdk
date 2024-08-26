@@ -972,9 +972,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 #ifndef IN_PORTCONTROL_MINI
 	qca803x_phy_api_ops->phy_powersave_set = qca803x_phy_set_powersave;
 	qca803x_phy_api_ops->phy_powersave_get = qca803x_phy_get_powersave;
-	qca803x_phy_api_ops->phy_mdix_set = qcaphy_set_mdix;
-	qca803x_phy_api_ops->phy_mdix_get = qcaphy_get_mdix;
-	qca803x_phy_api_ops->phy_mdix_status_get = qcaphy_get_mdix_status;
 	qca803x_phy_api_ops->phy_local_loopback_set = qcaphy_set_local_loopback;
 	qca803x_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
 	qca803x_phy_api_ops->phy_remote_loopback_set = qca803x_phy_set_remote_loopback;

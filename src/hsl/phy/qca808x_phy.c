@@ -1654,9 +1654,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 	qca808x_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
 	qca808x_phy_api_ops->phy_reset = qca808x_phy_reset;
 #ifndef IN_PORTCONTROL_MINI
-	qca808x_phy_api_ops->phy_mdix_set = qcaphy_set_mdix;
-	qca808x_phy_api_ops->phy_mdix_get = qcaphy_get_mdix;
-	qca808x_phy_api_ops->phy_mdix_status_get = qcaphy_get_mdix_status;
 	qca808x_phy_api_ops->phy_local_loopback_set = qca808x_phy_set_local_loopback;
 	qca808x_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
 	qca808x_phy_api_ops->phy_remote_loopback_set = qca808x_phy_set_remote_loopback;

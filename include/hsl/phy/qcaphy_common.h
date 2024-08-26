@@ -202,15 +202,6 @@ sw_error_t
 qcaphy_lp_capability_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t *cap);
 sw_error_t
-qcaphy_set_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_mdix_mode_t mode);
-sw_error_t
-qcaphy_get_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_mdix_mode_t * mode);
-sw_error_t
-qcaphy_get_mdix_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_mdix_status_t * mode);
-sw_error_t
 qcaphy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct port_phy_status *phy_status);
 a_bool_t
