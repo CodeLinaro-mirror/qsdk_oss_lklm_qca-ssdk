@@ -428,7 +428,7 @@ int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t bus_index)
 {
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
-	SSDK_INFO("qca probe sfp phy driver succeeded!\n");
+	SSDK_INFO("qca probe sfp phy driver succeeded on port%d\n",port_id);
 
 	hsl_phy_address_init(dev_id, port_id,
 		TO_PHY_ADDR_E(FAL_SFP_PHY_ADDR, bus_index));

@@ -31,8 +31,6 @@ sw_error_t ssdk_led_init(a_uint32_t dev_id, a_uint32_t port_id)
 		rv = ssdk_dt_port_source_pattern_get(dev_id, port_id, src_index, &pattern);
 		if(rv != SW_OK)
 			continue;
-		SSDK_INFO("port id 0x%x, ssdk_led_mode:%x, ssdk_led_map:%x, ssdk_led_src_id:%x\n",
-			port_id, pattern.mode, pattern.map, src_index);
 		rv = fal_port_led_source_pattern_set(dev_id, port_id, src_index, &pattern);
 		SW_RTN_ON_ERROR(rv);
 	}
