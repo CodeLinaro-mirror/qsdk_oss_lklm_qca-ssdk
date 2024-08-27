@@ -46,18 +46,25 @@ struct sub_attr_des_t
 	char *sub_attr_name;
 	a_uint32_t value;
 };
-
+#if 0
 struct attr_des_t
 {
 	char *attr_name;
 	struct sub_attr_des_t sub_attr_des[MAX_ARRT_NUM];
 };
 
-struct attr_des_t g_attr_des[] =
+#else
+struct attr_des_t {
+    char *attr_name;
+    struct sub_attr_des_t *sub_attr_des;
+};
+#endif
+
+const struct attr_des_t g_attr_des[] =
 {
 	{
 		"dest_info_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"port_bmp", FAL_DEST_INFO_PORT_BMP},
 			{"port_id", FAL_DEST_INFO_PORT_ID},
 			{NULL, INVALID_ARRT_VALUE}
@@ -65,7 +72,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"mtu_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"ethernet", FAL_MTU_ETHERNET},
 			{"ip", FAL_MTU_IP},
 			{NULL, INVALID_ARRT_VALUE}
@@ -73,7 +80,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"ip_ver",
-		{
+		(struct sub_attr_des_t[]){
 			{"ipv4", 1},
 			{"ipv6", 2},
 			{"ipv4_and_ipv6", 3},
@@ -82,7 +89,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"udp_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"udp", 1},
 			{"udp-lite", 2},
 			{"udp_and_udp-lite", 3},
@@ -91,7 +98,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"l4_port_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"dst", 1},
 			{"src", 2},
 			{"dst_and_src", 3},
@@ -100,7 +107,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"hdr_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"ethernet", FAL_ETHERNET_HDR},
 			{"ethernet-tag", FAL_ETHERNET_TAG_HDR},
 			{"ipv4", FAL_IPV4_HDR},
@@ -117,7 +124,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"l3_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"others", FAL_L3_TYPE_OTHERS},
 			{"ipv4", FAL_L3_TYPE_IPV4},
 			{"arp", FAL_L3_TYPE_ARP},
@@ -127,7 +134,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"l4_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"others", FAL_L4_TYPE_OTHERS},
 			{"tcp", FAL_L4_TYPE_TCP},
 			{"udp", FAL_L4_TYPE_UDP},
@@ -139,7 +146,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"vpn_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"vsi", 0},
 			{"vrf", 1},
 			{NULL, INVALID_ARRT_VALUE}
@@ -148,7 +155,7 @@ struct attr_des_t g_attr_des[] =
 #if defined(IN_ACL) || defined(IN_TUNNEL)
 	{
 		"tunnel_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"gre_tap_ipv4", FAL_TUNNEL_TYPE_GRE_TAP_OVER_IPV4},
 			{"gre_tap_ipv6", FAL_TUNNEL_TYPE_GRE_TAP_OVER_IPV6},
 			{"vxlan_ipv4", FAL_TUNNEL_TYPE_VXLAN_OVER_IPV4},
@@ -170,7 +177,7 @@ struct attr_des_t g_attr_des[] =
 #endif
 	{
 		"vport_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"tunnel", FAL_VPORT_TYPE_TUNNEL},
 			{"0", FAL_VPORT_TYPE_TUNNEL},
 			{"normal", FAL_VPORT_TYPE_NORMAL},
@@ -181,7 +188,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_POLICER
 	{
 		"policer_meter_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"rfc", FAL_POLICER_METER_RFC},
 			{"mef10_3", FAL_POLICER_METER_MEF10_3},
 			{NULL, INVALID_ARRT_VALUE}
@@ -189,7 +196,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"policer_meter_color",
-		{
+		(struct sub_attr_des_t[]){
 			{"meter_yellow", FAL_POLICER_METER_YELLOW},
 			{"meter_red", FAL_POLICER_METER_RED},
 			{NULL, INVALID_ARRT_VALUE}
@@ -199,7 +206,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_SHAPER
 	{
 		"shaper_meter_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"rfc", FAL_SHAPER_METER_RFC},
 			{"mef10_3", FAL_SHAPER_METER_MEF10_3},
 			{NULL, INVALID_ARRT_VALUE}
@@ -209,7 +216,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_VXLAN
 	{
 		"vxlan_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"vxlan", FAL_VXLAN},
 			{"0", FAL_VXLAN},
 			{"vxlan-gpe", FAL_VXLAN_GPE},
@@ -221,7 +228,7 @@ struct attr_des_t g_attr_des[] =
 #if defined(IN_TUNNEL_PROGRAM) || defined(IN_TUNNEL)
 	{
 		"tunnel_program_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"program0", FAL_TUNNEL_PROGRAM_TYPE_0},
 			{"program1", FAL_TUNNEL_PROGRAM_TYPE_1},
 			{"program2", FAL_TUNNEL_PROGRAM_TYPE_2},
@@ -241,7 +248,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_TUNNEL_PROGRAM
 	{
 		"tunnel_program_pos_mode",
-		{
+		(struct sub_attr_des_t[]){
 			{"end", 0},
 			{"start", 1},
 			{NULL, INVALID_ARRT_VALUE}
@@ -249,7 +256,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"tunnel_program_inner_type_mode",
-		{
+		(struct sub_attr_des_t[]){
 			{"fix", 0},
 			{"udf", 1},
 			{NULL, INVALID_ARRT_VALUE}
@@ -257,7 +264,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"tunnel_program_opt_len_unit",
-		{
+		(struct sub_attr_des_t[]){
 			{"1byte", 0},
 			{"2bytes", 1},
 			{"4bytes", 2},
@@ -269,7 +276,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_IP
 	{
 		"udp_zero_csum_action",
-		{
+		(struct sub_attr_des_t[]){
 			{"forward", FAL_UDP_ZERO_CSUM_FRWRD},
 			{"drop", FAL_UDP_ZERO_CSUM_DROP},
 			{"recalc_mapt", FAL_UDP_ZERO_CSUM_RECALC_MAPT},
@@ -281,7 +288,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_TUNNEL
 	{
 		"tunnel_overlay_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"gre-tap", FAL_TUNNEL_OVERLAY_TYPE_GRE_TAP},
 			{"vxlan", FAL_TUNNEL_OVERLAY_TYPE_VXLAN},
 			{"vxlan-gpe", FAL_TUNNEL_OVERLAY_TYPE_VXLAN_GPE},
@@ -291,7 +298,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"tunnel_udf_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"l2", FAL_TUNNEL_UDF_TYPE_L2},
 			{"l3", FAL_TUNNEL_UDF_TYPE_L3},
 			{"l4", FAL_TUNNEL_UDF_TYPE_L4},
@@ -303,7 +310,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"src1_sel",
-		{
+		(struct sub_attr_des_t[]){
 			{"zero_data", FAL_TUNNEL_RULE_SRC1_ZERO_DATA},
 			{"header_data", FAL_TUNNEL_RULE_SRC1_FROM_HEADER_DATA},
 			{NULL, FAL_TUNNEL_RULE_SRC1_DATA_INVALID}
@@ -311,7 +318,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"src2_sel",
-		{
+		(struct sub_attr_des_t[]){
 			{"zero_data", FAL_TUNNEL_RULE_SRC2_ZERO_DATA},
 			{"pkt_data", FAL_TUNNEL_RULE_SRC2_PKT_DATA0},
 			{"napt_addr", FAL_TUNNEL_RULE_SRC2_NAPT_ADDR},
@@ -323,7 +330,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"src3_sel",
-		{
+		(struct sub_attr_des_t[]){
 			{"zero_data", FAL_TUNNEL_RULE_SRC3_ZERO_DATA},
 			{"pkt_data", FAL_TUNNEL_RULE_SRC3_PKT_DATA1},
 			{"napt_port", FAL_TUNNEL_RULE_SRC3_NAPT_PORT},
@@ -336,7 +343,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"encap_target",
-		{
+		(struct sub_attr_des_t[]){
 			{"sip", FAL_TUNNEL_ENCAP_TARGET_SIP},
 			{"dip", FAL_TUNNEL_ENCAP_TARGET_DIP},
 			{"tunnel", FAL_TUNNEL_ENCAP_TARGET_TUNNEL_INFO},
@@ -346,7 +353,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"payload_inner_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"ethernet", FAL_TUNNEL_INNER_ETHERNET},
 			{"ip", FAL_TUNNEL_INNER_IP},
 			{"transport", FAL_TUNNEL_INNER_TRANSPORT},
@@ -355,7 +362,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"ecn_val",
-		{
+		(struct sub_attr_des_t[]){
 			{"no_ect", FAL_TUNNEL_ECN_NOT_ECT},
 			{"ect_0", FAL_TUNNEL_ECN_ECT_0},
 			{"ect_1", FAL_TUNNEL_ECN_ECT_1},
@@ -366,7 +373,7 @@ struct attr_des_t g_attr_des[] =
 #endif
 	{
 		"flow_excep_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"flow_aware", FAL_FLOW_AWARE},
 			{"flow_hit", FAL_FLOW_HIT},
 			{"flow_miss", FAL_FLOW_MISS},
@@ -376,7 +383,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_MAPT
 	{
 		"addr_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"zero_data", FAL_TUNNEL_MAPT_ZERO_DATA},
 			{"src_ip", FAL_TUNNEL_MAPT_FROM_SRC},
 			{"dst_ip", FAL_TUNNEL_MAPT_FROM_DST},
@@ -385,7 +392,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"proto_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"zero_data", FAL_TUNNEL_MAPT_ZERO_DATA},
 			{"src_port", FAL_TUNNEL_MAPT_FROM_SRC},
 			{"dst_port", FAL_TUNNEL_MAPT_FROM_DST},
@@ -396,7 +403,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_VPORT
 	{
 		"vport_type",
-		{
+		(struct sub_attr_des_t[]){
 			{"tunnel", FAL_VPORT_TYPE_TUNNEL},
 			{"normal", FAL_VPORT_TYPE_NORMAL},
 			{NULL, FAL_VPORT_TYPE_BUTT}
@@ -405,7 +412,7 @@ struct attr_des_t g_attr_des[] =
 #endif
 	{
 		"cnt_mode",
-		{
+		(struct sub_attr_des_t[]){
 			{"ip_pkt", FAL_PORT_CNT_MODE_IP_PKT},
 			{"full_pkt", FAL_PORT_CNT_MODE_FULL_PKT},
 			{NULL, FAL_PORT_CNT_MODE_BUTT}
@@ -413,7 +420,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"port_select",
-		{
+		(struct sub_attr_des_t[]){
 			{"tnl_decap_src_vp", FAL_QINQ_SEL_TNL_DECAP_SRC_VP},
 			{"org_src_port", FAL_QINQ_SEL_ORG_SRC_PORT},
 			{NULL, INVALID_ARRT_VALUE}
@@ -422,7 +429,7 @@ struct attr_des_t g_attr_des[] =
 	{
 
 		"direction",
-		{
+		(struct sub_attr_des_t[]){
 			{"both", FAL_DIR_BOTH},
 			{"ingress", FAL_DIR_INGRESS},
 			{"egress", FAL_DIR_EGRESS},
@@ -432,7 +439,7 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_ATHTAG
 	{
 		"athtag_version",
-		{
+		(struct sub_attr_des_t[]){
 			{"v2", FAL_ATHTAG_VER2},
 			{"v3", FAL_ATHTAG_VER3},
 			{NULL, INVALID_ARRT_VALUE}
@@ -440,7 +447,7 @@ struct attr_des_t g_attr_des[] =
 	},
 	{
 		"athtag_action",
-		{
+		(struct sub_attr_des_t[]){
 			{"normal", FAL_ATHTAG_ACTION_NORMAL},
 			{"read_write_reg", FAL_ATHTAG_ACTION_READ_WRITE_REG},
 			{"disable_learn", FAL_ATHTAG_ACTION_DISABLE_LEARN},
@@ -453,7 +460,7 @@ struct attr_des_t g_attr_des[] =
 #if defined(MRPPE)
 	{
 		"rsshash_algm",
-		{
+		(struct sub_attr_des_t[]){
 			{"legacy", FAL_RSS_LEGACY_HASH},
 			{"toeplitz", FAL_RSS_TOEPLITZ_HASH},
 			{NULL, INVALID_ARRT_VALUE}
@@ -463,14 +470,14 @@ struct attr_des_t g_attr_des[] =
 #ifdef IN_LED
 	{
 		"led_active_level",
-		{
+		(struct sub_attr_des_t[]){
 			{"high", LED_ACTIVE_HIGH},
 			{"low", LED_ACTIVE_LOW},
 			{NULL, INVALID_ARRT_VALUE}
 		}
 	},
 #endif
-	{NULL, {{NULL, INVALID_ARRT_VALUE}}}
+	{NULL, (struct sub_attr_des_t[]){{NULL, INVALID_ARRT_VALUE}}}
 };
 
 sw_error_t

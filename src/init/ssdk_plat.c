@@ -1831,3 +1831,26 @@ int ssdk_uniphy_valid_check(a_uint32_t dev_id,
 	return ssdk_uniphy_check_by_socid(dev_id, index, mode);
 #endif
 }
+
+void ssdk_log_fun(a_uint8_t level, const char *func, unsigned int line, const char *fmt, ...) {
+    va_list args;
+	char buffer[512] = {0};
+	char *level_str;
+
+	switch (level) {
+		case SSDK_LOG_LEVEL_ERROR: 	level_str = "ERROR"; 	break;
+		case SSDK_LOG_LEVEL_WARN: 	level_str = "WARN"; 	break;
+		case SSDK_LOG_LEVEL_INFO: 	level_str = "INFO"; 	break;
+		case SSDK_LOG_LEVEL_DEBUG: 	level_str = "DEBUG"; 	break;
+		default: 			level_str = "N/A"; 	break;
+	}
+
+	if (level<= ssdk_log_level) {
+	  va_start(args, fmt);
+	  snprintf(buffer, sizeof(buffer), "%s[%u]:%s:", func, line, level_str);
+	  vsnprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), fmt, args);
+	  printk("%s", buffer);
+	  va_end(args);
+	}
+}
+

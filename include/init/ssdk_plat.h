@@ -260,7 +260,7 @@ enum {
 #define SSDK_REGADDR_C45_MASK    GENMASK(15, 0)
 
 extern a_uint32_t ssdk_log_level;
-
+#if 0
 #define __SSDK_LOG_FUN(lev, fmt, ...) \
 	do { \
 		if (SSDK_LOG_LEVEL_##lev <= ssdk_log_level) { \
@@ -268,6 +268,12 @@ extern a_uint32_t ssdk_log_level;
 				 __FUNCTION__, __LINE__, ##__VA_ARGS__); \
 		} \
 	} while(0)
+#else
+void ssdk_log_fun(a_uint8_t level, const char *func, unsigned int line, const char *fmt, ...);
+#define __SSDK_LOG_FUN(lev, fmt, ...)  \
+		ssdk_log_fun(SSDK_LOG_LEVEL_##lev, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+#endif
+
 #define SSDK_DUMP_BUF(lev, buf, len) \
 	do {\
 		if (SSDK_LOG_LEVEL_##lev <= ssdk_log_level) {\
