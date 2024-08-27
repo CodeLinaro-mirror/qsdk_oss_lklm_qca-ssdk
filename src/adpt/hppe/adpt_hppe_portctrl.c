@@ -4831,6 +4831,8 @@ _adpt_hppe_pport_tx_cnt_update(a_uint32_t dev_id, fal_port_t port_id, fal_port_c
 	ADPT_NULL_POINT_CHECK(dt_cfg);
 
 	ptscheduler = &dt_cfg->pool[FAL_PORT_ID_VALUE(port_id)];
+	if (ptscheduler->ucastq_end == 0 || ptscheduler->mcastq_end == 0)
+		return rv;
 
 	p_adpt_api = adpt_api_ptr_get(dev_id);
 	ADPT_NULL_POINT_CHECK(p_adpt_api);
