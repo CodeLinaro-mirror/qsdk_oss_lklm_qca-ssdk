@@ -1645,15 +1645,24 @@ qca_ppe_port_reset(a_uint32_t dev_id)
 
 sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 {
+	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
 	sw_error_t rv = SW_OK;
 
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
+	switch (chip_type) {
+	case APPE_TYPE:
+	case MPPE_TYPE:
+	case MRPPE_TYPE:
 		rv = qca_ppe_port_reset(dev_id);
 		SW_RTN_ON_ERROR(rv);
+
 		rv = qca_appe_hw_init(dev_id);
 		SW_RTN_ON_ERROR(rv);
+
+		SSDK_INFO("ssdk ppe hw recover successfully!\n");
+		break;
+	default:
+		return SW_NOT_SUPPORTED;
 	}
-	SSDK_INFO("ssdk ppe hw recover successfully!\n");
 
 	return rv;
 }
