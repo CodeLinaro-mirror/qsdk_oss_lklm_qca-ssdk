@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,6 +26,8 @@
 #include "appe_portvlan.h"
 #include "hsl.h"
 #include "hsl_dev.h"
+#include "hsl_port_prop.h"
+#include "ssdk_dts.h"
 
 sw_error_t
 adpt_mppe_athtag_pri_mapping_set(a_uint32_t dev_id,
@@ -203,29 +205,6 @@ adpt_mppe_port_athtag_tx_get(a_uint32_t dev_id,
 }
 
 sw_error_t
-_adpt_mppe_athtag_slave_switch_set (a_uint32_t dev_id, a_uint32_t ath_port)
-{
-#if defined(MHT)
-	a_uint32_t port_id = 0;
-	if (hsl_get_current_chip_type(dev_id) == CHIP_MHT)
-	{
-		fal_header_type_set(dev_id, A_TRUE, MHT_ATHTAG_TYPE);
-		fal_port_rxhdr_mode_set(dev_id, SSDK_PHYSICAL_PORT0, FAL_ONLY_MANAGE_FRAME_EN);
-		fal_port_txhdr_mode_set(dev_id, SSDK_PHYSICAL_PORT0, FAL_ALL_TYPE_FRAME_EN);
-		if ((ath_port & (ath_port -1)) == 0)
-		{
-			/* single port mapping configurations */
-			port_id = _adpt_mppe_athtag_bit_index(ath_port);
-			fal_port_unk_uc_filter_set(dev_id, port_id, A_TRUE);
-			fal_port_unk_mc_filter_set(dev_id, port_id, A_TRUE);
-			fal_port_bc_filter_set(dev_id, port_id, A_TRUE);
-		}
-	}
-#endif
-	return SW_OK;
-}
-
-sw_error_t
 adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 		fal_direction_t direction, fal_athtag_port_mapping_t * port_mapping)
 {
@@ -235,6 +214,7 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 	fal_athtag_rx_cfg_t rx_cfg = {0};
 	fal_athtag_tx_cfg_t tx_cfg = {0};
 	adpt_api_t *p_api = NULL;
+	ssdk_netdev_switch_t *netdev_switch = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
@@ -242,15 +222,29 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 
 	if (direction == FAL_DIR_INGRESS || direction == FAL_DIR_BOTH)
 	{
-		/* enable rx athtag for mppe port1 */
 		rx_cfg.athtag_en = A_TRUE;
+
+		for (port_id = 0; port_id < SSDK_MAX_PORT_NUM; port_id ++) {
+			if (!hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+				continue;
+
+			netdev_switch = ssdk_dts_netdev_switch_find(port_id);
+			if (!netdev_switch)
+				continue;
 #if defined(MHT)
-		if (hsl_get_current_chip_type(dev_id + 1) == CHIP_MHT)
-		{
-			rx_cfg.athtag_type = MHT_ATHTAG_TYPE;
-		}
+			if (hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_MHT) {
+				/* enable switch atheros header tx */
+				fal_header_type_set(netdev_switch->switch_dev_id,
+						A_TRUE, MHT_ATHTAG_TYPE);
+				fal_port_txhdr_mode_set(netdev_switch->switch_dev_id,
+						netdev_switch->switch_cpu_port,
+						FAL_ALL_TYPE_FRAME_EN);
+				rx_cfg.athtag_type = MHT_ATHTAG_TYPE;
+			}
 #endif
-		adpt_mppe_port_athtag_rx_set(dev_id, SSDK_PHYSICAL_PORT1, &rx_cfg);
+			/* enable athtag rx on ppe switch connected port */
+			adpt_mppe_port_athtag_rx_set(dev_id, port_id, &rx_cfg);
+		}
 
 		/* ingress port mapping */
 		for (port_id = 0; port_id < PRX_PORT_TO_VP_MAPPING_MAX_ENTRY; port_id++)
@@ -267,21 +261,36 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 	}
 	if (direction == FAL_DIR_EGRESS || direction == FAL_DIR_BOTH)
 	{
-		/* enable tx athtag for int_port */
 		if (port_mapping->ath_port & (port_mapping->ath_port -1))
 			tx_cfg.version = FAL_ATHTAG_VER2;
 		else
 			tx_cfg.version = FAL_ATHTAG_VER3;
 		tx_cfg.athtag_en = A_TRUE;
+
+		for (port_id = 0; port_id < SSDK_MAX_PORT_NUM; port_id ++) {
+			if (!hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+				continue;
+
+			netdev_switch = ssdk_dts_netdev_switch_find(port_id);
+			if (!netdev_switch)
+				continue;
 #if defined(MHT)
-		if (hsl_get_current_chip_type(dev_id + 1) == CHIP_MHT)
-		{
-			tx_cfg.athtag_type = MHT_ATHTAG_TYPE;
-		}
+			if (hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_MHT) {
+				/* enable switch atheros header rx */
+				fal_header_type_set(netdev_switch->switch_dev_id,
+						A_TRUE, MHT_ATHTAG_TYPE);
+				fal_port_rxhdr_mode_set(netdev_switch->switch_dev_id,
+						netdev_switch->switch_cpu_port,
+						FAL_ONLY_MANAGE_FRAME_EN);
+				tx_cfg.athtag_type = MHT_ATHTAG_TYPE;
+			}
 #endif
+		}
+
 		tx_cfg.action = FAL_ATHTAG_ACTION_DISABLE_LEARN;
 		tx_cfg.bypass_fwd_en = A_TRUE;
 		tx_cfg.field_disable = A_FALSE;
+		/* enable ppe int port athtag tx */
 		adpt_mppe_port_athtag_tx_set(dev_id, port_mapping->int_port, &tx_cfg);
 
 		/* egress port mapping */
@@ -308,9 +317,6 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 		/* enable txmac_en for int_port */
 		p_api->adpt_port_bridge_txmac_set(dev_id, port_mapping->int_port, A_TRUE);
 	}
-
-	/* slave switch athtag configuration */
-	_adpt_mppe_athtag_slave_switch_set (dev_id + 1, port_mapping->ath_port);
 
 	return SW_OK;
 }
