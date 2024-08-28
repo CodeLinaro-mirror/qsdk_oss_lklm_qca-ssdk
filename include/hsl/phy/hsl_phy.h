@@ -1035,6 +1035,7 @@ hsl_port_phy_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
 enum hsl_phy_api_id {
 	hibernation_set,
 	hibernation_get,
+	cdt,
 	duplex_get,
 	duplex_set,
 	power_on,

@@ -223,7 +223,7 @@ sw_error_t fal_port_autoneg_adv_get (a_uint32_t dev_id, fal_port_t port_id, a_ui
     EXPORT_SYMBOL(fal_port_autoneg_adv_get);
 
 sw_error_t fal_port_cdt (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair, fal_cable_status_t * cable_status, a_uint32_t * cable_len)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_cdt, dev_id, port_id, mdi_pair, cable_status, cable_len)
+    DEFINE_FAL_PORT_PHY_FUNC(cdt, dev_id, port_id, mdi_pair, (void*)cable_status, cable_len)
     EXPORT_SYMBOL(fal_port_cdt);
 
 sw_error_t fal_port_power_off (a_uint32_t dev_id, fal_port_t port_id)

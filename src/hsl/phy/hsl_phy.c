@@ -3493,6 +3493,7 @@ struct hsl_phy_api hsl_phy_api_table[] =
 {
 	{hibernation_set, NULL},
 	{hibernation_get, NULL},
+	{cdt, NULL},
 	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
 	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
 	{power_on, (void*)hsl_port_phy_std_power_on},
