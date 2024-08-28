@@ -402,138 +402,7 @@ sw_error_t qca808x_phy_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
 
 	return SW_OK;
 }
-/******************************************************************************
-*
-* qca808x_phy_cdt - cable diagnostic test
-*
-* cable diagnostic test
-*/
 
-static inline fal_cable_status_t _phy_cdt_status_mapping(a_uint16_t status)
-{
-	fal_cable_status_t status_mapping = FAL_CABLE_STATUS_INVALID;
-
-	switch (status) {
-		case 0:
-			status_mapping = FAL_CABLE_STATUS_INVALID;
-			break;
-		case 1:
-			status_mapping = FAL_CABLE_STATUS_NORMAL;
-			break;
-		case 2:
-			status_mapping = FAL_CABLE_STATUS_OPENED;
-			break;
-		case 3:
-			status_mapping = FAL_CABLE_STATUS_SHORT;
-			break;
-	}
-
-	return status_mapping;
-}
-
-static sw_error_t qca808x_phy_cdt_start(a_uint32_t dev_id, a_uint32_t phy_addr)
-{
-	a_uint16_t status = 0;
-	a_uint16_t ii = 100;
-	sw_error_t rv = SW_OK;
-
-	/* RUN CDT */
-	rv = hsl_phy_mii_reg_write(dev_id, phy_addr, QCA808X_PHY_CDT_CONTROL,
-		QCA808X_RUN_CDT | QCA808X_CABLE_LENGTH_UNIT);
-	PHY_RTN_ON_ERROR(rv);
-
-	do {
-		aos_mdelay(30);
-		status = hsl_phy_mii_reg_read(dev_id, phy_addr, QCA808X_PHY_CDT_CONTROL);
-		PHY_RTN_ON_READ_ERROR(status);
-	}
-	while ((status & QCA808X_RUN_CDT) && (--ii));
-
-	if (ii == 0) {
-		return SW_TIMEOUT;
-	} else {
-		return SW_OK;
-	}
-}
-
-sw_error_t
-qca808x_phy_cdt(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mdi_pair,
-	fal_cable_status_t * cable_status, a_uint32_t * cable_len)
-{
-	a_uint16_t cable_delta_time = 0;
-	a_uint16_t status;
-	sw_error_t rv;
-
-	if ((mdi_pair >= QCA808X_MDI_PAIR_NUM)) {
-		return SW_BAD_PARAM;
-	}
-
-	rv = qca808x_phy_cdt_start(dev_id, phy_addr);
-
-	if (rv != SW_OK) {
-		*cable_status = FAL_CABLE_STATUS_INVALID;
-		*cable_len = 0;
-		return rv;
-	}
-
-	/* Get cable status */
-	status = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE,
-		QCA808X_PHY_MMD3_NUM, QCA808X_PHY_CDT_STATUS);
-	PHY_RTN_ON_READ_ERROR(status);
-
-	switch (mdi_pair) {
-		case 0:
-			*cable_status =
-				_phy_cdt_status_mapping((status >> 12) & 0x3);
-			cable_delta_time =
-				hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD3_NUM,
-						QCA808X_PHY_CDT_DIAG_PAIR0);
-			PHY_RTN_ON_READ_ERROR(cable_delta_time);
-
-			break;
-		case 1:
-			*cable_status =
-				_phy_cdt_status_mapping((status >> 8) & 0x3);
-			cable_delta_time =
-				hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD3_NUM,
-						QCA808X_PHY_CDT_DIAG_PAIR1);
-			PHY_RTN_ON_READ_ERROR(cable_delta_time);
-
-			break;
-		case 2:
-			*cable_status =
-				_phy_cdt_status_mapping((status >> 4) & 0x3);
-			cable_delta_time =
-				hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD3_NUM,
-						QCA808X_PHY_CDT_DIAG_PAIR2);
-			PHY_RTN_ON_READ_ERROR(cable_delta_time);
-
-			break;
-		case 3:
-			*cable_status =
-				_phy_cdt_status_mapping(status & 0x3);
-			cable_delta_time =
-				hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD3_NUM,
-						QCA808X_PHY_CDT_DIAG_PAIR3);
-			PHY_RTN_ON_READ_ERROR(cable_delta_time);
-
-			break;
-	}
-#ifdef MHT
-	/*CDT status open and short are reversed for MHT PHY at analog level*/
-	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-	{
-		if(*cable_status == FAL_CABLE_STATUS_OPENED)
-			*cable_status = FAL_CABLE_STATUS_SHORT;
-		else if(*cable_status == FAL_CABLE_STATUS_SHORT)
-			*cable_status = FAL_CABLE_STATUS_OPENED;
-	}
-#endif
-	/* the actual cable length equals to CableDeltaTime * 0.824 */
-	*cable_len = ((cable_delta_time & 0xff) * 824) / 1000;
-
-	return rv;
-}
 #ifndef IN_PORTCONTROL_MINI
 /******************************************************************************
 *
@@ -1784,7 +1653,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 	qca808x_phy_api_ops->phy_autoneg_adv_get = qca808x_phy_get_autoneg_adv;
 	qca808x_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
 	qca808x_phy_api_ops->phy_reset = qca808x_phy_reset;
-	qca808x_phy_api_ops->phy_cdt = qca808x_phy_cdt;
 #ifndef IN_PORTCONTROL_MINI
 	qca808x_phy_api_ops->phy_mdix_set = qcaphy_set_mdix;
 	qca808x_phy_api_ops->phy_mdix_get = qcaphy_get_mdix;
