@@ -33,6 +33,7 @@
 #include "ssdk_dts.h"
 #include "hppe_uniphy_reg.h"
 #include "hppe_uniphy.h"
+#include "hsl_port_prop.h"
 
 static a_bool_t sfp_phy_drv_registered = A_FALSE;
 
@@ -446,6 +447,9 @@ void sfp_phy_exit(a_uint32_t dev_id)
 	sfp_phy_driver_unregister();
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++) {
+		if (!hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+			continue;
+
 		if (hsl_port_is_sfp(dev_id, port_id)) {
 				sfp_phy_device_remove(dev_id, port_id);
 				miibus = ssdk_port_miibus_get(dev_id, port_id);
