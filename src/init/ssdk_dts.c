@@ -708,7 +708,7 @@ static struct mii_bus *ssdk_mdio_i2c_bus_register(a_uint32_t dev_id,
 		SSDK_ERROR("i2c adpt was not found\n");
 		return NULL;
 	}
-	mdio_i2c = mdio_i2c_alloc(&(i2c_adpt->dev), i2c_adpt, MDIO_I2C_NONE);
+	mdio_i2c = mdio_i2c_alloc(&(i2c_adpt->dev), i2c_adpt, MIDO_I2C_QCOM);
 	if (!mdio_i2c) {
 		SSDK_ERROR("mdio_i2c bus alloc failed\n");
 		return NULL;
@@ -860,6 +860,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				phy_features |= (PHY_F_SFP | PHY_F_SFP_SGMII);
 			}
 		}
+		hsl_port_feature_set(dev_id, port_id, phy_features | PHY_F_INIT);
 		if((phy_features & PHY_F_SFP) || phy_combo) {
 			/*get related PINs for SFP port*/
 			if(priv) {
@@ -918,7 +919,6 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 			sfp_phy_init(dev_id, port_id, miibus_index);
 #endif
 		}
-		hsl_port_feature_set(dev_id, port_id, phy_features | PHY_F_INIT);
 		/*parse the switch external node*/
 		switch_external_node = of_get_child_by_name(port_node, "switch_external");
 		if(switch_external_node) {
