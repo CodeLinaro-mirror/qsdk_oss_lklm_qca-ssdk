@@ -479,58 +479,6 @@ malibu_phy_get_combo_fiber_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 /******************************************************************************
 *
-* malibu_phy_set_mdix - 
-*
-* set phy mdix configuraiton
-*/
-sw_error_t
-malibu_phy_set_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_mdix_mode_t mode)
-{
-	if(!malibu_phy_is_copper(dev_id, phy_addr))
-		return SW_NOT_SUPPORTED;
-
-	return qcaphy_set_mdix(dev_id, phy_addr, mode);
-}
-
-/******************************************************************************
-*
-* malibu_phy_get_mdix 
-*
-* get phy mdix configuration
-*/
-sw_error_t
-malibu_phy_get_mdix(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_mdix_mode_t * mode)
-{
-	if(!malibu_phy_is_copper(dev_id, phy_addr))
-		return SW_NOT_SUPPORTED;
-
-	return qcaphy_get_mdix(dev_id, phy_addr, mode);
-}
-
-/******************************************************************************
-*
-* malibu_phy_get_mdix status
-*
-* get phy mdix status
-*/
-sw_error_t
-malibu_phy_get_mdix_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_mdix_status_t * mode)
-{
-	if (phy_addr == COMBO_PHY_ID) {
-		if (PHY_MEDIUM_COPPER !=
-			__phy_active_medium_get(dev_id, phy_addr))
-			return SW_NOT_SUPPORTED;
-		__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
-	}
-
-	return qcaphy_get_mdix_status(dev_id, phy_addr, mode);
-}
-
-/******************************************************************************
-*
 * malibu_phy_set_local_loopback
 *
 * set phy local loopback
@@ -1853,9 +1801,6 @@ static int malibu_phy_api_ops_init(void)
 #endif
 	malibu_phy_api_ops->phy_link_status_get = malibu_phy_get_link_status;
 #ifndef IN_PORTCONTROL_MINI
-	malibu_phy_api_ops->phy_mdix_set = malibu_phy_set_mdix;
-	malibu_phy_api_ops->phy_mdix_get = malibu_phy_get_mdix;
-	malibu_phy_api_ops->phy_mdix_status_get = malibu_phy_get_mdix_status;
 	malibu_phy_api_ops->phy_8023az_set = malibu_phy_set_8023az;
 	malibu_phy_api_ops->phy_8023az_get = malibu_phy_get_8023az;
 	malibu_phy_api_ops->phy_local_loopback_set = malibu_phy_set_local_loopback;

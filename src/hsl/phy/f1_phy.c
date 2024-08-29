@@ -618,9 +618,6 @@ static int f1_phy_api_ops_init(void)
 	f1_phy_api_ops->phy_intr_status_get = f1_phy_intr_status_get;
 	f1_phy_api_ops->phy_8023az_set = qcaphy_set_8023az;
 	f1_phy_api_ops->phy_8023az_get = qcaphy_get_8023az;
-	f1_phy_api_ops->phy_mdix_set = qcaphy_set_mdix;
-	f1_phy_api_ops->phy_mdix_get = qcaphy_get_mdix;
-	f1_phy_api_ops->phy_mdix_status_get = qcaphy_get_mdix_status;
 	f1_phy_api_ops->phy_eee_adv_set = qcaphy_set_eee_adv;
 	f1_phy_api_ops->phy_eee_adv_get = qcaphy_get_eee_adv;
 	f1_phy_api_ops->phy_eee_partner_adv_get = qcaphy_get_eee_partner_adv;

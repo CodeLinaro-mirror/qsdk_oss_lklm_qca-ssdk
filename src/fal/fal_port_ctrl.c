@@ -320,15 +320,15 @@ sw_error_t fal_port_8023az_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
     EXPORT_SYMBOL(fal_port_8023az_get);
 
 sw_error_t fal_port_mdix_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t mode)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_mdix_set, dev_id, port_id, mode)
+    DEFINE_FAL_PORT_PHY_FUNC(mdix_set, dev_id, port_id, (a_uint32_t)mode)
     EXPORT_SYMBOL(fal_port_mdix_set);
 
 sw_error_t fal_port_mdix_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t * mode)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_mdix_get, dev_id, port_id, mode)
+    DEFINE_FAL_PORT_PHY_FUNC(mdix_get, dev_id, port_id, (void*)mode)
     EXPORT_SYMBOL(fal_port_mdix_get);
 
 sw_error_t fal_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_status_t * mode)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_mdix_status_get, dev_id, port_id, mode)
+    DEFINE_FAL_PORT_PHY_FUNC(mdix_status_get, dev_id, port_id, (void*)mode)
     EXPORT_SYMBOL(fal_port_mdix_status_get);
 
 sw_error_t fal_port_powersave_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
