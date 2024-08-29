@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017, 2019, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -40,73 +40,6 @@ static struct mutex qca803x_reg_lock;
 #define QCA803X_REG_LOCK		mutex_lock(&qca803x_reg_lock)
 #define QCA803X_REG_UNLOCK		mutex_unlock(&qca803x_reg_lock)
 
-/******************************************************************************
-*
-* qca803x_phy_cdt - cable diagnostic test
-*
-* cable diagnostic test
-*/
-
-static inline fal_cable_status_t _phy_cdt_status_mapping(a_uint16_t status)
-{
-	fal_cable_status_t status_mapping = FAL_CABLE_STATUS_INVALID;
-
-	switch (status) {
-		case 3:
-			status_mapping = FAL_CABLE_STATUS_INVALID;
-			break;
-		case 2:
-			status_mapping = FAL_CABLE_STATUS_OPENED;
-			break;
-		case 1:
-			status_mapping = FAL_CABLE_STATUS_SHORT;
-			break;
-		case 0:
-			status_mapping = FAL_CABLE_STATUS_NORMAL;
-			break;
-	}
-	return status_mapping;
-}
-
-static sw_error_t qca803x_phy_cdt_start(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mdi_pair)
-{
-	a_uint16_t status = 0;
-	a_uint16_t ii = 100;
-	a_uint16_t MDI_PAIR_S = (mdi_pair << 8) & CDT_PAIR_MASK;
-
-	/* RUN CDT */
-	hsl_phy_mii_reg_write(dev_id, phy_addr, QCA803X_PHY_CDT_CONTROL,
-		QCA803X_RUN_CDT | MDI_PAIR_S);
-	do {
-		aos_mdelay(30);
-		status = hsl_phy_mii_reg_read(dev_id, phy_addr, QCA803X_PHY_CDT_CONTROL);
-	}
-	while ((status & QCA803X_RUN_CDT) && (--ii));
-
-	return SW_OK;
-}
-
-sw_error_t
-qca803x_phy_cdt(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mdi_pair,
-	fal_cable_status_t * cable_status, a_uint32_t * cable_len)
-{
-	a_uint16_t status = 0;
-
-	if (mdi_pair >= QCA803X_MDI_PAIR_NUM) {
-		//There are only 4 mdi pairs in 1000BASE-T
-		return SW_BAD_PARAM;
-	}
-
-	qca803x_phy_cdt_start(dev_id, phy_addr, mdi_pair);
-
-	/* Get cable status */
-	status = hsl_phy_mii_reg_read(dev_id, phy_addr, QCA803X_PHY_CDT_STATUS);
-	*cable_status = _phy_cdt_status_mapping((status >> 8) & 0x3);
-	/* the actual cable length equals to CableDeltaTime * 0.824 */
-	*cable_len = ((status & 0xff) * 824) / 1000;
-
-	return SW_OK;
-}
 #ifndef IN_PORTCONTROL_MINI
 /******************************************************************************
 *
@@ -1039,9 +972,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 #ifndef IN_PORTCONTROL_MINI
 	qca803x_phy_api_ops->phy_powersave_set = qca803x_phy_set_powersave;
 	qca803x_phy_api_ops->phy_powersave_get = qca803x_phy_get_powersave;
-#endif
-	qca803x_phy_api_ops->phy_cdt = qca803x_phy_cdt;
-#ifndef IN_PORTCONTROL_MINI
 	qca803x_phy_api_ops->phy_mdix_set = qcaphy_set_mdix;
 	qca803x_phy_api_ops->phy_mdix_get = qcaphy_get_mdix;
 	qca803x_phy_api_ops->phy_mdix_status_get = qcaphy_get_mdix_status;
