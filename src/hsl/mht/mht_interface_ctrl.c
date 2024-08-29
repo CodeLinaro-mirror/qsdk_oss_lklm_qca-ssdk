@@ -751,14 +751,12 @@ mht_interface_mac_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 		/*if uniphy0 is used as switch bypass, then will do nothing here*/
 		if(mht_uniphy_mode_check(dev_id, MHT_UNIPHY_SGMII_0, MHT_UNIPHY_PHY))
 		{
-			SSDK_INFO("the uniphy0 is used for switch bypass\n");
 			return SW_OK;
 		}
 		else
 		{
 			if(config->mac_mode == FAL_MAC_MODE_MAX)
 			{
-				SSDK_INFO("the uniphy for port %d is not used\n", port_id);
 				/* assert serdes0 to save power */
 				ssdk_mht_clk_assert(dev_id, MHT_SRDS0_SYS_CLK);
 				return SW_OK;

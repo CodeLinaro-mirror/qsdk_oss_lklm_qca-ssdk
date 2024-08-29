@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -326,8 +326,6 @@ sw_error_t mht_pinctrl_clk_gate_set(a_uint32_t dev_id, a_bool_t gate_en)
     MHT_REG_FIELD_SET(rv, dev_id, TLMM_CLK_GATE_EN, 0, CRIF_READ_EN,
                       (a_uint8_t *) (&gate_en), sizeof (a_bool_t));
 
-    SSDK_INFO("[%s] gate_en:%d", __func__, gate_en);
-
     return rv;
 }
 
@@ -343,13 +341,8 @@ static sw_error_t mht_pinctrl_rev_check(a_uint32_t dev_id)
     MHT_REG_FIELD_GET(rv, dev_id, TLMM_HW_REVISION_NUMBER, 0, START_BIT,
                       (a_uint8_t *) (&start_bit), sizeof (a_uint32_t));
 
-    SSDK_INFO("[%s] version_id:0x%x mfg_id:0x%x start_bit:0x%x",
-                                __func__, version_id, mfg_id, start_bit);
-
-    if((version_id == 0x0) && (mfg_id == 0x70) && (start_bit == 0x1)) {
-        SSDK_INFO(" Pinctrl Version Check Pass\n");
-    } else {
-        SSDK_INFO(" Pinctrl Version Check Fail\n");
+    if((version_id != 0x0) || (mfg_id != 0x70) || (start_bit != 0x1)) {
+        SSDK_ERROR(" Pinctrl Version Check Fail\n");
         rv = SW_FAIL;
     }
 
