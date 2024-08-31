@@ -3008,6 +3008,45 @@ hsl_port_feature_clear(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t fea
 	return SW_OK;
 }
 /*********************APIs to access PHY with MDIO and I2C*********************/
+a_uint32_t hsl_phy_mii_soc_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg)
+{
+	a_uint32_t val, bus_index, soc_reg;
+	struct mii_bus *bus = NULL;
+
+	bus_index = TO_MIIBUS_INDEX(phy_addr);
+	bus = ssdk_miibus_get(dev_id, bus_index);
+	if (!bus)
+		return 0xffff;
+	phy_addr = (phy_addr & GENMASK(4, 0));
+	soc_reg = (FIELD_PREP(GENMASK(28, 24), phy_addr) |
+		(reg & (GENMASK(23, 0) | SSDK_SWITCH_REG_TYPE_MASK)));
+	mutex_lock(&bus->mdio_lock);
+	qca_mii_raw_read(bus, soc_reg, &val);
+	mutex_unlock(&bus->mdio_lock);
+
+	return val;
+}
+
+void hsl_phy_mii_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg, a_uint32_t val)
+{
+	a_uint32_t bus_index, soc_reg;
+	struct mii_bus *bus = NULL;
+
+	bus_index = TO_MIIBUS_INDEX(phy_addr);
+	bus = ssdk_miibus_get(dev_id, bus_index);
+	if (!bus)
+		return;
+	phy_addr = (phy_addr & GENMASK(4, 0));
+	soc_reg = (FIELD_PREP(GENMASK(28, 24), phy_addr) |
+		(reg & (GENMASK(23, 0) | SSDK_SWITCH_REG_TYPE_MASK)));
+
+	mutex_lock(&bus->mdio_lock);
+	qca_mii_raw_write(bus, soc_reg, val);
+	mutex_unlock(&bus->mdio_lock);
+}
+
 static sw_error_t
 hsl_phy_lock(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
 {
@@ -3062,12 +3101,12 @@ __hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_re
 			return PHY_INVALID_DATA;
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
 		if (mii_reg & SSDK_ADDR_C45)
-			phy_data = __mdiobus_c45_read(miibus, phy_addr,
+			phy_data = __mdiobus_c45_read(miibus, TO_PHY_ADDR(phy_addr),
 					FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
 					FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg));
 		else
 #endif
-			phy_data = __mdiobus_read(miibus, phy_addr, mii_reg);
+			phy_data = __mdiobus_read(miibus, TO_PHY_ADDR(phy_addr), mii_reg);
 	}
 
 	return phy_data;
@@ -3100,13 +3139,13 @@ __hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_r
 		SW_RTN_ON_NULL(miibus);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
 		if (mii_reg & SSDK_ADDR_C45)
-			ret = __mdiobus_c45_write(miibus, phy_addr,
+			ret = __mdiobus_c45_write(miibus, TO_PHY_ADDR(phy_addr),
 					FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
 					FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg),
 					reg_val);
 		else
 #endif
-			ret = __mdiobus_write(miibus, phy_addr, mii_reg, reg_val);
+			ret = __mdiobus_write(miibus, TO_PHY_ADDR(phy_addr), mii_reg, reg_val);
 
 		if (ret)
 			return ret;

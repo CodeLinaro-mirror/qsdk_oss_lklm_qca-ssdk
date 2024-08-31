@@ -873,6 +873,10 @@ hsl_phytype_get_by_phyid(a_uint32_t dev_id, a_uint32_t phy_id);
 #define I2C_ADAPTER_DEFAULT_ID                                 0
 
 /*APIs to access mii register*/
+a_uint32_t hsl_phy_mii_soc_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg);
+void hsl_phy_mii_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg, a_uint32_t val);
 a_uint16_t
 __hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg);
 sw_error_t

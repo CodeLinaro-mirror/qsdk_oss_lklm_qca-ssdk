@@ -390,11 +390,10 @@ struct qca_phy_priv {
 /*qca808x_start*/
 };
 
-#define SSDK_SWITCH_REG_TYPE_MASK		GENMASK(31, 28)
+#define SSDK_SWITCH_REG_TYPE_MASK		GENMASK(31, 29)
 #define SSDK_SWITCH_REG_TYPE_QCA8337		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, 1)
 #define SSDK_SWITCH_REG_TYPE_QCA8386		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, 0)
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
 #define ETH_LDO_RDY_CNT		3
 struct qca_mdio_data{
 	void __iomem	*membase[2];
@@ -405,21 +404,9 @@ struct qca_mdio_data{
 	void (*preinit)(struct mii_bus *bus);
 	u32 (*sw_read)(struct mii_bus *bus, u32 reg);
 	void (*sw_write)(struct mii_bus *bus, u32 reg, u32 val);
-	struct clk *clk[];
+	struct clk *clk[5];
+	void *i2c;
 };
-#else
-struct qca_mdio_data {
-	struct mii_bus *mii_bus;
-	struct clk *mdio_clk;
-	void __iomem *membase;
-	int phy_irq[PHY_MAX_ADDR];
-	int clk_div;
-	bool force_c22;
-	void (*preinit)(struct mii_bus *bus);
-	u32 (*sw_read)(struct mii_bus *bus, u32 reg);
-	void (*sw_write)(struct mii_bus *bus, u32 reg, u32 val);
-};
-#endif
 
 #if defined(IN_SWCONFIG)
 #define qca_phy_priv_get(_dev) \

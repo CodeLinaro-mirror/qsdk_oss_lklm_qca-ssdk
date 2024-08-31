@@ -61,18 +61,33 @@ sw_error_t fal_uniphy_reg_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t re
 
 static sw_error_t
 _fal_phy_get(a_uint32_t dev_id, a_uint32_t phy_addr,
-             a_uint32_t reg, a_uint16_t * value)
+             a_uint32_t reg, a_uint32_t * value)
 {
-    *value = hsl_phy_mii_reg_read(dev_id, phy_addr, reg);
+	/* for PHY SOC registers, the bit 20~23 of reg only can be 4, 8 and 9 */
+	/* and 0, 1 will be PHY registers*/
+	if ((reg >> 20 & 0xf) > 1) {
+		*value = hsl_phy_mii_soc_read(dev_id, phy_addr, reg);
+		return SW_OK;
+	}
 
-    return SW_OK;
+	*value = hsl_phy_mii_reg_read(dev_id, phy_addr, reg);
+
+	return SW_OK;
 }
 
 static sw_error_t
 _fal_phy_set(a_uint32_t dev_id, a_uint32_t phy_addr,
-             a_uint32_t reg, a_uint16_t value)
+             a_uint32_t reg, a_uint32_t value)
 {
-    return hsl_phy_mii_reg_write(dev_id, phy_addr, reg, value);
+	/* for PHY SOC registers, the bit 20~23 of reg only can be 4, 8 and 9 */
+	/* and 0, 1 will be PHY registers*/
+	if ((reg >> 20 & 0xf) > 1) {
+		hsl_phy_mii_soc_write(dev_id, phy_addr, reg, value);
+		return SW_OK;
+	}
+
+	return hsl_phy_mii_reg_write(dev_id, phy_addr, reg,
+		(a_uint16_t)(value & GENMASK(15, 0)));
 }
 /*qca808x_end*/
 static sw_error_t
@@ -131,7 +146,7 @@ _fal_reg_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t value[],
   */
 sw_error_t
 fal_phy_get(a_uint32_t dev_id, a_uint32_t phy_addr,
-            a_uint32_t reg, a_uint16_t * value)
+            a_uint32_t reg, a_uint32_t * value)
 {
     sw_error_t rv;
 
@@ -150,7 +165,7 @@ fal_phy_get(a_uint32_t dev_id, a_uint32_t phy_addr,
   */
 sw_error_t
 fal_phy_set(a_uint32_t dev_id, a_uint32_t phy_addr,
-            a_uint32_t reg, a_uint16_t value)
+            a_uint32_t reg, a_uint32_t value)
 {
     sw_error_t rv;
 
