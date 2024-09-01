@@ -2362,7 +2362,7 @@ hsl_port_phy_hibernation_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * e
 }
 
 sw_error_t
-hsl_port_phy_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
+hsl_port_phy_ieee_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -2386,7 +2386,7 @@ hsl_port_phy_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 }
 
 sw_error_t
-hsl_port_phy_8023az_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
+hsl_port_phy_ieee_8023az_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -3562,6 +3562,15 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{intr_mask_set, NULL},
 	{intr_mask_get, NULL},
 	{intr_status_get, NULL},
+	{powersave_set, NULL},
+	{powersave_get, NULL},
+	{eee_adv_set, NULL},
+	{eee_adv_get, NULL},
+	{eee_partner_adv_get, NULL},
+	{eee_cap_get, NULL},
+	{eee_status_get, NULL},
+	{ieee_8023az_set, NULL},
+	{ieee_8023az_get, NULL},
 	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
 	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
 	{power_on, (void*)hsl_port_phy_std_power_on},

@@ -312,11 +312,11 @@ sw_error_t fal_ring_flow_ctrl_config_set(a_uint32_t dev_id, a_uint32_t ring_id, 
     EXPORT_SYMBOL(fal_ring_flow_ctrl_config_set);
 
 sw_error_t fal_port_8023az_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_8023az_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(ieee_8023az_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_8023az_set);
 
 sw_error_t fal_port_8023az_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_8023az_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(ieee_8023az_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_8023az_get);
 
 sw_error_t fal_port_mdix_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t mode)
@@ -332,11 +332,11 @@ sw_error_t fal_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_
     EXPORT_SYMBOL(fal_port_mdix_status_get);
 
 sw_error_t fal_port_powersave_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_powersave_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(powersave_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_powersave_set);
 
 sw_error_t fal_port_powersave_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_powersave_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(powersave_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_powersave_get);
 
 sw_error_t fal_port_hibernate_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)

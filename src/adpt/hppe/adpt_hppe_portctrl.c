@@ -3466,7 +3466,7 @@ _adpt_ppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	} else {
 		adv = 0;
 	}
-	rv = hsl_port_phy_eee_adv_set(dev_id, port_id, adv);
+	HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
 	SW_RTN_ON_ERROR (rv);
 #ifdef MRPPE
 	if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
@@ -3497,16 +3497,16 @@ _adpt_ppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6)) {
 		return SW_BAD_PARAM;
 	}
-	rv = hsl_port_phy_eee_adv_get(dev_id, port_id, &adv);
+	HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->advertisement = adv;
-	rv = hsl_port_phy_eee_partner_adv_get(dev_id, port_id, &lp_adv);
+	HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->link_partner_advertisement = lp_adv;
-	rv = hsl_port_phy_eee_cap_get(dev_id, port_id, &cap);
+	HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->capability = cap;
-	rv = hsl_port_phy_eee_status_get(dev_id, port_id, &status);
+	HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->eee_status = status;
 
@@ -3555,7 +3555,7 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 		adv = 0;
 	}
 
-	rv = hsl_port_phy_eee_adv_set(dev_id, port_id, adv);
+	HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
 	SW_RTN_ON_ERROR (rv);
 
 	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
@@ -3606,16 +3606,16 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 	memset(&mac_lpi_control_status, 0, sizeof(mac_lpi_control_status));
 	memset(&mac_lpi_timers_control, 0, sizeof(mac_lpi_timers_control));
 
-	rv = hsl_port_phy_eee_adv_get(dev_id, port_id, &adv);
+	HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->advertisement = adv;
-	rv = hsl_port_phy_eee_partner_adv_get(dev_id, port_id, &lp_adv);
+	HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->link_partner_advertisement = lp_adv;
-	rv = hsl_port_phy_eee_cap_get(dev_id, port_id, &cap);
+	HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->capability = cap;
-	rv = hsl_port_phy_eee_status_get(dev_id, port_id, &status);
+	HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->eee_status = status;
 

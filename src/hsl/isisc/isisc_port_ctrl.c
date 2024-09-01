@@ -1126,7 +1126,7 @@ _isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
         adv = port_eee_cfg->advertisement;
     else
         adv = 0;
-    rv = hsl_port_phy_eee_adv_set(dev_id, port_id, adv);
+    HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
     SW_RTN_ON_ERROR (rv);
     HSL_REG_ENTRY_GET(rv, dev_id, MASK_CTL, 0,
                         (a_uint8_t *) (&reg), sizeof (a_uint32_t));
@@ -1195,16 +1195,16 @@ _isisc_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
     a_uint32_t reg = 0, field, offset, device_id, rev_id, reverse = 0;
     a_uint32_t eee_mask = 0, adv = 0, lp_adv = 0, cap = 0, status = 0;
 
-    rv = hsl_port_phy_eee_adv_get(dev_id, port_id, &adv);
+    HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
     SW_RTN_ON_ERROR (rv);
     port_eee_cfg->advertisement = adv;
-    rv = hsl_port_phy_eee_partner_adv_get(dev_id, port_id, &lp_adv);
+    HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
     SW_RTN_ON_ERROR (rv);
     port_eee_cfg->link_partner_advertisement = lp_adv;
-    rv = hsl_port_phy_eee_cap_get(dev_id, port_id, &cap);
+    HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
     SW_RTN_ON_ERROR (rv);
     port_eee_cfg->capability = cap;
-    rv = hsl_port_phy_eee_status_get(dev_id, port_id, &status);
+    HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
     SW_RTN_ON_ERROR (rv);
 
     port_eee_cfg->eee_status = status;

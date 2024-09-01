@@ -163,94 +163,6 @@ a_bool_t qca803x_phy_speed_duplex_resolved(a_uint32_t dev_id, a_uint32_t phy_add
 }
 #endif
 #endif
-#ifndef IN_PORTCONTROL_MINI
-/******************************************************************************
-*
-* qca803x_phy_set_powersave - set power saving status
-*
-* set power saving status
-*/
-sw_error_t
-qca803x_phy_set_powersave(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-	sw_error_t rv =SW_OK;
-
-	if (enable == A_TRUE)
-		phy_data = phy_data | QCA803X_PWR_SAVE_EN;
-
-	rv = hsl_phy_modify_mii(dev_id, phy_addr, QCA803X_PWR_SAVE,
-		QCA803X_PWR_SAVE_EN, phy_data);
-	PHY_RTN_ON_ERROR(rv);
-	return qcaphy_autoneg_restart(dev_id, phy_addr);
-}
-
-/******************************************************************************
-*
-* qca803x_phy_get_powersave - get power saving status
-*
-* set power saving status
-*/
-sw_error_t
-qca803x_phy_get_powersave(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data;
-
-	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, QCA803X_PWR_SAVE);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCA803X_PWR_SAVE_EN)
-		*enable = A_TRUE;
-	else
-		*enable = A_FALSE;
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* qca803x_phy_set_hibernate - set hibernate status
-*
-* set hibernate status
-*/
-sw_error_t
-qca803x_phy_set_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE) {
-		phy_data |= 0x8000;
-	}
-	return hsl_phy_modify_debug(dev_id, phy_addr,
-		QCA803X_DEBUG_PHY_HIBERNATION_CTRL, BIT(15), phy_data);
-}
-
-/******************************************************************************
-*
-* qca803x_phy_get_hibernate - get hibernate status
-*
-* get hibernate status
-*/
-sw_error_t
-qca803x_phy_get_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data;
-
-	*enable = A_FALSE;
-
-	phy_data = hsl_phy_debug_reg_read(dev_id, phy_addr,
-		QCA803X_DEBUG_PHY_HIBERNATION_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & 0x8000)
-		*enable = A_TRUE;
-
-	return SW_OK;
-}
-#endif
 sw_error_t
 __phy_chip_config_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	qca803x_cfg_type_t cfg_sel, qca803x_cfg_t *cfg_value)
@@ -590,8 +502,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
 	qca803x_phy_api_ops->phy_reset = qcaphy_sw_reset;
 #ifndef IN_PORTCONTROL_MINI
-	qca803x_phy_api_ops->phy_powersave_set = qca803x_phy_set_powersave;
-	qca803x_phy_api_ops->phy_powersave_get = qca803x_phy_get_powersave;
 	qca803x_phy_api_ops->phy_local_loopback_set = qcaphy_set_local_loopback;
 	qca803x_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
 	qca803x_phy_api_ops->phy_remote_loopback_set = qca803x_phy_set_remote_loopback;
@@ -600,12 +510,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_id_get = qcaphy_get_phy_id;
 	qca803x_phy_api_ops->phy_power_off = qcaphy_poweroff;
 	qca803x_phy_api_ops->phy_power_on = qcaphy_poweron;
-#ifndef IN_PORTCONTROL_MINI
-	qca803x_phy_api_ops->phy_8023az_set = qcaphy_set_8023az;
-	qca803x_phy_api_ops->phy_8023az_get = qcaphy_get_8023az;
-	qca803x_phy_api_ops->phy_hibernation_set = qca803x_phy_set_hibernate;
-	qca803x_phy_api_ops->phy_hibernation_get = qca803x_phy_get_hibernate;
-#endif
 	qca803x_phy_api_ops->phy_interface_mode_set = qca803x_phy_interface_set_mode;
 	qca803x_phy_api_ops->phy_interface_mode_get = qca803x_phy_interface_get_mode;
 	qca803x_phy_api_ops->phy_interface_mode_status_get = qca803x_phy_interface_get_mode_status;
@@ -617,11 +521,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_combo_fiber_mode_get = qca803x_phy_get_combo_fiber_mode;
 #endif
 	qca803x_phy_api_ops->phy_get_status = qca803x_phy_get_status;
-	qca803x_phy_api_ops->phy_eee_adv_set = qcaphy_set_eee_adv;
-	qca803x_phy_api_ops->phy_eee_adv_get = qcaphy_get_eee_adv;
-	qca803x_phy_api_ops->phy_eee_partner_adv_get = qcaphy_get_eee_partner_adv;
-	qca803x_phy_api_ops->phy_eee_cap_get = qcaphy_get_eee_cap;
-	qca803x_phy_api_ops->phy_eee_status_get = qcaphy_get_eee_status;
 
 	ret = hsl_phy_api_ops_register(QCA803X_PHY_CHIP, qca803x_phy_api_ops);
 

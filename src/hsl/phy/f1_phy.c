@@ -25,85 +25,6 @@
 
 /******************************************************************************
 *
-* f1_phy_set_powersave - set power saving status
-*
-* set power saving status
-*/
-sw_error_t
-f1_phy_set_powersave(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-    a_uint16_t phy_data = 0;
-
-    if(enable == A_TRUE)
-    {
-        phy_data |= BIT(15);
-    }
-
-    return hsl_phy_modify_debug(dev_id, phy_addr, 0x29, BIT(15), phy_data);
-}
-
-/******************************************************************************
-*
-* f1_phy_get_powersave - get power saving status
-*
-* set power saving status
-*/
-sw_error_t
-f1_phy_get_powersave(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t *enable)
-{
-    a_uint16_t phy_data;
-
-    *enable = A_FALSE;
-
-    phy_data = hsl_phy_debug_reg_read(dev_id, phy_addr, 0x29);
-    if(phy_data & 0x8000)
-        *enable =  A_TRUE;
-
-    return SW_OK;
-}
-
-/******************************************************************************
-*
-* f1_phy_set_hibernate - set hibernate status
-*
-* set hibernate status
-*/
-sw_error_t
-f1_phy_set_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-    a_uint16_t phy_data = 0;
-
-    if(enable == A_TRUE)
-    {
-        phy_data |= BIT(15);
-    }
-
-    return hsl_phy_modify_debug(dev_id, phy_addr, 0xb, BIT(15), phy_data);
-}
-
-/******************************************************************************
-*
-* f1_phy_get_hibernate - get hibernate status
-*
-* get hibernate status
-*/
-sw_error_t
-f1_phy_get_hibernate(a_uint32_t dev_id, a_uint32_t phy_id, a_bool_t *enable)
-{
-    a_uint16_t phy_data;
-
-    *enable = A_FALSE;
-
-    phy_data = hsl_phy_debug_reg_read(dev_id, phy_id, 0xb);
-
-    if(phy_data & BIT(15))
-        *enable =  A_TRUE;
-
-    return SW_OK;
-}
-
-/******************************************************************************
-*
 * f1_phy_reset_done - reset the phy
 *
 * reset the phy
@@ -475,8 +396,6 @@ static int f1_phy_api_ops_init(void)
 
 	phy_api_ops_init(F1_PHY_CHIP);
 
-	f1_phy_api_ops->phy_hibernation_set = f1_phy_set_hibernate;
-	f1_phy_api_ops->phy_hibernation_get = f1_phy_get_hibernate;
 	f1_phy_api_ops->phy_speed_get = f1_phy_get_speed;
 	f1_phy_api_ops->phy_speed_set = f1_phy_set_speed;
 	f1_phy_api_ops->phy_duplex_get = f1_phy_get_duplex;
@@ -486,8 +405,6 @@ static int f1_phy_api_ops_init(void)
 	f1_phy_api_ops->phy_autoneg_status_get = qcaphy_autoneg_status;
 	f1_phy_api_ops->phy_autoneg_adv_set = qcaphy_set_autoneg_adv;
 	f1_phy_api_ops->phy_autoneg_adv_get = qcaphy_get_autoneg_adv;
-	f1_phy_api_ops->phy_powersave_set = f1_phy_set_powersave;
-	f1_phy_api_ops->phy_powersave_get = f1_phy_get_powersave;
 	f1_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
 	f1_phy_api_ops->phy_reset = qcaphy_sw_reset;
 	f1_phy_api_ops->phy_power_off = qcaphy_poweroff;
@@ -497,13 +414,6 @@ static int f1_phy_api_ops_init(void)
 	f1_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
 	f1_phy_api_ops->phy_remote_loopback_set = f1_phy_set_remote_loopback;
 	f1_phy_api_ops->phy_remote_loopback_get = f1_phy_get_remote_loopback;
-	f1_phy_api_ops->phy_8023az_set = qcaphy_set_8023az;
-	f1_phy_api_ops->phy_8023az_get = qcaphy_get_8023az;
-	f1_phy_api_ops->phy_eee_adv_set = qcaphy_set_eee_adv;
-	f1_phy_api_ops->phy_eee_adv_get = qcaphy_get_eee_adv;
-	f1_phy_api_ops->phy_eee_partner_adv_get = qcaphy_get_eee_partner_adv;
-	f1_phy_api_ops->phy_eee_cap_get = qcaphy_get_eee_cap;
-	f1_phy_api_ops->phy_eee_status_get = qcaphy_get_eee_status;
 
 	ret = hsl_phy_api_ops_register(F1_PHY_CHIP, f1_phy_api_ops);
 

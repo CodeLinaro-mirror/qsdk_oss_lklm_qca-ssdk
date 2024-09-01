@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -349,121 +349,6 @@ qca8084_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 	}
 
 	return rv;
-}
-
-sw_error_t
-qca8084_phy_set_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE) {
-		phy_data |= QCA8084_PHY_8023AZ_EEE_2500BT;
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCA8084_PHY_MMD7_NUM,
-		QCA8084_PHY_MMD7_ADDR_8023AZ_EEE_2500M_CTRL,
-		QCA8084_PHY_8023AZ_EEE_2500BT, phy_data);
-}
-
-sw_error_t
-qca8084_phy_get_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t * enable)
-{
-	a_uint16_t phy_data = 0;
-
-	*enable = A_FALSE;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA8084_PHY_MMD7_NUM,
-		QCA8084_PHY_MMD7_ADDR_8023AZ_EEE_2500M_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCA8084_PHY_8023AZ_EEE_2500BT) {
-		*enable = A_TRUE;
-	}
-
-	return SW_OK;
-}
-
-sw_error_t
-qca8084_phy_set_eee_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t adv)
-{
-	a_uint16_t phy_data = 0;
-
-	if (adv & FAL_PHY_EEE_2500BASE_T) {
-		phy_data |= QCA8084_PHY_8023AZ_EEE_2500BT;
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCA8084_PHY_MMD7_NUM,
-		QCA8084_PHY_MMD7_ADDR_8023AZ_EEE_2500M_CTRL,
-		QCA8084_PHY_8023AZ_EEE_2500BT, phy_data);
-}
-
-sw_error_t
-qca8084_phy_get_eee_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *adv)
-{
-	a_uint16_t phy_data = 0;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA8084_PHY_MMD7_NUM,
-		QCA8084_PHY_MMD7_ADDR_8023AZ_EEE_2500M_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCA8084_PHY_8023AZ_EEE_2500BT) {
-		*adv |= FAL_PHY_EEE_2500BASE_T;
-	}
-
-	return SW_OK;
-}
-
-sw_error_t
-qca8084_phy_get_eee_partner_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *adv)
-{
-	a_uint16_t phy_data = 0;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA8084_PHY_MMD7_NUM,
-		QCA8084_PHY_MMD7_ADDR_8023AZ_EEE_2500M_PARTNER);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCA8084_PHY_8023AZ_EEE_2500BT) {
-		*adv |= FAL_PHY_EEE_2500BASE_T;
-	}
-
-	return SW_OK;
-}
-
-sw_error_t
-qca8084_phy_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *cap)
-{
-	a_uint16_t phy_data = 0;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA8084_PHY_MMD3_NUM,
-		QCA8084_PHY_MMD3_ADDR_8023AZ_EEE_2500M_CAPABILITY);
-
-	if (phy_data & QCA8084_PHY_EEE_CAPABILITY_2500M) {
-		*cap |= FAL_PHY_EEE_2500BASE_T;
-	}
-
-	return SW_OK;
-}
-
-sw_error_t
-qca8084_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *status)
-{
-	a_uint32_t adv = 0, lp_adv = 0;
-	sw_error_t rv = SW_OK;
-
-	rv = qca8084_phy_get_eee_adv(dev_id, phy_addr, &adv);
-	PHY_RTN_ON_ERROR(rv);
-
-	rv = qca8084_phy_get_eee_partner_adv(dev_id, phy_addr, &lp_adv);
-	PHY_RTN_ON_ERROR(rv);
-
-	*status |= (adv & lp_adv);
-
-	return SW_OK;
 }
 
 static sw_error_t

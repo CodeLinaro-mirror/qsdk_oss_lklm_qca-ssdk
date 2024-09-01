@@ -1014,9 +1014,9 @@ hsl_port_phy_hibernation_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 hsl_port_phy_hibernation_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
 sw_error_t
-hsl_port_phy_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
+hsl_port_phy_ieee_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 sw_error_t
-hsl_port_phy_8023az_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
+hsl_port_phy_ieee_8023az_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
 sw_error_t
 hsl_port_phy_remote_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 sw_error_t
@@ -1054,6 +1054,15 @@ enum hsl_phy_api_id {
 	intr_mask_set,
 	intr_mask_get,
 	intr_status_get,
+	powersave_set,
+	powersave_get,
+	eee_adv_set,
+	eee_adv_get,
+	eee_partner_adv_get,
+	eee_cap_get,
+	eee_status_get,
+	ieee_8023az_set,
+	ieee_8023az_get,
 	duplex_get,
 	duplex_set,
 	wol_set,

@@ -190,17 +190,6 @@ malibu_phy_get_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return qcaphy_get_duplex(dev_id, phy_addr, duplex);
 }
 
-static a_bool_t
-malibu_phy_is_copper(a_uint32_t dev_id, a_uint32_t phy_addr)
-{
-	if (phy_addr == COMBO_PHY_ID) {
-		if (PHY_MEDIUM_COPPER !=
-			__phy_active_medium_get(dev_id, phy_addr))
-			return A_FALSE;
-	}
-
-	return A_TRUE;
-}
 #ifndef IN_PORTCONTROL_MINI
 /******************************************************************************
 *
@@ -215,149 +204,6 @@ sw_error_t malibu_phy_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
 	return qcaphy_sw_reset(dev_id, phy_addr);
 }
 #endif
-/******************************************************************************
-*
-* malibu_phy_set_powersave - set power saving status
-*
-* set power saving status
-*/
-sw_error_t
-malibu_phy_set_powersave(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_bool_t status = A_FALSE;
-	sw_error_t rv = SW_OK;
-
-	if(!malibu_phy_is_copper(dev_id, phy_addr))
-		return SW_NOT_SUPPORTED;
-
-	if (enable == A_TRUE) {
-		rv = malibu_phy_get_8023az (dev_id, phy_addr, &status);
-		PHY_RTN_ON_ERROR(rv);
-		if (status == A_FALSE) {
-			rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-				MALIBU_PHY_MMD3_ADDR_8023AZ_TIMER_CTRL, BIT(14), 0);
-			PHY_RTN_ON_ERROR(rv);
-		}
-		rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-				MALIBU_PHY_MMD3_ADDR_CLD_CTRL5, BIT(14), 0);
-		PHY_RTN_ON_ERROR(rv);
-		rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-			MALIBU_PHY_MMD3_ADDR_CLD_CTRL3, BIT(15), 0);
-		PHY_RTN_ON_ERROR(rv);
-	} else {
-		rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-			MALIBU_PHY_MMD3_ADDR_8023AZ_TIMER_CTRL, BIT(14), BIT(14));
-		PHY_RTN_ON_ERROR(rv);
-		rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-			MALIBU_PHY_MMD3_ADDR_CLD_CTRL5, BIT(14), BIT(14));
-		PHY_RTN_ON_ERROR(rv);
-		rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-			MALIBU_PHY_MMD3_ADDR_CLD_CTRL3, BIT(15), BIT(15));
-		PHY_RTN_ON_ERROR(rv);
-	}
-	return hsl_phy_mii_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL, 0x9040);
-}
-#ifndef IN_PORTCONTROL_MINI
-/******************************************************************************
-*
-* malibu_phy_get_powersave - get power saving status
-*
-* set power saving status
-*/
-sw_error_t
-malibu_phy_get_powersave(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data = 0;
-	a_uint16_t phy_data1 = 0;
-
-	if(!malibu_phy_is_copper(dev_id, phy_addr))
-		return SW_NOT_SUPPORTED;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-		MALIBU_PHY_MMD3_ADDR_CLD_CTRL5);
-	phy_data1 = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-		MALIBU_PHY_MMD3_ADDR_CLD_CTRL3);
-	if (!(phy_data& 0x4000) && !(phy_data1 & 0x8000)) {
-		*enable = A_TRUE;
-	}
-	if ((phy_data& 0x4000) && (phy_data1 & 0x8000)) {
-		*enable = A_FALSE;
-	}
-	return SW_OK;
-}
-#endif
-/******************************************************************************
-*
-* malibu_phy_set_802.3az
-*
-* set 802.3az status
-*/
-sw_error_t
-malibu_phy_set_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	if(!malibu_phy_is_copper(dev_id, phy_addr))
-		return SW_NOT_SUPPORTED;
-
-	return qcaphy_set_8023az(dev_id, phy_addr, enable);
-}
-
-/******************************************************************************
-*
-* malibu_phy_get_8023az status
-*
-* get 8023az status
-*/
-sw_error_t
-malibu_phy_get_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t * enable)
-{
-	if(!malibu_phy_is_copper(dev_id, phy_addr))
-		return SW_NOT_SUPPORTED;
-
-	return qcaphy_get_8023az(dev_id, phy_addr, enable);
-}
-
-/******************************************************************************
-*
-* malibu_phy_set_hibernate - set hibernate status
-*
-* set hibernate status
-*/
-sw_error_t
-malibu_phy_set_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE)
-		phy_data |= BIT(15);
-
-	return hsl_phy_modify_debug(dev_id, phy_addr, MALIBU_DEBUG_PHY_HIBERNATION_CTRL,
-		BIT(15), phy_data);
-}
-
-#ifndef IN_PORTCONTROL_MINI
-/******************************************************************************
-*
-* malibu_phy_get_hibernate - get hibernate status
-*
-* get hibernate status
-*/
-sw_error_t
-malibu_phy_get_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data = 0;
-
-	*enable = A_FALSE;
-
-	phy_data = hsl_phy_debug_reg_read(dev_id, phy_addr,
-		MALIBU_DEBUG_PHY_HIBERNATION_CTRL);
-	if (phy_data & 0x8000)
-		*enable = A_TRUE;
-
-	return SW_OK;
-}
-
 /******************************************************************************
 *
 * malibu_phy_set combo medium type
@@ -651,7 +497,6 @@ a_bool_t malibu_phy_speed_duplex_resolved(a_uint32_t dev_id, a_uint32_t phy_addr
 
 	return A_TRUE;
 }
-#endif
 #endif
 /******************************************************************************
 *
@@ -1133,87 +978,7 @@ malibu_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_addr,
 	}
 	return qcaphy_status_get(dev_id, phy_addr, phy_status);
 }
-/******************************************************************************
-*
-* malibu_phy_set_eee_advertisement
-*
-* set eee advertisement
-*/
-sw_error_t
-malibu_phy_set_eee_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t adv)
-{
-	if (!malibu_phy_is_copper(dev_id, phy_addr)){
-			return SW_NOT_SUPPORTED;
-	}
 
-	return qcaphy_set_eee_adv(dev_id, phy_addr, adv);
-}
-
-/******************************************************************************
-*
-* malibu_phy_get_eee_advertisement
-*
-* get eee advertisement
-*/
-sw_error_t
-malibu_phy_get_eee_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *adv)
-{
-	if (!malibu_phy_is_copper(dev_id, phy_addr)){
-			return SW_NOT_SUPPORTED;
-	}
-
-	return qcaphy_get_eee_adv(dev_id, phy_addr, adv);
-}
-/******************************************************************************
-*
-* malibu_phy_get_eee_partner_advertisement
-*
-* get eee partner advertisement
-*/
-sw_error_t
-malibu_phy_get_eee_partner_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *adv)
-{
-	if (!malibu_phy_is_copper(dev_id, phy_addr)){
-			return SW_NOT_SUPPORTED;
-	}
-
-	return qcaphy_get_eee_partner_adv(dev_id, phy_addr, adv);
-}
-/******************************************************************************
-*
-* malibu_phy_get_eee_capability
-*
-* get eee capability
-*/
-sw_error_t
-malibu_phy_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *cap)
-{
-	if (!malibu_phy_is_copper(dev_id, phy_addr)){
-		return SW_NOT_SUPPORTED;
-	}
-
-	return qcaphy_get_eee_cap(dev_id, phy_addr, cap);
-}
-/******************************************************************************
-*
-* malibu_phy_get_eee_status
-*
-* get eee status
-*/
-sw_error_t
-malibu_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t *status)
-{
-	if (!malibu_phy_is_copper(dev_id, phy_addr)){
-		return SW_NOT_SUPPORTED;
-	}
-
-	return qcaphy_get_eee_status(dev_id, phy_addr, status);
-}
 #ifdef IN_LED
 a_uint32_t
 malibu_phy_led_source_map_mmd_reg_get(a_uint32_t dev_id, a_uint32_t source_id)
@@ -1381,10 +1146,6 @@ malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 			{
 				first_phy_addr = phy_addr;
 			}
-			/*enable phy power saving function by default */
-			malibu_phy_set_8023az(dev_id, phy_addr, A_TRUE);
-			malibu_phy_set_powersave(dev_id, phy_addr, A_TRUE);
-			malibu_phy_set_hibernate(dev_id, phy_addr, A_TRUE);
 			/*change malibu control_dac[2:0] of MMD7 0x801A bit[9:7] from 111 to 101*/
 			hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD7_NUM,
 				MALIBU_PHY_MMD7_DAC_CTRL, MALIBU_DAC_CTRL_MASK,
@@ -1438,10 +1199,7 @@ static int malibu_phy_api_ops_init(void)
 	}
 
 	phy_api_ops_init(MALIBU_PHY_CHIP);
-#ifndef IN_PORTCONTROL_MINI
-	malibu_phy_api_ops->phy_hibernation_set = malibu_phy_set_hibernate;
-	malibu_phy_api_ops->phy_hibernation_get = malibu_phy_get_hibernate;
-#endif
+
 	malibu_phy_api_ops->phy_speed_get = malibu_phy_get_speed;
 	malibu_phy_api_ops->phy_speed_set = malibu_phy_set_speed;
 	malibu_phy_api_ops->phy_duplex_get = malibu_phy_get_duplex;
@@ -1451,14 +1209,8 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_autoneg_status_get = malibu_phy_autoneg_status;
 	malibu_phy_api_ops->phy_autoneg_adv_set = malibu_phy_set_autoneg_adv;
 	malibu_phy_api_ops->phy_autoneg_adv_get = malibu_phy_get_autoneg_adv;
-#ifndef IN_PORTCONTROL_MINI
-	malibu_phy_api_ops->phy_powersave_set = malibu_phy_set_powersave;
-	malibu_phy_api_ops->phy_powersave_get = malibu_phy_get_powersave;
-#endif
 	malibu_phy_api_ops->phy_link_status_get = malibu_phy_get_link_status;
 #ifndef IN_PORTCONTROL_MINI
-	malibu_phy_api_ops->phy_8023az_set = malibu_phy_set_8023az;
-	malibu_phy_api_ops->phy_8023az_get = malibu_phy_get_8023az;
 	malibu_phy_api_ops->phy_local_loopback_set = malibu_phy_set_local_loopback;
 	malibu_phy_api_ops->phy_local_loopback_get = malibu_phy_get_local_loopback;
 	malibu_phy_api_ops->phy_remote_loopback_set = malibu_phy_set_remote_loopback;
@@ -1478,11 +1230,6 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_interface_mode_status_get = malibu_phy_interface_get_mode_status;
 	malibu_phy_api_ops->phy_serdes_reset = malibu_phy_serdes_reset;
 	malibu_phy_api_ops->phy_get_status = malibu_phy_get_status;
-	malibu_phy_api_ops->phy_eee_adv_set = malibu_phy_set_eee_adv;
-	malibu_phy_api_ops->phy_eee_adv_get = malibu_phy_get_eee_adv;
-	malibu_phy_api_ops->phy_eee_partner_adv_get = malibu_phy_get_eee_partner_adv;
-	malibu_phy_api_ops->phy_eee_cap_get = malibu_phy_get_eee_cap;
-	malibu_phy_api_ops->phy_eee_status_get = malibu_phy_get_eee_status;
 #ifdef IN_LED
 	malibu_phy_api_ops->phy_led_ctrl_source_set = malibu_phy_led_ctrl_source_set;
 	malibu_phy_api_ops->phy_led_ctrl_source_get = malibu_phy_led_ctrl_source_get;
