@@ -35,63 +35,6 @@ qcaphy_sw_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
 		QCAPHY_CTRL_SOFTWARE_RESET, QCAPHY_CTRL_SOFTWARE_RESET);
 }
 /*
- * @brief set local loopback
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @param[in] enable A_TRUE or A_FALSE
- * @return SW_OK or error code
- */
-sw_error_t
-qcaphy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-	fal_port_speed_t cur_speed = 0;
-	sw_error_t rv = SW_OK;
-
-	if (enable == A_TRUE) {
-		rv = qcaphy_get_speed(dev_id, phy_addr, &cur_speed);
-		PHY_RTN_ON_ERROR(rv);
-		if (cur_speed == FAL_SPEED_1000) {
-			phy_data = QCAPHY_1000M_LOOPBACK;
-		} else if (cur_speed == FAL_SPEED_100) {
-			phy_data = QCAPHY_100M_LOOPBACK;
-		} else if (cur_speed == FAL_SPEED_10) {
-			phy_data = QCAPHY_10M_LOOPBACK;
-		} else {
-			return SW_FAIL;
-		}
-	} else {
-		phy_data = QCAPHY_COMMON_CTRL;
-	}
-
-	return hsl_phy_mii_reg_write(dev_id, phy_addr, QCAPHY_CONTROL, phy_data);
-}
-/*
- * @brief get local loopback status
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @param[out] enable A_TRUE or A_FALSE
- * @return SW_OK or error code
- */
-sw_error_t
-qcaphy_get_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t *enable)
-{
-	a_uint16_t phy_data = 0;
-
-	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, QCAPHY_CONTROL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCAPHY_LOCAL_LOOPBACK_ENABLE) {
-		*enable = A_TRUE;
-	} else {
-		*enable = A_FALSE;
-	}
-
-	return SW_OK;
-}
-/*
  * @brief configure the force speed
  * @param[in] dev_id device id
  * @param[in] phy_addr phy address

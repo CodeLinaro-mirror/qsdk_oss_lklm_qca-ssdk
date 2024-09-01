@@ -336,53 +336,6 @@ f1_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_addr,
     return SW_OK;
 }
 
-/******************************************************************************
-*
-* f1_phy_set_remote_loopback
-*
-* set phy remote loopback
-*/
-sw_error_t
-f1_phy_set_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-    a_uint16_t phy_data = 0;
-
-    if (enable == A_TRUE)
-    {
-        phy_data |= F1_PHY_REMOTE_LOOPBACK_ENABLE;
-    }
-
-    return hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, F1_PHY_MMD3_NUM,
-        F1_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL,
-        F1_PHY_REMOTE_LOOPBACK_ENABLE, phy_data);
-}
-
-/******************************************************************************
-*
-* f1_phy_get_remote_loopback
-*
-* get phy remote loopback
-*/
-sw_error_t
-f1_phy_get_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t * enable)
-{
-    a_uint16_t phy_data;
-
-    phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE, F1_PHY_MMD3_NUM,
-        F1_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL);
-
-    if (phy_data & F1_PHY_REMOTE_LOOPBACK_ENABLE)
-    {
-        *enable = A_TRUE;
-    }
-    else
-    {
-        *enable = A_FALSE;
-    }
-
-    return SW_OK;
-}
-
 static int f1_phy_api_ops_init(void)
 {
 	int ret;
@@ -410,10 +363,6 @@ static int f1_phy_api_ops_init(void)
 	f1_phy_api_ops->phy_power_off = qcaphy_poweroff;
 	f1_phy_api_ops->phy_power_on = qcaphy_poweron;
 	f1_phy_api_ops->phy_id_get = qcaphy_get_phy_id;
-	f1_phy_api_ops->phy_local_loopback_set = qcaphy_set_local_loopback;
-	f1_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
-	f1_phy_api_ops->phy_remote_loopback_set = f1_phy_set_remote_loopback;
-	f1_phy_api_ops->phy_remote_loopback_get = f1_phy_get_remote_loopback;
 
 	ret = hsl_phy_api_ops_register(F1_PHY_CHIP, f1_phy_api_ops);
 

@@ -322,99 +322,6 @@ malibu_phy_get_combo_fiber_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	return SW_OK;
 }
-
-/******************************************************************************
-*
-* malibu_phy_set_local_loopback
-*
-* set phy local loopback
-*/
-sw_error_t
-malibu_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (phy_addr == COMBO_PHY_ID) {
-		if(PHY_MEDIUM_COPPER != __phy_active_medium_get(dev_id, phy_addr)) {
-			__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_SGBX_PAGES);
-			if(enable) {
-				if (__medium_is_fiber_100fx(dev_id, phy_addr))
-					phy_data = MALIBU_100M_LOOPBACK;
-				else
-					phy_data = MALIBU_1000M_LOOPBACK;
-			} else {
-				phy_data = MALIBU_COMMON_CTRL;
-			}
-			return hsl_phy_mii_reg_write(dev_id, phy_addr, MALIBU_PHY_CONTROL, phy_data);
-				 __phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
-		} else {
-			__phy_reg_pages_sel(dev_id, phy_addr, MALIBU_PHY_COPPER_PAGES);
-		}
-	}
-
-	return qcaphy_set_local_loopback(dev_id, phy_addr, enable);
-}
-
-/******************************************************************************
-*
-* malibu_phy_get_local_loopback
-*
-* get phy local loopback
-*/
-sw_error_t
-malibu_phy_get_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	if (phy_addr == COMBO_PHY_ID) {
-		__phy_reg_pages_sel_by_active_medium(dev_id, phy_addr);
-	}
-
-	return qcaphy_get_local_loopback(dev_id, phy_addr, enable);
-}
-
-/******************************************************************************
-*
-* malibu_phy_set_remote_loopback
-*
-* set phy remote loopback
-*/
-sw_error_t
-malibu_phy_set_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE)
-		phy_data |= 0x0001;
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, MALIBU_PHY_MMD3_NUM,
-		MALIBU_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL, BIT(0), phy_data);
-}
-
-/******************************************************************************
-*
-* malibu_phy_get_remote_loopback
-*
-* get phy remote loopback
-*/
-sw_error_t
-malibu_phy_get_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data = 0;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE,
-		MALIBU_PHY_MMD3_NUM, MALIBU_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL);
-
-	if (phy_data & 0x0001) {
-		*enable = A_TRUE;
-	} else {
-		*enable = A_FALSE;
-	}
-
-	return SW_OK;
-}
 #if 0
 /******************************************************************************
 *
@@ -1211,10 +1118,6 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_autoneg_adv_get = malibu_phy_get_autoneg_adv;
 	malibu_phy_api_ops->phy_link_status_get = malibu_phy_get_link_status;
 #ifndef IN_PORTCONTROL_MINI
-	malibu_phy_api_ops->phy_local_loopback_set = malibu_phy_set_local_loopback;
-	malibu_phy_api_ops->phy_local_loopback_get = malibu_phy_get_local_loopback;
-	malibu_phy_api_ops->phy_remote_loopback_set = malibu_phy_set_remote_loopback;
-	malibu_phy_api_ops->phy_remote_loopback_get = malibu_phy_get_remote_loopback;
 	malibu_phy_api_ops->phy_combo_prefer_medium_set = malibu_phy_set_combo_prefer_medium;
 	malibu_phy_api_ops->phy_combo_prefer_medium_get = malibu_phy_get_combo_prefer_medium;
 	malibu_phy_api_ops->phy_combo_medium_status_get = malibu_phy_get_combo_current_medium_type;

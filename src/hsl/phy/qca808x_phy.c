@@ -403,84 +403,6 @@ sw_error_t qca808x_phy_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
 	return SW_OK;
 }
 
-#ifndef IN_PORTCONTROL_MINI
-/******************************************************************************
-*
-* qca808x_phy_set_local_loopback
-*
-* set phy local loopback
-*/
-sw_error_t
-qca808x_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0, mask = 0;
-	fal_port_speed_t cur_speed = 0;
-	sw_error_t rv = SW_OK;
-
-	if (enable == A_TRUE) {
-		/* get the link speed first, then force the corresponding
-		 * speed to enable local loopback */
-		rv = qcaphy_get_speed(dev_id, phy_addr, &cur_speed);
-		PHY_RTN_ON_ERROR(rv);
-		rv = qca808x_phy_set_force_speed(dev_id, phy_addr, cur_speed);
-		PHY_RTN_ON_ERROR(rv);
-		phy_data |= QCA808X_LOCAL_LOOPBACK_ENABLE | QCA808X_CTRL_FULL_DUPLEX;
-	} else {
-		phy_data |= QCA808X_COMMON_CTRL;
-	}
-	mask = QCA808X_CTRL_AUTONEGOTIATION_ENABLE | QCA808X_LOCAL_LOOPBACK_ENABLE |
-		QCA808X_CTRL_FULL_DUPLEX;
-	return hsl_phy_modify_mii(dev_id, phy_addr, QCA808X_PHY_CONTROL, mask,
-		phy_data);
-}
-/******************************************************************************
-*
-* qca808x_phy_set_remote_loopback
-*
-* set phy remote loopback
-*/
-sw_error_t
-qca808x_phy_set_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE) {
-		phy_data |= QCA808X_PHY_REMOTE_LOOPBACK_EN;
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD3_NUM,
-		QCA808X_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL,
-		QCA808X_PHY_REMOTE_LOOPBACK_EN, phy_data);
-}
-
-/******************************************************************************
-*
-* qca808x_phy_get_remote_loopback
-*
-* get phy remote loopback
-*/
-sw_error_t
-qca808x_phy_get_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data = 0;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCA808X_PHY_MMD3_NUM,
-		QCA808X_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & QCA808X_PHY_REMOTE_LOOPBACK_EN) {
-		*enable = A_TRUE;
-	} else {
-		*enable = A_FALSE;
-	}
-
-	return SW_OK;
-}
-#endif
-
 sw_error_t
 qca808x_phy_get_partner_ability(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t *ability)
@@ -965,12 +887,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 	qca808x_phy_api_ops->phy_autoneg_adv_get = qca808x_phy_get_autoneg_adv;
 	qca808x_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
 	qca808x_phy_api_ops->phy_reset = qca808x_phy_reset;
-#ifndef IN_PORTCONTROL_MINI
-	qca808x_phy_api_ops->phy_local_loopback_set = qca808x_phy_set_local_loopback;
-	qca808x_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
-	qca808x_phy_api_ops->phy_remote_loopback_set = qca808x_phy_set_remote_loopback;
-	qca808x_phy_api_ops->phy_remote_loopback_get = qca808x_phy_get_remote_loopback;
-#endif
 	qca808x_phy_api_ops->phy_id_get = qcaphy_get_phy_id;
 	qca808x_phy_api_ops->phy_power_off = qca808x_phy_poweroff;
 	qca808x_phy_api_ops->phy_power_on = qcaphy_poweron;

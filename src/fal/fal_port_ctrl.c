@@ -360,19 +360,19 @@ sw_error_t fal_port_combo_fiber_mode_get (a_uint32_t dev_id, a_uint32_t port_id,
     EXPORT_SYMBOL(fal_port_combo_fiber_mode_get);
 
 sw_error_t fal_port_local_loopback_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_local_loopback_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(local_loopback_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_local_loopback_set);
 
 sw_error_t fal_port_local_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_local_loopback_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(local_loopback_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_local_loopback_get);
 
 sw_error_t fal_port_remote_loopback_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_remote_loopback_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(remote_loopback_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_remote_loopback_set);
 
 sw_error_t fal_port_remote_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_remote_loopback_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_FUNC(remote_loopback_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_remote_loopback_get);
 
 sw_error_t fal_port_reset (a_uint32_t dev_id, fal_port_t port_id)

@@ -41,53 +41,6 @@ static struct mutex qca803x_reg_lock;
 #define QCA803X_REG_UNLOCK		mutex_unlock(&qca803x_reg_lock)
 
 #ifndef IN_PORTCONTROL_MINI
-/******************************************************************************
-*
-* qca803x_phy_set_remote_loopback
-*
-* set phy remote loopback
-*/
-sw_error_t
-qca803x_phy_set_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE) {
-		phy_data |= 0x0001;
-	}
-
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_FALSE, QCA803X_PHY_MMD3_NUM,
-		QCA803X_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL, BIT(0), phy_data);;
-}
-
-/******************************************************************************
-*
-* qca803x_phy_get_remote_loopback
-*
-* get phy remote loopback
-*/
-sw_error_t
-qca803x_phy_get_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_bool_t * enable)
-{
-	a_uint16_t phy_data;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE,
-		QCA803X_PHY_MMD3_NUM, QCA803X_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	if (phy_data & 0x0001) {
-		*enable = A_TRUE;
-	} else {
-		*enable = A_FALSE;
-	}
-
-	return SW_OK;
-
-}
-#endif
-#ifndef IN_PORTCONTROL_MINI
 #if 0
 /******************************************************************************
 *
@@ -501,12 +454,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_autoneg_adv_get = qcaphy_get_autoneg_adv;
 	qca803x_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
 	qca803x_phy_api_ops->phy_reset = qcaphy_sw_reset;
-#ifndef IN_PORTCONTROL_MINI
-	qca803x_phy_api_ops->phy_local_loopback_set = qcaphy_set_local_loopback;
-	qca803x_phy_api_ops->phy_local_loopback_get = qcaphy_get_local_loopback;
-	qca803x_phy_api_ops->phy_remote_loopback_set = qca803x_phy_set_remote_loopback;
-	qca803x_phy_api_ops->phy_remote_loopback_get = qca803x_phy_get_remote_loopback;
-#endif
 	qca803x_phy_api_ops->phy_id_get = qcaphy_get_phy_id;
 	qca803x_phy_api_ops->phy_power_off = qcaphy_poweroff;
 	qca803x_phy_api_ops->phy_power_on = qcaphy_poweron;
