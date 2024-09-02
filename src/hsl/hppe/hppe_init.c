@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -37,15 +37,6 @@ a_bool_t hppe_xgmac_port_check(a_uint32_t dev_id, fal_port_t port_id)
 	}
 
 	return A_FALSE;
-}
-a_bool_t hppe_mac_port_valid_check(a_uint32_t dev_id, fal_port_t port_id)
-{
-	a_uint32_t bitmap = 0;
-
-	bitmap = qca_ssdk_port_bmp_get(dev_id);
-
-	return SW_IS_PBMP_MEMBER(bitmap, port_id);
-
 }
 
 static sw_error_t

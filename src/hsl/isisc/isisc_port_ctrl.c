@@ -31,24 +31,6 @@
 #include "mht_port_ctrl.h"
 #endif
 
-a_bool_t
-_isisc_port_phy_connected(a_uint32_t dev_id, fal_port_t port_id)
-{
-	ssdk_chip_type chip_type = CHIP_UNSPECIFIED;
-	a_uint32_t cpu_bmp = BIT(6) | BIT(0);
-
-	chip_type = hsl_get_current_chip_type(dev_id);
-#if defined(MHT)
-	if (chip_type == CHIP_MHT)
-		return hsl_port_phy_connected(dev_id, port_id);
-#endif
-
-	if (cpu_bmp & BIT(port_id))
-		return A_FALSE;
-	else
-		return A_TRUE;
-}
-
 static sw_error_t
 _isisc_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
                       fal_port_duplex_t duplex)
@@ -74,7 +56,7 @@ _isisc_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
     SW_GET_FIELD_BY_REG(PORT_STATUS, DUPLEX_MODE, tmp, reg_val);
 
     /* for those ports without PHY device we set MAC register */
-    if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+    if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
     {
         SW_SET_REG_BY_FIELD(PORT_STATUS, LINK_EN, 0, reg_val);
         if (FAL_HALF_DUPLEX == duplex)
@@ -156,7 +138,7 @@ _isisc_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
     SW_GET_FIELD_BY_REG(PORT_STATUS, SPEED_MODE, tmp, reg_val);
 
     /* for those ports without PHY device we set MAC register */
-    if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+    if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
     {
         SW_SET_REG_BY_FIELD(PORT_STATUS, LINK_EN, 0, reg_val);
         if (FAL_SPEED_10 == speed)
@@ -298,7 +280,7 @@ _isisc_port_flowctrl_forcemode_set(a_uint32_t dev_id, fal_port_t port_id,
     else if (A_FALSE == enable)
     {
         /* for those ports without PHY, it can't sync flow control status */
-        if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+        if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
         {
             return SW_DISABLE;
         }
@@ -329,7 +311,7 @@ _isisc_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 		return SW_BAD_PARAM;
 	}
 	/* for those ports without PHY device supposed always 1000Mbps */
-	if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
 	{
 		*pspeed = FAL_SPEED_1000;
 	}
@@ -353,7 +335,7 @@ _isisc_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 
 	/* for those ports without PHY device supposed always full */
-	if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
 	{
 		*pduplex = FAL_FULL_DUPLEX;
 	}
@@ -657,7 +639,7 @@ _isisc_port_txmac_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t ena
 	tmp = reg;
 
     /* for those ports without PHY device we set MAC register */
-    if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+    if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
     {
         SW_SET_REG_BY_FIELD(PORT_STATUS, LINK_EN,  0, reg);
         SW_SET_REG_BY_FIELD(PORT_STATUS, TXMAC_EN, val, reg);
@@ -743,7 +725,7 @@ _isisc_port_rxmac_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t ena
 	tmp = reg;
 
     /* for those ports without PHY device we set MAC register */
-    if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+    if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
     {
         SW_SET_REG_BY_FIELD(PORT_STATUS, LINK_EN,  0, reg);
         SW_SET_REG_BY_FIELD(PORT_STATUS, RXMAC_EN, val, reg);
@@ -829,7 +811,7 @@ _isisc_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enab
 	tmp = reg;
 
     /* for those ports without PHY device we set MAC register */
-    if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+    if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
     {
         SW_SET_REG_BY_FIELD(PORT_STATUS, FLOW_LINK_EN, 0, reg);
         SW_SET_REG_BY_FIELD(PORT_STATUS, TX_FLOW_EN,   val, reg);
@@ -915,7 +897,7 @@ _isisc_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enab
 	tmp = reg;
 
     /* for those ports without PHY device we set MAC register */
-    if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+    if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
     {
         SW_SET_REG_BY_FIELD(PORT_STATUS, FLOW_LINK_EN, 0, reg);
         SW_SET_REG_BY_FIELD(PORT_STATUS, RX_FLOW_EN,   val, reg);
@@ -981,7 +963,7 @@ _isisc_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * st
     }
 
    /* for those ports without PHY device supposed always link up */
-   if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+   if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
    {
 	   *status = A_TRUE;
    }
@@ -1026,7 +1008,7 @@ _isisc_port_link_forcemode_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t e
           return SW_OK;
 
         /* for those ports without PHY, it can't sync link status */
-        if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+        if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
         {
             return SW_DISABLE;
         }
@@ -1353,7 +1335,7 @@ _isisc_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 		if (port_id >= SW_MAX_NR_PORT)
 			break;
 			/* for those ports without PHY device supposed always link up */
-		if (A_FALSE == _isisc_port_phy_connected(dev_id, port_id))
+		if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
 		{
 			*status |= (0x1 << port_id);
 		}

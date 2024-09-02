@@ -168,13 +168,13 @@ a_bool_t hsl_port_is_sfp(a_uint32_t dev_id, a_uint32_t port_id)
 
 a_bool_t hsl_port_phy_connected(a_uint32_t dev_id, fal_port_t port_id)
 {
-	a_uint32_t cpu_bmp = ssdk_cpu_bmp_get(dev_id);
-	a_bool_t is_fport = hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE);
-
-	if (A_FALSE == hsl_port_validity_check(dev_id, port_id))
+	if (!hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
 		return A_FALSE;
 
-	if ((cpu_bmp & BIT(port_id)) || is_fport == A_TRUE)
+	if (hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE))
+		return A_FALSE;
+
+	if (hsl_port_is_sfp(dev_id, port_id))
 		return A_FALSE;
 
 	return A_TRUE;

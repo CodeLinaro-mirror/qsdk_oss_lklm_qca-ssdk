@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2019-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -111,7 +111,6 @@ extern "C" {
 #define MALIBU_MODE_RESET_REG                              0x0
 
 sw_error_t hppe_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
-a_bool_t hppe_mac_port_valid_check(a_uint32_t dev_id, fal_port_t port_id);
 a_bool_t hppe_xgmac_port_check(a_uint32_t dev_id, fal_port_t port_id);
 sw_error_t hppe_cleanup(a_uint32_t dev_id);
 
