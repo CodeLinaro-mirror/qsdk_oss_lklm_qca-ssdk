@@ -486,8 +486,6 @@ static int qca808x_read_status(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	qca808x_phy_get_status(dev_id, phy_id, &phy_status);
-
 	if (phy_status.link_status) {
 		phydev->link = QCA808X_PHY_LINK_UP;
 	} else {

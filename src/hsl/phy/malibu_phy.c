@@ -804,88 +804,6 @@ malibu_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return SW_OK;
 }
 
-/******************************************************************************
-*
-* malibu_phy_interface mode status get
-*
-* get malibu phy interface mode status
-*/
-sw_error_t
-malibu_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t *interface_mode_status)
-{
-	a_uint16_t phy_data, phy_mode, phy_mode_status;
-	a_uint16_t copper_mode;
-
-	if ((phy_addr < first_phy_addr) ||
-		(phy_addr > (first_phy_addr + MALIBU_PHY_MAX_ADDR_INC))) {
-		return SW_NOT_SUPPORTED;
-	}
-
-	phy_data = hsl_phy_mii_reg_read(dev_id,
-		first_phy_addr + MALIBU_PHY_MAX_ADDR_INC, MALIBU_PHY_CHIP_CONFIG);
-	copper_mode = ((phy_data & MALIBU_PHY_COPPER_MODE) >> 0xf);
-	phy_mode = phy_data & 0x000f;
-	phy_mode_status = (phy_data & 0x00f0) >> 0x4;
-
-	if (phy_mode == MALIBU_PHY_PSGMII_AMDET) {
-		if (copper_mode) {
-			*interface_mode_status = PHY_PSGMII_BASET;
-		} else {
-			if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-				*interface_mode_status = PHY_PSGMII_FIBER;
-			else
-				*interface_mode_status = PHY_PSGMII_BASET;
-		}
-	} else {
-		switch (phy_mode_status) {
-			case MALIBU_PHY_PSGMII_BASET:
-				*interface_mode_status = PHY_PSGMII_BASET;
-				break;
-			case MALIBU_PHY_PSGMII_BX1000:
-				if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-					*interface_mode_status = PHY_PSGMII_BX1000;
-				else
-					*interface_mode_status = PHY_PSGMII_BASET;
-				break;
-			case MALIBU_PHY_PSGMII_FX100:
-				if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-					*interface_mode_status = PHY_PSGMII_FX100;
-				else
-					*interface_mode_status = PHY_PSGMII_BASET;
-				break;
-			case MALIBU_PHY_SGMII_BASET:
-				if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-					*interface_mode_status = PHY_SGMII_BASET;
-				else
-					*interface_mode_status = PORT_QSGMII;
-				break;
-			default:
-				*interface_mode_status = PORT_INTERFACE_MODE_MAX;
-				break;
-		}
-	}
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* malibu_phy_get status
-*
-* get phy status
-*/
-sw_error_t
-malibu_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-		struct port_phy_status *phy_status)
-{
-
-	if (phy_addr == COMBO_PHY_ID) {
-		__phy_reg_pages_sel_by_active_medium(dev_id, phy_addr);
-	}
-	return qcaphy_status_get(dev_id, phy_addr, phy_status);
-}
-
 #ifdef IN_LED
 a_uint32_t
 malibu_phy_led_source_map_mmd_reg_get(a_uint32_t dev_id, a_uint32_t source_id)
@@ -1130,9 +1048,7 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_id_get = qcaphy_get_phy_id;
 	malibu_phy_api_ops->phy_interface_mode_set = malibu_phy_interface_set_mode;
 	malibu_phy_api_ops->phy_interface_mode_get = malibu_phy_interface_get_mode;
-	malibu_phy_api_ops->phy_interface_mode_status_get = malibu_phy_interface_get_mode_status;
 	malibu_phy_api_ops->phy_serdes_reset = malibu_phy_serdes_reset;
-	malibu_phy_api_ops->phy_get_status = malibu_phy_get_status;
 #ifdef IN_LED
 	malibu_phy_api_ops->phy_led_ctrl_source_set = malibu_phy_led_ctrl_source_set;
 	malibu_phy_api_ops->phy_led_ctrl_source_get = malibu_phy_led_ctrl_source_get;

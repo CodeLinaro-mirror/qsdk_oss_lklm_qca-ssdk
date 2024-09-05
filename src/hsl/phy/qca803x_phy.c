@@ -212,44 +212,6 @@ qca803x_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return SW_OK;
 }
 
-/******************************************************************************
-*
-* qca803x_phy_interface mode status get
-*
-* get qca803x phy interface mode status
-*/
-sw_error_t
-qca803x_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t *interface_mode_status)
-{
-	qca803x_cfg_t cfg_value;
-
-	PHY_RTN_ON_ERROR(__phy_chip_config_get(dev_id, phy_addr,
-		QCA803X_CHIP_CFG_STAT, &cfg_value));
-
-	switch (cfg_value) {
-		case QCA803X_PHY_RGMII_BASET:
-			*interface_mode_status = PORT_RGMII_BASET;
-			break;
-		case QCA803X_PHY_SGMII_BASET:
-			*interface_mode_status = PHY_SGMII_BASET;
-			break;
-		case QCA803X_PHY_BX1000_RGMII_50:
-			*interface_mode_status = PORT_RGMII_BX1000;
-			break;
-		case QCA803X_PHY_FX100_RGMII_50:
-			*interface_mode_status = PORT_RGMII_FX100;
-			break;
-		case QCA803X_PHY_RGMII_AMDET:
-			*interface_mode_status = PORT_RGMII_AMDET;
-			break;
-		default:
-			*interface_mode_status = PORT_INTERFACE_MODE_MAX;
-			break;
-	}
-
-	return SW_OK;
-}
 #ifndef IN_PORTCONTROL_MINI
 /******************************************************************************
 *
@@ -406,29 +368,6 @@ qca803x_phy_get_combo_fiber_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return SW_OK;
 }
 #endif
-/******************************************************************************
-*
-* qca803x_phy_get status
-*
-* get phy status
-*/
-sw_error_t
-qca803x_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	struct port_phy_status *phy_status)
-{
-	a_uint16_t phy_data = 0;
-	sw_error_t rv = SW_OK;
-
-	rv = qcaphy_status_get(dev_id, phy_addr, phy_status);
-	PHY_RTN_ON_ERROR(rv);
-	if(phy_status->link_status) {
-		phy_data |= QCA803X_PHY_MSE_THRESH_LINK_UP;
-	} else {
-		phy_data |= QCA803X_PHY_MSE_THRESH_LINK_DOWN;
-	}
-	return hsl_phy_modify_debug(dev_id, phy_addr, QCA803X_PHY_SPEC_STATUS,
-		QCA803X_PHY_MSE_THRESH_MASK, phy_data);
-}
 
 static sw_error_t qca803x_phy_api_ops_init(void)
 {
@@ -459,7 +398,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_power_on = qcaphy_poweron;
 	qca803x_phy_api_ops->phy_interface_mode_set = qca803x_phy_interface_set_mode;
 	qca803x_phy_api_ops->phy_interface_mode_get = qca803x_phy_interface_get_mode;
-	qca803x_phy_api_ops->phy_interface_mode_status_get = qca803x_phy_interface_get_mode_status;
 #ifndef IN_PORTCONTROL_MINI
 	qca803x_phy_api_ops->phy_combo_prefer_medium_set = qca803x_phy_set_combo_prefer_medium;
 	qca803x_phy_api_ops->phy_combo_prefer_medium_get = qca803x_phy_get_combo_prefer_medium;
@@ -467,7 +405,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_combo_fiber_mode_set = qca803x_phy_set_combo_fiber_mode;
 	qca803x_phy_api_ops->phy_combo_fiber_mode_get = qca803x_phy_get_combo_fiber_mode;
 #endif
-	qca803x_phy_api_ops->phy_get_status = qca803x_phy_get_status;
 
 	ret = hsl_phy_api_ops_register(QCA803X_PHY_CHIP, qca803x_phy_api_ops);
 

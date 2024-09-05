@@ -1047,6 +1047,10 @@ hsl_port_phydev_get_status(a_uint32_t dev_id, a_uint32_t port_id,
 	}
 
 	mutex_lock(&phydev->lock);
+	/*when attached_dev is null, the phy state machine is not start,*/
+	/*need to read phy status manully*/
+	if (!phydev->attached_dev)
+		phy_read_status(phydev);
 	phy_status->link_status = phydev->link;
 	phy_status->speed = phydev->speed;
 	phy_status->duplex = phydev->duplex;

@@ -131,62 +131,6 @@ qca808x_phy_fifo_reset(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
 
 /******************************************************************************
 *
-* qca808x_phy_get status
-*
-* get phy status
-*/
-sw_error_t
-qca808x_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-		struct port_phy_status *phy_status)
-{
-	a_uint16_t phy_data = 0;
-
-	qcaphy_status_get(dev_id, phy_addr, phy_status);
-	if (phy_status->link_status) {
-#if defined(MHT)
-		if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-		{
-			qca8084_phy_speed_fixup(dev_id, phy_addr, phy_status);
-		}
-		else
-#endif
-		{
-			qca808x_phy_fifo_reset(dev_id, phy_addr, A_FALSE);
-		}
-	}
-	else {
-#if defined(MHT)
-		if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY)) {
-			/*when link down, phy speed is set as 10M*/
-			phy_status->speed = FAL_SPEED_10;
-			qca8084_phy_speed_fixup(dev_id, phy_addr, phy_status);
-		}
-		else
-#endif
-		{
-			qca808x_phy_fifo_reset(dev_id, phy_addr, A_TRUE);
-			if (qca808x_phy_2500caps(dev_id, phy_addr) == A_TRUE) {
-				PHY_RTN_ON_ERROR(
-					qca808x_phy_ms_random_seed_set (dev_id, phy_addr));
-				/*protect logic, if MASTER_SLAVE_CONFIG_FAULT is 1,
-					then disable this logic*/
-				phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr,
-					QCA808X_1000BASET_STATUS);
-				if ((phy_data & QCA808X_MASTER_SLAVE_CONFIG_FAULT) >> 15)
-				{
-					PHY_RTN_ON_ERROR(
-						qca808x_phy_ms_seed_enable (dev_id,phy_addr,
-							A_FALSE));
-					SSDK_INFO("master_slave_config_fault was set\n");
-				}
-			}
-		}
-	}
-
-	return SW_OK;
-}
-/******************************************************************************
-*
 * qca808x_phy_set_force_speed - Force the speed of qca808x phy ports associated with the
 * specified device.
 */
@@ -645,44 +589,6 @@ qca808x_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 /******************************************************************************
 *
-* qca808x_phy_interface mode status get
-*
-* get qca808x phy interface mode status
-*/
-sw_error_t
-qca808x_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t *interface_mode_status)
-{
-	a_uint16_t phy_data = 0;
-/*qca808x_end*/
-#if defined(MHT)
-	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-	{
-		return qca8084_phy_interface_get_mode_status(dev_id, phy_addr,
-			interface_mode_status);
-	}
-#endif
-/*qca808x_start*/
-	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, QCA808X_PHY_CHIP_CONFIG);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	phy_data &= QCA808X_PHY_MODE_MASK;
-	switch (phy_data) {
-		case QCA808X_PHY_SGMII_PLUS_MODE:
-			*interface_mode_status = PORT_SGMII_PLUS;
-			break;
-		case QCA808X_PHY_SGMII_MODE:
-			*interface_mode_status = PHY_SGMII_BASET;
-			break;
-		default:
-			*interface_mode_status = PORT_INTERFACE_MODE_MAX;
-			break;
-	}
-
-	return SW_OK;
-}
-/******************************************************************************
-*
 * qca808x_phy_led_init - set led behavior
 *
 * set led behavior
@@ -875,7 +781,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 
 	phy_api_ops_init(QCA808X_PHY_CHIP);
 
-	qca808x_phy_api_ops->phy_get_status = qca808x_phy_get_status;
 	qca808x_phy_api_ops->phy_speed_get = qcaphy_get_speed;
 	qca808x_phy_api_ops->phy_speed_set = qca808x_phy_set_speed;
 	qca808x_phy_api_ops->phy_duplex_get = qcaphy_get_duplex;
@@ -892,7 +797,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 	qca808x_phy_api_ops->phy_power_on = qcaphy_poweron;
 	qca808x_phy_api_ops->phy_interface_mode_set = qca808x_phy_interface_set_mode;
 	qca808x_phy_api_ops->phy_interface_mode_get = qca808x_phy_interface_get_mode;
-	qca808x_phy_api_ops->phy_interface_mode_status_get = qca808x_phy_interface_get_mode_status;
 	qca808x_phy_api_ops->phy_function_reset = qca808x_phy_function_reset;
 	qca808x_phy_api_ops->phy_pll_on = qca808x_phy_pll_on;
 	qca808x_phy_api_ops->phy_pll_off = qca808x_phy_pll_off;
