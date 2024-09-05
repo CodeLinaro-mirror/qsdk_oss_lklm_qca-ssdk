@@ -106,33 +106,6 @@
  */
 #define GMAC_TX_THD    0x1
 
-static a_bool_t
-_adpt_hppe_port_phy_connected (a_uint32_t dev_id, fal_port_t port_id)
-{
-	a_bool_t force_port = 0;
-
-	if (dev_id >= SW_MAX_NR_DEV)
-		return A_FALSE;
-
-	/* CPU port and inner port without mac */
-	if (hppe_mac_port_valid_check (dev_id, port_id) == A_FALSE)
-		return A_FALSE;
-
-	/* force port which connect s17c or other device chip*/
-	force_port = hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE);
-	if (force_port == A_TRUE) {
-		SSDK_DEBUG("port_id %d is a force port!\n", port_id);
-		return A_FALSE;
-	}
-	/* sfp port which connect a sfp module*/
-	if (A_TRUE == hsl_port_is_sfp(dev_id, port_id)) {
-		SSDK_DEBUG("port_id %d is a SFP port!\n", port_id);
-		return A_FALSE;
-	}
-
-	return A_TRUE;
-}
-
 static sw_error_t
 _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 		struct port_phy_status *phy_status)
@@ -691,7 +664,7 @@ adpt_hppe_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 	{
 		return SW_BAD_PARAM;
 	}
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
 		return SW_NOT_SUPPORTED;
 
 	HSL_PORT_PHY_API_RUN(duplex_set, dev_id, port_id, duplex);
@@ -785,7 +758,7 @@ adpt_hppe_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 
 	/* for those ports without PHY device should be sfp port */
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
 	{
 		rv = _adpt_phy_status_get_from_ppe(dev_id,
 			port_id, &phy_status);
@@ -1064,7 +1037,7 @@ adpt_hppe_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id++)
 	{
 		/* for those ports without PHY device should be sfp port */
-		if (A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id))
+		if (A_FALSE == hsl_port_phy_connected(dev_id, port_id))
 		{
 			if (hsl_port_prop_check(dev_id, port_id, HSL_PP_CPU) ||
 				hsl_port_prop_check(dev_id, port_id, HSL_PP_INNER))
@@ -1187,7 +1160,7 @@ adpt_hppe_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 	  {
 		return SW_BAD_PARAM;
 	  }
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
 		return SW_NOT_SUPPORTED;
 
 	return hsl_port_phy_speed_set(dev_id, port_id, speed);
@@ -1229,7 +1202,7 @@ adpt_hppe_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 
 	/* for those ports without PHY device should be sfp port */
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
 	{
 
 		rv = _adpt_phy_status_get_from_ppe(dev_id,
@@ -1281,7 +1254,7 @@ adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
 		return SW_BAD_PARAM;
 	}
 
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id) &&
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id) &&
 		A_FALSE == hsl_port_is_sfp(dev_id, port_id))
 	{
 		return SW_NOT_SUPPORTED;
@@ -1352,7 +1325,7 @@ adpt_hppe_port_flowctrl_forcemode_set(a_uint32_t dev_id,
 
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
 		return SW_BAD_VALUE;
-	if(!_adpt_hppe_port_phy_connected(dev_id, port_id) && !enable)
+	if(!hsl_port_phy_connected(dev_id, port_id) && !enable)
 	{
 		return SW_NOT_SUPPORTED;
 	}
@@ -1432,7 +1405,7 @@ adpt_hppe_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv = SW_OK;
 	a_bool_t force_mode = A_FALSE;
 
-	if(A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id))
+	if(A_FALSE == hsl_port_phy_connected(dev_id, port_id))
 	{
 		rv = _adpt_hppe_port_txfc_status_set(dev_id, port_id, enable);
 		SW_RTN_ON_ERROR(rv);
@@ -1516,7 +1489,7 @@ adpt_hppe_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_bool_t force_mode = A_FALSE;
 	a_uint32_t phy_addr = 0;
 
-	if(A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id))
+	if(A_FALSE == hsl_port_phy_connected(dev_id, port_id))
 	{
 		rv = _adpt_hppe_port_rxfc_status_set(dev_id, port_id, enable);
 		SW_RTN_ON_ERROR(rv);
@@ -1587,7 +1560,7 @@ _adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
 	if (rv == SW_OK)
 	{
 		/*init port status to triger polling*/
-		if(_adpt_hppe_port_phy_connected(dev_id, port_id) == A_TRUE)
+		if(hsl_port_phy_connected(dev_id, port_id) == A_TRUE)
 		{
 			_adpt_hppe_port_txfc_status_set(dev_id, port_id, A_FALSE);
 			_adpt_hppe_port_rxfc_status_set(dev_id, port_id, A_FALSE);
@@ -1614,7 +1587,7 @@ adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
 		return SW_BAD_PARAM;
 	}
 
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id) &&
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id) &&
 		A_FALSE == hsl_port_is_sfp(dev_id, port_id))
 	{
 		return SW_NOT_SUPPORTED;
@@ -2943,7 +2916,7 @@ adpt_hppe_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 
 	/* for those ports without PHY device should be sfp port */
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id))
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
 	{
 		if (port_id == SSDK_PHYSICAL_PORT0)
 			*pspeed = FAL_SPEED_10000;
@@ -3645,7 +3618,7 @@ adpt_ppe_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id)) {
+	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id)) {
 		return SW_NOT_SUPPORTED;
 	}
 
@@ -3670,7 +3643,7 @@ adpt_ppe_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t port_mac_type;
 
 	ADPT_DEV_ID_CHECK(dev_id);
-	if (A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id)) {
+	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id)) {
 		return SW_NOT_SUPPORTED;
 	}
 
@@ -3698,7 +3671,7 @@ adpt_hppe_port_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	ADPT_NULL_POINT_CHECK(phy_status);
 
 	/* for those ports without PHY device should be sfp port or a internal port*/
-	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id)) {
+	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id)) {
 		if (port_id != SSDK_PHYSICAL_PORT0) {
 			fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
 			rv = adpt_hppe_port_interface_mode_get(dev_id, port_id,
@@ -4359,7 +4332,7 @@ adpt_hppe_phy_interface_mode_switch(a_uint32_t dev_id,
 {
 	sw_error_t rv = SW_OK;
 
-	if (A_TRUE == _adpt_hppe_port_phy_connected(dev_id, port_id)) {
+	if (A_TRUE == hsl_port_phy_connected(dev_id, port_id)) {
 		SSDK_DEBUG("phy port %d change interface mode!\n", port_id);
 		rv = adpt_hppe_port_interface_mode_switch(dev_id, port_id);
 		SW_RTN_ON_ERROR(rv);
