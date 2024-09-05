@@ -43,7 +43,7 @@ prepare_compile() {
   		echo "Error: toolchain not found in ${QSDK_DIR}"
   		exit 1
 	fi
-	export IN_COMPILE=$(ls -d ${QSDK_DIR}/staging_dir/toolchain*/bin/*linux-musl-gcc | xargs -i basename {} | cut -d'-' -f1-4)-
+	export IN_COMPILE=$(ls -d ${QSDK_DIR}/staging_dir/toolchain*/bin/*linux-musl*-gcc | xargs -i basename {} | cut -d'-' -f1-4)-
 	if [ -z "$IN_COMPILE" ]; then
   		echo "Error: gcc not found in ${QSDK_DIR}"
   		exit 1
