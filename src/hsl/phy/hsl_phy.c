@@ -3501,8 +3501,11 @@ hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
 
 	SW_RTN_ON_ERROR(hsl_port_phydev_get(dev_id, port_id, &phydev));
 
+	SW_RTN_ON_NULL(phydev);
+	SW_RTN_ON_NULL(phydev->drv);
 	SW_RTN_ON_NULL(nss_phydev);
 	nss_phydev->phydev = phydev;
+
 	*nss_phy_ops = (struct nss_phy_ops*)(phydev->drv->driver_data);
 	SW_RTN_ON_NULL(*nss_phy_ops);
 
