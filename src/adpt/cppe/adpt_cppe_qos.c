@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -298,6 +298,7 @@ adpt_cppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
 
 	group->pcp_group = mru_mtu_ctrl.bf.pcp_qos_group_id;
 	group->dscp_group = mru_mtu_ctrl.bf.dscp_qos_group_id;
+	group->flow_group = 0;
 
 	return SW_OK;
 }
