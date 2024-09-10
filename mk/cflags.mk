@@ -494,5 +494,5 @@ endif
 #############################################
 #            combine all cflags
 #############################################
-ccflags-y += ${MODULE_INC} ${MODULE_CFLAG} -DFALLTHROUGH 
+ccflags-y += ${MODULE_INC} ${MODULE_CFLAG} -DFALLTHROUGH -Werror -Wall
 
