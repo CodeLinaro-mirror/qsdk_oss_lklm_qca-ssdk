@@ -313,8 +313,8 @@ int ssdk_phy_driver_init(a_uint32_t dev_id)
 				phy_info[dev_id]->phy_type[i] = phytype;
 				ssdk_phy_driver[phytype].port_bmp[dev_id] |= (0x1 << i);
 			} else {
-				SSDK_INFO("dev_id = %d, phy_adress = %d, phy_id = 0x%x phy"
-					"type doesn't match\n", dev_id,
+				SSDK_INFO("dev_id = %d, phy_adress = 0x%x, phy_id = 0x%x phy"
+					"driver is not supported in qca-ssdk\n", dev_id,
 					phy_info[dev_id]->phy_address[i], phy_id);
 			}
 		}
@@ -729,32 +729,30 @@ sw_error_t
 hsl_phy_phydev_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct phy_device **phydev)
 {
-	a_uint32_t pdev_addr;
+	a_uint32_t pdev_addr, port_id, phy_id;
 	const char *pdev_name;
 	struct mii_bus *miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
 
 	SW_RTN_ON_NULL(phydev);
 	SW_RTN_ON_NULL(miibus);
-#if (LINUX_VERSION_CODE < KERNEL_VERSION (5, 0, 0))
-	*phydev = miibus->phy_map[phy_addr];
-	if(*phydev == NULL)
-	{
-		SSDK_ERROR("phy_addr %d phydev is NULL\n", phy_addr);
+
+	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
+	if (hsl_port_feature_get(dev_id, port_id, PHY_F_INIT) == A_FALSE)
 		return SW_NOT_INITIALIZED;
-	}
-	pdev_addr = (*phydev)->addr;
-	pdev_name = dev_name(&((*phydev)->dev));
-#else
+
+	phy_id = hsl_phyid_get(dev_id, port_id);
+	if (phy_id == INVALID_PHY_ID)
+		return SW_NOT_INITIALIZED;
+
 	phy_addr = TO_PHY_ADDR(phy_addr);
 	*phydev = mdiobus_get_phy(miibus, phy_addr);
-	if(*phydev == NULL)
-	{
+	if(*phydev == NULL) {
+		hsl_port_feature_clear(dev_id, port_id, PHY_F_INIT);
 		SSDK_ERROR("phy_addr %d phydev is NULL\n", phy_addr);
 		return SW_NOT_INITIALIZED;
 	}
 	pdev_addr = (*phydev)->mdio.addr;
 	pdev_name = phydev_name(*phydev);
-#endif
 	SSDK_DEBUG("phy[%d]: device %s, driver %s\n",
 		pdev_addr, pdev_name,
 		(*phydev)->drv ? (*phydev)->drv->name : "unknown");
