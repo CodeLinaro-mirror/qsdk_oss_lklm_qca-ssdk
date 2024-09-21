@@ -2471,6 +2471,22 @@ adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
 			return rv; \
 		}
 
+#define DEFINE_FAL_PORT_ADPT_HSL_PHY_FUNC(func, dev_id, port_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			adpt_api_t *p_adpt_api = adpt_api_ptr_get(dev_id); \
+			hsl_api_t *p_api = hsl_api_ptr_get(dev_id); \
+			FAL_API_LOCK; \
+			if (p_adpt_api && p_adpt_api->adpt_port_##func) { \
+				rv = p_adpt_api->adpt_port_##func(dev_id, port_id, ##__VA_ARGS__); \
+			} else if (p_api && p_api->port_##func) { \
+				rv = p_api->port_##func(dev_id, port_id, ##__VA_ARGS__); \
+			} else {\
+				HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+			} \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
 #define DEFINE_FAL_FUNC_ADPT_HSL_ENDFUNC(func, hsl_func, end_func, dev_id, ...) \
 		{ \
 			sw_error_t rv = SW_NOT_SUPPORTED; \

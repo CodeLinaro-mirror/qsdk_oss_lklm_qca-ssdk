@@ -491,6 +491,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 {
 	fal_port_interface_mode_t port_mode, port5_mode = PORT_INTERFACE_MODE_MAX;
 	a_uint32_t i = 0, port_end = port_id;
+	sw_error_t rv = SW_OK;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 	SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode));
@@ -510,7 +511,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 
 		/* off phy */
 		hsl_port_phy_pll_off(dev_id, port_id);
-		hsl_port_phy_power_off(dev_id, port_id);
+		HSL_PORT_PHY_API_RUN(power_off, dev_id, port_id);
 		hsl_port_feature_set(dev_id, port_id, PHY_F_ERP_LOW_POWER);
 
 		if (port_mode == PHY_PSGMII_BASET || port_mode == PORT_UQXGMII) {
@@ -620,7 +621,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 		SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_apply(dev_id));
 		/* power on phy */
 		hsl_port_phy_pll_on(dev_id, port_id);
-		hsl_port_phy_power_on(dev_id, port_id);
+		HSL_PORT_PHY_API_RUN(power_on, dev_id, port_id);
 		hsl_port_feature_clear(dev_id, port_id, PHY_F_ERP_LOW_POWER);
 		break;
 	default:

@@ -609,7 +609,7 @@ _mht_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_duplex_set(dev_id, port_id, duplex);
+		HSL_PORT_PHY_API_RUN(duplex_set, dev_id, port_id, duplex);
 		SW_RTN_ON_ERROR(rv);
 	}
 
@@ -646,7 +646,7 @@ _mht_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_duplex_get(dev_id, port_id, pduplex);
+		HSL_PORT_PHY_API_RUN(duplex_get, dev_id, port_id, pduplex);
 		SW_RTN_ON_ERROR(rv);
 	}
 
@@ -673,7 +673,7 @@ _mht_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_speed_set(dev_id, port_id, speed);
+		HSL_PORT_PHY_API_RUN(speed_set, dev_id, port_id, speed);
 		SW_RTN_ON_ERROR(rv);
 	}
 	return rv;
@@ -713,7 +713,7 @@ _mht_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_speed_get(dev_id, port_id, pspeed);
+		HSL_PORT_PHY_API_RUN(speed_get, dev_id, port_id, pspeed);
 		SW_RTN_ON_ERROR(rv);
 	}
 	return rv;
@@ -1088,6 +1088,7 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t i = 0, pbmp = 0;
 	phy_info_t *phy_info = NULL;
 	fal_mac_config_t mac_config = {0};
+	sw_error_t rv = SW_OK;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
@@ -1100,7 +1101,7 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 
 		/* off phy */
 		hsl_port_phy_pll_off(dev_id, port_id);
-		hsl_port_phy_power_off(dev_id, port_id);
+		HSL_PORT_PHY_API_RUN(power_off, dev_id, port_id);
 		hsl_port_feature_set(dev_id, port_id, PHY_F_ERP_LOW_POWER);
 
 		/* off serdes and switch core */
@@ -1176,7 +1177,7 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 		}
 		/* on phy */
 		hsl_port_phy_pll_on(dev_id, port_id);
-		hsl_port_phy_power_on(dev_id, port_id);
+		HSL_PORT_PHY_API_RUN(power_on, dev_id, port_id);
 		hsl_port_feature_clear(dev_id, port_id, PHY_F_ERP_LOW_POWER);
 		break;
 	default:
@@ -1474,7 +1475,8 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 		rv = ssdk_mht_port_clk_reset(priv->device_id, port_id, MHT_CLK_TYPE_EPHY);
 		SW_RTN_ON_ERROR (rv);
 		/* reset eth phy fifo */
-		rv = hsl_port_phy_function_reset(priv->device_id, port_id);
+		HSL_PORT_PHY_API_RUN(function_reset, priv->device_id, port_id,
+			(a_uint32_t)PHY_FIFO_RESET);
 		SW_RTN_ON_ERROR (rv);
 	}
 

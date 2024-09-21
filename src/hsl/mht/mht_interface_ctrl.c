@@ -474,7 +474,7 @@ _mht_interface_uqxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_addr)
 			continue;
 		rv = qca_mht_ephy_addr_get(dev_id, mht_port_id, &phy_addr);
 		PHY_RTN_ON_ERROR (rv);
-		rv = qca808x_phy_reset(dev_id, phy_addr);
+		HSL_PORT_PHY_API_RUN(reset, dev_id, mht_port_id);
 		PHY_RTN_ON_ERROR (rv);
 	}
 	/*Set BaseR mode*/

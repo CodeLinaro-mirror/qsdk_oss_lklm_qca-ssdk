@@ -791,14 +791,15 @@ sw_error_t
 hsl_phy_phydev_autoneg_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_bool_t autoneg_en, a_uint32_t autoadv);
 a_uint32_t
-hsl_phy_speed_duplex_to_auto_adv(a_uint32_t dev_id, fal_port_speed_t speed,
+hsl_phy_speed_duplex_to_auto_adv(fal_port_speed_t speed,
 	fal_port_duplex_t duplex);
 sw_error_t
 hsl_port_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	struct port_phy_status *phy_status);
 /*qca808x_start*/
 sw_error_t
-hsl_port_phy_function_reset(a_uint32_t dev_id, a_uint32_t port_id);
+hsl_port_phy_function_reset(a_uint32_t dev_id, a_uint32_t port_id,
+	hsl_phy_function_reset_t reset_type);
 sw_error_t
 hsl_port_phy_interface_mode_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_interface_mode_t *interface_mode_status);
@@ -1071,12 +1072,23 @@ enum hsl_phy_api_id {
 	local_loopback_get,
 	remote_loopback_set,
 	remote_loopback_get,
+	function_reset,
 	duplex_get,
 	duplex_set,
 	wol_set,
 	wol_get,
 	magic_frame_set,
 	magic_frame_get,
+	phyid_get,
+	autoadv_get,
+	autoadv_set,
+	autoneg_restart,
+	autoneg_status_get,
+	autoneg_enable,
+	speed_set,
+	speed_get,
+	link_status_get,
+	reset,
 	power_on,
 	power_off,
 	api_max,

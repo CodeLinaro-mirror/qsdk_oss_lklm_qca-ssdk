@@ -60,7 +60,6 @@ static a_bool_t qca808x_sfp_present(struct phy_device *phydev)
 
 static sw_error_t qca808x_phy_config_init(struct phy_device *phydev)
 {
-	sw_error_t rv = SW_OK;
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0))
 	a_uint32_t features;
 #else
@@ -86,10 +85,6 @@ static sw_error_t qca808x_phy_config_init(struct phy_device *phydev)
 	linkmode_set_bit(ETHTOOL_LINK_MODE_AUI_BIT, mask);
 	linkmode_set_bit(ETHTOOL_LINK_MODE_BNC_BIT, mask);
 #endif
-	rv = qca808x_phy_get_ability(dev_id, phy_addr, &ability);
-	SW_RTN_ON_ERROR(rv);
-	rv = qca808x_phy_get_autoneg_adv(dev_id, phy_addr, &autoneg);
-	SW_RTN_ON_ERROR(rv);
 	ability &= autoneg;
 	if (ability & FAL_PHY_ADV_AUTONEG) {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0))
@@ -357,7 +352,6 @@ static int qca808x_config_aneg(struct phy_device *phydev)
 		}
 		hsl_phy_modify_mii(dev_id, phy_id, QCA808X_PHY_CONTROL, mask,
 			phy_data);
-		err = qca808x_phy_set_force_speed(dev_id, phy_id, phydev->speed);
 	} else {
 		/* autoneg enabled */
 		advertise = qca808x_negtiation_cap_get(phydev);
@@ -366,13 +360,7 @@ static int qca808x_config_aneg(struct phy_device *phydev)
 		if(!(advertise & ~(FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE))) {
 			return 0;
 		}
-		err |= qca808x_phy_get_autoneg_adv(dev_id, phy_id, &advertise_old);
 		SSDK_DEBUG("advertise:0x%x, advertise_old:0x%x\n", advertise, advertise_old);
-		if(advertise != advertise_old)
-		{
-			err |= qca808x_phy_set_autoneg_adv(dev_id, phy_id, advertise);
-			err |= qca808x_phy_restart_autoneg(dev_id, phy_id);
-		}
 	}
 	if(err != SW_OK) {
 		SSDK_ERROR("qca808x phy configure failed\n");
@@ -517,7 +505,6 @@ static int qca808x_read_status(struct phy_device *phydev)
 		}
 	}
 	/*get the link partner ability*/
-	qca808x_phy_get_partner_ability(dev_id, phy_id, &lp_adv);
 	qca808x_lp_adv_to_ethtool_adv(phydev, lp_adv);
 	/*get the link partner pause*/
 	phy_resolve_aneg_pause(phydev);
@@ -538,7 +525,7 @@ static int qca808x_suspend(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	return qca808x_phy_poweroff(dev_id, phy_id);
+	return qcaphy_poweroff(dev_id, phy_id);
 }
 
 static int qca808x_resume(struct phy_device *phydev)
@@ -575,7 +562,7 @@ static int qca808x_soft_reset(struct phy_device *phydev)
 	dev_id = pdata->dev_id;
 	phy_id = pdata->phy_addr;
 
-	return qca808x_phy_reset(dev_id, phy_id);
+	return 0;
 }
 
 static void qca808x_link_change_notify(struct phy_device *phydev)

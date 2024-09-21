@@ -382,20 +382,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 
 	phy_api_ops_init(QCA803X_PHY_CHIP);
 
-	qca803x_phy_api_ops->phy_speed_get = qcaphy_get_speed;
-	qca803x_phy_api_ops->phy_speed_set = qcaphy_set_speed;
-	qca803x_phy_api_ops->phy_duplex_get = qcaphy_get_duplex;
-	qca803x_phy_api_ops->phy_duplex_set = qcaphy_set_duplex;
-	qca803x_phy_api_ops->phy_autoneg_enable_set = qcaphy_autoneg_enable;
-	qca803x_phy_api_ops->phy_restart_autoneg = qcaphy_autoneg_restart;
-	qca803x_phy_api_ops->phy_autoneg_status_get = qcaphy_autoneg_status;
-	qca803x_phy_api_ops->phy_autoneg_adv_set = qcaphy_set_autoneg_adv;
-	qca803x_phy_api_ops->phy_autoneg_adv_get = qcaphy_get_autoneg_adv;
-	qca803x_phy_api_ops->phy_link_status_get = qcaphy_get_link_status;
-	qca803x_phy_api_ops->phy_reset = qcaphy_sw_reset;
-	qca803x_phy_api_ops->phy_id_get = qcaphy_get_phy_id;
-	qca803x_phy_api_ops->phy_power_off = qcaphy_poweroff;
-	qca803x_phy_api_ops->phy_power_on = qcaphy_poweron;
 	qca803x_phy_api_ops->phy_interface_mode_set = qca803x_phy_interface_set_mode;
 	qca803x_phy_api_ops->phy_interface_mode_get = qca803x_phy_interface_get_mode;
 #ifndef IN_PORTCONTROL_MINI
