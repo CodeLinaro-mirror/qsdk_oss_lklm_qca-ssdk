@@ -370,7 +370,7 @@ static void ssdk_softsku_uniphy_parse(a_uint32_t dev_id,
 			if (!IS_ERR(disable_status)) {
 				if (*disable_status == 1) {
 					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_FALSE;
-					SSDK_INFO("IPQ54xx uniphy%d is disabled by softsku!\n", i);
+					SSDK_INFO("IPQ54xx uniphy%d is not available on this SKU!\n", i);
 				} else {
 					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_TRUE;
 				}
