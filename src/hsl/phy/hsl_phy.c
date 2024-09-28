@@ -928,7 +928,8 @@ hsl_port_phy_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
 		SSDK_ERROR("group %x is not supported\n", group);
 		return SW_NOT_SUPPORTED;
 	}
-	rv = hsl_port_phy_led_source_pattern_get(dev_id, port_id, 0, pattern);
+	HSL_PORT_PHY_EXT_API_RUN(led_ctrl_source_get, dev_id, port_id, 0,
+		(void*)pattern);
 
 	return rv;
 }
@@ -938,6 +939,7 @@ hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
 	a_uint32_t port_id, led_ctrl_pattern_t * pattern)
 {
 	a_uint32_t led_src = 0;
+	sw_error_t rv = SW_OK;
 
 	if(group != LED_MAC_PORT_GROUP)
 	{
@@ -945,15 +947,15 @@ hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
 		return SW_NOT_SUPPORTED;
 	}
 	for(led_src = 0; led_src < PORT_LED_SOURCE_MAX; led_src++) {
-		hsl_port_phy_led_source_pattern_set(dev_id, port_id, led_src,
-			pattern);
+		HSL_PORT_PHY_EXT_API_RUN(led_ctrl_source_set, dev_id, port_id, led_src,
+			(void*)pattern);
 	}
 
 	return SW_OK;
 }
 
 sw_error_t
-hsl_port_phy_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t port_id,
+hsl_port_phy_led_ctrl_source_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t source_id, led_ctrl_pattern_t * pattern)
 {
 	sw_error_t rv = SW_OK;
@@ -977,7 +979,7 @@ hsl_port_phy_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_led_source_pattern_get(a_uint32_t dev_id, a_uint32_t port_id,
+hsl_port_phy_led_ctrl_source_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t source_id, led_ctrl_pattern_t * pattern)
 {
 	sw_error_t rv = SW_OK;
@@ -3729,6 +3731,8 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{remote_loopback_set, NULL},
 	{remote_loopback_get, NULL},
 	{function_reset, NULL},
+	{led_ctrl_source_set, NULL},
+	{led_ctrl_source_get, NULL},
 	{phyid_get, (void*)hsl_port_phy_std_phyid_get},
 	{autoadv_get, (void*)hsl_port_phy_std_autoadv_get},
 	{autoadv_set, (void*)hsl_port_phy_std_autoadv_set},
