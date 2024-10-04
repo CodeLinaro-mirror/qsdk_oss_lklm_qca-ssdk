@@ -133,85 +133,6 @@ __phy_chip_config_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return SW_OK;
 }
 
-/******************************************************************************
-*
-* qca803x_phy_interface mode set
-*
-* set qca803x phy interface mode
-*/
-sw_error_t
-qca803x_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t interface_mode)
-{
-	a_uint16_t phy_data = 0;
-
-	QCA803X_REG_LOCK;
-	switch (interface_mode) {
-		case PORT_RGMII_BASET:
-			phy_data |= QCA803X_PHY_RGMII_BASET;
-			break;
-		case PHY_SGMII_BASET:
-			phy_data |= QCA803X_PHY_SGMII_BASET;
-			break;
-		case PORT_RGMII_BX1000:
-			phy_data |= QCA803X_PHY_BX1000_RGMII_50;
-			break;
-		case PORT_RGMII_FX100:
-			phy_data |= QCA803X_PHY_FX100_RGMII_50;
-			break;
-		case PORT_RGMII_AMDET:
-			phy_data |= QCA803X_PHY_RGMII_AMDET;
-			break;
-		default:
-			QCA803X_REG_UNLOCK;
-			return SW_BAD_PARAM;
-	}
-
-	hsl_phy_modify_mii(dev_id, phy_addr, QCA803X_PHY_CHIP_CONFIG,
-		BITS(0, 4), phy_data);
-	QCA803X_REG_UNLOCK;
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* qca803x_phy_interface mode get
-*
-* get qca803x phy interface mode
-*/
-sw_error_t
-qca803x_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t *interface_mode)
-{
-	qca803x_cfg_t cfg_value;
-
-	PHY_RTN_ON_ERROR(__phy_chip_config_get(dev_id, phy_addr,
-		QCA803X_CHIP_CFG_SET, &cfg_value));
-	switch (cfg_value) {
-		case QCA803X_PHY_RGMII_BASET:
-			*interface_mode = PORT_RGMII_BASET;
-			break;
-		case  QCA803X_PHY_SGMII_BASET:
-			*interface_mode = PHY_SGMII_BASET;
-			break;
-		case QCA803X_PHY_BX1000_RGMII_50:
-			*interface_mode = PORT_RGMII_BX1000;
-			break;
-		case QCA803X_PHY_FX100_RGMII_50:
-			*interface_mode = PORT_RGMII_FX100;
-			break;
-		case QCA803X_PHY_RGMII_AMDET:
-			*interface_mode = PORT_RGMII_AMDET;
-			break;
-		default:
-			*interface_mode = PORT_INTERFACE_MODE_MAX;
-			break;
-	}
-
-	return SW_OK;
-}
-
 #ifndef IN_PORTCONTROL_MINI
 /******************************************************************************
 *
@@ -382,8 +303,6 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 
 	phy_api_ops_init(QCA803X_PHY_CHIP);
 
-	qca803x_phy_api_ops->phy_interface_mode_set = qca803x_phy_interface_set_mode;
-	qca803x_phy_api_ops->phy_interface_mode_get = qca803x_phy_interface_get_mode;
 #ifndef IN_PORTCONTROL_MINI
 	qca803x_phy_api_ops->phy_combo_prefer_medium_set = qca803x_phy_set_combo_prefer_medium;
 	qca803x_phy_api_ops->phy_combo_prefer_medium_get = qca803x_phy_get_combo_prefer_medium;
@@ -515,14 +434,9 @@ qca803x_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 			}
 
 			phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-			if (mac_mode == PORT_WRAPPER_SGMII_CHANNEL0)
-				qca803x_phy_interface_set_mode(dev_id, phy_addr, PHY_SGMII_BASET);
-			else if (mac_mode == PORT_WRAPPER_RGMII)
-				qca803x_phy_interface_set_mode(dev_id, phy_addr, PORT_RGMII_BASET);
 
 			if (A_TRUE == hsl_port_phy_combo_capability_get(dev_id, port_id)) {
 				g_qca803x_phy.combo_phy_bmp |= (0x1 << phy_addr);
-				qca803x_phy_interface_set_mode(dev_id, phy_addr, PORT_RGMII_AMDET);
 			}
 			/*config the times that MSE is over threshold as max*/
 			ret = hsl_phy_modify_debug(dev_id, phy_addr,

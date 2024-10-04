@@ -716,8 +716,8 @@ sw_error_t
 hsl_port_phy_serdes_reset(a_uint32_t dev_id);
 
 sw_error_t
-hsl_port_phy_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_interface_mode_t mode);
+hsl_port_phy_interface_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t interface);
 phy_type_t hsl_phy_type_get(a_uint32_t dev_id, a_uint32_t port_id);
 
 a_uint32_t
@@ -1042,8 +1042,9 @@ hsl_port_phy_wol_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 sw_error_t
 hsl_port_phy_wol_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
 sw_error_t
-hsl_port_phy_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_interface_mode_t *mode);
+hsl_port_phy_interface_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t *interface);
+
 #endif
 /*use the phy driver of nss ext or linux std for HSL APIs*/
 enum hsl_phy_api_id {
@@ -1075,6 +1076,8 @@ enum hsl_phy_api_id {
 	function_reset,
 	led_ctrl_source_set,
 	led_ctrl_source_get,
+	interface_set,
+	interface_get,
 	duplex_get,
 	duplex_set,
 	wol_set,

@@ -1154,9 +1154,8 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	/* configure malibu phy to qsgmii mode*/
-	rv = hsl_port_phy_mode_set(dev_id, SSDK_PHYSICAL_PORT1, PORT_QSGMII);
-	SW_RTN_ON_ERROR (rv);
-
+	HSL_PORT_PHY_API_RUN(interface_set, dev_id, SSDK_PHYSICAL_PORT1,
+		(a_uint32_t)PORT_QSGMII);
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 

@@ -29,6 +29,7 @@ extern "c" {
 
 #include "sw.h"
 #include "fal/fal_type.h"
+#include <linux/phy.h>
 
 	typedef enum {
 		FAL_HALF_DUPLEX = 0,
@@ -232,40 +233,24 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 
 /** Phy interface mode */
 	typedef enum {
-		PHY_PSGMII_BASET = 0,
-				/**< PSGMII mode */
-		PHY_PSGMII_BX1000 = 1,
-				/**< PSGMII BX1000 mode */
-		PHY_PSGMII_FX100 = 2,
-				/**< PSGMII FX100 mode */
-		PHY_PSGMII_AMDET = 3,
-				/**< PSGMII Auto mode */
-		PHY_SGMII_BASET = 4,
+		PHY_SGMII_BASET = PHY_INTERFACE_MODE_SGMII,
 				/**< SGMII mode */
-		PORT_QSGMII,
-				/**<QSGMII mode*/
-		PORT_SGMII_PLUS,
-				/**<PORT_SGMII_PLUS mode*/
-		PORT_USXGMII,
-				/**<PORT_USXGMII mode*/
-		PORT_10GBASE_R,
-				/**<PORT_10GBASE_R mode*/
-		PORT_RGMII_BASET,
+		PORT_RGMII_BASET = PHY_INTERFACE_MODE_RGMII,
 				/**< RGMII mode */
-		PORT_RGMII_BX1000,
-				/**< RGMII BX1000 mode */
-		PORT_RGMII_FX100,
-				/**< RGMII FX100 mode */
-		PORT_RGMII_AMDET,
-				/**< RGMII Auto mode */
-		PHY_PSGMII_FIBER,
-				/** <PHY_PSGMII_FIBER mode */
-		PORT_SGMII_FIBER,
+		PHY_PSGMII_BASET = PHY_INTERFACE_MODE_PSGMII,
+				/**< PSGMII mode */
+		PORT_QSGMII = PHY_INTERFACE_MODE_QSGMII,
+				/**<QSGMII mode*/
+		PORT_SGMII_FIBER = PHY_INTERFACE_MODE_1000BASEX,
 				/** <PORT SGMII_FIBER mode*/
-		PORT_UQXGMII,
+		PORT_SGMII_PLUS = PHY_INTERFACE_MODE_2500BASEX,
+				/**<PORT_SGMII_PLUS mode*/
+		PORT_10GBASE_R = PHY_INTERFACE_MODE_10GBASER,
+				/**<PORT_10GBASE_R mode*/
+		PORT_USXGMII = PHY_INTERFACE_MODE_USXGMII,
+				/**<PORT_USXGMII mode*/
+		PORT_UQXGMII = PHY_INTERFACE_MODE_QUSGMII,
 				/**<PORT_UQXGMII mode*/
-		PORT_UQXGMII_3CHANNELS,
-				/**<PORT_UQXGMII 3 port mode*/
 		PORT_INTERFACE_MODE_AUTO,
 				/**PORT AUTO INTERFACE MODE*/
 		PORT_INTERFACE_MODE_MAX = 0xFF

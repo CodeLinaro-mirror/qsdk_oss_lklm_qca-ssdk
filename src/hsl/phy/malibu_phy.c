@@ -301,131 +301,6 @@ malibu_phy_serdes_reset(a_uint32_t dev_id)
 	return SW_OK;
 }
 
-/******************************************************************************
-*
-* malibu_phy_interface mode set
-*
-* set malibu phy interface mode
-*/
-sw_error_t
-malibu_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_addr, fal_port_interface_mode_t interface_mode)
-{
-	a_uint16_t phy_data = 0;
-	static fal_port_interface_mode_t phy_mode = PORT_INTERFACE_MODE_MAX;
-
-	if ((phy_addr < first_phy_addr) ||
-		(phy_addr > (first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)))
-		return SW_NOT_SUPPORTED;
-	/*if interface_mode have been configured, then no need to configure again*/
-	if(phy_mode == interface_mode)
-		return SW_OK;
-
-	if (interface_mode == PHY_PSGMII_BASET) {
-		phy_data |= MALIBU_PHY_PSGMII_BASET;
-	} else if (interface_mode == PHY_PSGMII_BX1000) {
-		phy_data |= MALIBU_PHY_PSGMII_BX1000;
-	} else if (interface_mode == PHY_PSGMII_FX100) {
-		phy_data |= MALIBU_PHY_PSGMII_FX100;
-	} else if (interface_mode == PHY_PSGMII_AMDET) {
-	       phy_data |= MALIBU_PHY_PSGMII_AMDET;
-	} else if (interface_mode == PHY_SGMII_BASET ||
-		interface_mode == PORT_QSGMII) {
-	       phy_data |= MALIBU_PHY_SGMII_BASET;
-	} else if (interface_mode == PHY_PSGMII_FIBER) {
-		phy_data |= MALIBU_PHY_PSGMII_AMDET;
-	} else {
-		return SW_BAD_PARAM;
-	}
-
-	hsl_phy_modify_mii(dev_id,
-		first_phy_addr + MALIBU_PHY_MAX_ADDR_INC, MALIBU_PHY_CHIP_CONFIG,
-		BITS(0, 4), phy_data);
-
-	/* reset operation */
-	malibu_phy_serdes_reset(dev_id);
-
-	if (interface_mode == PHY_PSGMII_FIBER) {
-		hsl_phy_mii_reg_write(dev_id, first_phy_addr + MALIBU_PHY_MAX_ADDR_INC,
-			MALIBU_PHY_CHIP_CONFIG, MALIBU_MODECTRL_DFLT);
-		hsl_phy_mii_reg_write(dev_id, first_phy_addr + MALIBU_PHY_MAX_ADDR_INC,
-			MALIBU_PHY_CONTROL, MALIBU_MIICTRL_DFLT);
-		hsl_phy_phydev_autoneg_update(dev_id,
-			first_phy_addr + MALIBU_PHY_MAX_ADDR_INC, A_FALSE, 0);
-	}
-	phy_mode = interface_mode;
-	SSDK_DEBUG("malibu phy is configured as phy_mode:0x%x\n", phy_mode);
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* malibu_phy_interface mode get
-*
-* get malibu phy interface mode
-*/
-sw_error_t
-malibu_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t *interface_mode)
-{
-	a_uint16_t phy_data;
-	a_uint16_t copper_mode;
-
-	if ((phy_addr < first_phy_addr) ||
-		(phy_addr > (first_phy_addr + MALIBU_PHY_MAX_ADDR_INC))) {
-		return SW_NOT_SUPPORTED;
-	}
-
-	phy_data = hsl_phy_mii_reg_read(dev_id,
-		first_phy_addr + MALIBU_PHY_MAX_ADDR_INC, MALIBU_PHY_CHIP_CONFIG);
-	copper_mode = ((phy_data & MALIBU_PHY_COPPER_MODE) >> 0xf);
-	phy_data &= 0x000f;
-
-	switch (phy_data) {
-		case MALIBU_PHY_PSGMII_BASET:
-			*interface_mode = PHY_PSGMII_BASET;
-			break;
-		case MALIBU_PHY_PSGMII_BX1000:
-			if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-				*interface_mode = PHY_PSGMII_BX1000;
-			else
-				*interface_mode = PHY_PSGMII_BASET;
-			break;
-		case MALIBU_PHY_PSGMII_FX100:
-			if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-				*interface_mode = PHY_PSGMII_FX100;
-			else
-				*interface_mode = PHY_PSGMII_BASET;
-			break;
-		case MALIBU_PHY_PSGMII_AMDET:
-			if (copper_mode) {
-				*interface_mode = PHY_PSGMII_BASET;
-			 } else {
-				if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-					*interface_mode = PHY_PSGMII_FIBER;
-				else
-					*interface_mode = PHY_PSGMII_BASET;
-			 }
-			break;
-		case MALIBU_PHY_SGMII_BASET:
-			if (phy_addr == first_phy_addr + MALIBU_PHY_MAX_ADDR_INC)
-				*interface_mode = PHY_SGMII_BASET;
-			else
-				*interface_mode = PORT_QSGMII;
-			break;
-		default:
-			*interface_mode = PORT_INTERFACE_MODE_MAX;
-			break;
-	}
-
-	return SW_OK;
-}
-
-/******************************************************************************
-*
-* malibu_phy_hw_register init
-*
-*/
 sw_error_t
 malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
@@ -473,8 +348,6 @@ malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 		MALIBU_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL, BIT(1), 0);
 
 	mode = ssdk_dt_global_get_mac_mode(dev_id, 0);
-	if (mode == PORT_WRAPPER_PSGMII_FIBER)
-		malibu_phy_interface_set_mode(dev_id, first_phy_addr, PHY_PSGMII_FIBER);
 
 	/*init combo phy address*/
 	combo_phy_addr = first_phy_addr+4;
@@ -503,8 +376,6 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_combo_fiber_mode_set = malibu_phy_set_combo_fiber_mode;
 	malibu_phy_api_ops->phy_combo_fiber_mode_get = malibu_phy_get_combo_fiber_mode;
 #endif
-	malibu_phy_api_ops->phy_interface_mode_set = malibu_phy_interface_set_mode;
-	malibu_phy_api_ops->phy_interface_mode_get = malibu_phy_interface_get_mode;
 	malibu_phy_api_ops->phy_serdes_reset = malibu_phy_serdes_reset;
 	ret = hsl_phy_api_ops_register(MALIBU_PHY_CHIP, malibu_phy_api_ops);
 

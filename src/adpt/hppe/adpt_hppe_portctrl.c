@@ -2011,13 +2011,8 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 			if(port_id >= SSDK_PHYSICAL_PORT1  && port_id <= SSDK_PHYSICAL_PORT5)
 			{
 				qca_hppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
-				if (port_id == SSDK_PHYSICAL_PORT5) {
-					_adpt_hppe_port_interface_mode_set(dev_id,
-							SSDK_PHYSICAL_PORT5, PHY_PSGMII_FIBER);
-				} else {
 					_adpt_hppe_port_interface_mode_set(dev_id,
 							port_id, PHY_PSGMII_BASET);
-				}
 			}
 			break;
 		case PORT_WRAPPER_PSGMII:
@@ -2217,13 +2212,6 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t max_port_id,
 			}
 			*mode0 = PORT_WRAPPER_PSGMII;
 		}
-
-		if(phy_info->port_mode[port_id] == PHY_PSGMII_FIBER &&
-			port_id == SSDK_PHYSICAL_PORT5)
-		{
-			*mode0 = PORT_WRAPPER_PSGMII_FIBER;
-		}
-
 		if(phy_info->port_mode[port_id] == PORT_QSGMII)
 		{
 			if((*mode0 != PORT_WRAPPER_MAX && *mode0 != PORT_WRAPPER_QSGMII) ||
@@ -2385,7 +2373,6 @@ _adpt_hppe_instance1_mode_get(a_uint32_t dev_id, a_uint32_t port_id,  a_uint32_t
 			*mode = PORT_WRAPPER_SGMII_FIBER;
 			break;
 		case PHY_PSGMII_BASET:
-		case PHY_PSGMII_FIBER:
 			if(port_id == SSDK_PHYSICAL_PORT6)
 			{
 				SSDK_ERROR("port %d doesn't support port_interface_mode %d\n",
@@ -2612,8 +2599,7 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 					SW_RTN_ON_ERROR(rv);
 				}
 				/* set phy mode */
-				rv = hsl_port_phy_mode_set(dev_id, port_id, port_mode);
-				SW_RTN_ON_ERROR(rv);
+				HSL_PORT_PHY_API_RUN(interface_set, dev_id, port_id, port_mode);
 				SSDK_DEBUG("port_id:%d is configured as port_mode:0x%x\n",
 					port_id, port_mode);
 			}
@@ -3870,7 +3856,6 @@ adpt_hppe_uniphy_port_adapter_reset(a_uint32_t dev_id, a_uint32_t port_id)
 			}
 			break;
 		case PHY_PSGMII_BASET:
-		case PHY_PSGMII_FIBER:
 		case PORT_QSGMII:
 		case PHY_SGMII_BASET:
 		case PORT_SGMII_FIBER:
@@ -4212,7 +4197,6 @@ adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id, a_uint32_t port_id,
 			adpt_hppe_sgmii_speed_clock_set(dev_id, port_id, phy_speed);
 			break;
 		case PHY_PSGMII_BASET:
-		case PHY_PSGMII_FIBER:
 		case PORT_QSGMII:
 			adpt_hppe_pqsgmii_speed_clock_set(dev_id, port_id, phy_speed);
 			break;

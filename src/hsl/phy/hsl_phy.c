@@ -601,8 +601,8 @@ sw_error_t hsl_port_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_id)
 }
 
 sw_error_t
-hsl_port_phy_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_interface_mode_t mode)
+hsl_port_phy_interface_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t interface)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -617,7 +617,7 @@ hsl_port_phy_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
 	}
 
 	phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-	rv = phy_drv->phy_interface_mode_set(dev_id, phy_addr, mode);
+	rv = phy_drv->phy_interface_mode_set(dev_id, phy_addr, interface);
 
 	return rv;
 }
@@ -1187,8 +1187,6 @@ a_uint32_t hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
 			if(port_id == SSDK_PHYSICAL_PORT5) {
 				if(uniphy_mode == PORT_WRAPPER_PSGMII)
 					port_mode = PHY_PSGMII_BASET;
-				else
-					port_mode = PHY_PSGMII_FIBER;
 			}
 			break;
 		case PORT_WRAPPER_QSGMII:
@@ -2661,8 +2659,8 @@ hsl_port_phy_wol_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
 }
 
 sw_error_t
-hsl_port_phy_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_interface_mode_t *mode)
+hsl_port_phy_interface_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t *interface)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0;
@@ -2672,7 +2670,7 @@ hsl_port_phy_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
 	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr);
 	SW_RTN_ON_ERROR (rv);
 
-	return phy_drv->phy_interface_mode_get(dev_id, phy_addr, mode);
+	return phy_drv->phy_interface_mode_get(dev_id, phy_addr, interface);
 }
 /*qca808x_end*/
 #endif
@@ -3733,6 +3731,8 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{function_reset, NULL},
 	{led_ctrl_source_set, NULL},
 	{led_ctrl_source_get, NULL},
+	{interface_set, NULL},
+	{interface_get, NULL},
 	{phyid_get, (void*)hsl_port_phy_std_phyid_get},
 	{autoadv_get, (void*)hsl_port_phy_std_autoadv_get},
 	{autoadv_set, (void*)hsl_port_phy_std_autoadv_set},

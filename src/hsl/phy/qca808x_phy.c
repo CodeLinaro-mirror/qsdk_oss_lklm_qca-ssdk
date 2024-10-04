@@ -152,54 +152,6 @@ qca808x_phy_ldo_set(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
 #endif
 	return rv;
 }
-/******************************************************************************
-*
-* qca808x_phy_interface mode set
-*
-* set qca808x phy interface mode
-*/
-sw_error_t
-qca808x_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t interface_mode)
-{
-	/* qca808x phy will automatically switch the interface mode according
-	 * to the speed, 2.5G works on SGMII+, other works on SGMII.
-	 */
-	sw_error_t rv = SW_OK;
-/*qca808x_end*/
-#if defined(MHT)
-	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-	{
-		rv = qca8084_phy_interface_set_mode(dev_id, phy_addr,
-			interface_mode);
-		PHY_RTN_ON_ERROR (rv);
-	}
-#endif
-/*qca808x_start*/
-	return rv;
-}
-
-/******************************************************************************
-*
-* qca808x_phy_interface mode get
-*
-* get qca808x phy interface mode
-*/
-sw_error_t
-qca808x_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
-	fal_port_interface_mode_t *interface_mode)
-{
-	a_uint16_t phy_data = 0;
-	phy_data = hsl_phy_mii_reg_read(dev_id, phy_addr, QCA808X_PHY_CHIP_CONFIG);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-
-	phy_data &= QCA808X_PHY_CHIP_MODE_CFG;
-	if (phy_data == QCA808X_PHY_SGMII_BASET) {
-		*interface_mode = PHY_SGMII_BASET;
-	}
-
-	return SW_OK;
-}
 
 /******************************************************************************
 *
@@ -381,8 +333,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 
 	phy_api_ops_init(QCA808X_PHY_CHIP);
 
-	qca808x_phy_api_ops->phy_interface_mode_set = qca808x_phy_interface_set_mode;
-	qca808x_phy_api_ops->phy_interface_mode_get = qca808x_phy_interface_get_mode;
 	qca808x_phy_api_ops->phy_pll_on = qca808x_phy_pll_on;
 	qca808x_phy_api_ops->phy_pll_off = qca808x_phy_pll_off;
 	qca808x_phy_api_ops->phy_ldo_set = qca808x_phy_ldo_set;
