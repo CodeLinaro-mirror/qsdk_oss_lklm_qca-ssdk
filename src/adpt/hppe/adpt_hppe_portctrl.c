@@ -1224,7 +1224,8 @@ adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
 	{
 		return SW_NOT_SUPPORTED;
 	}
-	rv = hsl_port_phy_combo_prefer_medium_get(dev_id, port_id, medium);
+	HSL_PORT_PHY_API_RUN(combo_prefer_medium_get, dev_id, port_id,
+		(void*)medium);
 	if(rv != SW_OK)
 	{
 		rv = _adpt_hppe_port_combo_prefer_medium_get(dev_id, port_id, medium);
@@ -1558,7 +1559,8 @@ adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
 		return SW_NOT_SUPPORTED;
 	}
 
-	rv = hsl_port_phy_combo_prefer_medium_set(dev_id, port_id, medium);
+	HSL_PORT_PHY_API_RUN(combo_prefer_medium_set, dev_id, port_id,
+		(a_uint32_t)medium);
 	if (rv != SW_OK)
 	{
 		rv = _adpt_hppe_port_combo_prefer_medium_set(dev_id, port_id, medium);

@@ -354,15 +354,15 @@ sw_error_t fal_port_hibernate_get (a_uint32_t dev_id, fal_port_t port_id, a_bool
     EXPORT_SYMBOL(fal_port_hibernate_get);
 
 sw_error_t fal_port_combo_medium_status_get (a_uint32_t dev_id, a_uint32_t port_id, fal_port_medium_t * medium)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_combo_medium_status_get, dev_id, port_id, medium)
+    DEFINE_FAL_PORT_PHY_FUNC(combo_medium_status_get, dev_id, port_id, (void*)medium)
     EXPORT_SYMBOL(fal_port_combo_medium_status_get);
 
 sw_error_t fal_port_combo_fiber_mode_set (a_uint32_t dev_id, a_uint32_t port_id, fal_port_fiber_mode_t mode)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_combo_fiber_mode_set, dev_id, port_id, mode)
+    DEFINE_FAL_PORT_PHY_FUNC(combo_fiber_mode_set, dev_id, port_id, (a_uint32_t)mode)
     EXPORT_SYMBOL(fal_port_combo_fiber_mode_set);
 
 sw_error_t fal_port_combo_fiber_mode_get (a_uint32_t dev_id, a_uint32_t port_id, fal_port_fiber_mode_t * mode)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_combo_fiber_mode_get, dev_id, port_id, mode)
+    DEFINE_FAL_PORT_PHY_FUNC(combo_fiber_mode_get, dev_id, port_id, (void*)mode)
     EXPORT_SYMBOL(fal_port_combo_fiber_mode_get);
 
 sw_error_t fal_port_local_loopback_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
