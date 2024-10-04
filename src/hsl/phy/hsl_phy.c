@@ -565,19 +565,14 @@ sw_error_t
 hsl_port_phy_serdes_reset(a_uint32_t dev_id)
 {
 	int i = 0;
-	hsl_phy_ops_t *phy_drv;
+	sw_error_t rv = SW_OK;
 
 	for (i = 0; i < SW_MAX_NR_PORT; i++)
 	{
 		if (phy_info[dev_id]->phy_type[i] == MALIBU_PHY_CHIP)
 		{
-			/*if phy_drv is null or phy_serdes_reset is null, then no need to do
-			 serdes reset*/
-			phy_drv = hsl_phy_api_ops_get (dev_id, i);
-			if (phy_drv && phy_drv->phy_serdes_reset)
-			{
-				return phy_drv->phy_serdes_reset(dev_id);
-			}
+			HSL_PORT_PHY_EXT_API_RUN(function_reset, dev_id, i,
+				(a_uint32_t)SERDES_RESET);
 		}
 	}
 

@@ -282,24 +282,6 @@ a_bool_t malibu_phy_speed_duplex_resolved(a_uint32_t dev_id, a_uint32_t phy_addr
 	return A_TRUE;
 }
 #endif
-/******************************************************************************
-*
-* malibu_serdes_reset - malibu psgmii serdes reset
-*
-* reset serdes
-*/
-sw_error_t
-malibu_phy_serdes_reset(a_uint32_t dev_id)
-{
-
-	hsl_phy_mii_reg_write(dev_id, first_phy_addr + MALIBU_PHY_PSGMII_ADDR_INC,
-		MALIBU_MODE_RESET_REG, MALIBU_MODE_CHANAGE_RESET);
-	mdelay(100);
-	hsl_phy_mii_reg_write(dev_id, first_phy_addr + MALIBU_PHY_PSGMII_ADDR_INC,
-		MALIBU_MODE_RESET_REG, MALIBU_MODE_RESET_DEFAULT_VALUE);
-
-	return SW_OK;
-}
 
 sw_error_t
 malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
@@ -376,7 +358,6 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_combo_fiber_mode_set = malibu_phy_set_combo_fiber_mode;
 	malibu_phy_api_ops->phy_combo_fiber_mode_get = malibu_phy_get_combo_fiber_mode;
 #endif
-	malibu_phy_api_ops->phy_serdes_reset = malibu_phy_serdes_reset;
 	ret = hsl_phy_api_ops_register(MALIBU_PHY_CHIP, malibu_phy_api_ops);
 
 	if (ret == 0)
