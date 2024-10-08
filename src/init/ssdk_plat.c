@@ -1511,6 +1511,27 @@ static ssize_t ssdk_eth_switch_get(struct device *dev,
 	return len;
 }
 
+static ssize_t ssdk_mac_polling_set(struct device *dev,
+				    struct device_attribute *attr,
+				    const char *buf, size_t count)
+{
+	char num_buf[12];
+	a_uint32_t num;
+
+	if (count >= sizeof(num_buf))
+		return 0;
+	memcpy(num_buf, buf, count);
+	num_buf[count] = '\0';
+	sscanf(num_buf, "%u", &num);
+
+	if (num > 0)
+		ssdk_mac_sw_sync_work_start(ssdk_dev_id);
+	else
+		ssdk_mac_sw_sync_work_stop(ssdk_dev_id);
+
+	return count;
+}
+
 static const struct device_attribute ssdk_dev_id_attr =
 	__ATTR(dev_id, 0660, ssdk_dev_id_get, ssdk_dev_id_set);
 static const struct device_attribute ssdk_log_level_attr =
@@ -1535,6 +1556,8 @@ static const struct device_attribute ssdk_clk_cfg_attr =
 #endif
 static const struct device_attribute ssdk_eth_switch_attr =
 	__ATTR(eth_switch, 0660, ssdk_eth_switch_get, NULL);
+static const struct device_attribute ssdk_mac_polling_attr =
+	__ATTR(mac_polling, 0660, NULL, ssdk_mac_polling_set);
 
 struct kobject *ssdk_sys = NULL;
 
@@ -1622,7 +1645,17 @@ int ssdk_sysfs_init (void)
 		goto CLEANUP_10;
 	}
 
+	/* create /sys/ssdk/mac_polling */
+	ret = sysfs_create_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
+	if (ret) {
+		printk("Failed to register SSDK mac polling SysFS file\n");
+		goto CLEANUP_11;
+	}
+
 	return 0;
+
+CLEANUP_11:
+	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 
 CLEANUP_10:
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
