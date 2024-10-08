@@ -215,13 +215,7 @@ sw_error_t fal_port_autoneg_adv_set (a_uint32_t dev_id, fal_port_t port_id, a_ui
     EXPORT_SYMBOL(fal_port_autoneg_adv_set);
 
 sw_error_t fal_port_autoneg_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status)
-{
-    if (hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE) == A_TRUE) {
-        *status = A_FALSE;
-        return SW_OK;
-    }
     DEFINE_FAL_PORT_PHY_FUNC(autoneg_status_get, dev_id, port_id, status)
-}
     EXPORT_SYMBOL(fal_port_autoneg_status_get);
 
 sw_error_t fal_port_autoneg_adv_get (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t * autoadv)
