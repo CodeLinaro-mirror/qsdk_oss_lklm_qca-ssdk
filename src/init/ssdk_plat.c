@@ -49,12 +49,6 @@
 #include <linux/bitops.h>
 #include <linux/mdio-bitbang.h>
 
-#if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
-#include <f1_phy.h>
-#endif
-#if defined(ATHENA) ||defined(SHIVA) ||defined(HORUS)
-#include <f2_phy.h>
-#endif
 #ifdef IN_MALIBU_PHY
 #include <malibu_phy.h>
 #endif

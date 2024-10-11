@@ -59,10 +59,6 @@
 #include <net/switch.h>
 #endif
 #endif
-
-#if defined(ISIS) ||defined(ISISC)
-#include <f1_phy.h>
-#endif
 #ifdef IN_MALIBU_PHY
 #include <malibu_phy.h>
 #endif

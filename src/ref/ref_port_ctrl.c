@@ -50,7 +50,6 @@
 #include "ssdk_plat.h"
 #include "ref_vlan.h"
 #include <linux/time.h>
-#include "f1_phy.h"
 #include "ref_port_ctrl.h"
 
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
@@ -499,7 +498,7 @@ qca_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t *speed_stat
 	if (qca_ar8327_sw_rgmii_mode_valid(dev_id, port_id) == A_TRUE)
 		phy_addr = 4;
 
-	port_phy_status = hsl_phy_mii_reg_read(dev_id, phy_addr, F1_PHY_SPEC_STATUS);
+	port_phy_status = hsl_phy_mii_reg_read(dev_id, phy_addr, 17);
 	*speed_status = (a_uint32_t)((port_phy_status >> 14) & 0x03);
 	*link_status = (a_uint32_t)((port_phy_status & BIT(10)) >> 10);
 	*duplex_status = (a_uint32_t)((port_phy_status & BIT(13)) >> 13);

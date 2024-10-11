@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -50,7 +50,6 @@
 #include "isisc_reg_access.h"
 #include "isisc_reg.h"
 #include "isisc_init.h"
-#include "f1_phy.h"
 #include "hsl_phy.h"
 #include "ssdk_dts.h"
 

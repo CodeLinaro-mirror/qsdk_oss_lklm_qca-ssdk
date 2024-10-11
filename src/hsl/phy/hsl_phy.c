@@ -22,12 +22,6 @@
 #include "hsl_dev.h"
 /*qca808x_end*/
 #include "ssdk_dts.h"
-#if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
-#include <f1_phy.h>
-#endif
-#if defined(ATHENA) ||defined(SHIVA) ||defined(HORUS)
-#include <f2_phy.h>
-#endif
 #ifdef MP
 #include "mpge_phy.h"
 #endif
@@ -65,16 +59,8 @@ a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
 phy_driver_instance_t ssdk_phy_driver[] =
 {
 /*qca808x_end*/
-	#if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
-	{F1_PHY_CHIP, {0}, NULL, f1_phy_init, NULL},
-	#else
 	{F1_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
-	#if defined(ATHENA) ||defined(SHIVA) ||defined(HORUS)
-	{F2_PHY_CHIP, {0}, NULL, f2_phy_init, NULL},
-	#else
 	{F2_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
 	#ifdef IN_MALIBU_PHY
 	{MALIBU_PHY_CHIP, {0}, NULL, malibu_phy_init, NULL},
 	#else

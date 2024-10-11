@@ -3,26 +3,6 @@ LIB=HSL
 
 include $(PRJ_PATH)/make/config.mk
 
-ifeq (ATHENA, $(CHIP_TYPE))
-  SRC_LIST = f2_phy.c
-endif
-
-ifeq (GARUDA, $(CHIP_TYPE))
-  SRC_LIST = f1_phy.c
-endif
-
-ifeq (SHIVA, $(CHIP_TYPE))
-  SRC_LIST = f2_phy.c
-endif
-
-ifeq (HORUS, $(CHIP_TYPE))
-  SRC_LIST = f2_phy.c
-endif
-
-ifeq (ISIS, $(CHIP_TYPE))
-  SRC_LIST = f1_phy.c
-endif
-
 ifeq (MP, $(CHIP_TYPE))
   SRC_LIST = mpge_phy.c
 ifeq (TRUE, $(IN_LED))
@@ -30,16 +10,12 @@ ifeq (TRUE, $(IN_LED))
 endif
 endif
 
-ifneq (,$(filter ISISC, $(SUPPORT_CHIP)))
-  SRC_LIST += f1_phy.c
-endif
-
 ifeq (TRUE, $(IN_MALIBU_PHY))
   SRC_LIST += malibu_phy.c
 endif
 
 ifeq (ALL_CHIP, $(CHIP_TYPE))
-     SRC_LIST = f1_phy.c f2_phy.c malibu_phy.c
+     SRC_LIST = malibu_phy.c
 ifneq (,$(filter MP, $(SUPPORT_CHIP)))
      SRC_LIST += mpge_phy.c
 ifeq (TRUE, $(IN_LED))
@@ -49,7 +25,7 @@ endif
 endif
 
 ifeq (NONHK_CHIP, $(CHIP_TYPE))
-     SRC_LIST = f1_phy.c f2_phy.c malibu_phy.c
+     SRC_LIST = malibu_phy.c
 endif
 
 ifeq (TRUE, $(IN_AQUANTIA_PHY))

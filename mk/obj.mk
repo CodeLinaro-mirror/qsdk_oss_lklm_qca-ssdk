@@ -396,7 +396,8 @@ endif
 ###############################################################################
 #                                PHY
 ###############################################################################
-OBJ-COMMON  += src/hsl/phy/f1_phy.o src/hsl/phy/hsl_phy.o src/hsl/phy/qcaphy_common.o
+OBJ-COMMON  += src/hsl/phy/hsl_phy.o src/hsl/phy/qcaphy_common.o
+						media-type = "sfp"; /* fiber mode */
 
 ifeq (TRUE, $(IN_AQUANTIA_PHY))
 OBJ-COMMON  += src/hsl/phy/aquantia_phy.o src/hsl/phy/qcaphy_c45_common.o
