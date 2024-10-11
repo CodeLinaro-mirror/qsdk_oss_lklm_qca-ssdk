@@ -32,10 +32,6 @@ ifeq (TRUE, $(IN_AQUANTIA_PHY))
     SRC_LIST += aquantia_phy.c qcaphy_c45_common.c
 endif
 
-ifeq (TRUE, $(IN_QCA803X_PHY))
-    SRC_LIST += qca803x_phy.c
-endif
-
 ifeq (TRUE, $(IN_QCA808X_PHY))
     SRC_LIST += qca808x_phy.c
     SRC_LIST += qca808x.c

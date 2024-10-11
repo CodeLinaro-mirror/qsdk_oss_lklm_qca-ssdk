@@ -31,9 +31,6 @@
 #ifdef IN_AQUANTIA_PHY
 #include <aquantia_phy.h>
 #endif
-#ifdef IN_QCA803X_PHY
-#include <qca803x_phy.h>
-#endif
 #ifdef IN_SFP_PHY
 #include <sfp_phy.h>
 #endif
@@ -71,11 +68,7 @@ phy_driver_instance_t ssdk_phy_driver[] =
 	#else
 	{AQUANTIA_PHY_CHIP, {0}, NULL, NULL, NULL},
 	#endif
-	#ifdef IN_QCA803X_PHY
-	{QCA803X_PHY_CHIP, {0}, NULL, qca803x_phy_init, NULL},
-	#else
 	{QCA803X_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
 	{SFP_PHY_CHIP, {0}, NULL, NULL, NULL},
 	#ifdef MP
 	{MPGE_PHY_CHIP, {0}, NULL, mpge_phy_init, NULL},

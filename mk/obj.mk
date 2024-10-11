@@ -407,10 +407,6 @@ ifeq (TRUE, $(IN_MALIBU_PHY))
 OBJ-COMMON  += src/hsl/phy/malibu_phy.o
 endif
 
-ifeq (TRUE, $(IN_QCA803X_PHY))
-OBJ-COMMON  += src/hsl/phy/qca803x_phy.o
-endif
-
 ifeq (TRUE, $(IN_SFP_PHY))
 OBJ-COMMON  += src/hsl/phy/sfp_phy.o
 endif
