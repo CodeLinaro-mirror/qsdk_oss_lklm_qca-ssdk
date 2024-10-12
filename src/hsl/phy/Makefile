@@ -10,22 +10,13 @@ ifeq (TRUE, $(IN_LED))
 endif
 endif
 
-ifeq (TRUE, $(IN_MALIBU_PHY))
-  SRC_LIST += malibu_phy.c
-endif
-
 ifeq (ALL_CHIP, $(CHIP_TYPE))
-     SRC_LIST = malibu_phy.c
 ifneq (,$(filter MP, $(SUPPORT_CHIP)))
      SRC_LIST += mpge_phy.c
 ifeq (TRUE, $(IN_LED))
      SRC_LIST += mpge_led.c
 endif
 endif
-endif
-
-ifeq (NONHK_CHIP, $(CHIP_TYPE))
-     SRC_LIST = malibu_phy.c
 endif
 
 ifeq (TRUE, $(IN_AQUANTIA_PHY))

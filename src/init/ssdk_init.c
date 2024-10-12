@@ -59,9 +59,6 @@
 #include <net/switch.h>
 #endif
 #endif
-#ifdef IN_MALIBU_PHY
-#include <malibu_phy.h>
-#endif
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0))
 /*qca808x_start*/
 #include <linux/of.h>

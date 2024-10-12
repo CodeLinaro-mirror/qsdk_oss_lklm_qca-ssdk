@@ -189,9 +189,6 @@ ifeq (TRUE, $(IN_RFS))
   MODULE_CFLAG += -DIN_RFS
 endif
 
-ifeq (TRUE, $(IN_MALIBU_PHY))
-  MODULE_CFLAG += -DIN_MALIBU_PHY
-endif
 ifeq (TRUE, $(IN_AQUANTIA_PHY))
   MODULE_CFLAG += -DIN_AQUANTIA_PHY
 endif

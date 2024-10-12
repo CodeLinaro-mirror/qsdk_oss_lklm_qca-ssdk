@@ -25,9 +25,6 @@
 #ifdef MP
 #include "mpge_phy.h"
 #endif
-#ifdef IN_MALIBU_PHY
-#include <malibu_phy.h>
-#endif
 #ifdef IN_AQUANTIA_PHY
 #include <aquantia_phy.h>
 #endif
@@ -58,11 +55,7 @@ phy_driver_instance_t ssdk_phy_driver[] =
 /*qca808x_end*/
 	{F1_PHY_CHIP, {0}, NULL, NULL, NULL},
 	{F2_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#ifdef IN_MALIBU_PHY
-	{MALIBU_PHY_CHIP, {0}, NULL, malibu_phy_init, NULL},
-	#else
 	{MALIBU_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
 	#ifdef IN_AQUANTIA_PHY
 	{AQUANTIA_PHY_CHIP, {0}, NULL, aquantia_phy_init, NULL},
 	#else

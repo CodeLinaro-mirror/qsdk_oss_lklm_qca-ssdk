@@ -48,10 +48,6 @@
 #include <linux/string.h>
 #include <linux/bitops.h>
 #include <linux/mdio-bitbang.h>
-
-#ifdef IN_MALIBU_PHY
-#include <malibu_phy.h>
-#endif
 /*qca808x_start*/
 #include "ssdk_plat.h"
 #include "hsl_phy.h"
