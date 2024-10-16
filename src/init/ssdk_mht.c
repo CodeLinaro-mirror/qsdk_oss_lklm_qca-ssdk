@@ -197,6 +197,7 @@ qca_mht_portctrl_hw_init(a_uint32_t dev_id)
 	fal_port_speed_t force_speed = FAL_SPEED_BUTT;
 	fal_port_duplex_t force_duplex = FAL_DUPLEX_BUTT;
 	a_uint32_t i = 0, port_max = SSDK_PHYSICAL_PORT6;
+	struct phy_device *phydev;
 
 	for(i = SSDK_PHYSICAL_PORT0; i < port_max; i++)
 	{
@@ -223,6 +224,9 @@ qca_mht_portctrl_hw_init(a_uint32_t dev_id)
 			SW_RTN_ON_ERROR(rv);
 			rv = fal_port_rxmac_status_set(dev_id, i, A_FALSE);
 			SW_RTN_ON_ERROR(rv);
+			rv = hsl_port_phydev_get(dev_id, i, &phydev);
+			SW_RTN_ON_ERROR(rv);
+			phy_init_hw(phydev);
 		}
 #ifdef IN_LED
 		ssdk_led_init(dev_id, i);

@@ -111,48 +111,6 @@ qca808x_phy_id_check(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return A_FALSE;
 }
 
-sw_error_t
-qca808x_phy_pll_on(a_uint32_t dev_id, a_uint32_t phy_addr)
-{
-	sw_error_t rv = SW_OK;
-#ifdef MHT
-	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-	{
-		rv = qca8084_phy_pll_on(dev_id, phy_addr);
-		PHY_RTN_ON_ERROR (rv);
-	}
-#endif
-	return rv;
-}
-
-sw_error_t
-qca808x_phy_pll_off(a_uint32_t dev_id, a_uint32_t phy_addr)
-{
-	sw_error_t rv = SW_OK;
-#ifdef MHT
-	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-	{
-		rv = qca8084_phy_pll_off(dev_id, phy_addr);
-		PHY_RTN_ON_ERROR (rv);
-	}
-#endif
-	return rv;
-}
-
-sw_error_t
-qca808x_phy_ldo_set(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	sw_error_t rv = SW_OK;
-#ifdef MHT
-	if(qca808x_phy_id_check(dev_id, phy_addr, QCA8084_PHY))
-	{
-		rv = qca8084_phy_ldo_set(dev_id, phy_addr, enable);
-		PHY_RTN_ON_ERROR (rv);
-	}
-#endif
-	return rv;
-}
-
 /******************************************************************************
 *
 * qca808x_phy_led_init - set led behavior
@@ -333,9 +291,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 
 	phy_api_ops_init(QCA808X_PHY_CHIP);
 
-	qca808x_phy_api_ops->phy_pll_on = qca808x_phy_pll_on;
-	qca808x_phy_api_ops->phy_pll_off = qca808x_phy_pll_off;
-	qca808x_phy_api_ops->phy_ldo_set = qca808x_phy_ldo_set;
 /*qca808x_end*/
 #if defined(IN_PTP)
 	qca808x_phy_ptp_api_ops_init(&qca808x_phy_api_ops->phy_ptp_ops);

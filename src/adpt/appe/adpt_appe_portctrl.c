@@ -510,7 +510,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 		msleep(1);
 
 		/* off phy */
-		hsl_port_phy_pll_off(dev_id, port_id);
+		HSL_PORT_PHY_API_RUN(pll_off, dev_id, port_id);
 		HSL_PORT_PHY_API_RUN(power_off, dev_id, port_id);
 		hsl_port_feature_set(dev_id, port_id, PHY_F_ERP_LOW_POWER);
 
@@ -523,7 +523,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 				/* there is active channel port, only powr off current phy */
 				if (!hsl_port_feature_get(dev_id, i, PHY_F_ERP_LOW_POWER)) {
 					/* off LDO */
-					hsl_port_phy_ldo_set(dev_id, port_id, A_FALSE);
+					HSL_PORT_PHY_API_RUN(ldo_set, dev_id, port_id, A_FALSE);
 					return SW_OK;
 				}
 			}
@@ -563,7 +563,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 		}
 #endif
 		/* off LDO */
-		hsl_port_phy_ldo_set(dev_id, port_id, A_FALSE);
+		HSL_PORT_PHY_API_RUN(ldo_set, dev_id, port_id, A_FALSE);
 		break;
 	case FAL_ERP_ACTIVE:
 		if (!hsl_port_feature_get(dev_id, port_id, PHY_F_ERP_LOW_POWER)) {
@@ -571,7 +571,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 			return SW_OK;
 		}
 		/* on LDO */
-		hsl_port_phy_ldo_set(dev_id, port_id, A_TRUE);
+		HSL_PORT_PHY_API_RUN(ldo_set, dev_id, port_id, A_TRUE);
 #if defined(MHT)
 		/* resume manhattan serdes */
 		if (hsl_port_phyid_get(dev_id, port_id) == QCA8084_PHY) {
@@ -620,7 +620,7 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 				port_id, PORT_INTERFACE_MODE_AUTO));
 		SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_apply(dev_id));
 		/* power on phy */
-		hsl_port_phy_pll_on(dev_id, port_id);
+		HSL_PORT_PHY_API_RUN(pll_on, dev_id, port_id);
 		HSL_PORT_PHY_API_RUN(power_on, dev_id, port_id);
 		hsl_port_feature_clear(dev_id, port_id, PHY_F_ERP_LOW_POWER);
 		break;
