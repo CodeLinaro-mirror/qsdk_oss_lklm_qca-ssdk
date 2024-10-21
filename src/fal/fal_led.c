@@ -19,6 +19,7 @@
 #include "fal_led.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
+#include "adpt.h"
 
 static sw_error_t
 _fal_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
@@ -64,7 +65,8 @@ _fal_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t source_id,
     port_id = source_id/PORT_LED_SOURCE_MAX+1;
     source_id = source_id%PORT_LED_SOURCE_MAX;
 
-    return hsl_port_phy_led_source_pattern_set(dev_id, port_id, source_id, pattern);
+    DEFINE_FAL_PORT_PHY_FUNC(led_ctrl_source_set, dev_id, port_id, source_id,
+        (void*)pattern);
 }
 
 /**
@@ -137,15 +139,8 @@ fal_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t source_id,
 sw_error_t
 fal_port_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t port_id,
                           a_uint32_t source_id, led_ctrl_pattern_t * pattern)
-{
-	sw_error_t rv;
-
-	FAL_API_LOCK;
-	rv = hsl_port_phy_led_source_pattern_set(dev_id, port_id, source_id, pattern);
-	FAL_API_UNLOCK;
-	return rv;
-}
-
+DEFINE_FAL_PORT_PHY_FUNC(led_ctrl_source_set, dev_id, port_id, source_id,
+    (void*)pattern);
 /**
 * @brief Get led control source of port on a particular device.
 * @param[in] dev_id device id
@@ -157,14 +152,8 @@ fal_port_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t port_id,
 sw_error_t
 fal_port_led_source_pattern_get(a_uint32_t dev_id, a_uint32_t port_id,
                           a_uint32_t source_id, led_ctrl_pattern_t * pattern)
-{
-	sw_error_t rv;
-
-	FAL_API_LOCK;
-	rv = hsl_port_phy_led_source_pattern_get(dev_id, port_id, source_id, pattern);
-	FAL_API_UNLOCK;
-	return rv;
-}
+DEFINE_FAL_PORT_PHY_FUNC(led_ctrl_source_get, dev_id, port_id, source_id,
+    (void*)pattern);
 /**
  * @}
  */

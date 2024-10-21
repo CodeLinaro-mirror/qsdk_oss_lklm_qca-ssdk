@@ -748,7 +748,7 @@ aquantia_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_addr,
 	if(speed >= FAL_SPEED_1000)
 	{
 		rv = hsl_phy_phydev_autoneg_update(dev_id, phy_addr, A_TRUE,
-			hsl_phy_speed_duplex_to_auto_adv(dev_id, speed, FAL_FULL_DUPLEX));
+			hsl_phy_speed_duplex_to_auto_adv(speed, FAL_FULL_DUPLEX));
 		PHY_RTN_ON_ERROR(rv);
 		rv = aquantia_phy_restart_autoneg(dev_id, phy_addr);
 		PHY_RTN_ON_ERROR(rv);

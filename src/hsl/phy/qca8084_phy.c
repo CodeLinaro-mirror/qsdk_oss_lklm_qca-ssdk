@@ -304,8 +304,6 @@ qca8084_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 					rv = qca_mht_ephy_addr_get(dev_id, mht_port_id,
 						&mht_phy_addr);
 					PHY_RTN_ON_ERROR(rv);
-					rv = qca808x_phy_poweroff(dev_id, mht_phy_addr);
-					PHY_RTN_ON_ERROR(rv);
 					rv = qca8084_phy_pll_off(dev_id, mht_phy_addr);
 					PHY_RTN_ON_ERROR(rv);
 				}
@@ -339,7 +337,6 @@ qca8084_phy_interface_set_mode(a_uint32_t dev_id, a_uint32_t phy_addr,
 			PHY_RTN_ON_ERROR (rv);
 			/*port4 software reset*/
 			SSDK_DEBUG(" ethphy3 software reset\n");
-			rv = qca808x_phy_reset(dev_id, phy_addr);
 			SW_RTN_ON_ERROR (rv);
 			break;
 		default:
@@ -579,7 +576,8 @@ qca8084_phy_adc_edge_set(a_uint32_t dev_id, a_uint32_t phy_addr,
 	rv = hsl_phy_modify_debug(dev_id, phy_addr,
 		QCA8084_PHY_DEBUG_ANA_INTERFACE_CLK_SEL, BITS(4,4), adc_edge);
 	PHY_RTN_ON_ERROR(rv);
-	rv = qca808x_phy_reset(dev_id, phy_addr);
+	rv = hsl_phy_modify_mii(dev_id, phy_addr, MDIO_CTRL1,
+		BMCR_RESET, BMCR_RESET);
 
 	return rv;
 }

@@ -270,14 +270,3 @@ qca808x_phy_led_ctrl_source_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	return SW_OK;
 }
-
-void qca808x_phy_led_api_ops_init(hsl_phy_ops_t *qca808x_phy_led_api_ops)
-{
-	if (!qca808x_phy_led_api_ops) {
-		return;
-	}
-	qca808x_phy_led_api_ops->phy_led_ctrl_source_set = qca808x_phy_led_ctrl_source_set;
-	qca808x_phy_led_api_ops->phy_led_ctrl_source_get = qca808x_phy_led_ctrl_source_get;
-
-	return;
-}

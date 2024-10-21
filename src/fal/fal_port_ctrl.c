@@ -33,10 +33,10 @@
 #include "hsl_phy.h"
 
 sw_error_t fal_port_duplex_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_duplex_t duplex)
-    DEFINE_FAL_FUNC_EXPORT(port_duplex_set, dev_id, port_id, duplex)
+    DEFINE_FAL_PORT_ADPT_HSL_PHY_FUNC(duplex_set, dev_id, port_id, duplex)
 
 sw_error_t fal_port_speed_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_speed_t speed)
-    DEFINE_FAL_FUNC_EXPORT(port_speed_set, dev_id, port_id, speed)
+    DEFINE_FAL_PORT_ADPT_HSL_PHY_FUNC(speed_set, dev_id, port_id, speed)
 
 sw_error_t fal_port_duplex_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_duplex_t * pduplex)
     DEFINE_FAL_FUNC_EXPORT(port_duplex_get, dev_id, port_id, pduplex)
@@ -203,23 +203,29 @@ sw_error_t fal_port_erp_power_mode_set (a_uint32_t dev_id, fal_port_t port_id, f
     DEFINE_FAL_FUNC_EXPORT(port_erp_power_mode_set, dev_id, port_id, power_mode)
 
 sw_error_t fal_port_autoneg_enable (a_uint32_t dev_id, fal_port_t port_id)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_autoneg_enable, dev_id, port_id)
+    DEFINE_FAL_PORT_PHY_FUNC(autoneg_enable, dev_id, port_id)
     EXPORT_SYMBOL(fal_port_autoneg_enable);
 
 sw_error_t fal_port_autoneg_restart (a_uint32_t dev_id, fal_port_t port_id)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_autoneg_restart, dev_id, port_id)
+    DEFINE_FAL_PORT_PHY_FUNC(autoneg_restart, dev_id, port_id)
     EXPORT_SYMBOL(fal_port_autoneg_restart);
 
 sw_error_t fal_port_autoneg_adv_set (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t autoadv)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_autoadv_set, dev_id, port_id, autoadv)
+    DEFINE_FAL_PORT_PHY_FUNC(autoadv_set, dev_id, port_id, autoadv)
     EXPORT_SYMBOL(fal_port_autoneg_adv_set);
 
 sw_error_t fal_port_autoneg_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_autoneg_status_get, dev_id, port_id, status)
+{
+    if (hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE) == A_TRUE) {
+        *status = A_FALSE;
+        return SW_OK;
+    }
+    DEFINE_FAL_PORT_PHY_FUNC(autoneg_status_get, dev_id, port_id, status)
+}
     EXPORT_SYMBOL(fal_port_autoneg_status_get);
 
 sw_error_t fal_port_autoneg_adv_get (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t * autoadv)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_autoadv_get, dev_id, port_id, autoadv)
+    DEFINE_FAL_PORT_PHY_FUNC(autoadv_get, dev_id, port_id, autoadv)
     EXPORT_SYMBOL(fal_port_autoneg_adv_get);
 
 sw_error_t fal_port_cdt (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair, fal_cable_status_t * cable_status, a_uint32_t * cable_len)
@@ -227,7 +233,7 @@ sw_error_t fal_port_cdt (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_p
     EXPORT_SYMBOL(fal_port_cdt);
 
 sw_error_t fal_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_power_off, dev_id, port_id)
+    DEFINE_FAL_PORT_PHY_FUNC(power_off, dev_id, port_id)
     EXPORT_SYMBOL(fal_port_power_off);
 
 sw_error_t fal_port_power_on (a_uint32_t dev_id, fal_port_t port_id)
@@ -376,11 +382,12 @@ sw_error_t fal_port_remote_loopback_get (a_uint32_t dev_id, fal_port_t port_id, 
     EXPORT_SYMBOL(fal_port_remote_loopback_get);
 
 sw_error_t fal_port_reset (a_uint32_t dev_id, fal_port_t port_id)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_reset, dev_id, port_id)
+    DEFINE_FAL_PORT_PHY_FUNC(reset, dev_id, port_id)
     EXPORT_SYMBOL(fal_port_reset);
 
 sw_error_t fal_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id, a_uint16_t * org_id, a_uint16_t * rev_id)
-    DEFINE_FAL_FUNC_HSL_DIRECT(port_phy_phyid_get, dev_id, port_id, org_id, rev_id)
+    DEFINE_FAL_PORT_PHY_FUNC(phyid_get, dev_id, port_id, org_id, rev_id)
+
     EXPORT_SYMBOL(fal_port_phy_id_get);
 
 sw_error_t fal_port_wol_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)

@@ -75,9 +75,9 @@ _isisc_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
     }
     else
     {
-        rv = hsl_port_phy_duplex_get (dev_id, port_id, &tmp);
+        HSL_PORT_PHY_API_RUN(duplex_get, dev_id, port_id, &tmp);
         SW_RTN_ON_ERROR(rv);
-        rv = hsl_port_phy_autoneg_status_get(dev_id, port_id, &status);
+        HSL_PORT_PHY_API_RUN(autoneg_status_get, dev_id, port_id, &status);
         SW_RTN_ON_ERROR(rv);
         if ((tmp == duplex) && (status == A_FALSE))
             return SW_OK;
@@ -89,7 +89,7 @@ _isisc_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
         HSL_REG_ENTRY_SET(rv, dev_id, PORT_STATUS, port_id,
                           (a_uint8_t *) (&reg_val), sizeof (a_uint32_t));
 
-        rv = hsl_port_phy_duplex_set (dev_id, port_id, duplex);
+        HSL_PORT_PHY_API_RUN(duplex_set, dev_id, port_id, duplex);
         SW_RTN_ON_ERROR(rv);
 
         /* If MAC not in sync with PHY mode, the behavior is undefine.
@@ -164,9 +164,9 @@ _isisc_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
     }
     else
     {
-        rv = hsl_port_phy_speed_get (dev_id, port_id, &tmp);
+        HSL_PORT_PHY_API_RUN(speed_get, dev_id, port_id, &tmp);
         SW_RTN_ON_ERROR(rv);
-        rv = hsl_port_phy_autoneg_status_get(dev_id, port_id, &status);
+        HSL_PORT_PHY_API_RUN(autoneg_status_get, dev_id, port_id, &status);
         SW_RTN_ON_ERROR(rv);
         if ((tmp == speed) && (status == A_FALSE))
             return SW_OK;
@@ -179,7 +179,7 @@ _isisc_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
                           (a_uint8_t *) (&reg_val), sizeof (a_uint32_t));
 
 
-        rv = hsl_port_phy_speed_set (dev_id, port_id, speed);
+        HSL_PORT_PHY_API_RUN(speed_set, dev_id, port_id, speed);
         SW_RTN_ON_ERROR(rv);
 
         /* If MAC not in sync with PHY mode, the behavior is undefine.
@@ -317,7 +317,7 @@ _isisc_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_speed_get(dev_id, port_id, pspeed);
+		HSL_PORT_PHY_API_RUN(speed_get, dev_id, port_id, pspeed);
 	}
 	return rv;
 }
@@ -341,7 +341,7 @@ _isisc_port_duplex_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_duplex_get(dev_id, port_id, pduplex);
+		HSL_PORT_PHY_API_RUN(duplex_get, dev_id, port_id, pduplex);
 	}
 	return rv;
 }
@@ -969,7 +969,7 @@ _isisc_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * st
    }
    else
    {
-        rv = hsl_port_phy_link_status_get(dev_id, port_id, status);
+        HSL_PORT_PHY_API_RUN(link_status_get, dev_id, port_id, status);
         SW_RTN_ON_ERROR(rv);
    }
 
@@ -1344,7 +1344,7 @@ _isisc_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 			a_bool_t link = A_FALSE;
 			sw_error_t rv = SW_OK;
 
-			rv = hsl_port_phy_link_status_get(dev_id, port_id, &link);
+			HSL_PORT_PHY_API_RUN(link_status_get, dev_id, port_id, &link);
 			SW_RTN_ON_ERROR(rv);
 			if (A_TRUE == link)
 			{

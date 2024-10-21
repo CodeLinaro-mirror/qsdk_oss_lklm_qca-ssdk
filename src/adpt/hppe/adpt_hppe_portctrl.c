@@ -651,26 +651,6 @@ adpt_hppe_port_xgmac_reconfig(a_uint32_t dev_id, a_uint32_t port_id)
 
 	return rv;
 }
-
-sw_error_t
-adpt_hppe_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
-				fal_port_duplex_t duplex)
-{
-	sw_error_t rv = SW_NOT_SUPPORTED;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_INCL_CPU))
-	{
-		return SW_BAD_PARAM;
-	}
-	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
-		return SW_NOT_SUPPORTED;
-
-	HSL_PORT_PHY_API_RUN(duplex_set, dev_id, port_id, duplex);
-
-	return rv;
-}
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 adpt_hppe_port_rxmac_status_get(a_uint32_t dev_id, fal_port_t port_id,
@@ -767,7 +747,7 @@ adpt_hppe_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_link_status_get(dev_id, port_id, status);
+		HSL_PORT_PHY_API_RUN(link_status_get, dev_id, port_id, status);
 		SW_RTN_ON_ERROR (rv);
 	}
 
@@ -1068,7 +1048,7 @@ adpt_hppe_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 		{
 			a_bool_t link = A_FALSE;
 
-			rv = hsl_port_phy_link_status_get(dev_id, port_id, &link);
+			HSL_PORT_PHY_API_RUN(link_status_get, dev_id, port_id, &link);
 			SW_RTN_ON_ERROR(rv);
 			if (A_TRUE == link)
 			{
@@ -1150,21 +1130,6 @@ adpt_ppe_port_mru_get(a_uint32_t dev_id, fal_port_t port_id,
 	return SW_NOT_SUPPORTED;
 }
 
-sw_error_t
-adpt_hppe_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
-			       fal_port_speed_t speed)
-{
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_INCL_CPU))
-	  {
-		return SW_BAD_PARAM;
-	  }
-	if (A_FALSE == hsl_port_phy_connected (dev_id, port_id))
-		return SW_NOT_SUPPORTED;
-
-	return hsl_port_phy_speed_set(dev_id, port_id, speed);
-}
 sw_error_t
 adpt_hppe_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode)
@@ -2929,7 +2894,7 @@ adpt_hppe_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 	}
 	else
 	{
-		rv = hsl_port_phy_speed_get(dev_id, port_id, pspeed);
+		HSL_PORT_PHY_API_RUN(speed_get, dev_id, port_id, pspeed);
 		SW_RTN_ON_ERROR (rv);
 	}
 
@@ -5040,7 +5005,6 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
-	p_adpt_api->adpt_port_duplex_set = adpt_hppe_port_duplex_set;
 #ifndef IN_PORTCONTROL_MINI
 	p_adpt_api->adpt_port_rxmac_status_get = adpt_hppe_port_rxmac_status_get;
 #endif
@@ -5055,7 +5019,6 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_mac_loopback_set = adpt_hppe_port_mac_loopback_set;
 #endif
 	p_adpt_api->adpt_port_mru_get = adpt_ppe_port_mru_get;
-	p_adpt_api->adpt_port_speed_set = adpt_hppe_port_speed_set;
 	p_adpt_api->adpt_port_interface_mode_get = adpt_hppe_port_interface_mode_get;
 	p_adpt_api->adpt_port_duplex_get = adpt_hppe_port_duplex_get;
 	p_adpt_api->adpt_port_mtu_set = adpt_ppe_port_mtu_set;

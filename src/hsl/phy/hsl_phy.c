@@ -313,8 +313,8 @@ int ssdk_phy_driver_init(a_uint32_t dev_id)
 				phy_info[dev_id]->phy_type[i] = phytype;
 				ssdk_phy_driver[phytype].port_bmp[dev_id] |= (0x1 << i);
 			} else {
-				SSDK_INFO("dev_id = %d, phy_adress = %d, phy_id = 0x%x phy"
-					"type doesn't match\n", dev_id,
+				SSDK_INFO("dev_id = %d, phy_adress = 0x%x, phy_id = 0x%x phy"
+					"driver is not supported in qca-ssdk\n", dev_id,
 					phy_info[dev_id]->phy_address[i], phy_id);
 			}
 		}
@@ -599,35 +599,7 @@ sw_error_t hsl_port_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_id)
 
 	return SW_OK;
 }
-/*qca808x_start*/
-a_uint32_t
-hsl_port_phyid_get(a_uint32_t dev_id, fal_port_t port_id)
-{
-	sw_error_t rv = SW_OK;
-	a_uint32_t phy_addr, phy_id;
-	hsl_phy_ops_t *phy_drv;
 
-	phy_drv = hsl_phy_api_ops_get (dev_id, port_id);
-	if (phy_drv == NULL) {
-		return INVALID_PHY_ID;
-	}
-	if (NULL == phy_drv->phy_id_get) {
-		return INVALID_PHY_ID;
-	}
-
-	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr);
-	if(rv) {
-		return INVALID_PHY_ID;
-	}
-
-	rv = phy_drv->phy_id_get (dev_id, phy_addr, &phy_id);
-	if(rv) {
-		return INVALID_PHY_ID;
-	}
-
-	return phy_id;
-}
-/*qca808x_end*/
 sw_error_t
 hsl_port_phy_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_interface_mode_t mode)
@@ -729,32 +701,30 @@ sw_error_t
 hsl_phy_phydev_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct phy_device **phydev)
 {
-	a_uint32_t pdev_addr;
+	a_uint32_t pdev_addr, port_id, phy_id;
 	const char *pdev_name;
 	struct mii_bus *miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
 
 	SW_RTN_ON_NULL(phydev);
 	SW_RTN_ON_NULL(miibus);
-#if (LINUX_VERSION_CODE < KERNEL_VERSION (5, 0, 0))
-	*phydev = miibus->phy_map[phy_addr];
-	if(*phydev == NULL)
-	{
-		SSDK_ERROR("phy_addr %d phydev is NULL\n", phy_addr);
+
+	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
+	if (hsl_port_feature_get(dev_id, port_id, PHY_F_INIT) == A_FALSE)
 		return SW_NOT_INITIALIZED;
-	}
-	pdev_addr = (*phydev)->addr;
-	pdev_name = dev_name(&((*phydev)->dev));
-#else
+
+	phy_id = hsl_phyid_get(dev_id, port_id);
+	if (phy_id == INVALID_PHY_ID)
+		return SW_NOT_INITIALIZED;
+
 	phy_addr = TO_PHY_ADDR(phy_addr);
 	*phydev = mdiobus_get_phy(miibus, phy_addr);
-	if(*phydev == NULL)
-	{
+	if(*phydev == NULL) {
+		hsl_port_feature_clear(dev_id, port_id, PHY_F_INIT);
 		SSDK_ERROR("phy_addr %d phydev is NULL\n", phy_addr);
 		return SW_NOT_INITIALIZED;
 	}
 	pdev_addr = (*phydev)->mdio.addr;
 	pdev_name = phydev_name(*phydev);
-#endif
 	SSDK_DEBUG("phy[%d]: device %s, driver %s\n",
 		pdev_addr, pdev_name,
 		(*phydev)->drv ? (*phydev)->drv->name : "unknown");
@@ -909,7 +879,7 @@ hsl_phy_phydev_autoneg_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 }
 
 a_uint32_t
-hsl_phy_speed_duplex_to_auto_adv(a_uint32_t dev_id,fal_port_speed_t speed,
+hsl_phy_speed_duplex_to_auto_adv(fal_port_speed_t speed,
 	fal_port_duplex_t duplex)
 {
 	a_uint32_t auto_adv = 0;
@@ -958,7 +928,8 @@ hsl_port_phy_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
 		SSDK_ERROR("group %x is not supported\n", group);
 		return SW_NOT_SUPPORTED;
 	}
-	rv = hsl_port_phy_led_source_pattern_get(dev_id, port_id, 0, pattern);
+	HSL_PORT_PHY_EXT_API_RUN(led_ctrl_source_get, dev_id, port_id, 0,
+		(void*)pattern);
 
 	return rv;
 }
@@ -968,6 +939,7 @@ hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
 	a_uint32_t port_id, led_ctrl_pattern_t * pattern)
 {
 	a_uint32_t led_src = 0;
+	sw_error_t rv = SW_OK;
 
 	if(group != LED_MAC_PORT_GROUP)
 	{
@@ -975,15 +947,15 @@ hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
 		return SW_NOT_SUPPORTED;
 	}
 	for(led_src = 0; led_src < PORT_LED_SOURCE_MAX; led_src++) {
-		hsl_port_phy_led_source_pattern_set(dev_id, port_id, led_src,
-			pattern);
+		HSL_PORT_PHY_EXT_API_RUN(led_ctrl_source_set, dev_id, port_id, led_src,
+			(void*)pattern);
 	}
 
 	return SW_OK;
 }
 
 sw_error_t
-hsl_port_phy_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t port_id,
+hsl_port_phy_led_ctrl_source_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t source_id, led_ctrl_pattern_t * pattern)
 {
 	sw_error_t rv = SW_OK;
@@ -1007,7 +979,7 @@ hsl_port_phy_led_source_pattern_set(a_uint32_t dev_id, a_uint32_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_led_source_pattern_get(a_uint32_t dev_id, a_uint32_t port_id,
+hsl_port_phy_led_ctrl_source_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t source_id, led_ctrl_pattern_t * pattern)
 {
 	sw_error_t rv = SW_OK;
@@ -1047,6 +1019,9 @@ hsl_port_phydev_get_status(a_uint32_t dev_id, a_uint32_t port_id,
 	}
 
 	mutex_lock(&phydev->lock);
+	/* make sure that ssdk can get the phy realtime status so */
+	/* need to read phy status manually */
+	phy_read_status(phydev);
 	phy_status->link_status = phydev->link;
 	phy_status->speed = phydev->speed;
 	phy_status->duplex = phydev->duplex;
@@ -1102,7 +1077,8 @@ hsl_port_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 }
 
 sw_error_t
-hsl_port_phy_function_reset(a_uint32_t dev_id, a_uint32_t port_id)
+hsl_port_phy_function_reset(a_uint32_t dev_id, a_uint32_t port_id,
+	hsl_phy_function_reset_t reset_type)
 {
 	sw_error_t rv = 0;
 	a_uint32_t phy_addr;
@@ -1113,7 +1089,7 @@ hsl_port_phy_function_reset(a_uint32_t dev_id, a_uint32_t port_id)
 		return SW_NOT_SUPPORTED;
 	rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_addr);
 	SW_RTN_ON_ERROR (rv);
-	rv = phy_drv->phy_function_reset(dev_id, phy_addr, PHY_FIFO_RESET);
+	rv = phy_drv->phy_function_reset(dev_id, phy_addr, reset_type);
 	SW_RTN_ON_ERROR(rv);
 
 	return rv;
@@ -2725,23 +2701,6 @@ sw_error_t ssdk_phy_driver_cleanup(a_uint32_t dev_id)
 	return SW_OK;
 }
 /*qca808x_end*/
-
-sw_error_t
-hsl_port_phy_adv_update(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t adv_mask, a_uint32_t adv)
-{
-	sw_error_t rv = SW_OK;
-	a_uint32_t new_adv = 0;
-
-	rv = hsl_port_phy_autoadv_get(dev_id, port_id, &new_adv);
-	SW_RTN_ON_ERROR (rv);
-	new_adv &= ~adv_mask;
-	new_adv |= adv;
-	rv = hsl_port_phy_autoadv_set(dev_id, port_id, new_adv);
-
-	return rv;
-}
-
 sw_error_t
 hsl_port_phy_txfc_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable)
 {
@@ -3551,16 +3510,140 @@ hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
 	return SW_OK;
 }
 
+static a_bool_t
+hsl_port_phydev_adv_valid(struct phy_device *phydev, a_uint32_t autoadv)
+{
+	__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising) = { 0 };
+	__ETHTOOL_DECLARE_LINK_MODE_MASK(adv_tmp) = { 0 };
+
+	hsl_phy_adv_to_linkmode_adv(autoadv, advertising);
+
+	linkmode_and(adv_tmp, advertising, phydev->supported);
+	if (linkmode_equal(adv_tmp, advertising)) {
+		linkmode_copy(phydev->advertising, advertising);
+		return A_TRUE;
+	}
+
+	return A_FALSE;
+}
+
+static int
+hsl_port_phy_std_phyid_get(struct phy_device *phydev,
+	a_uint16_t * org_id, a_uint16_t * rev_id)
+{
+	a_uint32_t phy_id;
+
+	if(phydev->is_c45)
+		phy_id = phydev->c45_ids.device_ids[__ffs(phydev->c45_ids.mmds_present)];
+	else
+		phy_id = phydev->phy_id;
+
+	*org_id = (phy_id >> 16) & 0xffff;
+	*rev_id = phy_id & 0xffff;
+
+	return 0;
+}
+
+static int
+hsl_port_phy_std_autoadv_get(struct phy_device *phydev,
+	a_uint32_t *autoadv)
+{
+	hsl_phy_linkmode_adv_to_adv(phydev->advertising, autoadv);
+
+	return 0;
+}
+
+static int
+hsl_port_phy_std_autoadv_set(struct phy_device *phydev,
+	a_uint32_t autoadv)
+{
+	int ret;
+
+	mutex_lock(&phydev->lock);
+	if (!hsl_port_phydev_adv_valid(phydev, autoadv)) {
+		mutex_unlock(&phydev->lock);
+		return SW_NOT_SUPPORTED;
+	}
+	ret = phy_config_aneg(phydev);
+	mutex_unlock(&phydev->lock);
+
+	return ret;
+}
+
+static int
+hsl_port_phy_std_autoneg_restart(struct phy_device *phydev)
+{
+	int ret;
+
+	mutex_lock(&phydev->lock);
+	phydev->autoneg = A_TRUE;
+	ret = phy_restart_aneg(phydev);
+	mutex_unlock(&phydev->lock);
+
+	return ret;
+}
+
+static int
+hsl_port_phy_std_autoneg_status_get(struct phy_device *phydev,
+	a_bool_t * status)
+{
+	*status = (phydev->autoneg ? A_TRUE : A_FALSE);
+
+	return 0;
+}
+
+static int
+hsl_port_phy_std_speed_set(struct phy_device *phydev,
+	a_uint32_t speed)
+{
+	int ret, autoadv;
+
+	mutex_lock(&phydev->lock);
+	if (speed <= FAL_SPEED_100) {
+		phydev->autoneg = A_FALSE;
+		phydev->speed = speed;
+	} else {
+		phydev->autoneg = A_TRUE;
+		autoadv = hsl_phy_speed_duplex_to_auto_adv(speed,
+			FAL_FULL_DUPLEX);
+		if (!hsl_port_phydev_adv_valid(phydev, autoadv)) {
+			mutex_unlock(&phydev->lock);
+			return SW_NOT_SUPPORTED;
+		}
+	}
+	ret = phy_config_aneg(phydev);
+	mutex_unlock(&phydev->lock);
+
+	return ret;
+}
+
+static int
+hsl_port_phy_std_speed_get(struct phy_device *phydev,
+	a_uint32_t *speed)
+{
+	if (phydev->link)
+		*speed = phydev->speed;
+	else
+		*speed = SPEED_UNKNOWN;
+
+	return 0;
+}
+
 static int
 hsl_port_phy_std_duplex_set(struct phy_device *phydev, a_uint32_t duplex)
 {
 	int ret;
 
 	mutex_lock(&phydev->lock);
-	phydev->autoneg = A_FALSE;
-	phydev->duplex = duplex;
+	if (phydev->speed <= FAL_SPEED_100) {
+		phydev->autoneg = A_FALSE;
+		phydev->duplex = duplex;
+	} else {
+		phydev->autoneg = A_TRUE;
+		phydev->duplex = FAL_FULL_DUPLEX;
+	}
 	ret = phy_config_aneg(phydev);
-	mutex_lock(&phydev->lock);
+	mutex_unlock(&phydev->lock);
 
 	return ret;
 }
@@ -3570,8 +3653,38 @@ hsl_port_phy_std_duplex_get(struct phy_device *phydev, a_uint32_t *duplex)
 {
 	if (phydev->link)
 		*duplex = (phydev->duplex ? FAL_FULL_DUPLEX : FAL_HALF_DUPLEX);
+	else
+		*duplex = DUPLEX_UNKNOWN;
 
 	return 0;
+}
+
+static int
+hsl_port_phy_std_link_status_get(struct phy_device *phydev,
+	a_bool_t * status)
+{
+	*status = phydev->link;
+
+	return 0;
+}
+
+static int
+hsl_port_phy_std_reset(struct phy_device *phydev)
+{
+	sw_error_t ret = SW_OK;
+
+	mutex_lock(&phydev->lock);
+	if (phydev->drv && phydev->drv->soft_reset) {
+		ret = phydev->drv->soft_reset(phydev);
+	} else {
+		if (phydev->is_c45 == A_FALSE)
+			ret = genphy_soft_reset(phydev);
+		else
+			ret = SW_NOT_SUPPORTED;
+	}
+	mutex_unlock(&phydev->lock);
+
+	return ret;
 }
 
 static int
@@ -3617,6 +3730,19 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{local_loopback_get, NULL},
 	{remote_loopback_set, NULL},
 	{remote_loopback_get, NULL},
+	{function_reset, NULL},
+	{led_ctrl_source_set, NULL},
+	{led_ctrl_source_get, NULL},
+	{phyid_get, (void*)hsl_port_phy_std_phyid_get},
+	{autoadv_get, (void*)hsl_port_phy_std_autoadv_get},
+	{autoadv_set, (void*)hsl_port_phy_std_autoadv_set},
+	{autoneg_restart, (void*)hsl_port_phy_std_autoneg_restart},
+	{autoneg_status_get, (void*)hsl_port_phy_std_autoneg_status_get},
+	{autoneg_enable, (void*)hsl_port_phy_std_autoneg_restart},
+	{speed_set, (void*)hsl_port_phy_std_speed_set},
+	{speed_get, (void*)hsl_port_phy_std_speed_get},
+	{link_status_get, (void*)hsl_port_phy_std_link_status_get},
+	{reset, (void*)hsl_port_phy_std_reset},
 	{duplex_set, (void*)hsl_port_phy_std_duplex_set},
 	{duplex_get, (void*)hsl_port_phy_std_duplex_get},
 	{power_on, (void*)hsl_port_phy_std_power_on},
@@ -3637,4 +3763,43 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id)
 
 	return NULL;
 }
-/*qca808x_end*/
+
+sw_error_t
+hsl_port_phy_adv_update(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t adv_mask, a_uint32_t adv)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t new_adv = 0;
+	struct phy_device *phydev = NULL;
+
+	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
+	SW_RTN_ON_ERROR (rv);
+
+	rv = hsl_port_phy_std_autoadv_get(phydev, &new_adv);
+	SW_RTN_ON_ERROR (rv);
+	new_adv &= ~adv_mask;
+	new_adv |= adv;
+	rv = hsl_port_phy_std_autoadv_set(phydev, new_adv);
+
+	return rv;
+}
+
+a_uint32_t
+hsl_port_phyid_get(a_uint32_t dev_id, fal_port_t port_id)
+{
+	a_uint16_t org_id, rev_id;
+	sw_error_t rv = SW_OK;
+	struct phy_device *phydev = NULL;
+
+	if (!hsl_port_phy_connected(dev_id, port_id))
+		return INVALID_PHY_ID;
+
+	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
+	if (rv != SW_OK)
+		return INVALID_PHY_ID;
+	rv = hsl_port_phy_std_phyid_get(phydev, &org_id, &rev_id);
+	if (rv != SW_OK)
+		return INVALID_PHY_ID;
+
+	return (org_id << 16 | rev_id);
+}

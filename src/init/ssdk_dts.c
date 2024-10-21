@@ -370,7 +370,7 @@ static void ssdk_softsku_uniphy_parse(a_uint32_t dev_id,
 			if (!IS_ERR(disable_status)) {
 				if (*disable_status == 1) {
 					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_FALSE;
-					SSDK_INFO("IPQ54xx uniphy%d is disabled by softsku!\n", i);
+					SSDK_INFO("IPQ54xx uniphy%d is not available on this SKU!\n", i);
 				} else {
 					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_TRUE;
 				}
@@ -1059,7 +1059,7 @@ ssdk_dt_parse_interrupt(a_uint32_t dev_id, struct device_node *switch_node)
 	if(intr_gpio_num < 0) {
 		intr_gpio_num = of_get_named_gpio(switch_node, "link-intr-gpio", 0);
 		if(intr_gpio_num < 0) {
-			SSDK_INFO("link-intr-gpio isn’t defined, enabling link polling\n");
+			SSDK_INFO("link-intr-gpio is not defined, link polling is enabled\n");
 		}
 	}
 	if(intr_gpio_num > 0) {
@@ -1374,6 +1374,10 @@ static void ssdk_dt_parse_led_source(a_uint32_t dev_id,
 				source_pattern.map |= LED_MAP_1000M_SPEED;
 			if (!strcmp(led_str, "2500M"))
 				source_pattern.map |= LED_MAP_2500M_SPEED;
+			if (!strcmp(led_str, "5000M"))
+				source_pattern.map |= LED_MAP_5000M_SPEED;
+			if (!strcmp(led_str, "10000M"))
+				source_pattern.map |= LED_MAP_10000M_SPEED;
 			if (!strcmp(led_str, "all"))
 				source_pattern.map |= LED_MAP_ALL_SPEED;
 

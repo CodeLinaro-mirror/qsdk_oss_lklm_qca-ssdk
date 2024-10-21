@@ -474,7 +474,7 @@ _mht_interface_uqxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_addr)
 			continue;
 		rv = qca_mht_ephy_addr_get(dev_id, mht_port_id, &phy_addr);
 		PHY_RTN_ON_ERROR (rv);
-		rv = qca808x_phy_reset(dev_id, phy_addr);
+		HSL_PORT_PHY_API_RUN(reset, dev_id, mht_port_id);
 		PHY_RTN_ON_ERROR (rv);
 	}
 	/*Set BaseR mode*/
@@ -838,6 +838,13 @@ mht_interface_ops_init(a_uint32_t dev_id, a_uint32_t port_id)
 
 	shared_priv->phy_clk_init = ssdk_mht_gcc_clock_init;
 	shared_priv->phy_qusgmii_mode_set = mht_interface_uqxgmii_mode_set;
+	shared_priv->phy_clk_en_set = ssdk_mht_port_clk_en_set;
+	shared_priv->phy_clk_reset = ssdk_mht_port_clk_reset;
+	shared_priv->phy_sgmii_function_reset = mht_uniphy_sgmii_function_reset;
+	shared_priv->phy_sgmii_mode_set = mht_interface_phy_mode_set;
+	shared_priv->phy_speed_clk_set = mht_port_speed_clock_set;
+	shared_priv->phy_xpcs_autoneg_restart = mht_uniphy_xpcs_autoneg_restart;
+	shared_priv->phy_xpcs_function_reset = mht_uniphy_uqxgmii_function_reset;
 
 	return SW_OK;
 }
