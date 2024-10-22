@@ -54,10 +54,6 @@ endif
 ifeq (TRUE, $(IN_LED))
 OBJ-COMMON += src/fal/fal_led.o src/init/ssdk_led.o
 OBJ-ISISC  += src/hsl/isisc/isisc_led.o
-
-ifeq (TRUE, $(IN_QCA808X_PHY))
-OBJ-COMMON += src/hsl/phy/qca808x_led.o
-endif
 endif
 
 ###############################################################################
@@ -418,8 +414,6 @@ endif
 
 endif
 endif
-
-OBJ-MHT     += src/hsl/phy/qca8084_phy.o
 
 ###############################################################################
 #                               IN_NAT_HELPER

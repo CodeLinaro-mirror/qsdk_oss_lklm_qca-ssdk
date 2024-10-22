@@ -21,8 +21,6 @@
 #include "mht_interface_ctrl.h"
 #include "mht_sec_ctrl.h"
 #include "hsl_dev.h"
-#include "qca808x_phy.h"
-#include "qca8084_phy.h"
 #include "ssdk_mht_clk.h"
 #include "ssdk_clk.h"
 
