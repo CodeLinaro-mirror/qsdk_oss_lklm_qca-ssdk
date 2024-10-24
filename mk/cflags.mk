@@ -250,9 +250,6 @@ endif
 
 ifeq (TRUE, $(IN_PTP))
   MODULE_CFLAG += -DIN_PTP
-  ifeq ($(CONFIG_PTP_1588_CLOCK), y)
-    MODULE_CFLAG += -DIN_LINUX_STD_PTP
-  endif
 endif
 
 ifeq (TRUE, $(IN_VPORT))

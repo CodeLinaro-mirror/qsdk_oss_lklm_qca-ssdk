@@ -324,7 +324,6 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_PTP))
 OBJ-COMMON  += src/fal/fal_ptp.o
-OBJ-HPPE    += src/adpt/hppe/adpt_hppe_ptp.o
 endif
 
 ###############################################################################
@@ -407,9 +406,8 @@ ifeq (TRUE, $(IN_QCA808X_PHY))
 OBJ-COMMON  += src/hsl/phy/qca808x_phy.o src/hsl/phy/qca808x.o
 
 ifeq (TRUE, $(IN_PTP))
-OBJ-COMMON  += src/hsl/phy/qca808x_ptp.o src/hsl/phy/qca808x_ptp_api.o
 ifeq ($(CONFIG_PTP_1588_CLOCK), y)
-OBJ-COMMON  += src/hsl/phy/hsl_ptp.o src/hsl/phy/qca808x_phc.o
+OBJ-COMMON  += src/hsl/phy/hsl_ptp.o
 endif
 
 endif

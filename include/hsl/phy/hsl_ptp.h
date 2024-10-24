@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,6 +26,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+#include "aos_types.h"
 
 enum {
 	PTP_PKT_SEQID_CHECKED = 0,
