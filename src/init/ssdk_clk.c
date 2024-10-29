@@ -2390,9 +2390,8 @@ void ssdk_ppe_reset_init(a_uint32_t dev_id)
 	}
 
 	ssdk_gcc_reset(rst, SSDK_RESET_ASSERT);
-	msleep(100);
+	msleep(10);
 	ssdk_gcc_reset(rst, SSDK_RESET_DEASSERT);
-	msleep(100);
 
 	reset_control_put(rst);
 #endif
