@@ -474,9 +474,10 @@ qcaphy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
 	if (rv == SW_OK) {
+		SW_RTN_ON_NULL(phydev->drv);
 		SSDK_DEBUG("phy_addr:0x%x, phydev->drv->name:%s", phy_addr,
 				phydev->drv->name);
-		if(phydev->drv && !strcmp(phydev->drv->name, "Generic PHY") &&
+		if(!strcmp(phydev->drv->name, "Generic PHY") &&
 				(phydev->autoneg == AUTONEG_ENABLE)) {
 			rv = hsl_phy_linkmode_adv_to_adv(phydev->advertising, &old_adv);
 			PHY_RTN_ON_ERROR (rv);

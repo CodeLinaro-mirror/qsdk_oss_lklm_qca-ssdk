@@ -3525,7 +3525,7 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 	union mac_lpi_control_status_u mac_lpi_control_status;
 	union mac_lpi_timers_control_u mac_lpi_timers_control;
 	a_uint32_t xgmac_id = 0;
-	a_uint32_t adv, lp_adv, cap, status;
+	a_uint32_t adv = 0, lp_adv = 0, cap = 0, status = 0;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);

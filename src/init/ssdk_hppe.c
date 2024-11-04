@@ -1435,6 +1435,7 @@ qca_hppe_interface_mode_init(a_uint32_t dev_id)
 	a_uint32_t index = 0, uniphy_num = 0, mode[SSDK_MAX_UNIPHY_INSTANCE] = {0};
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
+	SW_RTN_ON_NULL(priv);
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
 	SW_RTN_ON_NULL(p_api->adpt_port_mux_mac_type_set);
 	SW_RTN_ON_NULL(p_api->adpt_uniphy_mode_set);

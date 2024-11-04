@@ -592,7 +592,7 @@ static sw_error_t
 _mht_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_duplex_t duplex)
 {
-	sw_error_t rv;
+	sw_error_t rv = SW_OK;
 
 	HSL_DEV_ID_CHECK(dev_id);
 
@@ -657,7 +657,7 @@ static sw_error_t
 _mht_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_speed_t speed)
 {
-	sw_error_t rv;
+	sw_error_t rv = SW_OK;
 
 	HSL_DEV_ID_CHECK (dev_id);
 

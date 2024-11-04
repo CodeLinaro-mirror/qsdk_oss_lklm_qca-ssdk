@@ -37,7 +37,7 @@ _isisc_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
     a_uint32_t reg_save, reg_val = 0, force, tmp;
-    a_bool_t status;
+    a_bool_t status = A_FALSE;
 
     HSL_DEV_ID_CHECK(dev_id);
 
@@ -119,7 +119,7 @@ _isisc_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
     a_uint32_t reg_save, reg_val = 0, force, tmp;
-    a_bool_t status;
+    a_bool_t status = A_FALSE;
 
     HSL_DEV_ID_CHECK(dev_id);
 
@@ -953,7 +953,7 @@ _isisc_port_rxfc_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * en
 static sw_error_t
 _isisc_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status)
 {
-    sw_error_t rv;
+    sw_error_t rv = SW_OK;
 
     HSL_DEV_ID_CHECK(dev_id);
 
@@ -1173,7 +1173,7 @@ static sw_error_t
 _isisc_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
-    sw_error_t rv;
+    sw_error_t rv = SW_OK;
     a_uint32_t reg = 0, field, offset, device_id, rev_id, reverse = 0;
     a_uint32_t eee_mask = 0, adv = 0, lp_adv = 0, cap = 0, status = 0;
 
