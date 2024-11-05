@@ -2564,11 +2564,11 @@ ip6_clear_low_bits(fal_ip6_addr_t ip6, a_uint32_t len)
 	a_uint8_t bits_to_clear = len % 32;
 	a_uint32_t *addr = ip6.ul;
 
-	for (i = 0; i < ints_to_clear; i++) {
+	for (i = 0; i < ints_to_clear && i <= 3; i++) {
 		addr[3 - i] = 0;
 	}
 
-	if (bits_to_clear > 0) {
+	if (bits_to_clear > 0 && ints_to_clear <= 3) {
 	    addr[3 - ints_to_clear] &= ~((1U << bits_to_clear) - 1);
 	}
 
