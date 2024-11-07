@@ -441,6 +441,9 @@ qca_ssdk_phy_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr)
 
 	for (i = 0; i < SW_MAX_NR_PORT; i ++)
 	{
+		if (!(BIT(i) & qca_ssdk_port_bmp_get(dev_id)))
+			continue;
+
 		if (phy_info[dev_id]->phy_address[i] == phy_addr)
 			return i;
 #if defined(IN_PHY_I2C_MODE)
