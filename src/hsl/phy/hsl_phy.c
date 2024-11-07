@@ -3519,17 +3519,23 @@ hsl_port_phy_std_autoadv_get(struct phy_device *phydev,
 }
 
 static int
+__hsl_port_phy_std_autoadv_set(struct phy_device *phydev,
+	a_uint32_t autoadv)
+{
+	if (!hsl_port_phydev_adv_valid(phydev, autoadv))
+		return SW_NOT_SUPPORTED;
+
+	return phy_config_aneg(phydev);
+}
+
+static int
 hsl_port_phy_std_autoadv_set(struct phy_device *phydev,
 	a_uint32_t autoadv)
 {
 	int ret;
 
 	mutex_lock(&phydev->lock);
-	if (!hsl_port_phydev_adv_valid(phydev, autoadv)) {
-		mutex_unlock(&phydev->lock);
-		return SW_NOT_SUPPORTED;
-	}
-	ret = phy_config_aneg(phydev);
+	ret = __hsl_port_phy_std_autoadv_set(phydev, autoadv);
 	mutex_unlock(&phydev->lock);
 
 	return ret;
@@ -3558,25 +3564,38 @@ hsl_port_phy_std_autoneg_status_get(struct phy_device *phydev,
 }
 
 static int
+hsl_phydev_speed_duplex_set(struct phy_device *phydev)
+{
+	int ret;
+	a_uint32_t autoadv = 0;
+
+	SW_RTN_ON_NULL(phydev);
+
+	if (phydev->speed <= FAL_SPEED_100) {
+		phydev->autoneg = A_FALSE;
+		ret = phy_config_aneg(phydev);
+	} else {
+		phydev->autoneg = A_TRUE;
+		autoadv = hsl_phy_speed_duplex_to_auto_adv(phydev->speed,
+			phydev->duplex);
+		ret = __hsl_port_phy_std_autoadv_set(phydev, autoadv);
+		if (ret < 0)
+			return ret;
+		ret = phy_restart_aneg(phydev);
+	}
+
+	return ret;
+}
+
+static int
 hsl_port_phy_std_speed_set(struct phy_device *phydev,
 	a_uint32_t speed)
 {
-	int ret, autoadv;
+	int ret;
 
 	mutex_lock(&phydev->lock);
-	if (speed <= FAL_SPEED_100) {
-		phydev->autoneg = A_FALSE;
-		phydev->speed = speed;
-	} else {
-		phydev->autoneg = A_TRUE;
-		autoadv = hsl_phy_speed_duplex_to_auto_adv(speed,
-			FAL_FULL_DUPLEX);
-		if (!hsl_port_phydev_adv_valid(phydev, autoadv)) {
-			mutex_unlock(&phydev->lock);
-			return SW_NOT_SUPPORTED;
-		}
-	}
-	ret = phy_config_aneg(phydev);
+	phydev->speed = speed;
+	ret = hsl_phydev_speed_duplex_set(phydev);
 	mutex_unlock(&phydev->lock);
 
 	return ret;
@@ -3600,14 +3619,8 @@ hsl_port_phy_std_duplex_set(struct phy_device *phydev, a_uint32_t duplex)
 	int ret;
 
 	mutex_lock(&phydev->lock);
-	if (phydev->speed <= FAL_SPEED_100) {
-		phydev->autoneg = A_FALSE;
-		phydev->duplex = duplex;
-	} else {
-		phydev->autoneg = A_TRUE;
-		phydev->duplex = FAL_FULL_DUPLEX;
-	}
-	ret = phy_config_aneg(phydev);
+	phydev->duplex = duplex;
+	ret = hsl_phydev_speed_duplex_set(phydev);
 	mutex_unlock(&phydev->lock);
 
 	return ret;
