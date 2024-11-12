@@ -191,6 +191,8 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 a_uint32_t ssdk_dts_netdev_switch_alloc(ssdk_netdev_switch_t **netdev_switch);
 ssdk_netdev_switch_t *ssdk_dts_netdev_switch_get(a_uint32_t index);
 ssdk_netdev_switch_t *ssdk_dts_netdev_switch_find(a_uint32_t port_id);
+ssdk_netdev_switch_t *
+ssdk_dts_netdev_switch_find_by_netdev(struct net_device *netdev);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

@@ -316,6 +316,20 @@ ssdk_netdev_switch_t *ssdk_dts_netdev_switch_find(a_uint32_t port_id)
 	return NULL;
 }
 
+ssdk_netdev_switch_t *
+ssdk_dts_netdev_switch_find_by_netdev(struct net_device *netdev)
+{
+	a_uint32_t index = 0;
+
+	for (index = 0; index < SSDK_NETDEV_SWITCH_NUM; index++) {
+		if (!strncmp(ssdk_dt_global.netdev_switch[index].switch_netdev_name,
+				netdev->name, IFNAMSIZ))
+			return &ssdk_dt_global.netdev_switch[index];
+	}
+
+	return NULL;
+}
+
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 static void ssdk_dt_parse_mac_mode(a_uint32_t dev_id,
 		struct device_node *switch_node, ssdk_init_cfg *cfg)

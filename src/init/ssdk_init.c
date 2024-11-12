@@ -51,6 +51,7 @@
 #include <linux/string.h>
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
+#include <net/dsa.h>
 
 #if defined(IN_SWCONFIG)
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
@@ -1348,18 +1349,7 @@ qm_err_check_work_task_polling(struct work_struct *work)
 {
 	struct qca_phy_priv *priv = container_of(work, struct qca_phy_priv,
                                             qm_dwork_polling.work);
-
-	mutex_lock(&priv->qm_lock);
-
-	if(priv->version == QCA_VER_MHT) {
-#if defined(MHT)
-		qca_mht_sw_mac_polling_task(priv);
-#endif
-	} else {
-		qca_ar8327_sw_mac_polling_task(priv);
-	}
-
-	mutex_unlock(&priv->qm_lock);
+	qca_link_change_task(priv);
 
 #ifndef SSDK_QM_CHANGE_WQ
 	schedule_delayed_work(&priv->qm_dwork,
@@ -1764,6 +1754,53 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 }
 #endif
 
+#if IS_ENABLED(CONFIG_NET_DSA)
+static int ssdk_dsa_event_link_change(struct net_device *dev, bool link)
+{
+	struct dsa_port *dp = NULL;
+	ssdk_netdev_switch_t *netdev_switch = NULL;
+	struct qca_phy_priv* priv = NULL;
+
+	if (!dsa_slave_dev_check(dev))
+		return NOTIFY_DONE;
+
+	/* find dp,master by dsa helper and get net_switch */
+	dp = dsa_port_from_netdev(dev);
+	netdev_switch = ssdk_dts_netdev_switch_find_by_netdev(dp->cpu_dp->master);
+	if (!netdev_switch)
+		return NOTIFY_DONE;
+
+	priv = ssdk_phy_priv_data_get(netdev_switch->switch_dev_id);
+	if (!priv)
+		return NOTIFY_DONE;
+
+	qca_link_change_task(priv);
+
+	return NOTIFY_OK;
+}
+
+static int ssdk_dsa_event_nb(struct notifier_block *unused,
+		unsigned long event, void *ptr)
+{
+	switch (event) {
+		case DSA_NOTIFIER_PORT_LINK:
+			struct dsa_notifier_link *info = (struct dsa_notifier_link *)ptr;
+
+			SSDK_DEBUG("%s, link: %d.\n", info->info.dev->name, info->link);
+			return ssdk_dsa_event_link_change(info->info.dev, info->link);
+
+		default:
+			SSDK_INFO("DSA event %lu is not supported\n", event);
+	}
+
+	return NOTIFY_DONE;
+}
+
+static struct notifier_block ssdk_dsa_notifier_nb = {
+	.notifier_call = ssdk_dsa_event_nb,
+};
+#endif
+
 #if defined(DESS) || defined(HPPE) || defined (ISISC) || defined (ISIS) || defined(MP) || defined(MHT)
 static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 {
@@ -1831,6 +1868,7 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 	{
 		qm_err_check_work_init(priv);
 		qm_err_check_work_start(priv);
+
 #ifdef HPPE
 		if (_ssdk_mac_sw_sync_chip_check(priv) != SW_OK) {
 			return 0;
@@ -1883,6 +1921,13 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 		}
 	}
 
+#if IS_ENABLED(CONFIG_NET_DSA)
+	if (priv->version == QCA_VER_MHT ||
+		priv->version == QCA_VER_AR8337 ||
+		priv->version == QCA_VER_AR8327)
+		register_dsa_blocking_notifier(&ssdk_dsa_notifier_nb);
+#endif
+
 	return 0;
 }
 
@@ -1905,6 +1950,14 @@ static int ssdk_switch_unregister(a_uint32_t dev_id)
 #if defined(IN_SWCONFIG)
 	unregister_switch(&qca_phy_priv_global[dev_id]->sw_dev);
 #endif
+
+#if IS_ENABLED(CONFIG_NET_DSA)
+	if (priv->version == QCA_VER_MHT ||
+		priv->version == QCA_VER_AR8337 ||
+		priv->version == QCA_VER_AR8327)
+		unregister_dsa_blocking_notifier(&ssdk_dsa_notifier_nb);
+#endif
+
 	return 0;
 }
 #endif

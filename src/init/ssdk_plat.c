@@ -84,6 +84,7 @@
 #endif
 
 #include "adpt.h"
+#include "ssdk_interrupt.h"
 
 #ifdef IN_LINUX_STD_PTP
 #include "hsl_ptp.h"
@@ -1517,6 +1518,7 @@ static ssize_t ssdk_mac_polling_set(struct device *dev,
 {
 	char num_buf[12];
 	a_uint32_t num;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(ssdk_dev_id);
 
 	if (count >= sizeof(num_buf))
 		return 0;
@@ -1524,10 +1526,23 @@ static ssize_t ssdk_mac_polling_set(struct device *dev,
 	num_buf[count] = '\0';
 	sscanf(num_buf, "%u", &num);
 
-	if (num > 0)
-		ssdk_mac_sw_sync_work_start(ssdk_dev_id);
-	else
-		ssdk_mac_sw_sync_work_stop(ssdk_dev_id);
+	if (num > 0) {
+		if (priv->link_polling_required) {
+			ssdk_mac_sw_sync_work_start(ssdk_dev_id);
+			qm_err_check_work_start(priv);
+		} else {
+			qca_phy_enable_intr(priv);
+			qca_switch_enable_intr(priv, FAL_SWITCH_INTR_LINK_STATUS);
+		}
+	} else {
+		if (priv->link_polling_required) {
+			ssdk_mac_sw_sync_work_stop(ssdk_dev_id);
+			qm_err_check_work_stop(priv);
+		} else {
+			qca_phy_disable_intr(priv);
+			qca_switch_disable_intr(priv, FAL_SWITCH_INTR_LINK_STATUS);
+		}
+	}
 
 	return count;
 }

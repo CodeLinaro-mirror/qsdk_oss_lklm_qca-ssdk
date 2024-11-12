@@ -62,7 +62,7 @@
 
 extern void qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv);
 
-static int qca_phy_disable_intr(struct qca_phy_priv *priv)
+int qca_phy_disable_intr(struct qca_phy_priv *priv)
 {
 	a_uint32_t  port_id = 0, phy_intr_status = 0;
 
@@ -76,7 +76,7 @@ static int qca_phy_disable_intr(struct qca_phy_priv *priv)
 	return 0;
 }
 
-static int qca_switch_disable_intr(struct qca_phy_priv *priv, a_uint32_t intr_mask)
+int qca_switch_disable_intr(struct qca_phy_priv *priv, a_uint32_t intr_mask)
 {
 	a_uint32_t port_id = 0, intr_mask_tmp = 0;
 
@@ -101,7 +101,7 @@ static int qca_switch_disable_intr(struct qca_phy_priv *priv, a_uint32_t intr_ma
 	return 0;
 }
 
-static int qca_phy_enable_intr(struct qca_phy_priv *priv)
+int qca_phy_enable_intr(struct qca_phy_priv *priv)
 {
 	a_uint32_t port_id = 0, phy_intr_status = 0;
 
@@ -159,8 +159,7 @@ static int qca_switch_clean_intr(struct qca_phy_priv *priv, a_uint32_t intr_mask
 	return 0;
 }
 
-static void
-qca_link_change_task(struct qca_phy_priv *priv)
+void qca_link_change_task(struct qca_phy_priv *priv)
 {
 	SSDK_DEBUG("qca_link_change_task is running\n");
 	mutex_lock(&priv->qm_lock);
