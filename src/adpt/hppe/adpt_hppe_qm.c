@@ -1254,8 +1254,8 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 		case HPPE_TYPE:
 		case MRPPE_TYPE:
 		case APPE_TYPE:
-			ceiling = 400;
-			weight = 4;
+			ceiling = 1200;
+			weight = 7;
 			resume_offset = 36;
 			green_max = 250;
 			break;
@@ -1266,8 +1266,8 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 			green_max = 144;
 			break;
 		case MPPE_TYPE:
-			ceiling = 50;
-			weight = 5;
+			ceiling = 300;
+			weight = 7;
 			resume_offset = 18;
 			green_max = 50;
 			break;
