@@ -1111,14 +1111,11 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 	a_uint32_t hw_index;
 	a_uint64_t byte_cnt;
 	sw_error_t rv = SW_OK;
-	fal_acl_rule_t * sw_rule;
-	fal_acl_rule_t inner_rule;
+	fal_acl_rule_t *inner_rule = NULL;
 	union pre_ipo_rule_reg_u hw_reg = {0};
 	union pre_ipo_mask_reg_u hw_mask = {0};
 	union pre_ipo_action_u hw_act = {0};
 	union pre_ipo_cnt_tbl_u hw_match = {0};
-
-	aos_mem_zero(&inner_rule, sizeof(fal_acl_rule_t));
 
 	while(hw_entries != 0)
 	{
@@ -1138,16 +1135,22 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 		rule->pri = hw_reg.bf.pri&0x7;
 		if(hw_reg.bf.inner_outer_sel == 0)
 		{
-			sw_rule = rule;
+			/*get outer rule info from first 53bit hw rule reg fields*/
+			_adpt_hppe_acl_rule_hw_2_sw(dev_id, hw_reg.bf.rule_type,
+				hw_reg.bf.range_en, hw_reg.bf.inverse_en, &hw_reg, &hw_mask, rule);
 		}
 		else
 		{
-			sw_rule = &inner_rule;
-		}
+			if (!inner_rule)
+				inner_rule = (fal_acl_rule_t *)kzalloc(sizeof(fal_acl_rule_t), GFP_ATOMIC);
 
-		/*get sw rule info from first 53bit hw rule reg fields*/
-		_adpt_hppe_acl_rule_hw_2_sw(dev_id, hw_reg.bf.rule_type,
-			hw_reg.bf.range_en, hw_reg.bf.inverse_en, &hw_reg, &hw_mask, sw_rule);
+			if (!inner_rule)
+				return SW_FAIL;
+
+			/*get inner rule info from first 53bit hw rule reg fields*/
+			_adpt_hppe_acl_rule_hw_2_sw(dev_id, hw_reg.bf.rule_type,
+				hw_reg.bf.range_en, hw_reg.bf.inverse_en, &hw_reg, &hw_mask, inner_rule);
+		}
 
 		_adpt_appe_pre_acl_action_hw_2_sw(dev_id, &hw_act, rule);
 
@@ -1159,7 +1162,13 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 
 		hw_entries &= (~(1<<hw_index));
 	}
-	acl_rule_field_convert(&inner_rule, &rule->inner_rule_field, A_TRUE);
+
+	if (inner_rule) {
+		acl_rule_field_convert(inner_rule, &rule->inner_rule_field, A_TRUE);
+		aos_mem_free(inner_rule);
+		inner_rule = NULL;
+	}
+
 	return rv;
 }
 

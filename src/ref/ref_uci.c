@@ -9434,14 +9434,20 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 	a_uint32_t obj_type = 0;
 	a_uint32_t obj_value = 0;
 	a_uint32_t list_id = 0xffffffff;
-	fal_acl_rule_t rule;
+	fal_acl_rule_t *rule = NULL;
 #if defined(APPE)
 	fal_acl_rule_t *inner_rule = NULL;
 #endif
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
 	a_uint32_t tmpdata = 0;
-	memset(&rule, 0, sizeof(fal_acl_rule_t));
+
+	rule = (fal_acl_rule_t *)aos_mem_alloc(sizeof(fal_acl_rule_t));
+	if (!rule) {
+		SSDK_ERROR("rule allocate fail\n");
+		return SW_FAIL;
+	}
+
 #if defined(APPE)
 	inner_rule = (fal_acl_rule_t *)aos_mem_alloc(sizeof(fal_acl_rule_t));
 	if(inner_rule == NULL)
@@ -9474,18 +9480,18 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 			val_ptr[2] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "rule_type")) {
 			cmd_data_check_ruletype((char*)ext_value_p->option_value,
-						&(rule.rule_type), sizeof(a_uint32_t));
+						&(rule->rule_type), sizeof(a_uint32_t));
 			val_ptr[3] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "is_postrouting")) {
 			cmd_data_check_confirm((char*)ext_value_p->option_value, A_FALSE,
-						&(rule.post_routing), sizeof(rule.post_routing));
-			FAL_FIELD_FLG_SET(rule.field_flg,
+						&(rule->post_routing), sizeof(rule->post_routing));
+			FAL_FIELD_FLG_SET(rule->field_flg,
 					FAL_ACL_FIELD_POST_ROURING_EN);
 		} else if(!strcmp(ext_value_p->option_name, "acl_pool")) {
 			cmd_data_check_integer((char*)ext_value_p->option_value,
 						&(tmpdata), 1, 0);
-			rule.acl_pool = tmpdata;
-			FAL_FIELD_FLG_SET(rule.field_flg,
+			rule->acl_pool = tmpdata;
+			FAL_FIELD_FLG_SET(rule->field_flg,
 					FAL_ACL_FIELD_RES_CHAIN);
 		} else if(!strcmp(ext_value_p->option_name, "port_bitmap")) {
 			cmd_data_check_pbmp((char*)ext_value_p->option_value, &portmap, 4);
@@ -9495,21 +9501,21 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 			cmd_data_check_uint32((char*)ext_value_p->option_value, &obj_value, 4);
 		}
 
-		parse_acl_rule_field(ext_value_p, &rule, A_FALSE);
-		parse_acl_action_field(ext_value_p, &rule);
+		parse_acl_rule_field(ext_value_p, rule, A_FALSE);
+		parse_acl_action_field(ext_value_p, rule);
 
 #if defined(APPE)
-		if(rule.rule_type == FAL_ACL_RULE_TUNNEL_MAC ||
-			rule.rule_type == FAL_ACL_RULE_TUNNEL_IP4 ||
-			rule.rule_type == FAL_ACL_RULE_TUNNEL_IP6 ||
-			rule.rule_type == FAL_ACL_RULE_TUNNEL_UDF)
+		if(rule->rule_type == FAL_ACL_RULE_TUNNEL_MAC ||
+			rule->rule_type == FAL_ACL_RULE_TUNNEL_IP4 ||
+			rule->rule_type == FAL_ACL_RULE_TUNNEL_IP6 ||
+			rule->rule_type == FAL_ACL_RULE_TUNNEL_UDF)
 		{
 			if(!strcmp(ext_value_p->option_name, "inner_rule_type")) {
 				cmd_data_check_ruletype((char*)ext_value_p->option_value,
-					&(rule.inner_rule_field.rule_type), sizeof(a_uint32_t));
+					&(rule->inner_rule_field.rule_type), sizeof(a_uint32_t));
 			}
 			parse_acl_rule_field(ext_value_p, inner_rule, A_TRUE);
-			parse_acl_tunnel_info_field(ext_value_p, &rule.tunnel_info);
+			parse_acl_tunnel_info_field(ext_value_p, &rule->tunnel_info);
 		}
 #endif
 
@@ -9517,12 +9523,12 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 		switch_ext_p = switch_ext_p->next;
 	}
 #if defined(APPE)
-	if(rule.rule_type == FAL_ACL_RULE_TUNNEL_MAC ||
-		rule.rule_type == FAL_ACL_RULE_TUNNEL_IP4 ||
-		rule.rule_type == FAL_ACL_RULE_TUNNEL_IP6 ||
-		rule.rule_type == FAL_ACL_RULE_TUNNEL_UDF)
+	if(rule->rule_type == FAL_ACL_RULE_TUNNEL_MAC ||
+		rule->rule_type == FAL_ACL_RULE_TUNNEL_IP4 ||
+		rule->rule_type == FAL_ACL_RULE_TUNNEL_IP6 ||
+		rule->rule_type == FAL_ACL_RULE_TUNNEL_UDF)
 	{
-		acl_rule_field_convert(inner_rule, &rule.inner_rule_field, A_TRUE);
+		acl_rule_field_convert(inner_rule, &rule->inner_rule_field, A_TRUE);
 	}
 	aos_mem_free(inner_rule);
 	inner_rule = NULL;
@@ -9532,14 +9538,17 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 		list_id = rule_id;
 		rule_id = 0;
 	} else {
-		rule.pri = prio & 0x7;
+		rule->pri = prio & 0x7;
 		prio = (prio >> 3) & 0x3f;
 	}
 	SSDK_DEBUG("uci set acl list %d, rule %d\n", list_id, rule_id);
 	SSDK_DEBUG("uci set acl portbitmap 0x%x, obj_type %d, obj_value %d\n",
 			portmap, obj_type, obj_value);
 	fal_acl_list_creat(dev_id, list_id, prio);
-	fal_acl_rule_add(dev_id, list_id, rule_id, 1, &rule);
+	fal_acl_rule_add(dev_id, list_id, rule_id, 1, rule);
+	aos_mem_free(rule);
+	rule = NULL;
+
 	/*bind to port bitmap*/
 	if( portmap != 0 ) {
 		for (i = 0; i < AR8327_NUM_PORTS; i++) {
