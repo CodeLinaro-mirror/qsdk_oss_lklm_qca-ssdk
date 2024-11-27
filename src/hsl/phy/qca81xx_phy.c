@@ -21,6 +21,7 @@
 #include "hsl_phy.h"
 #include "qcaphy_c45_common.h"
 #include "qca81xx_phy.h"
+#include "qca81xx.h"
 
 static a_bool_t phy_ops_flag = A_FALSE;
 
@@ -1117,6 +1118,7 @@ int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
 	if(phy_ops_flag == A_FALSE) {
 		qca81xx_phy_api_ops_init();
+		qca81xx_phy_driver_register();
 		phy_ops_flag = A_TRUE;
 	}
 
@@ -1125,5 +1127,7 @@ int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 void qca81xx_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
+	qca81xx_phy_driver_unregister();
+
 	return;
 }
