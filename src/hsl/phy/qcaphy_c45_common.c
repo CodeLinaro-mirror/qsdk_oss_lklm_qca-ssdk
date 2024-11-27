@@ -245,8 +245,8 @@ qcaphy_c45_get_link_status(a_uint32_t dev_id, a_uint32_t phy_addr)
 sw_error_t
 qcaphy_c45_poweron(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
-		QCAPHY_MMD31_CONTROL, QCAPHY_POWER_DOWN, 0);
+	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD1_NUM,
+		QCAPHY_MMD1_PMA_CONTROL, QCAPHY_POWER_DOWN, 0);
 }
 /*
  * @brief poweroff the phy
@@ -258,8 +258,8 @@ qcaphy_c45_poweron(a_uint32_t dev_id, a_uint32_t phy_addr)
 sw_error_t
 qcaphy_c45_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
-		QCAPHY_MMD31_CONTROL, QCAPHY_POWER_DOWN, QCAPHY_POWER_DOWN);
+	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD1_NUM,
+		QCAPHY_MMD1_PMA_CONTROL, QCAPHY_POWER_DOWN, QCAPHY_POWER_DOWN);
 }
 /*
  * @brief reset the phy
@@ -271,8 +271,8 @@ qcaphy_c45_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr)
 sw_error_t
 qcaphy_c45_sw_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
-		QCAPHY_MMD31_CONTROL, QCAPHY_CTRL_SOFTWARE_RESET,
+	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD1_NUM,
+		QCAPHY_MMD1_PMA_CONTROL, QCAPHY_CTRL_SOFTWARE_RESET,
 		QCAPHY_CTRL_SOFTWARE_RESET);
 }
 /*
@@ -449,10 +449,10 @@ qcaphy_c45_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_addr,
 	sw_error_t rv = SW_OK;
 	a_uint32_t adv = 0, lp_adv = 0;
 
-	rv = qcaphy_get_eee_adv(dev_id, phy_addr, &adv);
+	rv = qcaphy_c45_get_eee_adv(dev_id, phy_addr, &adv);
 	SW_RTN_ON_ERROR(rv);
 
-	rv = qcaphy_get_eee_partner_adv(dev_id, phy_addr, &lp_adv);
+	rv = qcaphy_c45_get_eee_partner_adv(dev_id, phy_addr, &lp_adv);
 	SW_RTN_ON_ERROR(rv);
 
 	*status = (adv & lp_adv);
@@ -491,9 +491,9 @@ qcaphy_c45_get_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t * enable)
 
 	*enable = A_FALSE;
 
-	rv = qcaphy_get_eee_adv(dev_id, phy_addr, &eee_adv);
+	rv = qcaphy_c45_get_eee_adv(dev_id, phy_addr, &eee_adv);
 	PHY_RTN_ON_ERROR(rv);
-	if (eee_adv && FAL_PHY_EEE_ALL_ADV)
+	if (eee_adv == FAL_PHY_EEE_ALL_ADV)
 		*enable = A_TRUE;
 
 	return SW_OK;

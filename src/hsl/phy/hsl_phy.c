@@ -48,6 +48,9 @@
 #include <qca808x_phy.h>
 /*qca808x_end*/
 #endif
+#ifdef IN_QCA81XX_PHY
+#include <qca81xx_phy.h>
+#endif
 #include <linux/of_gpio.h>
 /*qca808x_start*/
 #include "sw.h"
@@ -108,6 +111,11 @@ phy_driver_instance_t ssdk_phy_driver[] =
 	{QCA808X_PHY_CHIP, {0}, NULL, NULL, NULL},
 	#endif
 /*qca808x_start*/
+	#ifdef IN_QCA81XX_PHY
+	{QCA81XX_PHY_CHIP, {0}, NULL, qca81xx_phy_init, qca81xx_phy_exit},
+	#else
+	{QCA81XX_PHY_CHIP, {0}, NULL, NULL, NULL},
+	#endif
 	{MAX_PHY_CHIP, {0}, NULL, NULL, NULL}
 };
 sw_error_t hsl_phy_api_ops_register(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops)
@@ -290,6 +298,9 @@ phy_type_t hsl_phytype_get_by_phyid(a_uint32_t dev_id, a_uint32_t phy_id)
 /*qca808x_start*/
 		case QCA8081_PHY_V1_1:
 			phytype = QCA808X_PHY_CHIP;
+			break;
+		case QCA8111_PHY:
+			phytype = QCA81XX_PHY_CHIP;
 			break;
 		default:
 			phytype = MAX_PHY_CHIP;

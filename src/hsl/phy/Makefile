@@ -79,6 +79,10 @@ endif
 endif
 endif
 
+ifeq (TRUE, $(IN_QCA81XX_PHY))
+    SRC_LIST += qca81xx_phy.c
+endif
+
 ifeq (TRUE, $(IN_SFP_PHY))
     SRC_LIST += sfp_phy.c
 endif
