@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "fal_ptp.h"
+#include "hsl_ptp.h"
 #include "qca808x.h"
 
 void hsl_ptp_event_stat_update(hsl_ptp_event_pkt_stat_t *pkt_stat,
@@ -122,7 +122,7 @@ static int hsl_ptp_event_stat_operation_callback(struct device *dev, void *data)
 	switch (phy_id) {
 		case QCA8081_PHY_V1_1:
 		case QCA8084_PHY:
-			pkt_stat = ((qca808x_priv *)priv)->ptp_event_stat;
+			pkt_stat = priv;
 			break;
 		default:
 			SSDK_ERROR("PHY ID 0x%.8x not supported", phydev->phy_id);

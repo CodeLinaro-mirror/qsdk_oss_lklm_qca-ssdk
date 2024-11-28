@@ -53,7 +53,6 @@ extern "C" {
 #include "fal_init.h"
 #include "fal_policer.h"
 #include "fal_misc.h"
-#include "fal_ptp.h"
 #include "fal_sfp.h"
 #include "fal_tunnel.h"
 #include "fal_vxlan.h"
@@ -64,6 +63,8 @@ extern "C" {
 #include "fal_athtag.h"
 #include "fal_pktedit.h"
 #include "ssdk_plat.h"
+#include "hsl_api.h"
+#include "hsl_phy.h"
 
 #define ADPT_DEV_ID_CHECK(dev_id) \
 do { \
@@ -1115,102 +1116,6 @@ typedef sw_error_t (*adpt_intr_port_link_status_get_func)(a_uint32_t dev_id,
 /* uniphy */
 typedef sw_error_t (*adpt_uniphy_mode_set_func)(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode);
 
-/* ptp */
-typedef sw_error_t (*adpt_ptp_config_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_config_t *config);
-typedef sw_error_t (*adpt_ptp_config_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_config_t *config);
-typedef sw_error_t (*adpt_ptp_reference_clock_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_reference_clock_t ref_clock);
-typedef sw_error_t (*adpt_ptp_reference_clock_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_reference_clock_t *ref_clock);
-typedef sw_error_t (*adpt_ptp_rx_timestamp_mode_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_rx_timestamp_mode_t ts_mode);
-typedef sw_error_t (*adpt_ptp_rx_timestamp_mode_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_rx_timestamp_mode_t *ts_mode);
-typedef sw_error_t (*adpt_ptp_timestamp_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_direction_t direction,
-		fal_ptp_pkt_info_t *pkt_info, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_pkt_timestamp_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_pkt_timestamp_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_grandmaster_mode_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_grandmaster_mode_t *gm_mode);
-typedef sw_error_t (*adpt_ptp_grandmaster_mode_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_grandmaster_mode_t *gm_mode);
-typedef sw_error_t (*adpt_ptp_rtc_time_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_rtc_time_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_rtc_time_clear_func)(a_uint32_t dev_id,
-		a_uint32_t port_id);
-typedef sw_error_t (*adpt_ptp_rtc_adjtime_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_rtc_adjfreq_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_rtc_adjfreq_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_link_delay_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_link_delay_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_time_t *time);
-typedef sw_error_t (*adpt_ptp_security_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_security_t *sec);
-typedef sw_error_t (*adpt_ptp_security_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_security_t *sec);
-typedef sw_error_t (*adpt_ptp_pps_signal_control_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_pps_signal_control_t *sig_control);
-typedef sw_error_t (*adpt_ptp_pps_signal_control_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_pps_signal_control_t *sig_control);
-typedef sw_error_t (*adpt_ptp_rx_crc_recalc_enable_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, a_bool_t status);
-typedef sw_error_t (*adpt_ptp_rx_crc_recalc_status_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, a_bool_t *status);
-typedef sw_error_t (*adpt_ptp_asym_correction_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_asym_correction_t *asym_cf);
-typedef sw_error_t (*adpt_ptp_asym_correction_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_asym_correction_t *asym_cf);
-typedef sw_error_t (*adpt_ptp_output_waveform_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_output_waveform_t *waveform);
-typedef sw_error_t (*adpt_ptp_output_waveform_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_output_waveform_t *waveform);
-typedef sw_error_t (*adpt_ptp_rtc_time_snapshot_enable_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, a_bool_t status);
-typedef sw_error_t (*adpt_ptp_rtc_time_snapshot_status_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, a_bool_t *status);
-typedef sw_error_t (*adpt_ptp_increment_sync_from_clock_enable_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, a_bool_t status);
-typedef sw_error_t (*adpt_ptp_increment_sync_from_clock_status_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, a_bool_t *status);
-typedef sw_error_t (*adpt_ptp_tod_uart_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_tod_uart_t *tod_uart);
-typedef sw_error_t (*adpt_ptp_tod_uart_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_tod_uart_t *tod_uart);
-typedef sw_error_t (*adpt_ptp_enhanced_timestamp_engine_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_direction_t direction,
-		fal_ptp_enhanced_ts_engine_t *ts_engine);
-typedef sw_error_t (*adpt_ptp_enhanced_timestamp_engine_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_direction_t direction,
-		fal_ptp_enhanced_ts_engine_t *ts_engine);
-typedef sw_error_t (*adpt_ptp_trigger_set_func)(a_uint32_t dev_id, a_uint32_t port_id,
-		a_uint32_t trigger_id, fal_ptp_trigger_t *triger);
-typedef sw_error_t (*adpt_ptp_trigger_get_func)(a_uint32_t dev_id, a_uint32_t port_id,
-		a_uint32_t trigger_id, fal_ptp_trigger_t *triger);
-typedef sw_error_t (*adpt_ptp_capture_set_func)(a_uint32_t dev_id, a_uint32_t port_id,
-		a_uint32_t capture_id, fal_ptp_capture_t *capture);
-typedef sw_error_t (*adpt_ptp_capture_get_func)(a_uint32_t dev_id, a_uint32_t port_id,
-		a_uint32_t capture_id, fal_ptp_capture_t *capture);
-typedef sw_error_t (*adpt_ptp_interrupt_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_interrupt_t *interrupt);
-typedef sw_error_t (*adpt_ptp_interrupt_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_interrupt_t *interrupt);
-
-typedef sw_error_t (*adpt_ptp_rtc_sync_set_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_rtc_src_type_t src_type, a_uint32_t src_id);
-typedef sw_error_t (*adpt_ptp_rtc_sync_get_func)(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_ptp_rtc_src_type_t *src_type, a_uint32_t *src_id);
-
 /* sfp */
 typedef sw_error_t (*adpt_sfp_eeprom_data_get_func)(a_uint32_t dev_id,
 		a_uint32_t port_id, fal_sfp_data_t *entry);
@@ -2044,54 +1949,6 @@ typedef struct
 	/* uniphy */
 	adpt_uniphy_mode_set_func adpt_uniphy_mode_set;
 
-	/* ptp */
-	adpt_ptp_config_set_func adpt_ptp_config_set;
-	adpt_ptp_config_get_func adpt_ptp_config_get;
-	adpt_ptp_reference_clock_set_func adpt_ptp_reference_clock_set;
-	adpt_ptp_reference_clock_get_func adpt_ptp_reference_clock_get;
-	adpt_ptp_rx_timestamp_mode_set_func adpt_ptp_rx_timestamp_mode_set;
-	adpt_ptp_rx_timestamp_mode_get_func adpt_ptp_rx_timestamp_mode_get;
-	adpt_ptp_timestamp_get_func adpt_ptp_timestamp_get;
-	adpt_ptp_pkt_timestamp_set_func adpt_ptp_pkt_timestamp_set;
-	adpt_ptp_pkt_timestamp_get_func adpt_ptp_pkt_timestamp_get;
-	adpt_ptp_grandmaster_mode_set_func adpt_ptp_grandmaster_mode_set;
-	adpt_ptp_grandmaster_mode_get_func adpt_ptp_grandmaster_mode_get;
-	adpt_ptp_rtc_time_get_func adpt_ptp_rtc_time_get;
-	adpt_ptp_rtc_time_set_func adpt_ptp_rtc_time_set;
-	adpt_ptp_rtc_time_clear_func adpt_ptp_rtc_time_clear;
-	adpt_ptp_rtc_adjtime_set_func adpt_ptp_rtc_adjtime_set;
-	adpt_ptp_rtc_adjfreq_set_func adpt_ptp_rtc_adjfreq_set;
-	adpt_ptp_rtc_adjfreq_get_func adpt_ptp_rtc_adjfreq_get;
-	adpt_ptp_link_delay_set_func adpt_ptp_link_delay_set;
-	adpt_ptp_link_delay_get_func adpt_ptp_link_delay_get;
-	adpt_ptp_security_set_func adpt_ptp_security_set;
-	adpt_ptp_security_get_func adpt_ptp_security_get;
-	adpt_ptp_pps_signal_control_set_func adpt_ptp_pps_signal_control_set;
-	adpt_ptp_pps_signal_control_get_func adpt_ptp_pps_signal_control_get;
-	adpt_ptp_rx_crc_recalc_enable_func adpt_ptp_rx_crc_recalc_enable;
-	adpt_ptp_rx_crc_recalc_status_get_func adpt_ptp_rx_crc_recalc_status_get;
-	adpt_ptp_asym_correction_set_func adpt_ptp_asym_correction_set;
-	adpt_ptp_asym_correction_get_func adpt_ptp_asym_correction_get;
-	adpt_ptp_output_waveform_set_func adpt_ptp_output_waveform_set;
-	adpt_ptp_output_waveform_get_func adpt_ptp_output_waveform_get;
-	adpt_ptp_rtc_time_snapshot_enable_func adpt_ptp_rtc_time_snapshot_enable;
-	adpt_ptp_rtc_time_snapshot_status_get_func adpt_ptp_rtc_time_snapshot_status_get;
-	adpt_ptp_increment_sync_from_clock_enable_func adpt_ptp_increment_sync_from_clock_enable;
-	adpt_ptp_increment_sync_from_clock_status_get_func \
-		adpt_ptp_increment_sync_from_clock_status_get;
-	adpt_ptp_tod_uart_set_func adpt_ptp_tod_uart_set;
-	adpt_ptp_tod_uart_get_func adpt_ptp_tod_uart_get;
-	adpt_ptp_enhanced_timestamp_engine_set_func adpt_ptp_enhanced_timestamp_engine_set;
-	adpt_ptp_enhanced_timestamp_engine_get_func adpt_ptp_enhanced_timestamp_engine_get;
-	adpt_ptp_trigger_set_func adpt_ptp_trigger_set;
-	adpt_ptp_trigger_get_func adpt_ptp_trigger_get;
-	adpt_ptp_capture_set_func adpt_ptp_capture_set;
-	adpt_ptp_capture_get_func adpt_ptp_capture_get;
-	adpt_ptp_interrupt_set_func adpt_ptp_interrupt_set;
-	adpt_ptp_interrupt_get_func adpt_ptp_interrupt_get;
-	adpt_ptp_rtc_sync_set_func adpt_ptp_rtc_sync_set;
-	adpt_ptp_rtc_sync_get_func adpt_ptp_rtc_sync_get;
-
 	/* sfp */
 	adpt_sfp_eeprom_data_get_func adpt_sfp_eeprom_data_get;
 	adpt_sfp_eeprom_data_set_func adpt_sfp_eeprom_data_set;
@@ -2467,6 +2324,15 @@ adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
 			sw_error_t rv = SW_NOT_SUPPORTED; \
 			FAL_API_LOCK; \
 			HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
+#define DEFINE_FAL_PORT_PHY_PTP_FUNC(func, dev_id, port_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			FAL_API_LOCK; \
+			HSL_PORT_PHY_PTP_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
 			FAL_API_UNLOCK; \
 			return rv; \
 		}

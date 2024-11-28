@@ -1142,6 +1142,24 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 			} \
 		} \
 	}
+
+#if defined(NSS_PHY_PTP)
+#define HSL_PORT_PHY_PTP_API_RUN(func, dev_id, port_id, ...)					\
+	{											\
+		if (hsl_port_phy_connected(dev_id, port_id)) {					\
+			struct nss_phy_ops *nss_phy_ops = NULL;					\
+			struct nss_phy_ptp_ops *ptp_ops = NULL;					\
+			struct nss_phy_device nss_phydev;					\
+			hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops);	\
+			ptp_ops = nss_phy_ops->ptp_ops;						\
+			if (ptp_ops && ptp_ops->func)						\
+				rv = ptp_ops->func(&nss_phydev, ##__VA_ARGS__);			\
+		}										\
+	}
+#else
+#define HSL_PORT_PHY_PTP_API_RUN(func, dev_id, port_id, ...)
+#endif
+
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */
