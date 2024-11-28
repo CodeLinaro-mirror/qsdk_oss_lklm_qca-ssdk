@@ -56,6 +56,7 @@
 #include <linux/netdevice.h>
 #include <linux/i2c.h>
 #include "ssdk_phy_i2c.h"
+#include "qcaphy_common.h"
 
 phy_info_t *phy_info[SW_MAX_NR_DEV] = {0};
 a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
@@ -3430,6 +3431,130 @@ hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
 	rv = __hsl_phy_modify_debug(dev_id, phy_addr, debug_reg, mask, value);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+
+/*
+ * @brief read debug register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @return debug register value
+ */
+a_uint16_t
+__hsl_phy_c45_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = __hsl_phy_c45_mmd_reg_write(dev_id, phy_addr, QCAPHY_MMD31_NUM,
+		HSL_PHY_DEBUG_PORT_ADDRESS, debug_reg);
+	if(rv != SW_OK)
+		return PHY_INVALID_DATA;
+	return __hsl_phy_c45_mmd_reg_read(dev_id, phy_addr, QCAPHY_MMD31_NUM,
+		HSL_PHY_DEBUG_PORT_DATA);
+}
+/*
+ * @brief write debug register without lock.
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] reg_val write to debug register
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_c45_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t debug_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = __hsl_phy_c45_mmd_reg_write(dev_id, phy_id, QCAPHY_MMD31_NUM,
+		HSL_PHY_DEBUG_PORT_ADDRESS, debug_reg);
+
+	rv |= __hsl_phy_c45_mmd_reg_write(dev_id, phy_id, QCAPHY_MMD31_NUM,
+		HSL_PHY_DEBUG_PORT_DATA, reg_val);
+
+	return rv;
+}
+/*
+ * @brief modify debug register without lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+__hsl_phy_c45_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value)
+{
+	a_uint16_t phy_data = 0, new_phy_data = 0;
+
+	phy_data = __hsl_phy_c45_debug_reg_read(dev_id, phy_addr, debug_reg);
+	PHY_RTN_ON_READ_ERROR(phy_data);
+	new_phy_data = (phy_data & ~mask) | value;
+	return __hsl_phy_c45_debug_reg_write (dev_id, phy_addr, debug_reg,
+		new_phy_data);
+}
+/*
+ * @brief read debug register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @return debug register value
+ */
+a_uint16_t
+hsl_phy_c45_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg)
+{
+	a_uint16_t phy_data = 0;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	phy_data = __hsl_phy_c45_debug_reg_read(dev_id, phy_addr, debug_reg);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return phy_data;
+}
+/*
+ * @brief write debug register with lock.
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] reg_val write to debug register
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_c45_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t reg_val)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_c45_debug_reg_write(dev_id, phy_addr, debug_reg, reg_val);
+	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
+
+	return rv;
+}
+/*
+ * @brief modify debug register with lock
+ * @param[in] dev_id device id
+ * @param[in] phy_addr phy address
+ * @param[in] debug_reg debug register id
+ * @param[in] mask mask of bits to clear
+ * @param[in] value new value of bits
+ * @return SW_OK or error code
+ */
+sw_error_t
+hsl_phy_c45_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value)
+{
+	sw_error_t rv = SW_OK;
+
+	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
+	rv = __hsl_phy_c45_modify_debug(dev_id, phy_addr, debug_reg, mask, value);
 	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
 
 	return rv;

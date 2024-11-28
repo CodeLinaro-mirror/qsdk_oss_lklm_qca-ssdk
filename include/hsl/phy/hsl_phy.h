@@ -929,6 +929,25 @@ hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
+a_uint16_t
+__hsl_phy_c45_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg);
+sw_error_t
+__hsl_phy_c45_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t debug_reg, a_uint16_t reg_val);
+sw_error_t
+__hsl_phy_c45_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
+a_uint16_t
+hsl_phy_c45_debug_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg);
+sw_error_t
+hsl_phy_c45_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t reg_val);
+sw_error_t
+hsl_phy_c45_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
+
 sw_error_t
 hsl_port_phy_autoneg_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status);
 sw_error_t
