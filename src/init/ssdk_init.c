@@ -1389,10 +1389,20 @@ _qm_err_work_chip_check(struct qca_phy_priv *priv)
 	return rv;
 }
 
-void qm_err_check_work_start(struct qca_phy_priv *priv)
+void qm_err_check_work_init(struct qca_phy_priv *priv)
 {
+	if (_qm_err_work_chip_check(priv) != SW_OK)
+		return;
+
 	mutex_init(&priv->qm_lock);
 	INIT_DELAYED_WORK(&priv->qm_dwork_polling, qm_err_check_work_task_polling);
+}
+
+void qm_err_check_work_start(struct qca_phy_priv *priv)
+{
+	if (_qm_err_work_chip_check(priv) != SW_OK)
+		return;
+
 #ifndef SSDK_MIB_CHANGE_WQ
 	schedule_delayed_work(&priv->qm_dwork_polling,
 							msecs_to_jiffies(QCA_QM_WORK_DELAY));
@@ -1404,6 +1414,9 @@ void qm_err_check_work_start(struct qca_phy_priv *priv)
 
 void qm_err_check_work_stop(struct qca_phy_priv *priv)
 {
+	if (_qm_err_work_chip_check(priv) != SW_OK)
+		return;
+
 	cancel_delayed_work_sync(&priv->qm_dwork_polling);
 }
 
@@ -1816,8 +1829,8 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 
 	if(priv->link_polling_required)
 	{
-		if(_qm_err_work_chip_check(priv) == SW_OK)
-			qm_err_check_work_start(priv);
+		qm_err_check_work_init(priv);
+		qm_err_check_work_start(priv);
 #ifdef HPPE
 		if (_ssdk_mac_sw_sync_chip_check(priv) != SW_OK) {
 			return 0;
@@ -1880,8 +1893,7 @@ static int ssdk_switch_unregister(a_uint32_t dev_id)
 	qca_phy_mib_work_stop(priv);
 
 	if (priv->link_polling_required) {
-		if (_qm_err_work_chip_check(priv) == SW_OK)
-			qm_err_check_work_stop(priv);
+		qm_err_check_work_stop(priv);
 #ifdef HPPE
 		ssdk_mac_sw_sync_work_stop(dev_id);
 #endif
