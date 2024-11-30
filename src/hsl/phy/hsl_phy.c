@@ -3559,4 +3559,113 @@ hsl_phy_c45_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	return rv;
 }
+
+a_uint32_t
+hsl_soc_read(a_uint32_t dev_id, a_bool_t is_i2c, a_uint32_t reg)
+{
+	a_uint32_t val = 0;
+
+#if defined(IN_PHY_I2C_MODE)
+	if (is_i2c)
+	{
+		val = qca_phy_i2c_read_soc(dev_id, reg);
+	}
+	else
+#endif
+	{
+		struct mii_bus *bus = NULL;
+		bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+		if (!bus)
+			return 0xffff;
+		mutex_lock(&bus->mdio_lock);
+		qca_mii_raw_read(bus, reg, &val);
+		mutex_unlock(&bus->mdio_lock);
+	}
+	return val;
+}
+
+void
+hsl_soc_write(a_uint32_t dev_id, a_bool_t is_i2c, a_uint32_t reg,
+	a_uint32_t reg_val)
+{
+#if defined(IN_PHY_I2C_MODE)
+	if (is_i2c)
+	{
+		qca_phy_i2c_write_soc(dev_id, reg, reg_val);
+	}
+	else
+#endif
+	{
+		struct mii_bus *bus = NULL;
+		bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+		if (!bus)
+			return;
+		mutex_lock(&bus->mdio_lock);
+		qca_mii_raw_write(bus, reg, reg_val);
+		mutex_unlock(&bus->mdio_lock);
+	}
+}
+
+int
+hsl_modify_soc(a_uint32_t dev_id, a_bool_t is_i2c, a_uint32_t reg,
+	a_uint32_t mask, a_uint32_t val)
+{
+	int ret = 0;
+#if defined(IN_PHY_I2C_MODE)
+	if (is_i2c)
+	{
+		ret = qca_phy_i2c_modify_soc(dev_id, reg, mask, val);
+	}
+	else
+#endif
+	{
+		struct mii_bus *bus = NULL;
+		bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+		if (!bus)
+			return -1;
+		mutex_lock(&bus->mdio_lock);
+		ret = qca_mii_raw_update(bus, reg, mask, val);
+		mutex_unlock(&bus->mdio_lock);
+	}
+	return ret;
+}
+
+a_uint32_t
+hsl_phy_soc_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg)
+{
+	a_uint32_t soc_reg, phy_addr_val;
+
+	phy_addr_val = (phy_addr & GENMASK(4, 0));
+	soc_reg = (FIELD_PREP(GENMASK(28, 24), phy_addr_val) |
+		(reg & (GENMASK(23, 0) | SSDK_SWITCH_REG_TYPE_MASK)));
+
+	return hsl_soc_read(dev_id, IS_I2C_PHY_ADDR(phy_addr), soc_reg);
+}
+
+void
+hsl_phy_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg, a_uint32_t val)
+{
+	a_uint32_t soc_reg, phy_addr_val;
+
+	phy_addr_val = (phy_addr & GENMASK(4, 0));
+	soc_reg = (FIELD_PREP(GENMASK(28, 24), phy_addr_val) |
+		(reg & (GENMASK(23, 0) | SSDK_SWITCH_REG_TYPE_MASK)));
+
+	hsl_soc_write(dev_id, IS_I2C_PHY_ADDR(phy_addr), soc_reg, val);
+}
+
+int
+hsl_phy_modify_soc(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
+	a_uint32_t mask, a_uint32_t val)
+{
+	a_uint32_t soc_reg, phy_addr_val;
+
+	phy_addr_val = (phy_addr & GENMASK(4, 0));
+	soc_reg = (FIELD_PREP(GENMASK(28, 24), phy_addr_val) |
+		(reg & (GENMASK(23, 0) | SSDK_SWITCH_REG_TYPE_MASK)));
+
+	return hsl_modify_soc(dev_id, IS_I2C_PHY_ADDR(phy_addr), soc_reg, mask, val);
+}
 /*qca808x_end*/

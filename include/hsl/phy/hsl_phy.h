@@ -989,6 +989,23 @@ hsl_port_phy_eee_cap_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t *cap)
 sw_error_t
 hsl_port_phy_eee_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t *status);
+a_uint32_t
+hsl_soc_read(a_uint32_t dev_id, a_bool_t is_i2c, a_uint32_t reg);
+void
+hsl_soc_write(a_uint32_t dev_id, a_bool_t is_i2c, a_uint32_t reg,
+	a_uint32_t reg_val);
+int
+hsl_modify_soc(a_uint32_t dev_id, a_bool_t is_i2c, a_uint32_t reg,
+	a_uint32_t mask, a_uint32_t val);
+a_uint32_t
+hsl_phy_soc_read(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg);
+void
+hsl_phy_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t reg, a_uint32_t val);
+int
+hsl_phy_modify_soc(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
+	a_uint32_t mask, a_uint32_t val);
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 hsl_port_phy_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
