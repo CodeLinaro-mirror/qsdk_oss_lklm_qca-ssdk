@@ -1143,7 +1143,6 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 		} \
 	}
 
-#if defined(NSS_PHY_PTP)
 #define HSL_PORT_PHY_PTP_API_RUN(func, dev_id, port_id, ...)					\
 	{											\
 		if (hsl_port_phy_connected(dev_id, port_id)) {					\
@@ -1156,9 +1155,6 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 				rv = ptp_ops->func(&nss_phydev, ##__VA_ARGS__);			\
 		}										\
 	}
-#else
-#define HSL_PORT_PHY_PTP_API_RUN(func, dev_id, port_id, ...)
-#endif
 
 #ifdef __cplusplus
 }
