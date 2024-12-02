@@ -82,7 +82,7 @@ IN_MACBLOCK=FALSE
 #############################################
 #        Platform Special Features          #
 #############################################
-ifeq ($(SoC),$(filter $(SoC),ipq53xx ipq95xx ipq807x ipq60xx))
+ifeq ($(SoC),$(filter $(SoC),ipq53xx ipq54xx ipq95xx ipq807x ipq60xx))
 	PTP_FEATURE=enable
 endif
 

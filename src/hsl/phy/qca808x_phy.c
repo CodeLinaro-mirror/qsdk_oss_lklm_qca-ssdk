@@ -24,9 +24,6 @@
 #include "ssdk_plat.h"
 #include "qca808x_phy.h"
 /*qca808x_end*/
-#if defined(IN_PTP)
-#include "qca808x_ptp.h"
-#endif
 #include "qca808x.h"
 #if defined(MHT)
 #include "mht_sec_ctrl.h"
@@ -50,9 +47,6 @@ static sw_error_t qca808x_phy_api_ops_init(a_uint32_t dev_id, a_uint32_t port_bm
 	phy_api_ops_init(QCA808X_PHY_CHIP);
 
 /*qca808x_end*/
-#if defined(IN_PTP)
-	qca808x_phy_ptp_api_ops_init(&qca808x_phy_api_ops->phy_ptp_ops);
-#endif
 /*qca808x_start*/
 	ret = hsl_phy_api_ops_register(QCA808X_PHY_CHIP, qca808x_phy_api_ops);
 
@@ -90,9 +84,6 @@ int qca808x_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 	}
 
 	if (qca808x_ssdk_phy_drv_registered == A_FALSE) {
-#if defined(IN_LINUX_STD_PTP)
-		ret = qca808x_ptp_hook_init();
-#endif
 		ret |= qca808x_phy_driver_register();
 		qca808x_ssdk_phy_drv_registered = A_TRUE;
 	}
@@ -108,9 +99,6 @@ void qca808x_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 	if (qca808x_ssdk_phy_drv_registered == A_TRUE) {
 		qca808x_phy_driver_unregister();
-#if defined(IN_LINUX_STD_PTP)
-		qca808x_ptp_hook_cleanup();
-#endif
 		qca808x_ssdk_phy_drv_registered = A_FALSE;
 	}
 

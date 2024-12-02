@@ -1808,11 +1808,10 @@ void ssdk_port_mac_clock_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id)
 {
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
+#if defined(CONFIG_OF)
 	ssdk_port_reset(dev_id, port_id, SSDK_RESET_ASSERT);
-	msleep(150);
+	msleep(10);
 	ssdk_port_reset(dev_id, port_id, SSDK_RESET_DEASSERT);
-	msleep(150);
 #endif
 	return;
 }
@@ -2379,7 +2378,7 @@ static char *port_mac_rst_ids[] = {
 
 void ssdk_ppe_reset_init(a_uint32_t dev_id)
 {
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
+#if defined(CONFIG_OF)
 	struct reset_control *rst;
 
 	rst_node = of_find_node_by_name(NULL, "ess-switch");
