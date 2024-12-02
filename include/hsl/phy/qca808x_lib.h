@@ -20,3 +20,7 @@ struct qca808x_phy_info* qca808x_phy_info_get(a_uint32_t phy_addr);
 int qca808x_phy_info_add(struct qca808x_phy_info *pinfo);
 int qca808x_phy_info_remove(struct qca808x_phy_info *pinfo);
 void qca808x_phy_remove(struct phy_device *phydev);
+#if defined(IN_LINUX_STD_PTP)
+int qca808x_ptp_hook_init(void);
+void qca808x_ptp_hook_cleanup(void);
+#endif

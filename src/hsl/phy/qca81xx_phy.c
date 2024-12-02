@@ -23,6 +23,9 @@
 #include "qca81xx_phy.h"
 #include "qca81xx.h"
 #include "qca808x_lib.h"
+#if defined(IN_PTP)
+#include "qca808x_ptp.h"
+#endif
 
 static a_bool_t phy_ops_flag = A_FALSE;
 static a_bool_t phy_driver_flag = A_FALSE;
@@ -1105,6 +1108,9 @@ qca81xx_phy_api_ops_init(void)
 	qca81xx_phy_api_ops->phy_intr_mask_get = qca81xx_phy_get_intr_mask;
 	qca81xx_phy_api_ops->phy_intr_status_get = qca81xx_phy_get_intr_status;
 #endif
+#if defined(IN_PTP)
+	qca808x_phy_ptp_api_ops_init(&qca81xx_phy_api_ops->phy_ptp_ops);
+#endif
 
 	ret = hsl_phy_api_ops_register(QCA81XX_PHY_CHIP, qca81xx_phy_api_ops);
 
@@ -1132,6 +1138,9 @@ int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 	if (!phy_driver_flag) {
 		qca81xx_phy_driver_register();
+#if defined(IN_LINUX_STD_PTP)
+		qca808x_ptp_hook_init();
+#endif
 		phy_driver_flag = A_TRUE;
 	}
 
@@ -1143,6 +1152,9 @@ void qca81xx_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 	a_uint32_t port_id;
 
 	if (phy_driver_flag) {
+#if defined(IN_LINUX_STD_PTP)
+		qca808x_ptp_hook_cleanup();
+#endif
 		qca81xx_phy_driver_unregister();
 		phy_driver_flag = A_FALSE;
 	}

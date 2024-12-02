@@ -631,9 +631,20 @@ static int qca81xx_pcs_eee_enable(struct phy_device *phydev)
 
 static int qca81xx_phy_probe(struct phy_device *phydev)
 {
-	phydev_info(phydev, "probed successfully\n");
+	int ret = 0;
 
-	return 0;
+#if defined(IN_LINUX_STD_PTP)
+	if (phydev->priv != NULL)
+		ret = qca808x_ptp_init((qca808x_priv*)(phydev->priv));
+#endif
+	return ret;
+}
+
+void qca81xx_phy_remove(struct phy_device *phydev)
+{
+#if defined(IN_LINUX_STD_PTP)
+	qca808x_ptp_deinit((qca808x_priv*)(phydev->priv));
+#endif
 }
 
 static int qca81xx_suspend(struct phy_device *phydev)
@@ -1317,6 +1328,7 @@ static struct phy_driver qca81xx_phy_driver = {
 	PHY_ID_MATCH_EXACT(QCA8111_PHY),
 	.name		= QCA81XX_PHY_DRIVER_NAME,
 	.probe		= qca81xx_phy_probe,
+	.remove		= qca81xx_phy_remove,
 	.config_init	= qca81xx_phy_config_init,
 	.get_features	= qca81xx_phy_get_features,
 	.config_aneg	= qca81xx_phy_config_aneg,

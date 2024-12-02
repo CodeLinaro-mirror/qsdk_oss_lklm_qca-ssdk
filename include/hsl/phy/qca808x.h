@@ -123,8 +123,6 @@ int qca808x_ts_info(struct phy_device *phydev, struct ethtool_ts_info *info);
 sw_error_t qca808x_ptp_config_init(struct phy_device *phydev);
 int qca808x_ptp_init(qca808x_priv *priv);
 void qca808x_ptp_deinit(qca808x_priv *priv);
-int qca808x_ptp_hook_init(void);
-void qca808x_ptp_hook_cleanup(void);
 #endif
 
 void qca808x_phydev_init(a_uint32_t dev_id, a_uint32_t port_id);
