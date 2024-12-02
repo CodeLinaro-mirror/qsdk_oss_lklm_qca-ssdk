@@ -4391,6 +4391,11 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 #ifdef IN_FDB
 			adpt_hppe_fdb_del_by_port(priv->device_id, port_id, !(FAL_FDB_DEL_STATIC));
 #endif
+			/* adjust PHY configuration after MAC operation */
+			if(hsl_port_phy_connected(priv->device_id, port_id)) {
+				HSL_PORT_PHY_ONLY_EXT_API_RUN(adjust_link_post,
+					priv->device_id, port_id);
+			}
 		}
 		/* link status from down to up*/
 		if ((phy_status.link_status == PORT_LINK_UP) &&
