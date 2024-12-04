@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -14,6 +14,9 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
+#ifndef __QCA808X_H__
+#define __QCA808X_H__
 
 #include <linux/kconfig.h>
 #include <linux/version.h>
@@ -102,7 +105,6 @@ struct qca808x_ptp_clock{
 	qca808x_priv *priv;
 };
 
-struct qca808x_phy_info* qca808x_phy_info_get(a_uint32_t phy_addr);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
 void qca808x_ptp_change_notify(struct mii_timestamper *mii_ts, struct phy_device *phydev);
 int qca808x_hwtstamp(struct mii_timestamper *mii_ts, struct ifreq *ifr);
@@ -131,3 +133,4 @@ a_int32_t qca808x_phy_driver_register(void);
 void qca808x_phy_driver_unregister(void);
 int qca808x_phy_probe(struct phy_device *phydev);
 void qca808x_phy_remove(struct phy_device *phydev);
+#endif

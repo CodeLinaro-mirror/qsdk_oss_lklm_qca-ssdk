@@ -22,8 +22,10 @@
 #include "qcaphy_c45_common.h"
 #include "qca81xx_phy.h"
 #include "qca81xx.h"
+#include "qca808x_lib.h"
 
 static a_bool_t phy_ops_flag = A_FALSE;
+static a_bool_t phy_driver_flag = A_FALSE;
 
 sw_error_t
 qca81xx_phy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
@@ -1116,10 +1118,21 @@ qca81xx_phy_api_ops_init(void)
 
 int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
+	a_uint32_t port_id;
+
 	if(phy_ops_flag == A_FALSE) {
 		qca81xx_phy_api_ops_init();
-		qca81xx_phy_driver_register();
 		phy_ops_flag = A_TRUE;
+	}
+
+	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id++) {
+		if (port_bmp & BIT(port_id))
+			qca808x_phydev_init(dev_id, port_id);
+	}
+
+	if (!phy_driver_flag) {
+		qca81xx_phy_driver_register();
+		phy_driver_flag = A_TRUE;
 	}
 
 	return 0;
@@ -1127,7 +1140,17 @@ int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 void qca81xx_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
-	qca81xx_phy_driver_unregister();
+	a_uint32_t port_id;
+
+	if (phy_driver_flag) {
+		qca81xx_phy_driver_unregister();
+		phy_driver_flag = A_FALSE;
+	}
+
+	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id++) {
+		if (port_bmp & BIT(port_id))
+			qca808x_phydev_deinit(dev_id, port_id);
+	}
 
 	return;
 }

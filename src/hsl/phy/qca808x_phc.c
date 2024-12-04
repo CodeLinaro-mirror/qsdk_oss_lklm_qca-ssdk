@@ -20,6 +20,7 @@
 #include <linux/ptp_classify.h>
 
 #include "qca808x.h"
+#include "qca808x_lib.h"
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 #include <linux/time64.h>
@@ -188,36 +189,34 @@ sw_error_t qca808x_ptp_config_init(struct phy_device *phydev)
 	return ret;
 }
 
-static a_uint8_t* skb_ptp_header(struct sk_buff *skb, int type)
+static a_uint8_t* skb_ptp_header(struct sk_buff *skb, int ptp_type)
 {
-	a_uint8_t *data = skb_mac_header(skb);
-	a_uint32_t offset = 0;
+	a_uint8_t *mac_header = skb_mac_header(skb);
+	a_uint32_t ptp_offset = 0;
 
-	if (type & PTP_CLASS_VLAN) {
-		offset += VLAN_HLEN;
-	}
+	if (ptp_type & PTP_CLASS_VLAN)
+		ptp_offset += VLAN_HLEN;
 
-	switch (type & PTP_CLASS_PMASK) {
-		case PTP_CLASS_IPV4:
-			offset += ETH_HLEN + IPV4_HLEN(data + offset) + UDP_HLEN;
-			break;
-		case PTP_CLASS_IPV6:
-			offset += ETH_HLEN + IP6_HLEN + UDP_HLEN;
-			break;
-		case PTP_CLASS_L2:
-			offset += ETH_HLEN;
-			break;
-		default:
-			return NULL;
-	}
-
-	if (skb->len + ETH_HLEN < offset +
-			OFF_PTP_SEQUENCE_ID + sizeof(a_uint16_t)) {
+	switch (ptp_type & PTP_CLASS_PMASK) {
+	case PTP_CLASS_IPV4:
+		ptp_offset += ETH_HLEN + IPV4_HLEN(mac_header + ptp_offset) + UDP_HLEN;
+		break;
+	case PTP_CLASS_IPV6:
+		ptp_offset += ETH_HLEN + IP6_HLEN + UDP_HLEN;
+		break;
+	case PTP_CLASS_L2:
+		ptp_offset += ETH_HLEN;
+		break;
+	default:
 		return NULL;
 	}
 
-	return data + offset;
+	if (skb->len + ETH_HLEN < ptp_offset + OFF_PTP_SEQUENCE_ID + sizeof(a_uint16_t))
+		return NULL;
+
+	return mac_header + ptp_offset;
 }
+
 
 void qca808x_pkt_info_get(struct sk_buff *skb,
 		unsigned int type, fal_ptp_pkt_info_t *pkt_info)
