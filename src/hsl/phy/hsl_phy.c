@@ -3005,12 +3005,12 @@ __hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_re
 			return PHY_INVALID_DATA;
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
 		if (mii_reg & SSDK_ADDR_C45)
-			phy_data = __mdiobus_c45_read(miibus, phy_addr,
+			phy_data = __mdiobus_c45_read(miibus, TO_PHY_ADDR(phy_addr),
 					FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
 					FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg));
 		else
 #endif
-			phy_data = __mdiobus_read(miibus, phy_addr, mii_reg);
+			phy_data = __mdiobus_read(miibus, TO_PHY_ADDR(phy_addr), mii_reg);
 	}
 
 	return phy_data;
@@ -3043,13 +3043,13 @@ __hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_r
 		SW_RTN_ON_NULL(miibus);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
 		if (mii_reg & SSDK_ADDR_C45)
-			ret = __mdiobus_c45_write(miibus, phy_addr,
+			ret = __mdiobus_c45_write(miibus, TO_PHY_ADDR(phy_addr),
 					FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
 					FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg),
 					reg_val);
 		else
 #endif
-			ret = __mdiobus_write(miibus, phy_addr, mii_reg, reg_val);
+			ret = __mdiobus_write(miibus, TO_PHY_ADDR(phy_addr), mii_reg, reg_val);
 
 		if (ret)
 			return ret;
