@@ -1119,8 +1119,11 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 			i++;
 		}
 
-		/* pause intr task */
-		qca_intr_work_pause(priv);
+		/* stop polling task or interrupt */
+		if (priv->link_polling_required)
+			qm_err_check_work_stop(priv);
+		else if (priv->interrupt_no > 0)
+			qca_intr_work_pause(priv);
 
 		/* manually excute polling task to finish all ports up to down sequence */
 		mutex_lock(&priv->qm_lock);
@@ -1172,8 +1175,11 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 			/* resume mib task */
 			qca_phy_mib_work_resume(priv);
 
-			/* resume intr task */
-			qca_intr_work_resume(priv);
+			/* resume polling task or interrupt */
+			if (priv->link_polling_required)
+				qm_err_check_work_start(priv);
+			else if (priv->interrupt_no > 0)
+				qca_intr_work_resume(priv);
 		}
 		/* on phy */
 		HSL_PORT_PHY_API_RUN(pll_on, dev_id, port_id);
