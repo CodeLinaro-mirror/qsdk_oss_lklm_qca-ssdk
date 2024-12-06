@@ -19,7 +19,10 @@
 #include <linux/delay.h>
 #include <linux/version.h>
 
+#include "hsl_phy.h"
+#include "qca808x.h"
 #include "qca81xx.h"
+#include "qcaphy_c45_common.h"
 
 struct qca81xx_phy_mdio_data {
 	struct mii_bus *mii_bus;
@@ -99,6 +102,7 @@ enum qca81xx_addr_offset {
 
 #define QCA81XX_SPEC_STATUS				0x11
 #define QCA81XX_INTR_DOWNSHIFT				0x20
+#define QCA81XX_SS_LINK_STAT				0x400
 #define QCA81XX_SS_DUPLEX_FULL				0x2000
 #define QCA81XX_SS_SPEED_MASK				0x380
 #define QCA81XX_SS_SPEED_10000				0x180
@@ -237,186 +241,149 @@ enum qca81xx_addr_offset {
 #define WOL_INTR_CTRL					0x90f010
 #define WOL_INTR_EN					BIT(0)
 
-static int qca81xx_pcs_address(struct phy_device *phydev)
-{
-	return phydev->mdio.addr + PCS_ADDR_OFFSET;
-}
-
-static u32 qca81xx_soc_address(struct phy_device *phydev)
-{
-	return phydev->mdio.addr + SOC_ADDR_OFFSET;
-}
-
-static int __qca81xx_phy_write(struct mii_bus *bus, int addr, int devad,
+static int qca81xx_phy_debug_write(struct phy_device *phydev,
 		unsigned int reg, u16 val)
 {
-	if (devad > 0)
-		reg = TO_C45_ADDR(devad, reg);
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	return __mdiobus_write(bus, addr, reg, val);
-}
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-static int __qca81xx_phy_read(struct mii_bus *bus, int addr, int devad,
-		unsigned int reg)
-{
-	if (devad > 0)
-		reg = TO_C45_ADDR(devad, reg);
-
-	return __mdiobus_read(bus, addr, reg);
-}
-
-static int qca81xx_phy_debug_write(struct mii_bus *bus, int addr,
-		unsigned int reg, u16 val)
-{
-	int ret;
-
-	mutex_lock(&bus->mdio_lock);
-	ret = __qca81xx_phy_write(bus, addr,
-			MDIO_MMD_VEND2, QCA81XX_DEBUG_ADDR, reg);
-	if (ret < 0)
-		return ret;
-
-	ret = __qca81xx_phy_write(bus, addr,
-			MDIO_MMD_VEND2, QCA81XX_DEBUG_DATA, val);
-	mutex_unlock(&bus->mdio_lock);
-
-	return ret;
+	return hsl_phy_c45_debug_reg_write(pdata->dev_id, pdata->phy_addr,
+				       reg, val);
 }
 
 int qca81xx_phy_debug_modify(struct phy_device *phydev,
 			     unsigned int reg, u16 clear, u16 set)
 {
-	int ret, val;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	mutex_lock(&phydev->mdio.bus->mdio_lock);
-	ret = __qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr,
-			MDIO_MMD_VEND2, QCA81XX_DEBUG_ADDR, reg);
-	if (ret)
-		goto debug_modify_done;
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-	ret = __qca81xx_phy_read(phydev->mdio.bus, phydev->mdio.addr,
-			MDIO_MMD_VEND2, QCA81XX_DEBUG_DATA);
-
-	if (ret)
-		goto debug_modify_done;
-
-	val = (ret & ~clear) | set;
-	ret = __qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr,
-			MDIO_MMD_VEND2, QCA81XX_DEBUG_DATA, val);
-
-debug_modify_done:
-	mutex_unlock(&phydev->mdio.bus->mdio_lock);
-	return ret;
+	return hsl_phy_c45_modify_debug(pdata->dev_id, pdata->phy_addr,
+				    reg, clear, set);
 }
 
-static int qca81xx_phy_modify(struct mii_bus *bus, int addr, int devad,
-			          u32 regnum, int mask, int set)
+static int qca81xx_phy_modify(struct phy_device *phydev, int devad,
+			      u32 regnum, int mask, int set)
 {
-	int ret, new;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	mutex_lock(&bus->mdio_lock);
-	ret = __qca81xx_phy_read(bus, addr, devad, regnum);
-	if (ret < 0)
-		goto mdiobus_modify_done;
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-	new = (ret & ~mask) | set;
-	ret = __qca81xx_phy_write(bus, addr, devad, regnum, new);
+	if (devad < 0)
+		return hsl_phy_modify_mii(pdata->dev_id, pdata->phy_addr,
+					  regnum, mask, set);
 
-mdiobus_modify_done:
-	mutex_unlock(&bus->mdio_lock);
-	return ret < 0 ? ret : 0;
+	return hsl_phy_modify_mmd(pdata->dev_id, pdata->phy_addr, true,
+				  devad, regnum, mask, set);
 }
 
-static int qca81xx_phy_read(struct mii_bus *bus, int addr, int devad, u32 regnum)
+static int qca81xx_phy_read(struct phy_device *phydev, int devad, u32 regnum)
 {
-	int ret;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	mutex_lock(&bus->mdio_lock);
-	ret = __qca81xx_phy_read(bus, addr, devad, regnum);
-	mutex_unlock(&bus->mdio_lock);
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-	return ret;
+	if (devad < 0)
+		return hsl_phy_mii_reg_read(pdata->dev_id, pdata->phy_addr, regnum);
+
+	return hsl_phy_mmd_reg_read(pdata->dev_id, pdata->phy_addr, true,
+				    devad, regnum);
 }
 
-static int qca81xx_phy_write(struct mii_bus *bus, int addr, int devad, u32 regnum, int val)
+static int qca81xx_phy_write(struct phy_device *phydev, int devad, u32 regnum, int val)
 {
-	int ret;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	mutex_lock(&bus->mdio_lock);
-	ret = __qca81xx_phy_write(bus, addr, devad, regnum, val);
-	mutex_unlock(&bus->mdio_lock);
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-	return ret;
-}
+	if (devad < 0)
+		return hsl_phy_mii_reg_write(pdata->dev_id, pdata->phy_addr,
+					     regnum, val);
 
-static u32 __qca81xx_soc_read(struct phy_device *phydev, u32 reg)
-{
-	struct qca81xx_phy_mdio_data *mdio_priv = phydev->mdio.bus->priv;
-	u32 reg_e, val = 0;
-	int addr;
-
-	addr = qca81xx_soc_address(phydev);
-	reg_e = TO_QCA81XX_PHY_SOC_ADDR(addr, reg);
-
-	if (mdio_priv && mdio_priv->sw_read)
-		val = mdio_priv->sw_read(phydev->mdio.bus, reg_e);
-
-	return val;
-}
-
-static int __qca81xx_soc_write(struct phy_device *phydev,
-		u32 reg, u32 val)
-{
-	struct qca81xx_phy_mdio_data *mdio_priv = phydev->mdio.bus->priv;
-	u32 reg_e;
-	int addr;
-
-	addr = qca81xx_soc_address(phydev);
-	reg_e = TO_QCA81XX_PHY_SOC_ADDR(addr, reg);
-
-	if (mdio_priv && mdio_priv->sw_write)
-		mdio_priv->sw_write(phydev->mdio.bus, reg_e, val);
-
-	return 0;
+	return hsl_phy_mmd_reg_write(pdata->dev_id, pdata->phy_addr, true,
+				     devad, regnum, val);
 }
 
 int qca81xx_soc_modify(struct phy_device *phydev, u32 reg,
 		u32 mask, u32 set)
 {
-	u32 val;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	mutex_lock(&phydev->mdio.bus->mdio_lock);
-	val = __qca81xx_soc_read(phydev, reg);
-	val = (val & ~mask) | set;
-	__qca81xx_soc_write(phydev, reg, val);
-	mutex_unlock(&phydev->mdio.bus->mdio_lock);
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-	return 0;
-
+	return hsl_phy_modify_soc(pdata->dev_id, (pdata->phy_addr + SOC_ADDR_OFFSET),
+			TO_QCA81XX_PHY_SOC_ADDR((pdata->phy_addr + SOC_ADDR_OFFSET), reg),
+			mask, set);
 }
 
 static int qca81xx_pcs_read_mmd(struct phy_device *phydev,
 		int devad, u32 regnum)
 {
-	int addr = qca81xx_pcs_address(phydev);
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	return qca81xx_phy_read(phydev->mdio.bus, addr, devad, regnum);
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
+
+	return hsl_phy_mmd_reg_read(pdata->dev_id, (pdata->phy_addr + PCS_ADDR_OFFSET),
+			true, devad, regnum);
 }
 
 static int qca81xx_pcs_modify_mmd(struct phy_device *phydev,
 		int devad, u32 regnum, u16 mask, u16 set)
 {
-	int addr = qca81xx_pcs_address(phydev);
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	return qca81xx_phy_modify(phydev->mdio.bus, addr, devad, regnum, mask, set);
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
+
+	return hsl_phy_modify_mmd(pdata->dev_id, (pdata->phy_addr + PCS_ADDR_OFFSET),
+			true, devad, regnum, mask, set);
 }
 
 static int qca81xx_pcs_modify(struct phy_device *phydev,
 		u32 regnum, u16 mask, u16 set)
 {
-	int addr = qca81xx_pcs_address(phydev);
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	return qca81xx_phy_modify(phydev->mdio.bus, addr, -1, regnum, mask, set);
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
+
+	return hsl_phy_modify_mii(pdata->dev_id, (pdata->phy_addr + PCS_ADDR_OFFSET),
+			regnum, mask, set);
 }
 
 static int qca81xx_pcs_txclk_en_set(struct phy_device *phydev,
@@ -671,13 +638,13 @@ static int qca81xx_phy_probe(struct phy_device *phydev)
 
 static int qca81xx_suspend(struct phy_device *phydev)
 {
-	return qca81xx_phy_modify(phydev->mdio.bus, phydev->mdio.addr,
+	return qca81xx_phy_modify(phydev,
 			MDIO_MMD_VEND2, MDIO_CTRL1, 0, MDIO_CTRL1_LPOWER);
 }
 
 static int qca81xx_resume(struct phy_device *phydev)
 {
-	return qca81xx_phy_modify(phydev->mdio.bus, phydev->mdio.addr,
+	return qca81xx_phy_modify(phydev,
 			MDIO_MMD_VEND2, MDIO_CTRL1, MDIO_CTRL1_LPOWER, 0);
 }
 
@@ -685,7 +652,7 @@ static int qca81xx_phy_soft_reset(struct phy_device *phydev)
 {
 	int ret;
 
-	ret = qca81xx_phy_modify(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+	ret = qca81xx_phy_modify(phydev, MDIO_MMD_VEND2,
 			QCA81XX_SMART_SPEED, 0, QCA81XX_AUTO_SOFT_RESET);
 	if (ret < 0)
 		return ret;
@@ -852,45 +819,45 @@ static int qca81xx_phy_cdt_thresh_init(struct phy_device *phydev)
 {
 	int ret = 0;
 
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL2,
 		QCA81XX_MMD3_CDT_THRESH_CTRL2_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL3,
 		QCA81XX_MMD3_CDT_THRESH_CTRL3_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL4,
 		QCA81XX_MMD3_CDT_THRESH_CTRL4_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL5,
 		QCA81XX_MMD3_CDT_THRESH_CTRL5_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL6,
 		QCA81XX_MMD3_CDT_THRESH_CTRL6_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL7,
 		QCA81XX_MMD3_CDT_THRESH_CTRL7_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL9,
 		QCA81XX_MMD3_CDT_THRESH_CTRL9_VAL);
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL13,
 		QCA81XX_MMD3_CDT_THRESH_CTRL13_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_PCS,
+	ret = qca81xx_phy_write(phydev, MDIO_MMD_PCS,
 		QCA81XX_MMD3_CDT_THRESH_CTRL14,
 		QCA81XX_MMD3_CDT_THRESH_CTRL14_VAL);
 
@@ -940,27 +907,27 @@ static int qca81xx_phy_afe_dac_config_init(struct phy_device *phydev)
 {
 	int ret = 0;
 
-	ret = qca81xx_phy_debug_write(phydev->mdio.bus, phydev->mdio.addr,
+	ret = qca81xx_phy_debug_write(phydev,
 			QCA81XX_ANA_DEBUG_AFE_DAC8_DP,
 			QCA81XX_ANA_DEBUG_AFE_DAC8_DP_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_debug_write(phydev->mdio.bus, phydev->mdio.addr,
+	ret = qca81xx_phy_debug_write(phydev,
 			QCA81XX_ANA_DEBUG_AFE_DAC9_DP,
 			QCA81XX_ANA_DEBUG_AFE_DAC9_DP_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_debug_write(phydev->mdio.bus, phydev->mdio.addr,
+	ret = qca81xx_phy_debug_write(phydev,
 			QCA81XX_ANA_DEBUG_AFE_DAC38_DP,
 			QCA81XX_ANA_DEBUG_AFE_DAC38_DP_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_debug_write(phydev->mdio.bus, phydev->mdio.addr,
+	ret = qca81xx_phy_debug_write(phydev,
 			QCA81XX_ANA_DEBUG_AFE_DAC39_DP,
 			QCA81XX_ANA_DEBUG_AFE_DAC39_DP_VAL);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr,
+	ret = qca81xx_phy_write(phydev,
 			MDIO_MMD_PCS, QCA81XX_MMD3_DEBUG5,
 			QCA81XX_MMD3_DEBUG5_VAL);
 
@@ -1001,7 +968,7 @@ static int qca81xx_phy_eee_config_init(struct phy_device *phydev)
 {
 	/* disable AFE control for 1G EEE to keep FULLECHO, ECHO, ADC, VGA */
 	/* and DAC always on */
-	return qca81xx_phy_modify(phydev->mdio.bus, phydev->mdio.addr,
+	return qca81xx_phy_modify(phydev,
 			MDIO_MMD_PCS, QCA81XX_MMD3_AZ_1G_AFE_CTRL,
 			QCA81XX_MMD3_AZ_1G_AFE_CTRL_MASK, 0);
 }
@@ -1043,54 +1010,108 @@ static int qca81xx_phy_config_init(struct phy_device *phydev)
 
 static int qca81xx_phy_get_features(struct phy_device *phydev)
 {
-	int ret;
+	unsigned long *supported = phydev->supported;
 
-	ret = genphy_c45_pma_read_abilities(phydev);
-	if (ret < 0)
-		return ret;
+	linkmode_or(supported, supported, phy_10gbit_full_features);
+	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
+	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
 
+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
+		supported);
+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+		supported);
 	linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
-		phydev->advertising);
+		supported);
 	linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
-		phydev->supported);
+		supported);
 
 	return 0;
 }
 
+static u32 qca81xx_phydev_negtiation_cap_get(struct phy_device *phydev)
+{
+	a_uint32_t autoneg = 0;
+	__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising) = { 0, };
+
+	linkmode_and(advertising, phydev->advertising, phydev->supported);
+
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_PAUSE;
+	}
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_ASY_PAUSE;
+	}
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_100TX_FD;
+	}
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_1000T_FD;
+	}
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_2500T_FD;
+	}
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_5000T_FD;
+	}
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, advertising)) {
+		autoneg |= FAL_PHY_ADV_10000T_FD;
+	}
+
+	return autoneg;
+}
+
 static int qca81xx_phy_config_aneg(struct phy_device *phydev)
 {
-	bool changed = false;
-	u16 reg = 0;
-	int ret = 0;
+	u32 advertise = 0, advertise_new = 0;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
+	int autoneg, ret;
+
+
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
 	if (phydev->autoneg == AUTONEG_DISABLE)
-		return genphy_c45_pma_setup_forced(phydev);
+		return qcaphy_c45_force_speed_set(pdata->dev_id, pdata->phy_addr, phydev->speed);
 
-	ret = genphy_c45_an_config_aneg(phydev);
-	if (ret < 0)
+	/* get the current autoneg status. */
+	autoneg = qcaphy_c45_autoneg_status(pdata->dev_id, pdata->phy_addr);
+	ret = qcaphy_c45_get_autoneg_adv(pdata->dev_id, pdata->phy_addr, &advertise);
+	if (ret)
 		return ret;
-	if (ret > 0)
-		changed = true;
+
+	/* get required autoneg capabilities. */
+	advertise_new = qca81xx_phydev_negtiation_cap_get(phydev);
+	if (advertise_new == advertise && phydev->autoneg == autoneg)
+		return 0;
+
+	if (advertise_new != advertise) {
+		ret = qcaphy_c45_set_autoneg_adv(pdata->dev_id, pdata->phy_addr, advertise_new);
+		if (ret)
+			return ret;
+	}
 
 	/* Clause 45 has no standardized support for 1000BaseT, */
 	/* therefore use vendor registers. */
-	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-		phydev->advertising))
-		reg |= QCA81XX_ADVERTISE_1000FULL;
+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, phydev->advertising))
+		autoneg = QCA81XX_ADVERTISE_1000FULL;
+	else
+		autoneg = 0;
 
-	ret = qca81xx_phy_modify(phydev->mdio.bus, phydev->mdio.addr,
-			MDIO_MMD_VEND2, QCA81XX_1000BASET_CONTROL,
-			QCA81XX_ADVERTISE_1000FULL, reg);
+	ret = qca81xx_phy_modify(phydev, MDIO_MMD_VEND2, QCA81XX_1000BASET_CONTROL,
+			QCA81XX_ADVERTISE_1000FULL, autoneg);
 	if (ret < 0)
 		return ret;
 
-	return genphy_c45_check_and_restart_aneg(phydev, changed);
+	return qcaphy_c45_autoneg_restart(pdata->dev_id, pdata->phy_addr);
 }
 
 static int qca81xx_phy_fifo_reset(struct phy_device *phydev,
 	bool enable)
 {
-	return qca81xx_phy_modify(phydev->mdio.bus, phydev->mdio.addr,
+	return qca81xx_phy_modify(phydev,
 			MDIO_MMD_VEND2, QCA81XX_FIFO_CONTROL,
 			QCA81XX_FIFO_RESET, enable ? 0 : QCA81XX_FIFO_RESET);
 }
@@ -1148,6 +1169,7 @@ static int qca81xx_phy_speed_fixup(struct phy_device *phydev)
 		ret = qca81xx_phy_fifo_reset(phydev, false);
 		if (ret < 0)
 			return ret;
+
 	}
 
 	return 0;
@@ -1155,16 +1177,22 @@ static int qca81xx_phy_speed_fixup(struct phy_device *phydev)
 
 static int qca81xx_phy_read_status(struct phy_device *phydev)
 {
-	int ret = 0;
+	struct qca808x_phy_info *pdata;
 	unsigned old_link = 0;
+	qca808x_priv *priv;
+	int ret = 0;
 
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
 	old_link = phydev->link;
 
 	/* Clause 45 has no standardized support for 1000BaseT, */
 	/* therefore use vendor registers. */
 	if (phydev->autoneg == AUTONEG_ENABLE) {
-		ret = qca81xx_phy_read(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+		ret = qca81xx_phy_read(phydev, MDIO_MMD_VEND2,
 			QCA81XX_1000BASET_STATUS);
 		if (ret < 0)
 			return ret;
@@ -1172,41 +1200,74 @@ static int qca81xx_phy_read_status(struct phy_device *phydev)
 			 phydev->lp_advertising,
 			 ret & QCA81XX_LP_ADVERTISE_1000FULL);
 	}
-	ret = genphy_c45_read_status(phydev);
-	if (ret < 0)
-		return ret;
-	/* Some PHY maybe have downgrade issue and */
-	/* send incorrect advertise, then the link */
-	/* speed will be not correct, so need to read */
-	/* link speed from the vendor register directly */
-	ret = qca81xx_phy_read(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+
+	ret = qca81xx_phy_read(phydev, MDIO_MMD_VEND2,
 		QCA81XX_SPEC_STATUS);
 	if (ret < 0)
 		return ret;
-	if (ret & QCA81XX_INTR_DOWNSHIFT) {
+
+	if (ret & QCA81XX_SS_LINK_STAT)
+		phydev->link = 1;
+	else
+		phydev->link = 0;
+
+	phydev->speed = SPEED_UNKNOWN;
+	phydev->duplex = DUPLEX_UNKNOWN;
+	phydev->pause = 0;
+	phydev->asym_pause = 0;
+
+	if (phydev->link) {
 		switch (ret & QCA81XX_SS_SPEED_MASK) {
-		case QCA81XX_SS_SPEED_10000:
-			phydev->speed = SPEED_10000;
-			break;
-		case QCA81XX_SS_SPEED_5000:
-			phydev->speed = SPEED_5000;
-			break;
-		case QCA81XX_SS_SPEED_2500:
-			phydev->speed = SPEED_2500;
-			break;
-		case QCA81XX_SS_SPEED_1000:
-			phydev->speed = SPEED_1000;
-			break;
-		case QCA81XX_SS_SPEED_100:
-			phydev->speed = SPEED_100;
-			break;
-		default:
-			phydev->speed = SPEED_UNKNOWN;
+			case QCA81XX_SS_SPEED_10000:
+				phydev->speed = SPEED_10000;
+				break;
+			case QCA81XX_SS_SPEED_5000:
+				phydev->speed = SPEED_5000;
+				break;
+			case QCA81XX_SS_SPEED_2500:
+				phydev->speed = SPEED_2500;
+				break;
+			case QCA81XX_SS_SPEED_1000:
+				phydev->speed = SPEED_1000;
+				break;
+			case QCA81XX_SS_SPEED_100:
+				phydev->speed = SPEED_100;
+				break;
+			default:
+				phydev->speed = SPEED_UNKNOWN;
 		}
+
 		if (ret & QCA81XX_SS_DUPLEX_FULL)
 			phydev->duplex = DUPLEX_FULL;
 		else
 			phydev->duplex = DUPLEX_UNKNOWN;
+
+		/* get pause status */
+		ret = qca81xx_phy_read(phydev, MDIO_MMD_AN, MDIO_AN_LPA);
+		if (ret < 0)
+			return ret;
+
+		mii_adv_mod_linkmode_adv_t(phydev->lp_advertising, ret);
+		phy_resolve_aneg_pause(phydev);
+	}
+
+	ret = qca81xx_phy_read(phydev, MDIO_MMD_AN, MDIO_STAT1);
+	if (ret < 0)
+		return ret;
+
+	if (!(ret & MDIO_AN_STAT1_COMPLETE)) {
+		linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
+				phydev->lp_advertising);
+		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
+		mii_adv_mod_linkmode_adv_t(phydev->lp_advertising, 0);
+		phydev->pause = 0;
+		phydev->asym_pause = 0;
+	} else {
+		ret = qca81xx_phy_read(phydev, MDIO_MMD_AN, MDIO_AN_10GBT_STAT);
+		if (ret < 0)
+			return ret;
+
+		mii_10gbt_stat_mod_linkmode_lpa_t(phydev->lp_advertising, ret);
 	}
 
 	if (phydev->link != old_link)
@@ -1219,7 +1280,7 @@ static int qca81xx_phy_ack_interrupt(struct phy_device *phydev)
 {
 	int ret = 0;
 
-	ret = qca81xx_phy_read(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+	ret = qca81xx_phy_read(phydev, MDIO_MMD_VEND2,
 		QCA81XX_INTR_STATUS);
 
 	return (ret < 0) ? ret : 0;
@@ -1230,7 +1291,7 @@ static int qca81xx_phy_config_intr(struct phy_device *phydev)
 	int ret = 0;
 	u16 phy_data = 0;
 
-	phy_data = qca81xx_phy_read(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+	phy_data = qca81xx_phy_read(phydev, MDIO_MMD_VEND2,
 		QCA81XX_INTR_MASK);
 
 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
@@ -1239,10 +1300,10 @@ static int qca81xx_phy_config_intr(struct phy_device *phydev)
 			return ret;
 		phy_data = QCA81XX_INTR_STATUS_DOWN |
 			QCA81XX_INTR_STATUS_UP;
-		ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+		ret = qca81xx_phy_write(phydev, MDIO_MMD_VEND2,
 			QCA81XX_INTR_MASK, phy_data);
 	} else {
-		ret = qca81xx_phy_write(phydev->mdio.bus, phydev->mdio.addr, MDIO_MMD_VEND2,
+		ret = qca81xx_phy_write(phydev, MDIO_MMD_VEND2,
 			QCA81XX_INTR_MASK, 0);
 		if (ret < 0)
 			return ret;

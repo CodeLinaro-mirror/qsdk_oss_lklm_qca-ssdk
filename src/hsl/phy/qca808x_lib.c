@@ -17,6 +17,7 @@
 #include "hsl_phy.h"
 #include "qca808x.h"
 #include "qcaphy_c45_common.h"
+#include "sfp_phy.h"
 
 #define PHY_INVALID_DATA            0xffff
 
