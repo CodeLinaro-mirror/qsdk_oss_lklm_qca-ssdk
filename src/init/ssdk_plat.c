@@ -1444,8 +1444,16 @@ static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
 sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
 {
 	ssdk_netdev_switch_t *netdev_switch = NULL;
+	a_uint32_t port_id, dev_id = 0;
+	phy_info_t *phyinfo;
 
-	netdev_switch = ssdk_dts_netdev_switch_find(ssdk_netdev_to_portid(dev));
+	/* netdev info for PPE port */
+	port_id = ssdk_netdev_to_portid(dev);
+	phyinfo = hsl_phy_info_get(dev_id);
+	phyinfo->netdev[port_id] = dev;
+
+	/* netdev switch info for PPE port which connected with switch */
+	netdev_switch = ssdk_dts_netdev_switch_find(port_id);
 	if(!netdev_switch)
 		return SW_NOT_FOUND;
 
