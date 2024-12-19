@@ -511,5 +511,8 @@ void ssdk_plat_exit(a_uint32_t dev_id);
 #define qca_mht_mii_write qca_mii_write
 #define qca_mht_mii_update qca_mii_update
 sw_error_t ssdk_netdev_switch_init(struct net_device *dev);
+#if IS_ENABLED(CONFIG_NET_DSA)
+a_bool_t ssdk_switch_enable_8021q_dsa(a_uint32_t dev_id);
+#endif
 #endif
 /*qca808x_end*/
