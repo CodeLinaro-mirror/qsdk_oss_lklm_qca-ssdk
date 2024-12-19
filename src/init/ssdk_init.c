@@ -213,6 +213,10 @@ char *
 ssdk_port_to_ifname(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	struct phy_device *phydev = NULL;
+	phy_info_t *phyinfo = hsl_phy_info_get(dev_id);
+
+	if (phyinfo->netdev[port_id])
+		return phyinfo->netdev[port_id]->name;
 
 	hsl_port_phydev_get(dev_id, port_id, &phydev);
 	if (phydev && phydev->attached_dev)
