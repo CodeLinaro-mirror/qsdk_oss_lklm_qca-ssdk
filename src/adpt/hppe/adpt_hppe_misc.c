@@ -593,40 +593,40 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 }
 
 static void
-adpt_hppe_debug_prx_drop_cnt_get(a_uint32_t dev_id)
+adpt_hppe_debug_prx_drop_cnt_get(a_uint32_t dev_id, char **buf, ssize_t *count)
 {
 	a_uint32_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PRX_DROP_CNT RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_CNT RX:");
 	for (i = 0; i < PPE_BM_PHY_PORT_OFFSET; i++)
 	{
 		hppe_drop_cnt_drop_cnt_get(dev_id, i, &value);
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15u(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	a_uint32_t value32;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PRX_DROP_PKT_STAT RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_PKT_STAT RX:");
 	for (i = 0; i < DROP_STAT_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -639,20 +639,20 @@ adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union ipr_pkt_num_tbl_reg_u ipr_pkt_num_tbl_reg;
 	union ipr_byte_low_reg_reg_u ipr_byte_low_reg;
@@ -661,7 +661,7 @@ adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type)
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "IPR_PKT_NUM RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "IPR_PKT_NUM RX:");
 	for (i = 0; i < IPR_PKT_NUM_TBL_REG_MAX_ENTRY; i++)
 	{
 		hppe_ipr_pkt_num_tbl_reg_get(dev_id, i, &ipr_pkt_num_tbl_reg);
@@ -675,27 +675,27 @@ adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_vlan_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_vlan_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union vlan_cnt_tbl_u vlan_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "VLAN_CNT_TBL RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VLAN_CNT_TBL RX:");
 	for (i = 0; i < VLAN_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_vlan_cnt_tbl_get(dev_id, i, &vlan_cnt_tbl);
@@ -706,27 +706,27 @@ adpt_hppe_debug_vlan_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union pre_l2_cnt_tbl_u pre_l2_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PRE_L2_CNT_TBL RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRE_L2_CNT_TBL RX:");
 	for (i = 0; i < PRE_L2_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_pre_l2_cnt_tbl_get(dev_id, i, &pre_l2_cnt_tbl);
@@ -737,19 +737,19 @@ adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 
 	sign = tags = 0;
-	printk("%-35s", "PRE_L2_CNT_TBL RX_DROP:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRE_L2_CNT_TBL RX_DROP:");
 	for (i = 0; i < PRE_L2_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_pre_l2_cnt_tbl_get(dev_id, i, &pre_l2_cnt_tbl);
@@ -760,26 +760,26 @@ adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
-static void adpt_hppe_debug_port_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+static void adpt_hppe_debug_port_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union port_tx_drop_cnt_tbl_u port_tx_drop_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PORT_TX_DROP_CNT_TBL TX_DROP:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_TX_DROP_CNT_TBL TX_DROP:");
 	for (i = 0; i < PORT_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_port_tx_drop_cnt_tbl_get(dev_id, i, &port_tx_drop_cnt_tbl);
@@ -790,27 +790,27 @@ static void adpt_hppe_debug_port_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_eg_vsi_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_eg_vsi_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union eg_vsi_counter_tbl_u eg_vsi_counter_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "EG_VSI_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "EG_VSI_COUNTER_TBL TX:");
 	for (i = 0; i < EG_VSI_COUNTER_TBL_MAX_ENTRY; i++)
 	{
 		hppe_eg_vsi_counter_tbl_get(dev_id, i, &eg_vsi_counter_tbl);
@@ -821,27 +821,27 @@ adpt_hppe_debug_eg_vsi_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_port_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_port_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union port_tx_counter_tbl_reg_u port_tx_counter_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PORT_TX_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_TX_COUNTER_TBL TX:");
 	for (i = 0; i < PORT_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
 	{
 		hppe_port_tx_counter_tbl_reg_get(dev_id, i, &port_tx_counter_tbl);
@@ -852,27 +852,27 @@ adpt_hppe_debug_port_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_vp_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_vp_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union vp_tx_counter_tbl_reg_u vp_tx_counter_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "VP_TX_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_TX_COUNTER_TBL TX:");
 	for (i = 0; i < VP_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
 	{
 		hppe_vp_tx_counter_tbl_reg_get(dev_id, i, &vp_tx_counter_tbl);
@@ -883,27 +883,27 @@ adpt_hppe_debug_vp_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union queue_tx_counter_tbl_u queue_tx_counter_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "QUEUE_TX_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "QUEUE_TX_COUNTER_TBL TX:");
 	for (i = 0; i < QUEUE_TX_COUNTER_TBL_MAX_ENTRY; i++)
 	{
 		hppe_queue_tx_counter_tbl_get(dev_id, i, &queue_tx_counter_tbl);
@@ -914,27 +914,27 @@ adpt_hppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(queue=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(queue=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union vp_tx_drop_cnt_tbl_u vp_tx_drop_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "VP_TX_DROP_CNT_TBL TX_DROP:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_TX_DROP_CNT_TBL TX_DROP:");
 	for (i = 0; i < VP_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_vp_tx_drop_cnt_tbl_get(dev_id, i, &vp_tx_drop_cnt_tbl);
@@ -945,27 +945,27 @@ adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (value > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
-			printk(KERN_CONT "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "CPU_CODE_CNT_TBL:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "CPU_CODE_CNT_TBL:");
 	for (i = 0; i < CPU_CODE_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_drop_cpu_cnt_tbl_get(dev_id, i, &drop_cpu_cnt_tbl);
@@ -975,52 +975,52 @@ adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 			value = drop_cpu_cnt_tbl.bf.byte_cnt_0 | ((a_uint64_t)drop_cpu_cnt_tbl.bf.byte_cnt_1 << 32);
 		if (value > 0)
 		{
-			printk(KERN_CONT "\n");
-			printk(KERN_CONT "%-35s", "");
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			if (i >=0 && i <= 70)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i], i);
 			else if (i >= 79 && i <= 92)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 8], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 8], i);
 			else if (i >= 97 && i <= 102)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 12], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 12], i);
 			else if (i >= 107 && i <= 110)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 16], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 16], i);
 			else if (i >= 113 && i <= 127)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 18], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 18], i);
 			else if (i >= 136 && i <= 143)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 26], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 26], i);
 			else if (i >= 148 && i <= 174)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 30], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 30], i);
 			else if (i >= 178 && i <= 180)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 33], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 33], i);
 #ifdef APPE
 			else if (i >= 93 && i <= 95)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i + 57], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i + 57], i);
 			else if (i == 104)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i + 49], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i + 49], i);
 			else if (i >= 181 && i <= 198)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 27], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 27], i);
 			else if (i >= 210 && i <= 232)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 38], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 38], i);
 #endif
 			else if (i >= 254 && i <= 255)
-				printk(KERN_CONT "%15llu(%s),cpucode:%d", value, cpucode[i - 106], i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 106], i);
 			else
-				printk(KERN_CONT "%15llu(Reserved),cpucode:%d", value, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(Reserved),cpucode:%d", value, i);
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "DROP_CPU_CNT_TBL:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "DROP_CPU_CNT_TBL:");
 	for (i = CPU_CODE_CNT_TBL_MAX_ENTRY; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_drop_cpu_cnt_tbl_get(dev_id, i, &drop_cpu_cnt_tbl);
@@ -1030,24 +1030,24 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 			value = drop_cpu_cnt_tbl.bf.byte_cnt_0 | ((a_uint64_t)drop_cpu_cnt_tbl.bf.byte_cnt_1 << 32);
 		if (value > 0)
 		{
-			printk(KERN_CONT "\n");
-			printk(KERN_CONT "%-35s", "");
-			printk(KERN_CONT "%15llu(port=%d:%s),dropcode:%d", value, (i - 256) % 8, dropcode[(i - 256) / 8], (i-256)/8);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d", value, (i - 256) % 8, dropcode[(i - 256) / 8], (i-256)/8);
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 #ifdef APPE
 static void
-adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	a_uint64_t rx_value = 0;
 	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "VP_RX_COUNTER_TBL RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_RX_COUNTER_TBL RX:");
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1057,30 +1057,30 @@ adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	a_uint64_t rx_value = 0;
 	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "VP_RX_DROP_CNT_TBL RX_DROP:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_RX_DROP_CNT_TBL RX_DROP:");
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1090,30 +1090,30 @@ adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	a_uint64_t rx_value = 0;
 	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PORT_RX_COUNTER_TBL RX:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_RX_COUNTER_TBL RX:");
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1123,30 +1123,30 @@ adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	a_uint64_t rx_value = 0;
 	a_uint32_t rx_pkt = 0;
 	int i, tags, sign;
 
 	sign = tags = 0;
-	printk("%-35s", "PORT_RX_DROP_CNT_TBL RX_DROP:");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_RX_DROP_CNT_TBL RX_DROP:");
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1157,19 +1157,19 @@ adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				printk(KERN_CONT "\n");
-				printk(KERN_CONT "%-35s", "");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				printk(KERN_CONT "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				printk(KERN_CONT "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	printk(KERN_CONT "\n");
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 #endif
@@ -1177,58 +1177,58 @@ adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type)
  * if show_type = A_TRUE, show bytes.
  */
 static sw_error_t
-adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type)
+adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
 	/* show PRX DROP_CNT */
-	adpt_hppe_debug_prx_drop_cnt_get(dev_id);
+	adpt_hppe_debug_prx_drop_cnt_get(dev_id, buf, count);
 
 	/* show PRX DROP_PKT_STAT */
-	adpt_hppe_debug_prx_drop_pkt_stat_get(dev_id, show_type);
+	adpt_hppe_debug_prx_drop_pkt_stat_get(dev_id, show_type, buf, count);
 
 	/* show IPR_PKT_NUM */
-	adpt_hppe_debug_ipx_pkt_num_get(dev_id, show_type);
+	adpt_hppe_debug_ipx_pkt_num_get(dev_id, show_type, buf, count);
 
 	/* show VLAN_CNT_TBL */
-	adpt_hppe_debug_vlan_counter_get(dev_id, show_type);
+	adpt_hppe_debug_vlan_counter_get(dev_id, show_type, buf, count);
 
 	/* show PRE_L2_CNT_TBL */
-	adpt_hppe_debug_pre_l2_counter_get(dev_id, show_type);
+	adpt_hppe_debug_pre_l2_counter_get(dev_id, show_type, buf, count);
 
 	/* show PORT_TX_DROP_CNT_TBL */
-	adpt_hppe_debug_port_tx_drop_counter_get(dev_id, show_type);
+	adpt_hppe_debug_port_tx_drop_counter_get(dev_id, show_type, buf, count);
 
 	/* show EG_VSI_COUNTER_TBL */
-	adpt_hppe_debug_eg_vsi_counter_get(dev_id, show_type);
+	adpt_hppe_debug_eg_vsi_counter_get(dev_id, show_type, buf, count);
 
 	/* show PORT_TX_COUNTER_TBL */
-	adpt_hppe_debug_port_tx_counter_get(dev_id, show_type);
+	adpt_hppe_debug_port_tx_counter_get(dev_id, show_type, buf, count);
 
 	/* show VP_TX_COUNTER_TBL */
-	adpt_hppe_debug_vp_tx_counter_get(dev_id, show_type);
+	adpt_hppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
 
 	/* show QUEUE_TX_COUNTER_TBL */
-	adpt_hppe_debug_queue_tx_counter_get(dev_id, show_type);
+	adpt_hppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
 
 	/* show VP_TX_DROP_CNT_TBL */
-	adpt_hppe_debug_vp_tx_drop_counter_get(dev_id, show_type);
+	adpt_hppe_debug_vp_tx_drop_counter_get(dev_id, show_type, buf, count);
 
 	/* show CPU_CODE_CNT */
-	adpt_hppe_debug_cpu_code_counter_get(dev_id, show_type);
+	adpt_hppe_debug_cpu_code_counter_get(dev_id, show_type, buf, count);
 
 	/* show DROP_CPU_CNT_TBL */
-	adpt_hppe_debug_drop_cpu_counter_get(dev_id, show_type);
+	adpt_hppe_debug_drop_cpu_counter_get(dev_id, show_type, buf, count);
 #ifdef APPE
 	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
 	   adpt_chip_type_get(dev_id) == CHIP_MRPPE)
 	{
 		/* show VP_PORT_RX_COUNTER_TBL*/
-		adpt_appe_debug_vp_rx_counter_get(dev_id, show_type);
+		adpt_appe_debug_vp_rx_counter_get(dev_id, show_type, buf, count);
 		/* show VP_PORT_RX_DROP_CNT_TBL*/
-		adpt_appe_debug_vp_rx_drop_counter_get(dev_id, show_type);
+		adpt_appe_debug_vp_rx_drop_counter_get(dev_id, show_type, buf, count);
 		/* show PORT_RX_COUNTER_TBL*/
-		adpt_appe_debug_port_rx_counter_get(dev_id, show_type);
+		adpt_appe_debug_port_rx_counter_get(dev_id, show_type, buf, count);
 		/* show PORT_RX_DROP_CNT_TBL*/
-		adpt_appe_debug_port_rx_drop_counter_get(dev_id, show_type);
+		adpt_appe_debug_port_rx_drop_counter_get(dev_id, show_type, buf, count);
 	}
 #endif
 	return SW_OK;
