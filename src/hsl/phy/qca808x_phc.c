@@ -983,7 +983,7 @@ void qca808x_ptp_change_notify(struct phy_device *phydev)
 
 	pdata->speed = phydev->speed;
 }
-
+#ifdef IN_QCA81XX_PHY
 static int qca81xx_ptp_synce_pin_config(struct phy_device *phydev, a_bool_t en)
 {
 	int  ret, pin_id;
@@ -1025,6 +1025,7 @@ static int qca81xx_ptp_clock_set(struct phy_device *phydev, a_bool_t enable,
 
 	return qca81xx_ptp_synce_pin_config(phydev, enable);
 }
+#endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
 int qca808x_hwtstamp(struct mii_timestamper *mii_ts, struct ifreq *ifr)
@@ -1106,9 +1107,10 @@ int qca808x_hwtstamp(struct phy_device *phydev, struct ifreq *ifr)
 		return -EFAULT;
 	}
 
+#ifdef IN_QCA81XX_PHY
 	if (qca808x_phy_id_compare(phydev, QCA8111_PHY, 0x00ffffff))
 		qca81xx_ptp_clock_set(phydev, ptp_config.ptp_en, pdata);
-
+#endif
 	/*
 	 * disable SYNCE clock output by default,
 	 * only enabling the clock output under the
