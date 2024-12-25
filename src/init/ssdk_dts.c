@@ -322,8 +322,20 @@ ssdk_dts_netdev_switch_find_by_netdev(struct net_device *netdev)
 	a_uint32_t index = 0;
 
 	for (index = 0; index < SSDK_NETDEV_SWITCH_NUM; index++) {
-		if (!strncmp(ssdk_dt_global.netdev_switch[index].switch_netdev_name,
-				netdev->name, IFNAMSIZ))
+		if (ssdk_dt_global.netdev_switch[index].dev == netdev)
+			return &ssdk_dt_global.netdev_switch[index];
+	}
+
+	return NULL;
+}
+
+ssdk_netdev_switch_t *
+ssdk_dts_netdev_switch_find_by_devid(a_uint32_t dev_id)
+{
+	a_uint32_t index = 0;
+
+	for(index = 0; index < SSDK_NETDEV_SWITCH_NUM; index++) {
+		if(ssdk_dt_global.netdev_switch[index].switch_dev_id == dev_id)
 			return &ssdk_dt_global.netdev_switch[index];
 	}
 

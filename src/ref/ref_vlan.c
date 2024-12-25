@@ -456,6 +456,11 @@ qca_ar8327_sw_hw_apply(struct switch_dev *dev)
         return 0;
     }
 
+#if IS_ENABLED(CONFIG_NET_DSA)
+	if (ssdk_switch_enable_8021q_dsa(priv->device_id) == A_TRUE)
+		return 0;
+#endif
+
     portmask = aos_mem_alloc(sizeof(fal_pbmp_t) * dev->ports);
     if (portmask == NULL) {
 	    SSDK_ERROR("%s: portmask malloc failed. \n", __func__);

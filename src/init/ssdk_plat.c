@@ -48,6 +48,7 @@
 #include <linux/string.h>
 #include <linux/bitops.h>
 #include <linux/mdio-bitbang.h>
+#include <net/dsa.h>
 /*qca808x_start*/
 #include "ssdk_plat.h"
 #include "hsl_phy.h"
@@ -1458,11 +1459,22 @@ sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
 	if(!netdev_switch)
 		return SW_NOT_FOUND;
 
-	strlcpy(netdev_switch->switch_netdev_name, dev->name,
-		sizeof(netdev_switch->switch_netdev_name));
+	netdev_switch->dev = dev;
 
 	return SW_OK;
 }
+
+#if IS_ENABLED(CONFIG_NET_DSA)
+a_bool_t ssdk_switch_enable_8021q_dsa(a_uint32_t dev_id)
+{
+	ssdk_netdev_switch_t *netdev_switch = ssdk_dts_netdev_switch_find_by_devid(dev_id);
+	if (netdev_switch && netdev_switch->dev && netdev_uses_dsa(netdev_switch->dev) &&
+		netdev_switch->dev->dsa_ptr->tag_ops->proto == DSA_TAG_PROTO_QCA_8021Q)
+		return A_TRUE;
+
+	return A_FALSE;
+}
+#endif
 
 static ssize_t ssdk_eth_switch_get(struct device *dev,
 	struct device_attribute *attr, char *buf)
@@ -1485,7 +1497,7 @@ static ssize_t ssdk_eth_switch_get(struct device *dev,
 				"     \"switch_connected\":\"%s\",\n" \
 				"     \"switch_device_id\":\"%d\",\n" \
 				"     \"switch_cpu_port\":\"%d\",\n",
-				netdev_switch->switch_netdev_name,
+				netdev_switch->dev->name,
 				netdev_switch->switch_connected ? "yes": "no",
 				dev_id,
 				netdev_switch->switch_cpu_port

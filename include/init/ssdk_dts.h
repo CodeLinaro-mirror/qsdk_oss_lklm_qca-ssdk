@@ -107,7 +107,7 @@ typedef struct
 #define SSDK_NETDEV_SWITCH_NUM 2
 typedef struct
 {
-	char switch_netdev_name[IFNAMSIZ];
+	struct net_device *dev;
 	a_uint8_t switch_netdev_port;
 	a_bool_t switch_connected;
 	a_uint8_t switch_dev_id;
@@ -193,6 +193,8 @@ ssdk_netdev_switch_t *ssdk_dts_netdev_switch_get(a_uint32_t index);
 ssdk_netdev_switch_t *ssdk_dts_netdev_switch_find(a_uint32_t port_id);
 ssdk_netdev_switch_t *
 ssdk_dts_netdev_switch_find_by_netdev(struct net_device *netdev);
+ssdk_netdev_switch_t *
+ssdk_dts_netdev_switch_find_by_devid(a_uint32_t dev_id);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
