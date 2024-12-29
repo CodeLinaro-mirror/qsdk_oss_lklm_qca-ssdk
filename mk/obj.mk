@@ -391,7 +391,7 @@ endif
 ###############################################################################
 #                                PHY
 ###############################################################################
-OBJ-COMMON  += src/hsl/phy/hsl_phy.o src/hsl/phy/qcaphy_common.o
+OBJ-COMMON  += src/hsl/phy/hsl_phy.o
 						media-type = "sfp"; /* fiber mode */
 
 ifeq (TRUE, $(IN_AQUANTIA_PHY))
@@ -402,14 +402,9 @@ ifeq (TRUE, $(IN_SFP_PHY))
 OBJ-COMMON  += src/hsl/phy/sfp_phy.o
 endif
 
-ifeq (TRUE, $(IN_QCA808X_PHY))
-OBJ-COMMON  += src/hsl/phy/qca808x_phy.o src/hsl/phy/qca808x.o
-
 ifeq (TRUE, $(IN_PTP))
 ifeq ($(CONFIG_PTP_1588_CLOCK), y)
 OBJ-COMMON  += src/hsl/phy/hsl_ptp.o
-endif
-
 endif
 endif
 

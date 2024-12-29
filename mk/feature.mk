@@ -97,37 +97,20 @@ endif
 #############################################
 # PHY CHIP Features According To Switch     #
 #############################################
-ifeq (HPPE, $(CHIP_TYPE))
+ifeq (APPE, $(CHIP_TYPE))
 	IN_AQUANTIA_PHY=TRUE
-	IN_QCA808X_PHY=TRUE
-	IN_PHY_I2C_MODE=TRUE
-	IN_SFP_PHY=TRUE
-	IN_SFP=TRUE
-else ifeq (CPPE, $(CHIP_TYPE))
-	IN_QCA808X_PHY=TRUE
-	IN_PHY_I2C_MODE=TRUE
-else ifeq (MP, $(CHIP_TYPE))
-	IN_QCA808X_PHY=TRUE
-	IN_SFP_PHY=TRUE
-	IN_SFP=TRUE
-else ifeq (APPE, $(CHIP_TYPE))
-	IN_AQUANTIA_PHY=TRUE
-	IN_QCA808X_PHY=TRUE
 	IN_SFP_PHY=TRUE
 	IN_SFP=TRUE
 else ifneq (, $(filter MRPPE MPPE, $(CHIP_TYPE)))
 	ifeq ($(LOWMEM_FLASH), enable)
-		IN_QCA808X_PHY=TRUE
 		IN_SFP_PHY=TRUE
 		IN_SFP=TRUE
 	else
 		IN_AQUANTIA_PHY=TRUE
-		IN_QCA808X_PHY=TRUE
 		IN_SFP_PHY=TRUE
 		IN_SFP=TRUE
 	endif
 else
-	IN_QCA808X_PHY=FALSE
 	IN_AQUANTIA_PHY=FALSE
 	IN_SFP_PHY=FALSE
 	IN_SFP=FALSE
@@ -139,18 +122,10 @@ else
 	IN_SFE=FALSE
 endif
 
-#QCA808X PHY features
-ifeq ($(IN_QCA808X_PHY), TRUE)
-	ifeq ($(PTP_FEATURE), enable)
-		IN_PTP=TRUE
-	else
-		IN_PTP=FALSE
-	endif
-endif
-
-#IN_PHY_I2C_MODE depends on IN_SFP_PHY
-ifeq ($(IN_PHY_I2C_MODE), TRUE)
-	IN_SFP_PHY=TRUE
+ifeq ($(PTP_FEATURE), enable)
+	IN_PTP=TRUE
+else
+	IN_PTP=FALSE
 endif
 
 #############################################

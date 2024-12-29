@@ -22,19 +22,11 @@
 #include "hsl_dev.h"
 /*qca808x_end*/
 #include "ssdk_dts.h"
-#ifdef MP
-#include "mpge_phy.h"
-#endif
 #ifdef IN_AQUANTIA_PHY
 #include <aquantia_phy.h>
 #endif
 #ifdef IN_SFP_PHY
 #include <sfp_phy.h>
-#endif
-#ifdef IN_QCA808X_PHY
-/*qca808x_start*/
-#include <qca808x_phy.h>
-/*qca808x_end*/
 #endif
 #include <linux/of_gpio.h>
 /*qca808x_start*/
@@ -63,18 +55,8 @@ phy_driver_instance_t ssdk_phy_driver[] =
 	#endif
 	{QCA803X_PHY_CHIP, {0}, NULL, NULL, NULL},
 	{SFP_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#ifdef MP
-	{MPGE_PHY_CHIP, {0}, NULL, mpge_phy_init, NULL},
-	#else
 	{MPGE_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
-	#ifdef IN_QCA808X_PHY
-/*qca808x_start*/
-	{QCA808X_PHY_CHIP, {0}, NULL, qca808x_phy_init, qca808x_phy_exit},
-/*qca808x_end*/
-	#else
 	{QCA808X_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
 /*qca808x_start*/
 	{MAX_PHY_CHIP, {0}, NULL, NULL, NULL}
 };

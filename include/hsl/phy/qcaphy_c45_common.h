@@ -20,19 +20,48 @@
 #ifdef __cplusplus
 extern "C" {
 #endif				/* __cplusplus */
-#include "qcaphy_common.h"
+
+/*MMD number*/
+#define QCAPHY_MMD1_NUM                                            0x1
+#define QCAPHY_MMD3_NUM                                            0x3
+#define QCAPHY_MMD7_NUM                                            0x7
+#define QCAPHY_MMD31_NUM                                           0x1e
 
 /*MMD register*/
+#define QCAPHY_ID1                                                 2
+#define QCAPHY_ID2                                                 3
+#define QCAPHY_MMD1_PMA_CONTROL                                    0x0
+#define QCAPHY_MMD1_PMA_TTYPE                                      0x7
+#define QCAPHY_MMD3_8023AZ_EEE_CAPABILITY                          0x14
+#define QCAPHY_MMD3_8023AZ_EEE_CAPABILITY1                         0x15
 #define QCAPHY_MMD7_AN_CONTROL1                                    0
 #define QCAPHY_MMD7_AN_STATUS                                      0x1
 #define QCAPHY_MMD7_AN_ADV                                         0x10
 #define QCAPHY_MMD7_AN_10G_ADV                                     0x20
-#define QCAPHY_MMD7_AN_LP_ADV                                      0x13
-#define QCAPHY_MMD7_AN_LP_10G_ADV                                  0x21
-#define QCAPHY_MMD1_PMA_CONTROL                                    0x0
-#define QCAPHY_MMD1_PMA_TTYPE                                      0x7
 #define QCAPHY_MMD31_CONTROL                                       0
+#define QCAPHY_MMD7_8023AZ_EEE_CTRL                                0x3c
+#define QCAPHY_MMD7_8023AZ_EEE_PARTNER                             0x3d
+#define QCAPHY_MMD7_8023AZ_EEE_CTRL1                               0x3e
+#define QCAPHY_MMD7_8023AZ_EEE_PARTNER1                            0x3f
+
 /*MMD registers field*/
+#define QCAPHY_EEE_MASK                                            0x000e
+#define QCAPHY_EEE_ADV_100M                                        0x0002
+#define QCAPHY_EEE_ADV_1000M                                       0x0004
+#define QCAPHY_EEE_ADV_10000M                                      0x0008
+#define QCAPHY_EEE_MASK1                                           0x0003
+#define QCAPHY_EEE_ADV_2500M                                       0x0001
+#define QCAPHY_EEE_ADV_5000M                                       0x0002
+#define QCAPHY_EEE_PARTNER_ADV_100M                                0x0002
+#define QCAPHY_EEE_PARTNER_ADV_1000M                               0x0004
+#define QCAPHY_EEE_PARTNER_ADV_10000M                              0x0008
+#define QCAPHY_EEE_PARTNER_ADV_2500M                               0x0001
+#define QCAPHY_EEE_PARTNER_ADV_5000M                               0x0002
+#define QCAPHY_EEE_CAPABILITY_100M                                 0x0002
+#define QCAPHY_EEE_CAPABILITY_1000M                                0x0004
+#define QCAPHY_EEE_CAPABILITY_10000M                               0x0008
+#define QCAPHY_EEE_CAPABILITY_2500M                                0x0001
+#define QCAPHY_EEE_CAPABILITY_5000M                                0x0002
 #define QCAPHY_AN_LINK_STATUS                                      0x4
 #define QCAPHY_AN_AUTONEG_EN                                       0x1000
 #define QCAPHY_AN_AUTONEG_RESTART                                  0x200
@@ -50,15 +79,6 @@ QCAPHY_AN_ADVERTISE_PAUSE | QCAPHY_AN_ADVERTISE_ASM_PAUSE)
 #define QCAPHY_AN_ADVERTISE_10000FULL                              0x1000
 #define QCAPHY_AN_GIGA_PLUS_ALL     (QCAPHY_AN_ADVERTISE_2500FULL |\
 QCAPHY_AN_ADVERTISE_5000FULL | QCAPHY_AN_ADVERTISE_10000FULL)
-#define QCAPHY_AN_LP_ADVERTISE_10HALF                              0x20
-#define QCAPHY_AN_LP_ADVERTISE_10FULL                              0x40
-#define QCAPHY_AN_LP_ADVERTISE_100HALF                             0x80
-#define QCAPHY_AN_LP_ADVERTISE_100FULL                             0x100
-#define QCAPHY_AN_LP_ADVERTISE_PAUSE                               0x400
-#define QCAPHY_AN_LP_ADVERTISE_ASM_PAUSE                           0x800
-#define QCAPHY_AN_LP_ADVERTISE_2500FULL                            0x80
-#define QCAPHY_AN_LP_ADVERTISE_5000FULL                            0x100
-#define QCAPHY_AN_LP_ADVERTISE_10000FULL                           0x800
 #define QCAPHY_PMA_SPEED_MASK                                      0x207c
 #define QCAPHY_PMA_CONTROL_10000M                                  0x2040
 #define QCAPHY_PMA_CONTROL_5000M                                   0x205c
@@ -93,9 +113,6 @@ qcaphy_c45_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 qcaphy_c45_get_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t * autoneg);
-sw_error_t
-qcaphy_c45_get_partner_ability(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t * ability);
 a_bool_t
 qcaphy_c45_get_link_status(a_uint32_t dev_id, a_uint32_t phy_addr);
 sw_error_t
@@ -122,10 +139,6 @@ qcaphy_c45_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 qcaphy_c45_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t *status);
-sw_error_t
-qcaphy_c45_set_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable);
-sw_error_t
-qcaphy_c45_get_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t * enable);
 sw_error_t
 qcaphy_c45_force_speed_set(a_uint32_t dev_id, a_uint32_t phy_addr,
 	fal_port_speed_t speed);
