@@ -3724,6 +3724,7 @@ struct hsl_phy_api hsl_phy_api_table[] =
 	{pll_on, NULL},
 	{pll_off, NULL},
 	{ldo_set, NULL},
+	{adjust_link_post, NULL},
 	{phyid_get, (void*)hsl_port_phy_std_phyid_get},
 	{autoadv_get, (void*)hsl_port_phy_std_autoadv_get},
 	{autoadv_set, (void*)hsl_port_phy_std_autoadv_set},
