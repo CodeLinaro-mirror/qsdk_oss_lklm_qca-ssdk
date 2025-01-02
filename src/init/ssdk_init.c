@@ -1564,94 +1564,6 @@ ssdk_cleanup(a_uint32_t dev_id)
 }
 /*qca808x_end*/
 
-#ifdef IN_AQUANTIA_PHY
-#ifdef CONFIG_MDIO
-static struct mdio_if_info ssdk_mdio_ctl;
-#endif
-static struct net_device *ssdk_miireg_netdev = NULL;
-
-static int ssdk_miireg_open(struct net_device *netdev)
-{
-	return 0;
-}
-static int ssdk_miireg_close(struct net_device *netdev)
-{
-	return 0;
-}
-
-static int ssdk_miireg_do_ioctl(struct net_device *netdev,
-			struct ifreq *ifr, int32_t cmd)
-{
-	int ret = -EINVAL;
-#ifdef CONFIG_MDIO
-	struct mii_ioctl_data *mii_data = if_mii(ifr);
-	ret = mdio_mii_ioctl(&ssdk_mdio_ctl, mii_data, cmd);
-#endif
-	return ret;
-}
-
-static const struct net_device_ops ssdk_netdev_ops = {
-	.ndo_open = &ssdk_miireg_open,
-	.ndo_stop = &ssdk_miireg_close,
-	.ndo_do_ioctl = &ssdk_miireg_do_ioctl,
-};
-
-#ifdef CONFIG_MDIO
-static int ssdk_miireg_ioctl_read(struct net_device *netdev, int phy_addr, int mmd, uint16_t addr)
-{
-	a_uint16_t val = 0;
-
-	if (MDIO_DEVAD_NONE == mmd) {
-		val = hsl_phy_mii_reg_read(0, phy_addr, addr);
-		return (int)val;
-	}
-
-	val = hsl_phy_mmd_reg_read(0, phy_addr, A_TRUE, mmd, addr);
-
-	return (int)val;
-}
-
-static int ssdk_miireg_ioctl_write(struct net_device *netdev, int phy_addr, int mmd,
-				uint16_t addr, uint16_t value)
-{
-	if (MDIO_DEVAD_NONE == mmd) {
-		hsl_phy_mii_reg_write(0, phy_addr, addr, value);
-		return 0;
-	}
-
-	hsl_phy_mmd_reg_write(0, phy_addr, A_TRUE, mmd, addr, value);
-
-	return 0;
-}
-#endif
-
-static void ssdk_netdev_setup(struct net_device *dev)
-{
-	dev->netdev_ops = &ssdk_netdev_ops;
-}
-static void ssdk_miireg_ioctrl_register(void)
-{
-	if (ssdk_miireg_netdev)
-		return;
-#ifdef CONFIG_MDIO
-	ssdk_mdio_ctl.mdio_read = ssdk_miireg_ioctl_read;
-	ssdk_mdio_ctl.mdio_write = ssdk_miireg_ioctl_write;
-	ssdk_mdio_ctl.mode_support = MDIO_SUPPORTS_C45;
-#endif
-	ssdk_miireg_netdev = alloc_netdev(100, "miireg", 0, ssdk_netdev_setup);
-	if (ssdk_miireg_netdev)
-		register_netdev(ssdk_miireg_netdev);
-}
-
-static void ssdk_miireg_ioctrl_unregister(void)
-{
-	if (ssdk_miireg_netdev) {
-		unregister_netdev(ssdk_miireg_netdev);
-		kfree(ssdk_miireg_netdev);
-		ssdk_miireg_netdev = NULL;
-	}
-}
-#endif
 static void ssdk_driver_register(a_uint32_t dev_id)
 {
 	hsl_reg_mode reg_mode;
@@ -2006,11 +1918,7 @@ static int __init regi_init(void)
 /*qca808x_start*/
 		rv = chip_ver_get(dev_id, &cfg);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-/*qca808x_end*/
-#ifdef IN_AQUANTIA_PHY
-		ssdk_miireg_ioctrl_register();
-#endif
-/*qca808x_start*/
+
 		rv = ssdk_init(dev_id, &cfg);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 /*qca808x_end*/
@@ -2145,9 +2053,6 @@ regi_exit(void)
 /*qca808x_end*/
 
 	ssdk_sysfs_exit();
-#ifdef IN_AQUANTIA_PHY
-	ssdk_miireg_ioctrl_unregister();
-#endif
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		ssdk_plat_exit(dev_id);
 	}
