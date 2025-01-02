@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2017,  The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -294,10 +294,6 @@ qca_switch_get_mac_link(struct qca_phy_priv *priv, a_uint32_t port_id, a_uint32_
 
 #define QM_NOT_EMPTY  1
 #define QM_EMPTY  0
-
-
-static a_uint32_t phy_current_speed = 2;
-static a_uint32_t phy_current_duplex = 1;
 
 #if defined(IN_VLAN)
 int qca_ar8327_sw_enable_vlan0(a_uint32_t dev_id, a_bool_t enable, a_uint8_t portmap);
@@ -713,43 +709,6 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 		}
 	}
 	return ;
-}
-
-void
-dess_rgmii_sw_mac_polling_task(struct qca_phy_priv *priv)
-{
-	a_uint32_t mac_mode;
-	a_uint16_t phy_spec_status, phy_link_status;
-	a_uint32_t speed, duplex;
-
-	mac_mode = ssdk_dt_global_get_mac_mode(priv->device_id, 0);
-
-	if ((mac_mode == PORT_WRAPPER_SGMII0_RGMII5)
-		||(mac_mode == PORT_WRAPPER_SGMII1_RGMII5)
-		||(mac_mode == PORT_WRAPPER_SGMII0_RGMII4)
-		||(mac_mode == PORT_WRAPPER_SGMII1_RGMII4)
-		||(mac_mode == PORT_WRAPPER_SGMII4_RGMII4)) {
-		phy_spec_status = hsl_phy_mii_reg_read(priv->device_id, 4, 0x11);
-		phy_link_status = (a_uint16_t)((phy_spec_status & BIT(10)) >> 10);
-		if (phy_link_status == 1) {
-			speed = (a_uint32_t)((phy_spec_status >> 14) & 0x03);
-			duplex = (a_uint32_t)((phy_spec_status & BIT(13)) >> 13);
-			if ((speed != phy_current_speed) || (duplex != phy_current_duplex)) {
-				if ((mac_mode == PORT_WRAPPER_SGMII0_RGMII5)
-				||(mac_mode == PORT_WRAPPER_SGMII1_RGMII5))
-				qca_switch_force_mac_status(priv, 5,speed,duplex);
-
-				if ((mac_mode == PORT_WRAPPER_SGMII0_RGMII4)
-				||(mac_mode == PORT_WRAPPER_SGMII1_RGMII4)
-				||(mac_mode == PORT_WRAPPER_SGMII4_RGMII4))
-				qca_switch_force_mac_status(priv, 4,speed,duplex);
-			}
-			phy_current_speed = speed;
-			phy_current_duplex = duplex;
-		}
-	}
-
-	return;
 }
 
 #ifdef IN_SWCONFIG

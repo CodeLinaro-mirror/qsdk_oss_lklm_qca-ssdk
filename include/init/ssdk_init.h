@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2012, 2015-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -268,139 +268,73 @@ typedef struct
 	a_uint32_t      mac_mode2;
 } ssdk_init_cfg;
 /*qca808x_end*/
-
-#if defined ATHENA
-#define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
-#elif defined GARUDA
-
-#define def_init_cfg_cpu2  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2,};
-
-#define def_init_spec_cfg_cpu2 {.mac0_rgmii = A_TRUE, .mac5_rgmii = A_TRUE, \
-                    .rx_delay_s0 = A_FALSE, .rx_delay_s1 = A_FALSE, \
-                    .tx_delay_s0 = A_TRUE,  .tx_delay_s1 = A_FALSE,\
-                    .rgmii_rxclk_delay = A_TRUE, .rgmii_txclk_delay = A_TRUE,\
-                    .phy4_rx_delay = A_TRUE, .phy4_tx_delay = A_TRUE,}
-
-#define def_init_cfg_cpu1  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_1,};
-
-#define def_init_spec_cfg_cpu1 {.mac0_rgmii = A_TRUE, .mac5_rgmii = A_FALSE, \
-                    .rx_delay_s0 = A_FALSE, .rx_delay_s1 = A_FALSE, \
-                    .tx_delay_s0 = A_TRUE,  .tx_delay_s1 = A_FALSE,\
-                    .rgmii_rxclk_delay = A_TRUE, .rgmii_txclk_delay = A_TRUE, \
-                    .phy4_rx_delay = A_TRUE, .phy4_tx_delay = A_TRUE,}
-
-#define def_init_cfg_cpu1plus  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_1_PLUS,};
-
-#define def_init_spec_cfg_cpu1plus {.mac0_rgmii = A_TRUE, .mac5_rgmii = A_FALSE, \
-                    .rx_delay_s0 = A_FALSE, .rx_delay_s1 = A_FALSE, \
-                    .tx_delay_s0 = A_FALSE,  .tx_delay_s1 = A_FALSE,\
-                    .rgmii_rxclk_delay = A_TRUE, .rgmii_txclk_delay = A_TRUE, \
-                    .phy4_rx_delay = A_TRUE, .phy4_tx_delay = A_TRUE,}
-
-#define def_init_cfg_nocpu  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_NO_CPU,};
-
-#define def_init_spec_cfg_nocpu { .mac0_rgmii = A_FALSE, .mac5_rgmii = A_FALSE, \
-                    .rx_delay_s0 = A_FALSE, .rx_delay_s1 = A_FALSE, \
-                    .tx_delay_s0 = A_FALSE,  .tx_delay_s1 = A_FALSE,\
-                    .rgmii_rxclk_delay = A_TRUE, .rgmii_txclk_delay = A_TRUE, \
-                    .phy4_rx_delay = A_TRUE, .phy4_tx_delay = A_TRUE,}
-
-#define def_init_cfg_cpu1_gmii  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_1,};
-
-#define def_init_spec_cfg_cpu1_gmii {.mac0_rgmii = A_FALSE, .mac5_rgmii = A_FALSE, \
-                    .rx_delay_s0 = A_FALSE, .rx_delay_s1 = A_FALSE, \
-                    .tx_delay_s0 = A_TRUE,  .tx_delay_s1 = A_FALSE,\
-                    .rgmii_rxclk_delay = A_TRUE, .rgmii_txclk_delay = A_TRUE, \
-                    .phy4_rx_delay = A_TRUE, .phy4_tx_delay = A_TRUE,}
-
-#define def_init_cfg def_init_cfg_cpu2
-#define def_init_spec_cfg def_init_spec_cfg_cpu2
-
-#elif defined SHIVA
-#define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
-#elif defined HORUS
-#define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
-#elif defined ISIS
+#if defined ISIS
 #define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
 #elif defined ISISC
 #define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
 #endif
 
-    typedef struct
-    {
-        a_bool_t in_acl;
-        a_bool_t in_fdb;
-        a_bool_t in_igmp;
-        a_bool_t in_leaky;
-        a_bool_t in_led;
-        a_bool_t in_mib;
-        a_bool_t in_mirror;
-        a_bool_t in_misc;
-        a_bool_t in_portcontrol;
-        a_bool_t in_portvlan;
-        a_bool_t in_qos;
-        a_bool_t in_rate;
-        a_bool_t in_stp;
-        a_bool_t in_vlan;
-        a_bool_t in_reduced_acl;
-        a_bool_t in_ip;
-        a_bool_t in_nat;
-        a_bool_t in_cosmap;
-        a_bool_t in_sec;
-        a_bool_t in_trunk;
-        a_bool_t in_nathelper;
-        a_bool_t in_interfacectrl;
-    } ssdk_features;
+typedef struct
+{
+	a_bool_t in_acl;
+	a_bool_t in_fdb;
+	a_bool_t in_igmp;
+	a_bool_t in_leaky;
+	a_bool_t in_led;
+	a_bool_t in_mib;
+	a_bool_t in_mirror;
+	a_bool_t in_misc;
+	a_bool_t in_portcontrol;
+	a_bool_t in_portvlan;
+	a_bool_t in_qos;
+	a_bool_t in_rate;
+	a_bool_t in_stp;
+	a_bool_t in_vlan;
+	a_bool_t in_reduced_acl;
+	a_bool_t in_ip;
+	a_bool_t in_nat;
+	a_bool_t in_cosmap;
+	a_bool_t in_sec;
+	a_bool_t in_trunk;
+	a_bool_t in_nathelper;
+	a_bool_t in_interfacectrl;
+}ssdk_features;
 /*qca808x_start*/
 #ifdef IOCTL_COMPAT
-	typedef struct
-	{		
-		hsl_init_mode	cpu_mode;
-		hsl_access_mode reg_mode;
-		ssdk_chip_type	chip_type;
-		a_uint32_t		chip_revision;
-		a_uint32_t		nl_prot;
-	} ssdk_init_cfg_us;
+typedef struct
+{		
+	hsl_init_mode	cpu_mode;
+	hsl_access_mode reg_mode;
+	ssdk_chip_type	chip_type;
+	a_uint32_t		chip_revision;
+	a_uint32_t		nl_prot;
+} ssdk_init_cfg_us;
 #endif
 
 #define CFG_STR_SIZE 20
-    typedef struct
-    {
-        a_uint8_t build_ver[CFG_STR_SIZE];
-        a_uint8_t build_date[CFG_STR_SIZE];
-
-        a_uint8_t chip_type[CFG_STR_SIZE]; //GARUDA
-        a_uint8_t cpu_type[CFG_STR_SIZE];  //mips
-        a_uint8_t os_info[CFG_STR_SIZE];   //OS=linux OS_VER=2_6
-
-        a_bool_t  fal_mod;
-        a_bool_t  kernel_mode;
-        a_bool_t  uk_if;
-/*qca808x_end*/
-        ssdk_features features;
-/*qca808x_start*/
-#ifdef IOCTL_COMPAT
-        ssdk_init_cfg_us init_cfg;
-#else
-        ssdk_init_cfg init_cfg;
-#endif
-    } ssdk_cfg_t;
-
-#define SSDK_RFS_INTF_MAX	8
 typedef struct
 {
-	a_uint32_t if_idx; /*netdevic idx*/
-	fal_mac_addr_t macaddr;
-	a_uint16_t vid;
-	a_uint8_t hw_idx; /* HW table entry idx*/
-} ssdk_rfs_intf_t;
+	a_uint8_t build_ver[CFG_STR_SIZE];
+	a_uint8_t build_date[CFG_STR_SIZE];
+	a_uint8_t chip_type[CFG_STR_SIZE]; //GARUDA
+	a_uint8_t cpu_type[CFG_STR_SIZE];  //mips
+	a_uint8_t os_info[CFG_STR_SIZE];   //OS=linux OS_VER=2_6
+	a_bool_t  fal_mod;
+	a_bool_t  kernel_mode;
+	a_bool_t  uk_if;
+/*qca808x_end*/
+	ssdk_features features;
+/*qca808x_start*/
+#ifdef IOCTL_COMPAT
+	ssdk_init_cfg_us init_cfg;
+#else
+	ssdk_init_cfg init_cfg;
+#endif
+} ssdk_cfg_t;
 
 sw_error_t
 ssdk_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
 /*qca808x_end*/
-sw_error_t
-ssdk_hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode);
-
 a_uint32_t ssdk_dt_global_get_mac_mode(a_uint32_t dev_id, a_uint32_t index);
 a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode);
 
@@ -412,12 +346,8 @@ a_uint32_t
 ssdk_ifname_to_port(a_uint32_t dev_id, const char *ifname);
 char *
 ssdk_port_to_ifname(a_uint32_t dev_id, a_uint32_t port_id);
-
 void ssdk_portvlan_init(a_uint32_t dev_id);
-sw_error_t ssdk_dess_trunk_init(a_uint32_t dev_id, a_uint32_t wan_bitmap);
-
-void
-qca_mac_port_status_init(a_uint32_t dev_id, a_uint32_t port_id);
+void qca_mac_port_status_init(a_uint32_t dev_id, a_uint32_t port_id);
 /*qca808x_start*/
 struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id);
 /*qca808x_end*/

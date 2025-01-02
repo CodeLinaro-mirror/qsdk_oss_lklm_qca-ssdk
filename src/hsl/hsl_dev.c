@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2017-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -119,14 +119,6 @@ hsl_dev_ptr_get(a_uint32_t dev_id)
     return &dev_table[dev_id];
 }
 /*qca808x_end*/
-
-a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id)
-{
-	if(dev_ssdk_cfg[dev_id]) {
-		return dev_ssdk_cfg[dev_id]->port_cfg.wan_bmp;
-	}
-	return 0;
-}
 
 a_uint32_t hsl_dev_inner_ports_get(a_uint32_t dev_id)
 {

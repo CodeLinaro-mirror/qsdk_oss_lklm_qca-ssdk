@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2014, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -153,11 +153,6 @@ qca_lan_wan_cfg_set(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg)
 	ssdk_lan_bmp_set(dev_id, lan_bmp);
 	ssdk_wan_bmp_set(dev_id, wan_bmp);
 	qca_ssdk_port_bmp_set(dev_id, lan_bmp|wan_bmp);
-#if defined(DESS) && defined(IN_TRUNK)
-	if(chip_type == CHIP_DESS) {
-		ssdk_dess_trunk_init(dev_id, wan_bmp);
-	}
-#endif
 #if defined(IN_PORTVLAN)
 	ssdk_portvlan_init(dev_id);
 #endif

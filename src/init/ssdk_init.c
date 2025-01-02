@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2012, 2014-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -54,32 +54,14 @@
 #include <net/dsa.h>
 
 #if defined(IN_SWCONFIG)
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/switch.h>
-#else
-#include <net/switch.h>
 #endif
-#endif
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0))
 /*qca808x_start*/
 #include <linux/of.h>
 #include <linux/of_platform.h>
 #include <linux/of_net.h>
 #include <linux/of_address.h>
 #include <linux/reset.h>
-/*qca808x_end*/
-#elif defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
-#include <linux/of.h>
-#include <linux/of_platform.h>
-#include <linux/of_net.h>
-#include <linux/of_address.h>
-#include <linux/reset.h>
-#else
-#include <linux/ar8216_platform.h>
-#include <drivers/net/phy/ar8216.h>
-#include <drivers/net/ethernet/atheros/ag71xx/ag71xx.h>
-#endif
-/*qca808x_start*/
 #include "ssdk_plat.h"
 /*qca808x_end*/
 #include "ssdk_clk.h"
@@ -97,24 +79,6 @@
 #include "ssdk_phy_i2c.h"
 #endif
 /*qca808x_end*/
-#ifdef IN_IP
-#if defined (CONFIG_NF_FLOW_COOKIE)
-#include "fal_flowcookie.h"
-#ifdef IN_SFE
-#include <shortcut-fe/sfe.h>
-#endif
-#endif
-#endif
-
-#ifdef IN_RFS
-#if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
-#include <linux/if_vlan.h>
-#endif
-#include <qca-rfs/rfs_dev.h>
-#ifdef IN_IP
-#include "fal_rfs.h"
-#endif
-#endif
 #include "adpt.h"
 #ifdef HPPE
 #include "ssdk_hppe.h"
@@ -138,22 +102,11 @@
 #include "ssdk_led.h"
 #endif
 #include "ssdk_plat.h"
-
-#ifdef IN_RFS
-struct rfs_device rfs_dev;
-struct notifier_block ssdk_inet_notifier;
-ssdk_rfs_intf_t rfs_intf_tbl[SSDK_RFS_INTF_MAX] = {{0}};
-#endif
-
-//#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 struct notifier_block ssdk_dev_notifier;
-//#endif
 #ifdef IN_SFP_PHY
 #include "sfp_phy.h"
 #endif
 
-extern a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id);
-extern void dess_rgmii_sw_mac_polling_task(struct qca_phy_priv *priv);
 extern void qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv);
 extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
 
@@ -161,7 +114,6 @@ extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
 
 #define QCA_QM_WORK_DELAY	100
 #define QCA_QM_ITEM_NUMBER 41
-#define QCA_RGMII_WORK_DELAY	1000
 #define QCA_MAC_SW_SYNC_WORK_DELAY	1000
 #define QCA_FDB_SW_SYNC_WORK_DELAY	1000
 /*qca808x_start*/
@@ -229,7 +181,6 @@ ssdk_port_to_ifname(a_uint32_t dev_id, a_uint32_t port_id)
 	}
 }
 
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 static void
 ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 {
@@ -238,13 +189,6 @@ ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 
 	if (priv->of_node)
 		np = priv->of_node;
-	else
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
-		np = priv->phy->mdio.dev.of_node;
-#else
-		np = priv->phy->dev.of_node;
-#endif
-
 	if (!np)
 		return;
 
@@ -267,39 +211,6 @@ ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 		}
 	}
 }
-#else
-static void
-ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
-{
-	struct ar8327_platform_data *plat_data;
-
-	plat_data = priv->phy->dev.platform_data;
-	if (plat_data == NULL) {
-		return;
-	}
-
-	if(plat_data->pad5_cfg) {
-		if(plat_data->pad5_cfg->mode == AR8327_PAD_PHY_RGMII) {
-			a_uint16_t val = 0;
-			/*enable RGMII  mode */
-			hsl_phy_modify_debug(0, AR8327_PORT5_PHY_ADDR,
-				AR8327_PHY_REG_MODE_SEL, AR8327_PHY_RGMII_MODE,
-				AR8327_PHY_RGMII_MODE);
-			if(plat_data->pad5_cfg->txclk_delay_en) {
-				hsl_phy_modify_debug(0, AR8327_PORT5_PHY_ADDR,
-					AR8327_PHY_REG_SYS_CTRL, AR8327_PHY_RGMII_TX_DELAY,
-					AR8327_PHY_RGMII_TX_DELAY);
-			}
-			if(plat_data->pad5_cfg->rxclk_delay_en) {
-				hsl_phy_modify_debug(0, AR8327_PORT5_PHY_ADDR,
-					AR8327_PHY_REG_TEST_CTRL, AR8327_PHY_RGMII_RX_DELAY,
-					AR8327_PHY_RGMII_RX_DELAY);
-			}
-		}
-	}
-}
-#endif
-
 
 static void
 qca_ar8327_phy_fixup(struct qca_phy_priv *priv, int phy)
@@ -731,7 +642,6 @@ void qca_ar8327_sw_soft_reset(struct qca_phy_priv *priv)
 	return;
 }
 
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 {
 	struct device_node *np = NULL;
@@ -741,13 +651,6 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 
 	if (priv->of_node)
 		np = priv->of_node;
-	else
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
-		np = priv->phy->mdio.dev.of_node;
-#else
-		np = priv->phy->dev.of_node;
-#endif
-
 	if(!np)
 		return -EINVAL;
 
@@ -793,353 +696,8 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 
 	return 0;
 }
-#else
-static a_uint32_t
-qca_ar8327_get_pad_cfg(struct ar8327_pad_cfg *pad_cfg)
-{
-	a_uint32_t value = 0;
-
-	if (pad_cfg == 0) {
-		return 0;
-    }
-
-    if(pad_cfg->mode == AR8327_PAD_MAC2MAC_MII) {
-		value = AR8327_PAD_CTRL_MAC_MII_EN;
-		if (pad_cfg->rxclk_sel)
-			value |= AR8327_PAD_CTRL_MAC_MII_RXCLK_SEL;
-		if (pad_cfg->txclk_sel)
-			value |= AR8327_PAD_CTRL_MAC_MII_TXCLK_SEL;
-
-    } else if (pad_cfg->mode == AR8327_PAD_MAC2MAC_GMII) {
-		value = AR8327_PAD_CTRL_MAC_GMII_EN;
-		if (pad_cfg->rxclk_sel)
-			value |= AR8327_PAD_CTRL_MAC_GMII_RXCLK_SEL;
-		if (pad_cfg->txclk_sel)
-			value |= AR8327_PAD_CTRL_MAC_GMII_TXCLK_SEL;
-
-    } else if (pad_cfg->mode == AR8327_PAD_MAC_SGMII) {
-		value = AR8327_PAD_CTRL_SGMII_EN;
-
-		/* WAR for AP136 board. */
-		value |= pad_cfg->txclk_delay_sel <<
-		        AR8327_PAD_CTRL_RGMII_TXCLK_DELAY_SEL_S;
-		value |= pad_cfg->rxclk_delay_sel <<
-                AR8327_PAD_CTRL_RGMII_RXCLK_DELAY_SEL_S;
-		if (pad_cfg->rxclk_delay_en)
-			value |= AR8327_PAD_CTRL_RGMII_RXCLK_DELAY_EN;
-		if (pad_cfg->txclk_delay_en)
-			value |= AR8327_PAD_CTRL_RGMII_TXCLK_DELAY_EN;
-
-    } else if (pad_cfg->mode == AR8327_PAD_MAC2PHY_MII) {
-		value = AR8327_PAD_CTRL_PHY_MII_EN;
-		if (pad_cfg->rxclk_sel)
-			value |= AR8327_PAD_CTRL_PHY_MII_RXCLK_SEL;
-		if (pad_cfg->txclk_sel)
-			value |= AR8327_PAD_CTRL_PHY_MII_TXCLK_SEL;
-
-    } else if (pad_cfg->mode == AR8327_PAD_MAC2PHY_GMII) {
-		value = AR8327_PAD_CTRL_PHY_GMII_EN;
-		if (pad_cfg->pipe_rxclk_sel)
-			value |= AR8327_PAD_CTRL_PHY_GMII_PIPE_RXCLK_SEL;
-		if (pad_cfg->rxclk_sel)
-			value |= AR8327_PAD_CTRL_PHY_GMII_RXCLK_SEL;
-		if (pad_cfg->txclk_sel)
-			value |= AR8327_PAD_CTRL_PHY_GMII_TXCLK_SEL;
-
-    } else if (pad_cfg->mode == AR8327_PAD_MAC_RGMII) {
-		value = AR8327_PAD_CTRL_RGMII_EN;
-		value |= pad_cfg->txclk_delay_sel <<
-                 AR8327_PAD_CTRL_RGMII_TXCLK_DELAY_SEL_S;
-		value |= pad_cfg->rxclk_delay_sel <<
-                 AR8327_PAD_CTRL_RGMII_RXCLK_DELAY_SEL_S;
-		if (pad_cfg->rxclk_delay_en)
-			value |= AR8327_PAD_CTRL_RGMII_RXCLK_DELAY_EN;
-		if (pad_cfg->txclk_delay_en)
-			value |= AR8327_PAD_CTRL_RGMII_TXCLK_DELAY_EN;
-
-    } else if (pad_cfg->mode == AR8327_PAD_PHY_GMII) {
-		value = AR8327_PAD_CTRL_PHYX_GMII_EN;
-
-    } else if (pad_cfg->mode == AR8327_PAD_PHY_RGMII) {
-		value = AR8327_PAD_CTRL_PHYX_RGMII_EN;
-
-    } else if (pad_cfg->mode == AR8327_PAD_PHY_MII) {
-		value = AR8327_PAD_CTRL_PHYX_MII_EN;
-
-	} else {
-        value = 0;
-    }
-
-	return value;
-}
-
-static a_uint32_t
-qca_ar8327_get_pwr_sel(struct qca_phy_priv *priv,
-                                struct ar8327_platform_data *plat_data)
-{
-	struct ar8327_pad_cfg *cfg = NULL;
-	a_uint32_t value;
-
-	if (!plat_data) {
-		return 0;
-	}
-
-	value = priv->mii_read(priv->device_id, AR8327_REG_PAD_MAC_PWR_SEL);
-
-	cfg = plat_data->pad0_cfg;
-
-	if (cfg && (cfg->mode == AR8327_PAD_MAC_RGMII) &&
-                cfg->rgmii_1_8v) {
-		value |= AR8327_PAD_MAC_PWR_RGMII0_1_8V;
-	}
-
-	cfg = plat_data->pad5_cfg;
-	if (cfg && (cfg->mode == AR8327_PAD_MAC_RGMII) &&
-                cfg->rgmii_1_8v) {
-		value |= AR8327_PAD_MAC_PWR_RGMII1_1_8V;
-	}
-
-	cfg = plat_data->pad6_cfg;
-	if (cfg && (cfg->mode == AR8327_PAD_MAC_RGMII) &&
-               cfg->rgmii_1_8v) {
-		value |= AR8327_PAD_MAC_PWR_RGMII1_1_8V;
-	}
-
-	return value;
-}
-
-static a_uint32_t
-qca_ar8327_set_led_cfg(struct qca_phy_priv *priv,
-                              struct ar8327_platform_data *plat_data,
-                              a_uint32_t pos)
-{
-	struct ar8327_led_cfg *led_cfg;
-	a_uint32_t new_pos = pos;
-
-	led_cfg = plat_data->led_cfg;
-	if (led_cfg) {
-		if (led_cfg->open_drain)
-			new_pos |= AR8327_POS_LED_OPEN_EN;
-		else
-			new_pos &= ~AR8327_POS_LED_OPEN_EN;
-
-		priv->mii_write(priv->device_id, AR8327_REG_LED_CTRL_0, led_cfg->led_ctrl0);
-		priv->mii_write(priv->device_id, AR8327_REG_LED_CTRL_1, led_cfg->led_ctrl1);
-		priv->mii_write(priv->device_id, AR8327_REG_LED_CTRL_2, led_cfg->led_ctrl2);
-		priv->mii_write(priv->device_id, AR8327_REG_LED_CTRL_3, led_cfg->led_ctrl3);
-
-		if (new_pos != pos) {
-			new_pos |= AR8327_POS_POWER_ON_SEL;
-		}
-	}
-	return new_pos;
-}
-
-static int
-qca_ar8327_set_sgmii_cfg(struct qca_phy_priv *priv,
-                              struct ar8327_platform_data *plat_data,
-                              a_uint32_t* new_pos)
-{
-	a_uint32_t value = 0;
-
-	/*configure the SGMII*/
-	value = priv->mii_read(priv->device_id, AR8327_REG_PAD_SGMII_CTRL);
-	value &= ~(AR8327_PAD_SGMII_CTRL_MODE_CTRL);
-	value |= ((plat_data->sgmii_cfg->sgmii_mode) <<
-          AR8327_PAD_SGMII_CTRL_MODE_CTRL_S);
-
-	if (priv->version == QCA_VER_AR8337) {
-		value |= (AR8327_PAD_SGMII_CTRL_EN_PLL |
-		     AR8327_PAD_SGMII_CTRL_EN_RX |
-		     AR8327_PAD_SGMII_CTRL_EN_TX);
-	} else {
-		value &= ~(AR8327_PAD_SGMII_CTRL_EN_PLL |
-		       AR8327_PAD_SGMII_CTRL_EN_RX |
-		       AR8327_PAD_SGMII_CTRL_EN_TX);
-	}
-	value |= AR8327_PAD_SGMII_CTRL_EN_SD;
-
-	priv->mii_write(priv->device_id, AR8327_REG_PAD_SGMII_CTRL, value);
-
-	if (plat_data->sgmii_cfg->serdes_aen) {
-		*new_pos &= ~AR8327_POS_SERDES_AEN;
-	} else {
-		*new_pos |= AR8327_POS_SERDES_AEN;
-	}
-	return 0;
-}
-
-static int
-qca_ar8327_set_plat_data_cfg(struct qca_phy_priv *priv,
-                              struct ar8327_platform_data *plat_data)
-{
-	a_uint32_t pos, new_pos;
-
-	pos = priv->mii_read(priv->device_id, AR8327_REG_POS);
-
-	new_pos = qca_ar8327_set_led_cfg(priv, plat_data, pos);
-
-	/*configure the SGMII*/
-	if (plat_data->sgmii_cfg) {
-		qca_ar8327_set_sgmii_cfg(priv, plat_data, &new_pos);
-	}
-
-	priv->mii_write(priv->device_id, AR8327_REG_POS, new_pos);
-
-	return 0;
-}
-
-static int
-qca_ar8327_set_pad_cfg(struct qca_phy_priv *priv,
-                              struct ar8327_platform_data *plat_data)
-{
-	a_uint32_t pad0 = 0, pad5 = 0, pad6 = 0;
-
-	pad0 = qca_ar8327_get_pad_cfg(plat_data->pad0_cfg);
-	priv->mii_write(priv->device_id, AR8327_REG_PAD0_CTRL, pad0);
-
-	pad5 = qca_ar8327_get_pad_cfg(plat_data->pad5_cfg);
-	if(priv->version == QCA_VER_AR8337) {
-	        pad5 |= AR8327_PAD_CTRL_RGMII_RXCLK_DELAY_EN;
-	}
-	priv->mii_write(priv->device_id, AR8327_REG_PAD5_CTRL, pad5);
-
-	pad6 = qca_ar8327_get_pad_cfg(plat_data->pad6_cfg);
-	if(plat_data->pad5_cfg &&
-		(plat_data->pad5_cfg->mode == AR8327_PAD_PHY_RGMII))
-		pad6 |= AR8327_PAD_CTRL_PHYX_RGMII_EN;
-	priv->mii_write(priv->device_id, AR8327_REG_PAD6_CTRL, pad6);
-
-	return 0;
-}
-
-void
-qca_ar8327_port_init(struct qca_phy_priv *priv, a_uint32_t port)
-{
-	struct ar8327_platform_data *plat_data;
-	struct ar8327_port_cfg *port_cfg;
-	a_uint32_t value;
-
-	plat_data = priv->phy->dev.platform_data;
-	if (plat_data == NULL) {
-		return;
-	}
-
-	if (((port == 0) && plat_data->pad0_cfg) ||
-	    ((port == 5) && plat_data->pad5_cfg) ||
-	    ((port == 6) && plat_data->pad6_cfg)) {
-	        switch (port) {
-		        case 0:
-		            port_cfg = &plat_data->cpuport_cfg;
-		            break;
-		        case 5:
-		            port_cfg = &plat_data->port5_cfg;
-		            break;
-		        case 6:
-		            port_cfg = &plat_data->port6_cfg;
-		            break;
-	        }
-	} else {
-	        return;
-	}
-
-	/*disable mac at first*/
-	fal_port_rxmac_status_set(priv->device_id, port, A_FALSE);
-	fal_port_txmac_status_set(priv->device_id, port, A_FALSE);
-	value = port_cfg->duplex ? FAL_FULL_DUPLEX : FAL_HALF_DUPLEX;
-	fal_port_duplex_set(priv->device_id, port, value);
-	value = port_cfg->txpause ? A_TRUE : A_FALSE;
-	fal_port_txfc_status_set(priv->device_id, port, value);
-	value = port_cfg->rxpause ? A_TRUE : A_FALSE;
-	fal_port_rxfc_status_set(priv->device_id, port, value);
-	if(port_cfg->speed == AR8327_PORT_SPEED_10) {
-		value = FAL_SPEED_10;
-	} else if(port_cfg->speed == AR8327_PORT_SPEED_100) {
-		value = FAL_SPEED_100;
-	} else if(port_cfg->speed == AR8327_PORT_SPEED_1000) {
-		value = FAL_SPEED_1000;
-	} else {
-		value = FAL_SPEED_1000;
-	}
-	fal_port_speed_set(priv->device_id, port, value);
-	/*enable mac at last*/
-	udelay(800);
-	fal_port_rxmac_status_set(priv->device_id, port, A_TRUE);
-	fal_port_txmac_status_set(priv->device_id, port, A_TRUE);
-}
-
-int
-qca_ar8327_hw_init(struct qca_phy_priv *priv)
-{
-	struct ar8327_platform_data *plat_data;
-	a_uint32_t i = 0;
-	a_uint32_t value = 0;
-
-	plat_data = priv->phy->dev.platform_data;
-	if (plat_data == NULL) {
-		return -EINVAL;
-	}
-
-	/*Before switch software reset, disable PHY and clear MAC PAD*/
-	qca_ar8327_phy_linkdown(priv->device_id);
-	qca_mac_disable(priv->device_id);
-	udelay(10);
-
-	qca_ar8327_set_plat_data_cfg(priv, plat_data);
-
-	/*mac reset*/
-	priv->mii_write(priv->device_id, AR8327_REG_MAC_SFT_RST, 0x3fff);
-
-	msleep(100);
-
-	/*First software reset S17 chip*/
-	qca_ar8327_sw_soft_reset(priv);
-	udelay(1000);
-
-	/*After switch software reset, need disable all ports' MAC with 1000M FULL*/
-	qca_switch_set_mac_force(priv);
-
-	qca_ar8327_set_pad_cfg(priv, plat_data);
-
-	value = priv->mii_read(priv->device_id, AR8327_REG_MODULE_EN);
-	value &= ~AR8327_REG_MODULE_EN_QM_ERR;
-	value &= ~AR8327_REG_MODULE_EN_LOOKUP_ERR;
-	priv->mii_write(priv->device_id, AR8327_REG_MODULE_EN, value);
-
-	qca_switch_init(priv->device_id);
-
-	value = qca_ar8327_get_pwr_sel(priv, plat_data);
-	priv->mii_write(priv->device_id, AR8327_REG_PAD_MAC_PWR_SEL, value);
-
-	msleep(1000);
-
-	for (i = 0; i < AR8327_NUM_PORTS; i++) {
-		qca_ar8327_port_init(priv, i);
-	}
-
-	qca_ar8327_phy_enable(priv);
-
-	return 0;
-}
-#endif
 
 #if defined(IN_SWCONFIG)
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0))
-static int
-qca_ar8327_sw_get_reg_val(struct switch_dev *dev,
-                                    int reg, int *val)
-{
-	return 0;
-}
-
-static int
-qca_ar8327_sw_set_reg_val(struct switch_dev *dev,
-                                    int reg, int val)
-{
-	return 0;
-}
-#endif
-
 static struct switch_attr qca_ar8327_globals[] = {
 #if defined(IN_VLAN)
 	{
@@ -1257,10 +815,6 @@ const struct switch_dev_ops qca_ar8327_sw_ops = {
 #endif
 #if defined(IN_PORTCONTROL)
 	.get_port_link = qca_ar8327_sw_get_port_link,
-#endif
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0))
-	.get_reg_val = qca_ar8327_sw_get_reg_val,
-	.set_reg_val = qca_ar8327_sw_set_reg_val,
 #endif
 };
 #endif
@@ -1623,26 +1177,6 @@ qca_fdb_sw_sync_work_stop(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 }
 
 #if defined(APPE)
-static sw_error_t
-qca_ppe_port_reset(a_uint32_t dev_id)
-{
-#if 0
-	a_uint32_t i = 0, port_max = SSDK_PHYSICAL_PORT7;
-
-#if defined(MPPE)
-	if (adpt_chip_revision_get(dev_id) == MPPE_REVISION)
-		port_max = SSDK_PHYSICAL_PORT3;
-#endif
-	for(i = SSDK_PHYSICAL_PORT1; i < port_max; i++) {
-#ifdef IN_PORTCONTROL
-		fal_port_rxmac_status_set(dev_id, i, A_FALSE);
-#endif
-		ssdk_port_mac_clock_reset(dev_id, i);
-	}
-#endif
-	return SW_OK;
-}
-
 sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 {
 	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
@@ -1652,9 +1186,6 @@ sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 	case APPE_TYPE:
 	case MPPE_TYPE:
 	case MRPPE_TYPE:
-		rv = qca_ppe_port_reset(dev_id);
-		SW_RTN_ON_ERROR(rv);
-
 		rv = qca_appe_hw_init(dev_id);
 		SW_RTN_ON_ERROR(rv);
 
@@ -1668,29 +1199,6 @@ sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 }
 EXPORT_SYMBOL(ssdk_ppe_hw_recover);
 #endif
-
-int
-qca_phy_id_chip(struct qca_phy_priv *priv)
-{
-	a_uint32_t value, version;
-
-	value = qca_mii_read(priv->device_id, AR8327_REG_CTRL);
-	version = value & (AR8327_CTRL_REVISION |
-                AR8327_CTRL_VERSION);
-	priv->version = (version & AR8327_CTRL_VERSION) >>
-                           AR8327_CTRL_VERSION_S;
-	priv->revision = (version & AR8327_CTRL_REVISION);
-
-    if((priv->version == QCA_VER_AR8327) ||
-       (priv->version == QCA_VER_AR8337) ||
-       (priv->version == QCA_VER_AR8227)) {
-		return 0;
-
-    } else {
-		SSDK_ERROR("unsupported QCA device\n");
-		return -ENODEV;
-	}
-}
 
 #if defined(IN_SWCONFIG)
 static int qca_switchdev_register(struct qca_phy_priv *priv)
@@ -1966,7 +1474,6 @@ static int ssdk_switch_unregister(a_uint32_t dev_id)
 }
 #endif
 
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 char ssdk_driver_name[] = "ess_ssdk";
 struct ssdk_driver_priv {
 	a_uint32_t dev_id;
@@ -2017,7 +1524,7 @@ static struct platform_driver ssdk_driver = {
         .probe    = ssdk_probe,
         .shutdown = ssdk_shutdown,
 };
-#endif
+
 /*qca808x_start*/
 sw_error_t
 ssdk_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
@@ -2057,28 +1564,6 @@ ssdk_cleanup(a_uint32_t dev_id)
 }
 /*qca808x_end*/
 
-sw_error_t
-ssdk_hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode)
-{
-    sw_error_t rv;
-
-    rv = hsl_access_mode_set(dev_id, reg_mode);
-    return rv;
-}
-
-void switch_cpuport_setup(a_uint32_t dev_id)
-{
-#ifdef IN_PORTCONTROL
-	//According to HW suggestion, enable CPU port flow control for Dakota
-	fal_port_flowctrl_forcemode_set(dev_id, 0, A_TRUE);
-	fal_port_flowctrl_set(dev_id, 0, A_TRUE);
-	fal_port_duplex_set(dev_id, 0, FAL_FULL_DUPLEX);
-	fal_port_speed_set(dev_id, 0, FAL_SPEED_1000);
-	udelay(10);
-	fal_port_txmac_status_set(dev_id, 0, A_TRUE);
-	fal_port_rxmac_status_set(dev_id, 0, A_TRUE);
-#endif
-}
 #ifdef IN_AQUANTIA_PHY
 #ifdef CONFIG_MDIO
 static struct mdio_if_info ssdk_mdio_ctl;
@@ -2153,12 +1638,7 @@ static void ssdk_miireg_ioctrl_register(void)
 	ssdk_mdio_ctl.mdio_write = ssdk_miireg_ioctl_write;
 	ssdk_mdio_ctl.mode_support = MDIO_SUPPORTS_C45;
 #endif
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,18,0))
 	ssdk_miireg_netdev = alloc_netdev(100, "miireg", 0, ssdk_netdev_setup);
-#else
-	ssdk_miireg_netdev = alloc_netdev(100, "miireg", ssdk_netdev_setup);
-#endif
 	if (ssdk_miireg_netdev)
 		register_netdev(ssdk_miireg_netdev);
 }
@@ -2178,9 +1658,7 @@ static void ssdk_driver_register(a_uint32_t dev_id)
 
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 	if(reg_mode == HSL_REG_LOCAL_BUS) {
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 		platform_driver_register(&ssdk_driver);
-#endif
 	}
 }
 
@@ -2190,9 +1668,7 @@ static void ssdk_driver_unregister(a_uint32_t dev_id)
 
 	reg_mode= ssdk_switch_reg_access_mode_get(dev_id);
 	if (reg_mode == HSL_REG_LOCAL_BUS) {
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 		platform_driver_unregister(&ssdk_driver);
-#endif
 	}
 }
 /*qca808x_start*/
@@ -2315,20 +1791,6 @@ static void ssdk_cfg_default_init(ssdk_init_cfg *cfg)
 }
 /*qca808x_end*/
 
-#ifdef IN_RFS
-#if defined(CONFIG_RFS_ACCEL)
-int ssdk_netdev_rfs_cb(
-		struct net_device *dev,
-		__be32 src, __be32 dst,
-		__be16 sport, __be16 dport,
-		u8 proto, u16 rxq_index, u32 action)
-{
-	return ssdk_rfs_ipct_rule_set(src, dst, sport, dport,
-							proto, rxq_index, action);
-}
-#endif
-#endif
-
 //#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void *ptr)
 {
@@ -2339,12 +1801,7 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	adpt_api_t *p_api = adpt_api_ptr_get(dev_id);
 #endif
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-#else
-	struct net_device *dev = (struct net_device *)ptr;
-#endif
 
 	ssdk_cfg_default_init(&cfg);
 	rv = chip_ver_get(0, &cfg);
@@ -2353,18 +1810,6 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 		return NOTIFY_DONE;
 	}
 	switch (event) {
-#ifdef IN_RFS
-#if defined(CONFIG_RFS_ACCEL)
-		case NETDEV_UP:
-			if (strstr(dev->name, "eth")) {
-				if (dev->netdev_ops && dev->netdev_ops->ndo_register_rfs_filter) {
-					dev->netdev_ops->ndo_register_rfs_filter(dev,
-						ssdk_netdev_rfs_cb);
-				}
-			}
-			break;
-#endif
-#endif
 		case NETDEV_CHANGEMTU:
 			if(dev->type == ARPHRD_ETHER) {
 				if (cfg.chip_type == CHIP_DESS ||
@@ -2486,12 +1931,6 @@ static void qca_ar8327_gpio_reset(struct qca_phy_priv *priv)
 
 	if (priv->of_node)
 		np = priv->of_node;
-	else
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
-		np = priv->phy->mdio.dev.of_node;
-#else
-		np = priv->phy->dev.of_node;
-#endif
 	if(!np)
 		return;
 	gpio_num = of_get_named_gpio(np, "reset_gpio", 0);
