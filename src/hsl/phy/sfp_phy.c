@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -202,11 +202,11 @@ sfp_read_status(struct phy_device *pdev)
 	pdev->speed = phy_status.speed;
 	pdev->duplex = phy_status.duplex;
 #else
-	pdev->link = priv->port_old_link[port - 1];
+	pdev->link = priv->ports[port].port_old_link;
 	if(pdev->link == PORT_LINK_UP)
 	{
-		pdev->speed = priv->port_old_speed[port - 1];
-		pdev->duplex = priv->port_old_duplex[port - 1];
+		pdev->speed = priv->ports[port].port_old_speed;
+		pdev->duplex = priv->ports[port].port_old_duplex;
 	}
 	else
 	{
@@ -524,7 +524,7 @@ sfp_phy_present_status_check(a_uint32_t dev_id, a_uint32_t port_id)
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
 	/*if sfp_mode_present_pin is available, then need to check it*/
-	if(priv && !qca_ssdk_gpio_is_invalid(dev_id, priv->sfp_mod_present_pin[port_id]))
+	if(priv && !qca_ssdk_gpio_is_invalid(dev_id, priv->ports[port_id].sfp_mod_present_pin))
 	{
 		rv = sfp_phy_mod_present_status_get(dev_id, port_id,
 			&mod_present_status);
@@ -668,7 +668,7 @@ sfp_phy_rx_los_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 
 	if(!priv)
 		return SW_NOT_INITIALIZED;
-	rx_los_pin = priv->sfp_rx_los_pin[port_id];
+	rx_los_pin = priv->ports[port_id].sfp_rx_los_pin;
 	if(qca_ssdk_gpio_is_invalid(dev_id, rx_los_pin))
 	{
 		return SW_NOT_SUPPORTED;
@@ -690,7 +690,7 @@ sfp_phy_tx_dis_status_set(a_uint32_t dev_id, a_uint32_t port_id,
 
 	if(!priv)
 		return SW_NOT_INITIALIZED;
-	tx_dis_pin = priv->sfp_tx_dis_pin[port_id];
+	tx_dis_pin = priv->ports[port_id].sfp_tx_dis_pin;
 	if(qca_ssdk_gpio_is_invalid(dev_id, tx_dis_pin))
 	{
 		return SW_NOT_SUPPORTED;
@@ -721,7 +721,7 @@ sfp_phy_tx_dis_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 
 	if(!priv)
 		return SW_NOT_INITIALIZED;
-	tx_dis_pin = priv->sfp_tx_dis_pin[port_id];
+	tx_dis_pin = priv->ports[port_id].sfp_tx_dis_pin;
 	if(qca_ssdk_gpio_is_invalid(dev_id, tx_dis_pin))
 	{
 		return SW_NOT_SUPPORTED;
@@ -743,7 +743,7 @@ sfp_phy_mod_present_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 
 	if(!priv)
 		return SW_NOT_INITIALIZED;
-	mod_present_pin = priv->sfp_mod_present_pin[port_id];
+	mod_present_pin = priv->ports[port_id].sfp_mod_present_pin;
 	if(qca_ssdk_gpio_is_invalid(dev_id, mod_present_pin))
 	{
 		return SW_NOT_SUPPORTED;
@@ -768,7 +768,7 @@ sfp_phy_medium_status_set(a_uint32_t dev_id, a_uint32_t port_id,
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	sfp_medium_pin = priv->sfp_medium_pin[port_id];
+	sfp_medium_pin = priv->ports[port_id].sfp_medium_pin;
 	if(qca_ssdk_gpio_is_invalid(dev_id, sfp_medium_pin))
 	{
 		return SW_NOT_SUPPORTED;

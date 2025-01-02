@@ -296,6 +296,27 @@ typedef enum {
 	FDB_SYNC_POLLING,
 } fdb_sync_t;
 
+struct ssdk_port_priv {
+	a_uint32_t port_mac_type;
+	a_uint32_t port_link_up;
+	a_uint32_t port_old_link;
+	a_uint32_t port_old_speed;
+	a_uint32_t port_old_duplex;
+	a_uint32_t port_old_phy_status;
+	a_uint32_t port_qm_buf;
+	a_bool_t port_old_tx_flowctrl;
+	a_bool_t port_old_rx_flowctrl;
+	a_bool_t port_tx_flowctrl_forcemode;
+	a_bool_t port_rx_flowctrl_forcemode;
+
+	/*rx_los_pin, tx_dis_pin and mod_present_pin are for SFP port*/
+	a_uint32_t sfp_rx_los_pin;
+	a_uint32_t sfp_tx_dis_pin;
+	a_uint32_t sfp_mod_present_pin;
+	/*sfp_medium_pin, use to select sfp medium or not in combo mode*/
+	a_uint32_t sfp_medium_pin;
+};
+
 struct qca_phy_priv {
 	struct phy_device *phy;
 #if defined(IN_SWCONFIG)
@@ -324,17 +345,7 @@ struct qca_phy_priv {
 	struct delayed_work mib_dwork;
 	/*qm_err_check*/
 	struct mutex 	qm_lock;
-	a_uint32_t port_link_down[SW_MAX_NR_PORT];
-	a_uint32_t port_link_up[SW_MAX_NR_PORT];
-	a_uint32_t port_old_link[SW_MAX_NR_PORT];
-	a_uint32_t port_old_speed[SW_MAX_NR_PORT];
-	a_uint32_t port_old_duplex[SW_MAX_NR_PORT];
-	a_uint32_t port_old_phy_status[SW_MAX_NR_PORT];
-	a_uint32_t port_qm_buf[SW_MAX_NR_PORT];
-	a_bool_t port_old_tx_flowctrl[SW_MAX_NR_PORT];
-	a_bool_t port_old_rx_flowctrl[SW_MAX_NR_PORT];
-	a_bool_t port_tx_flowctrl_forcemode[SW_MAX_NR_PORT];
-	a_bool_t port_rx_flowctrl_forcemode[SW_MAX_NR_PORT];
+	struct ssdk_port_priv ports[SW_MAX_NR_PORT];
 	struct delayed_work qm_dwork_polling;
 	struct work_struct	 intr_workqueue;
 	/*qm_err_check end*/
@@ -376,16 +387,10 @@ struct qca_phy_priv {
 	a_uint8_t  vlan_table[AR8327_MAX_VLANS];
 	a_uint8_t  vlan_tagged[AR8327_MAX_VLANS];
 	a_uint16_t pvid[SSDK_MAX_PORT_NUM];
-	a_uint32_t ports;
+	a_uint32_t ports_num;
 	u8 __iomem *hw_addr;
 	u8 __iomem *psgmii_hw_addr;
 	u8 __iomem *uniphy_hw_addr;
-	/*rx_los_pin, tx_dis_pin and mod_present_pin are for SFP port*/
-	a_uint32_t sfp_rx_los_pin[SW_MAX_NR_PORT];
-	a_uint32_t sfp_tx_dis_pin[SW_MAX_NR_PORT];
-	a_uint32_t sfp_mod_present_pin[SW_MAX_NR_PORT];
-	/*sfp_medium_pin, use to select sfp medium or not in combo mode*/
-	a_uint32_t sfp_medium_pin[SW_MAX_NR_PORT];
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
 /*qca808x_start*/
 };

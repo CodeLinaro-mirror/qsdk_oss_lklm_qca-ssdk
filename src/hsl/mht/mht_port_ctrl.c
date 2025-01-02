@@ -362,8 +362,8 @@ _mht_port_flowctrl_forcemode_set(a_uint32_t dev_id, fal_port_t port_id,
 	if(!hsl_port_phy_connected(dev_id, port_id) && !enable)
 		return SW_NOT_SUPPORTED;
 
-	priv->port_tx_flowctrl_forcemode[port_id] = enable;
-	priv->port_rx_flowctrl_forcemode[port_id] = enable;
+	priv->ports[port_id].port_tx_flowctrl_forcemode = enable;
+	priv->ports[port_id].port_rx_flowctrl_forcemode = enable;
 
     return rv;
 }
@@ -408,7 +408,7 @@ __mht_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enabl
 	HSL_REG_ENTRY_SET(rv, dev_id, PORT_STATUS, port_id,
 				(a_uint8_t *) (&reg), sizeof (a_uint32_t));
 
-	priv->port_old_tx_flowctrl[port_id] = enable;
+	priv->ports[port_id].port_old_tx_flowctrl = enable;
 
 	return rv;
 }
@@ -481,7 +481,7 @@ __mht_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enabl
 	HSL_REG_ENTRY_SET(rv, dev_id, PORT_STATUS, port_id,
 				(a_uint8_t *) (&reg), sizeof (a_uint32_t));
 
-	priv->port_old_rx_flowctrl[port_id] = enable;
+	priv->ports[port_id].port_old_rx_flowctrl = enable;
 
 	return rv;
 }
@@ -755,8 +755,8 @@ _mht_port_flowctrl_forcemode_get(a_uint32_t dev_id, fal_port_t port_id,
 	if (!priv)
 		return SW_FAIL;
 
-	*enable = (priv->port_tx_flowctrl_forcemode[port_id] &
-		priv->port_rx_flowctrl_forcemode[port_id]);
+	*enable = (priv->ports[port_id].port_tx_flowctrl_forcemode &
+		priv->ports[port_id].port_rx_flowctrl_forcemode);
 
 	return rv;
 }
@@ -1455,14 +1455,14 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 	if (phy_status.link_status == PORT_LINK_UP)
 	{
 		/* sync mac flowctrl */
-		if (priv->port_tx_flowctrl_forcemode[port_id] != A_TRUE) {
+		if (priv->ports[port_id].port_tx_flowctrl_forcemode != A_TRUE) {
 			rv = __mht_port_txfc_status_set(priv->device_id,
 				port_id, phy_status.tx_flowctrl);
 			SW_RTN_ON_ERROR (rv);
 			SSDK_DEBUG("mht port %d link up update txfc %d\n",
 			port_id, phy_status.tx_flowctrl);
 		}
-		if (priv->port_tx_flowctrl_forcemode[port_id] != A_TRUE) {
+		if (priv->ports[port_id].port_tx_flowctrl_forcemode != A_TRUE) {
 			rv = __mht_port_rxfc_status_set(priv->device_id,
 				port_id, phy_status.rx_flowctrl);
 			SW_RTN_ON_ERROR (rv);

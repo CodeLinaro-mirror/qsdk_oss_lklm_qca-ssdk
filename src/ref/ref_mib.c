@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -512,7 +512,7 @@ qca_ar8327_sw_mib_task(struct qca_phy_priv *priv)
 	else
 		_qca_ar8327_sw_capture_port_tx_counter(priv->device_id, priv->mib_loop_cnt/2);
 
-	if(++priv->mib_loop_cnt == (2 * (priv->ports))) {
+	if(++priv->mib_loop_cnt == (2 * (priv->ports_num))) {
 		priv->mib_loop_cnt = 0;
 	}
 

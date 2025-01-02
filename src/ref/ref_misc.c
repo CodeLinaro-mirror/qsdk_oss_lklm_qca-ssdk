@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -67,7 +67,7 @@ qca_ar8327_sw_set_max_frame_size(struct switch_dev *dev,
 	if (priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE
 		|| priv->version == QCA_VER_MRPPE)
 	{
-		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports;
+		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num;
 			port_id++)
 		{
 			ret = fal_port_max_frame_size_set(priv->device_id,

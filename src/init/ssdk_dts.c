@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -894,38 +894,38 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					"sfp_rx_los_pin", 0);
 				if(sfp_rx_los_pin > 0)
 				{
-					priv->sfp_rx_los_pin[port_id] = sfp_rx_los_pin;
+					priv->ports[port_id].sfp_rx_los_pin = sfp_rx_los_pin;
 				}
 				else if(sfp_rx_los_pin == -EPROBE_DEFER)
 				{
-					priv->sfp_rx_los_pin[port_id] = SSDK_MAX_GPIO;
+					priv->ports[port_id].sfp_rx_los_pin = SSDK_MAX_GPIO;
 				}
 				else
 				{
-					priv->sfp_rx_los_pin[port_id] = SSDK_INVALID_GPIO;
+					priv->ports[port_id].sfp_rx_los_pin = SSDK_INVALID_GPIO;
 				}
 
 				sfp_tx_dis_pin = of_get_named_gpio(port_node,
 					"sfp_tx_dis_pin", 0);
 				if(sfp_tx_dis_pin > 0)
 				{
-					priv->sfp_tx_dis_pin[port_id] = sfp_tx_dis_pin;
+					priv->ports[port_id].sfp_tx_dis_pin = sfp_tx_dis_pin;
 				}
 				else
 				{
-					priv->sfp_tx_dis_pin[port_id] = SSDK_INVALID_GPIO;
+					priv->ports[port_id].sfp_tx_dis_pin = SSDK_INVALID_GPIO;
 				}
 
 				sfp_mod_present_pin = of_get_named_gpio(port_node,
 					"sfp_mod_present_pin", 0);
 				if(sfp_mod_present_pin > 0)
 				{
-					priv->sfp_mod_present_pin[port_id] =
+					priv->ports[port_id].sfp_mod_present_pin =
 						sfp_mod_present_pin;
 				}
 				else
 				{
-					priv->sfp_mod_present_pin[port_id] =
+					priv->ports[port_id].sfp_mod_present_pin =
 						SSDK_INVALID_GPIO;
 				}
 
@@ -933,11 +933,11 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					"sfp_medium_pin", 0);
 				if(sfp_medium_pin > 0)
 				{
-					priv->sfp_medium_pin[port_id] = sfp_medium_pin;
+					priv->ports[port_id].sfp_medium_pin = sfp_medium_pin;
 				}
 				else
 				{
-					priv->sfp_medium_pin[port_id] = SSDK_INVALID_GPIO;
+					priv->ports[port_id].sfp_medium_pin = SSDK_INVALID_GPIO;
 				}
 			}
 			/*register PHY device and PHY driver for SFP port*/
