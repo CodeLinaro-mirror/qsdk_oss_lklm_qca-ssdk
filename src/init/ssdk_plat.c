@@ -1403,6 +1403,8 @@ static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
 	a_uint32_t mac_reg = 0, port_id = 0;
 
 	mac_reg = dev->base_addr & 0xffffff;
+	if (mac_reg < NSS_MAC_CSR_BASE_ADDR)
+		return SW_MAX_NR_PORT;
 #ifdef HPPE
 	/*xgmac*/
 	if(mac_reg >= NSS_XGMAC_CSR_BASE_ADDR) {
@@ -1429,11 +1431,14 @@ sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
 {
 	ssdk_netdev_switch_t *netdev_switch = NULL;
 	a_uint32_t port_id, dev_id = 0;
-	phy_info_t *phyinfo;
+	phy_info_t *phyinfo = NULL;
 
 	/* netdev info for PPE port */
 	port_id = ssdk_netdev_to_portid(dev);
+	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_EXCL_CPU))
+		return SW_BAD_VALUE;
 	phyinfo = hsl_phy_info_get(dev_id);
+	SW_RTN_ON_NULL(phyinfo);
 	phyinfo->netdev[port_id] = dev;
 
 	/* netdev switch info for PPE port which connected with switch */
