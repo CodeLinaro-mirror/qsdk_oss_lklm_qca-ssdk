@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015, 2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -287,31 +287,4 @@ sw_error_t fal_ip_network_route_get(a_uint32_t dev_id, a_uint32_t index, a_uint8
 sw_error_t fal_ip_network_route_del(a_uint32_t dev_id, a_uint32_t index, a_uint8_t type)
     DEFINE_FAL_FUNC_ADPT_EXPORT(ip_network_route_del, dev_id, index, type)
 #endif
-
-
-int ssdk_rfs_ip4_rule_set(u16 vid, u32 ip, u8* mac, u8 ldb, int is_set)
-{
-	fal_ip4_rfs_t entry;
-	memcpy(&entry.mac_addr, mac, 6);
-	entry.ip4_addr = ip;
-	entry.load_balance = ldb;
-	entry.vid = vid;
-	if(is_set)
-		return fal_ip_rfs_ip4_rule_set(0, &entry);
-	else
-		return fal_ip_rfs_ip4_rule_del(0, &entry);
-}
-
-int ssdk_rfs_ip6_rule_set(u16 vid, u8* ip, u8* mac, u8 ldb, int is_set)
-{
-	fal_ip6_rfs_t entry;
-	memcpy(&entry.mac_addr, mac, 6);
-	memcpy(&entry.ip6_addr, ip, sizeof(entry.ip6_addr));
-	entry.load_balance = ldb;
-	entry.vid = vid;
-	if(is_set)
-		return fal_ip_rfs_ip6_rule_set(0, &entry);
-	else
-		return fal_ip_rfs_ip6_rule_del(0, &entry);
-}
 

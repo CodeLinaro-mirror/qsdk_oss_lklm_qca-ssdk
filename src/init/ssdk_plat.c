@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -61,24 +61,6 @@
 #include "ref_misc.h"
 #include "ref_uci.h"
 #include "shell.h"
-#ifdef IN_IP
-#if defined (CONFIG_NF_FLOW_COOKIE)
-#include "fal_flowcookie.h"
-#ifdef IN_SFE
-#include <shortcut-fe/sfe.h>
-#endif
-#endif
-#endif
-
-#ifdef IN_RFS
-#if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
-#include <linux/if_vlan.h>
-#endif
-#include <qca-rfs/rfs_dev.h>
-#ifdef IN_IP
-#include "fal_rfs.h"
-#endif
-#endif
 
 #if defined(MHT)
 #include "ssdk_mht_clk.h"

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -162,45 +162,5 @@ fal_nat_global_set(a_uint32_t dev_id, a_bool_t enable,
     rv = _fal_nat_global_set(dev_id, enable, portbmp);
     FAL_API_UNLOCK;
     return rv;
-}
-
-int ssdk_flow_cookie_set(
-		u32 protocol, __be32 src_ip,
-		__be16 src_port, __be32 dst_ip,
-		__be16 dst_port, u16 flowcookie)
-{
-	fal_flow_cookie_t flow_cookie;
-	if(protocol == 17) {
-		flow_cookie.proto = 0x2;
-	} else {
-		flow_cookie.proto = 0x1;
-	}
-	flow_cookie.src_addr = ntohl(src_ip);
-	flow_cookie.dst_addr = ntohl(dst_ip);
-	flow_cookie.src_port = ntohs(src_port);
-	flow_cookie.dst_port = ntohs(dst_port);
-	flow_cookie.flow_cookie = flowcookie;
-	return fal_flow_cookie_set(0, &flow_cookie);
-}
-
-int ssdk_rfs_ipct_rule_set(
-	__be32 ip_src, __be32 ip_dst,
-	__be16 sport, __be16 dport, uint8_t proto,
-	u16 loadbalance, bool action)
-{
-	fal_flow_rfs_t rfs;
-	if(proto == 17) {
-		rfs.proto = 0x2;
-	} else {
-		rfs.proto = 0x1;
-	}
-	rfs.src_addr = ntohl(ip_src);
-	rfs.dst_addr = ntohl(ip_dst);
-	rfs.src_port = ntohs(sport);
-	rfs.dst_port = ntohs(dport);
-	rfs.load_balance = loadbalance;
-	if(fal_flow_rfs_set(0, action, &rfs))
-		return -1;
-	return 0;
 }
 
