@@ -15,7 +15,9 @@
  */
 
 #include "hsl_ptp.h"
-#include "qca808x.h"
+#include "hsl_phy.h"
+#include "ssdk_init.h"
+#include "ssdk_plat.h"
 
 void hsl_ptp_event_stat_update(hsl_ptp_event_pkt_stat_t *pkt_stat,
 		a_int32_t msg_type, a_int32_t seqid_matched)

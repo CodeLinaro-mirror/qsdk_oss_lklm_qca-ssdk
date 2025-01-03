@@ -172,47 +172,6 @@ qcaphy_c45_get_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return SW_OK;
 }
 /*
- * @brief get lp autoneg adv
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @return SW_OK or error code
- */
-sw_error_t
-qcaphy_c45_get_partner_ability(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t * ability)
-{
-	a_uint16_t phy_data = 0;
-
-	*ability = 0;
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD7_NUM,
-		QCAPHY_MMD7_AN_LP_ADV);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_10HALF)
-		*ability |= FAL_PHY_ADV_10T_HD;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_10FULL)
-		*ability |= FAL_PHY_ADV_10T_FD;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_100HALF)
-		*ability |= FAL_PHY_ADV_100TX_HD;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_100FULL)
-		*ability |= FAL_PHY_ADV_100TX_FD;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_PAUSE)
-		*ability |= FAL_PHY_ADV_PAUSE;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_ASM_PAUSE)
-		*ability |= FAL_PHY_ADV_ASY_PAUSE;
-
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD7_NUM,
-		QCAPHY_MMD7_AN_LP_10G_ADV);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_2500FULL)
-		*ability |= FAL_PHY_ADV_2500T_FD;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_5000FULL)
-		*ability |= FAL_PHY_ADV_5000T_FD;
-	if (phy_data & QCAPHY_AN_LP_ADVERTISE_10000FULL)
-		*ability |= FAL_PHY_ADV_10000T_FD;
-
-	return SW_OK;
-}
-/*
  * @brief get the link status
  * @param[in] dev_id device id
  * @param[in] phy_addr phy address
@@ -446,55 +405,24 @@ sw_error_t
 qcaphy_c45_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t *status)
 {
-	sw_error_t rv = SW_OK;
 	a_uint32_t adv = 0, lp_adv = 0;
+	a_uint16_t phy_data = 0;
 
-	rv = qcaphy_get_eee_adv(dev_id, phy_addr, &adv);
-	SW_RTN_ON_ERROR(rv);
+	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE,
+		QCAPHY_MMD7_NUM, QCAPHY_MMD7_8023AZ_EEE_CTRL);
+	if (phy_data & QCAPHY_EEE_ADV_100M)
+		adv |= FAL_PHY_EEE_100BASE_T;
+	if (phy_data & QCAPHY_EEE_ADV_1000M)
+		adv |= FAL_PHY_EEE_1000BASE_T;
 
-	rv = qcaphy_get_eee_partner_adv(dev_id, phy_addr, &lp_adv);
-	SW_RTN_ON_ERROR(rv);
+	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_FALSE,
+		QCAPHY_MMD7_NUM, QCAPHY_MMD7_8023AZ_EEE_PARTNER);
+	if (phy_data & QCAPHY_EEE_PARTNER_ADV_100M)
+		lp_adv |= FAL_PHY_EEE_100BASE_T;
+	if (phy_data & QCAPHY_EEE_PARTNER_ADV_1000M)
+		lp_adv |= FAL_PHY_EEE_1000BASE_T;
 
 	*status = (adv & lp_adv);
-
-	return SW_OK;
-}
-/******************************************************************************
- * @brief set 8023 az
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @param[in] enable
- * @return SW_OK or error code
- */
-sw_error_t
-qcaphy_c45_set_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_uint32_t eee_adv = 0;
-
-	if (enable == A_TRUE)
-		eee_adv = FAL_PHY_EEE_ALL_ADV;
-	return qcaphy_c45_set_eee_adv(dev_id, phy_addr, eee_adv);
-}
-
-/******************************************************************************
- * @brief get 8023 az
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @param[out] enable
- * @return SW_OK or error code
- */
-sw_error_t
-qcaphy_c45_get_8023az(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t * enable)
-{
-	a_uint32_t eee_adv = 0;
-	sw_error_t rv = SW_OK;
-
-	*enable = A_FALSE;
-
-	rv = qcaphy_get_eee_adv(dev_id, phy_addr, &eee_adv);
-	PHY_RTN_ON_ERROR(rv);
-	if (eee_adv && FAL_PHY_EEE_ALL_ADV)
-		*enable = A_TRUE;
 
 	return SW_OK;
 }

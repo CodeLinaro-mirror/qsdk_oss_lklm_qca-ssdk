@@ -480,7 +480,7 @@ sw_error_t aquatia_phy_cdt_start(a_uint32_t dev_id, a_uint32_t phy_addr)
 	sw_error_t rv = SW_OK;
 
 	/*select mode0 if aq107, and select mode2 if aq109*/
-	rv = qcaphy_get_phy_id(dev_id, phy_addr, &aq_phy_id);
+	rv = qcaphy_c45_get_phy_id(dev_id, phy_addr, &aq_phy_id);
 	PHY_RTN_ON_ERROR(rv);
 	if(aq_phy_id == AQUANTIA_PHY_109 || aq_phy_id == AQUANTIA_PHY_113C_B0 ||
 		aq_phy_id == AQUANTIA_PHY_113C_B1)
