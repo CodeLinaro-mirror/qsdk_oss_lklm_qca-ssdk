@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013, 2015-2017, 2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -69,8 +69,10 @@ sw_error_t cmd_data_check_speed(char *cmd_str, a_uint32_t * arg_val,
 sw_error_t cmd_data_check_port_8023ah_ctrl(char *cmd_str, void * val,
 	a_uint32_t size);
 #endif
+#endif
 sw_error_t
 cmd_data_check_port_eee_config(char *cmd_str, void * val, a_uint32_t size);
+#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 cmd_data_check_switch_port_loopback_config(char *cmd_str, void * val,
 	a_uint32_t size);

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -668,7 +668,9 @@ struct sub_cmd_des_t g_port_des[] =
 	{"frameMaxSize", "set",   SW_API_PT_FRAME_MAX_SIZE_SET, NULL},
 	{"interface3az", "set", SW_API_PT_INTERFACE_3AZ_STATUS_SET, NULL},
 	{"promiscmode", "set",   SW_API_PT_PROMISC_MODE_SET, NULL},
+#endif
 	{"eeecfg", "set", SW_API_PT_INTERFACE_EEE_CFG_SET, NULL},
+#ifndef IN_PORTCONTROL_MINI
 	{"srcfiltercfg", "set",   SW_API_PT_SOURCE_FILTER_CONFIG_SET, NULL},
 	{"switchportloopback", "set", SW_API_PT_SWITCH_PORT_LOOPBACK_SET, NULL},
 #endif

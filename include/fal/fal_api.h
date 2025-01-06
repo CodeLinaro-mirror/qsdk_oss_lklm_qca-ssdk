@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -334,6 +334,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_SOURCE_FILTER_CONFIG_SET, fal_port_source_filter_config_set), \
     SW_API_DEF(SW_API_PT_PROMISC_MODE_SET, fal_port_promisc_mode_set), \
     SW_API_DEF(SW_API_PT_PROMISC_MODE_GET, fal_port_promisc_mode_get), \
+    SW_API_DEF(SW_API_PT_INTERFACE_EEE_CFG_SET, fal_port_interface_eee_cfg_set),  \
+    SW_API_DEF(SW_API_PT_INTERFACE_EEE_CFG_GET, fal_port_interface_eee_cfg_get),  \
     SW_API_DEF(SW_API_PT_COMBO_LINK_STATUS_GET, fal_port_combo_link_status_get ), \
     SW_API_DEF(SW_API_PT_COMBO_PREFER_MEDIUM_SET, fal_port_combo_prefer_medium_set), \
     SW_API_DEF(SW_API_PT_COMBO_PREFER_MEDIUM_GET, fal_port_combo_prefer_medium_get), \
@@ -390,6 +392,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_SOURCE_FILTER_CONFIG_SET) \
     SW_API_DESC(SW_API_PT_PROMISC_MODE_SET) \
     SW_API_DESC(SW_API_PT_PROMISC_MODE_GET) \
+    SW_API_DESC(SW_API_PT_INTERFACE_EEE_CFG_SET)  \
+    SW_API_DESC(SW_API_PT_INTERFACE_EEE_CFG_GET)  \
     SW_API_DESC(SW_API_PT_COMBO_LINK_STATUS_GET) \
     SW_API_DESC(SW_API_PT_COMBO_PREFER_MEDIUM_SET) \
     SW_API_DESC(SW_API_PT_COMBO_PREFER_MEDIUM_GET) \

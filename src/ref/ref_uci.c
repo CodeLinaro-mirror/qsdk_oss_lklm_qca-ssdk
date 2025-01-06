@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2013, 2015, 2017-2019, 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2592,6 +2592,7 @@ parse_port_promiscmode(struct switch_val *val)
 
 	return rv;
 }
+#endif
 static int
 parse_port_eeecfg(struct switch_val *val)
 {
@@ -2631,7 +2632,7 @@ parse_port_eeecfg(struct switch_val *val)
 
 	return rv;
 }
-
+#ifndef IN_PORTCONTROL_MINI
 static int
 parse_port_srcfiltercfg(struct switch_val *val)
 {
@@ -12232,9 +12233,13 @@ parse_port(const char *command_name, struct switch_val *val)
 		rv = parse_port_interface8023az(val);
 	} else if(!strcmp(command_name, "Promiscmode")) {
 		rv = parse_port_promiscmode(val);
-	} else if(!strcmp(command_name, "Eeecfg")) {
+	}
+#endif
+	else if(!strcmp(command_name, "Eeecfg")) {
 		rv = parse_port_eeecfg(val);
-	}else if(!strcmp(command_name, "Srcfiltercfg")) {
+	}
+#ifndef IN_PORTCONTROL_MINI
+	else if(!strcmp(command_name, "Srcfiltercfg")) {
 		rv = parse_port_srcfiltercfg(val);
 	} else if(!strcmp(command_name, "SwitchPortLoopback")) {
 		rv = parse_switch_port_loopback(val);
