@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, 2017-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -982,6 +982,22 @@ hsl_phy_speed_duplex_to_auto_adv(a_uint32_t dev_id,fal_port_speed_t speed,
 
 	return auto_adv;
 }
+
+sw_error_t
+hsl_phydev_suspended_update(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_bool_t suspend)
+{
+	sw_error_t rv = SW_OK;
+	struct phy_device *phydev = NULL;
+
+	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	SW_RTN_ON_ERROR(rv);
+
+	phydev->suspended = suspend;
+
+	return SW_OK;
+}
+
 #ifdef IN_LED
 sw_error_t
 hsl_port_phy_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
@@ -2030,6 +2046,31 @@ hsl_port_phy_eee_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 	SW_RTN_ON_ERROR (rv);
 
 	return phy_drv->phy_eee_status_get (dev_id, phy_addr, status);
+}
+
+sw_error_t
+hsl_port_phy_adjust_link_post(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t phy_addr = 0;
+	hsl_phy_ops_t *phy_drv = NULL;
+
+	HSL_DEV_ID_CHECK(dev_id);
+
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
+	{
+		return SW_BAD_PARAM;
+	}
+
+	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+	if (NULL == phy_drv->phy_adjust_link_post)
+		return SW_NOT_SUPPORTED;
+
+	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr);
+	SW_RTN_ON_ERROR (rv);
+
+	return phy_drv->phy_adjust_link_post (dev_id, phy_addr);
+
 }
 /*qca808x_end*/
 #ifndef IN_PORTCONTROL_MINI

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1049,6 +1049,65 @@ qca81xx_phy_led_ctrl_source_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return rv;
 }
 
+sw_error_t
+qca81xx_phy_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+
+	if (!(qcaphy_c45_get_link_status(dev_id, phy_addr))) {
+		rv = hsl_phy_modify_mii(dev_id, phy_addr + 1,
+			QCA81XX_PHY_PCS_PLL_POWER_ON_AND_RESET,
+			QCA81XX_PHY_PCS_ANA_SOFT_RESET_MASK,
+			QCA81XX_PHY_PCS_ANA_SOFT_RESET);
+		PHY_RTN_ON_ERROR(rv);
+	}
+
+	rv = qcaphy_c45_poweroff(dev_id, phy_addr);
+	PHY_RTN_ON_ERROR(rv);
+
+	return hsl_phydev_suspended_update(dev_id, phy_addr, A_TRUE);
+}
+
+sw_error_t
+qca81xx_phy_poweron(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+
+	/* make sure the PHY PCS is enabled */
+	rv = hsl_phy_modify_mii(dev_id, phy_addr + 1,
+		QCA81XX_PHY_PCS_PLL_POWER_ON_AND_RESET,
+		QCA81XX_PHY_PCS_ANA_SOFT_RESET_MASK,
+		QCA81XX_PHY_PCS_ANA_SOFT_RELEASE);
+	PHY_RTN_ON_ERROR(rv);
+
+	rv = qcaphy_c45_poweron(dev_id, phy_addr);
+	PHY_RTN_ON_ERROR(rv);
+
+	return hsl_phydev_suspended_update(dev_id, phy_addr, A_FALSE);
+}
+
+sw_error_t
+qca81xx_phy_adjust_link_post(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t  rv = SW_OK;
+	struct phy_device *phydev = NULL;
+
+	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	SW_RTN_ON_ERROR(rv);
+
+	/* disable PHY PCS if PHY is suspended and link is down */
+	if (phydev && phydev->suspended &&
+		!(qcaphy_c45_get_link_status(dev_id, phy_addr))) {
+		rv = hsl_phy_modify_mii(dev_id, phy_addr + 1,
+			QCA81XX_PHY_PCS_PLL_POWER_ON_AND_RESET,
+			QCA81XX_PHY_PCS_ANA_SOFT_RESET_MASK,
+			QCA81XX_PHY_PCS_ANA_SOFT_RESET);
+		PHY_RTN_ON_ERROR(rv);
+	}
+
+	return SW_OK;
+}
+
 static sw_error_t
 qca81xx_phy_api_ops_init(void)
 {
@@ -1063,8 +1122,8 @@ qca81xx_phy_api_ops_init(void)
 
 	phy_api_ops_init(QCA81XX_PHY_CHIP);
 	qca81xx_phy_api_ops->phy_id_get = qcaphy_c45_get_phy_id;
-	qca81xx_phy_api_ops->phy_power_off = qcaphy_c45_poweroff;
-	qca81xx_phy_api_ops->phy_power_on = qcaphy_c45_poweron;
+	qca81xx_phy_api_ops->phy_power_off = qca81xx_phy_poweroff;
+	qca81xx_phy_api_ops->phy_power_on = qca81xx_phy_poweron;
 	qca81xx_phy_api_ops->phy_link_status_get = qcaphy_c45_get_link_status;
 	qca81xx_phy_api_ops->phy_autoneg_enable_set = qcaphy_c45_autoneg_enable;
 	qca81xx_phy_api_ops->phy_restart_autoneg = qcaphy_c45_autoneg_restart;
@@ -1085,6 +1144,7 @@ qca81xx_phy_api_ops_init(void)
 	qca81xx_phy_api_ops->phy_cdt = qca81xx_phy_cdt;
 	qca81xx_phy_api_ops->phy_led_ctrl_source_set = qca81xx_phy_led_ctrl_source_set;
 	qca81xx_phy_api_ops->phy_led_ctrl_source_get = qca81xx_phy_led_ctrl_source_get;
+	qca81xx_phy_api_ops->phy_adjust_link_post = qca81xx_phy_adjust_link_post;
 #ifndef IN_PORTCONTROL_MINI
 	qca81xx_phy_api_ops->phy_8023az_set = qcaphy_c45_set_8023az;
 	qca81xx_phy_api_ops->phy_8023az_get = qcaphy_c45_get_8023az;

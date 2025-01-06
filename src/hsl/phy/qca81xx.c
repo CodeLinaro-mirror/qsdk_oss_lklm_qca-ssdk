@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -23,6 +23,7 @@
 #include "qca808x.h"
 #include "qca81xx.h"
 #include "qcaphy_c45_common.h"
+#include "qca81xx_phy.h"
 
 struct qca81xx_phy_mdio_data {
 	struct mii_bus *mii_bus;
@@ -649,14 +650,29 @@ void qca81xx_phy_remove(struct phy_device *phydev)
 
 static int qca81xx_suspend(struct phy_device *phydev)
 {
-	return qca81xx_phy_modify(phydev,
-			MDIO_MMD_VEND2, MDIO_CTRL1, 0, MDIO_CTRL1_LPOWER);
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
+
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
+
+	return qca81xx_phy_poweroff(pdata->dev_id, pdata->phy_addr);
 }
 
 static int qca81xx_resume(struct phy_device *phydev)
 {
-	return qca81xx_phy_modify(phydev,
-			MDIO_MMD_VEND2, MDIO_CTRL1, MDIO_CTRL1_LPOWER, 0);
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
+
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
+
+	return qca81xx_phy_poweron(pdata->dev_id, pdata->phy_addr);
+
 }
 
 static int qca81xx_phy_soft_reset(struct phy_device *phydev)

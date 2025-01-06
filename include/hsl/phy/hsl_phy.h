@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, 2017-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -242,6 +242,8 @@ extern "C" {
 	typedef sw_error_t(*hsl_phy_eee_status_get) (a_uint32_t dev_id,
 					      a_uint32_t phy_id,
 					      a_uint32_t * status);
+	typedef sw_error_t(*hsl_phy_adjust_link_post) (a_uint32_t dev_id,
+					      a_uint32_t phy_id);
 /*qca808x_end*/
 	typedef sw_error_t(*hsl_phy_led_ctrl_pattern_set) (a_uint32_t dev_id,
 					      a_uint32_t phy_id,
@@ -524,6 +526,7 @@ extern "C" {
 		hsl_phy_eee_partner_adv_get phy_eee_partner_adv_get;
 		hsl_phy_eee_cap_get phy_eee_cap_get;
 		hsl_phy_eee_status_get phy_eee_status_get;
+		hsl_phy_adjust_link_post phy_adjust_link_post;
 /*qca808x_end*/
 		hsl_phy_led_ctrl_pattern_set phy_led_ctrl_pattern_set;
 		hsl_phy_led_ctrl_pattern_get phy_led_ctrl_pattern_get;
@@ -768,6 +771,9 @@ hsl_phy_autoneg_adv_check(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t adv);
 sw_error_t
 hsl_phy_adv_to_linkmode_adv(a_uint32_t autoadv, a_ulong_t *advertising);
+sw_error_t
+hsl_phydev_suspended_update(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_bool_t suspend);
 #ifdef IN_LED
 sw_error_t
 hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
@@ -1007,6 +1013,8 @@ hsl_phy_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 int
 hsl_phy_modify_soc(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
 	a_uint32_t mask, a_uint32_t val);
+sw_error_t
+hsl_port_phy_adjust_link_post(a_uint32_t dev_id, a_uint32_t port_id);
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 hsl_port_phy_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);

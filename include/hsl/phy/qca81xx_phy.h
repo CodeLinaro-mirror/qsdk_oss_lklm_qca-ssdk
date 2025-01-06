@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -115,8 +115,16 @@ extern "C"
 #define QCA81XX_PHY_CABLE_LENGTH_UNIT                          0x0400
 #define QCA81XX_PHY_AUTO_SOFT_RESET                            0x8000
 
+/*SERDES registers*/
+#define QCA81XX_PHY_PCS_PLL_POWER_ON_AND_RESET                 0
+#define QCA81XX_PHY_PCS_ANA_SOFT_RESET_MASK                    0x40
+#define QCA81XX_PHY_PCS_ANA_SOFT_RELEASE                       0x40
+#define QCA81XX_PHY_PCS_ANA_SOFT_RESET                         0
+
 int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
 void qca81xx_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp);
+sw_error_t qca81xx_phy_poweron(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t qca81xx_phy_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr);
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */
