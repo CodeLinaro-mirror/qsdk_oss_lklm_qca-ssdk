@@ -35,6 +35,11 @@ qca81xx_phy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct port_phy_status *phy_status)
 {
 	a_uint16_t phy_data = 0;
+	struct phy_device *phydev = NULL;
+
+	hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	if (phydev->loopback_enabled)
+		return SW_OK;
 
 	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
 		QCAPHY_SPEC_STATUS);
@@ -444,43 +449,109 @@ qca81xx_phy_get_mdix_status(a_uint32_t dev_id, a_uint32_t phy_addr,
 }
 
 sw_error_t
+qca81xx_phy_set_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
+{
+	a_uint16_t phy_data = 0;
+
+	if (enable == A_TRUE)
+		phy_data |= QCA81XX_PHY_HIBERNATION_CFG;
+
+	return hsl_phy_c45_modify_debug(dev_id, phy_addr, QCA81XX_PHY_DEBUG_HIBERNATION_CTRL,
+		QCA81XX_PHY_HIBERNATION_CFG, phy_data);
+}
+
+sw_error_t
+qca81xx_phy_set_pma_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t speed, a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
+		QCAPHY_CONTROL, QCAPHY_LOCAL_LOOPBACK_ENABLE,
+		enable ? QCAPHY_LOCAL_LOOPBACK_ENABLE : 0);
+	PHY_RTN_ON_ERROR(rv);
+	rv = qcaphy_c45_autoneg_set(dev_id, phy_addr, !enable);
+	PHY_RTN_ON_ERROR(rv);
+	if (enable) {
+		rv = qcaphy_c45_force_speed_set(dev_id, phy_addr, speed);
+		PHY_RTN_ON_ERROR(rv);
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+qca81xx_phy_set_pcs_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
+	a_uint32_t speed, a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE,
+		QCAPHY_MMD3_NUM, QCAPHY_CONTROL,
+		QCAPHY_LOCAL_LOOPBACK_ENABLE,
+		enable ? QCAPHY_LOCAL_LOOPBACK_ENABLE : 0);
+	PHY_RTN_ON_ERROR(rv);
+	rv = qcaphy_c45_autoneg_set(dev_id, phy_addr, !enable);
+	PHY_RTN_ON_ERROR(rv);
+	if (enable) {
+		rv = qcaphy_c45_force_speed_set(dev_id, phy_addr, speed);
+		PHY_RTN_ON_ERROR(rv);
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
 qca81xx_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_bool_t enable)
 {
-	a_uint16_t phy_data = 0;
-	fal_port_speed_t cur_speed = 0;
 	sw_error_t rv = SW_OK;
+	struct phy_device *phydev = NULL;
 
-	if (enable == A_TRUE) {
-		/* get the link speed first, then force the corresponding
-		 * speed to enable local loopback */
-		rv = qca81xx_phy_get_speed(dev_id, phy_addr, &cur_speed);
-		PHY_RTN_ON_ERROR(rv);
-		rv = qcaphy_c45_force_speed_set(dev_id, phy_addr, cur_speed);
-		PHY_RTN_ON_ERROR(rv);
-		rv = qcaphy_c45_autoneg_set(dev_id, phy_addr, A_FALSE);
-		PHY_RTN_ON_ERROR(rv);
+	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	PHY_RTN_ON_ERROR(rv);
 
-		phy_data |= QCAPHY_LOCAL_LOOPBACK_ENABLE;
+	if (phydev->speed < FAL_SPEED_2500) {
+		return qca81xx_phy_set_pma_loopback(dev_id, phy_addr, phydev->speed, enable);
 	} else {
-		rv = qcaphy_c45_autoneg_set(dev_id, phy_addr, A_TRUE);
+		/* the link would drop when enable PCS loopback, so need special */
+		/* sequence to work around it */
+		phydev->loopback_enabled = enable;
+		rv = qca81xx_phy_set_hibernate(dev_id, phy_addr, !enable);
+		PHY_RTN_ON_ERROR(rv);
+		rv = qca81xx_phy_set_pcs_loopback(dev_id, phy_addr, phydev->speed, enable);
+		PHY_RTN_ON_ERROR(rv);
+		rv = qca81xx_phy_soft_reset(dev_id, phy_addr);
+		PHY_RTN_ON_ERROR(rv);
+		/* the autoneg would be enabled after software reset, */
+		/* so need to configure it again */
+		rv = qcaphy_c45_autoneg_set(dev_id, phy_addr, !enable);
+		PHY_RTN_ON_ERROR(rv);
+		rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD3_NUM,
+			QCA81XX_PHY_MMD3_BYPASS_SIGNAL,
+			QCA81XX_PHY_MMD3_PCS_BYPASS_LINK,
+			enable ? QCA81XX_PHY_MMD3_PCS_BYPASS_LINK : 0);
 		PHY_RTN_ON_ERROR(rv);
 	}
-	return hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
-		QCAPHY_CONTROL, QCAPHY_LOCAL_LOOPBACK_ENABLE, phy_data);
+
+	return SW_OK;
 }
 
 sw_error_t
 qca81xx_phy_get_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_bool_t *enable)
 {
-	a_uint16_t phy_data = 0;
+	a_uint16_t phy_data0 = 0, phy_data1 = 0;
 
-	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
+	phy_data0 = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
 		QCAPHY_CONTROL);
-	PHY_RTN_ON_READ_ERROR(phy_data);
+	PHY_RTN_ON_READ_ERROR(phy_data0);
+	phy_data1 = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD3_NUM,
+		QCAPHY_CONTROL);
+	PHY_RTN_ON_READ_ERROR(phy_data0);
 
-	if (phy_data & QCAPHY_LOCAL_LOOPBACK_ENABLE)
+	if ((phy_data0 & QCAPHY_LOCAL_LOOPBACK_ENABLE) ||
+		(phy_data1 & QCAPHY_LOCAL_LOOPBACK_ENABLE))
 		*enable = A_TRUE;
 	else
 		*enable = A_FALSE;
@@ -713,18 +784,6 @@ qca81xx_phy_get_remote_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
 		*enable = A_FALSE;
 
 	return SW_OK;
-}
-
-sw_error_t
-qca81xx_phy_set_hibernate(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
-{
-	a_uint16_t phy_data = 0;
-
-	if (enable == A_TRUE)
-		phy_data |= QCA81XX_PHY_HIBERNATION_CFG;
-
-	return hsl_phy_c45_modify_debug(dev_id, phy_addr, QCA81XX_PHY_DEBUG_HIBERNATION_CTRL,
-		QCA81XX_PHY_HIBERNATION_CFG, phy_data);
 }
 
 sw_error_t

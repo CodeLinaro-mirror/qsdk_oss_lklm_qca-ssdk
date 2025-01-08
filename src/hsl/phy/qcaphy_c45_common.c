@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -539,7 +539,14 @@ qcaphy_c45_force_speed_set(a_uint32_t dev_id, a_uint32_t phy_addr,
 			phy_speed_type = QCAPHY_PMA_TYPE_10000M;
 			break;
 		default:
-			return SW_NOT_SUPPORTED;
+			if (hsl_phydev_support_10m(dev_id, phy_addr)) {
+				phy_speed_ctrl = QCAPHY_PMA_CONTROL_10M;
+				phy_speed_type = QCAPHY_PMA_TYPE_10M;
+			} else {
+				phy_speed_ctrl = QCAPHY_PMA_CONTROL_100M;
+				phy_speed_type = QCAPHY_PMA_TYPE_100M;
+			}
+			break;
 	}
 	rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD1_NUM,
 		QCAPHY_MMD1_PMA_CONTROL, QCAPHY_PMA_SPEED_MASK, phy_speed_ctrl);

@@ -60,6 +60,7 @@ extern "C"
 #define QCA81XX_PHY_MMD3_CDT_THRESH_CTRL9                      0x807a
 #define QCA81XX_PHY_MMD3_CDT_THRESH_CTRL13                     0x807e
 #define QCA81XX_PHY_MMD3_CDT_THRESH_CTRL14                     0x807f
+#define QCA81XX_PHY_MMD3_BYPASS_SIGNAL                         0x2003
 
 /*PHY MMD3 register fields*/
 #define QCA81XX_PHY_MMD3_REMOTE_LOOPBACK_EN                    0x0001
@@ -74,6 +75,7 @@ extern "C"
 #define QCA81XX_PHY_MMD3_CDT_THRESH_CTRL9_VAL                  0xc060
 #define QCA81XX_PHY_MMD3_CDT_THRESH_CTRL13_VAL                 0xb060
 #define QCA81XX_PHY_MMD3_CDT_THRESH_CTRL14_VAL                 0xb8b0
+#define QCA81XX_PHY_MMD3_PCS_BYPASS_LINK                       0x200
 
 /*PHY MMD7 registers*/
 #define QCA81XX_PHY_MMD7_COUNTER_CTRL                          0x8029

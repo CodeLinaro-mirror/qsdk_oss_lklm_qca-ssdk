@@ -774,6 +774,8 @@ hsl_phy_adv_to_linkmode_adv(a_uint32_t autoadv, a_ulong_t *advertising);
 sw_error_t
 hsl_phydev_suspended_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_bool_t suspend);
+bool
+hsl_phydev_support_10m(a_uint32_t dev_id, a_uint32_t phy_addr);
 #ifdef IN_LED
 sw_error_t
 hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,

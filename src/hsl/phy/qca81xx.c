@@ -1213,7 +1213,9 @@ static int qca81xx_phy_read_status(struct phy_device *phydev)
 	pdata = priv->phy_info;
 	if (!pdata)
 		return -EINVAL;
-
+	/* if loopback is enabled, no need to read PHY */
+	if (phydev->loopback_enabled)
+		return 0;
 	old_link = phydev->link;
 
 	/* Clause 45 has no standardized support for 1000BaseT, */

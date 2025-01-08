@@ -998,6 +998,21 @@ hsl_phydev_suspended_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 	return SW_OK;
 }
 
+bool
+hsl_phydev_support_10m(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	sw_error_t rv = SW_OK;
+	struct phy_device *phydev = NULL;
+
+	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	SW_RTN_ON_ERROR(rv);
+
+	return (linkmode_test_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
+		phydev->supported) &&
+		linkmode_test_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+		phydev->supported));
+}
+
 #ifdef IN_LED
 sw_error_t
 hsl_port_phy_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
