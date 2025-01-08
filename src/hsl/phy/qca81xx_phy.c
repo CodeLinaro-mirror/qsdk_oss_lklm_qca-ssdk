@@ -373,19 +373,30 @@ qca81xx_phy_cdt(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mdi_pair,
 	return rv;
 }
 
-int qca81xx_phy_soft_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
+sw_error_t
+qca81xx_phy_soft_reset(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
 	sw_error_t rv = SW_OK;
 
+	/* enable auto soft reset when power on */
 	rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
-		QCA81XX_PHY_SMART_SPEED, QCA81XX_PHY_AUTO_SOFT_RESET,
-		QCA81XX_PHY_AUTO_SOFT_RESET);
+		QCAPHY_SPEC_CONTROL,
+		QCA81XX_PHY_AUTO_SOFT_RESET_EN,
+		QCA81XX_PHY_AUTO_SOFT_RESET_EN);
 	PHY_RTN_ON_ERROR(rv);
-	qcaphy_c45_poweroff(dev_id, phy_addr);
-	mdelay(10);
-	qcaphy_c45_poweron(dev_id, phy_addr);
 
-	return SW_OK;
+	rv = qcaphy_c45_poweroff(dev_id, phy_addr);
+	PHY_RTN_ON_ERROR(rv);
+	mdelay(10);
+	rv = qcaphy_c45_poweron(dev_id, phy_addr);
+	PHY_RTN_ON_ERROR(rv);
+
+	/* disable auto soft reset when power on */
+	rv = hsl_phy_modify_mmd(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
+		QCAPHY_SPEC_CONTROL,
+		QCA81XX_PHY_AUTO_SOFT_RESET_EN, 0);
+
+	return rv;
 }
 
 #ifndef IN_PORTCONTROL_MINI

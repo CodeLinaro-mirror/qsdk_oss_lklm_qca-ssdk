@@ -117,9 +117,6 @@ enum qca81xx_addr_offset {
 #define QCA81XX_INTR_STATUS_DOWN			0x800
 #define QCA81XX_INTR_STATUS_UP				0x400
 
-#define QCA81XX_SMART_SPEED				0x14
-#define QCA81XX_AUTO_SOFT_RESET				0x8000
-
 /*PCS MII registers*/
 #define QCA81XX_PCS_PLL_POWER_ON_AND_RESET		0
 #define QCA81XX_PCS_ANA_SOFT_RESET_MASK			0x40
@@ -675,20 +672,17 @@ static int qca81xx_resume(struct phy_device *phydev)
 
 }
 
-static int qca81xx_phy_soft_reset(struct phy_device *phydev)
+static int qca81xx_soft_reset(struct phy_device *phydev)
 {
-	int ret;
+	struct qca808x_phy_info *pdata;
+	qca808x_priv *priv;
 
-	ret = qca81xx_phy_modify(phydev, MDIO_MMD_VEND2,
-			QCA81XX_SMART_SPEED, 0, QCA81XX_AUTO_SOFT_RESET);
-	if (ret < 0)
-		return ret;
+	priv = phydev->priv;
+	pdata = priv->phy_info;
+	if (!pdata)
+		return -EINVAL;
 
-	qca81xx_suspend(phydev);
-	usleep_range(10000, 11000);
-	qca81xx_resume(phydev);
-
-	return 0;
+	return qca81xx_phy_soft_reset(pdata->dev_id, pdata->phy_addr);
 }
 
 static int qca81xx_pcs_poll_timeout(struct phy_device *phydev, int devad,
@@ -771,7 +765,7 @@ static int qca81xx_pcs_usxgmii_init(struct phy_device *phydev)
 	ret = qca81xx_xpcs_clk_reset_update(phydev, false);
 	if (ret < 0)
 		return ret;
-	ret = qca81xx_phy_soft_reset(phydev);
+	ret = qca81xx_soft_reset(phydev);
 	if (ret < 0)
 		return ret;
 	ret = qca81xx_pcs_modify_mmd(phydev,
@@ -1354,7 +1348,7 @@ static struct phy_driver qca81xx_phy_driver = {
 	.read_status	= qca81xx_phy_read_status,
 	.suspend	= qca81xx_suspend,
 	.resume		= qca81xx_resume,
-	.soft_reset	= qca81xx_phy_soft_reset,
+	.soft_reset	= qca81xx_soft_reset,
 };
 
 int qca81xx_phy_driver_register(void)

@@ -103,7 +103,6 @@ extern "C"
 /*PHY MMD31 registers*/
 #define QCA81XX_PHY_INTR_MASK                                  0x12
 #define QCA81XX_PHY_INTR_STATUS                                0x13
-#define QCA81XX_PHY_SMART_SPEED                                0x14
 #define QCA81XX_PHY_CDT_CONTROL                                0x16
 
 /*PHY MMD31 register fields*/
@@ -115,7 +114,7 @@ extern "C"
 #define QCA81XX_PHY_MDI_PAIR_NUM                               0x4
 #define QCA81XX_PHY_RUN_CDT                                    0x8000
 #define QCA81XX_PHY_CABLE_LENGTH_UNIT                          0x0400
-#define QCA81XX_PHY_AUTO_SOFT_RESET                            0x8000
+#define QCA81XX_PHY_AUTO_SOFT_RESET_EN                         0x8
 
 /*SERDES registers*/
 #define QCA81XX_PHY_PCS_PLL_POWER_ON_AND_RESET                 0
@@ -127,6 +126,7 @@ int qca81xx_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
 void qca81xx_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp);
 sw_error_t qca81xx_phy_poweron(a_uint32_t dev_id, a_uint32_t phy_addr);
 sw_error_t qca81xx_phy_poweroff(a_uint32_t dev_id, a_uint32_t phy_addr);
+sw_error_t qca81xx_phy_soft_reset(a_uint32_t dev_id, a_uint32_t phy_addr);
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */
