@@ -834,19 +834,17 @@ static ssize_t ssdk_packet_counter_get(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
 {
-	ssize_t count;
+	ssize_t count = 0;
 	adpt_api_t *p_api;
 
 	p_api = adpt_api_ptr_get(ssdk_dev_id);
 	if (p_api == NULL || p_api->adpt_debug_counter_get == NULL)
 	{
-		count = snprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
+		count = scnprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
 		return count;
 	}
 
-	count = snprintf(buf, (ssize_t)PAGE_SIZE, "\n");
-
-	p_api->adpt_debug_counter_get(ssdk_dev_id, A_FALSE);
+	p_api->adpt_debug_counter_get(ssdk_dev_id, A_FALSE, &buf, &count);
 
 	return count;
 }
@@ -879,19 +877,17 @@ static ssize_t ssdk_byte_counter_get(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
 {
-	ssize_t count;
+	ssize_t count = 0;
 	adpt_api_t *p_api;
 
 	p_api = adpt_api_ptr_get(ssdk_dev_id);
 	if (p_api == NULL || p_api->adpt_debug_counter_get == NULL)
 	{
-		count = snprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
+		count = scnprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
 		return count;
 	}
 
-	count = snprintf(buf, (ssize_t)PAGE_SIZE, "\n");
-
-	p_api->adpt_debug_counter_get(ssdk_dev_id, A_TRUE);
+	p_api->adpt_debug_counter_get(ssdk_dev_id, A_TRUE, &buf, &count);
 
 	return count;
 }
