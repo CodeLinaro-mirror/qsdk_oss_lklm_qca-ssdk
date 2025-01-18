@@ -1770,7 +1770,7 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 			break;
 #endif
 		case NETDEV_REGISTER:
-			if (strstr(dev->name, "eth"))
+			if (strstr(dev->name, "eth") && !(dev->priv_flags & IFF_802_1Q_VLAN))
 				ssdk_netdev_switch_init(dev);
 			break;
 	}
