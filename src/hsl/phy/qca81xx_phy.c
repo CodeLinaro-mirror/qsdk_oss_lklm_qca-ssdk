@@ -37,8 +37,9 @@ qca81xx_phy_status_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint16_t phy_data = 0;
 	struct phy_device *phydev = NULL;
 
-	hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
-	if (phydev->loopback_enabled)
+	hsl_port_phydev_get(dev_id, qca_ssdk_phy_addr_to_port(dev_id, phy_addr),
+		&phydev);
+	if (phydev && phydev->loopback_enabled)
 		return SW_OK;
 
 	phy_data = hsl_phy_mmd_reg_read(dev_id, phy_addr, A_TRUE, QCAPHY_MMD31_NUM,
@@ -519,7 +520,8 @@ qca81xx_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_addr,
 	sw_error_t rv = SW_OK;
 	struct phy_device *phydev = NULL;
 
-	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	rv = hsl_port_phydev_get(dev_id, qca_ssdk_phy_addr_to_port(dev_id, phy_addr),
+		&phydev);
 	PHY_RTN_ON_ERROR(rv);
 
 	if (phydev->speed < FAL_SPEED_2500) {
@@ -1162,7 +1164,8 @@ qca81xx_phy_adjust_link_post(a_uint32_t dev_id, a_uint32_t phy_addr)
 	sw_error_t  rv = SW_OK;
 	struct phy_device *phydev = NULL;
 
-	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	rv = hsl_port_phydev_get(dev_id, qca_ssdk_phy_addr_to_port(dev_id, phy_addr),
+		&phydev);
 	SW_RTN_ON_ERROR(rv);
 
 	/* disable PHY PCS if PHY is suspended and link is down */

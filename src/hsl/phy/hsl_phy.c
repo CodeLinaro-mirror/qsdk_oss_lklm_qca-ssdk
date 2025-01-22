@@ -990,7 +990,8 @@ hsl_phydev_suspended_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 	sw_error_t rv = SW_OK;
 	struct phy_device *phydev = NULL;
 
-	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	rv = hsl_port_phydev_get(dev_id, qca_ssdk_phy_addr_to_port(dev_id, phy_addr),
+		&phydev);
 	SW_RTN_ON_ERROR(rv);
 
 	phydev->suspended = suspend;
@@ -1004,7 +1005,8 @@ hsl_phydev_support_10m(a_uint32_t dev_id, a_uint32_t phy_addr)
 	sw_error_t rv = SW_OK;
 	struct phy_device *phydev = NULL;
 
-	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
+	rv = hsl_port_phydev_get(dev_id, qca_ssdk_phy_addr_to_port(dev_id, phy_addr),
+		&phydev);
 	SW_RTN_ON_ERROR(rv);
 
 	return (linkmode_test_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
