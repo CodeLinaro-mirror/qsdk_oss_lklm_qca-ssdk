@@ -1522,6 +1522,8 @@ static ssize_t ssdk_mac_polling_set(struct device *dev,
 	char num_buf[12];
 	a_uint32_t num;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(ssdk_dev_id);
+	if (!priv)
+		return count;
 
 	if (count >= sizeof(num_buf))
 		return 0;
