@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -591,26 +591,23 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 				/* uqxgmii mode */
 				if (ssdk_mht_clk_is_asserted(dev_id, MHT_SRDS1_SYS_CLK)) {
 					SSDK_DEBUG("configure manhattan serdes1\n");
-#if 0
-					/* configure phy serdes as uqxgmii mode then set port mode
-					 * as auto to auto configure alder uniphy as uqxgmii mode
-					 * will see mht serdes 10g link up and xpcs uniphy autoneg
-					 * timeout, ignore the timeout and unblock the sequence
-					 * execute, can be linup and ping ok, but not sure if any
-					 * potential issue, backup it */
+
+					/* set the alder port mode as uqxgmii and apply to configure
+					 * alder uniphy as uqxgmii mode.
+					 */
+					SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_set(dev_id,
+							port_id, PORT_UQXGMII));
+					SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_apply(dev_id));
+
+					/* HSL_PORT_PHY_API_RUN() is not hooked to set phy mode for
+					 * MHT PHY when apply ppe port interface mode, so manually
+					 * configure MHT PHY serdes to uqxgmii mode here.
+					 */
 					SW_RTN_ON_ERROR(mht_interface_uqxgmii_mode_set(dev_id));
 					SW_RTN_ON_ERROR(ssdk_mht_clk_parent_set(dev_id,
 							MHT_AHB_CLK, MHT_P_UNIPHY1_TX312P5M));
 					SW_RTN_ON_ERROR(ssdk_mht_clk_rate_set(dev_id,
 							MHT_AHB_CLK, MHT_AHB_CLK_RATE_104P17M));
-#endif
-					/* manually set the alder port mode as uqxgmii to configure
-					 * alder uniphy as uqxgmii mode and then force apply to
-					 * configure mht phy serdes as uqxgmii mode, keep same with
-					 * bring up sequence */
-					SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_set(dev_id,
-							port_id, PORT_UQXGMII));
-					SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_apply(dev_id));
 				}
 			}
 		}
