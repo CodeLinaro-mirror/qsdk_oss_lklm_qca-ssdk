@@ -1142,12 +1142,9 @@ static int qca81xx_phy_speed_fixup(struct phy_device *phydev)
 	int ret = 0;
 	bool port_clock_en = false;
 
-	ret = qca81xx_pcs_poll_timeout(phydev,MDIO_MMD_VEND2,
+	qca81xx_pcs_poll_timeout(phydev,MDIO_MMD_VEND2,
 			QCA81XX_PCS_MMD31_MII_ERR_SEL,
 			QCA81XX_PCS_MMD31_MII_AN_COMPLETE_INT);
-	if (ret < 0)
-		return ret;
-
 	ret = qca81xx_pcs_modify_mmd(phydev,
 		MDIO_MMD_VEND2, QCA81XX_PCS_MMD31_MII_ERR_SEL,
 		QCA81XX_PCS_MMD31_MII_AN_COMPLETE_INT, 0);
