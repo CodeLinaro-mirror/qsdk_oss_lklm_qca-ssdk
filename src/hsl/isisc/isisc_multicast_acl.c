@@ -1,15 +1,18 @@
 /*
  * Copyright (c) 2012, 2016, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
+ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 
@@ -662,7 +665,7 @@ HSL_LOCAL int portmap_clear_type(int count, int index, fal_pbmp_t portmap)
 }
 sw_error_t isisc_igmp_sg_entry_set(a_uint32_t dev_id, fal_igmp_sg_entry_t * entry)
 {
-    int number, count;
+    a_uint32_t number, count;
     int new_index=0;
     sw_error_t rv;
     int action = MULT_ACTION_SET;
@@ -712,6 +715,10 @@ sw_error_t isisc_igmp_sg_entry_set(a_uint32_t dev_id, fal_igmp_sg_entry_t * entr
                 return SW_OK;
             }
 #endif
+            if (number == FAL_IGMP_SG_ENTRY_MAX) {
+                MULTI_DEBUG("Already total maxium multi entries, do not add more new (G,S) entries\n");
+                return SW_OK;
+            }
             isisc_multicast_acl_add(dev_id, FAL_ACL_LIST_MULTICAST, entry);
             MULTI_DEBUG("Here, need add (G, S), portmap=%x\n", entry->port_map);
             return SW_OK;
@@ -727,6 +734,10 @@ sw_error_t isisc_igmp_sg_entry_set(a_uint32_t dev_id, fal_igmp_sg_entry_t * entr
     {
         if(0 == new_index) //new entry, need add
         {
+            if (number == FAL_IGMP_SG_ENTRY_MAX) {
+                MULTI_DEBUG("Already total maxium multi entries, do not add more new (G,*) entries\n");
+                return SW_OK;
+            }
             isisc_multicast_acl_add(dev_id, FAL_ACL_LIST_MULTICAST+1, entry);
             rv = SW_OK;
         }
@@ -952,6 +963,8 @@ sw_error_t isisc_igmp_sg_entry_show(a_uint32_t dev_id)
     aos_mem_zero(multi_acl_group, FAL_IGMP_SG_ENTRY_MAX * sizeof (multi_acl_info_t));
     //number is the total multicast ACL rules amount, stores in multi_acl_info[];
     number = isisc_multicast_acl_query(dev_id);
+    if (number > FAL_IGMP_SG_ENTRY_MAX)
+	    number = FAL_IGMP_SG_ENTRY_MAX;
 
     for(i=0; i<number; i++)
     {
