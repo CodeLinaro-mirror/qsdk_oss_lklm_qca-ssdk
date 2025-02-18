@@ -231,7 +231,7 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 			netdev_switch = ssdk_dts_netdev_switch_find(port_id);
 			if (!netdev_switch)
 				continue;
-#if defined(MHT)
+#if defined(MHT) && !IS_ENABLED(CONFIG_NET_DSA)
 			if (hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_MHT) {
 				/* enable switch atheros header tx */
 				fal_header_type_set(netdev_switch->switch_dev_id,
@@ -274,7 +274,7 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 			netdev_switch = ssdk_dts_netdev_switch_find(port_id);
 			if (!netdev_switch)
 				continue;
-#if defined(MHT)
+#if defined(MHT) && !IS_ENABLED(CONFIG_NET_DSA)
 			if (hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_MHT) {
 				/* enable switch atheros header rx */
 				fal_header_type_set(netdev_switch->switch_dev_id,
