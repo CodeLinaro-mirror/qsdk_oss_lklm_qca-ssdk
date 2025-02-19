@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1478,8 +1478,7 @@ _isisc_interface_phy_mode_set(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     sw_error_t rv;
     a_uint16_t data;
     a_bool_t tx_delay_cmd, rx_delay_cmd;
-    hsl_phy_ops_t *phy_drv;
-    a_uint32_t reg, rgmii_mode, tx_delay = 2, port_id;
+    a_uint32_t reg, rgmii_mode, tx_delay = 2;
 
     HSL_DEV_ID_CHECK(dev_id);
 
@@ -1488,11 +1487,6 @@ _isisc_interface_phy_mode_set(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     {
         return SW_BAD_PARAM;
     }
-
-	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_id);
-    SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-    if ((NULL == phy_drv->phy_debug_write) || (NULL == phy_drv->phy_debug_read))
-	  return SW_NOT_SUPPORTED;
 
     HSL_REG_ENTRY_GET(rv, dev_id, PORT6_PAD_CTRL, 0,
                       (a_uint8_t *) (&reg), sizeof (a_uint32_t));
@@ -1540,14 +1534,14 @@ _isisc_interface_phy_mode_set(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     SW_RTN_ON_ERROR(rv);
 
     /* PHY RGMII mode, debug register18 bit3 */
-    data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 18);
+    data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 18);
     data &= 0xfff7UL;
     data |= ((rgmii_mode & 0x1) << 3);
-    rv = phy_drv->phy_debug_write(dev_id, ISISC_PHY_MODE_PHY_ID, 18, data);
+    rv = hsl_phy_debug_reg_write(dev_id, ISISC_PHY_MODE_PHY_ID, 18, data);
     SW_RTN_ON_ERROR(rv);
 
     /* PHY TX delay command, debug regigster5 bit8 */
-    data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 5);
+    data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 5);
     if (A_TRUE == tx_delay_cmd)
     {
         data |= 0x0100UL;
@@ -1556,11 +1550,11 @@ _isisc_interface_phy_mode_set(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     {
         data &= 0xfeffUL;
     }
-    rv = phy_drv->phy_debug_write(dev_id, ISISC_PHY_MODE_PHY_ID, 5, data);
+    rv = hsl_phy_debug_reg_write(dev_id, ISISC_PHY_MODE_PHY_ID, 5, data);
     SW_RTN_ON_ERROR(rv);
 
     /* PHY TX delay select, debug register11 bit-6 */
-    data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 11);
+    data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 11);
     data &= 0xff9fUL;
     data |= ((tx_delay & 0x3UL) << 5);
     if (A_TRUE == tx_delay_cmd)
@@ -1571,11 +1565,11 @@ _isisc_interface_phy_mode_set(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     {
         data &= 0xfeffUL;
     }
-    rv = phy_drv->phy_debug_write(dev_id, ISISC_PHY_MODE_PHY_ID, 11, data);
+    rv = hsl_phy_debug_reg_write(dev_id, ISISC_PHY_MODE_PHY_ID, 11, data);
     SW_RTN_ON_ERROR(rv);
 
     /* PHY RX delay command, debug regigster0 bit15 */
-    data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 0);
+    data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 0);
     if (A_TRUE == rx_delay_cmd)
     {
         data |= 0x8000UL;
@@ -1584,7 +1578,7 @@ _isisc_interface_phy_mode_set(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     {
         data &= 0x7fffUL;
     }
-    rv = phy_drv->phy_debug_write(dev_id, ISISC_PHY_MODE_PHY_ID, 0, data);
+    rv = hsl_phy_debug_reg_write(dev_id, ISISC_PHY_MODE_PHY_ID, 0, data);
     SW_RTN_ON_ERROR(rv);
 
     /* PHY RX delay select, now hardware not support */
@@ -1597,8 +1591,7 @@ _isisc_interface_phy_mode_get(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
 {
     sw_error_t rv;
     a_uint16_t data;
-    a_uint32_t reg = 0, rgmii, port_id;
-    hsl_phy_ops_t *phy_drv;
+    a_uint32_t reg = 0, rgmii;
 
     HSL_DEV_ID_CHECK(dev_id);
 
@@ -1607,11 +1600,6 @@ _isisc_interface_phy_mode_get(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     {
         return SW_BAD_PARAM;
     }
-
-	port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_id);
-    SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get(dev_id, port_id));
-    if (NULL == phy_drv->phy_debug_read)
-	  return SW_NOT_SUPPORTED;
 
     aos_mem_zero(config, sizeof(fal_phy_config_t));
 
@@ -1624,11 +1612,11 @@ _isisc_interface_phy_mode_get(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
     if (rgmii)
     {
         config->mac_mode = FAL_MAC_MODE_RGMII;
-        data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 5);
+        data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 5);
         if (data & 0x0100)
         {
             config->txclk_delay_cmd = A_TRUE;
-            data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 11);
+            data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 11);
             config->txclk_delay_sel = (data >> 5) & 0x3UL;
         }
         else
@@ -1636,7 +1624,7 @@ _isisc_interface_phy_mode_get(a_uint32_t dev_id, a_uint32_t phy_id, fal_phy_conf
             config->txclk_delay_cmd = A_FALSE;
         }
 
-        data = phy_drv->phy_debug_read(dev_id, ISISC_PHY_MODE_PHY_ID, 0);
+        data = hsl_phy_debug_reg_read(dev_id, ISISC_PHY_MODE_PHY_ID, 0);
         if (data & 0x8000)
         {
             config->rxclk_delay_cmd = A_TRUE;

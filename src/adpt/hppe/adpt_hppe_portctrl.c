@@ -2472,9 +2472,12 @@ _adpt_hppe_sfp_copper_phydriver_switch(a_uint32_t dev_id, a_uint32_t port_id,
 
 	rv = _adpt_hppe_port_phyaddr_update(dev_id, port_id, port_mode);
 	SW_RTN_ON_ERROR(rv);
-	rv = hsl_phydriver_update(dev_id, port_id);
+	if (port_mode == PORT_10GBASE_R || port_mode == PHY_PSGMII_BASET) {
+		rv = hsl_port_phydrv_update(dev_id, port_id);
+		SW_RTN_ON_ERROR(rv);
+	}
 
-	return rv;
+	return SW_OK;
 }
 
 static sw_error_t
