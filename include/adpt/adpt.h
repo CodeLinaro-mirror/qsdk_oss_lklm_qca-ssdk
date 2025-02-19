@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2325,6 +2325,15 @@ adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
 			sw_error_t rv = SW_NOT_SUPPORTED; \
 			FAL_API_LOCK; \
 			HSL_PORT_PHY_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
+			FAL_API_UNLOCK; \
+			return rv; \
+		}
+
+#define DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(func, dev_id, port_id, ...) \
+		{ \
+			sw_error_t rv = SW_NOT_SUPPORTED; \
+			FAL_API_LOCK; \
+			HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN(func, dev_id, port_id, ##__VA_ARGS__); \
 			FAL_API_UNLOCK; \
 			return rv; \
 		}

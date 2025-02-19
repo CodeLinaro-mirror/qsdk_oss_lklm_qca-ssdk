@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2601,7 +2601,7 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 					SW_RTN_ON_ERROR(rv);
 				}
 				/* set phy mode */
-				HSL_PORT_PHY_API_RUN(interface_set, dev_id, port_id, port_mode);
+				HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN(interface_set, dev_id, port_id, port_mode);
 				SSDK_DEBUG("port_id:%d is configured as port_mode:0x%x\n",
 					port_id, port_mode);
 			}
@@ -4393,7 +4393,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 #endif
 			/* adjust PHY configuration after MAC operation */
 			if(hsl_port_phy_connected(priv->device_id, port_id)) {
-				HSL_PORT_PHY_ONLY_EXT_API_RUN(adjust_link_post,
+				HSL_PORT_PHY_API_RUN(adjust_link_post,
 					priv->device_id, port_id);
 			}
 		}

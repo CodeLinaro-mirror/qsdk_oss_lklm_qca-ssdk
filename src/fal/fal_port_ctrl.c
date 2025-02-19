@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -223,7 +223,7 @@ sw_error_t fal_port_autoneg_adv_get (a_uint32_t dev_id, fal_port_t port_id, a_ui
     EXPORT_SYMBOL(fal_port_autoneg_adv_get);
 
 sw_error_t fal_port_cdt (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair, fal_cable_status_t * cable_status, a_uint32_t * cable_len)
-    DEFINE_FAL_PORT_PHY_FUNC(cdt, dev_id, port_id, mdi_pair, (void*)cable_status, cable_len)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(cdt, dev_id, port_id, mdi_pair, (void*)cable_status, cable_len)
     EXPORT_SYMBOL(fal_port_cdt);
 
 sw_error_t fal_port_power_off (a_uint32_t dev_id, fal_port_t port_id)
@@ -320,15 +320,15 @@ sw_error_t fal_port_8023az_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
     EXPORT_SYMBOL(fal_port_8023az_get);
 
 sw_error_t fal_port_mdix_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t mode)
-    DEFINE_FAL_PORT_PHY_FUNC(mdix_set, dev_id, port_id, (a_uint32_t)mode)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(mdix_set, dev_id, port_id, (a_uint32_t)mode)
     EXPORT_SYMBOL(fal_port_mdix_set);
 
 sw_error_t fal_port_mdix_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t * mode)
-    DEFINE_FAL_PORT_PHY_FUNC(mdix_get, dev_id, port_id, (void*)mode)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(mdix_get, dev_id, port_id, (void*)mode)
     EXPORT_SYMBOL(fal_port_mdix_get);
 
 sw_error_t fal_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_status_t * mode)
-    DEFINE_FAL_PORT_PHY_FUNC(mdix_status_get, dev_id, port_id, (void*)mode)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(mdix_status_get, dev_id, port_id, (void*)mode)
     EXPORT_SYMBOL(fal_port_mdix_status_get);
 
 sw_error_t fal_port_powersave_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
@@ -368,11 +368,11 @@ sw_error_t fal_port_local_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a
     EXPORT_SYMBOL(fal_port_local_loopback_get);
 
 sw_error_t fal_port_remote_loopback_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_PORT_PHY_FUNC(remote_loopback_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(remote_loopback_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_remote_loopback_set);
 
 sw_error_t fal_port_remote_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_PORT_PHY_FUNC(remote_loopback_get, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(remote_loopback_get, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_remote_loopback_get);
 
 sw_error_t fal_port_reset (a_uint32_t dev_id, fal_port_t port_id)
@@ -385,19 +385,19 @@ sw_error_t fal_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id, a_uint16_
     EXPORT_SYMBOL(fal_port_phy_id_get);
 
 sw_error_t fal_port_wol_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_PORT_PHY_FUNC(wol_set, dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(wol_set, dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_wol_status_set);
 
 sw_error_t fal_port_wol_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable)
-    DEFINE_FAL_PORT_PHY_FUNC(wol_get , dev_id, port_id, enable)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(wol_get , dev_id, port_id, enable)
     EXPORT_SYMBOL(fal_port_wol_status_get);
 
 sw_error_t fal_port_magic_frame_mac_set (a_uint32_t dev_id, fal_port_t port_id, fal_mac_addr_t * mac)
-    DEFINE_FAL_PORT_PHY_FUNC(magic_frame_set, dev_id, port_id, (void*)mac)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(magic_frame_set, dev_id, port_id, (void*)mac)
     EXPORT_SYMBOL(fal_port_magic_frame_mac_set);
 
 sw_error_t fal_port_magic_frame_mac_get (a_uint32_t dev_id, fal_port_t port_id, fal_mac_addr_t * mac)
-    DEFINE_FAL_PORT_PHY_FUNC(magic_frame_get, dev_id, port_id, (void*)mac)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(magic_frame_get, dev_id, port_id, (void*)mac)
     EXPORT_SYMBOL(fal_port_magic_frame_mac_get);
 
 sw_error_t fal_debug_phycounter_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
@@ -409,7 +409,7 @@ sw_error_t fal_debug_phycounter_get (a_uint32_t dev_id, fal_port_t port_id, a_bo
     EXPORT_SYMBOL(fal_debug_phycounter_get);
 
 sw_error_t fal_debug_phycounter_show (a_uint32_t dev_id, fal_port_t port_id, fal_port_counter_info_t* port_counter_info)
-    DEFINE_FAL_PORT_PHY_FUNC(stats_get, dev_id, port_id, (void*)port_counter_info)
+    DEFINE_FAL_PORT_PHY_NSS_WITH_AQR_FUNC(stats_get, dev_id, port_id, (void*)port_counter_info)
     EXPORT_SYMBOL(fal_debug_phycounter_show);
 
 static sw_error_t

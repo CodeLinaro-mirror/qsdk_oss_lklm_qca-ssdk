@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, 2017-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -27,6 +27,10 @@ extern "C" {
 #include <linux/version.h>
 #include <linux/phy.h>
 #include "qca-nss-phy/nss_phy.h"
+#include "hsl_port_prop.h"
+#ifdef IN_AQUANTIA_PHY
+#include "aquantia_phy.h"
+#endif
 
 	/** Phy function reset type */
 	typedef enum {
@@ -1118,16 +1122,6 @@ sw_error_t hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
 	struct nss_phy_device *nss_phydev, struct nss_phy_ops  **nss_phy_ops);
 struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 
-#define HSL_PORT_PHY_ONLY_EXT_API_RUN(func, dev_id, port_id, ...) \
-	{ \
-		struct nss_phy_ops *nss_phy_ops = NULL; \
-		struct nss_phy_device nss_phydev; \
-		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
-		if (nss_phy_ops && nss_phy_ops->func) { \
-			rv = nss_phy_ops->func(&nss_phydev, ##__VA_ARGS__); \
-		} \
-	}
-
 #define HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ...) \
 	{ \
 		struct nss_phy_ops *nss_phy_ops = NULL; \
@@ -1135,8 +1129,6 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
 		if (nss_phy_ops && nss_phy_ops->func) { \
 			rv = nss_phy_ops->func(&nss_phydev, ##__VA_ARGS__); \
-		} else { \
-			rv = hsl_port_phy_##func(dev_id, port_id, ##__VA_ARGS__); \
 		} \
 	}
 
@@ -1154,6 +1146,25 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 			} \
 		} \
 	}
+
+#ifdef IN_AQUANTIA_PHY
+/* this macro is for the features that NSS PHY and AQR PHY both supported */
+#define HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN(func, dev_id, port_id, ...) \
+	{ \
+		struct nss_phy_ops *nss_phy_ops = NULL; \
+		struct nss_phy_device nss_phydev; \
+		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
+		if (nss_phy_ops && nss_phy_ops->func) { \
+			rv = nss_phy_ops->func(&nss_phydev, ##__VA_ARGS__); \
+		} else { \
+			a_uint32_t phy_addr = 0; \
+			hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr); \
+			rv = aquantia_phy_##func(dev_id, phy_addr, ##__VA_ARGS__); \
+		} \
+	}
+#else
+#define HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN HSL_PORT_PHY_API_RUN
+#endif
 
 #define HSL_PORT_PHY_PTP_API_RUN(func, dev_id, port_id, ...)					\
 	{											\

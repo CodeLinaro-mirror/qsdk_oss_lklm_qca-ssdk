@@ -394,7 +394,7 @@ endif
 OBJ-COMMON  += src/hsl/phy/hsl_phy.o
 
 ifeq (TRUE, $(IN_AQUANTIA_PHY))
-OBJ-COMMON  += src/hsl/phy/aquantia_phy.o src/hsl/phy/qcaphy_c45_common.o
+OBJ-COMMON  += src/hsl/phy/aquantia_phy.o
 endif
 
 ifeq (TRUE, $(IN_SFP_PHY))

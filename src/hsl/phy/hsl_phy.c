@@ -48,11 +48,7 @@ phy_driver_instance_t ssdk_phy_driver[] =
 	{F1_PHY_CHIP, {0}, NULL, NULL, NULL},
 	{F2_PHY_CHIP, {0}, NULL, NULL, NULL},
 	{MALIBU_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#ifdef IN_AQUANTIA_PHY
-	{AQUANTIA_PHY_CHIP, {0}, NULL, aquantia_phy_init, NULL},
-	#else
 	{AQUANTIA_PHY_CHIP, {0}, NULL, NULL, NULL},
-	#endif
 	{QCA803X_PHY_CHIP, {0}, NULL, NULL, NULL},
 	{SFP_PHY_CHIP, {0}, NULL, NULL, NULL},
 	{MPGE_PHY_CHIP, {0}, NULL, NULL, NULL},
@@ -265,7 +261,11 @@ int ssdk_phy_driver_init(a_uint32_t dev_id)
 			phytype = hsl_phytype_get_by_phyid(dev_id, phy_id);
 			if (MAX_PHY_CHIP != phytype) {
 				phy_info[dev_id]->phy_type[i] = phytype;
-				ssdk_phy_driver[phytype].port_bmp[dev_id] |= (0x1 << i);
+#ifdef IN_AQUANTIA_PHY
+				if (phytype == AQUANTIA_PHY_CHIP)
+					aquantia_phy_hw_init(dev_id,
+						qca_ssdk_port_to_phy_addr(dev_id, i));
+#endif
 			} else {
 				SSDK_INFO("dev_id = %d, phy_adress = 0x%x, phy_id = 0x%x phy"
 					"driver is not supported in qca-ssdk\n", dev_id,
