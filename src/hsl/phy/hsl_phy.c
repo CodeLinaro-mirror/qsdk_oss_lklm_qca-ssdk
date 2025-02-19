@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, 2017-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -3466,6 +3466,9 @@ hsl_port_phydev_adv_valid(struct phy_device *phydev, a_uint32_t autoadv)
 	__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising) = { 0 };
 	__ETHTOOL_DECLARE_LINK_MODE_MASK(adv_tmp) = { 0 };
 
+	if (!phydev)
+		return A_FALSE;
+
 	hsl_phy_adv_to_linkmode_adv(autoadv, advertising);
 
 	linkmode_and(adv_tmp, advertising, phydev->supported);
@@ -3481,7 +3484,9 @@ static int
 hsl_port_phy_std_phyid_get(struct phy_device *phydev,
 	a_uint16_t * org_id, a_uint16_t * rev_id)
 {
-	a_uint32_t phy_id;
+	a_uint32_t phy_id = INVALID_PHY_ID;
+
+	SW_RTN_ON_NULL(phydev);
 
 	if(phydev->is_c45)
 		phy_id = phydev->c45_ids.device_ids[__ffs(phydev->c45_ids.mmds_present)];
@@ -3498,6 +3503,8 @@ static int
 hsl_port_phy_std_autoadv_get(struct phy_device *phydev,
 	a_uint32_t *autoadv)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	hsl_phy_linkmode_adv_to_adv(phydev->advertising, autoadv);
 
 	return 0;
@@ -3507,6 +3514,8 @@ static int
 __hsl_port_phy_std_autoadv_set(struct phy_device *phydev,
 	a_uint32_t autoadv)
 {
+	SW_RTN_ON_NULL(phydev->drv);
+
 	if (!hsl_port_phydev_adv_valid(phydev, autoadv))
 		return SW_NOT_SUPPORTED;
 
@@ -3517,7 +3526,9 @@ static int
 hsl_port_phy_std_autoadv_set(struct phy_device *phydev,
 	a_uint32_t autoadv)
 {
-	int ret;
+	int ret = SW_OK;
+
+	SW_RTN_ON_NULL(phydev);
 
 	mutex_lock(&phydev->lock);
 	ret = __hsl_port_phy_std_autoadv_set(phydev, autoadv);
@@ -3529,7 +3540,9 @@ hsl_port_phy_std_autoadv_set(struct phy_device *phydev,
 static int
 hsl_port_phy_std_autoneg_restart(struct phy_device *phydev)
 {
-	int ret;
+	int ret = SW_OK;
+
+	SW_RTN_ON_NULL(phydev);
 
 	mutex_lock(&phydev->lock);
 	phydev->autoneg = A_TRUE;
@@ -3543,6 +3556,8 @@ static int
 hsl_port_phy_std_autoneg_status_get(struct phy_device *phydev,
 	a_bool_t * status)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	*status = (phydev->autoneg ? A_TRUE : A_FALSE);
 
 	return 0;
@@ -3551,10 +3566,11 @@ hsl_port_phy_std_autoneg_status_get(struct phy_device *phydev,
 static int
 hsl_phydev_speed_duplex_set(struct phy_device *phydev)
 {
-	int ret;
+	int ret = SW_OK;
 	a_uint32_t autoadv = 0;
 
 	SW_RTN_ON_NULL(phydev);
+	SW_RTN_ON_NULL(phydev->drv);
 
 	if (phydev->speed <= FAL_SPEED_100) {
 		phydev->autoneg = A_FALSE;
@@ -3576,7 +3592,9 @@ static int
 hsl_port_phy_std_speed_set(struct phy_device *phydev,
 	a_uint32_t speed)
 {
-	int ret;
+	int ret = SW_OK;
+
+	SW_RTN_ON_NULL(phydev);
 
 	mutex_lock(&phydev->lock);
 	phydev->speed = speed;
@@ -3590,6 +3608,8 @@ static int
 hsl_port_phy_std_speed_get(struct phy_device *phydev,
 	a_uint32_t *speed)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	if (phydev->link)
 		*speed = phydev->speed;
 	else
@@ -3601,7 +3621,9 @@ hsl_port_phy_std_speed_get(struct phy_device *phydev,
 static int
 hsl_port_phy_std_duplex_set(struct phy_device *phydev, a_uint32_t duplex)
 {
-	int ret;
+	int ret = SW_OK;
+
+	SW_RTN_ON_NULL(phydev);
 
 	mutex_lock(&phydev->lock);
 	phydev->duplex = duplex;
@@ -3614,6 +3636,8 @@ hsl_port_phy_std_duplex_set(struct phy_device *phydev, a_uint32_t duplex)
 static int
 hsl_port_phy_std_duplex_get(struct phy_device *phydev, a_uint32_t *duplex)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	if (phydev->link)
 		*duplex = (phydev->duplex ? FAL_FULL_DUPLEX : FAL_HALF_DUPLEX);
 	else
@@ -3626,6 +3650,8 @@ static int
 hsl_port_phy_std_link_status_get(struct phy_device *phydev,
 	a_bool_t * status)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	*status = phydev->link;
 
 	return 0;
@@ -3635,6 +3661,8 @@ static int
 hsl_port_phy_std_reset(struct phy_device *phydev)
 {
 	sw_error_t ret = SW_OK;
+
+	SW_RTN_ON_NULL(phydev);
 
 	mutex_lock(&phydev->lock);
 	if (phydev->drv && phydev->drv->soft_reset) {
@@ -3653,12 +3681,16 @@ hsl_port_phy_std_reset(struct phy_device *phydev)
 static int
 hsl_port_phy_std_power_on(struct phy_device *phydev)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	return phy_resume(phydev);
 }
 
 static int
 hsl_port_phy_std_power_off(struct phy_device *phydev)
 {
+	SW_RTN_ON_NULL(phydev);
+
 	return phy_suspend(phydev);
 }
 
