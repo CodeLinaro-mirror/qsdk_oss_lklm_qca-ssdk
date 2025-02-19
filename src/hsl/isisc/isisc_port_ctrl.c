@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1320,14 +1320,11 @@ _isisc_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 {
 	a_uint32_t port_id = 0;
 	hsl_dev_t *pdev = NULL;
-	a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
 	HSL_DEV_ID_CHECK(dev_id);
 
 	pdev = hsl_dev_ptr_get(dev_id);
 	if (pdev == NULL)
 	    return SW_NOT_INITIALIZED;
-
-	port_bmp[dev_id] = qca_ssdk_phy_type_port_bmp_get(dev_id, F1_PHY_CHIP);
 
 	*status = 0x0;
 	for (port_id = 0; port_id < pdev->nr_ports; port_id++)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -293,7 +293,7 @@ qca_mht_sw_mac_polling_task(struct qca_phy_priv *priv)
 		if(!(portbmp & (0x1 << port_id)) ||
 			!(hsl_port_phy_connected(priv->device_id, port_id)))
 			continue;
-		rv = hsl_port_phy_status_get(priv->device_id, port_id, &phy_status);
+		rv = hsl_port_phydev_get_status(priv->device_id, port_id, &phy_status);
 		if (rv != SW_OK) {
 			SSDK_DEBUG("mht failed to get port %d status return value is %d\n",
 					port_id, rv);

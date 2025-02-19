@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -110,7 +110,7 @@ __adpt_cppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 		phy_type = hsl_port_phyid_get(dev_id, SSDK_PHYSICAL_PORT4);
 		if (phy_type == MALIBU2PORT_PHY) {
 			rst_type = UNIPHY0_PORT_4_5_RESET_E;
-		} else if (phy_type == QCA8081_PHY_V1_1) {
+		} else if (phy_type == QCA8081_PHY) {
 			rst_type = UNIPHY0_PORT_4_RESET_E;
 		} else {
 			rst_type = UNIPHY0_SOFT_RESET_E;

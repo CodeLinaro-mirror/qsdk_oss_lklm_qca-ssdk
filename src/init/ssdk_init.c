@@ -1612,7 +1612,7 @@ static int chip_is_scomphy(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		case QCA8035_PHY:
 		case MP_GEPHY:
 			/*qca808x_start*/
-		case QCA8081_PHY_V1_1:
+		case QCA8081_PHY:
 			cfg->chip_type = CHIP_SCOMPHY;
 			/*MP GEPHY is always the first port*/
 			if(cfg->phy_id == 0) {
@@ -1643,7 +1643,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 			case QCA8084_PHY:
 				chip_ver = QCA_VER_MHT;
 				break;
-			case F1V4_PHY:
+			case QCA8337_PHY_V4:
 				chip_ver = QCA_VER_AR8337;
 			default:
 				break;

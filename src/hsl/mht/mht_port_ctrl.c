@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1392,7 +1392,7 @@ mht_port_interface_mode_switch(a_uint32_t dev_id, a_uint32_t port_id)
 	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
 	fal_mac_config_t mac_config = {0};
 
-	rv = hsl_port_phy_interface_mode_status_get(dev_id, port_id,
+	rv = hsl_port_phydev_interface_mode_status_get(dev_id, port_id,
 			&port_mode_new);
 	SW_RTN_ON_ERROR(rv);
 
@@ -1482,7 +1482,7 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 		SW_RTN_ON_ERROR (rv);
 		/* reset eth phy fifo */
 		HSL_PORT_PHY_API_RUN(function_reset, priv->device_id, port_id,
-			(a_uint32_t)PHY_FIFO_RESET);
+			FIFO_RESET);
 		SW_RTN_ON_ERROR (rv);
 	}
 

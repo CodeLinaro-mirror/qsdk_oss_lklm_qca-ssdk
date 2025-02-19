@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -122,7 +122,7 @@ static int hsl_ptp_event_stat_operation_callback(struct device *dev, void *data)
 	}
 
 	switch (phy_id) {
-		case QCA8081_PHY_V1_1:
+		case QCA8081_PHY:
 		case QCA8084_PHY:
 			pkt_stat = priv;
 			break;

@@ -2826,7 +2826,7 @@ adpt_hppe_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 #endif
 		SW_RTN_ON_ERROR (rv);
 	} else {
-		rv = hsl_port_phy_interface_mode_status_get(dev_id, port_id, mode);
+		rv = hsl_port_phydev_interface_mode_status_get(dev_id, port_id, mode);
 		SW_RTN_ON_ERROR(rv);
 	}
 
@@ -3645,7 +3645,7 @@ adpt_hppe_port_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
 			return SW_NOT_SUPPORTED;
 		}
 	} else {
-		rv = hsl_port_phy_status_get(dev_id, port_id, phy_status);
+		rv = hsl_port_phydev_get_status(dev_id, port_id, phy_status);
 		SW_RTN_ON_ERROR (rv);
 	}
 

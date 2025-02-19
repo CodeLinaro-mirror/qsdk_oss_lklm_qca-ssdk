@@ -266,199 +266,7 @@ extern "C" {
 	typedef sw_error_t(*hsl_phy_pll_off) (a_uint32_t dev_id, a_uint32_t phy_id);
 	typedef sw_error_t(*hsl_phy_ldo_set) (a_uint32_t dev_id, a_uint32_t phy_id,
 				a_bool_t enable);
-	typedef sw_error_t(*hsl_phy_ptp_security_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_security_t *sec);
 
-	typedef sw_error_t(*hsl_phy_ptp_link_delay_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_rx_crc_recalc_status_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_bool_t *status);
-
-	typedef sw_error_t(*hsl_phy_ptp_tod_uart_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_tod_uart_t *tod_uart);
-
-	typedef sw_error_t(*hsl_phy_ptp_enhanced_timestamp_engine_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_direction_t direction,
-				fal_ptp_enhanced_ts_engine_t *ts_engine);
-
-	typedef sw_error_t(*hsl_phy_ptp_pps_signal_control_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_pps_signal_control_t *sig_control);
-
-	typedef sw_error_t(*hsl_phy_ptp_timestamp_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_direction_t direction,
-				fal_ptp_pkt_info_t *pkt_info, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_asym_correction_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_asym_correction_t* asym_cf);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_time_snapshot_status_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_bool_t *status);
-
-	typedef sw_error_t(*hsl_phy_ptp_capture_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_uint32_t capture_id,
-				fal_ptp_capture_t *capture);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_adjfreq_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_asym_correction_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_asym_correction_t *asym_cf);
-
-	typedef sw_error_t(*hsl_phy_ptp_pkt_timestamp_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_time_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_time_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_pkt_timestamp_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_interrupt_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_interrupt_t *interrupt);
-
-	typedef sw_error_t(*hsl_phy_ptp_trigger_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_uint32_t trigger_id,
-				fal_ptp_trigger_t *triger);
-
-	typedef sw_error_t(*hsl_phy_ptp_pps_signal_control_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id,
-				fal_ptp_pps_signal_control_t *sig_control);
-
-	typedef sw_error_t(*hsl_phy_ptp_capture_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_uint32_t capture_id,
-				fal_ptp_capture_t *capture);
-
-	typedef sw_error_t(*hsl_phy_ptp_rx_crc_recalc_enable) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_bool_t status);
-
-	typedef sw_error_t(*hsl_phy_ptp_security_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_security_t *sec);
-
-	typedef sw_error_t(*hsl_phy_ptp_increment_sync_from_clock_status_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_bool_t *status);
-
-	typedef sw_error_t(*hsl_phy_ptp_tod_uart_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_tod_uart_t *tod_uart);
-
-	typedef sw_error_t(*hsl_phy_ptp_enhanced_timestamp_engine_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_direction_t direction,
-				fal_ptp_enhanced_ts_engine_t *ts_engine);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_time_clear) (a_uint32_t dev_id,
-				a_uint32_t phy_id);
-
-	typedef sw_error_t(*hsl_phy_ptp_reference_clock_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_reference_clock_t ref_clock);
-
-	typedef sw_error_t(*hsl_phy_ptp_output_waveform_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_output_waveform_t *waveform);
-
-	typedef sw_error_t(*hsl_phy_ptp_rx_timestamp_mode_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_rx_timestamp_mode_t ts_mode);
-
-	typedef sw_error_t(*hsl_phy_ptp_grandmaster_mode_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_grandmaster_mode_t *gm_mode);
-
-	typedef sw_error_t(*hsl_phy_ptp_config_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_config_t *config);
-
-	typedef sw_error_t(*hsl_phy_ptp_trigger_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_uint32_t trigger_id,
-				fal_ptp_trigger_t *triger);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_adjfreq_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_grandmaster_mode_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_grandmaster_mode_t *gm_mode);
-
-	typedef sw_error_t(*hsl_phy_ptp_rx_timestamp_mode_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_rx_timestamp_mode_t *ts_mode);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_adjtime_set) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_link_delay_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_time_t *time);
-
-	typedef sw_error_t(*hsl_phy_ptp_increment_sync_from_clock_enable) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_bool_t status);
-
-	typedef sw_error_t(*hsl_phy_ptp_config_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_config_t *config);
-
-	typedef sw_error_t(*hsl_phy_ptp_output_waveform_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_output_waveform_t *waveform);
-
-	typedef sw_error_t(*hsl_phy_ptp_interrupt_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_interrupt_t *interrupt);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_time_snapshot_enable) (a_uint32_t dev_id,
-				a_uint32_t phy_id, a_bool_t status);
-
-	typedef sw_error_t(*hsl_phy_ptp_reference_clock_get) (a_uint32_t dev_id,
-				a_uint32_t phy_id, fal_ptp_reference_clock_t *ref_clock);
-
-	typedef sw_error_t(*hsl_phy_ptp_rtc_sync_set) (a_uint32_t dev_id, a_uint32_t phy_id,
-			fal_ptp_rtc_src_type_t src_type, a_uint32_t src_id);
-	typedef sw_error_t(*hsl_phy_ptp_rtc_sync_get) (a_uint32_t dev_id, a_uint32_t phy_id,
-			fal_ptp_rtc_src_type_t *src_type, a_uint32_t *src_id);
-
-	typedef struct hsl_phy_ptp_ops_s {
-		hsl_phy_ptp_security_set phy_ptp_security_set;
-		hsl_phy_ptp_link_delay_set phy_ptp_link_delay_set;
-		hsl_phy_ptp_rx_crc_recalc_status_get phy_ptp_rx_crc_recalc_status_get;
-		hsl_phy_ptp_tod_uart_set phy_ptp_tod_uart_set;
-		hsl_phy_ptp_enhanced_timestamp_engine_get phy_ptp_enhanced_timestamp_engine_get;
-		hsl_phy_ptp_pps_signal_control_set phy_ptp_pps_signal_control_set;
-		hsl_phy_ptp_timestamp_get phy_ptp_timestamp_get;
-		hsl_phy_ptp_asym_correction_get phy_ptp_asym_correction_get;
-		hsl_phy_ptp_rtc_time_snapshot_status_get phy_ptp_rtc_time_snapshot_status_get;
-		hsl_phy_ptp_capture_set phy_ptp_capture_set;
-		hsl_phy_ptp_rtc_adjfreq_set phy_ptp_rtc_adjfreq_set;
-		hsl_phy_ptp_asym_correction_set phy_ptp_asym_correction_set;
-		hsl_phy_ptp_pkt_timestamp_set phy_ptp_pkt_timestamp_set;
-		hsl_phy_ptp_rtc_time_get phy_ptp_rtc_time_get;
-		hsl_phy_ptp_rtc_time_set phy_ptp_rtc_time_set;
-		hsl_phy_ptp_pkt_timestamp_get phy_ptp_pkt_timestamp_get;
-		hsl_phy_ptp_interrupt_set phy_ptp_interrupt_set;
-		hsl_phy_ptp_trigger_set phy_ptp_trigger_set;
-		hsl_phy_ptp_pps_signal_control_get phy_ptp_pps_signal_control_get;
-		hsl_phy_ptp_capture_get phy_ptp_capture_get;
-		hsl_phy_ptp_rx_crc_recalc_enable phy_ptp_rx_crc_recalc_enable;
-		hsl_phy_ptp_security_get phy_ptp_security_get;
-		hsl_phy_ptp_increment_sync_from_clock_status_get \
-			phy_ptp_increment_sync_from_clock_status_get;
-		hsl_phy_ptp_tod_uart_get phy_ptp_tod_uart_get;
-		hsl_phy_ptp_enhanced_timestamp_engine_set phy_ptp_enhanced_timestamp_engine_set;
-		hsl_phy_ptp_rtc_time_clear phy_ptp_rtc_time_clear;
-		hsl_phy_ptp_reference_clock_set phy_ptp_reference_clock_set;
-		hsl_phy_ptp_output_waveform_set phy_ptp_output_waveform_set;
-		hsl_phy_ptp_rx_timestamp_mode_set phy_ptp_rx_timestamp_mode_set;
-		hsl_phy_ptp_grandmaster_mode_set phy_ptp_grandmaster_mode_set;
-		hsl_phy_ptp_config_set phy_ptp_config_set;
-		hsl_phy_ptp_trigger_get phy_ptp_trigger_get;
-		hsl_phy_ptp_rtc_adjfreq_get phy_ptp_rtc_adjfreq_get;
-		hsl_phy_ptp_grandmaster_mode_get phy_ptp_grandmaster_mode_get;
-		hsl_phy_ptp_rx_timestamp_mode_get phy_ptp_rx_timestamp_mode_get;
-		hsl_phy_ptp_rtc_adjtime_set phy_ptp_rtc_adjtime_set;
-		hsl_phy_ptp_link_delay_get phy_ptp_link_delay_get;
-		hsl_phy_ptp_increment_sync_from_clock_enable \
-			phy_ptp_increment_sync_from_clock_enable;
-		hsl_phy_ptp_config_get phy_ptp_config_get;
-		hsl_phy_ptp_output_waveform_get phy_ptp_output_waveform_get;
-		hsl_phy_ptp_interrupt_get phy_ptp_interrupt_get;
-		hsl_phy_ptp_rtc_time_snapshot_enable phy_ptp_rtc_time_snapshot_enable;
-		hsl_phy_ptp_reference_clock_get phy_ptp_reference_clock_get;
-		hsl_phy_ptp_rtc_sync_set phy_ptp_rtc_sync_set;
-		hsl_phy_ptp_rtc_sync_get phy_ptp_rtc_sync_get;
-	} hsl_phy_ptp_ops_t;
-
-/*qca808x_start*/
 	typedef struct hsl_phy_ops_s {
 
 		hsl_phy_init phy_init;
@@ -537,7 +345,6 @@ extern "C" {
 		hsl_phy_pll_on phy_pll_on;
 		hsl_phy_pll_off phy_pll_off;
 		hsl_phy_ldo_set phy_ldo_set;
-		hsl_phy_ptp_ops_t phy_ptp_ops;
 /*qca808x_start*/
 	} hsl_phy_ops_t;
 
@@ -564,8 +371,6 @@ typedef enum
 	MAX_PHY_CHIP,
 } phy_type_t;
 
-#define PHY_INVALID_DAC        0
-
 typedef struct {
 	a_uint8_t mdac;
 	a_uint8_t edac;
@@ -591,19 +396,8 @@ typedef struct {
 	a_uint32_t combo_phy_type[SW_MAX_NR_PORT];
 	struct net_device *netdev[SW_MAX_NR_PORT];
 } phy_info_t;
-/*qca808x_end*/
-#define QCA8030_PHY             0x004DD076
-#define QCA8033_PHY             0x004DD074
-#define QCA8035_PHY             0x004DD072
-/*qca808x_start*/
-#define QCA8081_PHY_V1_1        0x004DD101
+
 #define INVALID_PHY_ID          0xFFFFFFFF
-/*qca808x_end*/
-#define F1V1_PHY                0x004DD033
-#define F1V2_PHY                0x004DD034
-#define F1V3_PHY                0x004DD035
-#define F1V4_PHY                0x004DD036
-#define F2V1_PHY                0x004DD042
 #define AQUANTIA_PHY_107        0x03a1b4e2
 #define AQUANTIA_PHY_108        0x03a1b4f2
 #define AQUANTIA_PHY_109        0x03a1b502
@@ -616,12 +410,7 @@ typedef struct {
 #define AQUANTIA_PHY_113C_B1    0x31c31C13
 #define AQUANTIA_PHY_112C       0x03a1b792
 #define MVL_PHY_X3410           0x31c31DD3
-
-#define PHY_805XV2              0x004DD082
-#define PHY_805XV1              0x004DD081
-/*qca808x_start*/
 #define SFP_PHY                 0xaaaabbbb
-/*qca808x_end*/
 #define MP_GEPHY                0x004DD0C0
 #define SFP_PHY_MASK            0xffffffff
 
@@ -635,7 +424,6 @@ typedef struct {
 
 #define INVALID_PHY_ADDR        0xfff
 #define MAX_PHY_ADDR            0xf1f
-#define QCA8072_PHY_NUM         0x2
 
 #define PHY_INVALID_DATA 0xffff
 
@@ -652,15 +440,8 @@ typedef struct {
 #define TO_PHY_I2C_ADDR(phy_addr) (BIT(24) | phy_addr)
 #define TO_PHY_I2C_ADDR_VAL(i2c_addr) (i2c_addr & 0x7f)
 #define IS_I2C_PHY_ADDR(phy_addr) (phy_addr & BIT(24))
-sw_error_t
-hsl_phy_api_ops_register(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);
-
-sw_error_t
-hsl_phy_api_ops_unregister(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);
 
 hsl_phy_ops_t *hsl_phy_api_ops_get(a_uint32_t dev_id, a_uint32_t port_id);
-
-sw_error_t phy_api_ops_init(phy_type_t phy_type);
 
 int ssdk_phy_driver_init(a_uint32_t dev_id);
 
@@ -690,10 +471,6 @@ void qca_ssdk_phy_mdio_fake_address_set(a_uint32_t dev_id, a_uint32_t i,
 void qca_ssdk_port_bmp_set(a_uint32_t dev_id, a_uint32_t value);
 
 a_uint32_t qca_ssdk_port_bmp_get(a_uint32_t dev_id);
-/*qca808x_end*/
-a_uint32_t qca_ssdk_phy_type_port_bmp_get(a_uint32_t dev_id,
-				phy_type_t phy_type);
-/*qca808x_start*/
 a_uint32_t
 qca_ssdk_phy_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr);
 /*qca808x_end*/
@@ -720,9 +497,6 @@ hsl_port_phy_access_type_set(a_uint32_t dev_id, a_uint32_t port_id,
 sw_error_t
 hsl_port_phy_serdes_reset(a_uint32_t dev_id);
 
-sw_error_t
-hsl_port_phy_interface_set(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t interface);
 phy_type_t hsl_phy_type_get(a_uint32_t dev_id, a_uint32_t port_id);
 
 a_uint32_t
@@ -765,9 +539,9 @@ hsl_port_phydev_get(a_uint32_t dev_id, a_uint32_t port_id,
 sw_error_t
 hsl_phy_phydev_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct phy_device **phydev);
-a_bool_t
-hsl_phy_autoneg_adv_check(a_uint32_t dev_id, a_uint32_t phy_addr,
-	a_uint32_t adv);
+sw_error_t
+hsl_port_phydev_interface_mode_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	fal_port_interface_mode_t *interface_mode_status);
 sw_error_t
 hsl_phy_adv_to_linkmode_adv(a_uint32_t autoadv, a_ulong_t *advertising);
 #ifdef IN_LED
@@ -777,19 +551,7 @@ hsl_port_phy_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
 sw_error_t
 hsl_port_phy_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
 	a_uint32_t port_id, led_ctrl_pattern_t * pattern);
-sw_error_t
-hsl_port_phy_led_ctrl_source_set(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t source_id, led_ctrl_pattern_t * pattern);
-sw_error_t
-hsl_port_phy_led_ctrl_source_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t source_id, led_ctrl_pattern_t * pattern);
 #endif
-sw_error_t
-hsl_port_phy_pll_on(a_uint32_t dev_id, a_uint32_t port_id);
-sw_error_t
-hsl_port_phy_pll_off(a_uint32_t dev_id, a_uint32_t port_id);
-sw_error_t
-hsl_port_phy_ldo_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable);
 phy_info_t *hsl_phy_info_get(a_uint32_t dev_id);
 
 sw_error_t
@@ -798,17 +560,6 @@ hsl_phy_phydev_autoneg_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 a_uint32_t
 hsl_phy_speed_duplex_to_auto_adv(fal_port_speed_t speed,
 	fal_port_duplex_t duplex);
-sw_error_t
-hsl_port_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
-	struct port_phy_status *phy_status);
-/*qca808x_start*/
-sw_error_t
-hsl_port_phy_function_reset(a_uint32_t dev_id, a_uint32_t port_id,
-	hsl_phy_function_reset_t reset_type);
-sw_error_t
-hsl_port_phy_interface_mode_status_get(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_interface_mode_t *interface_mode_status);
-/*qca808x_end*/
 sw_error_t
 hsl_phy_linkmode_adv_to_adv(a_ulong_t *advertising, a_uint32_t *autoadv);
 sw_error_t
@@ -836,22 +587,6 @@ hsl_port_combo_phy_driver_update(a_uint32_t dev_id,
 sw_error_t
 hsl_port_phydev_get_status(a_uint32_t dev_id, a_uint32_t port_id,
 	struct port_phy_status *phy_status);
-/*qca808x_start*/
-sw_error_t
-hsl_port_phy_stats_status_set(a_uint32_t dev_id, a_uint32_t port_id, a_bool_t enable);
-sw_error_t
-hsl_port_phy_stats_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
-sw_error_t
-hsl_port_phy_stats_get(a_uint32_t dev_id, fal_port_t port_id,
-	fal_port_counter_info_t *counter_info);
-sw_error_t
-hsl_port_phy_autoadv_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t *autoadv);
-sw_error_t
-hsl_port_phy_autoadv_set(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t autoadv);
-sw_error_t
-hsl_port_phy_autoneg_restart(a_uint32_t dev_id, a_uint32_t port_id);
 /*qca808x_end*/
 a_uint32_t
 hsl_port_force_speed_get(a_uint32_t dev_id, a_uint32_t port_id);
@@ -937,120 +672,6 @@ hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
-sw_error_t
-hsl_port_phy_autoneg_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status);
-sw_error_t
-hsl_port_phy_autoneg_enable(a_uint32_t dev_id, fal_port_t port_id);
-sw_error_t
-hsl_port_phy_duplex_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_duplex_t duplex);
-sw_error_t
-hsl_port_phy_duplex_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_duplex_t *duplex);
-sw_error_t
-hsl_port_phy_cdt(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair,
-	fal_cable_status_t * cable_status, a_uint32_t * cable_len);
-sw_error_t
-hsl_port_phy_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status);
-sw_error_t
-hsl_port_phy_power_on(a_uint32_t dev_id, fal_port_t port_id);
-sw_error_t
-hsl_port_phy_power_off(a_uint32_t dev_id, fal_port_t port_id);
-sw_error_t
-hsl_port_phy_speed_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_speed_t speed);
-sw_error_t
-hsl_port_phy_speed_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_speed_t * pspeed);
-sw_error_t
-hsl_port_phy_combo_prefer_medium_set(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_medium_t medium);
-sw_error_t
-hsl_port_phy_combo_prefer_medium_get(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_medium_t *medium);
-sw_error_t
-hsl_port_phy_reset(a_uint32_t dev_id, fal_port_t port_id);
-sw_error_t
-hsl_port_phy_eee_adv_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t adv);
-sw_error_t
-hsl_port_phy_eee_adv_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t *adv);
-sw_error_t
-hsl_port_phy_eee_partner_adv_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t *adv);
-sw_error_t
-hsl_port_phy_eee_cap_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t *cap);
-sw_error_t
-hsl_port_phy_eee_status_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t *status);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
-sw_error_t
-hsl_phydev_eee_update(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t adv);
-#endif
-sw_error_t
-hsl_port_phy_intr_mask_set(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t intr_mask_flag);
-sw_error_t
-hsl_port_phy_intr_mask_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t * intr_mask_flag);
-sw_error_t
-hsl_port_phy_intr_status_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t * intr_mask_flag);
-#ifndef IN_PORTCONTROL_MINI
-sw_error_t
-hsl_port_phy_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
-sw_error_t
-hsl_port_phy_local_loopback_get(a_uint32_t dev_id, fal_port_t port_id,
-	a_bool_t * enable);
-sw_error_t
-hsl_port_phy_combo_fiber_mode_set(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_fiber_mode_t mode);
-sw_error_t
-hsl_port_phy_combo_fiber_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_fiber_mode_t * mode);
-sw_error_t
-hsl_port_phy_combo_medium_status_get(a_uint32_t dev_id, a_uint32_t port_id,
-	fal_port_medium_t *medium);
-sw_error_t
-hsl_port_phy_magic_frame_set(a_uint32_t dev_id, fal_port_t port_id,
-	fal_mac_addr_t * mac);
-sw_error_t
-hsl_port_phy_magic_frame_get(a_uint32_t dev_id, fal_port_t port_id,
-	fal_mac_addr_t * mac);
-sw_error_t
-hsl_port_phy_powersave_set(a_uint32_t dev_id, fal_port_t port_id,
-	a_bool_t enable);
-sw_error_t
-hsl_port_phy_powersave_get(a_uint32_t dev_id, fal_port_t port_id,
-	a_bool_t * enable);
-sw_error_t
-hsl_port_phy_hibernation_set(a_uint32_t dev_id, fal_port_t port_id,
-	a_bool_t enable);
-sw_error_t
-hsl_port_phy_hibernation_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
-sw_error_t
-hsl_port_phy_ieee_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
-sw_error_t
-hsl_port_phy_ieee_8023az_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
-sw_error_t
-hsl_port_phy_remote_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
-sw_error_t
-hsl_port_phy_remote_loopback_get(a_uint32_t dev_id, fal_port_t port_id,
-	a_bool_t * enable);
-sw_error_t
-hsl_port_phy_mdix_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t mode);
-sw_error_t
-hsl_port_phy_mdix_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_mdix_mode_t * mode);
-sw_error_t
-hsl_port_phy_mdix_status_get(a_uint32_t dev_id, fal_port_t port_id,
-	fal_port_mdix_status_t * mode);
-sw_error_t
-hsl_port_phy_phyid_get(a_uint32_t dev_id, fal_port_t port_id, a_uint16_t * org_id,
-	a_uint16_t * rev_id);
-sw_error_t
-hsl_port_phy_wol_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
-sw_error_t
-hsl_port_phy_wol_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
-sw_error_t
-hsl_port_phy_interface_get(a_uint32_t dev_id, a_uint32_t port_id,
-	a_uint32_t *interface);
-
-#endif
 /*use the phy driver of nss ext or linux std for HSL APIs*/
 enum hsl_phy_api_id {
 	hibernation_set,
