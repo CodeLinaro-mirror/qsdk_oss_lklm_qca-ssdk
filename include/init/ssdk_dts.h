@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -115,6 +115,7 @@ typedef struct
 	a_uint8_t switch_port_bmp;
 	a_uint32_t switch_port_vid[SSDK_MAX_PORT_NUM];
 	a_uint32_t switch_athtag;
+	a_bool_t switch_erp_standby;
 } ssdk_netdev_switch_t;
 
 typedef struct

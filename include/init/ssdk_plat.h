@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2014-2015, 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -512,6 +512,7 @@ void ssdk_plat_exit(a_uint32_t dev_id);
 #define qca_mht_mii_update qca_mii_update
 sw_error_t ssdk_netdev_switch_init(struct net_device *dev);
 #if IS_ENABLED(CONFIG_NET_DSA)
+void ssdk_switch_set_standby_status(a_uint32_t dev_id, bool enable);
 a_bool_t ssdk_switch_enable_8021q_dsa(a_uint32_t dev_id);
 #endif
 #endif
