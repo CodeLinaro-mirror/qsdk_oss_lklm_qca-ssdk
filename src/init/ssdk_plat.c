@@ -256,7 +256,28 @@ qca_mii_field_set(a_uint32_t dev_id, a_uint32_t reg_addr,
 	return rv;
 }
 
-static void qca_mii_reg_convert(a_uint32_t dev_id, a_uint32_t *reg)
+static a_bool_t qca_mii_reg_accessible(a_uint32_t dev_id, a_uint32_t reg)
+{
+
+	ssdk_netdev_switch_t *netdev_switch = ssdk_dts_netdev_switch_find_by_devid(dev_id);
+	a_bool_t ret = A_TRUE;
+
+	if (netdev_switch && netdev_switch->switch_erp_standby) {
+		switch (reg) {
+		case 0x0 ... 0x5F000:
+		case 0xC000000 ... 0xC05F000:
+			/* switch core registers are un-accessible in standby mode */
+			ret = A_FALSE;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return ret;
+}
+
+static sw_error_t qca_mii_reg_convert(a_uint32_t dev_id, a_uint32_t *reg)
 {
 	ssdk_chip_type chip_type = hsl_get_current_chip_type(dev_id);
 
@@ -264,10 +285,17 @@ static void qca_mii_reg_convert(a_uint32_t dev_id, a_uint32_t *reg)
 		case CHIP_ISISC:
 			*reg |= SSDK_SWITCH_REG_TYPE_QCA8337;
 			break;
+		case CHIP_MHT:
+			if (!qca_mii_reg_accessible(dev_id, *reg))
+				return SW_FAIL;
+			*reg |= SSDK_SWITCH_REG_TYPE_QCA8386;
+			break;
 		default:
 			*reg |= SSDK_SWITCH_REG_TYPE_QCA8386;
 			break;
 	}
+
+	return SW_OK;
 }
 
 #if IS_ENABLED(CONFIG_MDIO_BITBANG)
@@ -402,8 +430,9 @@ a_uint32_t __qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
 	if (!bus)
 		return val;
 
-	qca_mii_reg_convert(dev_id, &reg);
-	qca_mii_raw_read(bus, reg, &val);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_read(bus, reg, &val);
+
 	return val;
 }
 
@@ -415,8 +444,8 @@ void __qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
 	if (!bus)
 		return;
 
-	qca_mii_reg_convert(dev_id, &reg);
-	qca_mii_raw_write(bus, reg, val);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_write(bus, reg, val);
 }
 
 int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_t val)
@@ -427,8 +456,9 @@ int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint3
 	if (!bus)
 		return -1;
 
-	qca_mii_reg_convert(dev_id, &reg);
-	qca_mii_raw_update(bus, reg, mask, val);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_update(bus, reg, mask, val);
+
 	return 0;
 }
 
@@ -442,8 +472,8 @@ a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
 		return val;
 
 	mutex_lock(&bus->mdio_lock);
-	qca_mii_reg_convert(dev_id, &reg);
-	qca_mii_raw_read(bus, reg, &val);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_read(bus, reg, &val);
 	mutex_unlock(&bus->mdio_lock);
 
 	return val;
@@ -458,8 +488,8 @@ void qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
 		return;
 
 	mutex_lock(&bus->mdio_lock);
-	qca_mii_reg_convert(dev_id, &reg);
-	qca_mii_raw_write(bus, reg, val);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_write(bus, reg, val);
 	mutex_unlock(&bus->mdio_lock);
 }
 
@@ -472,8 +502,8 @@ int qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_
 		return -1;
 
 	mutex_lock(&bus->mdio_lock);
-	qca_mii_reg_convert(dev_id, &reg);
-	qca_mii_raw_update(bus, reg, mask, val);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_update(bus, reg, mask, val);
 	mutex_unlock(&bus->mdio_lock);
 
 	return 0;
@@ -1445,6 +1475,40 @@ sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
 	netdev_switch->dev = dev;
 
 	return SW_OK;
+}
+
+/* Set switch ERP standby status if required */
+void ssdk_switch_set_standby_status(a_uint32_t dev_id, bool enable)
+{
+	ssdk_netdev_switch_t *netdev_switch = NULL;
+	struct mii_bus *bus = NULL;
+
+	netdev_switch = ssdk_dts_netdev_switch_find_by_devid(dev_id);
+	if (!netdev_switch)
+		return;
+
+	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+	if (!bus)
+		return;
+
+	/* Set ssdk switch erp standby status */
+	mutex_lock(&bus->mdio_lock);
+	netdev_switch->switch_erp_standby = enable;
+	mutex_unlock(&bus->mdio_lock);
+
+#if IS_ENABLED(CONFIG_NET_DSA)
+	/* If DSA is enabled, notify to set DSA switch standby status */
+	if (netdev_switch->dev && netdev_uses_dsa(netdev_switch->dev)) {
+		struct dsa_switch *ds= netdev_switch->dev->dsa_ptr->ds;
+		if (!ds || !ds->ops)
+			return;
+
+		if (enable && ds->ops->suspend)
+			ds->ops->suspend(ds);
+		if (!enable && ds->ops->resume)
+			ds->ops->resume(ds);
+	}
+#endif
 }
 
 #if IS_ENABLED(CONFIG_NET_DSA)
