@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2014-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -820,7 +820,7 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 			group_buf = 1550;
 			break;
 		case MPPE_TYPE:
-			group_buf = 240;
+			group_buf = 320;
 			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
