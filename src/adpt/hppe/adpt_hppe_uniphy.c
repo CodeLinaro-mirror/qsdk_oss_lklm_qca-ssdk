@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -333,7 +333,7 @@ __adpt_appe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	}
 	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_ASSERT);
 	ssdk_uniphy_reset(dev_id, rst_type, SSDK_RESET_ASSERT);
-	msleep(100);
+	msleep(1);
 	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_DEASSERT);
 	ssdk_uniphy_reset(dev_id, rst_type, SSDK_RESET_DEASSERT);
 
@@ -374,7 +374,7 @@ __adpt_mppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_ASSERT);
 	ssdk_uniphy_reset(dev_id, port_rx_rst_type, SSDK_RESET_ASSERT);
 	ssdk_uniphy_reset(dev_id, port_tx_rst_type, SSDK_RESET_ASSERT);
-	msleep(100);
+	msleep(1);
 	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_DEASSERT);
 	ssdk_uniphy_reset(dev_id, port_rx_rst_type, SSDK_RESET_DEASSERT);
 	ssdk_uniphy_reset(dev_id, port_tx_rst_type, SSDK_RESET_DEASSERT);
@@ -505,10 +505,10 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	/*reset uniphy*/
 	hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 		uniphy_index, UNIPHY_PLL_RESET_REG_VALUE);
-	msleep(10);
+	msleep(1);
 	hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 		uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-	msleep(10);
+	__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 
 	/* disable instance clock */
 	for (i = SSDK_PHYSICAL_PORT1; i <= SSDK_PHYSICAL_PORT4; i++) {
@@ -539,8 +539,6 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 
 	/* configure uniphy usxgmii gcc software reset */
 	__adpt_ppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-
-	msleep(10);
 
 	/* wait calibration done to uniphy */
 	__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
@@ -639,10 +637,10 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	/*reset uniphy*/
 	hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 		uniphy_index, UNIPHY_PLL_RESET_REG_VALUE);
-	msleep(100);
+	msleep(1);
 	hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 		uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-	msleep(100);
+	__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 
 	/* disable instance clock */
 	qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
@@ -677,8 +675,6 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 
 	/* configure uniphy usxgmii gcc software reset */
 	__adpt_ppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-
-	msleep(100);
 
 	/* wait calibration done to uniphy */
 	__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
@@ -894,10 +890,10 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 		/*reset uniphy*/
 		hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 				uniphy_index, UNIPHY_PLL_RESET_REG_VALUE);
-		msleep(100);
+		msleep(1);
 		hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 				uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-		msleep(100);
+		__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 	}
 
 	/* keep xpcs to reset status */
@@ -993,10 +989,10 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 		/*reset uniphy*/
 		hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 			uniphy_index, UNIPHY_PLL_RESET_REG_VALUE);
-		msleep(100);
+		msleep(1);
 		hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 			uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-		msleep(100);
+		__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 	}
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
