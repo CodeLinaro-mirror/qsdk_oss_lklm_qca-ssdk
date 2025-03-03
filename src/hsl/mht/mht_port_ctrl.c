@@ -1133,6 +1133,9 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 		SSDK_DEBUG("disable manhattan switch core and serdes1\n");
 		/* pause mib task */
 		qca_phy_mib_work_pause(priv);
+
+		ssdk_switch_set_standby_status(dev_id, true);
+
 		/* disable switch core */
 		SW_RTN_ON_ERROR(ssdk_mht_clk_disable(dev_id, MHT_SWITCH_CORE_CLK));
 
@@ -1172,6 +1175,9 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 
 			/* enable switch core */
 			SW_RTN_ON_ERROR(ssdk_mht_clk_enable(dev_id, MHT_SWITCH_CORE_CLK));
+
+			ssdk_switch_set_standby_status(dev_id, false);
+
 			/* resume mib task */
 			qca_phy_mib_work_resume(priv);
 
