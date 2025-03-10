@@ -207,7 +207,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_PPPOE))
 OBJ-COMMON  += src/fal/fal_pppoe.o
-OBJ-HPPE    += src/hsl/hppe/hppe_pppoe.o src/adpt/hppe/adpt_hppe_pppoe.o
+OBJ-HPPE    += src/adpt/hppe/adpt_hppe_pppoe.o
 OBJ-APPE    += src/hsl/appe/appe_pppoe.o src/adpt/appe/adpt_appe_pppoe.o
 endif
 
