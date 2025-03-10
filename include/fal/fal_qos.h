@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -72,12 +72,6 @@ typedef struct {
 	a_uint8_t pre_acl_inner_pri; /* pre-acl for tunnel inner packet precedence,
 				      * added for ipq95xx*/
 } fal_qos_pri_precedence_t;
-
-typedef struct {
-	a_bool_t pcp_change_en;
-	a_bool_t dei_chage_en;
-	a_bool_t dscp_change_en;
-} fal_qos_remark_enable_t;
 
 typedef struct {
 	a_uint8_t internal_pcp;
@@ -337,14 +331,6 @@ fal_qos_port_pri_precedence_get(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_pri_precedence_t *pri);
 
 #ifndef IN_QOS_MINI
-sw_error_t
-fal_qos_port_remark_set(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_remark_enable_t *remark);
-
-sw_error_t
-fal_qos_port_remark_get(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_remark_enable_t *remark);
-
 sw_error_t
 fal_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap);

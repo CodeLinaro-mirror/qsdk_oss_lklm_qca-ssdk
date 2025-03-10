@@ -647,38 +647,6 @@ parse_qos_ptpri(struct switch_val *val)
 
 #ifndef IN_QOS_MINI
 static int
-parse_qos_ptremark(struct switch_val *val)
-{
-	struct switch_ext *switch_ext_p, *ext_value_p;
-	int rv = 0;
-
-	switch_ext_p = val->value.ext_val;
-	while (switch_ext_p) {
-		ext_value_p = switch_ext_p;
-
-		if (!strcmp(ext_value_p->option_name, "name")) {
-			switch_ext_p = switch_ext_p->next;
-			continue;
-		} else if (!strcmp(ext_value_p->option_name, "port_id")) {
-			val_ptr[0] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "pcp_change_en")) {
-			val_ptr[1] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "dei_change_en")) {
-			val_ptr[2] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "dscp_change_en")) {
-			val_ptr[3] = (char*)ext_value_p->option_value;
-		}  else {
-			rv = -1;
-			break;
-		}
-
-		parameter_length++;
-		switch_ext_p = switch_ext_p->next;
-	}
-
-	return rv;
-}
-static int
 parse_qos_pcpmap(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
@@ -12046,9 +12014,7 @@ parse_qos(const char *command_name, struct switch_val *val)
 		rv = parse_qos_ptpri(val);
 	}
 #ifndef IN_QOS_MINI
-	else if (!strcmp(command_name, "Ptremark")) {
-		rv = parse_qos_ptremark(val);
-	} else if (!strcmp(command_name, "Pcpmap")) {
+	else if (!strcmp(command_name, "Pcpmap")) {
 		rv = parse_qos_pcpmap(val);
 	}
 #endif

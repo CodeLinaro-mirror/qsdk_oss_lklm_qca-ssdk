@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1862,18 +1862,6 @@ extern "C" {
     SW_PARAM_DEF(SW_API_QOS_PORT_PRI_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),\
     SW_PARAM_DEF(SW_API_QOS_PORT_PRI_GET, SW_PORTPRI, \
 		    sizeof(fal_qos_pri_precedence_t), SW_PARAM_PTR|SW_PARAM_OUT, "PortPri"),
-
-#define SW_API_QOS_PORT_REMARK_SET_DESC \
-    SW_PARAM_DEF(SW_API_QOS_PORT_REMARK_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\
-    SW_PARAM_DEF(SW_API_QOS_PORT_REMARK_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),\
-    SW_PARAM_DEF(SW_API_QOS_PORT_REMARK_SET, SW_PORTREMARK, \
-		    sizeof(fal_qos_remark_enable_t), SW_PARAM_PTR|SW_PARAM_IN, "PortRemark"),
-
-#define SW_API_QOS_PORT_REMARK_GET_DESC \
-    SW_PARAM_DEF(SW_API_QOS_PORT_REMARK_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\
-    SW_PARAM_DEF(SW_API_QOS_PORT_REMARK_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),\
-    SW_PARAM_DEF(SW_API_QOS_PORT_REMARK_GET, SW_PORTREMARK, \
-		    sizeof(fal_qos_remark_enable_t), SW_PARAM_PTR|SW_PARAM_OUT, "PortRemark"),
 
 #define SW_API_QOS_PCP_MAP_SET_DESC \
     SW_PARAM_DEF(SW_API_QOS_PCP_MAP_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\

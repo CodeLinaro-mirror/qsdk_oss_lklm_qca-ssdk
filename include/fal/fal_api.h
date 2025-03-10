@@ -976,8 +976,6 @@ extern "C" {
     SW_API_DEF(SW_API_QOS_PORT_GROUP_SET, fal_qos_port_group_set), \
     SW_API_DEF(SW_API_QOS_PORT_PRI_GET, fal_qos_port_pri_precedence_get), \
     SW_API_DEF(SW_API_QOS_PORT_PRI_SET, fal_qos_port_pri_precedence_set), \
-    SW_API_DEF(SW_API_QOS_PORT_REMARK_GET, fal_qos_port_remark_get), \
-    SW_API_DEF(SW_API_QOS_PORT_REMARK_SET, fal_qos_port_remark_set), \
     SW_API_DEF(SW_API_QOS_PCP_MAP_GET, fal_qos_cosmap_pcp_get), \
     SW_API_DEF(SW_API_QOS_PCP_MAP_SET, fal_qos_cosmap_pcp_set), \
     SW_API_DEF(SW_API_QOS_FLOW_MAP_GET, fal_qos_cosmap_flow_get), \
@@ -1035,8 +1033,6 @@ extern "C" {
     SW_API_DESC(SW_API_QOS_PORT_GROUP_SET) \
     SW_API_DESC(SW_API_QOS_PORT_PRI_GET) \
     SW_API_DESC(SW_API_QOS_PORT_PRI_SET) \
-    SW_API_DESC(SW_API_QOS_PORT_REMARK_GET) \
-    SW_API_DESC(SW_API_QOS_PORT_REMARK_SET) \
     SW_API_DESC(SW_API_QOS_PCP_MAP_GET) \
     SW_API_DESC(SW_API_QOS_PCP_MAP_SET) \
     SW_API_DESC(SW_API_QOS_FLOW_MAP_GET) \

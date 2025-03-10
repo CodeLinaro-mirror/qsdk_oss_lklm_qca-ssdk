@@ -141,8 +141,6 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
-cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size);
-sw_error_t
 cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size);
