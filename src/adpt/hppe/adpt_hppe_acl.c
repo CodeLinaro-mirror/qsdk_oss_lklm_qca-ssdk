@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -5264,91 +5264,6 @@ adpt_hppe_acl_list_destroy(a_uint32_t dev_id, a_uint32_t list_id)
 	return SW_OK;
 }
 
-typedef sw_error_t (*hppe_acl_udp_set_func)(a_uint32_t dev_id, union udf_ctrl_reg_u *udf_ctrl);
-typedef sw_error_t (*hppe_acl_udp_get_func)(a_uint32_t dev_id, union udf_ctrl_reg_u *udf_ctrl);
-
-hppe_acl_udp_set_func g_udf_set_func[FAL_ACL_UDF_BUTT][4] = {
-	{hppe_non_ip_udf0_ctrl_reg_set, hppe_non_ip_udf1_ctrl_reg_set,
-			hppe_non_ip_udf2_ctrl_reg_set, hppe_non_ip_udf3_ctrl_reg_set},
-	{hppe_ipv4_udf0_ctrl_reg_set, hppe_ipv4_udf1_ctrl_reg_set, hppe_ipv4_udf2_ctrl_reg_set,
-			hppe_ipv4_udf3_ctrl_reg_set},
-	{hppe_ipv6_udf0_ctrl_reg_set, hppe_ipv6_udf1_ctrl_reg_set, hppe_ipv6_udf2_ctrl_reg_set,
-			hppe_ipv6_udf3_ctrl_reg_set},
-};
-
-hppe_acl_udp_get_func g_udf_get_func[FAL_ACL_UDF_BUTT][4] = {
-	{hppe_non_ip_udf0_ctrl_reg_get, hppe_non_ip_udf1_ctrl_reg_get,
-			hppe_non_ip_udf2_ctrl_reg_get, hppe_non_ip_udf3_ctrl_reg_get},
-	{hppe_ipv4_udf0_ctrl_reg_get, hppe_ipv4_udf1_ctrl_reg_get, hppe_ipv4_udf2_ctrl_reg_get,
-			hppe_ipv4_udf3_ctrl_reg_get},
-	{hppe_ipv6_udf0_ctrl_reg_get, hppe_ipv6_udf1_ctrl_reg_get, hppe_ipv6_udf2_ctrl_reg_get,
-			hppe_ipv6_udf3_ctrl_reg_get},
-};
-
-sw_error_t
-adpt_hppe_acl_udf_profile_get(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,a_uint32_t udf_idx,
-			fal_acl_udf_type_t *udf_type, a_uint32_t *offset)
-{
-	union udf_ctrl_reg_u udf_ctrl = {0};
-	sw_error_t rv = SW_OK;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(udf_type);
-	ADPT_NULL_POINT_CHECK(offset);
-
-	rv = g_udf_get_func[pkt_type][udf_idx](dev_id, &udf_ctrl);
-
-	if(rv != SW_OK)
-		return rv;
-
-	if(udf_ctrl.bf.udf_base == 0)
-	{
-		*udf_type = FAL_ACL_UDF_TYPE_L2;
-	}
-	else if(udf_ctrl.bf.udf_base == 1)
-	{
-		*udf_type = FAL_ACL_UDF_TYPE_L3;
-	}
-	else if(udf_ctrl.bf.udf_base == 2)
-	{
-		*udf_type = FAL_ACL_UDF_TYPE_L4;
-	}
-
-	*offset = udf_ctrl.bf.udf_offset*2;
-
-	return SW_OK;
-}
-
-
-sw_error_t
-adpt_hppe_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,a_uint32_t udf_idx,
-			fal_acl_udf_type_t udf_type, a_uint32_t offset)
-{
-	union udf_ctrl_reg_u udf_ctrl = {0};
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if(udf_type == FAL_ACL_UDF_TYPE_L2)
-	{
-		udf_ctrl.bf.udf_base = 0;
-	}
-	else if(udf_type == FAL_ACL_UDF_TYPE_L3)
-	{
-		udf_ctrl.bf.udf_base = 1;
-	}
-	else if(udf_type == FAL_ACL_UDF_TYPE_L4)
-	{
-		udf_ctrl.bf.udf_base = 2;
-	}
-	else
-		return SW_NOT_SUPPORTED;
-
-	if(offset % 2)/*only support even data*/
-		return SW_BAD_VALUE;
-	udf_ctrl.bf.udf_offset = offset/2;
-
-	return g_udf_set_func[pkt_type][udf_idx](dev_id, &udf_ctrl);
-}
-
 sw_error_t
 adpt_ppe_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type, a_uint32_t udf_idx,
 			fal_acl_udf_type_t udf_type, a_uint32_t offset)
@@ -5356,14 +5271,9 @@ adpt_ppe_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,
 	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
 		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
 	{
-#if defined(APPE)
 		return adpt_appe_acl_udf_profile_set(dev_id, pkt_type, udf_idx, udf_type, offset);
-#endif
 	}
-	else
-	{
-		return adpt_hppe_acl_udf_profile_set(dev_id, pkt_type, udf_idx, udf_type, offset);
-	}
+
 	return SW_NOT_SUPPORTED;
 }
 
@@ -5374,14 +5284,9 @@ adpt_ppe_acl_udf_profile_get(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,
 	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
 		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
 	{
-#if defined(APPE)
 		return adpt_appe_acl_udf_profile_get(dev_id, pkt_type, udf_idx, udf_type, offset);
-#endif
 	}
-	else
-	{
-		return adpt_hppe_acl_udf_profile_get(dev_id, pkt_type, udf_idx, udf_type, offset);
-	}
+
 	return SW_NOT_SUPPORTED;
 }
 
