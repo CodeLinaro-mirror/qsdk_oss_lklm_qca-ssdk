@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -2926,53 +2926,7 @@ hppe_vp_tx_counter_tbl_reg_set(
 				3);
 }
 
-#if ((!defined(IN_PORTCONTROL_MINI)) || (!defined(IN_MISC_MINI)))
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_get(
-		a_uint32_t dev_id,
-		union epe_dbg_in_cnt_reg_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EPE_DBG_IN_CNT_REG_ADDRESS,
-				&value->val);
-}
-#endif
-
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_set(
-		a_uint32_t dev_id,
-		union epe_dbg_in_cnt_reg_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EPE_DBG_IN_CNT_REG_ADDRESS,
-				value->val);
-}
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_set(
-		a_uint32_t dev_id,
-		union epe_dbg_out_cnt_reg_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EPE_DBG_OUT_CNT_REG_ADDRESS,
-				value->val);
-}
-
 #ifndef IN_PORTCONTROL_MINI
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_get(
-		a_uint32_t dev_id,
-		union epe_dbg_out_cnt_reg_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EPE_DBG_OUT_CNT_REG_ADDRESS,
-				&value->val);
-}
-
 sw_error_t
 hppe_port_tx_counter_tbl_reg_tx_bytes_get(
 		a_uint32_t dev_id,
@@ -3098,64 +3052,6 @@ hppe_vp_tx_counter_tbl_reg_tx_packets_set(
 		return ret;
 	reg_val.bf.tx_packets = value;
 	ret = hppe_vp_tx_counter_tbl_reg_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_counter_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union epe_dbg_in_cnt_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_epe_dbg_in_cnt_reg_get(dev_id, &reg_val);
-	*value = reg_val.bf.counter;
-	return ret;
-}
-
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_counter_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union epe_dbg_in_cnt_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_epe_dbg_in_cnt_reg_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.counter = value;
-	ret = hppe_epe_dbg_in_cnt_reg_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_counter_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union epe_dbg_out_cnt_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_epe_dbg_out_cnt_reg_get(dev_id, &reg_val);
-	*value = reg_val.bf.counter;
-	return ret;
-}
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_counter_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union epe_dbg_out_cnt_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_epe_dbg_out_cnt_reg_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.counter = value;
-	ret = hppe_epe_dbg_out_cnt_reg_set(dev_id, &reg_val);
 	return ret;
 }
 #endif

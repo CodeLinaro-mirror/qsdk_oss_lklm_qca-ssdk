@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -1145,26 +1145,6 @@ hppe_vp_tx_counter_tbl_reg_set(
 		union vp_tx_counter_tbl_reg_u *value);
 
 sw_error_t
-hppe_epe_dbg_in_cnt_reg_get(
-		a_uint32_t dev_id,
-		union epe_dbg_in_cnt_reg_u *value);
-
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_set(
-		a_uint32_t dev_id,
-		union epe_dbg_in_cnt_reg_u *value);
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_get(
-		a_uint32_t dev_id,
-		union epe_dbg_out_cnt_reg_u *value);
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_set(
-		a_uint32_t dev_id,
-		union epe_dbg_out_cnt_reg_u *value);
-
-sw_error_t
 hppe_port_tx_counter_tbl_reg_tx_bytes_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1211,26 +1191,6 @@ hppe_vp_tx_counter_tbl_reg_tx_packets_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
-
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_counter_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_epe_dbg_in_cnt_reg_counter_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_counter_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_epe_dbg_out_cnt_reg_counter_set(
-		a_uint32_t dev_id,
-		unsigned int value);
 
 sw_error_t
 hppe_drop_stat_bytes_get(
