@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -990,50 +990,6 @@ struct vp_tx_counter_tbl_reg {
 union vp_tx_counter_tbl_reg_u {
 	a_uint32_t val[3];
 	struct vp_tx_counter_tbl_reg bf;
-};
-
-/*[register] EPE_DBG_IN_CNT_REG*/
-#define EPE_DBG_IN_CNT_REG
-#define EPE_DBG_IN_CNT_REG_ADDRESS 0x6054
-#define EPE_DBG_IN_CNT_REG_NUM     1
-#define EPE_DBG_IN_CNT_REG_INC     0x4
-#define EPE_DBG_IN_CNT_REG_TYPE    REG_TYPE_RW
-#define EPE_DBG_IN_CNT_REG_DEFAULT 0x0
-	/*[field] COUNTER*/
-	#define EPE_DBG_IN_CNT_REG_COUNTER
-	#define EPE_DBG_IN_CNT_REG_COUNTER_OFFSET  0
-	#define EPE_DBG_IN_CNT_REG_COUNTER_LEN     32
-	#define EPE_DBG_IN_CNT_REG_COUNTER_DEFAULT 0x0
-
-struct epe_dbg_in_cnt_reg {
-	a_uint32_t  counter:32;
-};
-
-union epe_dbg_in_cnt_reg_u {
-	a_uint32_t val;
-	struct epe_dbg_in_cnt_reg bf;
-};
-
-/*[register] EPE_DBG_OUT_CNT_REG*/
-#define EPE_DBG_OUT_CNT_REG
-#define EPE_DBG_OUT_CNT_REG_ADDRESS 0x6070
-#define EPE_DBG_OUT_CNT_REG_NUM     1
-#define EPE_DBG_OUT_CNT_REG_INC     0x4
-#define EPE_DBG_OUT_CNT_REG_TYPE    REG_TYPE_RW
-#define EPE_DBG_OUT_CNT_REG_DEFAULT 0x0
-	/*[field] COUNTER*/
-	#define EPE_DBG_OUT_CNT_REG_COUNTER
-	#define EPE_DBG_OUT_CNT_REG_COUNTER_OFFSET  0
-	#define EPE_DBG_OUT_CNT_REG_COUNTER_LEN     32
-	#define EPE_DBG_OUT_CNT_REG_COUNTER_DEFAULT 0x0
-
-struct epe_dbg_out_cnt_reg {
-	a_uint32_t  counter:32;
-};
-
-union epe_dbg_out_cnt_reg_u {
-	a_uint32_t val;
-	struct epe_dbg_out_cnt_reg bf;
 };
 
 /*[register] LPI_ENABLE*/

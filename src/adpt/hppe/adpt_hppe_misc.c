@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017, 2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -510,8 +510,6 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	union port_tx_counter_tbl_reg_u port_tx_counter_tbl = {0};
 	union vp_tx_counter_tbl_reg_u vp_tx_counter_tbl = {0};
 	union queue_tx_counter_tbl_u queue_tx_counter_tbl = {0};
-	union epe_dbg_in_cnt_reg_u epe_dbg_in_cnt = {0};
-	union epe_dbg_out_cnt_reg_u epe_dbg_out_cnt = {0};
 	union vp_tx_drop_cnt_tbl_u vp_tx_drop_cnt_tbl = {0};
 	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl = {0};
 #ifdef APPE
@@ -564,10 +562,6 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	/* clear QUEUE_TX_COUNTER_TBL */
 	for (i = 0; i < QUEUE_TX_COUNTER_TBL_MAX_ENTRY; i++)
 		hppe_queue_tx_counter_tbl_set(dev_id, i, &queue_tx_counter_tbl);
-
-	/* clear EPE_DBG_IN_CNT & EPE_DBG_OUT_CNT */
-	hppe_epe_dbg_in_cnt_reg_set(dev_id, &epe_dbg_in_cnt);
-	hppe_epe_dbg_out_cnt_reg_set(dev_id, &epe_dbg_out_cnt);
 
 	/* clear VP_TX_DROP_CNT_TBL */
 	for (i = 0; i < VP_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
