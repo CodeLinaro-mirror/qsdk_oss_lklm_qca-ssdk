@@ -963,8 +963,6 @@ typedef sw_error_t (*adpt_port_queues_get_func)(a_uint32_t dev_id,
 					fal_queue_bmp_t *queue_bmp);
 typedef sw_error_t (*adpt_qos_cosmap_pcp_set_func)(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap);
-typedef sw_error_t (*adpt_qos_port_remark_get_func)(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_remark_enable_t *remark);
 typedef sw_error_t (*adpt_qos_cosmap_dscp_get_func)(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t dscp, fal_qos_cosmap_t *cosmap);
 typedef sw_error_t (*adpt_qos_cosmap_flow_set_func)(a_uint32_t dev_id, a_uint8_t group_id,
@@ -975,8 +973,6 @@ typedef sw_error_t (*adpt_ring_queue_map_set_func)(a_uint32_t dev_id,
 					a_uint32_t ring_id, fal_queue_bmp_t *queue_bmp);
 typedef sw_error_t (*adpt_qos_cosmap_dscp_set_func)(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t dscp, fal_qos_cosmap_t *cosmap);
-typedef sw_error_t (*adpt_qos_port_remark_set_func)(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_remark_enable_t *remark);
 typedef sw_error_t (*adpt_qos_cosmap_flow_get_func)(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint16_t flow, fal_qos_cosmap_t *cosmap);
 typedef sw_error_t (*adpt_qos_port_group_get_func)(a_uint32_t dev_id, fal_port_t port_id,
@@ -1034,10 +1030,6 @@ typedef sw_error_t (*adpt_scheduler_dequeue_ctrl_get_func)(a_uint32_t dev_id, a_
 					a_bool_t *enable);
 typedef sw_error_t (*adpt_scheduler_dequeue_ctrl_set_func)(a_uint32_t dev_id, a_uint32_t queue_id,
 					a_bool_t enable);
-typedef sw_error_t (*adpt_qos_port_mode_pri_get_func)(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_mode_t mode, a_uint32_t *pri);
-typedef sw_error_t (*adpt_qos_port_mode_pri_set_func)(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_mode_t mode, a_uint32_t pri);
 typedef sw_error_t (*adpt_port_scheduler_resource_get_func)(a_uint32_t dev_id, fal_port_t port_id,
 					fal_portscheduler_resource_t *cfg);
 typedef sw_error_t (*adpt_reservedpool_scheduler_resource_get_func)(a_uint32_t dev_id,
@@ -1857,13 +1849,11 @@ typedef struct
 	adpt_queue_scheduler_get_func adpt_queue_scheduler_get;
 	adpt_port_queues_get_func adpt_port_queues_get;
 	adpt_qos_cosmap_pcp_set_func adpt_qos_cosmap_pcp_set;
-	adpt_qos_port_remark_get_func adpt_qos_port_remark_get;
 	adpt_qos_cosmap_dscp_get_func adpt_qos_cosmap_dscp_get;
 	adpt_qos_cosmap_flow_set_func adpt_qos_cosmap_flow_set;
 	adpt_qos_port_group_set_func adpt_qos_port_group_set;
 	adpt_ring_queue_map_set_func adpt_ring_queue_map_set;
 	adpt_qos_cosmap_dscp_set_func adpt_qos_cosmap_dscp_set;
-	adpt_qos_port_remark_set_func adpt_qos_port_remark_set;
 	adpt_qos_cosmap_flow_get_func adpt_qos_cosmap_flow_get;
 	adpt_qos_port_group_get_func adpt_qos_port_group_get;
 	adpt_ring_queue_map_get_func adpt_ring_queue_map_get;
@@ -1873,8 +1863,6 @@ typedef struct
 	adpt_port_scheduler_cfg_get_func adpt_port_scheduler_cfg_get;
 	adpt_scheduler_dequeue_ctrl_get_func adpt_scheduler_dequeue_ctrl_get;
 	adpt_scheduler_dequeue_ctrl_set_func adpt_scheduler_dequeue_ctrl_set;
-	adpt_qos_port_mode_pri_get_func adpt_qos_port_mode_pri_get;
-	adpt_qos_port_mode_pri_set_func adpt_qos_port_mode_pri_set;
 	adpt_port_scheduler_cfg_reset_func adpt_port_scheduler_cfg_reset;
 	adpt_port_scheduler_resource_get_func adpt_port_scheduler_resource_get;
 	adpt_reservedpool_scheduler_resource_get_func adpt_reservedpool_scheduler_resource_get;

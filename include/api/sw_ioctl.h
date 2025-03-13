@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -386,8 +386,9 @@ extern "C" {
 #define SW_API_QOS_PORT_GROUP_SET   (33  + SW_API_QOS_OFFSET)
 #define SW_API_QOS_PORT_PRI_GET   (34  + SW_API_QOS_OFFSET)
 #define SW_API_QOS_PORT_PRI_SET   (35  + SW_API_QOS_OFFSET)
-#define SW_API_QOS_PORT_REMARK_GET   (36  + SW_API_QOS_OFFSET)
-#define SW_API_QOS_PORT_REMARK_SET   (37  + SW_API_QOS_OFFSET)
+/* remove Hawkeye specific feature */
+//#define SW_API_QOS_PORT_REMARK_GET   (36  + SW_API_QOS_OFFSET)
+//#define SW_API_QOS_PORT_REMARK_SET   (37  + SW_API_QOS_OFFSET)
 #define SW_API_QOS_PCP_MAP_GET   (38  + SW_API_QOS_OFFSET)
 #define SW_API_QOS_PCP_MAP_SET   (39  + SW_API_QOS_OFFSET)
 #define SW_API_QOS_FLOW_MAP_GET   (40  + SW_API_QOS_OFFSET)

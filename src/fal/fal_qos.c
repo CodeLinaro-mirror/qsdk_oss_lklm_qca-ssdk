@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022,2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022,2024-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -85,10 +85,10 @@ sw_error_t fal_qos_port_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_qos_
     DEFINE_FAL_FUNC_HSL_EXPORT(qos_port_mode_get, dev_id, port_id, mode, enable)
 
 sw_error_t fal_qos_port_mode_pri_set(a_uint32_t dev_id, fal_port_t port_id, fal_qos_mode_t mode, a_uint32_t pri)
-    DEFINE_FAL_FUNC_EXPORT(qos_port_mode_pri_set, dev_id, port_id, mode, pri)
+    DEFINE_FAL_FUNC_HSL_EXPORT(qos_port_mode_pri_set, dev_id, port_id, mode, pri)
 
 sw_error_t fal_qos_port_mode_pri_get(a_uint32_t dev_id, fal_port_t port_id, fal_qos_mode_t mode, a_uint32_t * pri)
-    DEFINE_FAL_FUNC_EXPORT(qos_port_mode_pri_get, dev_id, port_id, mode, pri)
+    DEFINE_FAL_FUNC_HSL_EXPORT(qos_port_mode_pri_get, dev_id, port_id, mode, pri)
 
 sw_error_t fal_qos_port_default_up_set(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t up)
     DEFINE_FAL_FUNC_HSL_EXPORT(qos_port_default_up_set, dev_id, port_id, up)
@@ -190,12 +190,6 @@ sw_error_t fal_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id, a_uint8
 
 sw_error_t fal_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qos_cosmap_pcp_set, dev_id, group_id, pcp, cosmap)
-
-sw_error_t fal_qos_port_remark_get(a_uint32_t dev_id, fal_port_t port_id, fal_qos_remark_enable_t *remark)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(qos_port_remark_get, dev_id, port_id, remark)
-
-sw_error_t fal_qos_port_remark_set(a_uint32_t dev_id, fal_port_t port_id, fal_qos_remark_enable_t *remark)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(qos_port_remark_set, dev_id, port_id, remark)
 
 sw_error_t fal_port_queues_get(a_uint32_t dev_id, fal_port_t port_id, fal_queue_bmp_t *queue_bmp)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_queues_get, dev_id, port_id, queue_bmp)

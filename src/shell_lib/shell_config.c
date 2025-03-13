@@ -861,7 +861,6 @@ struct sub_cmd_des_t g_qos_des[] =
 	{"ptQuRemark", "set",   SW_API_QOS_QUEUE_REMARK_SET, NULL},
 	{"ptgroup", "set", SW_API_QOS_PORT_GROUP_SET, NULL},
 	{"ptpriprece", "set", SW_API_QOS_PORT_PRI_SET, NULL},
-	{"ptremark", "set", SW_API_QOS_PORT_REMARK_SET, NULL},
 	{"pcpmap", "set", SW_API_QOS_PCP_MAP_SET, NULL},
 	{"flowmap", "set", SW_API_QOS_FLOW_MAP_SET, NULL},
 	{"dscpmap", "set", SW_API_QOS_DSCP_MAP_SET, NULL},

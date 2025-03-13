@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -78,74 +78,6 @@ adpt_hppe_l1_flow_map_get(a_uint32_t dev_id,
 
 	return SW_OK;
 }
-#ifndef IN_QOS_MINI
-sw_error_t
-adpt_hppe_qos_port_mode_pri_set(a_uint32_t dev_id, fal_port_t port_id,
-				fal_qos_mode_t mode, a_uint32_t pri)
-{
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-
-	if (mode == FAL_QOS_UP_MODE)
-		port_qos_ctrl.bf.port_pcp_qos_pri = pri;
-	else if (mode == FAL_QOS_DSCP_MODE)
-		port_qos_ctrl.bf.port_dscp_qos_pri = pri;
-	else if (mode == FAL_QOS_FLOW_MODE)
-		port_qos_ctrl.bf.port_flow_qos_pri = pri;
-	else
-		return SW_NOT_SUPPORTED;
-	
-	return hppe_port_qos_ctrl_set(dev_id, port_id, &port_qos_ctrl);
-}
-
-sw_error_t
-adpt_hppe_qos_port_mode_pri_get(a_uint32_t dev_id, fal_port_t port_id,
-				fal_qos_mode_t mode, a_uint32_t *pri)
-{
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-
-	if (mode == FAL_QOS_UP_MODE)
-		*pri = port_qos_ctrl.bf.port_pcp_qos_pri;
-	else if (mode == FAL_QOS_DSCP_MODE)
-		*pri = port_qos_ctrl.bf.port_dscp_qos_pri;
-	else if (mode == FAL_QOS_FLOW_MODE)
-		*pri = port_qos_ctrl.bf.port_flow_qos_pri;
-	else
-		return SW_NOT_SUPPORTED;
-	
-	return SW_OK;
-}
-#endif
-
-static sw_error_t
-adpt_hppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_pri_precedence_t *pri)
-{
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(pri);
-
-	hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-
-	port_qos_ctrl.bf.port_pcp_qos_pri = pri->pcp_pri;
-	port_qos_ctrl.bf.port_dscp_qos_pri = pri->dscp_pri;
-	port_qos_ctrl.bf.port_preheader_qos_pri = pri->preheader_pri;
-	port_qos_ctrl.bf.port_flow_qos_pri = pri->flow_pri;
-	port_qos_ctrl.bf.port_acl_qos_pri = pri->acl_pri;
-	
-	return hppe_port_qos_ctrl_set(dev_id, port_id, &port_qos_ctrl);
-}
 
 sw_error_t
 adpt_ppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -161,38 +93,10 @@ adpt_ppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_port_pri_set(dev_id, port_id, pri);
-#endif
-	} else {
-		return adpt_hppe_qos_port_pri_set(dev_id, port_id, pri);
 	}
 
 	return SW_NOT_SUPPORTED;
-}
-
-static sw_error_t
-adpt_hppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_pri_precedence_t *pri)
-{
-	sw_error_t rv = SW_OK;
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(pri);
-
-	rv = hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-	if( rv != SW_OK )
-		return rv;
-
-	pri->pcp_pri = port_qos_ctrl.bf.port_pcp_qos_pri;
-	pri->dscp_pri = port_qos_ctrl.bf.port_dscp_qos_pri;
-	pri->preheader_pri = port_qos_ctrl.bf.port_preheader_qos_pri;
-	pri->flow_pri = port_qos_ctrl.bf.port_flow_qos_pri;
-	pri->acl_pri = port_qos_ctrl.bf.port_acl_qos_pri;
-
-	return SW_OK;
 }
 
 sw_error_t
@@ -209,11 +113,7 @@ adpt_ppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_port_pri_get(dev_id, port_id, pri);
-#endif
-	} else {
-		return adpt_hppe_qos_port_pri_get(dev_id, port_id, pri);
 	}
 
 	return SW_NOT_SUPPORTED;
@@ -446,29 +346,6 @@ adpt_ppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 
 	return SW_NOT_SUPPORTED;;
 }
-
-sw_error_t
-adpt_hppe_qos_port_remark_get(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_remark_enable_t *remark)
-{
-	sw_error_t rv = SW_OK;
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(remark);
-
-	rv = hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-
-	if( rv != SW_OK )
-		return rv;
-
-	remark->pcp_change_en = port_qos_ctrl.bf.port_pcp_change_en;
-	remark->dei_chage_en = port_qos_ctrl.bf.port_dei_change_en;
-	remark->dscp_change_en = port_qos_ctrl.bf.port_dscp_change_en;
-
-	return SW_OK;
-}
 #endif
 
 static sw_error_t
@@ -595,25 +472,6 @@ adpt_ppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
 	return SW_NOT_SUPPORTED;
 }
 
-static sw_error_t
-adpt_hppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_group_t *group)
-{
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(group);
-
-	hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-
-	port_qos_ctrl.bf.pcp_qos_group_id = group->pcp_group;
-	port_qos_ctrl.bf.dscp_qos_group_id = group->dscp_group;
-	port_qos_ctrl.bf.flow_qos_group_id = group->flow_group;
-	
-	return hppe_port_qos_ctrl_set(dev_id, port_id, &port_qos_ctrl);
-}
-
 sw_error_t
 adpt_ppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_group_t *group)
@@ -628,11 +486,7 @@ adpt_ppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_port_group_set(dev_id, port_id, group);
-#endif
-	} else {
-		return adpt_hppe_qos_port_group_set(dev_id, port_id, group);
 	}
 
 	return SW_NOT_SUPPORTED;
@@ -713,27 +567,6 @@ adpt_ppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 
 	return SW_NOT_SUPPORTED;
 }
-
-#ifndef IN_QOS_MINI
-sw_error_t
-adpt_hppe_qos_port_remark_set(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_remark_enable_t *remark)
-{
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(remark);
-
-	hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-
-	port_qos_ctrl.bf.port_pcp_change_en = remark->pcp_change_en;
-	port_qos_ctrl.bf.port_dei_change_en = remark->dei_chage_en;
-	port_qos_ctrl.bf.port_dscp_change_en = remark->dscp_change_en;
-	
-	return hppe_port_qos_ctrl_set(dev_id, port_id, &port_qos_ctrl);
-}
-#endif
 
 sw_error_t
 adpt_hppe_l1_flow_map_set(a_uint32_t dev_id,
@@ -873,28 +706,6 @@ adpt_ppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
 	return SW_NOT_SUPPORTED;
 }
 
-static sw_error_t
-adpt_hppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
-					fal_qos_group_t *group)
-{
-	sw_error_t rv = SW_OK;
-	union port_qos_ctrl_u port_qos_ctrl;
-
-	memset(&port_qos_ctrl, 0, sizeof(port_qos_ctrl));
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(group);
-
-	rv = hppe_port_qos_ctrl_get(dev_id, port_id, &port_qos_ctrl);
-	if( rv != SW_OK )
-		return rv;
-
-	group->pcp_group = port_qos_ctrl.bf.pcp_qos_group_id;
-	group->dscp_group = port_qos_ctrl.bf.dscp_qos_group_id;
-	group->flow_group = port_qos_ctrl.bf.flow_qos_group_id;
-
-	return SW_OK;
-}
-
 sw_error_t
 adpt_ppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_group_t *group)
@@ -909,11 +720,7 @@ adpt_ppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_port_group_get(dev_id, port_id, group);
-#endif
-	} else {
-		return adpt_hppe_qos_port_group_get(dev_id, port_id, group);
 	}
 
 	return SW_NOT_SUPPORTED;
@@ -1203,22 +1010,12 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 #ifndef IN_QOS_MINI
 	p_adpt_api->adpt_port_queues_get = adpt_hppe_port_queues_get;
 	p_adpt_api->adpt_qos_cosmap_pcp_set = adpt_ppe_qos_cosmap_pcp_set;
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-			adpt_chip_revision_get(dev_id) == HPPE_REVISION) {
-		p_adpt_api->adpt_qos_port_remark_get = adpt_hppe_qos_port_remark_get;
-	}
 #endif
 	p_adpt_api->adpt_qos_cosmap_dscp_get = adpt_ppe_qos_cosmap_dscp_get;
 	p_adpt_api->adpt_qos_cosmap_flow_set = adpt_ppe_qos_cosmap_flow_set;
 	p_adpt_api->adpt_qos_port_group_set = adpt_ppe_qos_port_group_set;
 	p_adpt_api->adpt_ring_queue_map_set = adpt_hppe_ring_queue_map_set;
 	p_adpt_api->adpt_qos_cosmap_dscp_set = adpt_ppe_qos_cosmap_dscp_set;
-#ifndef IN_QOS_MINI
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-			adpt_chip_revision_get(dev_id) == HPPE_REVISION) {
-		p_adpt_api->adpt_qos_port_remark_set = adpt_hppe_qos_port_remark_set;
-	}
-#endif
 	p_adpt_api->adpt_qos_cosmap_flow_get = adpt_ppe_qos_cosmap_flow_get;
 	p_adpt_api->adpt_qos_port_group_get = adpt_ppe_qos_port_group_get;
 	p_adpt_api->adpt_ring_queue_map_get = adpt_hppe_ring_queue_map_get;
@@ -1232,13 +1029,6 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 #endif
 	p_adpt_api->adpt_scheduler_dequeue_ctrl_get = adpt_hppe_scheduler_dequeue_ctrl_get;
 	p_adpt_api->adpt_scheduler_dequeue_ctrl_set = adpt_hppe_scheduler_dequeue_ctrl_set;
-#ifndef IN_QOS_MINI
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE &&
-			adpt_chip_revision_get(dev_id) == HPPE_REVISION) {
-		p_adpt_api->adpt_qos_port_mode_pri_get = adpt_hppe_qos_port_mode_pri_get;
-		p_adpt_api->adpt_qos_port_mode_pri_set = adpt_hppe_qos_port_mode_pri_set;
-	}
-#endif
 	p_adpt_api->adpt_port_scheduler_cfg_reset = adpt_hppe_port_scheduler_cfg_reset;
 	p_adpt_api->adpt_port_scheduler_resource_get =
 		adpt_hppe_port_scheduler_resource_get;

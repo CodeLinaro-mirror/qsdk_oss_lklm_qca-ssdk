@@ -638,7 +638,6 @@ static sw_data_type_t sw_data_type[] =
 #ifndef IN_QOS_MINI
     SW_TYPE_DEF(SW_PORTGROUP, (param_check_t)cmd_data_check_port_group, NULL),
     SW_TYPE_DEF(SW_PORTPRI, (param_check_t)cmd_data_check_port_pri, NULL),
-    SW_TYPE_DEF(SW_PORTREMARK, (param_check_t)cmd_data_check_port_remark, NULL),
     SW_TYPE_DEF(SW_COSMAP, (param_check_t)cmd_data_check_cosmap, NULL),
     SW_TYPE_DEF(SW_SCHEDULER, (param_check_t)cmd_data_check_queue_scheduler, NULL),
     SW_TYPE_DEF(SW_QUEUEBMP, (param_check_t)cmd_data_check_ring_queue, NULL),
@@ -2054,52 +2053,6 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 #endif
 
     *(fal_qos_pri_precedence_t *)val = entry;
-    return SW_OK;
-}
-
-sw_error_t
-cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
-{
-    char *cmd;
-    sw_error_t rv;
-    fal_qos_remark_enable_t entry;
-
-    aos_mem_zero(&entry, sizeof (fal_qos_remark_enable_t));
-
-    do
-    {
-        cmd = get_sub_cmd("pcp_change_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.pcp_change_en),
-                                   sizeof (a_bool_t));
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("dei_change_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dei_chage_en),
-                                   sizeof (a_bool_t));
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("dscp_change_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dscp_change_en),
-                                   sizeof (a_bool_t));
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    *(fal_qos_remark_enable_t *)val = entry;
     return SW_OK;
 }
 
