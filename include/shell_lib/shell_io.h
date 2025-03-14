@@ -191,6 +191,8 @@ sw_error_t
 cmd_data_check_qinq_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 sw_error_t
 cmd_data_check_qinq_role(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+sw_error_t
+cmd_data_check_srctype(char *cmdstr, a_uint8_t def, a_uint8_t *val, a_uint32_t size);
 #endif
 #ifdef IN_PORTCONTROL
 sw_error_t
