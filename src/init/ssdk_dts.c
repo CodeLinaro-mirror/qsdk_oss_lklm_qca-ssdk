@@ -282,6 +282,13 @@ struct clk *ssdk_dts_cmnclk_get(a_uint32_t dev_id)
 	return cfg->cmnblk_clk;
 }
 
+struct mdio_device *ssdk_dt_clk_mdiodev_get(a_uint32_t dev_id)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	return cfg->clk_mdiodev;
+}
+
 a_uint32_t ssdk_dts_netdev_switch_alloc(ssdk_netdev_switch_t **netdev_switch)
 {
 	a_uint32_t index = 0;
@@ -1018,6 +1025,31 @@ ssdk_dt_parse_default_mdio_bus(struct device_node *switch_node, a_uint32_t dev_i
 	return rv;
 }
 
+static sw_error_t ssdk_dt_parse_clkdev(a_uint32_t dev_id, struct device_node *switch_node)
+{
+	struct mdio_device *clk_dev = NULL;
+	struct device_node *clk_np = NULL;
+	sw_error_t ret = SW_OK;
+
+	/* clock controller for qca8xxx device. */
+	clk_np = of_parse_phandle(switch_node, "clk-handle", 0);
+	if (!clk_np)
+		return SW_NOT_FOUND;
+
+	clk_dev = of_mdio_find_device(clk_np);
+	if (!clk_dev) {
+		SSDK_ERROR("clk-handle device is not found\n");
+		ret = SW_FAIL;
+		goto parse_clkdev_exit;
+	}
+
+	ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->clk_mdiodev = clk_dev;
+
+parse_clkdev_exit:
+	of_node_put(clk_np);
+	return ret;
+}
+
 static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_node,
 		ssdk_init_cfg *cfg)
 {
@@ -1027,6 +1059,7 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 	const __be32 *phy_addr;
 	const __be32 *c45_phy;
 	phy_features_t phy_features = 0;
+	sw_error_t ret;
 
 	/*parse the mdio bus*/
 	if(!ssdk_is_emulation(dev_id)) {
@@ -1035,6 +1068,22 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 			return;
 		}
 	}
+
+	ret = ssdk_dt_parse_clkdev(dev_id, switch_node);
+	/* Clock MDIO device is not specified in DTS, then try to manually
+	 * create the MDIO device with address 0x18.
+	 */
+	if (ret != SW_OK) {
+		struct mdio_device *clk_dev = NULL;
+		struct mii_bus *bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+
+		if (bus)
+			clk_dev = mdio_device_create(bus, 0x18);
+
+		if (!IS_ERR_OR_NULL(clk_dev))
+			ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->clk_mdiodev = clk_dev;
+	}
+
 	/* prefer to get phy info from ess-switch node */
 	if (SW_OK == ssdk_dt_parse_phy_info(switch_node, dev_id, cfg))
 		return;
