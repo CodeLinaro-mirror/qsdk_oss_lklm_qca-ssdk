@@ -120,44 +120,6 @@ adpt_ppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 #ifndef IN_QOS_MINI
-static sw_error_t
-adpt_hppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
-{
-	sw_error_t rv = SW_OK;
-	union pcp_qos_group_0_u pcp_qos_group_0;
-	union pcp_qos_group_1_u pcp_qos_group_1;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(cosmap);
-
-	if (pcp >= PCP_QOS_GROUP_0_MAX_ENTRY)
-		return SW_BAD_PARAM;
-
-	if (group_id == 0) {
-		rv = hppe_pcp_qos_group_0_get(dev_id, pcp, &pcp_qos_group_0);
-		if( rv != SW_OK )
-			return rv;
-		cosmap->internal_pcp = pcp_qos_group_0.bf.qos_info & 7;
-		cosmap->internal_dei = (pcp_qos_group_0.bf.qos_info >> 3) & 1;
-		cosmap->internal_pri = (pcp_qos_group_0.bf.qos_info >> 4) & 0xf;
-		cosmap->internal_dscp = (pcp_qos_group_0.bf.qos_info >> 8) & 0x3f;
-		cosmap->internal_dp = (pcp_qos_group_0.bf.qos_info >> 14) & 0x3;
-	} else if (group_id == 1) {
-		rv = hppe_pcp_qos_group_1_get(dev_id, pcp, &pcp_qos_group_1);
-		if( rv != SW_OK )
-			return rv;
-		cosmap->internal_pcp = pcp_qos_group_1.bf.qos_info & 7;
-		cosmap->internal_dei = (pcp_qos_group_1.bf.qos_info >> 3) & 1;
-		cosmap->internal_pri = (pcp_qos_group_1.bf.qos_info >> 4) & 0xf;
-		cosmap->internal_dscp = (pcp_qos_group_1.bf.qos_info >> 8) & 0x3f;
-		cosmap->internal_dp = (pcp_qos_group_1.bf.qos_info >> 14) & 0x3;
-	} else
-		return SW_BAD_PARAM;
-
-	return SW_OK;
-}
-
 sw_error_t
 adpt_ppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
@@ -172,12 +134,7 @@ adpt_ppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_cosmap_pcp_get(dev_id, group_id,
-				pcp, cosmap);
-#endif
-	} else {
-		return adpt_hppe_qos_cosmap_pcp_get(dev_id, group_id,
 				pcp, cosmap);
 	}
 
@@ -287,40 +244,6 @@ adpt_hppe_l0_queue_map_get(a_uint32_t dev_id,
 }
 
 #ifndef IN_QOS_MINI
-static sw_error_t
-adpt_hppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
-{
-	sw_error_t rv = SW_OK;
-	union pcp_qos_group_0_u pcp_qos_group_0;
-	union pcp_qos_group_1_u pcp_qos_group_1;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(cosmap);
-
-	if (pcp >= PCP_QOS_GROUP_0_MAX_ENTRY)
-		return SW_BAD_PARAM;
-
-	if (group_id == 0) {
-		pcp_qos_group_0.bf.qos_info = cosmap->internal_pcp | \
-								(cosmap->internal_dei << 3) | \
-								(cosmap->internal_pri << 4) | \
-								(cosmap->internal_dscp << 8) | \
-								(cosmap->internal_dp << 14);
-		rv = hppe_pcp_qos_group_0_set(dev_id, pcp, &pcp_qos_group_0);
-	} else if (group_id == 1) {
-		pcp_qos_group_1.bf.qos_info = cosmap->internal_pcp | \
-								(cosmap->internal_dei << 3) | \
-								(cosmap->internal_pri << 4) | \
-								(cosmap->internal_dscp << 8) | \
-								(cosmap->internal_dp << 14);
-		rv = hppe_pcp_qos_group_1_set(dev_id, pcp, &pcp_qos_group_1);
-	} else
-		return SW_BAD_PARAM;
-
-	return rv;
-}
-
 sw_error_t
 adpt_ppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
@@ -335,56 +258,13 @@ adpt_ppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_cosmap_pcp_set(dev_id, group_id,
-				pcp, cosmap);
-#endif
-	} else {
-		return adpt_hppe_qos_cosmap_pcp_set(dev_id, group_id,
 				pcp, cosmap);
 	}
 
 	return SW_NOT_SUPPORTED;;
 }
 #endif
-
-static sw_error_t
-adpt_hppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t dscp, fal_qos_cosmap_t *cosmap)
-{
-	sw_error_t rv = SW_OK;
-	union dscp_qos_group_0_u dscp_qos_group_0;
-	union dscp_qos_group_1_u dscp_qos_group_1;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(cosmap);
-
-	if (dscp >= DSCP_QOS_GROUP_0_MAX_ENTRY)
-		return SW_BAD_PARAM;
-
-	if (group_id == 0) {
-		rv = hppe_dscp_qos_group_0_get(dev_id, dscp, &dscp_qos_group_0);
-		if( rv != SW_OK )
-			return rv;
-		cosmap->internal_pcp = dscp_qos_group_0.bf.qos_info & 7;
-		cosmap->internal_dei = (dscp_qos_group_0.bf.qos_info >> 3) & 1;
-		cosmap->internal_pri = (dscp_qos_group_0.bf.qos_info >> 4) & 0xf;
-		cosmap->internal_dscp = (dscp_qos_group_0.bf.qos_info >> 8) & 0x3f;
-		cosmap->internal_dp = (dscp_qos_group_0.bf.qos_info >> 14) & 0x3;
-	} else if (group_id == 1) {
-		rv = hppe_dscp_qos_group_1_get(dev_id, dscp, &dscp_qos_group_1);
-		if( rv != SW_OK )
-			return rv;
-		cosmap->internal_pcp = dscp_qos_group_1.bf.qos_info & 7;
-		cosmap->internal_dei = (dscp_qos_group_1.bf.qos_info >> 3) & 1;
-		cosmap->internal_pri = (dscp_qos_group_1.bf.qos_info >> 4) & 0xf;
-		cosmap->internal_dscp = (dscp_qos_group_1.bf.qos_info >> 8) & 0x3f;
-		cosmap->internal_dp = (dscp_qos_group_1.bf.qos_info >> 14) & 0x3;
-	} else
-		return SW_BAD_PARAM;
-
-	return SW_OK;
-}
 
 sw_error_t
 adpt_ppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
@@ -400,50 +280,11 @@ adpt_ppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_cosmap_dscp_get(dev_id, group_id,
-				dscp, cosmap);
-#endif
-	} else {
-		return adpt_hppe_qos_cosmap_dscp_get(dev_id, group_id,
 				dscp, cosmap);
 	}
 
 	return SW_NOT_SUPPORTED;
-}
-
-static sw_error_t
-adpt_hppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
-{
-	sw_error_t rv = SW_OK;
-	union flow_qos_group_0_u flow_qos_group_0;
-	union flow_qos_group_1_u flow_qos_group_1;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(cosmap);
-
-	if (flow >= FLOW_QOS_GROUP_0_MAX_ENTRY)
-		return SW_BAD_PARAM;
-
-	if (group_id == 0) {
-		flow_qos_group_0.bf.qos_info = cosmap->internal_pcp | \
-								(cosmap->internal_dei << 3) | \
-								(cosmap->internal_pri << 4) | \
-								(cosmap->internal_dscp << 8) | \
-								(cosmap->internal_dp << 14);
-		rv = hppe_flow_qos_group_0_set(dev_id, flow, &flow_qos_group_0);
-	} else if (group_id == 1) {
-		flow_qos_group_1.bf.qos_info = cosmap->internal_pcp | \
-								(cosmap->internal_dei << 3) | \
-								(cosmap->internal_pri << 4) | \
-								(cosmap->internal_dscp << 8) | \
-								(cosmap->internal_dp << 14);
-		rv = hppe_flow_qos_group_1_set(dev_id, flow, &flow_qos_group_1);
-	} else
-		return SW_BAD_PARAM;
-
-	return rv;
 }
 
 sw_error_t
@@ -460,12 +301,7 @@ adpt_ppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_cosmap_flow_set(dev_id, group_id,
-				flow, cosmap);
-#endif
-	} else {
-		return adpt_hppe_qos_cosmap_flow_set(dev_id, group_id,
 				flow, cosmap);
 	}
 
@@ -508,40 +344,6 @@ adpt_hppe_ring_queue_map_set(a_uint32_t dev_id,
 	return hppe_ring_q_map_tbl_set(dev_id, ring_id, &ring_q_map_tbl);
 }
 
-static sw_error_t
-adpt_hppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t dscp, fal_qos_cosmap_t *cosmap)
-{
-	sw_error_t rv = SW_OK;
-	union dscp_qos_group_0_u dscp_qos_group_0;
-	union dscp_qos_group_1_u dscp_qos_group_1;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(cosmap);
-
-	if (dscp >= DSCP_QOS_GROUP_0_MAX_ENTRY)
-		return SW_BAD_PARAM;
-
-	if (group_id == 0) {
-		dscp_qos_group_0.bf.qos_info = cosmap->internal_pcp | \
-								(cosmap->internal_dei << 3) | \
-								(cosmap->internal_pri << 4) | \
-								(cosmap->internal_dscp << 8) | \
-								(cosmap->internal_dp << 14);
-		rv = hppe_dscp_qos_group_0_set(dev_id, dscp, &dscp_qos_group_0);
-	} else if (group_id == 1) {
-		dscp_qos_group_1.bf.qos_info = cosmap->internal_pcp | \
-								(cosmap->internal_dei << 3) | \
-								(cosmap->internal_pri << 4) | \
-								(cosmap->internal_dscp << 8) | \
-								(cosmap->internal_dp << 14);
-		rv = hppe_dscp_qos_group_1_set(dev_id, dscp, &dscp_qos_group_1);
-	} else
-		return SW_BAD_PARAM;
-
-	return rv;
-}
-
 sw_error_t
 adpt_ppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 				a_uint8_t dscp, fal_qos_cosmap_t *cosmap)
@@ -556,12 +358,7 @@ adpt_ppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_cosmap_dscp_set(dev_id, group_id,
-				dscp, cosmap);
-#endif
-	} else {
-		return adpt_hppe_qos_cosmap_dscp_set(dev_id, group_id,
 				dscp, cosmap);
 	}
 
@@ -642,44 +439,6 @@ adpt_hppe_queue_scheduler_get(a_uint32_t dev_id, a_uint32_t node_id,
 		return SW_FAIL;
 }
 
-static sw_error_t
-adpt_hppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
-{
-	sw_error_t rv = SW_OK;
-	union flow_qos_group_0_u flow_qos_group_0;
-	union flow_qos_group_1_u flow_qos_group_1;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(cosmap);
-
-	if (flow >= FLOW_QOS_GROUP_0_MAX_ENTRY)
-		return SW_BAD_PARAM;
-
-	if (group_id == 0) {
-		rv = hppe_flow_qos_group_0_get(dev_id, flow, &flow_qos_group_0);
-		if( rv != SW_OK )
-			return rv;
-		cosmap->internal_pcp = flow_qos_group_0.bf.qos_info & 7;
-		cosmap->internal_dei = (flow_qos_group_0.bf.qos_info >> 3) & 1;
-		cosmap->internal_pri = (flow_qos_group_0.bf.qos_info >> 4) & 0xf;
-		cosmap->internal_dscp = (flow_qos_group_0.bf.qos_info >> 8) & 0x3f;
-		cosmap->internal_dp = (flow_qos_group_0.bf.qos_info >> 14) & 0x3;
-	} else if (group_id == 1) {
-		rv = hppe_flow_qos_group_1_get(dev_id, flow, &flow_qos_group_1);
-		if( rv != SW_OK )
-			return rv;
-		cosmap->internal_pcp = flow_qos_group_1.bf.qos_info & 7;
-		cosmap->internal_dei = (flow_qos_group_1.bf.qos_info >> 3) & 1;
-		cosmap->internal_pri = (flow_qos_group_1.bf.qos_info >> 4) & 0xf;
-		cosmap->internal_dscp = (flow_qos_group_1.bf.qos_info >> 8) & 0x3f;
-		cosmap->internal_dp = (flow_qos_group_1.bf.qos_info >> 14) & 0x3;
-	} else
-		return SW_BAD_PARAM;
-
-	return SW_OK;
-}
-
 sw_error_t
 adpt_ppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
@@ -694,12 +453,7 @@ adpt_ppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
 	if ((chip_type == CHIP_HPPE && chip_ver == CPPE_REVISION) ||
 			chip_type == CHIP_APPE ||
 			chip_type == CHIP_MRPPE) {
-#if defined(CPPE) || defined(APPE)
 		return adpt_cppe_qos_cosmap_flow_get(dev_id, group_id,
-				flow, cosmap);
-#endif
-	} else {
-		return adpt_hppe_qos_cosmap_flow_get(dev_id, group_id,
 				flow, cosmap);
 	}
 
