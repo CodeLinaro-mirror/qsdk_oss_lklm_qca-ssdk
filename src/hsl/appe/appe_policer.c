@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -73,35 +73,6 @@ appe_dscp_remap_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + DSCP_REMAP_TBL_ADDRESS + \
 				index * DSCP_REMAP_TBL_INC,
 				value->val);
-}
-
-sw_error_t
-appe_in_meter_head_reg_mef10dot3_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union in_meter_head_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_in_meter_head_reg_get(dev_id, &reg_val);
-	*value = reg_val.bf.mef10dot3_en;
-	return ret;
-}
-
-sw_error_t
-appe_in_meter_head_reg_mef10dot3_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union in_meter_head_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_in_meter_head_reg_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.mef10dot3_en = value;
-	ret = appe_in_meter_head_reg_set(dev_id, &reg_val);
-	return ret;
 }
 
 sw_error_t
