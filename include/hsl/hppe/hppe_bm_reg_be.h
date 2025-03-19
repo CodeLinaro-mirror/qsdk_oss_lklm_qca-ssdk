@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,52 +22,6 @@
  */
 #ifndef HPPE_NSS_BM_CSR_REG_H
 #define HPPE_NSS_BM_CSR_REG_H
-
-/*[register] BM_DBG_ADDR*/
-#define BM_DBG_ADDR
-#define BM_DBG_ADDR_ADDRESS 0x80
-#define BM_DBG_ADDR_NUM     1
-#define BM_DBG_ADDR_INC     0x4
-#define BM_DBG_ADDR_TYPE    REG_TYPE_RW
-#define BM_DBG_ADDR_DEFAULT 0x0
-	/*[field] DBG_ADDR*/
-	#define BM_DBG_ADDR_DBG_ADDR
-	#define BM_DBG_ADDR_DBG_ADDR_OFFSET  0
-	#define BM_DBG_ADDR_DBG_ADDR_LEN     8
-	#define BM_DBG_ADDR_DBG_ADDR_DEFAULT 0x0
-
-struct bm_dbg_addr {
-        a_uint32_t  _reserved0:24;
-	a_uint32_t  dbg_addr:8;
-};
-
-union bm_dbg_addr_u {
-	a_uint32_t val;
-	struct bm_dbg_addr bf;
-};
-
-
-/*[register] BM_DBG_DATA*/
-#define BM_DBG_DATA
-#define BM_DBG_DATA_ADDRESS 0x84
-#define BM_DBG_DATA_NUM     1
-#define BM_DBG_DATA_INC     0x4
-#define BM_DBG_DATA_TYPE    REG_TYPE_RO
-#define BM_DBG_DATA_DEFAULT 0x0
-	/*[field] DBG_DATA*/
-	#define BM_DBG_DATA_DBG_DATA
-	#define BM_DBG_DATA_DBG_DATA_OFFSET  0
-	#define BM_DBG_DATA_DBG_DATA_LEN     32
-	#define BM_DBG_DATA_DBG_DATA_DEFAULT 0x0
-
-struct bm_dbg_data {
-	a_uint32_t  dbg_data:32;
-};
-
-union bm_dbg_data_u {
-	a_uint32_t val;
-	struct bm_dbg_data bf;
-};
 
 /*[register] FB_FIFO_CFG*/
 #define FB_FIFO_CFG
