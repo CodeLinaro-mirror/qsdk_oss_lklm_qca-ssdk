@@ -820,7 +820,7 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 			group_buf = 1550;
 			break;
 		case MPPE_TYPE:
-			group_buf = 320;
+			group_buf = 360;
 			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
