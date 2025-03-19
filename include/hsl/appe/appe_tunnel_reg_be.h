@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2178,51 +2178,6 @@ struct eg_proto_mapping1 {
 union eg_proto_mapping1_u {
 	a_uint32_t val;
 	struct eg_proto_mapping1 bf;
-};
-
-/*[register] DBG_ADDR*/
-#define DBG_ADDR
-#define DBG_ADDR_ADDRESS 0x80
-#define DBG_ADDR_NUM     1
-#define DBG_ADDR_INC     0x4
-#define DBG_ADDR_TYPE    REG_TYPE_RW
-#define DBG_ADDR_DEFAULT 0x0
-	/*[field] DBG_ADDR*/
-	#define DBG_ADDR_DBG_ADDR
-	#define DBG_ADDR_DBG_ADDR_OFFSET  0
-	#define DBG_ADDR_DBG_ADDR_LEN     16
-	#define DBG_ADDR_DBG_ADDR_DEFAULT 0x0
-
-struct dbg_addr {
-	a_uint32_t  _reserved0:16;
-	a_uint32_t  dbg_addr:16;
-};
-
-union dbg_addr_u {
-	a_uint32_t val;
-	struct dbg_addr bf;
-};
-
-/*[register] DBG_DATA*/
-#define DBG_DATA
-#define DBG_DATA_ADDRESS 0x84
-#define DBG_DATA_NUM     1
-#define DBG_DATA_INC     0x4
-#define DBG_DATA_TYPE    REG_TYPE_RO
-#define DBG_DATA_DEFAULT 0x0
-	/*[field] DBG_DATA*/
-	#define DBG_DATA_DBG_DATA
-	#define DBG_DATA_DBG_DATA_OFFSET  0
-	#define DBG_DATA_DBG_DATA_LEN     32
-	#define DBG_DATA_DBG_DATA_DEFAULT 0x0
-
-struct dbg_data {
-	a_uint32_t  dbg_data:32;
-};
-
-union dbg_data_u {
-	a_uint32_t val;
-	struct dbg_data bf;
 };
 
 /*[table] EG_HEADER_DATA*/
