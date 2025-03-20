@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -119,26 +119,6 @@ sw_error_t
 hppe_bm_rsv_1_set(
 		a_uint32_t dev_id,
 		union bm_rsv_1_u *value);
-
-sw_error_t
-hppe_bm_dbg_addr_get(
-		a_uint32_t dev_id,
-		union bm_dbg_addr_u *value);
-
-sw_error_t
-hppe_bm_dbg_addr_set(
-		a_uint32_t dev_id,
-		union bm_dbg_addr_u *value);
-
-sw_error_t
-hppe_bm_dbg_data_get(
-		a_uint32_t dev_id,
-		union bm_dbg_data_u *value);
-
-sw_error_t
-hppe_bm_dbg_data_set(
-		a_uint32_t dev_id,
-		union bm_dbg_data_u *value);
 
 sw_error_t
 hppe_port_fc_mode_get(
@@ -489,26 +469,6 @@ hppe_bm_rsv_1_rsv_1_get(
 
 sw_error_t
 hppe_bm_rsv_1_rsv_1_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_bm_dbg_addr_dbg_addr_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_bm_dbg_addr_dbg_addr_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_bm_dbg_data_dbg_data_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_bm_dbg_data_dbg_data_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -162,48 +162,8 @@ hppe_bm_rsv_1_set(
 				NSS_BM_CSR_BASE_ADDR + BM_RSV_1_ADDRESS,
 				value->val);
 }
-
-sw_error_t
-hppe_bm_dbg_addr_get(
-		a_uint32_t dev_id,
-		union bm_dbg_addr_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + BM_DBG_ADDR_ADDRESS,
-				&value->val);
-}
-
-sw_error_t
-hppe_bm_dbg_addr_set(
-		a_uint32_t dev_id,
-		union bm_dbg_addr_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + BM_DBG_ADDR_ADDRESS,
-				value->val);
-}
-
-sw_error_t
-hppe_bm_dbg_data_get(
-		a_uint32_t dev_id,
-		union bm_dbg_data_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + BM_DBG_DATA_ADDRESS,
-				&value->val);
-}
-
-sw_error_t
-hppe_bm_dbg_data_set(
-		a_uint32_t dev_id,
-		union bm_dbg_data_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
 #endif
+
 sw_error_t
 hppe_port_fc_mode_get(
 		a_uint32_t dev_id,
@@ -1038,56 +998,6 @@ hppe_bm_rsv_1_rsv_1_set(
 	reg_val.bf.rsv_1 = value;
 	ret = hppe_bm_rsv_1_set(dev_id, &reg_val);
 	return ret;
-}
-
-sw_error_t
-hppe_bm_dbg_addr_dbg_addr_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union bm_dbg_addr_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_bm_dbg_addr_get(dev_id, &reg_val);
-	*value = reg_val.bf.dbg_addr;
-	return ret;
-}
-
-sw_error_t
-hppe_bm_dbg_addr_dbg_addr_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union bm_dbg_addr_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_bm_dbg_addr_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.dbg_addr = value;
-	ret = hppe_bm_dbg_addr_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_bm_dbg_data_dbg_data_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union bm_dbg_data_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_bm_dbg_data_get(dev_id, &reg_val);
-	*value = reg_val.bf.dbg_data;
-	return ret;
-}
-
-sw_error_t
-hppe_bm_dbg_data_dbg_data_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
