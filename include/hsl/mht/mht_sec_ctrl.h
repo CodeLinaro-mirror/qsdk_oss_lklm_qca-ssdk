@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -75,10 +75,6 @@ sw_error_t
 qca_mht_work_mode_get(a_uint32_t dev_id, mht_work_mode_t *work_mode);
 
 sw_error_t
-qca_mht_serdes_addr_get(a_uint32_t dev_id, a_uint32_t serdes_id,
-	a_uint32_t *address);
-
-sw_error_t
 qca_mht_ephy_addr_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t *address);
 
@@ -120,14 +116,8 @@ a_bool_t
 qca_mht_sku_check(a_uint32_t dev_id, a_uint32_t mht_sku);
 
 a_bool_t
-qca_mht_sku_uniphy_enabled(a_uint32_t dev_id, a_uint32_t uniphy_index);
-
-a_bool_t
 qca_mht_sku_switch_core_enabled(a_uint32_t dev_id);
 
-sw_error_t
-qca_mht_ethphy_icc_efuse_get(a_uint32_t dev_id, a_uint32_t mht_port_id,
-	a_uint32_t *icc_value);
 sw_error_t
 qca_mht_mdio_cfg(a_uint32_t dev_id, a_uint32_t div, a_uint32_t timer, a_uint32_t preamble_length);
 #ifdef __cplusplus
