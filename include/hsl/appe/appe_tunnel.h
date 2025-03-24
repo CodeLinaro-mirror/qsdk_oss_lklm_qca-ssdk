@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -629,21 +629,6 @@ appe_eg_proto_mapping1_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union eg_proto_mapping1_u *value);
-
-sw_error_t
-appe_dbg_addr_get(
-		a_uint32_t dev_id,
-		union dbg_addr_u *value);
-
-sw_error_t
-appe_dbg_addr_set(
-		a_uint32_t dev_id,
-		union dbg_addr_u *value);
-
-sw_error_t
-appe_dbg_data_get(
-		a_uint32_t dev_id,
-		union dbg_data_u *value);
 
 sw_error_t
 appe_eg_header_data_get(

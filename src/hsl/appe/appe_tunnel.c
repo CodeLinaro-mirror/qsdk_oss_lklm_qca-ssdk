@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1317,39 +1317,6 @@ appe_eg_proto_mapping1_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_PROTO_MAPPING1_ADDRESS + \
 				index * EG_PROTO_MAPPING1_INC,
 				value->val);
-}
-
-sw_error_t
-appe_dbg_addr_get(
-		a_uint32_t dev_id,
-		union dbg_addr_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + DBG_ADDR_ADDRESS,
-				&value->val);
-}
-
-sw_error_t
-appe_dbg_addr_set(
-		a_uint32_t dev_id,
-		union dbg_addr_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + DBG_ADDR_ADDRESS,
-				value->val);
-}
-
-sw_error_t
-appe_dbg_data_get(
-		a_uint32_t dev_id,
-		union dbg_data_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + DBG_DATA_ADDRESS,
-				&value->val);
 }
 
 sw_error_t
