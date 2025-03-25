@@ -28,12 +28,13 @@
 #include "isisc_port_ctrl.h"
 #include "hsl_phy.h"
 #include "ssdk_plat.h"
-#include "ssdk_mht_clk.h"
 #include "mht_port_ctrl.h"
-#include "mht_interface_ctrl.h"
 #include "ssdk_mht.h"
 #include "ssdk_dts.h"
 #include "ssdk_interrupt.h"
+#include "mht_sec_ctrl.h"
+#include "qca-nss-phy/qcom_phy_lib.h"
+#include "qca-nss-phy/qca8k_clk.h"
 
 #ifndef IN_PORTCONTROL_MINI
 #define PORT0_MAX_VIRT_RING	8
@@ -1087,10 +1088,16 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	a_uint32_t i = 0, pbmp = 0;
 	phy_info_t *phy_info = NULL;
-	fal_mac_config_t mac_config = {0};
+	struct qcom_phy_pcs_cfg pcs_config = {0};
+	struct phy_device *phydev = NULL;
 	sw_error_t rv = SW_OK;
+	struct mdio_device *clk_dev = NULL;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
+
+	clk_dev = ssdk_dt_clk_mdiodev_get(dev_id);
+	if (!clk_dev)
+		return SW_FAIL;
 
 	switch (power_mode) {
 	case FAL_ERP_LOW_POWER:
@@ -1137,13 +1144,13 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 		ssdk_switch_set_standby_status(dev_id, true);
 
 		/* disable switch core */
-		SW_RTN_ON_ERROR(ssdk_mht_clk_disable(dev_id, MHT_SWITCH_CORE_CLK));
+		SW_RTN_ON_ERROR(qca8k_clk_disable(clk_dev, MHT_SWITCH_CORE_CLK));
 
 		/* switch ahb to xo */
-		SW_RTN_ON_ERROR(ssdk_mht_clk_parent_set(dev_id, MHT_AHB_CLK, MHT_P_XO));
-		SW_RTN_ON_ERROR(ssdk_mht_clk_rate_set(dev_id, MHT_AHB_CLK, MHT_XO_CLK_RATE_50M));
+		SW_RTN_ON_ERROR(qca8k_clk_parent_set(clk_dev, MHT_AHB_CLK, MHT_P_XO));
+		SW_RTN_ON_ERROR(qca8k_clk_rate_set(clk_dev, MHT_AHB_CLK, MHT_XO_CLK_RATE_50M));
 		/* assert serdes1 */
-		SW_RTN_ON_ERROR(ssdk_mht_clk_assert(dev_id, MHT_SRDS1_SYS_CLK));
+		SW_RTN_ON_ERROR(qca8k_clk_assert(clk_dev, MHT_SRDS1_SYS_CLK));
 		/* off LDO */
 		HSL_PORT_PHY_API_RUN(ldo_set, dev_id, port_id, A_FALSE);
 		break;
@@ -1155,26 +1162,28 @@ _mht_port_erp_power_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 		/* on LDO */
 		HSL_PORT_PHY_API_RUN(ldo_set, dev_id, port_id, A_TRUE);
 		/* resume serdes and switch core */
-		if (ssdk_mht_clk_is_asserted(dev_id, MHT_SRDS1_SYS_CLK)) {
+		if (qca8k_clk_is_asserted(clk_dev, MHT_SRDS1_SYS_CLK)) {
 			SSDK_DEBUG("configure manhattan serdes1 and enable switch core\n");
 			/* configure serdes1 as sgmii plus mode */
 			phy_info = hsl_phy_info_get(dev_id);
 			phy_info->port_mode[SSDK_PHYSICAL_PORT0] = PORT_SGMII_PLUS;
-			mac_config.mac_mode = FAL_MAC_MODE_SGMII_PLUS;
-			mac_config.config.sgmii.clock_mode = FAL_INTERFACE_CLOCK_MAC_MODE;
-			mac_config.config.sgmii.auto_neg = A_FALSE;
-			mac_config.config.sgmii.force_speed = FAL_SPEED_2500;
-			SW_RTN_ON_ERROR(mht_interface_mac_mode_set(dev_id,
-					SSDK_PHYSICAL_PORT0, &mac_config));
+			pcs_config.type = PHY_INTERFACE_MODE_2500BASEX;
+			pcs_config.clock_mode = CLOCK_MAC_MODE;
+			pcs_config.auto_neg = A_FALSE;
+			pcs_config.force_speed = FAL_SPEED_2500;
+			pcs_config.addr_offset = PCS1_ADDR_OFFSET;
+			SW_RTN_ON_ERROR(hsl_port_phydev_get(dev_id, SSDK_PHYSICAL_PORT1,
+				&phydev));
+			SW_RTN_ON_ERROR(qcom_phy_pcs_interface_set(phydev, pcs_config));
 
 			/* switch ahb back to serdes1 */
-			SW_RTN_ON_ERROR(ssdk_mht_clk_parent_set(dev_id,
+			SW_RTN_ON_ERROR(qca8k_clk_parent_set(clk_dev,
 					MHT_AHB_CLK, MHT_P_UNIPHY1_TX312P5M));
-			SW_RTN_ON_ERROR(ssdk_mht_clk_rate_set(dev_id,
+			SW_RTN_ON_ERROR(qca8k_clk_rate_set(clk_dev,
 					MHT_AHB_CLK, MHT_AHB_CLK_RATE_104P17M));
 
 			/* enable switch core */
-			SW_RTN_ON_ERROR(ssdk_mht_clk_enable(dev_id, MHT_SWITCH_CORE_CLK));
+			SW_RTN_ON_ERROR(qca8k_clk_enable(clk_dev, MHT_SWITCH_CORE_CLK));
 
 			ssdk_switch_set_standby_status(dev_id, false);
 
@@ -1414,7 +1423,8 @@ mht_port_interface_mode_switch(a_uint32_t dev_id, a_uint32_t port_id)
 		}
 		mac_config.config.sgmii.clock_mode = FAL_INTERFACE_CLOCK_MAC_MODE;
 		mac_config.config.sgmii.auto_neg = A_TRUE;
-		rv = mht_interface_mac_mode_set(dev_id, port_id,&mac_config);
+		rv = mht_port_interface_mode_set(dev_id, SSDK_PHYSICAL_PORT5,
+			&mac_config);
 		SW_RTN_ON_ERROR(rv);
 		phy_info->port_mode[port_id] = port_mode_new;
 
@@ -1430,6 +1440,12 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 	struct port_phy_status phy_status)
 {
 	sw_error_t rv = 0;
+	struct phy_device *phydev = NULL;
+	struct mdio_device *clk_dev = NULL;
+
+	clk_dev = ssdk_dt_clk_mdiodev_get(priv->device_id);
+	if (!clk_dev)
+		return SW_FAIL;
 
 	if ((port_id == SSDK_PHYSICAL_PORT5) &&
 			(A_TRUE == hsl_port_phy_connected(priv->device_id, port_id))) {
@@ -1442,8 +1458,9 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 		phy_status.duplex = FAL_FULL_DUPLEX;
 	}
 	/* configure gcc uniphy and mac speed frequency*/
-	rv = mht_port_speed_clock_set(priv->device_id, port_id, phy_status.speed);
-	SW_RTN_ON_ERROR (rv);
+	rv = hsl_port_phydev_get(priv->device_id, port_id, &phydev);
+	SW_RTN_ON_ERROR(rv);
+	qcom_phy_pcs_speed_clock_set(phydev, port_id, phy_status.speed);
 	/* configure mac speed and duplex */
 	rv = _mht_port_mac_speed_set(priv->device_id, port_id, phy_status.speed);
 	SW_RTN_ON_ERROR (rv);
@@ -1471,7 +1488,7 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 		}
 		if (port_id != SSDK_PHYSICAL_PORT5) {
 			/* enable eth phy clock */
-			rv = ssdk_mht_port_clk_en_set(priv->device_id, port_id,
+			rv = qca8k_port_clk_en_set(clk_dev, port_id,
 				MHT_CLK_TYPE_EPHY, A_TRUE);
 			SW_RTN_ON_ERROR (rv);
 		}
@@ -1479,12 +1496,12 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 	if (port_id != SSDK_PHYSICAL_PORT5) {
 		if (phy_status.link_status == PORT_LINK_DOWN) {
 			/* disable eth phy clock */
-			rv = ssdk_mht_port_clk_en_set(priv->device_id, port_id,
+			rv = qca8k_port_clk_en_set(clk_dev, port_id,
 				MHT_CLK_TYPE_EPHY, A_FALSE);
 			SW_RTN_ON_ERROR (rv);
 		}
 		/* reset eth phy clock */
-		rv = ssdk_mht_port_clk_reset(priv->device_id, port_id, MHT_CLK_TYPE_EPHY);
+		rv = qca8k_port_clk_reset(clk_dev, port_id, MHT_CLK_TYPE_EPHY);
 		SW_RTN_ON_ERROR (rv);
 		/* reset eth phy fifo */
 		HSL_PORT_PHY_API_RUN(function_reset, priv->device_id, port_id,
@@ -1495,6 +1512,57 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 	return rv;
 }
 
+sw_error_t
+mht_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_mac_config_t *config)
+{
+	sw_error_t rv = SW_OK;
+	struct qcom_phy_pcs_cfg pcs_config = {0};
+	struct mdio_device *clk_dev = NULL;
+	struct phy_device *phydev = NULL;
+
+	rv = hsl_port_phydev_get(dev_id, SSDK_PHYSICAL_PORT1, &phydev);
+	SW_RTN_ON_ERROR(rv);
+
+	if(port_id == SSDK_PHYSICAL_PORT0) {
+		/*for switch mode, the uniphy1 must be initialized firstly and initialized
+		only one time, so configure dvs and acc for memory before uniphy1 initialization*/
+		rv = qca_mht_mem_ctrl_set(dev_id, MHT_MEM_CTRL_DVS_SWITCH_MODE,
+			MHT_MEM_ACC_0_SWITCH_MODE);
+		PHY_RTN_ON_ERROR (rv);
+		pcs_config.addr_offset = PCS1_ADDR_OFFSET;
+	} else if(port_id == SSDK_PHYSICAL_PORT5) {
+		pcs_config.addr_offset = PCS0_ADDR_OFFSET;
+		/*if uniphy0 is used as switch bypass, then will do nothing here*/
+		if(qcom_phy_pcs_mode_check(phydev, PCS0_ADDR_OFFSET,
+			QCOM_PHY_PCS_MMD1_SGMII_PHY_MODE)){
+			return SW_OK;
+		} else {
+			if(config->mac_mode == FAL_MAC_MODE_MAX) {
+				clk_dev = ssdk_dt_clk_mdiodev_get(dev_id);
+				if (!clk_dev)
+					return SW_FAIL;
+				/* assert serdes0 to save power */
+				qca8k_clk_assert(clk_dev, MHT_SRDS0_SYS_CLK);
+				return SW_OK;
+			}
+		}
+	}
+
+	if (config->mac_mode == FAL_MAC_MODE_SGMII)
+		pcs_config.type = PHY_INTERFACE_MODE_SGMII;
+	else if (config->mac_mode == FAL_MAC_MODE_SGMII_PLUS)
+		pcs_config.type = PHY_INTERFACE_MODE_2500BASEX;
+	else
+		return SW_NOT_SUPPORTED;
+	pcs_config.auto_neg = config->config.sgmii.auto_neg;
+	pcs_config.force_speed = config->config.sgmii.force_speed;
+	pcs_config.clock_mode = CLOCK_MAC_MODE;
+	if (qcom_phy_pcs_interface_set(phydev, pcs_config) < 0)
+		return SW_FAIL;
+
+	return SW_OK;
+}
 /**
  * @}
  */

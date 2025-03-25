@@ -39,7 +39,7 @@
 #endif
 #include <linux/mdio-bitbang.h>
 #ifdef MHT
-#include "mht_interface_ctrl.h"
+#include "qca-nss-phy/qcom_phy_lib.h"
 #endif
 extern void adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id,
 				a_uint32_t port_id, fal_port_speed_t phy_speed);
@@ -960,7 +960,9 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 	a_uint32_t i, max_port, ssdk_port;
 	sw_error_t rv = SW_OK;
 	a_bool_t force_port = 0;
-
+#ifdef MHT
+	struct phy_device *phydev = NULL;
+#endif
 	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
 
 	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
@@ -1121,16 +1123,21 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 			i, A_TRUE);
 	}
 #ifdef MHT
-	if(hsl_port_phyid_get(dev_id, ssdk_port) == QCA8084_PHY)
-	{
-		static a_bool_t init = A_FALSE;
+	if(hsl_port_phydev_get(dev_id, ssdk_port, &phydev) == SW_OK) {
+		if (phydev->phy_id == QCA8084_PHY) {
+			static a_bool_t init = A_FALSE;
+			struct qcom_phy_pcs_cfg config = {0};
 
-		if (init == A_FALSE) {
-			/*Below SGMII is only configured when ssdk init,
-			and would not be configured in polling*/
-			rv = mht_interface_phy_mode_set(dev_id, PHY_SGMII_BASET);
-			init = A_TRUE;
-			SW_RTN_ON_ERROR (rv);
+			if (init == A_FALSE) {
+				/*Below SGMII is only configured when ssdk init,
+				and would not be configured in polling*/
+				config.type = PHY_INTERFACE_MODE_SGMII;
+				config.addr_offset = PCS0_ADDR_OFFSET;
+				config.clock_mode = CLOCK_PHY_MODE;
+				config.auto_neg = A_TRUE;
+				qcom_phy_pcs_interface_set(phydev, config);
+				init = A_TRUE;
+			}
 		}
 	}
 #endif

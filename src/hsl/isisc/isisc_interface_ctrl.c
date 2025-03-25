@@ -26,8 +26,8 @@
 #include "isisc_interface_ctrl.h"
 #include "isisc_reg.h"
 #include "hsl_phy.h"
-#if defined(MHT)
-#include "mht_interface_ctrl.h"
+#if defined(MHT) && defined(IN_PORTCONTROL)
+#include "mht_port_ctrl.h"
 #endif
 
 #define ISISC_MAC_0     0
@@ -2118,10 +2118,10 @@ isisc_interface_ctrl_init(a_uint32_t dev_id)
         hsl_api_t *p_api;
 
         SW_RTN_ON_NULL(p_api = hsl_api_ptr_get(dev_id));
-#if defined(MHT)
+#if defined(MHT) && defined(IN_PORTCONTROL)
         if(chip_type == CHIP_MHT)
         {
-             p_api->interface_mac_mode_set = mht_interface_mac_mode_set;
+             p_api->interface_mac_mode_set = mht_port_interface_mode_set;
         }
         else
 #endif
