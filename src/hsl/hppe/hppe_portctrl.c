@@ -381,7 +381,7 @@ hppe_mac_ctrl2_mac_loop_back_set(
 }
 #endif
 sw_error_t
-hppe_mac_dbg_ctrl_hihg_ipg_set(
+hppe_mac_dbg_ctrl_high_ipg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value)
@@ -392,7 +392,7 @@ hppe_mac_dbg_ctrl_hihg_ipg_set(
 	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.hihg_ipg = value;
+	reg_val.bf.high_ipg = value;
 	ret = hppe_mac_dbg_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }

@@ -339,7 +339,7 @@ _adpt_gmac_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
 	rv |= hppe_mac_ctrl2_maxfr_set(dev_id, port_id, max_frame);
 	rv |= hppe_mac_ctrl2_crs_sel_set(dev_id, port_id, CARRIER_SENSE_SIGNAL_FROM_MAC);
-	rv |= hppe_mac_dbg_ctrl_hihg_ipg_set(dev_id, port_id, GMAC_IPG_CHECK);
+	rv |= hppe_mac_dbg_ctrl_high_ipg_set(dev_id, port_id, GMAC_IPG_CHECK);
 	rv |= hppe_mac_ctrl2_mac_tx_thd_set(dev_id, port_id, GMAC_TX_THD);
 
 	return rv;

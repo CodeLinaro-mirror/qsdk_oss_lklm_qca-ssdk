@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -23,7 +23,6 @@
 #ifndef _HPPE_FDB_H_
 #define _HPPE_FDB_H_
 
-#define PRE_L2_CNT_TBL_MAX_ENTRY	32
 #define PORT_BRIDGE_CTRL_MAX_ENTRY	8
 #define PORT_LRN_LIMIT_CTRL_MAX_ENTRY	8
 #define PORT_LRN_LIMIT_COUNTER_MAX_ENTRY	8

@@ -188,7 +188,7 @@ hppe_mac_ctrl2_mac_loop_back_set(
 		a_uint32_t value);
 
 sw_error_t
-hppe_mac_dbg_ctrl_hihg_ipg_set(
+hppe_mac_dbg_ctrl_high_ipg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);

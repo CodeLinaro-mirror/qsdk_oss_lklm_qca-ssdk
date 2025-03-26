@@ -435,10 +435,10 @@ union mac_ctrl2_u {
 	#define MAC_DBG_CTRL_IPGR1_LEN     7
 	#define MAC_DBG_CTRL_IPGR1_DEFAULT 0x40
 	/*[field] HIHG_IPG*/
-	#define MAC_DBG_CTRL_HIHG_IPG
-	#define MAC_DBG_CTRL_HIHG_IPG_OFFSET  8
-	#define MAC_DBG_CTRL_HIHG_IPG_LEN     8
-	#define MAC_DBG_CTRL_HIHG_IPG_DEFAULT 0x10
+	#define MAC_DBG_CTRL_HIGH_IPG
+	#define MAC_DBG_CTRL_HIGH_IPG_OFFSET  8
+	#define MAC_DBG_CTRL_HIGH_IPG_LEN     8
+	#define MAC_DBG_CTRL_HIGH_IPG_DEFAULT 0x10
 	/*[field] MAC_IPG_CTRL*/
 	#define MAC_DBG_CTRL_MAC_IPG_CTRL
 	#define MAC_DBG_CTRL_MAC_IPG_CTRL_OFFSET  20
@@ -458,7 +458,7 @@ union mac_ctrl2_u {
 struct mac_dbg_ctrl {
 	a_uint32_t  ipgr1:7;
 	a_uint32_t  _reserved0:1;
-	a_uint32_t  hihg_ipg:8;
+	a_uint32_t  high_ipg:8;
 	a_uint32_t  _reserved1:4;
 	a_uint32_t  mac_ipg_ctrl:4;
 	a_uint32_t  _reserved2:6;
