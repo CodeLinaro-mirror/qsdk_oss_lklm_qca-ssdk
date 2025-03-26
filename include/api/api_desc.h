@@ -1188,6 +1188,30 @@ extern "C" {
 		    sizeof(fal_vlan_trans_adv_action_t), SW_PARAM_PTR|SW_PARAM_IN, \
 		    "vlan trans action"),
 
+#define SW_API_PT_VLAN_TRANS_ADV_SET_DESC \
+	SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
+	SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, SW_PT_VLAN_DIRECTION, \
+			sizeof(fal_port_vlan_direction_t), SW_PARAM_IN, "vlan direction"), \
+	SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, SW_UINT32, 4, SW_PARAM_IN, "Index"),	\
+	SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, SW_PT_VLAN_TRANS_ADV_RULE, \
+			sizeof(fal_vlan_trans_adv_rule_t), SW_PARAM_PTR|SW_PARAM_IN, \
+			"vlan trans rule"), \
+	SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, SW_PT_VLAN_TRANS_ADV_ACTION, \
+			sizeof(fal_vlan_trans_adv_action_t), SW_PARAM_PTR|SW_PARAM_IN, \
+			"vlan trans action"),
+
+#define SW_API_PT_VLAN_TRANS_ADV_GET_DESC \
+    SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
+    SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, SW_PT_VLAN_DIRECTION, \
+		    sizeof(fal_port_vlan_direction_t), SW_PARAM_IN, "vlan direction"), \
+    SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, SW_UINT32, 4, SW_PARAM_IN, "Index"),   \
+    SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, SW_PT_VLAN_TRANS_ADV_RULE, \
+		    sizeof(fal_vlan_trans_adv_rule_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+		    "vlan trans rule"), \
+    SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, SW_PT_VLAN_TRANS_ADV_ACTION, \
+		    sizeof(fal_vlan_trans_adv_action_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+		    "vlan trans action"),
+
 #define SW_API_PT_VLAN_TRANS_ADV_GETFIRST_DESC \
     SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GETFIRST, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),    \
     SW_PARAM_DEF(SW_API_PT_VLAN_TRANS_ADV_GETFIRST, SW_UINT32, 4, SW_PARAM_IN, "Port ID"),   \

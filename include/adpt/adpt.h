@@ -780,6 +780,10 @@ typedef sw_error_t (*adpt_port_vlan_trans_adv_add_func)(a_uint32_t dev_id, fal_p
                                 fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
 typedef sw_error_t (*adpt_port_vlan_trans_adv_del_func)(a_uint32_t dev_id, fal_port_t port_id, fal_port_vlan_direction_t direction,
                                 fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
+typedef sw_error_t (*adpt_port_vlan_trans_adv_get_func)(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint32_t index,
+                                fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
+typedef sw_error_t (*adpt_port_vlan_trans_adv_set_func)(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint32_t index,
+                                fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
 typedef sw_error_t (*adpt_port_vlan_trans_adv_getfirst_func)(a_uint32_t dev_id, fal_port_t port_id, fal_port_vlan_direction_t direction,
                                 fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
 typedef sw_error_t (*adpt_port_vlan_trans_adv_getnext_func)(a_uint32_t dev_id, fal_port_t port_id, fal_port_vlan_direction_t direction,
@@ -1746,6 +1750,8 @@ typedef struct
 	adpt_port_invlan_mode_get_func adpt_port_invlan_mode_get;
 	adpt_port_vlan_trans_adv_add_func adpt_port_vlan_trans_adv_add;
 	adpt_port_vlan_trans_adv_del_func adpt_port_vlan_trans_adv_del;
+	adpt_port_vlan_trans_adv_get_func adpt_port_vlan_trans_adv_get;
+	adpt_port_vlan_trans_adv_set_func adpt_port_vlan_trans_adv_set;
 	adpt_port_vlan_trans_adv_getfirst_func adpt_port_vlan_trans_adv_getfirst;
 	adpt_port_vlan_trans_adv_getnext_func adpt_port_vlan_trans_adv_getnext;
 	adpt_port_vlan_counter_get_func adpt_port_vlan_counter_get;
