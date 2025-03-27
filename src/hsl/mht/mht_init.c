@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -33,41 +33,47 @@
 #include "mht_init.h"
 #include "mht_sec_ctrl.h"
 #include "ssdk_dts.h"
-#include "ssdk_mht_clk.h"
+#include "qca-nss-phy/qca8k_clk.h"
 
 static sw_error_t
 _mht_reset(a_uint32_t dev_id)
 {
 	sw_error_t rv;
+	struct mdio_device *clk_dev = NULL;
+
 	HSL_DEV_ID_CHECK(dev_id);
 
-	ssdk_mht_clk_assert(dev_id, MHT_SWITCH_CORE_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC0_TX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC0_RX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC1_TX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC1_RX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC2_TX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC2_RX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC3_TX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC3_RX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC4_TX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC4_RX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC5_TX_CLK);
-	ssdk_mht_clk_assert(dev_id, MHT_MAC5_RX_CLK);
+	clk_dev = ssdk_dt_clk_mdiodev_get(dev_id);
+	if (!clk_dev)
+		return SW_FAIL;
+
+	qca8k_clk_assert(clk_dev, MHT_SWITCH_CORE_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC0_TX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC0_RX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC1_TX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC1_RX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC2_TX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC2_RX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC3_TX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC3_RX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC4_TX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC4_RX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC5_TX_CLK);
+	qca8k_clk_assert(clk_dev, MHT_MAC5_RX_CLK);
 	udelay(10);
-	ssdk_mht_clk_deassert(dev_id, MHT_SWITCH_CORE_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC0_TX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC0_RX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC1_TX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC1_RX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC2_TX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC2_RX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC3_TX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC3_RX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC4_TX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC4_RX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC5_TX_CLK);
-	ssdk_mht_clk_deassert(dev_id, MHT_MAC5_RX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_SWITCH_CORE_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC0_TX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC0_RX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC1_TX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC1_RX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC2_TX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC2_RX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC3_TX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC3_RX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC4_TX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC4_RX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC5_TX_CLK);
+	qca8k_clk_deassert(clk_dev, MHT_MAC5_RX_CLK);
 	/* Need to wait 50us to complete switch initialization. */
 	udelay(50);
 

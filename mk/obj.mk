@@ -424,8 +424,7 @@ OBJ-COMMON  += src/init/ssdk_init.o src/init/ssdk_plat.o src/init/ssdk_interrupt
 OBJ-ISISC   += src/hsl/isisc/isisc_init.o
 OBJ-HPPE    += src/init/ssdk_hppe.o  src/hsl/hppe/hppe_init.o
 OBJ-APPE    += src/init/ssdk_appe.o
-OBJ-MHT     += src/hsl/mht/mht_init.o src/init/ssdk_mht.o src/init/ssdk_mht_clk.o \
-               src/init/ssdk_mht_pinctrl.o
+OBJ-MHT     += src/hsl/mht/mht_init.o src/init/ssdk_mht.o src/init/ssdk_mht_pinctrl.o
 OBJ-SCOMPHY += src/init/ssdk_scomphy.o
 
 ###############################################################################

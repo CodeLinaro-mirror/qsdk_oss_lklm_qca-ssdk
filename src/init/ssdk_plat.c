@@ -62,17 +62,9 @@
 #include "ref_uci.h"
 #include "shell.h"
 
-#if defined(MHT)
-#include "ssdk_mht_clk.h"
-#endif
-
 #include "adpt.h"
 #include "ssdk_interrupt.h"
 
-#ifdef IN_LINUX_STD_PTP
-#include "hsl_ptp.h"
-#include "qca808x.h"
-#endif
 #include "hsl_port_prop.h"
 /*qca808x_start*/
 #ifdef HPPE
@@ -1289,137 +1281,6 @@ fail:
 	return -EINVAL;
 }
 
-#ifdef IN_LINUX_STD_PTP
-static ssize_t ssdk_ptp_counter_get(struct device *dev,
-		struct device_attribute *attr,
-		char *buf)
-{
-	ssize_t count = 0;
-
-	snprintf(buf + PAGE_SIZE - 5, 5, "%zd", count);
-	hsl_ptp_event_stat_operation(QCA808X_SSDK_PHY_DRIVER_NAME, buf);
-
-	/* the last 5 bytes save the length of data bytes */
-	sscanf(buf + PAGE_SIZE - 5, "%zd", &count);
-
-	return count;
-}
-
-static ssize_t ssdk_ptp_counter_set(struct device *dev,
-		struct device_attribute *attr,
-		const char *buf, size_t count)
-{
-	char *op_set = "set";
-	hsl_ptp_event_stat_operation(QCA808X_SSDK_PHY_DRIVER_NAME, op_set);
-
-	return count;
-}
-#endif
-
-#if defined(MHT)
-static ssize_t ssdk_clk_show(struct device *dev,
-		struct device_attribute *attr,
-		char *buf)
-{
-	return ssdk_mht_clk_dump(ssdk_dev_id, buf);
-}
-
-static ssize_t ssdk_clk_store(struct device *dev,
-		struct device_attribute *attr,
-		const char *buf, size_t count)
-{
-	char *clk_str, *clk_id, *op_str, *val_str = NULL;
-	a_uint32_t op_val;
-
-	clk_str = kstrndup(buf, count, GFP_KERNEL);
-	if (!clk_str)
-		return -ENOMEM;
-
-	if (clk_str[count - 1] == '\n')
-		clk_str[count - 1] = '\0';
-
-	clk_id = strsep(&clk_str, " ");
-	if (!clk_id)
-		goto parse_fail;
-
-	op_str = strsep(&clk_str, " ");
-	if (!op_str)
-		goto parse_fail;
-
-	/* the op_val is optinal */
-	val_str = strsep(&clk_str, " ");
-	if (val_str) {
-		if (kstrtou32(val_str, 0, &op_val) < 0)
-			goto parse_fail;
-	}
-
-	SSDK_DEBUG("clk_id: %s, option: %s %s\n", clk_id, op_str, val_str ? val_str : "");
-
-	if (strncasecmp(op_str, "parent", 6) == 0) {
-		if (val_str != NULL)
-			ssdk_mht_clk_parent_set(ssdk_dev_id, clk_id, op_val);
-		else {
-			SSDK_ERROR("parent value needed\n");
-			goto parse_fail;
-		}
-	}
-
-	if (strncasecmp(op_str, "rate", 4) == 0) {
-		if (val_str != NULL)
-			ssdk_mht_clk_rate_set(ssdk_dev_id, clk_id, op_val);
-		else {
-			SSDK_ERROR("rate value needed\n");
-			goto parse_fail;
-		}
-	}
-
-	if (strncasecmp(op_str, "reset", 5) == 0) {
-		ssdk_mht_clk_reset(ssdk_dev_id, clk_id);
-	}
-
-	if (strncasecmp(op_str, "deassert", 8) == 0) {
-		ssdk_mht_clk_deassert(ssdk_dev_id, clk_id);
-	}
-
-	if (strncasecmp(op_str, "assert", 6) == 0) {
-		ssdk_mht_clk_assert(ssdk_dev_id, clk_id);
-	}
-
-	if (strncasecmp(op_str, "enable", 6) == 0) {
-		ssdk_mht_clk_enable(ssdk_dev_id, clk_id);
-	}
-
-	if (strncasecmp(op_str, "disable", 7) == 0) {
-		ssdk_mht_clk_disable(ssdk_dev_id, clk_id);
-	}
-
-	kfree(clk_str);
-	return count;
-
-parse_fail:
-	if (clk_str)
-		kfree(clk_str);
-
-	SSDK_INFO("clk_cfg supported options:\n"
-			"clock_id parent parent_value[0-6]\n"
-			"Example: echo mht_gcc_mac1_tx_clk parent 6 > /sys/ssdk/clk_cfg\n"
-			"clock_id rate rate_value\n"
-			"Example: echo mht_gcc_mac1_tx_clk rate 312500000 > /sys/ssdk/clk_cfg\n"
-			"clock_id reset\n"
-			"Example: echo mht_gcc_mac1_tx_clk reset > /sys/ssdk/clk_cfg\n"
-			"clock_id deassert\n"
-			"Example: echo mht_gcc_mac1_tx_clk deassert > /sys/ssdk/clk_cfg\n"
-			"clock_id assert\n"
-			"Example: echo mht_gcc_mac1_tx_clk assert > /sys/ssdk/clk_cfg\n"
-			"clock_id enable\n"
-			"Example: echo mht_gcc_mac1_tx_clk enable > /sys/ssdk/clk_cfg\n"
-			"clock_id disable\n"
-			"Example: echo mht_gcc_mac1_tx_clk disable > /sys/ssdk/clk_cfg\n");
-
-	return -EINVAL;
-}
-#endif
-
 #ifdef MP
 #define MP_GMAC_BASE_ADDR 0xc00000
 #endif
@@ -1630,14 +1491,6 @@ static const struct device_attribute ssdk_phy_write_reg_attr =
 	__ATTR(phy_write_reg, 0660, NULL, ssdk_phy_write_reg_set);
 static const struct device_attribute ssdk_phy_read_reg_attr =
 	__ATTR(phy_read_reg, 0660, ssdk_phy_read_reg_get, ssdk_phy_read_reg_set);
-#ifdef IN_LINUX_STD_PTP
-static const struct device_attribute ssdk_ptp_counter_attr =
-	__ATTR(ptp_packet_counter, 0660, ssdk_ptp_counter_get, ssdk_ptp_counter_set);
-#endif
-#if defined(MHT)
-static const struct device_attribute ssdk_clk_cfg_attr =
-	__ATTR(clk_cfg, 0660, ssdk_clk_show, ssdk_clk_store);
-#endif
 static const struct device_attribute ssdk_eth_switch_attr =
 	__ATTR(eth_switch, 0660, ssdk_eth_switch_get, NULL);
 static const struct device_attribute ssdk_mac_polling_attr =
@@ -1705,56 +1558,26 @@ int ssdk_sysfs_init (void)
 		goto CLEANUP_7;
 	}
 
-#ifdef IN_LINUX_STD_PTP
-	/* create /sys/ssdk/ptp_packet_counter file */
-	ret = sysfs_create_file(ssdk_sys, &ssdk_ptp_counter_attr.attr);
-	if (ret) {
-		printk("Failed to register SSDK ptp counter file\n");
-		goto CLEANUP_8;
-	}
-#endif
-
-#if defined(MHT)
-	/* create /sys/ssdk/dts_clk file */
-	ret = sysfs_create_file(ssdk_sys, &ssdk_clk_cfg_attr.attr);
-	if (ret) {
-		printk("Failed to register SSDK clk_cfg file\n");
-		goto CLEANUP_9;
-	}
-#endif
 	/* create /sys/ssdk/switch_external*/
 	ret = sysfs_create_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 	if (ret) {
 		printk("Failed to register switch_external file\n");
-		goto CLEANUP_10;
+		goto CLEANUP_8;
 	}
 
 	/* create /sys/ssdk/mac_polling */
 	ret = sysfs_create_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 	if (ret) {
 		printk("Failed to register SSDK mac polling SysFS file\n");
-		goto CLEANUP_11;
+		goto CLEANUP_9;
 	}
 
 	return 0;
 
-CLEANUP_11:
-	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
-
-CLEANUP_10:
-	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
-
-#if defined(MHT)
 CLEANUP_9:
-#if defined(IN_LINUX_STD_PTP)
-	sysfs_remove_file(ssdk_sys, &ssdk_ptp_counter_attr.attr);
-#endif
-#endif
-
-#ifdef IN_LINUX_STD_PTP
+	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 CLEANUP_8:
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_read_reg_attr.attr);
-#endif
 CLEANUP_7:
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_write_reg_attr.attr);
 CLEANUP_6:
@@ -1775,13 +1598,6 @@ CLEANUP_1:
 
 void ssdk_sysfs_exit (void)
 {
-#if defined(MHT)
-	sysfs_remove_file(ssdk_sys, &ssdk_clk_cfg_attr.attr);
-#endif
-
-#ifdef IN_LINUX_STD_PTP
-	sysfs_remove_file(ssdk_sys, &ssdk_ptp_counter_attr.attr);
-#endif
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_read_reg_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_write_reg_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dts_dump_attr.attr);

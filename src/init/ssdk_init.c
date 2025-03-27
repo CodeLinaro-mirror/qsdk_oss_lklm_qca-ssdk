@@ -96,7 +96,6 @@
 
 #if defined(MHT)
 #include "ssdk_mht.h"
-#include "ssdk_mht_clk.h"
 #endif
 #ifdef IN_LED
 #include "ssdk_led.h"
