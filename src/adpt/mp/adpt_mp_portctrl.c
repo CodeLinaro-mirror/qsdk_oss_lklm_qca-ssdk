@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -226,8 +226,8 @@ adpt_mp_port_flowctrl_forcemode_set(a_uint32_t dev_id,
 	if(!_adpt_mp_port_phy_connected(dev_id, port_id) && !enable)
 		return SW_NOT_SUPPORTED;
 
-	priv->port_tx_flowctrl_forcemode[port_id - 1] = enable;
-	priv->port_rx_flowctrl_forcemode[port_id - 1] = enable;
+	priv->ports[port_id].port_tx_flowctrl_forcemode = enable;
+	priv->ports[port_id].port_rx_flowctrl_forcemode = enable;
 
 	return rv;
 }
@@ -245,8 +245,8 @@ adpt_mp_port_flowctrl_forcemode_get(a_uint32_t dev_id,
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(priv);
 
-	*enable = (priv->port_tx_flowctrl_forcemode[port_id - 1] &
-		priv->port_rx_flowctrl_forcemode[port_id - 1]);
+	*enable = (priv->ports[port_id].port_tx_flowctrl_forcemode &
+		priv->ports[port_id].port_rx_flowctrl_forcemode);
 
 	return rv;
 }
@@ -304,7 +304,7 @@ _adpt_mp_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	rv = mp_mac_flowctrl_set(dev_id, gmac_id, &mac_flow_ctrl);
 	SW_RTN_ON_ERROR(rv);
 
-	priv->port_old_tx_flowctrl[port_id - 1] = enable;
+	priv->ports[port_id].port_old_tx_flowctrl = enable;
 
 	return rv;
 }
@@ -410,7 +410,7 @@ _adpt_mp_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	rv = mp_mac_flowctrl_set(dev_id, gmac_id, &mac_flow_ctrl);
 
-	priv->port_old_rx_flowctrl[port_id - 1] = enable;
+	priv->ports[port_id].port_old_rx_flowctrl = enable;
 
 	return rv;
 }
@@ -1021,13 +1021,13 @@ static a_bool_t
 _adpt_mp_port_status_change(struct qca_phy_priv *priv, a_uint32_t port_id,
 	struct port_phy_status phy_status)
 {
-	if ((a_uint32_t)phy_status.speed != priv->port_old_speed[port_id - 1])
+	if ((a_uint32_t)phy_status.speed != priv->ports[port_id].port_old_speed)
 		return A_TRUE;
-	if ((a_uint32_t)phy_status.duplex != priv->port_old_duplex[port_id - 1])
+	if ((a_uint32_t)phy_status.duplex != priv->ports[port_id].port_old_duplex)
 		return A_TRUE;
-	if (phy_status.tx_flowctrl != priv->port_old_tx_flowctrl[port_id - 1])
+	if (phy_status.tx_flowctrl != priv->ports[port_id].port_old_tx_flowctrl)
 		return A_TRUE;
-	if (phy_status.rx_flowctrl != priv->port_old_rx_flowctrl[port_id - 1])
+	if (phy_status.rx_flowctrl != priv->ports[port_id].port_old_rx_flowctrl)
 		return A_TRUE;
 	return A_FALSE;
 }
@@ -1039,7 +1039,7 @@ adpt_mp_port_link_up_change_update(struct qca_phy_priv *priv,
 	sw_error_t rv = 0;
 
 	if ((a_uint32_t)phy_status.speed !=
-		priv->port_old_speed[port_id - 1]) {
+		priv->ports[port_id].port_old_speed) {
 
 		/* configure gcc speed clock frequency */
 		rv = _adpt_mp_port_gcc_speed_clock_set(priv->device_id,
@@ -1051,60 +1051,60 @@ adpt_mp_port_link_up_change_update(struct qca_phy_priv *priv,
 			port_id, phy_status.speed);
 		SW_RTN_ON_ERROR (rv);
 
-		priv->port_old_speed[port_id - 1] =
+		priv->ports[port_id].port_old_speed =
 			(a_uint32_t)phy_status.speed;
 
 		SSDK_DEBUG("Port %d up and speed is %d\n", port_id,
-			priv->port_old_speed[port_id - 1]);
+			priv->ports[port_id].port_old_speed);
 	}
 	/* link up duplex change configuration */
 	if ((a_uint32_t)phy_status.duplex !=
-		priv->port_old_duplex[port_id - 1]) {
+		priv->ports[port_id].port_old_duplex) {
 
 		rv = adpt_mp_port_mac_duplex_set(priv->device_id,
 			port_id, phy_status.duplex);
 
-		priv->port_old_duplex[port_id - 1] =
+		priv->ports[port_id].port_old_duplex =
 			(a_uint32_t)phy_status.duplex;
 		SW_RTN_ON_ERROR (rv);
 
 		SSDK_DEBUG("Port %d up and duplex is %d\n", port_id,
-			priv->port_old_duplex[port_id - 1]);
+			priv->ports[port_id].port_old_duplex);
 	}
 	/* tx flowctrl configuration*/
-	if (priv->port_tx_flowctrl_forcemode[port_id - 1] != A_TRUE) {
+	if (priv->ports[port_id].port_tx_flowctrl_forcemode != A_TRUE) {
 		if (phy_status.duplex == FAL_HALF_DUPLEX) {
 			phy_status.tx_flowctrl = A_TRUE;
 		}
 		if (phy_status.tx_flowctrl !=
-			priv->port_old_tx_flowctrl[port_id - 1]) {
+			priv->ports[port_id].port_old_tx_flowctrl) {
 			rv = _adpt_mp_port_txfc_status_set(priv->device_id,
 				port_id, phy_status.tx_flowctrl);
 			SW_RTN_ON_ERROR (rv);
-			priv->port_old_tx_flowctrl[port_id - 1] =
+			priv->ports[port_id].port_old_tx_flowctrl =
 				phy_status.tx_flowctrl;
 
 			SSDK_DEBUG("Port %d up and tx flowctrl is %d\n",
 				port_id,
-				priv->port_old_tx_flowctrl[port_id - 1]);
+				priv->ports[port_id].port_old_tx_flowctrl);
 		}
 	}
 	/*rx flowctrl configuration*/
-	if (priv->port_rx_flowctrl_forcemode[port_id - 1] != A_TRUE) {
+	if (priv->ports[port_id].port_rx_flowctrl_forcemode != A_TRUE) {
 		if (phy_status.duplex == FAL_HALF_DUPLEX) {
 			phy_status.rx_flowctrl = A_TRUE;
 		}
 		if (phy_status.rx_flowctrl !=
-			priv->port_old_rx_flowctrl[port_id - 1]) {
+			priv->ports[port_id].port_old_rx_flowctrl) {
 			rv = _adpt_mp_port_rxfc_status_set(priv->device_id,
 				port_id, phy_status.rx_flowctrl);
 			SW_RTN_ON_ERROR (rv);
-			priv->port_old_rx_flowctrl[port_id - 1] =
+			priv->ports[port_id].port_old_rx_flowctrl =
 				phy_status.rx_flowctrl;
 
 			SSDK_DEBUG("Port %d up and rx flowctrl is %d\n",
 				port_id,
-				priv->port_old_rx_flowctrl[port_id-1]);
+				priv->ports[port_id].port_old_rx_flowctrl);
 		}
 	}
 
@@ -1192,28 +1192,28 @@ adpt_mp_port_netdev_change_notify(struct qca_phy_priv *priv,
 	}
 	/* link status from up to down*/
 	if ((phy_status.link_status == PORT_LINK_DOWN) &&
-		(priv->port_old_link[port_id - 1] == PORT_LINK_UP)) {
+		(priv->ports[port_id].port_old_link == PORT_LINK_UP)) {
 		SSDK_DEBUG("MP port %d change to link down status\n", port_id);
 		/* link down configuration*/
 		rv = _adpt_mp_port_link_down_update(priv, port_id);
 		SW_RTN_ON_ERROR (rv);
-		priv->port_old_link[port_id - 1] = phy_status.link_status ;
+		priv->ports[port_id].port_old_link = phy_status.link_status ;
 	}
 	/* link status from down to up */
 	if ((phy_status.link_status == PORT_LINK_UP) &&
-		(priv->port_old_link[port_id - 1] == PORT_LINK_DOWN)) {
+		(priv->ports[port_id].port_old_link == PORT_LINK_DOWN)) {
 		SSDK_DEBUG("Port %d change to link up status\n", port_id);
 		rv = adpt_mp_port_link_up_update(priv, port_id, phy_status);
 		SW_RTN_ON_ERROR (rv);
-		priv->port_old_link[port_id - 1] = phy_status.link_status;
+		priv->ports[port_id].port_old_link = phy_status.link_status;
 	}
 	SSDK_DEBUG("MP port %d link is %d speed is %d duplex is %d"
 		" tx_flowctrl is %d rx_flowctrl is %d\n",
-	port_id, priv->port_old_link[port_id - 1],
-	priv->port_old_speed[port_id - 1],
-	priv->port_old_duplex[port_id - 1],
-	priv->port_old_tx_flowctrl[port_id - 1],
-	priv->port_old_rx_flowctrl[port_id - 1]);
+	port_id, priv->ports[port_id].port_old_link,
+	priv->ports[port_id].port_old_speed,
+	priv->ports[port_id].port_old_duplex,
+	priv->ports[port_id].port_old_tx_flowctrl,
+	priv->ports[port_id].port_old_rx_flowctrl);
 
 	return rv;
 }

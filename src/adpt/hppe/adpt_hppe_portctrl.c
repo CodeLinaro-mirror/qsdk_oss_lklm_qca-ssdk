@@ -1295,8 +1295,8 @@ adpt_hppe_port_flowctrl_forcemode_set(a_uint32_t dev_id,
 	{
 		return SW_NOT_SUPPORTED;
 	}
-	priv->port_tx_flowctrl_forcemode[port_id - 1] = enable;
-	priv->port_rx_flowctrl_forcemode[port_id - 1] = enable;
+	priv->ports[port_id].port_tx_flowctrl_forcemode = enable;
+	priv->ports[port_id].port_rx_flowctrl_forcemode = enable;
 
 	return rv;
 }
@@ -1318,8 +1318,8 @@ adpt_hppe_port_flowctrl_forcemode_get(a_uint32_t dev_id,
 	if (!priv)
 		return SW_FAIL;
 
-	*enable = (priv->port_tx_flowctrl_forcemode[port_id - 1] &
-		priv->port_rx_flowctrl_forcemode[port_id - 1]);
+	*enable = (priv->ports[port_id].port_tx_flowctrl_forcemode &
+		priv->ports[port_id].port_rx_flowctrl_forcemode);
 
 	return rv;
 }
@@ -1352,7 +1352,7 @@ _adpt_hppe_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	if (rv != SW_OK)
 		return rv;
 
-	priv->port_old_tx_flowctrl[port_id - 1] = enable;
+	priv->ports[port_id].port_old_tx_flowctrl = enable;
 
 	/*keep bm status same with port*/
 	p_adpt_api = adpt_api_ptr_get(dev_id);
@@ -1442,7 +1442,7 @@ _adpt_hppe_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	if (rv != SW_OK)
 		return rv;
 
-	priv->port_old_rx_flowctrl[port_id - 1] = enable;
+	priv->ports[port_id].port_old_rx_flowctrl = enable;
 
 	return SW_OK;
 }
@@ -1954,11 +1954,11 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 
 		SW_RTN_ON_NULL(priv);
 		if (port_type == PORT_GMAC_TYPE) {
-			gmac_rxfc = priv->port_old_rx_flowctrl[port_id-1];
-			gmac_txfc = priv->port_old_tx_flowctrl[port_id-1];
+			gmac_rxfc = priv->ports[port_id].port_old_rx_flowctrl;
+			gmac_txfc = priv->ports[port_id].port_old_tx_flowctrl;
 		} else if (port_type == PORT_XGMAC_TYPE) {
-			xgmac_rxfc = priv->port_old_rx_flowctrl[port_id-1];
-			xgmac_txfc = priv->port_old_tx_flowctrl[port_id-1];
+			xgmac_rxfc = priv->ports[port_id].port_old_rx_flowctrl;
+			xgmac_txfc = priv->ports[port_id].port_old_tx_flowctrl;
 		} else {
 			return SW_NOT_SUPPORTED;
 		}
@@ -4308,13 +4308,13 @@ a_bool_t
 adpt_hppe_port_phy_status_change(struct qca_phy_priv *priv, a_uint32_t port_id,
 				struct port_phy_status phy_status)
 {
-	if ((a_uint32_t)phy_status.speed != priv->port_old_speed[port_id - 1])
+	if ((a_uint32_t)phy_status.speed != priv->ports[port_id].port_old_speed)
 		return A_TRUE;
-	if ((a_uint32_t)phy_status.duplex != priv->port_old_duplex[port_id - 1])
+	if ((a_uint32_t)phy_status.duplex != priv->ports[port_id].port_old_duplex)
 		return A_TRUE;
-	if (phy_status.tx_flowctrl != priv->port_old_tx_flowctrl[port_id - 1])
+	if (phy_status.tx_flowctrl != priv->ports[port_id].port_old_tx_flowctrl)
 		return A_TRUE;
-	if (phy_status.rx_flowctrl != priv->port_old_rx_flowctrl[port_id - 1])
+	if (phy_status.rx_flowctrl != priv->ports[port_id].port_old_rx_flowctrl)
 		return A_TRUE;
 	return A_FALSE;
 }
@@ -4373,7 +4373,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				port_id, phy_status.link_status, phy_status.speed);
 		/* link status from up to down */
 		if ((phy_status.link_status == PORT_LINK_DOWN) &&
-			(priv->port_old_link[port_id - 1] == PORT_LINK_UP))
+			(priv->ports[port_id].port_old_link == PORT_LINK_UP))
 		{
 			link_changed = A_TRUE;
 			SSDK_DEBUG("Port %d change to link down status\n", port_id);
@@ -4384,7 +4384,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_FALSE);
 			/* release ppe port egress packets when link down */
 			adpt_hppe_port_mac_loopback_reset(priv->device_id, port_id);
-			priv->port_old_link[port_id - 1] = phy_status.link_status;
+			priv->ports[port_id].port_old_link = phy_status.link_status;
 			/* switch interface mode if necessary */
 			if (adpt_hppe_phy_interface_mode_switch(priv->device_id,
 					port_id) == SW_OK) {
@@ -4402,7 +4402,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 		}
 		/* link status from down to up*/
 		if ((phy_status.link_status == PORT_LINK_UP) &&
-			(priv->port_old_link[port_id - 1] == PORT_LINK_DOWN))
+			(priv->ports[port_id].port_old_link == PORT_LINK_DOWN))
 		{
 			link_changed = A_TRUE;
 			SSDK_DEBUG("Port %d change to link up status\n", port_id);
@@ -4422,7 +4422,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
 						port_id, A_FALSE);
 				if ((a_uint32_t)phy_status.speed !=
-						priv->port_old_speed[port_id - 1])
+						priv->ports[port_id].port_old_speed)
 				{
 					/* configure 4bit-GMAC or 8bit-XGMAC for usxgmii mode */
 					adpt_hppe_uniphy_usxgmii_mac_type_set(priv->device_id,
@@ -4451,62 +4451,62 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 					/* config mac speed */
 					adpt_hppe_port_mac_speed_set(priv->device_id, port_id,
 							phy_status.speed);
-					priv->port_old_speed[port_id - 1] =
+					priv->ports[port_id].port_old_speed =
 						(a_uint32_t)phy_status.speed;
 
 					SSDK_DEBUG("Port %d is link up and speed change to %d\n",
-							port_id, priv->port_old_speed[port_id - 1]);
+							port_id, priv->ports[port_id].port_old_speed);
 				}
 				if ((a_uint32_t)phy_status.duplex !=
-						priv->port_old_duplex[port_id - 1])
+						priv->ports[port_id].port_old_duplex)
 				{
 					adpt_hppe_uniphy_duplex_set(priv->device_id, port_id,
 							phy_status.duplex);
 					adpt_hppe_port_mac_duplex_set(priv->device_id, port_id,
 							phy_status.duplex);
-					priv->port_old_duplex[port_id - 1] =
+					priv->ports[port_id].port_old_duplex =
 						(a_uint32_t)phy_status.duplex;
 
 					SSDK_DEBUG("Port %d is link up and duplex change to %d\n",
 							port_id,
-							priv->port_old_duplex[port_id - 1]);
+							priv->ports[port_id].port_old_duplex);
 				}
-				if (priv->port_tx_flowctrl_forcemode[port_id - 1] != A_TRUE)
+				if (priv->ports[port_id].port_tx_flowctrl_forcemode != A_TRUE)
 				{
 					if (phy_status.duplex == FAL_HALF_DUPLEX)
 					{
 						phy_status.tx_flowctrl = A_TRUE;
 					}
 					if (phy_status.tx_flowctrl !=
-							priv->port_old_tx_flowctrl[port_id - 1])
+							priv->ports[port_id].port_old_tx_flowctrl)
 					{
 						_adpt_hppe_port_txfc_status_set(priv->device_id,
 								port_id, phy_status.tx_flowctrl);
-						priv->port_old_tx_flowctrl[port_id - 1] =
+						priv->ports[port_id].port_old_tx_flowctrl =
 							phy_status.tx_flowctrl;
 
 						SSDK_DEBUG("Port %d is link up and tx flowctrl"
 							" change to %d\n", port_id,
-							priv->port_old_tx_flowctrl[port_id - 1]);
+							priv->ports[port_id].port_old_tx_flowctrl);
 					}
 				}
-				if (priv->port_rx_flowctrl_forcemode[port_id - 1] != A_TRUE)
+				if (priv->ports[port_id].port_rx_flowctrl_forcemode != A_TRUE)
 				{
 					if (phy_status.duplex == FAL_HALF_DUPLEX)
 					{
 						phy_status.rx_flowctrl = A_TRUE;
 					}
 					if (phy_status.rx_flowctrl !=
-							priv->port_old_rx_flowctrl[port_id - 1])
+							priv->ports[port_id].port_old_rx_flowctrl)
 					{
 						_adpt_hppe_port_rxfc_status_set(priv->device_id,
 								port_id, phy_status.rx_flowctrl);
-						priv->port_old_rx_flowctrl[port_id - 1] =
+						priv->ports[port_id].port_old_rx_flowctrl =
 							phy_status.rx_flowctrl;
 
 						SSDK_DEBUG("Port %d is link up and rx flowctrl"
 							" change to %d\n", port_id,
-							priv->port_old_rx_flowctrl[port_id-1]);
+							priv->ports[port_id].port_old_rx_flowctrl);
 					}
 				}
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
@@ -4517,11 +4517,11 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_bridge_txmac_set(priv->device_id, port_id, A_TRUE);
-			priv->port_old_link[port_id - 1] = phy_status.link_status;
+			priv->ports[port_id].port_old_link = phy_status.link_status;
 		}
 		SSDK_DEBUG("polling task PPE port %d link status is %d and speed is %d\n",
-				port_id, priv->port_old_link[port_id - 1],
-				priv->port_old_speed[port_id - 1]);
+				port_id, priv->ports[port_id].port_old_link,
+				priv->ports[port_id].port_old_speed);
 		if (link_changed) {
 			unsigned char link_notify_speed = 0;
 

@@ -733,7 +733,7 @@ __adpt_hppe_uniphy_rxlos_check(a_uint32_t dev_id, a_uint32_t uniphy_index)
 
 	port_id = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
 		SSDK_UNIPHY_CHANNEL0);
-	if(priv == NULL || priv->sfp_rx_los_pin[port_id] == SSDK_INVALID_GPIO)
+	if(priv == NULL || priv->ports[port_id].sfp_rx_los_pin == SSDK_INVALID_GPIO)
 		return A_TRUE;
 
 	return A_FALSE;

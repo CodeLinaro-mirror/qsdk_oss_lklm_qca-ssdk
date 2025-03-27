@@ -1452,7 +1452,7 @@ qca_hppe_interface_mode_init(a_uint32_t dev_id)
 			ssdk_gcc_uniphy_sys_set(dev_id, index, A_FALSE);
 	}
 
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports; port_id++) {
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num; port_id++) {
 		rv = p_api->adpt_port_mux_mac_type_set(dev_id, port_id, mode[0], mode[1], mode[2]);
 		if(rv != SW_OK) {
 			SSDK_ERROR("port_id:%d, mode0:%d, mode1:%d, mode2:%d\n", port_id,

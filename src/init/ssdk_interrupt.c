@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -66,7 +66,7 @@ int qca_phy_disable_intr(struct qca_phy_priv *priv)
 {
 	a_uint32_t  port_id = 0, phy_intr_status = 0;
 
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports; port_id++)
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num; port_id++)
 	{
 		fal_intr_port_link_mask_set(priv->device_id, port_id, 0);
 		fal_intr_port_link_status_get(priv->device_id, port_id,
@@ -83,7 +83,7 @@ int qca_switch_disable_intr(struct qca_phy_priv *priv, a_uint32_t intr_mask)
 	fal_intr_mask_get(priv->device_id, &intr_mask_tmp);
 	if(intr_mask & FAL_SWITCH_INTR_LINK_STATUS)
 	{
-		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports;  port_id++)
+		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num;  port_id++)
 		{
 			fal_intr_mask_mac_linkchg_set(priv->device_id, port_id, A_FALSE);
 		}
@@ -105,7 +105,7 @@ int qca_phy_enable_intr(struct qca_phy_priv *priv)
 {
 	a_uint32_t port_id = 0, phy_intr_status = 0;
 
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports; port_id++)
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num; port_id++)
 	{
 		fal_intr_port_link_status_get(priv->device_id, port_id,
 			&phy_intr_status);
@@ -125,7 +125,7 @@ int qca_switch_enable_intr(struct qca_phy_priv *priv, a_uint32_t intr_mask)
 	if(intr_mask & FAL_SWITCH_INTR_LINK_STATUS)
 	{
 		/*enable link change intr*/
-		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports;  port_id++)
+		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num;  port_id++)
 		{
 			fal_intr_mask_mac_linkchg_set(priv->device_id, port_id, A_TRUE);
 		}
@@ -140,7 +140,7 @@ static int qca_phy_clean_intr(struct qca_phy_priv *priv)
 {
 	a_uint32_t  port_id = 0, phy_intr_status = 0;
 
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports;  port_id++)
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num;  port_id++)
 	{
 		fal_intr_port_link_status_get(priv->device_id, port_id,
 			&phy_intr_status);

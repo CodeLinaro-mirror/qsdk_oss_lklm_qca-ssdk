@@ -326,7 +326,7 @@ int qca_ar8327_vlan_recovery(struct qca_phy_priv *priv)
 				/* reg 0x610 VLAN_TABLE_FUNC0_OFFSET*/
 				reg = 0x610;
 				val = 0x00180000;
-				for (i = 0; i < priv->ports; ++i) {
+				for (i = 0; i < priv->ports_num; ++i) {
 					mask = (1 << i);
 					portmask[i] |= ~mask & priv->vlan_table[j];
 					if (mask & priv->vlan_table[j])
@@ -362,7 +362,7 @@ int qca_ar8327_vlan_recovery(struct qca_phy_priv *priv)
 
 #if defined(IN_PORTVLAN)
 	/* update the port destination mask registers and tag settings */
-	for (i = 0; i < priv->ports; i++) {
+	for (i = 0; i < priv->ports_num; i++) {
 		int pvid;
 		fal_pt_1qmode_t ingressMode;
 		fal_pt_1q_egmode_t egressMode;
@@ -441,13 +441,16 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv);
 
 int qca_qm_err_recovery(struct qca_phy_priv *priv)
 {
-	memset(priv->port_link_down, 0, sizeof(priv->port_link_down));
-	memset(priv->port_link_up, 0, sizeof(priv->port_link_up));
-	memset(priv->port_old_link, 0, sizeof(priv->port_old_link));
-	memset(priv->port_old_speed, 0, sizeof(priv->port_old_speed));
-	memset(priv->port_old_duplex, 0, sizeof(priv->port_old_duplex));
-	memset(priv->port_old_phy_status, 0, sizeof(priv->port_old_phy_status));
-	memset(priv->port_qm_buf, 0, sizeof(priv->port_qm_buf));
+	int i;
+
+	for (i = 0; i < SW_MAX_NR_PORT; i ++) {
+		priv->ports[i].port_link_up = 0;
+		priv->ports[i].port_old_link = 0;
+		priv->ports[i].port_old_speed = 0;
+		priv->ports[i].port_old_duplex = 0;
+		priv->ports[i].port_old_phy_status = 0;
+		priv->ports[i].port_qm_buf = 0;
+	}
 
 	/* in soft reset recovery procedure */
 	qca_ar8327_phy_linkdown(priv->device_id);
@@ -564,15 +567,12 @@ EXPORT_SYMBOL(ssdk_port_link_notify_unregister);
 void
 qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 {
-	static int task_count = 0;
 	a_uint32_t i, dev_id = 0;
 	a_uint32_t value;
 	a_uint32_t link = 0, speed = 0, duplex = 0;
 	a_uint32_t qm_buffer_err = 0, phy_addr = 0;
 	a_uint16_t port_phy_status[AR8327_NUM_PORTS] = {0,0,0,0,0,0,0};
 	static a_uint32_t qm_err_cnt[AR8327_NUM_PORTS] = {0,0,0,0,0,0,0};
-
-	static a_uint32_t link_cnt[AR8327_NUM_PORTS] = {0,0,0,0,0,0,0};
 
 	dev_id = priv->device_id;
 
@@ -590,8 +590,6 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 		return;
 	}
 
-	++task_count;
-
 	for (i = 1; i < AR8327_NUM_PORTS-1; i++) {
 		phy_addr = qca_ssdk_port_to_phy_addr(dev_id, i);
 		if(qca_ar8327_sw_mac_polling_port_valid(priv, i) == A_FALSE)
@@ -603,14 +601,13 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 		{
 			qca_phy_status_get(dev_id, i, &speed, &link, &duplex);
 		}
-		if (link != priv->port_old_link[i]) {
+		if (link != priv->ports[i].port_old_link) {
 			if (qca_ar8327_sw_rgmii_mode_valid(dev_id, i) == A_FALSE)
 			{
 				qca_phy_status_get(dev_id, i, &speed, &link, &duplex);
 			}
-			++link_cnt[i];
 			/* Up --> Down */
-			if ((priv->port_old_link[i] == PORT_LINK_UP) && (link == PORT_LINK_DOWN)) {
+			if ((priv->ports[i].port_old_link == PORT_LINK_UP) && (link == PORT_LINK_DOWN)) {
 
 				if (qca_ar8327_sw_rgmii_mode_valid(dev_id, i) == A_TRUE)
 				{
@@ -622,7 +619,6 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 					fal_port_link_forcemode_set(dev_id, i, A_TRUE);
 					SSDK_DEBUG("%s, %d, port_id %d link down\n",__FUNCTION__,__LINE__,i);
 				}
-				priv->port_link_down[i]=0;
 				ssdk_port_link_notify(i, 0, 0, 0);
 #ifdef IN_FDB
 				fal_fdb_del_by_port(dev_id, i, 0);/*flush all dynamic fdb of this port*/
@@ -633,10 +629,10 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 					qca_switch_get_qm_status(priv, i, &qm_buffer_err);
 
 					if (qm_buffer_err) {
-						priv->port_qm_buf[i] = QM_NOT_EMPTY;
+						priv->ports[i].port_qm_buf = QM_NOT_EMPTY;
 					}
 					else {
-						priv->port_qm_buf[i] = QM_EMPTY;
+						priv->ports[i].port_qm_buf = QM_EMPTY;
 
 						/* Force MAC 1000M Full before auto negotiation */
 						qca_switch_force_mac_1000M_full(priv, i);
@@ -647,10 +643,10 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 				}
 			}
 			/* Down --> Up */
-			else if ((priv->port_old_link[i] == PORT_LINK_DOWN) && (link == PORT_LINK_UP)) {
+			else if ((priv->ports[i].port_old_link == PORT_LINK_DOWN) && (link == PORT_LINK_UP)) {
 
-				if (priv->port_link_up[i] < 1) {
-					++(priv->port_link_up[i]);
+				if (priv->ports[i].port_link_up == 0) {
+					priv->ports[i].port_link_up = 1;
 					qca_switch_get_qm_status(priv, i, &qm_buffer_err);
 					if (qm_buffer_err) {
 						if(priv->version != 0x14)
@@ -659,9 +655,9 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 						return;
 					}
 				}
-				if(priv->port_link_up[i] >=1)
+				if(priv->ports[i].port_link_up == 1)
 				{
-					priv->port_link_up[i]=0;
+					priv->ports[i].port_link_up = 0;
 					qca_switch_force_mac_status(priv, i, speed, duplex);
 					udelay(100);
 					if (qca_ar8327_sw_rgmii_mode_valid(dev_id, i) == A_FALSE) {
@@ -682,25 +678,24 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 					}
 				}
 			}
-			if ((priv->port_link_down[i] == 0)
-				&& (priv->port_link_up[i] == 0)){
+			if (priv->ports[i].port_link_up == 0) {
 				/* Save the current status */
-				priv->port_old_speed[i] = speed;
-				priv->port_old_link[i] = link;
-				priv->port_old_duplex[i] = duplex;
-				priv->port_old_phy_status[i] = port_phy_status[i];
+				priv->ports[i].port_old_speed = speed;
+				priv->ports[i].port_old_link = link;
+				priv->ports[i].port_old_duplex = duplex;
+				priv->ports[i].port_old_phy_status = port_phy_status[i];
 			}
 		}
 
-		if (priv->port_qm_buf[i] == QM_NOT_EMPTY) {
+		if (priv->ports[i].port_qm_buf == QM_NOT_EMPTY) {
 			/* Check QM */
 			qca_switch_get_qm_status(priv, i, &qm_buffer_err);
 			if (qm_buffer_err) {
-				priv->port_qm_buf[i] = QM_NOT_EMPTY;
+				priv->ports[i].port_qm_buf = QM_NOT_EMPTY;
 				++qm_err_cnt[i];
 			}
 			else {
-				priv->port_qm_buf[i] = QM_EMPTY;
+				priv->ports[i].port_qm_buf = QM_EMPTY;
 				qm_err_cnt[i] = 0;
 
 				/* Force MAC 1000M Full before auto negotiation */
