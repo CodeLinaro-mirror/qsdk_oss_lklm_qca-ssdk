@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -4719,7 +4719,7 @@ hppe_in_nexthop_tbl_port_get(
 	sw_error_t ret = SW_OK;
 
 	ret = hppe_in_nexthop_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf0.port;
+	*value = reg_val.bf.port;
 	return ret;
 }
 
@@ -4735,7 +4735,7 @@ hppe_in_nexthop_tbl_port_set(
 	ret = hppe_in_nexthop_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf0.port = value;
+	reg_val.bf.port = value;
 	ret = hppe_in_nexthop_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }

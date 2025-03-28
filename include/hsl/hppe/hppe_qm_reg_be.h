@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2443,7 +2443,7 @@ struct pkt_desp_tbl_1 {
 
 union pkt_desp_tbl_u {
 	a_uint32_t val[13];
-	struct pkt_desp_tbl_0 bf0;
+	struct pkt_desp_tbl_0 bf;
 	struct pkt_desp_tbl_1 bf1;
 };
 

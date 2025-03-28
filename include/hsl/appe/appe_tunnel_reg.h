@@ -2022,7 +2022,7 @@ struct tl_tbl_1 {
 
 union tl_tbl_u {
 	a_uint32_t val[14];
-	struct tl_tbl_0 bf0;
+	struct tl_tbl_0 bf;
 	struct tl_tbl_1 bf1;
 };
 
@@ -2804,7 +2804,7 @@ struct tl_vlan_tbl_1 {
 
 union tl_vlan_tbl_u {
 	a_uint32_t val[2];
-	struct tl_vlan_tbl_0 bf0;
+	struct tl_vlan_tbl_0 bf;
 	struct tl_vlan_tbl_1 bf1;
 	struct tl_vlan_tbl_2 bf2;
 };

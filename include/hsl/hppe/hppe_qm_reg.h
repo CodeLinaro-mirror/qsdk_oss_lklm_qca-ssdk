@@ -2032,7 +2032,7 @@ struct pkt_desp_tbl_1 {
 
 union pkt_desp_tbl_u {
 	a_uint32_t val[13];
-	struct pkt_desp_tbl_0 bf0;
+	struct pkt_desp_tbl_0 bf;
 	struct pkt_desp_tbl_1 bf1;
 };
 

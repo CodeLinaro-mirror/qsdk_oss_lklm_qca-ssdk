@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1107,7 +1107,7 @@ union in_flow_tbl_u {
 #else
 	a_uint32_t val[5];
 #endif
-	struct in_flow_tbl_0 bf0;
+	struct in_flow_tbl_0 bf;
 	struct in_flow_tbl_1 bf1;
 	struct in_flow_tbl_2 bf2;
 	struct in_flow_tbl_3 bf3;
@@ -1431,7 +1431,7 @@ struct in_flow_3tuple_tbl_0 {
 
 union in_flow_3tuple_tbl_u {
 	a_uint32_t val[5];
-	struct in_flow_3tuple_tbl_0 bf0;
+	struct in_flow_3tuple_tbl_0 bf;
 	struct in_flow_3tuple_tbl_1 bf1;
 	struct in_flow_3tuple_tbl_2 bf2;
 	struct in_flow_3tuple_tbl_3 bf3;
@@ -1826,7 +1826,7 @@ struct in_flow_ipv6_5tuple_tbl_3 {
 
 union in_flow_ipv6_5tuple_tbl_u {
 	a_uint32_t val[9];
-	struct in_flow_ipv6_5tuple_tbl_0 bf0;
+	struct in_flow_ipv6_5tuple_tbl_0 bf;
 	struct in_flow_ipv6_5tuple_tbl_1 bf1;
 	struct in_flow_ipv6_5tuple_tbl_2 bf2;
 	struct in_flow_ipv6_5tuple_tbl_3 bf3;
@@ -2221,7 +2221,7 @@ struct in_flow_ipv6_3tuple_tbl_2 {
 
 union in_flow_ipv6_3tuple_tbl_u {
 	a_uint32_t val[9];
-	struct in_flow_ipv6_3tuple_tbl_0 bf0;
+	struct in_flow_ipv6_3tuple_tbl_0 bf;
 	struct in_flow_ipv6_3tuple_tbl_1 bf1;
 	struct in_flow_ipv6_3tuple_tbl_2 bf2;
 	struct in_flow_ipv6_3tuple_tbl_3 bf3;

@@ -6865,7 +6865,7 @@ hppe_pkt_desp_tbl_tx_ptp_tag_get(
 	sw_error_t ret = SW_OK;
 
 	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf0.tx_ptp_tag;
+	*value = reg_val.bf.tx_ptp_tag;
 	return ret;
 }
 
@@ -6881,7 +6881,7 @@ hppe_pkt_desp_tbl_tx_ptp_tag_set(
 	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf0.tx_ptp_tag = value;
+	reg_val.bf.tx_ptp_tag = value;
 	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -6991,7 +6991,7 @@ hppe_pkt_desp_tbl_tx_ts_en_get(
 	sw_error_t ret = SW_OK;
 
 	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf0.tx_ts_en;
+	*value = reg_val.bf.tx_ts_en;
 	return ret;
 }
 
@@ -7007,7 +7007,7 @@ hppe_pkt_desp_tbl_tx_ts_en_set(
 	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf0.tx_ts_en = value;
+	reg_val.bf.tx_ts_en = value;
 	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -7495,7 +7495,7 @@ hppe_pkt_desp_tbl_tx_os_correction_en_get(
 	sw_error_t ret = SW_OK;
 
 	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf0.tx_os_correction_en;
+	*value = reg_val.bf.tx_os_correction_en;
 	return ret;
 }
 
@@ -7511,7 +7511,7 @@ hppe_pkt_desp_tbl_tx_os_correction_en_set(
 	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf0.tx_os_correction_en = value;
+	reg_val.bf.tx_os_correction_en = value;
 	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }

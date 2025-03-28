@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2019-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -2044,7 +2044,7 @@ struct in_nexthop_tbl_0 {
 
 union in_nexthop_tbl_u {
 	a_uint32_t val[4];
-	struct in_nexthop_tbl_0 bf0;
+	struct in_nexthop_tbl_0 bf;
 	struct in_nexthop_tbl_1 bf1;
 };
 
