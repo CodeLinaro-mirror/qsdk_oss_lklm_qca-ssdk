@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1712,6 +1712,53 @@ _adpt_appe_pre_acl_counter_get(a_uint32_t dev_id,
 		(a_uint64_t)pre_ipo_cnt.bf.hit_byte_cnt_1 << SW_FIELD_OFFSET_IN_WORD(
 				PRE_IPO_CNT_TBL_HIT_BYTE_CNT_OFFSET);
 
+	return rv;
+}
+
+sw_error_t
+_adpt_appe_pre_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t hw_list_id,
+			a_uint32_t hw_entries, a_uint32_t priority)
+{
+	union pre_ipo_rule_reg_u hw_reg = {0};
+	a_uint32_t hw_index;
+	sw_error_t rv = SW_OK;
+
+	while(hw_entries != 0)
+	{
+		hw_index = _acl_bit_index(hw_entries, ADPT_PRE_ACL_ENTRY_NUM_PER_LIST, 0);
+		if(hw_index >= ADPT_PRE_ACL_ENTRY_NUM_PER_LIST)
+		{
+			return SW_FAIL;
+		}
+		rv = appe_pre_ipo_rule_reg_get(dev_id,
+				hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		SW_RTN_ON_ERROR(rv);
+		hw_reg.bf.pri = priority;
+		rv = appe_pre_ipo_rule_reg_set(dev_id,
+				hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		SW_RTN_ON_ERROR(rv);
+		hw_entries &= (~(1<<hw_index));
+	}
+
+	return rv;
+}
+
+sw_error_t
+_adpt_appe_pre_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t hw_list_id,
+			a_uint32_t hw_entries, a_uint32_t *priority)
+{
+	union pre_ipo_rule_reg_u hw_reg = {0};
+	a_uint32_t hw_index;
+	sw_error_t rv = SW_OK;
+
+	hw_index = _acl_bit_index(hw_entries, ADPT_PRE_ACL_ENTRY_NUM_PER_LIST, 0);
+	if(hw_index >= ADPT_PRE_ACL_ENTRY_NUM_PER_LIST)
+	{
+		return SW_FAIL;
+	}
+	rv = appe_pre_ipo_rule_reg_get(dev_id,
+			hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+	*priority = hw_reg.bf.pri;
 	return rv;
 }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014, 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -876,6 +876,13 @@ fal_acl_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport_id,
 sw_error_t
 fal_acl_counter_get(a_uint32_t dev_id, a_uint32_t entry_index,
 		fal_entry_counter_t *acl_counter);
+
+sw_error_t
+fal_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t list_id,
+		a_uint32_t rule_id, a_uint32_t priority);
+sw_error_t
+fal_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t list_id,
+		a_uint32_t rule_id, a_uint32_t *priority);
 
 #ifdef __cplusplus
 }
