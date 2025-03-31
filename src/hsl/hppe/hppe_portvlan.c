@@ -1625,7 +1625,7 @@ hppe_vlan_dev_tx_counter_tbl_set(
 				value->val,
 				sizeof(union vlan_dev_tx_counter_tbl_u)/sizeof(a_uint32_t));
 }
-
+#ifdef HMSPPE
 sw_error_t
 hppe_port_parsing_reg_src_port_sel_get(
 		a_uint32_t dev_id,
@@ -1687,4 +1687,4 @@ hppe_port_parsing_reg_vlan_mode_set(
 	ret = hppe_port_parsing_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
-
+#endif

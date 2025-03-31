@@ -161,7 +161,7 @@ mppe_eg_hdr_xmit_pri_mapping_pri_set(
 	ret = mppe_eg_hdr_xmit_pri_mapping_set(dev_id, index, &reg_val);
 	return ret;
 }
-
+#ifdef HMSPPE
 sw_error_t
 mppe_edma_vp_remap_0_get(
 		a_uint32_t dev_id,
@@ -205,4 +205,4 @@ mppe_edma_vp_remap_1_set(
 				NSS_BM_CSR_BASE_ADDR + EDMA_VP_REMAP_1_ADDRESS,
 				value->val);
 }
-
+#endif

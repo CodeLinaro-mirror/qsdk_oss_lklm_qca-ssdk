@@ -321,7 +321,7 @@ appe_l2_vp_port_tbl_lrn_lmt_exceed_fwd_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-
+#ifdef HMSPPE
 sw_error_t
 appe_l2_vp_port_tbl_port_isolation_bitmap_get(
 		a_uint32_t dev_id,
@@ -354,6 +354,38 @@ appe_l2_vp_port_tbl_port_isolation_bitmap_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+#else
+sw_error_t
+appe_l2_vp_port_tbl_port_isolation_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union l2_vp_port_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_l2_vp_port_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_isolation_bitmap;
+	return ret;
+}
+
+sw_error_t
+appe_l2_vp_port_tbl_port_isolation_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union l2_vp_port_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_l2_vp_port_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_isolation_bitmap = value;
+	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+#endif
 
 sw_error_t
 appe_l2_vp_port_tbl_policer_en_get(
@@ -574,6 +606,38 @@ appe_l2_vp_port_tbl_invalid_vsi_forwarding_en_set(
 	return ret;
 }
 
+#ifndef HMSPPE
+sw_error_t
+appe_l2_vp_port_tbl_physical_port_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union l2_vp_port_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_l2_vp_port_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.physical_port;
+	return ret;
+}
+
+sw_error_t
+appe_l2_vp_port_tbl_physical_port_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union l2_vp_port_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_l2_vp_port_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.physical_port = value;
+	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+#else
 sw_error_t
 appe_l2_vp_port_tbl_isol_profile_en_get(
 		a_uint32_t dev_id,
@@ -635,4 +699,4 @@ appe_l2_vp_port_tbl_mirror_en_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-
+#endif
