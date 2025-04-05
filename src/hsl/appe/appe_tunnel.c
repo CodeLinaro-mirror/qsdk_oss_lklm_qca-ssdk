@@ -1413,7 +1413,7 @@ appe_tl_tbl_decap_en_get(
 	sw_error_t ret = SW_OK;
 
 	ret = appe_tl_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf0.decap_en;
+	*value = reg_val.bf.decap_en;
 	return ret;
 }
 
@@ -1429,7 +1429,7 @@ appe_tl_tbl_decap_en_set(
 	ret = appe_tl_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf0.decap_en = value;
+	reg_val.bf.decap_en = value;
 	ret = appe_tl_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }

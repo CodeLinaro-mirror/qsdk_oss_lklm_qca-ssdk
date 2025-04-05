@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -327,47 +327,47 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 	entry_action = &entry->decap_action;
 
 	if (to_hsl) {
-		tl_tbl.bf0.valid = A_TRUE;
+		tl_tbl.bf.valid = A_TRUE;
 		/* tunnel tbl key to get based on hash start */
-		tl_tbl.bf0.entry_type = rule_key->ip_ver;
-		tl_tbl.bf0.key_type = rule_key->tunnel_type;
-		tl_tbl.bf0.protocol = rule_key->l4_proto;
+		tl_tbl.bf.entry_type = rule_key->ip_ver;
+		tl_tbl.bf.key_type = rule_key->tunnel_type;
+		tl_tbl.bf.protocol = rule_key->l4_proto;
 
 		if (rule_key->ip_ver) {
-			tl_tbl.bf0.ipv6_src_addr_0 = rule_key->sip.ip6_addr.ul[3] &
+			tl_tbl.bf.ipv6_src_addr_0 = rule_key->sip.ip6_addr.ul[3] &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			tl_tbl.bf0.ipv6_src_addr_1 = (rule_key->sip.ip6_addr.ul[3] >>
+			tl_tbl.bf.ipv6_src_addr_1 = (rule_key->sip.ip6_addr.ul[3] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET)) |
 				rule_key->sip.ip6_addr.ul[2] << TL_TBL_IPV6_SRC_ADDR_OFFSET % 32;
 
-			tl_tbl.bf0.ipv6_src_addr_2 = (rule_key->sip.ip6_addr.ul[2] >>
+			tl_tbl.bf.ipv6_src_addr_2 = (rule_key->sip.ip6_addr.ul[2] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET)) |
 				rule_key->sip.ip6_addr.ul[1] << TL_TBL_IPV6_SRC_ADDR_OFFSET % 32;
 
-			tl_tbl.bf0.ipv6_src_addr_3 = (rule_key->sip.ip6_addr.ul[1] >>
+			tl_tbl.bf.ipv6_src_addr_3 = (rule_key->sip.ip6_addr.ul[1] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET)) |
 				rule_key->sip.ip6_addr.ul[0] << TL_TBL_IPV6_SRC_ADDR_OFFSET % 32;
 
-			tl_tbl.bf0.ipv6_src_addr_4 = rule_key->sip.ip6_addr.ul[0] >>
+			tl_tbl.bf.ipv6_src_addr_4 = rule_key->sip.ip6_addr.ul[0] >>
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET);
 
-			tl_tbl.bf0.ipv6_dst_addr_0 = rule_key->dip.ip6_addr.ul[3] &
+			tl_tbl.bf.ipv6_dst_addr_0 = rule_key->dip.ip6_addr.ul[3] &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			tl_tbl.bf0.ipv6_dst_addr_1 = (rule_key->dip.ip6_addr.ul[3] >>
+			tl_tbl.bf.ipv6_dst_addr_1 = (rule_key->dip.ip6_addr.ul[3] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET)) |
 				rule_key->dip.ip6_addr.ul[2] << TL_TBL_IPV6_DST_ADDR_OFFSET % 32;
 
-			tl_tbl.bf0.ipv6_dst_addr_2 = (rule_key->dip.ip6_addr.ul[2] >>
+			tl_tbl.bf.ipv6_dst_addr_2 = (rule_key->dip.ip6_addr.ul[2] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET)) |
 				rule_key->dip.ip6_addr.ul[1] << TL_TBL_IPV6_DST_ADDR_OFFSET % 32;
 
-			tl_tbl.bf0.ipv6_dst_addr_3 = (rule_key->dip.ip6_addr.ul[1] >>
+			tl_tbl.bf.ipv6_dst_addr_3 = (rule_key->dip.ip6_addr.ul[1] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET)) |
 				rule_key->dip.ip6_addr.ul[0] << TL_TBL_IPV6_DST_ADDR_OFFSET % 32;
 
-			tl_tbl.bf0.ipv6_dst_addr_4 = rule_key->dip.ip6_addr.ul[0] >>
+			tl_tbl.bf.ipv6_dst_addr_4 = rule_key->dip.ip6_addr.ul[0] >>
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET);
 		} else {
 			tl_tbl.bf1.ipv4_src_addr_0 = rule_key->sip.ip4_addr;
@@ -378,114 +378,114 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV4_DST_ADDR_OFFSET);
 		}
 
-		tl_tbl.bf0.l4_sport = rule_key->sport;
-		tl_tbl.bf0.l4_dport_0 = rule_key->dport;
-		tl_tbl.bf0.l4_dport_1 = rule_key->dport >>
+		tl_tbl.bf.l4_sport = rule_key->sport;
+		tl_tbl.bf.l4_dport_0 = rule_key->dport;
+		tl_tbl.bf.l4_dport_1 = rule_key->dport >>
 			SW_FIELD_OFFSET_IN_WORD(TL_TBL_L4_DPORT_OFFSET);
-		tl_tbl.bf0.vni_resv_0 = rule_key->tunnel_info;
-		tl_tbl.bf0.vni_resv_1 = rule_key->tunnel_info >>
+		tl_tbl.bf.vni_resv_0 = rule_key->tunnel_info;
+		tl_tbl.bf.vni_resv_1 = rule_key->tunnel_info >>
 			SW_FIELD_OFFSET_IN_WORD(TL_TBL_VNI_RESV_OFFSET);
-		tl_tbl.bf0.udf0 = rule_key->udf0;
-		tl_tbl.bf0.udf1_0 = rule_key->udf1;
-		tl_tbl.bf0.udf1_1 = rule_key->udf1 >>
+		tl_tbl.bf.udf0 = rule_key->udf0;
+		tl_tbl.bf.udf1_0 = rule_key->udf1;
+		tl_tbl.bf.udf1_1 = rule_key->udf1 >>
 			SW_FIELD_OFFSET_IN_WORD(TL_TBL_UDF1_OFFSET);
 
-		tl_tbl.bf0.vni_resv_valid = (rule_key->key_bmp >> FAL_TUNNEL_KEY_TLINFO_EN) & 1;
-		tl_tbl.bf0.udf0_valid = (rule_key->key_bmp >> FAL_TUNNEL_KEY_UDF0_EN) & 1;
-		tl_tbl.bf0.udf1_valid = (rule_key->key_bmp >> FAL_TUNNEL_KEY_UDF1_EN) & 1;
+		tl_tbl.bf.vni_resv_valid = (rule_key->key_bmp >> FAL_TUNNEL_KEY_TLINFO_EN) & 1;
+		tl_tbl.bf.udf0_valid = (rule_key->key_bmp >> FAL_TUNNEL_KEY_UDF0_EN) & 1;
+		tl_tbl.bf.udf1_valid = (rule_key->key_bmp >> FAL_TUNNEL_KEY_UDF1_EN) & 1;
 		/* tunnel tbl key to get based on hash end */
 
-		tl_tbl.bf0.fwd_type = entry_action->fwd_cmd;
-		tl_tbl.bf0.de_acce = entry_action->deacce_en;
-		tl_tbl.bf0.decap_en = entry_action->decap_en;
-		tl_tbl.bf0.udp_csum_zero = entry_action->udp_csum_zero;
-		tl_tbl.bf0.service_code_en = entry_action->service_code_en;
-		tl_tbl.bf0.service_code = entry_action->service_code;
-		tl_tbl.bf0.spcp_mode = entry_action->spcp_mode;
-		tl_tbl.bf0.sdei_mode = entry_action->sdei_mode;
-		tl_tbl.bf0.cpcp_mode = entry_action->cpcp_mode;
-		tl_tbl.bf0.cdei_mode = entry_action->cdei_mode;
-		tl_tbl.bf0.ttl_mode = entry_action->ttl_mode;
-		tl_tbl.bf0.dscp_mode = entry_action->dscp_mode;
-		tl_tbl.bf0.ecn_mode = entry_action->ecn_mode;
-		tl_tbl.bf0.src_info_valid = entry_action->src_info_enable;
-		tl_tbl.bf0.src_info_type = entry_action->src_info_type;
-		tl_tbl.bf0.src_info = entry_action->src_info;
-		tl_tbl.bf0.tl_l3_if = entry_action->verify_entry.tl_l3_if;
-		tl_tbl.bf0.svlan_fmt = entry_action->verify_entry.svlan_fmt;
-		tl_tbl.bf0.svlan_id_0 = entry_action->verify_entry.svlan_id;
-		tl_tbl.bf0.svlan_id_1 = entry_action->verify_entry.svlan_id >>
+		tl_tbl.bf.fwd_type = entry_action->fwd_cmd;
+		tl_tbl.bf.de_acce = entry_action->deacce_en;
+		tl_tbl.bf.decap_en = entry_action->decap_en;
+		tl_tbl.bf.udp_csum_zero = entry_action->udp_csum_zero;
+		tl_tbl.bf.service_code_en = entry_action->service_code_en;
+		tl_tbl.bf.service_code = entry_action->service_code;
+		tl_tbl.bf.spcp_mode = entry_action->spcp_mode;
+		tl_tbl.bf.sdei_mode = entry_action->sdei_mode;
+		tl_tbl.bf.cpcp_mode = entry_action->cpcp_mode;
+		tl_tbl.bf.cdei_mode = entry_action->cdei_mode;
+		tl_tbl.bf.ttl_mode = entry_action->ttl_mode;
+		tl_tbl.bf.dscp_mode = entry_action->dscp_mode;
+		tl_tbl.bf.ecn_mode = entry_action->ecn_mode;
+		tl_tbl.bf.src_info_valid = entry_action->src_info_enable;
+		tl_tbl.bf.src_info_type = entry_action->src_info_type;
+		tl_tbl.bf.src_info = entry_action->src_info;
+		tl_tbl.bf.tl_l3_if = entry_action->verify_entry.tl_l3_if;
+		tl_tbl.bf.svlan_fmt = entry_action->verify_entry.svlan_fmt;
+		tl_tbl.bf.svlan_id_0 = entry_action->verify_entry.svlan_id;
+		tl_tbl.bf.svlan_id_1 = entry_action->verify_entry.svlan_id >>
 			SW_FIELD_OFFSET_IN_WORD(TL_TBL_SVLAN_ID_OFFSET);
-		tl_tbl.bf0.cvlan_fmt = entry_action->verify_entry.cvlan_fmt;
-		tl_tbl.bf0.cvlan_id = entry_action->verify_entry.cvlan_id;
-		tl_tbl.bf0.svlan_check_en =
+		tl_tbl.bf.cvlan_fmt = entry_action->verify_entry.cvlan_fmt;
+		tl_tbl.bf.cvlan_id = entry_action->verify_entry.cvlan_id;
+		tl_tbl.bf.svlan_check_en =
 			entry_action->verify_entry.verify_bmp & FAL_TUNNEL_SVLAN_CHECK_EN ?
 			A_TRUE : A_FALSE;
-		tl_tbl.bf0.cvlan_check_en =
+		tl_tbl.bf.cvlan_check_en =
 			entry_action->verify_entry.verify_bmp & FAL_TUNNEL_CVLAN_CHECK_EN ?
 			A_TRUE : A_FALSE;
-		tl_tbl.bf0.tl_l3_if_check_en =
+		tl_tbl.bf.tl_l3_if_check_en =
 			entry_action->verify_entry.verify_bmp & FAL_TUNNEL_L3IF_CHECK_EN ?
 			A_TRUE : A_FALSE;
-		tl_tbl.bf0.exp_profile = entry_action->exp_profile;
+		tl_tbl.bf.exp_profile = entry_action->exp_profile;
 
 		*tl_entry = tl_tbl;
 	} else {
 		tl_tbl = *tl_entry;
 
-		if (tl_tbl.bf0.valid == A_FALSE) {
+		if (tl_tbl.bf.valid == A_FALSE) {
 			return SW_OK;
 		}
 
-		rule_key->ip_ver = tl_tbl.bf0.entry_type;
-		rule_key->tunnel_type = tl_tbl.bf0.key_type;
-		rule_key->l4_proto = tl_tbl.bf0.protocol;
+		rule_key->ip_ver = tl_tbl.bf.entry_type;
+		rule_key->tunnel_type = tl_tbl.bf.key_type;
+		rule_key->l4_proto = tl_tbl.bf.protocol;
 
-		if (tl_tbl.bf0.entry_type) {
-			rule_key->sip.ip6_addr.ul[3] = (tl_tbl.bf0.ipv6_src_addr_0 &
+		if (tl_tbl.bf.entry_type) {
+			rule_key->sip.ip6_addr.ul[3] = (tl_tbl.bf.ipv6_src_addr_0 &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_src_addr_1 <<
+				(tl_tbl.bf.ipv6_src_addr_1 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->sip.ip6_addr.ul[2] = ((tl_tbl.bf0.ipv6_src_addr_1 >>
+			rule_key->sip.ip6_addr.ul[2] = ((tl_tbl.bf.ipv6_src_addr_1 >>
 				TL_TBL_IPV6_SRC_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_src_addr_2 <<
+				(tl_tbl.bf.ipv6_src_addr_2 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->sip.ip6_addr.ul[1] = ((tl_tbl.bf0.ipv6_src_addr_2 >>
+			rule_key->sip.ip6_addr.ul[1] = ((tl_tbl.bf.ipv6_src_addr_2 >>
 				TL_TBL_IPV6_SRC_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_src_addr_3 <<
+				(tl_tbl.bf.ipv6_src_addr_3 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->sip.ip6_addr.ul[0] = ((tl_tbl.bf0.ipv6_src_addr_3 >>
+			rule_key->sip.ip6_addr.ul[0] = ((tl_tbl.bf.ipv6_src_addr_3 >>
 				TL_TBL_IPV6_SRC_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_src_addr_4 <<
+				(tl_tbl.bf.ipv6_src_addr_4 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[3] = (tl_tbl.bf0.ipv6_dst_addr_0 &
+			rule_key->dip.ip6_addr.ul[3] = (tl_tbl.bf.ipv6_dst_addr_0 &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_dst_addr_1 <<
+				(tl_tbl.bf.ipv6_dst_addr_1 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[2] = ((tl_tbl.bf0.ipv6_dst_addr_1 >>
+			rule_key->dip.ip6_addr.ul[2] = ((tl_tbl.bf.ipv6_dst_addr_1 >>
 				TL_TBL_IPV6_DST_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_dst_addr_2 <<
+				(tl_tbl.bf.ipv6_dst_addr_2 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[1] = ((tl_tbl.bf0.ipv6_dst_addr_2 >>
+			rule_key->dip.ip6_addr.ul[1] = ((tl_tbl.bf.ipv6_dst_addr_2 >>
 				TL_TBL_IPV6_DST_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_dst_addr_3 <<
+				(tl_tbl.bf.ipv6_dst_addr_3 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[0] = ((tl_tbl.bf0.ipv6_dst_addr_3 >>
+			rule_key->dip.ip6_addr.ul[0] = ((tl_tbl.bf.ipv6_dst_addr_3 >>
 				TL_TBL_IPV6_DST_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf0.ipv6_dst_addr_4 <<
+				(tl_tbl.bf.ipv6_dst_addr_4 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 		} else {
 			rule_key->sip.ip4_addr = tl_tbl.bf1.ipv4_src_addr_0 |
@@ -497,75 +497,75 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV4_DST_ADDR_OFFSET));
 		}
 
-		rule_key->sport = tl_tbl.bf0.l4_sport;
-		rule_key->dport = tl_tbl.bf0.l4_dport_0 |
-			tl_tbl.bf0.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_L4_DPORT_OFFSET);
-		rule_key->tunnel_info = tl_tbl.bf0.vni_resv_0 |
-			tl_tbl.bf0.vni_resv_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_VNI_RESV_OFFSET);
-		rule_key->udf0 = tl_tbl.bf0.udf0;
-		rule_key->udf1 = tl_tbl.bf0.udf1_0 |
-			tl_tbl.bf0.udf1_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_UDF1_OFFSET);
+		rule_key->sport = tl_tbl.bf.l4_sport;
+		rule_key->dport = tl_tbl.bf.l4_dport_0 |
+			tl_tbl.bf.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_L4_DPORT_OFFSET);
+		rule_key->tunnel_info = tl_tbl.bf.vni_resv_0 |
+			tl_tbl.bf.vni_resv_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_VNI_RESV_OFFSET);
+		rule_key->udf0 = tl_tbl.bf.udf0;
+		rule_key->udf1 = tl_tbl.bf.udf1_0 |
+			tl_tbl.bf.udf1_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_UDF1_OFFSET);
 
-		if (tl_tbl.bf0.vni_resv_valid) {
+		if (tl_tbl.bf.vni_resv_valid) {
 			rule_key->key_bmp |= BIT(FAL_TUNNEL_KEY_TLINFO_EN);
 		} else {
 			rule_key->key_bmp &= ~BIT(FAL_TUNNEL_KEY_TLINFO_EN);
 		}
 
-		if (tl_tbl.bf0.udf0_valid) {
+		if (tl_tbl.bf.udf0_valid) {
 			rule_key->key_bmp |= BIT(FAL_TUNNEL_KEY_UDF0_EN);
 		} else {
 			rule_key->key_bmp &= ~BIT(FAL_TUNNEL_KEY_UDF0_EN);
 		}
 
-		if (tl_tbl.bf0.udf1_valid) {
+		if (tl_tbl.bf.udf1_valid) {
 			rule_key->key_bmp |= BIT(FAL_TUNNEL_KEY_UDF1_EN);
 		} else {
 			rule_key->key_bmp &= ~BIT(FAL_TUNNEL_KEY_UDF1_EN);
 		}
 
-		entry_action->fwd_cmd = tl_tbl.bf0.fwd_type;
-		entry_action->deacce_en = tl_tbl.bf0.de_acce;
-		entry_action->decap_en = tl_tbl.bf0.decap_en;
-		entry_action->udp_csum_zero = tl_tbl.bf0.udp_csum_zero;
-		entry_action->service_code_en = tl_tbl.bf0.service_code_en;
-		entry_action->service_code = tl_tbl.bf0.service_code;
-		entry_action->spcp_mode = tl_tbl.bf0.spcp_mode;
-		entry_action->sdei_mode = tl_tbl.bf0.sdei_mode;
-		entry_action->cpcp_mode = tl_tbl.bf0.cpcp_mode;
-		entry_action->cdei_mode = tl_tbl.bf0.cdei_mode;
-		entry_action->ttl_mode = tl_tbl.bf0.ttl_mode;
-		entry_action->dscp_mode = tl_tbl.bf0.dscp_mode;
-		entry_action->ecn_mode = tl_tbl.bf0.ecn_mode;
-		entry_action->src_info_enable = tl_tbl.bf0.src_info_valid;
-		entry_action->src_info_type = tl_tbl.bf0.src_info_type;
-		entry_action->src_info = tl_tbl.bf0.src_info;
-		entry_action->verify_entry.tl_l3_if = tl_tbl.bf0.tl_l3_if;
-		entry_action->verify_entry.svlan_fmt = tl_tbl.bf0.svlan_fmt;
-		entry_action->verify_entry.svlan_id = tl_tbl.bf0.svlan_id_0 |
-			tl_tbl.bf0.svlan_id_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_SVLAN_ID_OFFSET);
-		entry_action->verify_entry.cvlan_fmt = tl_tbl.bf0.cvlan_fmt;
-		entry_action->verify_entry.cvlan_id = tl_tbl.bf0.cvlan_id;
+		entry_action->fwd_cmd = tl_tbl.bf.fwd_type;
+		entry_action->deacce_en = tl_tbl.bf.de_acce;
+		entry_action->decap_en = tl_tbl.bf.decap_en;
+		entry_action->udp_csum_zero = tl_tbl.bf.udp_csum_zero;
+		entry_action->service_code_en = tl_tbl.bf.service_code_en;
+		entry_action->service_code = tl_tbl.bf.service_code;
+		entry_action->spcp_mode = tl_tbl.bf.spcp_mode;
+		entry_action->sdei_mode = tl_tbl.bf.sdei_mode;
+		entry_action->cpcp_mode = tl_tbl.bf.cpcp_mode;
+		entry_action->cdei_mode = tl_tbl.bf.cdei_mode;
+		entry_action->ttl_mode = tl_tbl.bf.ttl_mode;
+		entry_action->dscp_mode = tl_tbl.bf.dscp_mode;
+		entry_action->ecn_mode = tl_tbl.bf.ecn_mode;
+		entry_action->src_info_enable = tl_tbl.bf.src_info_valid;
+		entry_action->src_info_type = tl_tbl.bf.src_info_type;
+		entry_action->src_info = tl_tbl.bf.src_info;
+		entry_action->verify_entry.tl_l3_if = tl_tbl.bf.tl_l3_if;
+		entry_action->verify_entry.svlan_fmt = tl_tbl.bf.svlan_fmt;
+		entry_action->verify_entry.svlan_id = tl_tbl.bf.svlan_id_0 |
+			tl_tbl.bf.svlan_id_1 << SW_FIELD_OFFSET_IN_WORD(TL_TBL_SVLAN_ID_OFFSET);
+		entry_action->verify_entry.cvlan_fmt = tl_tbl.bf.cvlan_fmt;
+		entry_action->verify_entry.cvlan_id = tl_tbl.bf.cvlan_id;
 
-		if (tl_tbl.bf0.svlan_check_en) {
+		if (tl_tbl.bf.svlan_check_en) {
 			entry_action->verify_entry.verify_bmp |= FAL_TUNNEL_SVLAN_CHECK_EN;
 		} else {
 			entry_action->verify_entry.verify_bmp &= ~FAL_TUNNEL_SVLAN_CHECK_EN;
 		}
 
-		if (tl_tbl.bf0.cvlan_check_en) {
+		if (tl_tbl.bf.cvlan_check_en) {
 			entry_action->verify_entry.verify_bmp |= FAL_TUNNEL_CVLAN_CHECK_EN;
 		} else {
 			entry_action->verify_entry.verify_bmp &= ~FAL_TUNNEL_CVLAN_CHECK_EN;
 		}
 
-		if (tl_tbl.bf0.tl_l3_if_check_en) {
+		if (tl_tbl.bf.tl_l3_if_check_en) {
 			entry_action->verify_entry.verify_bmp |= FAL_TUNNEL_L3IF_CHECK_EN;
 		} else {
 			entry_action->verify_entry.verify_bmp &= ~FAL_TUNNEL_L3IF_CHECK_EN;
 		}
 
-		entry_action->exp_profile = tl_tbl.bf0.exp_profile;
+		entry_action->exp_profile = tl_tbl.bf.exp_profile;
 	}
 	return SW_OK;
 }
@@ -722,7 +722,7 @@ adpt_appe_tunnel_decap_entry_get(a_uint32_t dev_id,
 			get_mode, &tl_tbl, &rule_key->entry_id);
 	SW_RTN_ON_ERROR(rv);
 
-	if (!tl_tbl.bf0.valid) {
+	if (!tl_tbl.bf.valid) {
 		return SW_NOT_FOUND;
 	}
 
@@ -835,7 +835,7 @@ adpt_appe_tunnel_decap_entry_getnext(a_uint32_t dev_id,
 				next_mode, &tl_tbl, &entry->decap_rule.entry_id);
 		SW_RTN_ON_ERROR(rv);
 
-		if (!tl_tbl.bf0.valid) {
+		if (!tl_tbl.bf.valid) {
 			entry->decap_rule.entry_id++;
 			continue;
 		} else {
@@ -1406,21 +1406,21 @@ adpt_appe_tunnel_vlan_entry_compare(fal_tunnel_vlan_intf_t vlan_cfg,
 
 	a_uint16_t tbl_key_bmp = 0;
 
-	tbl_key_bmp |= (tl_vlan_tbl.bf0.skey_vid_incl ? FAL_TUNNEL_SVLAN_CHECK_EN : 0);
-	tbl_key_bmp |= (tl_vlan_tbl.bf0.ckey_vid_incl ? FAL_TUNNEL_CVLAN_CHECK_EN : 0);
+	tbl_key_bmp |= (tl_vlan_tbl.bf.skey_vid_incl ? FAL_TUNNEL_SVLAN_CHECK_EN : 0);
+	tbl_key_bmp |= (tl_vlan_tbl.bf.ckey_vid_incl ? FAL_TUNNEL_CVLAN_CHECK_EN : 0);
 
-	if (tl_vlan_tbl.bf0.type != adpt_port_type_convert(A_TRUE,
+	if (tl_vlan_tbl.bf.type != adpt_port_type_convert(A_TRUE,
 				FAL_PORT_ID_TYPE(vlan_cfg.port_id)) ||
-			tl_vlan_tbl.bf0.port_vp_id != FAL_PORT_ID_VALUE(vlan_cfg.port_id) ||
-			tl_vlan_tbl.bf0.skey_fmt != vlan_cfg.svlan_fmt ||
-			tl_vlan_tbl.bf0.ckey_fmt != vlan_cfg.cvlan_fmt ||
+			tl_vlan_tbl.bf.port_vp_id != FAL_PORT_ID_VALUE(vlan_cfg.port_id) ||
+			tl_vlan_tbl.bf.skey_fmt != vlan_cfg.svlan_fmt ||
+			tl_vlan_tbl.bf.ckey_fmt != vlan_cfg.cvlan_fmt ||
 			tbl_key_bmp != vlan_cfg.key_bmp)
 		return A_FALSE;
 	if (vlan_cfg.key_bmp & FAL_TUNNEL_SVLAN_CHECK_EN &&
-			tl_vlan_tbl.bf0.skey_vid != vlan_cfg.svlan_id)
+			tl_vlan_tbl.bf.skey_vid != vlan_cfg.svlan_id)
 		return A_FALSE;
 	if (vlan_cfg.key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN &&
-			(tl_vlan_tbl.bf0.ckey_vid_0 | (tl_vlan_tbl.bf0.ckey_vid_1 <<
+			(tl_vlan_tbl.bf.ckey_vid_0 | (tl_vlan_tbl.bf.ckey_vid_1 <<
 					SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET)))
 			!= vlan_cfg.cvlan_id)
 		return A_FALSE;
@@ -1438,47 +1438,47 @@ adpt_appe_tunnel_vlan_entry_convert(fal_tunnel_vlan_intf_t *vlan_cfg,
 	ADPT_NULL_POINT_CHECK(tl_vlan_tbl);
 
 	if (to_hsl) {
-		tl_vlan_tbl->bf0.valid = A_TRUE;
-		tl_vlan_tbl->bf0.type = adpt_port_type_convert(A_TRUE,
+		tl_vlan_tbl->bf.valid = A_TRUE;
+		tl_vlan_tbl->bf.type = adpt_port_type_convert(A_TRUE,
 				FAL_PORT_ID_TYPE(vlan_cfg->port_id));
-		tl_vlan_tbl->bf0.port_vp_id = FAL_PORT_ID_VALUE(vlan_cfg->port_id);
-		tl_vlan_tbl->bf0.skey_fmt = vlan_cfg->svlan_fmt;
-		tl_vlan_tbl->bf0.skey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_SVLAN_CHECK_EN) ?
+		tl_vlan_tbl->bf.port_vp_id = FAL_PORT_ID_VALUE(vlan_cfg->port_id);
+		tl_vlan_tbl->bf.skey_fmt = vlan_cfg->svlan_fmt;
+		tl_vlan_tbl->bf.skey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_SVLAN_CHECK_EN) ?
 			A_TRUE : A_FALSE;
-		tl_vlan_tbl->bf0.skey_vid = vlan_cfg->svlan_id;
-		tl_vlan_tbl->bf0.ckey_fmt = vlan_cfg->cvlan_fmt;
-		tl_vlan_tbl->bf0.ckey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN) ?
+		tl_vlan_tbl->bf.skey_vid = vlan_cfg->svlan_id;
+		tl_vlan_tbl->bf.ckey_fmt = vlan_cfg->cvlan_fmt;
+		tl_vlan_tbl->bf.ckey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN) ?
 			A_TRUE : A_FALSE;
-		tl_vlan_tbl->bf0.ckey_vid_0 = vlan_cfg->cvlan_id;
-		tl_vlan_tbl->bf0.ckey_vid_1 = vlan_cfg->cvlan_id >>
+		tl_vlan_tbl->bf.ckey_vid_0 = vlan_cfg->cvlan_id;
+		tl_vlan_tbl->bf.ckey_vid_1 = vlan_cfg->cvlan_id >>
 			SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET);
 
-		tl_vlan_tbl->bf0.tl_l3_if_valid = vlan_cfg->l3_if.l3_if_valid;
-		tl_vlan_tbl->bf0.tl_l3_if_index = vlan_cfg->l3_if.l3_if_index;
-		tl_vlan_tbl->bf0.pppoe_en = vlan_cfg->pppoe_en;
+		tl_vlan_tbl->bf.tl_l3_if_valid = vlan_cfg->l3_if.l3_if_valid;
+		tl_vlan_tbl->bf.tl_l3_if_index = vlan_cfg->l3_if.l3_if_index;
+		tl_vlan_tbl->bf.pppoe_en = vlan_cfg->pppoe_en;
 	} else {
 		vlan_cfg->port_id = FAL_PORT_ID(adpt_port_type_convert(A_FALSE,
-					tl_vlan_tbl->bf0.type),
-				tl_vlan_tbl->bf0.port_vp_id);
-		vlan_cfg->svlan_fmt = tl_vlan_tbl->bf0.skey_fmt;
-		vlan_cfg->svlan_id = tl_vlan_tbl->bf0.skey_vid;
-		vlan_cfg->cvlan_fmt = tl_vlan_tbl->bf0.ckey_fmt;
-		vlan_cfg->cvlan_id = tl_vlan_tbl->bf0.ckey_vid_0 | (tl_vlan_tbl->bf0.ckey_vid_1 <<
+					tl_vlan_tbl->bf.type),
+				tl_vlan_tbl->bf.port_vp_id);
+		vlan_cfg->svlan_fmt = tl_vlan_tbl->bf.skey_fmt;
+		vlan_cfg->svlan_id = tl_vlan_tbl->bf.skey_vid;
+		vlan_cfg->cvlan_fmt = tl_vlan_tbl->bf.ckey_fmt;
+		vlan_cfg->cvlan_id = tl_vlan_tbl->bf.ckey_vid_0 | (tl_vlan_tbl->bf.ckey_vid_1 <<
 				SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET));
 
-		if (tl_vlan_tbl->bf0.skey_vid_incl)
+		if (tl_vlan_tbl->bf.skey_vid_incl)
 			vlan_cfg->key_bmp |= FAL_TUNNEL_SVLAN_CHECK_EN;
 		else
 			vlan_cfg->key_bmp &= ~FAL_TUNNEL_SVLAN_CHECK_EN;
 
-		if (tl_vlan_tbl->bf0.ckey_vid_incl)
+		if (tl_vlan_tbl->bf.ckey_vid_incl)
 			vlan_cfg->key_bmp |= FAL_TUNNEL_CVLAN_CHECK_EN;
 		else
 			vlan_cfg->key_bmp &= ~FAL_TUNNEL_CVLAN_CHECK_EN;
 
-		vlan_cfg->l3_if.l3_if_valid = tl_vlan_tbl->bf0.tl_l3_if_valid;
-		vlan_cfg->l3_if.l3_if_index = tl_vlan_tbl->bf0.tl_l3_if_index;
-		vlan_cfg->pppoe_en = tl_vlan_tbl->bf0.pppoe_en;
+		vlan_cfg->l3_if.l3_if_valid = tl_vlan_tbl->bf.tl_l3_if_valid;
+		vlan_cfg->l3_if.l3_if_index = tl_vlan_tbl->bf.tl_l3_if_index;
+		vlan_cfg->pppoe_en = tl_vlan_tbl->bf.pppoe_en;
 	}
 
 	return rv;
@@ -1504,7 +1504,7 @@ adpt_appe_tunnel_vlan_intf_add(a_uint32_t dev_id,
 		rv = appe_tl_vlan_tbl_get(dev_id, index, &tl_vlan_tbl);
 		SW_RTN_ON_ERROR(rv);
 
-		if (tl_vlan_tbl.bf0.valid == A_FALSE && update_index == TL_VLAN_TBL_NUM)
+		if (tl_vlan_tbl.bf.valid == A_FALSE && update_index == TL_VLAN_TBL_NUM)
 			update_index = index;
 
 		is_equal = adpt_appe_tunnel_vlan_entry_compare(*vlan_cfg, tl_vlan_tbl);
@@ -1544,7 +1544,7 @@ adpt_appe_tunnel_vlan_intf_getfirst(a_uint32_t dev_id,
 		rv = appe_tl_vlan_tbl_get(dev_id, index, &tl_vlan_tbl);
 		SW_RTN_ON_ERROR(rv);
 
-		if (tl_vlan_tbl.bf0.valid == A_TRUE)
+		if (tl_vlan_tbl.bf.valid == A_TRUE)
 			break;
 		index++;
 	}
@@ -1578,11 +1578,11 @@ adpt_appe_tunnel_vlan_intf_getnext(a_uint32_t dev_id,
 		rv = appe_tl_vlan_tbl_get(dev_id, index, &tl_vlan_tbl);
 		SW_RTN_ON_ERROR(rv);
 
-		if (is_equal && tl_vlan_tbl.bf0.valid == A_TRUE)
+		if (is_equal && tl_vlan_tbl.bf.valid == A_TRUE)
 			break;
 
 		index++;
-		if (tl_vlan_tbl.bf0.valid == A_FALSE)
+		if (tl_vlan_tbl.bf.valid == A_FALSE)
 			continue;
 
 		is_equal = adpt_appe_tunnel_vlan_entry_compare(*vlan_cfg, tl_vlan_tbl);
@@ -2723,65 +2723,65 @@ sw_error_t adpt_appe_tunnel_decap_action_update(a_uint32_t dev_id,
 		if (update_bitmap & 1) {
 			switch (update_field) {
 				case FAL_TUNNEL_SVLAN_UPDATE:
-					tl_tbl.bf0.svlan_fmt =
+					tl_tbl.bf.svlan_fmt =
 						update_action->verify_entry.svlan_fmt;
-					tl_tbl.bf0.svlan_id_0 =
+					tl_tbl.bf.svlan_id_0 =
 						update_action->verify_entry.svlan_id;
-					tl_tbl.bf0.svlan_id_1 =
+					tl_tbl.bf.svlan_id_1 =
 						update_action->verify_entry.svlan_id >>
 						SW_FIELD_OFFSET_IN_WORD(TL_TBL_SVLAN_ID_OFFSET);
-					tl_tbl.bf0.svlan_check_en =
+					tl_tbl.bf.svlan_check_en =
 						update_action->verify_entry.verify_bmp &
 						FAL_TUNNEL_SVLAN_CHECK_EN ? A_TRUE : A_FALSE;
 					break;
 				case FAL_TUNNEL_CVLAN_UPDATE:
-					tl_tbl.bf0.cvlan_fmt =
+					tl_tbl.bf.cvlan_fmt =
 						update_action->verify_entry.cvlan_fmt;
-					tl_tbl.bf0.cvlan_id =
+					tl_tbl.bf.cvlan_id =
 						update_action->verify_entry.cvlan_id;
-					tl_tbl.bf0.cvlan_check_en =
+					tl_tbl.bf.cvlan_check_en =
 						update_action->verify_entry.verify_bmp &
 						FAL_TUNNEL_CVLAN_CHECK_EN ? A_TRUE : A_FALSE;
 					break;
 				case FAL_TUNNEL_L3IF_UPDATE:
-					tl_tbl.bf0.tl_l3_if = update_action->verify_entry.tl_l3_if;
-					tl_tbl.bf0.tl_l3_if_check_en =
+					tl_tbl.bf.tl_l3_if = update_action->verify_entry.tl_l3_if;
+					tl_tbl.bf.tl_l3_if_check_en =
 						update_action->verify_entry.verify_bmp &
 						FAL_TUNNEL_L3IF_CHECK_EN ? A_TRUE : A_FALSE;
 					break;
 				case FAL_TUNNEL_DECAP_UPDATE:
-					tl_tbl.bf0.decap_en = update_action->decap_en;
+					tl_tbl.bf.decap_en = update_action->decap_en;
 					break;
 				case FAL_TUNNEL_DEACCE_UPDATE:
-					tl_tbl.bf0.de_acce = update_action->deacce_en;
+					tl_tbl.bf.de_acce = update_action->deacce_en;
 					break;
 				case FAL_TUNNEL_SRCINFO_UPDATE:
-					tl_tbl.bf0.src_info_valid = update_action->src_info_enable;
-					tl_tbl.bf0.src_info_type = update_action->src_info_type;
-					tl_tbl.bf0.src_info = update_action->src_info;
+					tl_tbl.bf.src_info_valid = update_action->src_info_enable;
+					tl_tbl.bf.src_info_type = update_action->src_info_type;
+					tl_tbl.bf.src_info = update_action->src_info;
 					break;
 				case FAL_TUNNEL_PKT_MODE_UPDATE:
-					tl_tbl.bf0.spcp_mode = update_action->spcp_mode;
-					tl_tbl.bf0.sdei_mode = update_action->sdei_mode;
-					tl_tbl.bf0.cpcp_mode = update_action->cpcp_mode;
-					tl_tbl.bf0.cdei_mode = update_action->cdei_mode;
-					tl_tbl.bf0.ttl_mode = update_action->ttl_mode;
-					tl_tbl.bf0.dscp_mode = update_action->dscp_mode;
-					tl_tbl.bf0.ecn_mode = update_action->ecn_mode;
+					tl_tbl.bf.spcp_mode = update_action->spcp_mode;
+					tl_tbl.bf.sdei_mode = update_action->sdei_mode;
+					tl_tbl.bf.cpcp_mode = update_action->cpcp_mode;
+					tl_tbl.bf.cdei_mode = update_action->cdei_mode;
+					tl_tbl.bf.ttl_mode = update_action->ttl_mode;
+					tl_tbl.bf.dscp_mode = update_action->dscp_mode;
+					tl_tbl.bf.ecn_mode = update_action->ecn_mode;
 					break;
 				case FAL_TUNNEL_SERVICE_CODE_UPDATE:
-					tl_tbl.bf0.service_code_en =
+					tl_tbl.bf.service_code_en =
 						update_action->service_code_en;
-					tl_tbl.bf0.service_code = update_action->service_code;
+					tl_tbl.bf.service_code = update_action->service_code;
 					break;
 				case FAL_TUNNEL_UDP_CSUM_ZERO_UPDATE:
-					tl_tbl.bf0.udp_csum_zero = update_action->udp_csum_zero;
+					tl_tbl.bf.udp_csum_zero = update_action->udp_csum_zero;
 					break;
 				case FAL_TUNNEL_EXP_PROFILE_UPDATE:
-					tl_tbl.bf0.exp_profile = update_action->exp_profile;
+					tl_tbl.bf.exp_profile = update_action->exp_profile;
 					break;
 				case FAL_TUNNEL_FWD_CMD_UPDATE:
-					tl_tbl.bf0.fwd_type = update_action->fwd_cmd;
+					tl_tbl.bf.fwd_type = update_action->fwd_cmd;
 					break;
 				default:
 					break;

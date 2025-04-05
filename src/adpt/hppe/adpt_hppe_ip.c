@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -994,23 +994,23 @@ adpt_hppe_ip_nexthop_get(a_uint32_t dev_id,
 	if( rv != SW_OK )
 		return rv;
 
-	entry->type = in_nexthop_tbl.bf0.type;
+	entry->type = in_nexthop_tbl.bf.type;
 	entry->vsi = in_nexthop_tbl.bf1.vsi;
-	entry->port = in_nexthop_tbl.bf0.port;
-	entry->if_index = in_nexthop_tbl.bf0.post_l3_if;
-	entry->ip_to_me_en = in_nexthop_tbl.bf0.ip_to_me;
+	entry->port = in_nexthop_tbl.bf.port;
+	entry->if_index = in_nexthop_tbl.bf.post_l3_if;
+	entry->ip_to_me_en = in_nexthop_tbl.bf.ip_to_me;
 	entry->pub_ip_index = in_nexthop_tbl.bf1.ip_pub_addr_index;
-	entry->stag_fmt = in_nexthop_tbl.bf0.stag_fmt;
-	entry->svid = in_nexthop_tbl.bf0.svid;
-	entry->ctag_fmt = in_nexthop_tbl.bf0.ctag_fmt;
-	entry->cvid = in_nexthop_tbl.bf0.cvid;
+	entry->stag_fmt = in_nexthop_tbl.bf.stag_fmt;
+	entry->svid = in_nexthop_tbl.bf.svid;
+	entry->ctag_fmt = in_nexthop_tbl.bf.ctag_fmt;
+	entry->cvid = in_nexthop_tbl.bf.cvid;
 	entry->mac_addr.uc[5] = in_nexthop_tbl.bf1.mac_addr_0;
 	entry->mac_addr.uc[4] = in_nexthop_tbl.bf1.mac_addr_0 >> 8;
 	entry->mac_addr.uc[3] = in_nexthop_tbl.bf1.mac_addr_1;
 	entry->mac_addr.uc[2] = in_nexthop_tbl.bf1.mac_addr_1 >> 8;
 	entry->mac_addr.uc[1] = in_nexthop_tbl.bf1.mac_addr_1 >> 16;
 	entry->mac_addr.uc[0] = in_nexthop_tbl.bf1.mac_addr_1 >> 24;
-	entry->dnat_ip = in_nexthop_tbl.bf0.ip_addr_dnat;
+	entry->dnat_ip = in_nexthop_tbl.bf.ip_addr_dnat;
 
 	return SW_OK;
 }
@@ -1457,25 +1457,25 @@ adpt_hppe_ip_nexthop_set(a_uint32_t dev_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
 
-	in_nexthop_tbl.bf0.type = entry->type;
+	in_nexthop_tbl.bf.type = entry->type;
 	if (entry->type == 0)
 		in_nexthop_tbl.bf1.vsi = entry->vsi;
 	else
-		in_nexthop_tbl.bf0.port = entry->port;
-	in_nexthop_tbl.bf0.post_l3_if = entry->if_index;
-	in_nexthop_tbl.bf0.ip_to_me = entry->ip_to_me_en;
-	in_nexthop_tbl.bf0.ip_pub_addr_index = entry->pub_ip_index;
-	in_nexthop_tbl.bf0.stag_fmt = entry->stag_fmt;
-	in_nexthop_tbl.bf0.svid = entry->svid;
-	in_nexthop_tbl.bf0.ctag_fmt = entry->ctag_fmt;
-	in_nexthop_tbl.bf0.cvid = entry->cvid;
-	in_nexthop_tbl.bf0.mac_addr_0 = entry->mac_addr.uc[5] |
+		in_nexthop_tbl.bf.port = entry->port;
+	in_nexthop_tbl.bf.post_l3_if = entry->if_index;
+	in_nexthop_tbl.bf.ip_to_me = entry->ip_to_me_en;
+	in_nexthop_tbl.bf.ip_pub_addr_index = entry->pub_ip_index;
+	in_nexthop_tbl.bf.stag_fmt = entry->stag_fmt;
+	in_nexthop_tbl.bf.svid = entry->svid;
+	in_nexthop_tbl.bf.ctag_fmt = entry->ctag_fmt;
+	in_nexthop_tbl.bf.cvid = entry->cvid;
+	in_nexthop_tbl.bf.mac_addr_0 = entry->mac_addr.uc[5] |
 					entry->mac_addr.uc[4] << 8;
-	in_nexthop_tbl.bf0.mac_addr_1 = entry->mac_addr.uc[3] |
+	in_nexthop_tbl.bf.mac_addr_1 = entry->mac_addr.uc[3] |
 					entry->mac_addr.uc[2] << 8 |
 					entry->mac_addr.uc[1] << 16 |
 					entry->mac_addr.uc[0] << 24;
-	in_nexthop_tbl.bf0.ip_addr_dnat = entry->dnat_ip;
+	in_nexthop_tbl.bf.ip_addr_dnat = entry->dnat_ip;
 
 	return hppe_in_nexthop_tbl_set(dev_id, index, &in_nexthop_tbl);
 }
