@@ -31,6 +31,7 @@
 #endif
 
 #if defined(IN_BM) && defined(IN_QOS)
+/* TODO: update JHPPE/HMSPPE tdm configurations */
 #if defined(MRPPE)
 fal_port_tdm_tick_cfg_t ppe_port_tdm0_tbl[] = {
 	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 0, 0},
@@ -610,9 +611,10 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 		}
 	}
 #endif
-
-	for (i = 0; i < num; i++) {
-		p_api->adpt_port_tdm_tick_cfg_set(dev_id, i, &bm_cfg[i]);
+	if (bm_cfg != NULL) {
+		for (i = 0; i < num; i++) {
+			p_api->adpt_port_tdm_tick_cfg_set(dev_id, i, &bm_cfg[i]);
+		}
 	}
 
 	tdm_ctrl.enable = A_TRUE;

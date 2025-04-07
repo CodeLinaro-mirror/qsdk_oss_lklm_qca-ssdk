@@ -85,13 +85,10 @@ sw_error_t qca_hppe_ctlpkt_hw_init(a_uint32_t dev_id)
 #if defined(APPE)
 	a_uint32_t cpu_code = 0;
 
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
-		while (cpu_code < APPE_CPU_CODE_CTRL_NUM) {
-			rv = fal_mgmtctrl_tunnel_decap_set(dev_id, cpu_code, A_TRUE);
-			SW_RTN_ON_ERROR(rv);
-			cpu_code++;
-		}
+	while (cpu_code < APPE_CPU_CODE_CTRL_NUM) {
+		rv = fal_mgmtctrl_tunnel_decap_set(dev_id, cpu_code, A_TRUE);
+		SW_RTN_ON_ERROR(rv);
+		cpu_code++;
 	}
 #endif
 
@@ -817,6 +814,8 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 			break;
 		case APPE_TYPE:
 		case MRPPE_TYPE:
+		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
 			group_buf = 1550;
 			break;
 		case MPPE_TYPE:
@@ -835,6 +834,8 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 		switch (chip_type) {
 			case HPPE_TYPE:
 			case APPE_TYPE:
+			case JHPPE_TYPE:
+			case HMSPPE_TYPE:
 				if (i < PPE_BM_PHY_PORT_OFFSET) {
 					prealloc_buf = 0;
 					react_buf = 100;
@@ -905,6 +906,8 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 				break;
 			case APPE_TYPE:
 			case MRPPE_TYPE:
+			case JHPPE_TYPE:
+			case HMSPPE_TYPE:
 				if (i == PPE_BM_PORT_MIN) {
 					share_ceiling = 1146;
 					cfg.resume_min_thresh = 0;
@@ -986,13 +989,10 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 
 	queue_dst.service_code = 7;
 #if defined(APPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-		fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 252, 0);
-	else
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 252, 0);
+#else
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 240, 0);
 #endif
-		fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 240, 0);
-
 	queue_dst.service_code_en = A_FALSE;
 	queue_dst.service_code = 0;
 	for(i = 0; i < SSDK_MAX_PORT_NUM; i++) {
@@ -1133,6 +1133,8 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	switch (chip_type) {
 		case HPPE_TYPE:
 		case MRPPE_TYPE:
+		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
 		case APPE_TYPE:
 			total_buf = 2000;
 			break;

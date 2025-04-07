@@ -53,7 +53,11 @@ extern "C" {
 #define SSDK_MAX_UNIPHY_INSTANCE        3
 
 #define IOCTL_COMPAT
-#if defined(MRPPE)
+#if defined(HMSPPE)
+#define PPE_STR "HMSPPE"
+#elif defined(JHPPE)
+#define PPE_STR "JHPPE"
+#elif defined(MRPPE)
 #define PPE_STR "MRPPE"
 #elif defined(MPPE)
 #define PPE_STR "MPPE"
@@ -199,6 +203,8 @@ enum ssdk_port_wrapper_cfg {
         CHIP_APPE,
 	CHIP_MHT,
         CHIP_MRPPE,
+	CHIP_JHPPE,
+	CHIP_HMSPPE,
     } ssdk_chip_type;
 /*qca808x_end*/
 	typedef struct

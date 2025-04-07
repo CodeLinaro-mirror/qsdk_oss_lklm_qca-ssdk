@@ -1038,6 +1038,8 @@ _ssdk_mac_sw_sync_chip_check(struct qca_phy_priv *priv)
 		case QCA_VER_SCOMPHY:
 		case QCA_VER_MRPPE:
 		case QCA_VER_APPE:
+		case QCA_VER_JHPPE:
+		case QCA_VER_HMSPPE:
 			break;
 		default:
 			SSDK_DEBUG("Unsupported chip version %d\n", priv->version);
@@ -1114,7 +1116,8 @@ int
 qca_fdb_sw_sync_work_init(struct qca_phy_priv *priv)
 {
 	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE) &&
-		(priv->version != QCA_VER_MRPPE) && (priv->version != QCA_VER_MHT))
+		(priv->version != QCA_VER_MRPPE) && (priv->version != QCA_VER_MHT) &&
+		(priv->version != QCA_VER_JHPPE) && (priv->version != QCA_VER_HMSPPE))
 	{
 		return 0;
 	}
@@ -1131,7 +1134,8 @@ int
 qca_fdb_sw_sync_work_start(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 {
 	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE) &&
-		(priv->version != QCA_VER_MRPPE) && (priv->version != QCA_VER_MHT))
+		(priv->version != QCA_VER_MRPPE) && (priv->version != QCA_VER_MHT) &&
+		(priv->version != QCA_VER_JHPPE) && (priv->version != QCA_VER_HMSPPE))
 	{
 		return 0;
 	}
@@ -1160,7 +1164,8 @@ void
 qca_fdb_sw_sync_work_stop(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 {
 	if ((priv->version != QCA_VER_HPPE) && (priv->version != QCA_VER_APPE) &&
-		(priv->version != QCA_VER_MRPPE))
+		(priv->version != QCA_VER_MRPPE) &&
+		(priv->version != QCA_VER_JHPPE) && (priv->version != QCA_VER_HMSPPE))
 	{
 		return;
 	}
@@ -1192,6 +1197,8 @@ sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 	case APPE_TYPE:
 	case MPPE_TYPE:
 	case MRPPE_TYPE:
+	case JHPPE_TYPE:
+	case HMSPPE_TYPE:
 		rv = qca_appe_hw_init(dev_id);
 		SW_RTN_ON_ERROR(rv);
 
@@ -1232,6 +1239,8 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 			break;
 		case QCA_VER_APPE:
 		case QCA_VER_MRPPE:
+		case QCA_VER_JHPPE:
+		case QCA_VER_HMSPPE:
 		case QCA_VER_HPPE:
 #ifdef HPPE
 			sw_dev->name = "QCA "PPE_STR;
@@ -1493,6 +1502,8 @@ static const struct of_device_id ssdk_of_mtable[] = {
 	{.compatible = "qcom,ess-switch-ipq95xx" },
 	{.compatible = "qcom,ess-switch-ipq53xx" },
 	{.compatible = "qcom,ess-switch-ipq54xx" },
+	{.compatible = "qcom,ess-switch-ipq96xx" },
+	{.compatible = "qcom,ess-switch-ipq52xx" },
 	{.compatible = "qcom,ess-instance" },
 	{}
 };
@@ -1659,6 +1670,12 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 			break;
 		case QCA_VER_MHT:
 			cfg->chip_type = CHIP_MHT;
+			break;
+		case QCA_VER_JHPPE:
+			cfg->chip_type = CHIP_JHPPE;
+			break;
+		case QCA_VER_HMSPPE:
+			cfg->chip_type = CHIP_HMSPPE;
 			break;
 		default:
 			/* try single phy without switch connected */
@@ -1930,6 +1947,8 @@ static int __init regi_init(void)
 				SSDK_INFO("Initializing MHT Done!!\n");
 #endif
 				break;
+			case CHIP_HMSPPE:
+			case CHIP_JHPPE:
 			case CHIP_MRPPE:
 			case CHIP_APPE:
 #if defined(APPE)
@@ -1937,6 +1956,12 @@ static int __init regi_init(void)
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT4;
 				else if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT3;
+				else if(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)
+					/* port0 cpu port, port1-port6 MAC ports, port7 loopback */
+					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT8;
+				else if(adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+					/* port0 cpu port, port1-port6 MAC ports, port7 EIP, port8 loopback */
+					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT8 + 1;
 				qca_appe_hw_init(dev_id);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
