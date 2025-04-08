@@ -628,6 +628,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_FDBENTRY, (param_check_t)cmd_data_check_fdbentry, NULL),
 #ifndef IN_FDB_MINI
     SW_TYPE_DEF(SW_MACLIMIT_CTRL, (param_check_t)cmd_data_check_maclimit_ctrl, NULL),
+    SW_TYPE_DEF(SW_FDB_LEARN_CTRL, (param_check_t)cmd_data_check_fdb_learning_ctrl, NULL),
 #endif
 #endif
 #ifdef IN_QOS
@@ -2945,6 +2946,34 @@ cmd_data_check_maclimit_ctrl(char *info, void *val, a_uint32_t size)
     while (talk_mode && (SW_OK != rv));
 
     *(fal_maclimit_ctrl_t *) val = maclimit_ctrl;
+
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_fdb_learning_ctrl(char *info, a_uint32_t * val, a_uint32_t size)
+{
+    if (NULL == info)
+    {
+        return SW_BAD_VALUE;
+    }
+
+    if (!strncasecmp(info, "disable", 10))
+    {
+        *val = DIS_LAERNING;
+    }
+    else if (!strncasecmp(info, "hw_ctrl", 10))
+    {
+        *val = HW_CTRL_LEARNING;
+    }
+    else if (!strncasecmp(info, "sw_ctrl", 10))
+    {
+        *val = SW_CTRL_LEARNING;
+    }
+    else
+    {
+        return SW_BAD_VALUE;
+    }
 
     return SW_OK;
 }

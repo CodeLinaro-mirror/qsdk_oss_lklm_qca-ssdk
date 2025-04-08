@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -118,6 +118,13 @@ extern "C" {
         INVALID_VLAN_IVL
     } fal_fdb_smode;
 
+    typedef enum
+    {
+        DIS_LAERNING = 0,
+        HW_CTRL_LEARNING,
+        SW_CTRL_LEARNING
+    } fal_fdb_learning_ctrl;
+
     sw_error_t
     fal_fdb_entry_add(a_uint32_t dev_id, const fal_fdb_entry_t * entry);
 #if defined(IN_RFS)
@@ -184,11 +191,11 @@ sw_error_t
 #endif
 
     sw_error_t
-    fal_fdb_learning_ctrl_set(a_uint32_t dev_id, a_bool_t enable);
+    fal_fdb_learning_ctrl_set(a_uint32_t dev_id, fal_fdb_learning_ctrl ctrl);
 
 #ifndef IN_FDB_MINI
     sw_error_t
-    fal_fdb_learning_ctrl_get(a_uint32_t dev_id, a_bool_t * enable);
+    fal_fdb_learning_ctrl_get(a_uint32_t dev_id, fal_fdb_learning_ctrl *ctrl);
 
     sw_error_t
     fal_fdb_vlan_ivl_svl_set(a_uint32_t dev_id, fal_fdb_smode smode);

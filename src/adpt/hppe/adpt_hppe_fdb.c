@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -887,7 +887,7 @@ adpt_hppe_fdb_extend_next(a_uint32_t dev_id, fal_fdb_op_t * option,
 }
 
 sw_error_t
-adpt_hppe_fdb_learn_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
+adpt_hppe_fdb_learn_ctrl_set(a_uint32_t dev_id, fal_fdb_learning_ctrl ctrl)
 {
 	sw_error_t rv = SW_OK;
 	union l2_global_conf_u l2_global_conf = {0};
@@ -898,28 +898,40 @@ adpt_hppe_fdb_learn_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
 
 	if( rv != SW_OK )
 		return rv;
-
-	l2_global_conf.bf.lrn_en = enable;
-
+	if (ctrl != DIS_LAERNING) {
+		l2_global_conf.bf.lrn_en = A_TRUE;
+		if (ctrl == SW_CTRL_LEARNING)
+			l2_global_conf.bf.lrn_ctrl_mode = 1;
+		else
+			l2_global_conf.bf.lrn_ctrl_mode = 0;
+	} else {
+		l2_global_conf.bf.lrn_en = A_FALSE;
+	}
 	return hppe_l2_global_conf_set(dev_id, &l2_global_conf);
 }
 #ifndef IN_FDB_MINI
 sw_error_t
-adpt_hppe_fdb_learn_ctrl_get(a_uint32_t dev_id, a_bool_t * enable)
+adpt_hppe_fdb_learn_ctrl_get(a_uint32_t dev_id, fal_fdb_learning_ctrl *ctrl)
 {
 	sw_error_t rv = SW_OK;
 	union l2_global_conf_u l2_global_conf = {0};
 
 	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(enable);
-
+	ADPT_NULL_POINT_CHECK(ctrl);
 
 	rv = hppe_l2_global_conf_get(dev_id, &l2_global_conf);
 
 	if( rv != SW_OK )
 		return rv;
 
-	*enable = l2_global_conf.bf.lrn_en;
+	if (l2_global_conf.bf.lrn_en) {
+		if (l2_global_conf.bf.lrn_ctrl_mode)
+			*ctrl = SW_CTRL_LEARNING;
+		else
+			*ctrl = HW_CTRL_LEARNING;
+	} else {
+		*ctrl = DIS_LAERNING;
+	}
 
 	return SW_OK;
 }

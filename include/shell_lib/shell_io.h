@@ -124,6 +124,7 @@ sw_error_t cmd_data_check_capable(char *cmd_str, a_uint32_t * arg_val,
 sw_error_t cmd_data_check_fdbentry(char *cmdstr, void *val, a_uint32_t size);
 #ifndef IN_FDB_MINI
 sw_error_t cmd_data_check_maclimit_ctrl(char *info, void *val, a_uint32_t size);
+sw_error_t cmd_data_check_fdb_learning_ctrl(char *info, a_uint32_t * val, a_uint32_t size);
 #endif
 #endif
 sw_error_t cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size);

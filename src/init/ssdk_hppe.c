@@ -63,7 +63,7 @@ sw_error_t qca_hppe_fdb_hw_init(a_uint32_t dev_id)
 	}
 
 	fal_fdb_aging_ctrl_set(dev_id, A_TRUE);
-	fal_fdb_learning_ctrl_set(dev_id, A_TRUE);
+	fal_fdb_learning_ctrl_set(dev_id, HW_CTRL_LEARNING);
 
 	return SW_OK;
 }
