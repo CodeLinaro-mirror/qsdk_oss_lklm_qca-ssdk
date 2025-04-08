@@ -48,7 +48,9 @@ enum {
 
 /*[table] */
 #define FLOW_HOST_TBL_RD_RSLT_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x6f8
+#elif defined(APPE)
 #define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x6ec
 #else
 #define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x494
@@ -62,7 +64,11 @@ enum {
 #define IN_FLOW_TBL_OP_DATA
 #if defined(APPE)
 #define IN_FLOW_TBL_OP_DATA_ADDRESS 0x550
+#if defined(JHPPE)
+#define IN_FLOW_TBL_OP_DATA_NUM     12
+#else
 #define IN_FLOW_TBL_OP_DATA_NUM     11
+#endif
 #else
 #define IN_FLOW_TBL_OP_DATA_ADDRESS 0x3c0
 #define IN_FLOW_TBL_OP_DATA_NUM     9
@@ -73,7 +79,9 @@ enum {
 
 /*[register] HOST_TBL_OP_DATA0*/
 #define HOST_TBL_OP_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define HOST_TBL_OP_DATA_ADDRESS 0x744
+#elif defined(APPE)
 #define HOST_TBL_OP_DATA_ADDRESS 0x738
 #else
 #define HOST_TBL_OP_DATA_ADDRESS 0x4c0
@@ -85,7 +93,9 @@ enum {
 
 /*[table] */
 #define FLOW_HOST_TBL_OP_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x590
+#elif defined(APPE)
 #define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x58c
 #else
 #define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x3e4
@@ -97,7 +107,10 @@ enum {
 
 /*[table] */
 #define IN_FLOW_TBL_RD_OP_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x618
+#define IN_FLOW_TBL_RD_OP_DATA_NUM     12
+#elif defined(APPE)
 #define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x614
 #define IN_FLOW_TBL_RD_OP_DATA_NUM     11
 #else
@@ -109,7 +122,10 @@ enum {
 #define IN_FLOW_TBL_RD_OP_DATA_DEFAULT 0x0
 
 #define IN_FLOW_TBL_RD_RSLT_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x6b8
+#define IN_FLOW_TBL_RD_RSLT_DATA_NUM     12
+#elif defined(APPE)
 #define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x6b0
 #define IN_FLOW_TBL_RD_RSLT_DATA_NUM     11
 #else
@@ -122,7 +138,9 @@ enum {
 
 /*[table] */
 #define HOST_TBL_RD_OP_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define HOST_TBL_RD_OP_DATA_ADDRESS 0x7a4
+#elif defined(APPE)
 #define HOST_TBL_RD_OP_DATA_ADDRESS 0x798
 #else
 #define HOST_TBL_RD_OP_DATA_ADDRESS 0x4f0
@@ -134,7 +152,9 @@ enum {
 
 /*[register]*/
 #define HOST_TBL_RD_RSLT_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x7f0
+#elif defined(APPE)
 #define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x7e4
 #else
 #define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x51c
@@ -146,7 +166,9 @@ enum {
 
 /*[register] FLOW_HOST_TBL_RD_OP_DATA*/
 #define FLOW_HOST_TBL_RD_OP_DATA
-#if defined(APPE)
+#if defined(JHPPE)
+#define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x658
+#elif defined(APPE)
 #define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x650
 #else
 #define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x440
@@ -1331,4 +1353,35 @@ mrppe_rss_hash_type_sel_extract_bit_pos_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
+#if defined(JHPPE)
+sw_error_t
+hppe_flow_entry_host_op_ip_6tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_entry_host_op_ip_6tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_entry_host_op_ip_6tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ip_6tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ip_6tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ip_6tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
+#endif
 #endif

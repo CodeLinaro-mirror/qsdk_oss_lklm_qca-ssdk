@@ -596,6 +596,26 @@ typedef sw_error_t (*adpt_flow_npt66_status_set_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_flow_npt66_status_get_func)(a_uint32_t dev_id,
 		a_bool_t *enable);
 
+typedef sw_error_t (*adpt_flow_key_get_func)(a_uint32_t dev_id,
+		fal_flow_protocol_type_t key_type,
+		fal_flow_key_t *flow_key);
+
+typedef sw_error_t (*adpt_flow_key_set_func)(a_uint32_t dev_id,
+		fal_flow_protocol_type_t key_type,
+		fal_flow_key_t *flow_key);
+
+typedef sw_error_t (*adpt_flow_sampling_id_get_func)(a_uint32_t dev_id,
+		a_uint32_t flow_index, a_uint32_t *sampling_id);
+
+typedef sw_error_t (*adpt_flow_sampling_id_set_func)(a_uint32_t dev_id,
+		a_uint32_t flow_index, a_uint32_t sampling_id);
+
+typedef sw_error_t (*adpt_flow_gro_en_get_func)(a_uint32_t dev_id,
+		a_uint32_t flow_index, a_bool_t *enable);
+
+typedef sw_error_t (*adpt_flow_gro_en_set_func)(a_uint32_t dev_id,
+		a_uint32_t flow_index, a_bool_t enable);
+
 typedef sw_error_t (*adpt_ucast_hash_map_set_func)(
 		a_uint32_t dev_id,
 		a_uint8_t profile,
@@ -1764,6 +1784,12 @@ typedef struct
 	adpt_flow_npt66_iid_del_func adpt_flow_npt66_iid_del;
 	adpt_flow_npt66_status_set_func adpt_flow_npt66_status_set;
 	adpt_flow_npt66_status_get_func adpt_flow_npt66_status_get;
+	adpt_flow_key_get_func	adpt_flow_key_get;
+	adpt_flow_key_set_func	adpt_flow_key_set;
+	adpt_flow_sampling_id_get_func adpt_flow_sampling_id_get;
+	adpt_flow_sampling_id_set_func adpt_flow_sampling_id_set;
+	adpt_flow_gro_en_get_func adpt_flow_gro_en_get;
+	adpt_flow_gro_en_set_func adpt_flow_gro_en_set;
 
 	/* qm */
 	adpt_ucast_hash_map_set_func adpt_ucast_hash_map_set;

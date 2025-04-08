@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2016-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -58,6 +48,8 @@ typedef enum {
 #define FAL_FLOW_IP6_5TUPLE_ADDR        0x2
 #define FAL_FLOW_IP4_3TUPLE_ADDR        0x4
 #define FAL_FLOW_IP6_3TUPLE_ADDR        0x8
+#define FAL_FLOW_IP4_6TUPLE_ADDR       	0x10
+#define FAL_FLOW_IP6_6TUPLE_ADDR       	0x20
 
 #define FAL_FLOW_OP_MODE_KEY         0x0
 #define FAL_FLOW_OP_MODE_INDEX     0x1
@@ -147,7 +139,20 @@ typedef struct {
 	a_bool_t invalid; /* added for host data path */
 	a_bool_t policer_valid; /* flow based policer valid or not, added for ipq53xx */
 	a_uint32_t policer_index; /* flow based policer index, added for ipq53xx */
+	a_bool_t route_en; /* routing or bridge. */
+	a_bool_t udf0_en; /* flow key gen0 enabled or not. */
+	a_bool_t udf1_en; /* flow key gen1 enabled or not. */
+	a_uint32_t match_more; /* SPI value for NATT, UDF0+UDF1 for flow key sel. */
+	a_uint32_t sampling_id; /* STC index. */
+	a_uint32_t nat_action; /* NAT action for routing. */
 } fal_flow_entry_t;
+
+enum {
+	FAL_FLOW_KEY_ROUTING = BIT(0),
+	FAL_FLOW_KEY_IPSEC_AH = BIT(1),
+	FAL_FLOW_KEY_IPSEC_ESP = BIT(2),
+	FAL_FLOW_KEY_IPSEC_NATT = BIT(3),
+};
 
 typedef struct {
 	fal_fwd_cmd_t src_if_check_action; /*source inferface check fail action*/
@@ -176,6 +181,7 @@ typedef struct {
 	a_bool_t l3_vpn_en; /* enable vrf(vpn_id configured by ip globalctrl) as flow key or not
 			     * added for ipq95xx */
 	a_uint8_t flow_cookie_pri; /* flow cookie priority compared with IPO, added for ipq53xx */
+	a_uint8_t flow_key_en_bitmap; /* Enable flow key for routing, ipsec_ah, ipsec_esp and ipsec_natt. */
 } fal_flow_global_cfg_t;
 
 typedef struct {
@@ -205,6 +211,70 @@ typedef struct {
 	a_bool_t   is_dnat;
 } fal_flow_npt66_iid_t;
 
+typedef enum {
+	FAL_FLOW_3TUPLE = 0,
+	FAL_FLOW_TCP,
+	FAL_FLOW_UDP,
+	FAL_FLOW_UDP_LITE,
+	FAL_FLOW_IPSEC,
+	FAL_FLOW_NATT,
+	FAL_FLOW_KEY_GEN0,
+	FAL_FLOW_KEY_GEN1,
+} fal_flow_protocol_type_t;
+
+enum {
+	FAL_FLOW_KEY_L3_TYPE,
+	FAL_FLOW_KEY_L4_TYPE,
+	FAL_FLOW_KEY_APP_TYPE,
+	FAL_FLOW_KEY_SIP,
+	FAL_FLOW_KEY_DIP,
+	FAL_FLOW_KEY_IP_PROTOCOL,
+	FAL_FLOW_KEY_SPORT,
+	FAL_FLOW_KEY_DPORT,
+	FAL_FLOW_KEY_UDF0,
+	FAL_FLOW_KEY_UDF1,
+};
+
+typedef struct {
+	/* Valid or not. */
+	a_bool_t valid;
+	/* flow key including l3 type, l4 type, app type, sip, dip,
+	 * ip protocol, sport, dport, udf0 and udf1.
+	 */
+	a_uint16_t key_bmp;
+	/* 0x1=IPv4; 0x2=ARP; 0x3=IPv6. */
+	a_uint16_t l3_type;
+	/* 0x1=TCP; 0x2=UDP; 0x3=UDP-Lite; 0x4=ICMP. */
+	a_uint16_t l4_type;
+	/* APP type from the mapped tunnel type. */
+	a_uint16_t app_type;
+	/* UDF0 id used to select one UDF from total four UDFs. */
+	a_uint8_t udf0_idx;
+	/* UDF0 mask for udf0. */
+	a_uint16_t udf0_mask;
+	/* UDF1 id used to select one UDF from total four UDFs. */
+	a_uint8_t udf1_idx;
+	/* UDF1 mask for udf1. */
+	a_uint16_t udf1_mask;
+} fal_flow_key_t;
+
+sw_error_t fal_flow_key_set(a_uint32_t dev_id, fal_flow_protocol_type_t key_type,
+		fal_flow_key_t *flow_key);
+
+sw_error_t fal_flow_key_get(a_uint32_t dev_id, fal_flow_protocol_type_t key_type,
+		fal_flow_key_t *flow_key);
+
+sw_error_t fal_flow_sampling_id_get(a_uint32_t dev_id, a_uint32_t flow_index,
+		a_uint32_t *sampling_id);
+
+sw_error_t fal_flow_sampling_id_set(a_uint32_t dev_id, a_uint32_t flow_index,
+		a_uint32_t sampling_id);
+
+sw_error_t fal_flow_gro_en_get(a_uint32_t dev_id, a_uint32_t flow_index,
+		a_bool_t *enable);
+
+sw_error_t fal_flow_gro_en_set(a_uint32_t dev_id, a_uint32_t flow_index,
+		a_bool_t enable);
 
 sw_error_t
 fal_flow_counter_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_entry_counter_t *flow_counter);

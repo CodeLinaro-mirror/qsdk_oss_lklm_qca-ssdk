@@ -1,16 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -108,6 +99,24 @@ sw_error_t fal_flow_npt66_status_get(a_uint32_t dev_id, a_bool_t *enable)
 
 sw_error_t fal_flow_npt66_status_set(a_uint32_t dev_id, a_bool_t enable)
     DEFINE_FAL_FUNC_ADPT_EXPORT(flow_npt66_status_set, dev_id, enable)
+
+sw_error_t fal_flow_key_get(a_uint32_t dev_id, fal_flow_protocol_type_t key_type, fal_flow_key_t *flow_key)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_key_get, dev_id, key_type, flow_key)
+
+sw_error_t fal_flow_key_set(a_uint32_t dev_id, fal_flow_protocol_type_t key_type, fal_flow_key_t *flow_key)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_key_set, dev_id, key_type, flow_key)
+
+sw_error_t fal_flow_sampling_id_get(a_uint32_t dev_id, a_uint32_t flow_index, a_uint32_t *sampling_id)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_sampling_id_get, dev_id, flow_index, sampling_id)
+
+sw_error_t fal_flow_sampling_id_set(a_uint32_t dev_id, a_uint32_t flow_index, a_uint32_t sampling_id)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_sampling_id_set, dev_id, flow_index, sampling_id)
+
+sw_error_t fal_flow_gro_en_get(a_uint32_t dev_id, a_uint32_t flow_index, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_gro_en_get, dev_id, flow_index, enable)
+
+sw_error_t fal_flow_gro_en_set(a_uint32_t dev_id, a_uint32_t flow_index, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_gro_en_set, dev_id, flow_index, enable)
 
 #if !defined(IN_FLOW_MINI)
 sw_error_t fal_flow_age_timer_set(a_uint32_t dev_id, fal_flow_age_timer_t *age_timer)

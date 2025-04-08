@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2020-2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 /**
  * @defgroup
@@ -939,6 +928,17 @@ hppe_flow_entry_op(
 	return hppe_flow_op_common(dev_id, op_type, op_mode, index);
 }
 
+#if defined(JHPPE)
+sw_error_t
+hppe_flow_entry_host_op_ip_6tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry)
+{
+	return hppe_flow_entry_op(dev_id, OP_ADD, op_mode, index,
+			entry->val, ARRAY_SIZE(entry->val), A_TRUE);
+}
+#endif
+
 sw_error_t
 hppe_flow_entry_host_op_ipv4_5tuple_add(
 		a_uint32_t dev_id, a_uint32_t op_mode,
@@ -1011,6 +1011,17 @@ hppe_flow_entry_host_op_ipv6_3tuple_del(
 			entry->val, ARRAY_SIZE(entry->val), A_TRUE);
 }
 
+#if defined(JHPPE)
+sw_error_t
+hppe_flow_entry_host_op_ip_6tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry)
+{
+	return hppe_flow_entry_op(dev_id, OP_DEL, op_mode, index,
+			entry->val, ARRAY_SIZE(entry->val), A_TRUE);
+}
+#endif
+
 sw_error_t
 hppe_flow_entry_get(
 		a_uint32_t dev_id, a_uint32_t op_mode,
@@ -1065,6 +1076,17 @@ hppe_flow_entry_host_op_ipv6_3tuple_get(
 	return hppe_flow_entry_get(dev_id, op_mode, index,
 			entry->val, ARRAY_SIZE(entry->val), A_TRUE);
 }
+
+#if defined(JHPPE)
+sw_error_t
+hppe_flow_entry_host_op_ip_6tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry)
+{
+	return hppe_flow_entry_get(dev_id, op_mode, index,
+			entry->val, ARRAY_SIZE(entry->val), A_TRUE);
+}
+#endif
 
 sw_error_t
 hppe_flow_host_data_op_common(
@@ -1259,6 +1281,17 @@ hppe_flow_ipv6_3tuple_add(
 			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
 }
 
+#if defined(JHPPE)
+sw_error_t
+hppe_flow_ip_6tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry)
+{
+	return hppe_flow_entry_op(dev_id, OP_ADD, op_mode, index,
+			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
+}
+#endif
+
 sw_error_t
 hppe_flow_ipv4_5tuple_del(
 		a_uint32_t dev_id, a_uint32_t op_mode,
@@ -1294,6 +1327,17 @@ hppe_flow_ipv6_3tuple_del(
 	return hppe_flow_entry_op(dev_id, OP_DEL, op_mode, index,
 			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
 }
+
+#if defined(JHPPE)
+sw_error_t
+hppe_flow_ip_6tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry)
+{
+	return hppe_flow_entry_op(dev_id, OP_DEL, op_mode, index,
+			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
+}
+#endif
 
 sw_error_t
 hppe_flow_ipv4_5tuple_get(
@@ -1332,6 +1376,15 @@ hppe_flow_ipv6_3tuple_get(
 }
 
 #ifdef JHPPE
+sw_error_t
+hppe_flow_ip_6tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry)
+{
+	return hppe_flow_entry_get(dev_id, op_mode, index,
+			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
+}
+
 sw_error_t
 hppe_eg_global_ctrl_pm_port_bitmap_for_gem_get(
 		a_uint32_t dev_id,

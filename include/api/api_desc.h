@@ -4122,6 +4122,53 @@ extern "C" {
 	SW_PARAM_DEF(SW_API_FLOW_NPT66_IID_DEL, SW_UINT32, \
 			sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),
 
+#define SW_API_FLOW_KEY_GET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_KEY_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_KEY_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow protocol"),  \
+    SW_PARAM_DEF(SW_API_FLOW_KEY_GET, SW_FLOW_KEY, \
+		    sizeof(fal_flow_key_t), SW_PARAM_PTR|SW_PARAM_OUT, "Flow key"),
+
+#define SW_API_FLOW_KEY_SET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_KEY_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_KEY_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow protocol"),  \
+    SW_PARAM_DEF(SW_API_FLOW_KEY_SET, SW_FLOW_KEY, \
+		    sizeof(fal_flow_key_t), SW_PARAM_PTR|SW_PARAM_IN, "Flow key"),
+
+#define SW_API_FLOW_SAMPLING_ID_GET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_SAMPLING_ID_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_SAMPLING_ID_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
+    SW_PARAM_DEF(SW_API_FLOW_SAMPLING_ID_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "Flow Sampling ID"),
+
+#define SW_API_FLOW_SAMPLING_ID_SET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_SAMPLING_ID_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_SAMPLING_ID_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
+    SW_PARAM_DEF(SW_API_FLOW_SAMPLING_ID_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Flow Sampling ID"),
+
+#define SW_API_FLOW_GRO_EN_GET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_GRO_EN_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_GRO_EN_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
+    SW_PARAM_DEF(SW_API_FLOW_GRO_EN_GET, SW_ENABLE, \
+		    sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "Flow GRO enable"),
+
+#define SW_API_FLOW_GRO_EN_SET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_GRO_EN_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_GRO_EN_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
+    SW_PARAM_DEF(SW_API_FLOW_GRO_EN_SET, SW_ENABLE, \
+		    sizeof(a_bool_t), SW_PARAM_IN, "Flow GRO enable"),
 
 #define SW_API_NAT_ADD_DESC \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),   \
