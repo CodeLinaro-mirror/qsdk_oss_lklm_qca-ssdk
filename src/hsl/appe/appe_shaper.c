@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,14 +14,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_shaper_reg.h"
-#include "appe_shaper.h"
-#include "hppe_shaper_reg.h"
-#include "hppe_shaper.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_min_max_mode_cfg_get(
@@ -160,7 +154,6 @@ appe_min_max_mode_cfg_min_max_mode_set(
 	ret = appe_min_max_mode_cfg_set(dev_id, &reg_val);
 	return ret;
 }
-
 
 sw_error_t
 appe_eco_reserve_0_eco_res_0_get(
@@ -345,7 +338,7 @@ appe_l0_shp_cfg_tbl_grp_end_get(
 	union l0_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l0_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l0_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.grp_end;
 	return ret;
 }
@@ -516,11 +509,11 @@ appe_l1_shp_cfg_tbl_grp_end_set(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.grp_end = value;
-	ret =  hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -533,7 +526,7 @@ appe_l1_shp_cfg_tbl_eir_max_get(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.eir_max;
 	return ret;
 }
@@ -547,11 +540,11 @@ appe_l1_shp_cfg_tbl_eir_max_set(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.eir_max = value;
-	ret =  hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -564,7 +557,7 @@ appe_l1_shp_cfg_tbl_grp_cf_get(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.grp_cf;
 	return ret;
 }
@@ -578,11 +571,11 @@ appe_l1_shp_cfg_tbl_grp_cf_set(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.grp_cf = value;
-	ret =  hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -595,7 +588,7 @@ appe_l1_shp_cfg_tbl_shp_refresh_nxt_ptr_get(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.shp_refresh_nxt_ptr;
 	return ret;
 }
@@ -609,11 +602,11 @@ appe_l1_shp_cfg_tbl_shp_refresh_nxt_ptr_set(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.shp_refresh_nxt_ptr = value;
-	ret =  hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -626,7 +619,7 @@ appe_l1_shp_cfg_tbl_cir_max_get(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.cir_max_1 << 17 | \
 		reg_val.bf.cir_max_0;
 	return ret;
@@ -641,11 +634,12 @@ appe_l1_shp_cfg_tbl_cir_max_set(
 	union l1_shp_cfg_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret =  hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.cir_max_1 = value >> 17;
 	reg_val.bf.cir_max_0 = value & (((a_uint64_t)1<<17)-1);
-	ret =  hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
+	ret = hppe_l1_shp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+

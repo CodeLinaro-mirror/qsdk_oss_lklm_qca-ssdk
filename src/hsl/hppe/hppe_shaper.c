@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -11,17 +12,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_shaper_reg.h"
-#include "hppe_shaper.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_shp_slot_cfg_l0_get(
@@ -100,7 +95,7 @@ hppe_l0_shp_credit_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_SHP_CREDIT_TBL_ADDRESS + \
 				index * L0_SHP_CREDIT_TBL_INC,
 				value->val,
-				2);
+				sizeof(union l0_shp_credit_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -114,7 +109,7 @@ hppe_l0_shp_credit_tbl_set(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_SHP_CREDIT_TBL_ADDRESS + \
 				index * L0_SHP_CREDIT_TBL_INC,
 				value->val,
-				2);
+				sizeof(union l0_shp_credit_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -128,7 +123,7 @@ hppe_l0_shp_cfg_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_SHP_CFG_TBL_ADDRESS + \
 				index * L0_SHP_CFG_TBL_INC,
 				value->val,
-				(sizeof(union l0_shp_cfg_tbl_u) / sizeof(a_uint32_t)));
+				sizeof(union l0_shp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -142,10 +137,9 @@ hppe_l0_shp_cfg_tbl_set(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_SHP_CFG_TBL_ADDRESS + \
 				index * L0_SHP_CFG_TBL_INC,
 				value->val,
-				(sizeof(union l0_shp_cfg_tbl_u) / sizeof(a_uint32_t)));
+				sizeof(union l0_shp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
-#ifndef IN_SHAPER_MINI
 sw_error_t
 hppe_l0_comp_tbl_get(
 		a_uint32_t dev_id,
@@ -157,18 +151,8 @@ hppe_l0_comp_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_COMP_TBL_ADDRESS + \
 				index * L0_COMP_TBL_INC,
 				value->val,
-				3);
+				sizeof(union l0_comp_tbl_u)/sizeof(a_uint32_t));
 }
-
-sw_error_t
-hppe_l0_comp_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_comp_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-#endif
 
 sw_error_t
 hppe_l0_comp_cfg_tbl_get(
@@ -198,7 +182,6 @@ hppe_l0_comp_cfg_tbl_set(
 				value->val);
 }
 
-
 sw_error_t
 hppe_l1_shp_credit_tbl_get(
 		a_uint32_t dev_id,
@@ -210,7 +193,7 @@ hppe_l1_shp_credit_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_SHP_CREDIT_TBL_ADDRESS + \
 				index * L1_SHP_CREDIT_TBL_INC,
 				value->val,
-				2);
+				sizeof(union l1_shp_credit_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -224,7 +207,7 @@ hppe_l1_shp_credit_tbl_set(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_SHP_CREDIT_TBL_ADDRESS + \
 				index * L1_SHP_CREDIT_TBL_INC,
 				value->val,
-				2);
+				sizeof(union l1_shp_credit_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -238,7 +221,7 @@ hppe_l1_shp_cfg_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_SHP_CFG_TBL_ADDRESS + \
 				index * L1_SHP_CFG_TBL_INC,
 				value->val,
-				(sizeof(union l1_shp_cfg_tbl_u) / sizeof(a_uint32_t)));
+				sizeof(union l1_shp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -252,11 +235,9 @@ hppe_l1_shp_cfg_tbl_set(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_SHP_CFG_TBL_ADDRESS + \
 				index * L1_SHP_CFG_TBL_INC,
 				value->val,
-				(sizeof(union l1_shp_cfg_tbl_u) / sizeof(a_uint32_t)));
+				sizeof(union l1_shp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
-
-#ifndef IN_SHAPER_MINI
 sw_error_t
 hppe_l1_comp_tbl_get(
 		a_uint32_t dev_id,
@@ -268,18 +249,8 @@ hppe_l1_comp_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_COMP_TBL_ADDRESS + \
 				index * L1_COMP_TBL_INC,
 				value->val,
-				3);
+				sizeof(union l1_comp_tbl_u)/sizeof(a_uint32_t));
 }
-
-sw_error_t
-hppe_l1_comp_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_comp_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-#endif
 
 sw_error_t
 hppe_l1_comp_cfg_tbl_get(
@@ -376,7 +347,7 @@ hppe_psch_shp_cfg_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + PSCH_SHP_CFG_TBL_ADDRESS + \
 				index * PSCH_SHP_CFG_TBL_INC,
 				value->val,
-				2);
+				sizeof(union psch_shp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -390,10 +361,9 @@ hppe_psch_shp_cfg_tbl_set(
 				TRAFFIC_MANAGER_BASE_ADDR + PSCH_SHP_CFG_TBL_ADDRESS + \
 				index * PSCH_SHP_CFG_TBL_INC,
 				value->val,
-				2);
+				sizeof(union psch_shp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
-#ifndef IN_SHAPER_MINI
 sw_error_t
 hppe_psch_comp_tbl_get(
 		a_uint32_t dev_id,
@@ -408,16 +378,6 @@ hppe_psch_comp_tbl_get(
 				index * PSCH_COMP_TBL_INC,
 				&value->val);
 }
-
-sw_error_t
-hppe_psch_comp_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union psch_comp_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-#endif
 
 sw_error_t
 hppe_psch_comp_cfg_tbl_get(
@@ -469,7 +429,6 @@ hppe_ipg_pre_len_cfg_set(
 				value->val);
 }
 
-#ifndef IN_SHAPER_MINI
 sw_error_t
 hppe_ipg_pre_len_cfg_ipg_pre_len_get(
 		a_uint32_t dev_id,
@@ -498,7 +457,6 @@ hppe_ipg_pre_len_cfg_ipg_pre_len_set(
 	ret = hppe_ipg_pre_len_cfg_set(dev_id, &reg_val);
 	return ret;
 }
-
 
 sw_error_t
 hppe_shp_slot_cfg_l0_l0_shp_slot_time_get(
@@ -1008,15 +966,6 @@ hppe_l0_comp_tbl_c_drr_compensate_byte_cnt_get(
 }
 
 sw_error_t
-hppe_l0_comp_tbl_c_drr_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_comp_tbl_e_drr_compensate_byte_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1028,15 +977,6 @@ hppe_l0_comp_tbl_e_drr_compensate_byte_cnt_get(
 	ret = hppe_l0_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_drr_compensate_byte_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_comp_tbl_e_drr_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1054,15 +994,6 @@ hppe_l0_comp_tbl_c_shaper_compensate_byte_neg_get(
 }
 
 sw_error_t
-hppe_l0_comp_tbl_c_shaper_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_comp_tbl_c_shaper_compensate_pkt_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1074,15 +1005,6 @@ hppe_l0_comp_tbl_c_shaper_compensate_pkt_cnt_get(
 	ret = hppe_l0_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.c_shaper_compensate_pkt_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_comp_tbl_c_shaper_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1100,15 +1022,6 @@ hppe_l0_comp_tbl_c_shaper_compensate_byte_cnt_get(
 }
 
 sw_error_t
-hppe_l0_comp_tbl_c_shaper_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_comp_tbl_e_shaper_compensate_pkt_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1120,15 +1033,6 @@ hppe_l0_comp_tbl_e_shaper_compensate_pkt_cnt_get(
 	ret = hppe_l0_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_shaper_compensate_pkt_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_comp_tbl_e_shaper_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1146,15 +1050,6 @@ hppe_l0_comp_tbl_e_drr_compensate_pkt_cnt_get(
 }
 
 sw_error_t
-hppe_l0_comp_tbl_e_drr_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_comp_tbl_e_drr_compensate_byte_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1166,15 +1061,6 @@ hppe_l0_comp_tbl_e_drr_compensate_byte_neg_get(
 	ret = hppe_l0_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_drr_compensate_byte_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_comp_tbl_e_drr_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1192,15 +1078,6 @@ hppe_l0_comp_tbl_c_drr_compensate_pkt_cnt_get(
 }
 
 sw_error_t
-hppe_l0_comp_tbl_c_drr_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_comp_tbl_c_drr_compensate_byte_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1212,15 +1089,6 @@ hppe_l0_comp_tbl_c_drr_compensate_byte_neg_get(
 	ret = hppe_l0_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.c_drr_compensate_byte_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_comp_tbl_c_drr_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1238,15 +1106,6 @@ hppe_l0_comp_tbl_e_shaper_compensate_byte_cnt_get(
 }
 
 sw_error_t
-hppe_l0_comp_tbl_e_shaper_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_comp_tbl_e_shaper_compensate_byte_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1258,15 +1117,6 @@ hppe_l0_comp_tbl_e_shaper_compensate_byte_neg_get(
 	ret = hppe_l0_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_shaper_compensate_byte_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_comp_tbl_e_shaper_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1752,15 +1602,6 @@ hppe_l1_comp_tbl_c_drr_compensate_byte_cnt_get(
 }
 
 sw_error_t
-hppe_l1_comp_tbl_c_drr_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_comp_tbl_e_drr_compensate_byte_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1772,15 +1613,6 @@ hppe_l1_comp_tbl_e_drr_compensate_byte_cnt_get(
 	ret = hppe_l1_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_drr_compensate_byte_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_comp_tbl_e_drr_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1798,15 +1630,6 @@ hppe_l1_comp_tbl_c_shaper_compensate_byte_neg_get(
 }
 
 sw_error_t
-hppe_l1_comp_tbl_c_shaper_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_comp_tbl_c_shaper_compensate_pkt_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1818,15 +1641,6 @@ hppe_l1_comp_tbl_c_shaper_compensate_pkt_cnt_get(
 	ret = hppe_l1_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.c_shaper_compensate_pkt_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_comp_tbl_c_shaper_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1844,15 +1658,6 @@ hppe_l1_comp_tbl_c_shaper_compensate_byte_cnt_get(
 }
 
 sw_error_t
-hppe_l1_comp_tbl_c_shaper_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_comp_tbl_e_shaper_compensate_pkt_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1864,15 +1669,6 @@ hppe_l1_comp_tbl_e_shaper_compensate_pkt_cnt_get(
 	ret = hppe_l1_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_shaper_compensate_pkt_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_comp_tbl_e_shaper_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1890,15 +1686,6 @@ hppe_l1_comp_tbl_e_drr_compensate_pkt_cnt_get(
 }
 
 sw_error_t
-hppe_l1_comp_tbl_e_drr_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_comp_tbl_e_drr_compensate_byte_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1910,15 +1697,6 @@ hppe_l1_comp_tbl_e_drr_compensate_byte_neg_get(
 	ret = hppe_l1_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_drr_compensate_byte_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_comp_tbl_e_drr_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1936,15 +1714,6 @@ hppe_l1_comp_tbl_c_drr_compensate_pkt_cnt_get(
 }
 
 sw_error_t
-hppe_l1_comp_tbl_c_drr_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_comp_tbl_c_drr_compensate_byte_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1956,15 +1725,6 @@ hppe_l1_comp_tbl_c_drr_compensate_byte_neg_get(
 	ret = hppe_l1_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.c_drr_compensate_byte_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_comp_tbl_c_drr_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1982,15 +1742,6 @@ hppe_l1_comp_tbl_e_shaper_compensate_byte_cnt_get(
 }
 
 sw_error_t
-hppe_l1_comp_tbl_e_shaper_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_comp_tbl_e_shaper_compensate_byte_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2002,15 +1753,6 @@ hppe_l1_comp_tbl_e_shaper_compensate_byte_neg_get(
 	ret = hppe_l1_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_shaper_compensate_byte_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_comp_tbl_e_shaper_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2307,15 +2049,6 @@ hppe_psch_comp_tbl_shaper_compensate_byte_neg_get(
 }
 
 sw_error_t
-hppe_psch_comp_tbl_shaper_compensate_byte_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_psch_comp_tbl_shaper_compensate_pkt_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2330,15 +2063,6 @@ hppe_psch_comp_tbl_shaper_compensate_pkt_cnt_get(
 }
 
 sw_error_t
-hppe_psch_comp_tbl_shaper_compensate_pkt_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_psch_comp_tbl_shaper_compensate_byte_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2350,15 +2074,6 @@ hppe_psch_comp_tbl_shaper_compensate_byte_cnt_get(
 	ret = hppe_psch_comp_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.shaper_compensate_byte_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_psch_comp_tbl_shaper_compensate_byte_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2391,4 +2106,4 @@ hppe_psch_comp_cfg_tbl_shaper_meter_len_set(
 	ret = hppe_psch_comp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+

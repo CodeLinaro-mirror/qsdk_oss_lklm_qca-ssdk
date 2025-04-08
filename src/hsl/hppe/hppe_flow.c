@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2020-2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -14,20 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_flow_reg.h"
-#include "hppe_flow.h"
-#include "hppe_ip.h"
-
-static a_uint32_t flow_cmd_id = 0;
-static a_uint32_t flow_host_cmd_id = 0;
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_in_flow_cnt_tbl_get(
@@ -40,7 +31,7 @@ hppe_in_flow_cnt_tbl_get(
 				INGRESS_POLICER_BASE_ADDR + IN_FLOW_CNT_TBL_ADDRESS + \
 				index * IN_FLOW_CNT_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -54,7 +45,7 @@ hppe_in_flow_cnt_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + IN_FLOW_CNT_TBL_ADDRESS + \
 				index * IN_FLOW_CNT_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -168,38 +159,6 @@ hppe_in_flow_tbl_op_data_set(
 }
 
 sw_error_t
-hppe_in_flow_tbl_op_data_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	if (index > IN_FLOW_TBL_OP_DATA_NUM)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_get(
-				dev_id,
-				IPE_L3_BASE_ADDR + IN_FLOW_TBL_OP_DATA_ADDRESS +
-				IN_FLOW_TBL_OP_DATA_INC * index,
-				value);
-}
-
-sw_error_t
-hppe_flow_host_tbl_op_data_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	if (index >= FLOW_HOST_TBL_OP_DATA_NUM)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_get(
-				dev_id,
-				IPE_L3_BASE_ADDR + FLOW_HOST_TBL_OP_DATA_ADDRESS +
-				FLOW_HOST_TBL_OP_DATA_INC * index,
-				value);
-}
-
-sw_error_t
 hppe_flow_host_tbl_op_data_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -227,14 +186,6 @@ hppe_in_flow_tbl_op_rslt_get(
 }
 
 sw_error_t
-hppe_in_flow_tbl_op_rslt_set(
-		a_uint32_t dev_id,
-		union in_flow_tbl_op_rslt_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_flow_host_tbl_op_rslt_get(
 		a_uint32_t dev_id,
 		union flow_host_tbl_op_rslt_u *value)
@@ -243,14 +194,6 @@ hppe_flow_host_tbl_op_rslt_get(
 				dev_id,
 				IPE_L3_BASE_ADDR + FLOW_HOST_TBL_OP_RSLT_ADDRESS,
 				&value->val);
-}
-
-sw_error_t
-hppe_flow_host_tbl_op_rslt_set(
-		a_uint32_t dev_id,
-		union flow_host_tbl_op_rslt_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -298,22 +241,6 @@ hppe_in_flow_host_tbl_rd_op_set(
 }
 
 sw_error_t
-hppe_in_flow_tbl_rd_op_data_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	if (index >= IN_FLOW_TBL_RD_OP_DATA_NUM)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_get(
-				dev_id,
-				IPE_L3_BASE_ADDR + IN_FLOW_TBL_RD_OP_DATA_ADDRESS +
-				IN_FLOW_TBL_RD_OP_DATA_INC * index,
-				value);
-}
-
-sw_error_t
 hppe_in_flow_tbl_rd_op_data_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -326,22 +253,6 @@ hppe_in_flow_tbl_rd_op_data_set(
 				dev_id,
 				IPE_L3_BASE_ADDR + IN_FLOW_TBL_RD_OP_DATA_ADDRESS +
 				IN_FLOW_TBL_RD_OP_DATA_INC * index,
-				value);
-}
-
-sw_error_t
-hppe_flow_host_tbl_rd_op_data_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	if (index >= FLOW_HOST_TBL_RD_OP_DATA_NUM)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_get(
-				dev_id,
-				IPE_L3_BASE_ADDR + FLOW_HOST_TBL_RD_OP_DATA_ADDRESS +
-				FLOW_HOST_TBL_RD_OP_DATA_INC * index,
 				value);
 }
 
@@ -373,14 +284,6 @@ hppe_in_flow_tbl_rd_op_rslt_get(
 }
 
 sw_error_t
-hppe_in_flow_tbl_rd_op_rslt_set(
-		a_uint32_t dev_id,
-		union in_flow_tbl_rd_op_rslt_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_flow_host_tbl_rd_op_rslt_get(
 		a_uint32_t dev_id,
 		union flow_host_tbl_rd_op_rslt_u *value)
@@ -389,30 +292,6 @@ hppe_flow_host_tbl_rd_op_rslt_get(
 				dev_id,
 				IPE_L3_BASE_ADDR + FLOW_HOST_TBL_RD_OP_RSLT_ADDRESS,
 				&value->val);
-}
-
-sw_error_t
-hppe_flow_host_tbl_rd_op_rslt_set(
-		a_uint32_t dev_id,
-		union flow_host_tbl_rd_op_rslt_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
-hppe_in_flow_tbl_rd_rslt_data_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	if (index >= IN_FLOW_TBL_RD_RSLT_DATA_NUM)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_get(
-				dev_id,
-				IPE_L3_BASE_ADDR + IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS +
-				IN_FLOW_TBL_RD_RSLT_DATA_INC * index,
-				value);
 }
 
 sw_error_t
@@ -442,7 +321,7 @@ hppe_in_flow_3tuple_tbl_get(
 				IPE_L3_BASE_ADDR + IN_FLOW_3TUPLE_TBL_ADDRESS + \
 				index * IN_FLOW_3TUPLE_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_3tuple_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -456,7 +335,7 @@ hppe_in_flow_3tuple_tbl_set(
 				IPE_L3_BASE_ADDR + IN_FLOW_3TUPLE_TBL_ADDRESS + \
 				index * IN_FLOW_3TUPLE_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_3tuple_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -470,7 +349,7 @@ hppe_in_flow_ipv6_3tuple_tbl_get(
 				IPE_L3_BASE_ADDR + IN_FLOW_IPV6_3TUPLE_TBL_ADDRESS + \
 				index * IN_FLOW_IPV6_3TUPLE_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_ipv6_3tuple_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -484,7 +363,7 @@ hppe_in_flow_ipv6_3tuple_tbl_set(
 				IPE_L3_BASE_ADDR + IN_FLOW_IPV6_3TUPLE_TBL_ADDRESS + \
 				index * IN_FLOW_IPV6_3TUPLE_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_ipv6_3tuple_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -498,7 +377,7 @@ hppe_in_flow_ipv6_5tuple_tbl_get(
 				IPE_L3_BASE_ADDR + IN_FLOW_IPV6_5TUPLE_TBL_ADDRESS + \
 				index * IN_FLOW_IPV6_5TUPLE_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_ipv6_5tuple_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -512,7 +391,7 @@ hppe_in_flow_ipv6_5tuple_tbl_set(
 				IPE_L3_BASE_ADDR + IN_FLOW_IPV6_5TUPLE_TBL_ADDRESS + \
 				index * IN_FLOW_IPV6_5TUPLE_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_ipv6_5tuple_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -526,7 +405,7 @@ hppe_in_flow_tbl_get(
 				IPE_L3_BASE_ADDR + IN_FLOW_TBL_ADDRESS + \
 				index * IN_FLOW_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -540,24 +419,21 @@ hppe_in_flow_tbl_set(
 				IPE_L3_BASE_ADDR + IN_FLOW_TBL_ADDRESS + \
 				index * IN_FLOW_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union in_flow_tbl_u)/sizeof(a_uint32_t));
 }
 
-#if defined(APPE)
 sw_error_t
 hppe_eg_flow_tree_map_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union eg_flow_tree_map_tbl_u *value)
 {
-	if (index >= EG_FLOW_TREE_MAP_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_tbl_get(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_TREE_MAP_TBL_ADDRESS + \
 				index * EG_FLOW_TREE_MAP_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union eg_flow_tree_map_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -571,37 +447,8 @@ hppe_eg_flow_tree_map_tbl_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_TREE_MAP_TBL_ADDRESS + \
 				index * EG_FLOW_TREE_MAP_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union eg_flow_tree_map_tbl_u)/sizeof(a_uint32_t));
 }
-#elif defined(HPPE)
-sw_error_t
-hppe_eg_flow_tree_map_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union eg_flow_tree_map_tbl_u *value)
-{
-	if (index >= EG_FLOW_TREE_MAP_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-	return hppe_reg_get(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_TREE_MAP_TBL_ADDRESS + \
-				index * EG_FLOW_TREE_MAP_TBL_INC,
-				&value->val);
-}
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union eg_flow_tree_map_tbl_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_TREE_MAP_TBL_ADDRESS + \
-				index * EG_FLOW_TREE_MAP_TBL_INC,
-				value->val);
-}
-#endif
 
 sw_error_t
 hppe_eg_ipv6_prefix_tbl_get(
@@ -614,7 +461,7 @@ hppe_eg_ipv6_prefix_tbl_get(
 				NSS_PTX_CSR_BASE_ADDR + EG_IPV6_PREFIX_TBL_ADDRESS + \
 				index * EG_IPV6_PREFIX_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union eg_ipv6_prefix_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -628,7 +475,7 @@ hppe_eg_ipv6_prefix_tbl_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_IPV6_PREFIX_TBL_ADDRESS + \
 				index * EG_IPV6_PREFIX_TBL_INC,
 				value->val,
-				ARRAY_SIZE(value->val));
+				sizeof(union eg_ipv6_prefix_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -637,12 +484,13 @@ hppe_eg_flow_ipv6_iid_tbl_get(
 		a_uint32_t index,
 		union eg_flow_ipv6_iid_tbl_u *value)
 {
-	return hppe_reg_tbl_get(
+	if (index >= EG_FLOW_IPV6_IID_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_IPV6_IID_TBL_ADDRESS + \
-				(index/2) * EG_FLOW_IPV6_IID_TBL_INC,
-				value->val,
-				ARRAY_SIZE(value->val));
+				index * EG_FLOW_IPV6_IID_TBL_INC,
+				&value->val);
 }
 
 sw_error_t
@@ -651,12 +499,11 @@ hppe_eg_flow_ipv6_iid_tbl_set(
 		a_uint32_t index,
 		union eg_flow_ipv6_iid_tbl_u *value)
 {
-	return hppe_reg_tbl_set(
+	return hppe_reg_set(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_IPV6_IID_TBL_ADDRESS + \
-				(index/2) * EG_FLOW_IPV6_IID_TBL_INC,
-				value->val,
-				ARRAY_SIZE(value->val));
+				index * EG_FLOW_IPV6_IID_TBL_INC,
+				value->val);
 }
 
 sw_error_t
@@ -679,928 +526,6 @@ hppe_eg_global_ctrl_set(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_GLOBAL_CTRL_ADDRESS,
 				value->val);
-}
-
-
-#if 0
-sw_error_t
-hppe_flow_ctrl0_flow_hash_mode_0_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	*value = reg_val.bf.flow_hash_mode_0;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_hash_mode_0_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_hash_mode_0 = value;
-	ret = hppe_flow_ctrl0_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_age_timer_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	*value = reg_val.bf.flow_age_timer_unit;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_age_timer_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_age_timer_unit = value;
-	ret = hppe_flow_ctrl0_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_hash_mode_1_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	*value = reg_val.bf.flow_hash_mode_1;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_hash_mode_1_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_hash_mode_1 = value;
-	ret = hppe_flow_ctrl0_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_age_timer_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	*value = reg_val.bf.flow_age_timer;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_age_timer_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_age_timer = value;
-	ret = hppe_flow_ctrl0_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	*value = reg_val.bf.flow_en;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl0_flow_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union flow_ctrl0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl0_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_en = value;
-	ret = hppe_flow_ctrl0_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_frag_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl1_frag_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_frag_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl1_frag_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_key_sel_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl4_key_sel;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_key_sel_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl4_key_sel = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_key_sel_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl1_key_sel;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_key_sel_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl1_key_sel = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_frag_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl0_frag_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_frag_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl0_frag_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_miss_action_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl0_miss_action;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_miss_action_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl0_miss_action = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_key_sel_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl0_key_sel;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_key_sel_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl0_key_sel = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl1_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl1_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl0_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl0_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_tcp_special_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl2_tcp_special;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_tcp_special_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl2_tcp_special = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_tcp_special_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl4_tcp_special;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_tcp_special_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl4_tcp_special = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_frag_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl3_frag_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_frag_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl3_frag_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl3_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl3_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_tcp_special_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl3_tcp_special;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_tcp_special_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl3_tcp_special = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_miss_action_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl1_miss_action;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_miss_action_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl1_miss_action = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_frag_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl4_frag_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_frag_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl4_frag_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_tcp_special_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl1_tcp_special;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl1_tcp_special_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl1_tcp_special = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_key_sel_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl2_key_sel;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_key_sel_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl2_key_sel = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_miss_action_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl2_miss_action;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_miss_action_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl2_miss_action = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl2_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl2_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl4_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl4_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_key_sel_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl3_key_sel;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_key_sel_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl3_key_sel = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_tcp_special_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl0_tcp_special;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl0_tcp_special_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl0_tcp_special = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_frag_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl2_frag_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl2_frag_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl2_frag_bypass = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_miss_action_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl3_miss_action;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl3_miss_action_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl3_miss_action = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_miss_action_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.flow_ctl4_miss_action;
-	return ret;
-}
-
-sw_error_t
-hppe_flow_ctrl1_flow_ctl4_miss_action_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union flow_ctrl1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_flow_ctrl1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.flow_ctl4_miss_action = value;
-	ret = hppe_flow_ctrl1_set(dev_id, index, &reg_val);
-	return ret;
 }
 
 sw_error_t
@@ -1778,64 +703,6 @@ hppe_in_flow_tbl_op_op_host_en_set(
 }
 
 sw_error_t
-hppe_in_flow_tbl_op_op_result_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union in_flow_tbl_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_op_get(dev_id, &reg_val);
-	*value = reg_val.bf.op_result;
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_op_op_result_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union in_flow_tbl_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_op_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.op_result = value;
-	ret = hppe_in_flow_tbl_op_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_op_busy_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union in_flow_tbl_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_op_get(dev_id, &reg_val);
-	*value = reg_val.bf.busy;
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_op_busy_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union in_flow_tbl_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_op_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.busy = value;
-	ret = hppe_in_flow_tbl_op_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_in_flow_tbl_op_hash_block_bitmap_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -1936,14 +803,6 @@ hppe_in_flow_tbl_op_rslt_op_rslt_get(
 }
 
 sw_error_t
-hppe_in_flow_tbl_op_rslt_op_rslt_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_in_flow_tbl_op_rslt_valid_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -1954,14 +813,6 @@ hppe_in_flow_tbl_op_rslt_valid_cnt_get(
 	ret = hppe_in_flow_tbl_op_rslt_get(dev_id, &reg_val);
 	*value = reg_val.bf.valid_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_op_rslt_valid_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1978,14 +829,6 @@ hppe_in_flow_tbl_op_rslt_flow_entry_index_get(
 }
 
 sw_error_t
-hppe_in_flow_tbl_op_rslt_flow_entry_index_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_in_flow_tbl_op_rslt_cmd_id_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -1996,22 +839,6 @@ hppe_in_flow_tbl_op_rslt_cmd_id_get(
 	ret = hppe_in_flow_tbl_op_rslt_get(dev_id, &reg_val);
 	*value = reg_val.bf.cmd_id;
 	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_op_rslt_cmd_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
-hppe_flow_host_tbl_op_rslt_host_entry_index_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2189,64 +1016,6 @@ hppe_in_flow_tbl_rd_op_op_host_en_set(
 }
 
 sw_error_t
-hppe_in_flow_tbl_rd_op_op_result_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union in_flow_tbl_rd_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_rd_op_get(dev_id, &reg_val);
-	*value = reg_val.bf.op_result;
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_rd_op_op_result_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union in_flow_tbl_rd_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_rd_op_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.op_result = value;
-	ret = hppe_in_flow_tbl_rd_op_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_rd_op_busy_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union in_flow_tbl_rd_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_rd_op_get(dev_id, &reg_val);
-	*value = reg_val.bf.busy;
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_rd_op_busy_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union in_flow_tbl_rd_op_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_in_flow_tbl_rd_op_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.busy = value;
-	ret = hppe_in_flow_tbl_rd_op_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_in_flow_tbl_rd_op_hash_block_bitmap_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -2347,14 +1116,6 @@ hppe_in_flow_tbl_rd_op_rslt_op_rslt_get(
 }
 
 sw_error_t
-hppe_in_flow_tbl_rd_op_rslt_op_rslt_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_in_flow_tbl_rd_op_rslt_valid_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -2365,14 +1126,6 @@ hppe_in_flow_tbl_rd_op_rslt_valid_cnt_get(
 	ret = hppe_in_flow_tbl_rd_op_rslt_get(dev_id, &reg_val);
 	*value = reg_val.bf.valid_cnt;
 	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_rd_op_rslt_valid_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2389,14 +1142,6 @@ hppe_in_flow_tbl_rd_op_rslt_flow_entry_index_get(
 }
 
 sw_error_t
-hppe_in_flow_tbl_rd_op_rslt_flow_entry_index_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_in_flow_tbl_rd_op_rslt_cmd_id_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -2406,53 +1151,6 @@ hppe_in_flow_tbl_rd_op_rslt_cmd_id_get(
 
 	ret = hppe_in_flow_tbl_rd_op_rslt_get(dev_id, &reg_val);
 	*value = reg_val.bf.cmd_id;
-	return ret;
-}
-
-sw_error_t
-hppe_in_flow_tbl_rd_op_rslt_cmd_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
-hppe_flow_host_tbl_rd_op_rslt_host_entry_index_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_tree_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union eg_flow_tree_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_eg_flow_tree_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tree_id;
-	return ret;
-}
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_tree_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union eg_flow_tree_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_eg_flow_tree_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tree_id = value;
-	ret = hppe_eg_flow_tree_map_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -2519,7 +1217,6 @@ hppe_in_flow_cnt_tbl_hit_pkt_counter_set(
 	ret = hppe_in_flow_cnt_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
 sw_error_t
 hppe_flow_host_tbl_op_rslt_host_entry_index_get(
@@ -2560,8 +1257,6 @@ hppe_flow_get_common(
 	a_uint32_t i = 0x100;
 	sw_error_t rv;
 
-	op.bf.cmd_id = flow_cmd_id;
-	flow_cmd_id++;
 	op.bf.byp_rslt_en = 0;
 	op.bf.op_type = 2;
 	op.bf.hash_block_bitmap = 3;
@@ -2593,7 +1288,6 @@ hppe_flow_get_common(
 	
 }
 
-
 sw_error_t
 hppe_flow_flush_common(a_uint32_t dev_id)
 {
@@ -2602,8 +1296,6 @@ hppe_flow_flush_common(a_uint32_t dev_id)
 	a_uint32_t i = 0x100 * 50;
 	sw_error_t rv;
 
-	op.bf.cmd_id = flow_cmd_id;
-	flow_cmd_id++;
 	op.bf.byp_rslt_en = 0;
 	op.bf.op_type = 3;
 	op.bf.hash_block_bitmap = 3;
@@ -2641,8 +1333,6 @@ hppe_flow_op_common(
 	a_uint32_t i = 0x100;
 	sw_error_t rv;
 
-	op.bf.cmd_id = flow_cmd_id;
-	flow_cmd_id++;
 	op.bf.byp_rslt_en = 0;
 	op.bf.op_type = op_type;
 	op.bf.hash_block_bitmap = 3;
@@ -2683,8 +1373,6 @@ hppe_flow_host_get_common(
 	a_uint32_t i = 0x100;
 	sw_error_t rv;
 
-	op.bf.cmd_id = flow_host_cmd_id;
-	flow_host_cmd_id++;
 	op.bf.byp_rslt_en = 0;
 	op.bf.op_type = 2;
 	op.bf.hash_block_bitmap = 3;
@@ -2724,8 +1412,6 @@ hppe_flow_host_flush_common(a_uint32_t dev_id)
 	a_uint32_t i = 0x100 * 50;
 	sw_error_t rv;
 
-	op.bf.cmd_id = flow_host_cmd_id;
-	flow_host_cmd_id++;
 	op.bf.byp_rslt_en = 0;
 	op.bf.op_type = 3;
 	op.bf.hash_block_bitmap = 3;
@@ -2761,8 +1447,6 @@ hppe_flow_host_op_both_common(
 	a_uint32_t i = 0x100;
 	sw_error_t rv;
 
-	op.bf.cmd_id = flow_host_cmd_id;
-	flow_host_cmd_id++;
 	op.bf.byp_rslt_en = 0;
 	op.bf.op_type = op_type;
 	op.bf.hash_block_bitmap = 3;
@@ -2900,7 +1584,6 @@ hppe_flow_entry_get(
 
 	return hppe_flow_get_common(dev_id, op_mode, index, entry, entry_size);
 }
-
 
 sw_error_t
 hppe_flow_entry_host_op_ipv4_5tuple_get(
@@ -3202,3 +1885,178 @@ hppe_flow_ipv6_3tuple_get(
 	return hppe_flow_entry_get(dev_id, op_mode, index,
 			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
 }
+
+sw_error_t
+hppe_eg_global_ctrl_pm_port_bitmap_for_gem_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	*value = reg_val.bf.pm_port_bitmap_for_gem;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_pm_port_bitmap_for_gem_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pm_port_bitmap_for_gem = value;
+	ret = hppe_eg_global_ctrl_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_port_cnt_byp_xlt_drop_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	*value = reg_val.bf.port_cnt_byp_xlt_drop_en;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_port_cnt_byp_xlt_drop_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_cnt_byp_xlt_drop_en = value;
+	ret = hppe_eg_global_ctrl_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_prefix_xlt_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	*value = reg_val.bf.prefix_xlt_en;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_prefix_xlt_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.prefix_xlt_en = value;
+	ret = hppe_eg_global_ctrl_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_private_tag_tpid_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	*value = reg_val.bf.private_tag_tpid;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_private_tag_tpid_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.private_tag_tpid = value;
+	ret = hppe_eg_global_ctrl_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_vp_cnt_byp_xlt_drop_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	*value = reg_val.bf.vp_cnt_byp_xlt_drop_en;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_vp_cnt_byp_xlt_drop_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.vp_cnt_byp_xlt_drop_en = value;
+	ret = hppe_eg_global_ctrl_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_vsi_cnt_byp_xlt_drop_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	*value = reg_val.bf.vsi_cnt_byp_xlt_drop_en;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_global_ctrl_vsi_cnt_byp_xlt_drop_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_global_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_global_ctrl_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.vsi_cnt_byp_xlt_drop_en = value;
+	ret = hppe_eg_global_ctrl_set(dev_id, &reg_val);
+	return ret;
+}
+

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,16 +15,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_mirror_reg.h"
-#include "hppe_mirror.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_mirror_analyzer_get(
@@ -75,7 +70,7 @@ hppe_port_mirror_set(
 				index * PORT_MIRROR_INC,
 				value->val);
 }
-#if 0
+
 sw_error_t
 hppe_mirror_analyzer_in_analyzer_port_get(
 		a_uint32_t dev_id,
@@ -195,4 +190,4 @@ hppe_port_mirror_eg_mirr_en_set(
 	ret = hppe_port_mirror_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+

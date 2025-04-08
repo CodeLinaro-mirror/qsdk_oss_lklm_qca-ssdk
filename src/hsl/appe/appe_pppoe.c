@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_pppoe_reg.h"
-#include "appe_pppoe.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_pppoe_session_get(
@@ -36,7 +30,7 @@ appe_pppoe_session_get(
 		return SW_OUT_OF_RANGE;
 	return hppe_reg_get(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_ADDRESS + \
 				index * PPPOE_SESSION_INC,
 				&value->val);
 }
@@ -49,7 +43,7 @@ appe_pppoe_session_set(
 {
 	return hppe_reg_set(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_ADDRESS + \
 				index * PPPOE_SESSION_INC,
 				value->val);
 }
@@ -64,7 +58,7 @@ appe_pppoe_session_ext_get(
 		return SW_OUT_OF_RANGE;
 	return hppe_reg_get(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT_ADDRESS + \
 				index * PPPOE_SESSION_EXT_INC,
 				&value->val);
 }
@@ -77,7 +71,7 @@ appe_pppoe_session_ext_set(
 {
 	return hppe_reg_set(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT_ADDRESS + \
 				index * PPPOE_SESSION_EXT_INC,
 				value->val);
 }
@@ -92,7 +86,7 @@ appe_pppoe_session_ext1_get(
 		return SW_OUT_OF_RANGE;
 	return hppe_reg_get(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT1_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT1_ADDRESS + \
 				index * PPPOE_SESSION_EXT1_INC,
 				&value->val);
 }
@@ -105,7 +99,7 @@ appe_pppoe_session_ext1_set(
 {
 	return hppe_reg_set(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT1_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT1_ADDRESS + \
 				index * PPPOE_SESSION_EXT1_INC,
 				value->val);
 }
@@ -120,7 +114,7 @@ appe_pppoe_session_ext2_get(
 		return SW_OUT_OF_RANGE;
 	return hppe_reg_get(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT2_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT2_ADDRESS + \
 				index * PPPOE_SESSION_EXT2_INC,
 				&value->val);
 }
@@ -133,7 +127,8 @@ appe_pppoe_session_ext2_set(
 {
 	return hppe_reg_set(
 				dev_id,
-				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT2_ADDRESS +
+				TUNNEL_LOOKUP_BASE_ADDR + PPPOE_SESSION_EXT2_ADDRESS + \
 				index * PPPOE_SESSION_EXT2_INC,
 				value->val);
 }
+

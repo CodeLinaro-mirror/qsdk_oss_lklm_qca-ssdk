@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_tunnel_reg.h"
-#include "appe_tunnel.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_tpr_udf_ctrl_0_get(
@@ -1150,7 +1144,7 @@ appe_tl_key_gen_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_KEY_GEN_ADDRESS + \
 				index * TL_KEY_GEN_INC,
 				value->val,
-				3);
+				sizeof(union tl_key_gen_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1164,7 +1158,7 @@ appe_tl_key_gen_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_KEY_GEN_ADDRESS + \
 				index * TL_KEY_GEN_INC,
 				value->val,
-				3);
+				sizeof(union tl_key_gen_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1178,7 +1172,7 @@ appe_tl_tbl_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_TBL_ADDRESS + \
 				index * TL_TBL_INC,
 				value->val,
-				14);
+				sizeof(union tl_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1192,7 +1186,7 @@ appe_tl_tbl_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_TBL_ADDRESS + \
 				index * TL_TBL_INC,
 				value->val,
-				14);
+				sizeof(union tl_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1239,7 +1233,6 @@ appe_eg_udp_entropy_ctrl_set(
 				value->val);
 }
 
-#ifndef IN_TUNNEL_MINI
 sw_error_t
 appe_ecn_profile_get(
 		a_uint32_t dev_id,
@@ -1261,7 +1254,6 @@ appe_ecn_profile_set(
 				NSS_PTX_CSR_BASE_ADDR + ECN_PROFILE_ADDRESS,
 				value->val);
 }
-#endif
 
 sw_error_t
 appe_eg_proto_mapping0_get(
@@ -1330,7 +1322,7 @@ appe_eg_header_data_get(
 				NSS_PTX_CSR_BASE_ADDR + EG_HEADER_DATA_ADDRESS + \
 				index * EG_HEADER_DATA_INC,
 				value->val,
-				32);
+				sizeof(union eg_header_data_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1344,7 +1336,7 @@ appe_eg_header_data_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_HEADER_DATA_ADDRESS + \
 				index * EG_HEADER_DATA_INC,
 				value->val,
-				32);
+				sizeof(union eg_header_data_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1358,7 +1350,7 @@ appe_eg_xlat_tun_ctrl_get(
 				NSS_PTX_CSR_BASE_ADDR + EG_XLAT_TUN_CTRL_ADDRESS + \
 				index * EG_XLAT_TUN_CTRL_INC,
 				value->val,
-				3);
+				sizeof(union eg_xlat_tun_ctrl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1372,7 +1364,7 @@ appe_eg_xlat_tun_ctrl_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_XLAT_TUN_CTRL_ADDRESS + \
 				index * EG_XLAT_TUN_CTRL_INC,
 				value->val,
-				3);
+				sizeof(union eg_xlat_tun_ctrl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1386,7 +1378,7 @@ appe_eg_edit_rule_get(
 				NSS_PTX_CSR_BASE_ADDR + EG_EDIT_RULE_ADDRESS + \
 				index * EG_EDIT_RULE_INC,
 				value->val,
-				3);
+				sizeof(union eg_edit_rule_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1400,7 +1392,7 @@ appe_eg_edit_rule_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_EDIT_RULE_ADDRESS + \
 				index * EG_EDIT_RULE_INC,
 				value->val,
-				3);
+				sizeof(union eg_edit_rule_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1445,7 +1437,7 @@ appe_tl_cnt_tbl_get(
 				INGRESS_POLICER_BASE_ADDR + TL_CNT_TBL_ADDRESS + \
 				index * TL_CNT_TBL_INC,
 				value->val,
-				sizeof(union tl_cnt_tbl_u) / sizeof(a_uint32_t));
+				sizeof(union tl_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1459,7 +1451,7 @@ appe_tl_cnt_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + TL_CNT_TBL_ADDRESS + \
 				index * TL_CNT_TBL_INC,
 				value->val,
-				sizeof(union tl_cnt_tbl_u) / sizeof(a_uint32_t));
+				sizeof(union tl_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1473,7 +1465,7 @@ appe_tl_port_vp_tbl_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_PORT_VP_TBL_ADDRESS + \
 				index * TL_PORT_VP_TBL_INC,
 				value->val,
-				sizeof(union tl_port_vp_tbl_u) / sizeof(a_uint32_t));
+				sizeof(union tl_port_vp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1487,7 +1479,7 @@ appe_tl_port_vp_tbl_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_PORT_VP_TBL_ADDRESS + \
 				index * TL_PORT_VP_TBL_INC,
 				value->val,
-				sizeof(union tl_port_vp_tbl_u) / sizeof(a_uint32_t));
+				sizeof(union tl_port_vp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1521,7 +1513,6 @@ appe_tl_port_vp_tbl_pre_ipo_profile_set(
 	return ret;
 }
 
-#ifndef IN_TUNNEL_MINI
 sw_error_t
 appe_tl_vlan_tbl_get(
 		a_uint32_t dev_id,
@@ -1533,7 +1524,7 @@ appe_tl_vlan_tbl_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_VLAN_TBL_ADDRESS + \
 				index * TL_VLAN_TBL_INC,
 				value->val,
-				sizeof(union tl_vlan_tbl_u) / sizeof(a_uint32_t));
+				sizeof(union tl_vlan_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1547,7 +1538,7 @@ appe_tl_vlan_tbl_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_VLAN_TBL_ADDRESS + \
 				index * TL_VLAN_TBL_INC,
 				value->val,
-				sizeof(union tl_vlan_tbl_u) / sizeof(a_uint32_t));
+				sizeof(union tl_vlan_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1681,4 +1672,4 @@ appe_ecn_map_mode2_1_set(
 				PRE_IPO_CSR_BASE_ADDR + ECN_MAP_MODE2_1_ADDRESS,
 				value->val);
 }
-#endif
+

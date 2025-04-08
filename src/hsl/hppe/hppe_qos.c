@@ -1,33 +1,23 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
-  *
- * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Permission to use, copy, modify, and/or distribute this software for
+ * any purpose with or without fee is hereby granted, provided that the
+ * above copyright notice and this permission notice appear in all copies.
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+ * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_qos_reg.h"
-#include "hppe_qos.h"
+#include "hsl_reg.h"
 
-#ifndef IN_QOS_MINI
 sw_error_t
 hppe_tdm_depth_cfg_get(
 		a_uint32_t dev_id,
@@ -38,7 +28,7 @@ hppe_tdm_depth_cfg_get(
 				TRAFFIC_MANAGER_BASE_ADDR + TDM_DEPTH_CFG_ADDRESS,
 				&value->val);
 }
-#endif
+
 sw_error_t
 hppe_tdm_depth_cfg_set(
 		a_uint32_t dev_id,
@@ -161,7 +151,7 @@ hppe_l0_flow_port_map_tbl_set(
 				index * L0_FLOW_PORT_MAP_TBL_INC,
 				value->val);
 }
-#ifndef IN_QOS_MINI
+
 sw_error_t
 hppe_l0_c_drr_head_tbl_get(
 		a_uint32_t dev_id,
@@ -173,16 +163,7 @@ hppe_l0_c_drr_head_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_C_DRR_HEAD_TBL_ADDRESS + \
 				index * L0_C_DRR_HEAD_TBL_INC,
 				value->val,
-				2);
-}
-
-sw_error_t
-hppe_l0_c_drr_head_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_c_drr_head_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l0_c_drr_head_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -196,16 +177,7 @@ hppe_l0_e_drr_head_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_E_DRR_HEAD_TBL_ADDRESS + \
 				index * L0_E_DRR_HEAD_TBL_INC,
 				value->val,
-				2);
-}
-
-sw_error_t
-hppe_l0_e_drr_head_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_e_drr_head_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l0_e_drr_head_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -219,16 +191,7 @@ hppe_l0_drr_credit_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_DRR_CREDIT_TBL_ADDRESS + \
 				index * L0_DRR_CREDIT_TBL_INC,
 				value->val,
-				2);
-}
-
-sw_error_t
-hppe_l0_drr_credit_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_drr_credit_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l0_drr_credit_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -247,15 +210,6 @@ hppe_l0_c_drr_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_c_drr_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_c_drr_reverse_ll_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -268,15 +222,6 @@ hppe_l0_c_drr_reverse_ll_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_C_DRR_REVERSE_LL_TBL_ADDRESS + \
 				index * L0_C_DRR_REVERSE_LL_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_l0_c_drr_reverse_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_c_drr_reverse_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -295,15 +240,6 @@ hppe_l0_e_drr_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_e_drr_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_e_drr_reverse_ll_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -319,15 +255,6 @@ hppe_l0_e_drr_reverse_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_reverse_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_e_drr_reverse_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_sp_entry_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -338,16 +265,7 @@ hppe_l0_sp_entry_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_SP_ENTRY_TBL_ADDRESS + \
 				index * L0_SP_ENTRY_TBL_INC,
 				value->val,
-				5);
-}
-
-sw_error_t
-hppe_l0_sp_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_sp_entry_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l0_sp_entry_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -366,15 +284,6 @@ hppe_l0_ens_q_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l0_ens_q_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_ens_q_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_ens_q_head_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -387,15 +296,6 @@ hppe_l0_ens_q_head_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L0_ENS_Q_HEAD_TBL_ADDRESS + \
 				index * L0_ENS_Q_HEAD_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_l0_ens_q_head_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_ens_q_head_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -414,15 +314,6 @@ hppe_l0_ens_q_entry_tbl_get(
 }
 
 sw_error_t
-hppe_l0_ens_q_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_ens_q_entry_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_flow_status_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -438,15 +329,6 @@ hppe_l0_flow_status_tbl_get(
 }
 
 sw_error_t
-hppe_l0_flow_status_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_flow_status_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-#endif
-sw_error_t
 hppe_ring_q_map_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -457,7 +339,7 @@ hppe_ring_q_map_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + RING_Q_MAP_TBL_ADDRESS + \
 				index * RING_Q_MAP_TBL_INC,
 				value->val,
-				10);
+				sizeof(union ring_q_map_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -471,9 +353,9 @@ hppe_ring_q_map_tbl_set(
 				TRAFFIC_MANAGER_BASE_ADDR + RING_Q_MAP_TBL_ADDRESS + \
 				index * RING_Q_MAP_TBL_INC,
 				value->val,
-				10);
+				sizeof(union ring_q_map_tbl_u)/sizeof(a_uint32_t));
 }
-#ifndef IN_QOS_MINI
+
 sw_error_t
 hppe_rfc_block_tbl_get(
 		a_uint32_t dev_id,
@@ -487,15 +369,6 @@ hppe_rfc_block_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + RFC_BLOCK_TBL_ADDRESS + \
 				index * RFC_BLOCK_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_rfc_block_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union rfc_block_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -513,15 +386,6 @@ hppe_rfc_status_tbl_get(
 				&value->val);
 }
 
-sw_error_t
-hppe_rfc_status_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union rfc_status_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-#endif
 sw_error_t
 hppe_deq_dis_tbl_get(
 		a_uint32_t dev_id,
@@ -673,16 +537,7 @@ hppe_l1_c_drr_head_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_C_DRR_HEAD_TBL_ADDRESS + \
 				index * L1_C_DRR_HEAD_TBL_INC,
 				value->val,
-				2);
-}
-#ifndef IN_QOS_MINI
-sw_error_t
-hppe_l1_c_drr_head_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_c_drr_head_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l1_c_drr_head_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -696,16 +551,7 @@ hppe_l1_e_drr_head_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_E_DRR_HEAD_TBL_ADDRESS + \
 				index * L1_E_DRR_HEAD_TBL_INC,
 				value->val,
-				2);
-}
-
-sw_error_t
-hppe_l1_e_drr_head_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_e_drr_head_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l1_e_drr_head_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -719,16 +565,7 @@ hppe_l1_drr_credit_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_DRR_CREDIT_TBL_ADDRESS + \
 				index * L1_DRR_CREDIT_TBL_INC,
 				value->val,
-				2);
-}
-
-sw_error_t
-hppe_l1_drr_credit_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_drr_credit_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l1_drr_credit_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -747,15 +584,6 @@ hppe_l1_c_drr_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l1_c_drr_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_c_drr_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_c_drr_reverse_ll_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -768,15 +596,6 @@ hppe_l1_c_drr_reverse_ll_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_C_DRR_REVERSE_LL_TBL_ADDRESS + \
 				index * L1_C_DRR_REVERSE_LL_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_l1_c_drr_reverse_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_c_drr_reverse_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -795,15 +614,6 @@ hppe_l1_e_drr_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l1_e_drr_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_e_drr_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_e_drr_reverse_ll_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -816,15 +626,6 @@ hppe_l1_e_drr_reverse_ll_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_E_DRR_REVERSE_LL_TBL_ADDRESS + \
 				index * L1_E_DRR_REVERSE_LL_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_l1_e_drr_reverse_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_e_drr_reverse_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -843,15 +644,6 @@ hppe_l1_a_flow_entry_tbl_get(
 }
 
 sw_error_t
-hppe_l1_a_flow_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_a_flow_entry_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_b_flow_entry_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -867,15 +659,6 @@ hppe_l1_b_flow_entry_tbl_get(
 }
 
 sw_error_t
-hppe_l1_b_flow_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_b_flow_entry_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_sp_entry_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -886,16 +669,7 @@ hppe_l1_sp_entry_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_SP_ENTRY_TBL_ADDRESS + \
 				index * L1_SP_ENTRY_TBL_INC,
 				value->val,
-				9);
-}
-
-sw_error_t
-hppe_l1_sp_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_sp_entry_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
+				sizeof(union l1_sp_entry_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -914,15 +688,6 @@ hppe_l1_ens_q_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l1_ens_q_ll_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_ens_q_ll_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_ens_q_head_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -935,15 +700,6 @@ hppe_l1_ens_q_head_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_ENS_Q_HEAD_TBL_ADDRESS + \
 				index * L1_ENS_Q_HEAD_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_l1_ens_q_head_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_ens_q_head_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -962,15 +718,6 @@ hppe_l1_ens_q_entry_tbl_get(
 }
 
 sw_error_t
-hppe_l1_ens_q_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_ens_q_entry_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_flow_status_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -983,15 +730,6 @@ hppe_l1_flow_status_tbl_get(
 				TRAFFIC_MANAGER_BASE_ADDR + L1_FLOW_STATUS_TBL_ADDRESS + \
 				index * L1_FLOW_STATUS_TBL_INC,
 				&value->val);
-}
-
-sw_error_t
-hppe_l1_flow_status_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_flow_status_tbl_u *value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1008,7 +746,7 @@ hppe_psch_tdm_cfg_tbl_get(
 				index * PSCH_TDM_CFG_TBL_INC,
 				&value->val);
 }
-#endif
+
 sw_error_t
 hppe_psch_tdm_cfg_tbl_set(
 		a_uint32_t dev_id,
@@ -1021,7 +759,7 @@ hppe_psch_tdm_cfg_tbl_set(
 				index * PSCH_TDM_CFG_TBL_INC,
 				value->val);
 }
-#ifndef IN_QOS_MINI
+
 sw_error_t
 hppe_tdm_depth_cfg_tdm_depth_get(
 		a_uint32_t dev_id,
@@ -1376,15 +1114,6 @@ hppe_l0_c_drr_head_tbl_backup_head_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_head_tbl_backup_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_c_drr_head_tbl_active_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1399,15 +1128,6 @@ hppe_l0_c_drr_head_tbl_active_vld_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_head_tbl_active_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_c_drr_head_tbl_backup_max_n_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1419,15 +1139,6 @@ hppe_l0_c_drr_head_tbl_backup_max_n_get(
 	ret = hppe_l0_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_max_n;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_c_drr_head_tbl_backup_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1446,15 +1157,6 @@ hppe_l0_c_drr_head_tbl_active_tail_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_head_tbl_active_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_c_drr_head_tbl_active_head_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1466,15 +1168,6 @@ hppe_l0_c_drr_head_tbl_active_head_get(
 	ret = hppe_l0_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_head;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_c_drr_head_tbl_active_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1492,15 +1185,6 @@ hppe_l0_c_drr_head_tbl_backup_vld_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_head_tbl_backup_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_c_drr_head_tbl_active_max_n_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1512,15 +1196,6 @@ hppe_l0_c_drr_head_tbl_active_max_n_get(
 	ret = hppe_l0_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_max_n;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_c_drr_head_tbl_active_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1538,15 +1213,6 @@ hppe_l0_c_drr_head_tbl_backup_tail_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_head_tbl_backup_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_e_drr_head_tbl_backup_head_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1558,15 +1224,6 @@ hppe_l0_e_drr_head_tbl_backup_head_get(
 	ret = hppe_l0_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_head;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_e_drr_head_tbl_backup_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1584,15 +1241,6 @@ hppe_l0_e_drr_head_tbl_active_vld_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_head_tbl_active_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_e_drr_head_tbl_backup_max_n_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1604,15 +1252,6 @@ hppe_l0_e_drr_head_tbl_backup_max_n_get(
 	ret = hppe_l0_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_max_n;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_e_drr_head_tbl_backup_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1631,15 +1270,6 @@ hppe_l0_e_drr_head_tbl_active_tail_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_head_tbl_active_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_e_drr_head_tbl_active_head_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1651,15 +1281,6 @@ hppe_l0_e_drr_head_tbl_active_head_get(
 	ret = hppe_l0_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_head;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_e_drr_head_tbl_active_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1677,15 +1298,6 @@ hppe_l0_e_drr_head_tbl_backup_vld_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_head_tbl_backup_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_e_drr_head_tbl_active_max_n_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1697,15 +1309,6 @@ hppe_l0_e_drr_head_tbl_active_max_n_get(
 	ret = hppe_l0_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_max_n;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_e_drr_head_tbl_active_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1723,15 +1326,6 @@ hppe_l0_e_drr_head_tbl_backup_tail_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_head_tbl_backup_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_drr_credit_tbl_e_drr_credit_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1743,15 +1337,6 @@ hppe_l0_drr_credit_tbl_e_drr_credit_neg_get(
 	ret = hppe_l0_drr_credit_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.e_drr_credit_neg;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_drr_credit_tbl_e_drr_credit_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1769,15 +1354,6 @@ hppe_l0_drr_credit_tbl_c_drr_credit_neg_get(
 }
 
 sw_error_t
-hppe_l0_drr_credit_tbl_c_drr_credit_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_drr_credit_tbl_c_drr_credit_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1789,15 +1365,6 @@ hppe_l0_drr_credit_tbl_c_drr_credit_get(
 	ret = hppe_l0_drr_credit_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.c_drr_credit;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_drr_credit_tbl_c_drr_credit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1816,15 +1383,6 @@ hppe_l0_drr_credit_tbl_e_drr_credit_get(
 }
 
 sw_error_t
-hppe_l0_drr_credit_tbl_e_drr_credit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_c_drr_ll_tbl_next_ptr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1836,15 +1394,6 @@ hppe_l0_c_drr_ll_tbl_next_ptr_get(
 	ret = hppe_l0_c_drr_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.next_ptr;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_c_drr_ll_tbl_next_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1862,15 +1411,6 @@ hppe_l0_c_drr_reverse_ll_tbl_pre_ptr_get(
 }
 
 sw_error_t
-hppe_l0_c_drr_reverse_ll_tbl_pre_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_e_drr_ll_tbl_next_ptr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1882,15 +1422,6 @@ hppe_l0_e_drr_ll_tbl_next_ptr_get(
 	ret = hppe_l0_e_drr_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.next_ptr;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_e_drr_ll_tbl_next_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1908,15 +1439,6 @@ hppe_l0_e_drr_reverse_ll_tbl_pre_ptr_get(
 }
 
 sw_error_t
-hppe_l0_e_drr_reverse_ll_tbl_pre_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_sp_entry_tbl_entry_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1928,15 +1450,6 @@ hppe_l0_sp_entry_tbl_entry_vld_get(
 	ret = hppe_l0_sp_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_vld;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_sp_entry_tbl_entry_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -1955,15 +1468,6 @@ hppe_l0_sp_entry_tbl_entry_path_id_get(
 }
 
 sw_error_t
-hppe_l0_sp_entry_tbl_entry_path_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_ens_q_ll_tbl_next_ptr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1975,15 +1479,6 @@ hppe_l0_ens_q_ll_tbl_next_ptr_get(
 	ret = hppe_l0_ens_q_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.next_ptr;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_ens_q_ll_tbl_next_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2001,15 +1496,6 @@ hppe_l0_ens_q_head_tbl_vld_get(
 }
 
 sw_error_t
-hppe_l0_ens_q_head_tbl_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_ens_q_head_tbl_head_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2021,15 +1507,6 @@ hppe_l0_ens_q_head_tbl_head_get(
 	ret = hppe_l0_ens_q_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.head;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_ens_q_head_tbl_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2047,15 +1524,6 @@ hppe_l0_ens_q_head_tbl_tail_get(
 }
 
 sw_error_t
-hppe_l0_ens_q_head_tbl_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_ens_q_entry_tbl_entry_ens_in_q_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2067,15 +1535,6 @@ hppe_l0_ens_q_entry_tbl_entry_ens_in_q_get(
 	ret = hppe_l0_ens_q_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_ens_in_q;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_ens_q_entry_tbl_entry_ens_in_q_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2093,15 +1552,6 @@ hppe_l0_ens_q_entry_tbl_entry_ens_vld_get(
 }
 
 sw_error_t
-hppe_l0_ens_q_entry_tbl_entry_ens_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_ens_q_entry_tbl_entry_ens_type_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2113,15 +1563,6 @@ hppe_l0_ens_q_entry_tbl_entry_ens_type_get(
 	ret = hppe_l0_ens_q_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_ens_type;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_ens_q_entry_tbl_entry_ens_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2139,15 +1580,6 @@ hppe_l0_flow_status_tbl_en_cdrr_get(
 }
 
 sw_error_t
-hppe_l0_flow_status_tbl_en_cdrr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_flow_status_tbl_en_edrr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2162,15 +1594,6 @@ hppe_l0_flow_status_tbl_en_edrr_get(
 }
 
 sw_error_t
-hppe_l0_flow_status_tbl_en_edrr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l0_flow_status_tbl_en_level_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2182,15 +1605,6 @@ hppe_l0_flow_status_tbl_en_level_get(
 	ret = hppe_l0_flow_status_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.en_level;
 	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_status_tbl_en_level_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2241,15 +1655,6 @@ hppe_rfc_block_tbl_rfc_block_get(
 }
 
 sw_error_t
-hppe_rfc_block_tbl_rfc_block_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_rfc_status_tbl_rfc_status_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2261,15 +1666,6 @@ hppe_rfc_status_tbl_rfc_status_get(
 	ret = hppe_rfc_status_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.rfc_status;
 	return ret;
-}
-
-sw_error_t
-hppe_rfc_status_tbl_rfc_status_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2628,15 +2024,6 @@ hppe_l1_c_drr_head_tbl_backup_head_get(
 }
 
 sw_error_t
-hppe_l1_c_drr_head_tbl_backup_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_c_drr_head_tbl_active_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2648,15 +2035,6 @@ hppe_l1_c_drr_head_tbl_active_vld_get(
 	ret = hppe_l1_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_vld;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_c_drr_head_tbl_active_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2674,15 +2052,6 @@ hppe_l1_c_drr_head_tbl_backup_max_n_get(
 }
 
 sw_error_t
-hppe_l1_c_drr_head_tbl_backup_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_c_drr_head_tbl_active_tail_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2694,15 +2063,6 @@ hppe_l1_c_drr_head_tbl_active_tail_get(
 	ret = hppe_l1_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_tail;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_c_drr_head_tbl_active_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2720,15 +2080,6 @@ hppe_l1_c_drr_head_tbl_active_head_get(
 }
 
 sw_error_t
-hppe_l1_c_drr_head_tbl_active_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_c_drr_head_tbl_backup_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2740,15 +2091,6 @@ hppe_l1_c_drr_head_tbl_backup_vld_get(
 	ret = hppe_l1_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_vld;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_c_drr_head_tbl_backup_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2767,15 +2109,6 @@ hppe_l1_c_drr_head_tbl_active_max_n_get(
 }
 
 sw_error_t
-hppe_l1_c_drr_head_tbl_active_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_c_drr_head_tbl_backup_tail_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2787,15 +2120,6 @@ hppe_l1_c_drr_head_tbl_backup_tail_get(
 	ret = hppe_l1_c_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_tail;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_c_drr_head_tbl_backup_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2813,15 +2137,6 @@ hppe_l1_e_drr_head_tbl_backup_head_get(
 }
 
 sw_error_t
-hppe_l1_e_drr_head_tbl_backup_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_e_drr_head_tbl_active_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2833,15 +2148,6 @@ hppe_l1_e_drr_head_tbl_active_vld_get(
 	ret = hppe_l1_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_vld;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_e_drr_head_tbl_active_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2859,15 +2165,6 @@ hppe_l1_e_drr_head_tbl_backup_max_n_get(
 }
 
 sw_error_t
-hppe_l1_e_drr_head_tbl_backup_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_e_drr_head_tbl_active_tail_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2879,15 +2176,6 @@ hppe_l1_e_drr_head_tbl_active_tail_get(
 	ret = hppe_l1_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.active_tail;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_e_drr_head_tbl_active_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2905,15 +2193,6 @@ hppe_l1_e_drr_head_tbl_active_head_get(
 }
 
 sw_error_t
-hppe_l1_e_drr_head_tbl_active_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_e_drr_head_tbl_backup_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2925,15 +2204,6 @@ hppe_l1_e_drr_head_tbl_backup_vld_get(
 	ret = hppe_l1_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_vld;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_e_drr_head_tbl_backup_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2952,15 +2222,6 @@ hppe_l1_e_drr_head_tbl_active_max_n_get(
 }
 
 sw_error_t
-hppe_l1_e_drr_head_tbl_active_max_n_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_e_drr_head_tbl_backup_tail_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2972,15 +2233,6 @@ hppe_l1_e_drr_head_tbl_backup_tail_get(
 	ret = hppe_l1_e_drr_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.backup_tail;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_e_drr_head_tbl_backup_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -2998,15 +2250,6 @@ hppe_l1_drr_credit_tbl_e_drr_credit_neg_get(
 }
 
 sw_error_t
-hppe_l1_drr_credit_tbl_e_drr_credit_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_drr_credit_tbl_c_drr_credit_neg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3021,15 +2264,6 @@ hppe_l1_drr_credit_tbl_c_drr_credit_neg_get(
 }
 
 sw_error_t
-hppe_l1_drr_credit_tbl_c_drr_credit_neg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_drr_credit_tbl_c_drr_credit_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3041,15 +2275,6 @@ hppe_l1_drr_credit_tbl_c_drr_credit_get(
 	ret = hppe_l1_drr_credit_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.c_drr_credit;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_drr_credit_tbl_c_drr_credit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3068,15 +2293,6 @@ hppe_l1_drr_credit_tbl_e_drr_credit_get(
 }
 
 sw_error_t
-hppe_l1_drr_credit_tbl_e_drr_credit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_c_drr_ll_tbl_next_ptr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3088,15 +2304,6 @@ hppe_l1_c_drr_ll_tbl_next_ptr_get(
 	ret = hppe_l1_c_drr_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.next_ptr;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_c_drr_ll_tbl_next_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3114,15 +2321,6 @@ hppe_l1_c_drr_reverse_ll_tbl_pre_ptr_get(
 }
 
 sw_error_t
-hppe_l1_c_drr_reverse_ll_tbl_pre_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_e_drr_ll_tbl_next_ptr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3134,15 +2332,6 @@ hppe_l1_e_drr_ll_tbl_next_ptr_get(
 	ret = hppe_l1_e_drr_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.next_ptr;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_e_drr_ll_tbl_next_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3160,15 +2349,6 @@ hppe_l1_e_drr_reverse_ll_tbl_pre_ptr_get(
 }
 
 sw_error_t
-hppe_l1_e_drr_reverse_ll_tbl_pre_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_a_flow_entry_tbl_entry_path_id_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3180,15 +2360,6 @@ hppe_l1_a_flow_entry_tbl_entry_path_id_get(
 	ret = hppe_l1_a_flow_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_path_id;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_a_flow_entry_tbl_entry_path_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3206,15 +2377,6 @@ hppe_l1_b_flow_entry_tbl_entry_path_id_get(
 }
 
 sw_error_t
-hppe_l1_b_flow_entry_tbl_entry_path_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_sp_entry_tbl_entry_vld_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3226,15 +2388,6 @@ hppe_l1_sp_entry_tbl_entry_vld_get(
 	ret = hppe_l1_sp_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_vld;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_sp_entry_tbl_entry_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3253,15 +2406,6 @@ hppe_l1_sp_entry_tbl_entry_path_id_get(
 }
 
 sw_error_t
-hppe_l1_sp_entry_tbl_entry_path_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_ens_q_ll_tbl_next_ptr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3273,15 +2417,6 @@ hppe_l1_ens_q_ll_tbl_next_ptr_get(
 	ret = hppe_l1_ens_q_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.next_ptr;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_ens_q_ll_tbl_next_ptr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3299,15 +2434,6 @@ hppe_l1_ens_q_head_tbl_vld_get(
 }
 
 sw_error_t
-hppe_l1_ens_q_head_tbl_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_ens_q_head_tbl_head_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3319,15 +2445,6 @@ hppe_l1_ens_q_head_tbl_head_get(
 	ret = hppe_l1_ens_q_head_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.head;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_ens_q_head_tbl_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3345,15 +2462,6 @@ hppe_l1_ens_q_head_tbl_tail_get(
 }
 
 sw_error_t
-hppe_l1_ens_q_head_tbl_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_ens_q_entry_tbl_entry_ens_in_q_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3365,15 +2473,6 @@ hppe_l1_ens_q_entry_tbl_entry_ens_in_q_get(
 	ret = hppe_l1_ens_q_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_ens_in_q;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_ens_q_entry_tbl_entry_ens_in_q_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3391,15 +2490,6 @@ hppe_l1_ens_q_entry_tbl_entry_ens_vld_get(
 }
 
 sw_error_t
-hppe_l1_ens_q_entry_tbl_entry_ens_vld_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_ens_q_entry_tbl_entry_ens_type_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3411,15 +2501,6 @@ hppe_l1_ens_q_entry_tbl_entry_ens_type_get(
 	ret = hppe_l1_ens_q_entry_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.entry_ens_type;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_ens_q_entry_tbl_entry_ens_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3437,15 +2518,6 @@ hppe_l1_flow_status_tbl_en_cdrr_get(
 }
 
 sw_error_t
-hppe_l1_flow_status_tbl_en_cdrr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_flow_status_tbl_en_edrr_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3460,15 +2532,6 @@ hppe_l1_flow_status_tbl_en_edrr_get(
 }
 
 sw_error_t
-hppe_l1_flow_status_tbl_en_edrr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 hppe_l1_flow_status_tbl_en_level_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -3480,15 +2543,6 @@ hppe_l1_flow_status_tbl_en_level_get(
 	ret = hppe_l1_flow_status_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.en_level;
 	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_status_tbl_en_level_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	return SW_NOT_SUPPORTED;
 }
 
 sw_error_t
@@ -3583,4 +2637,4 @@ hppe_psch_tdm_cfg_tbl_ens_port_bitmap_set(
 	ret = hppe_psch_tdm_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+

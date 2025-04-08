@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,16 +13,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "mppe_athtag_reg.h"
-#include "mppe_athtag.h"
+#include "hsl_reg.h"
 
 sw_error_t
 mppe_eg_hdr_xmit_pri_mapping_get(
@@ -32,13 +27,11 @@ mppe_eg_hdr_xmit_pri_mapping_get(
 {
 	if (index >= EG_HDR_XMIT_PRI_MAPPING_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_tbl_get(
+	return hppe_reg_get(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_HDR_XMIT_PRI_MAPPING_ADDRESS + \
 				index * EG_HDR_XMIT_PRI_MAPPING_INC,
-				&value->val,
-				1);
+				&value->val);
 }
 
 sw_error_t
@@ -47,15 +40,11 @@ mppe_eg_hdr_xmit_pri_mapping_set(
 		a_uint32_t index,
 		union eg_hdr_xmit_pri_mapping_u *value)
 {
-	if (index >= EG_HDR_XMIT_PRI_MAPPING_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_tbl_set(
+	return hppe_reg_set(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_HDR_XMIT_PRI_MAPPING_ADDRESS + \
 				index * EG_HDR_XMIT_PRI_MAPPING_INC,
-				&value->val,
-				1);
+				value->val);
 }
 
 sw_error_t
@@ -122,13 +111,11 @@ mppe_prx_hdr_rcv_pri_mapping_get(
 {
 	if (index >= PRX_HDR_RCV_PRI_MAPPING_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_tbl_get(
+	return hppe_reg_get(
 				dev_id,
-				NSS_PRX_CSR_BASE_ADDR + PRX_HDR_RCV_PRI_MAPPING_ADDRESS + \
+				PRX_BASE_ADDR + PRX_HDR_RCV_PRI_MAPPING_ADDRESS + \
 				index * PRX_HDR_RCV_PRI_MAPPING_INC,
-				&value->val,
-				1);
+				&value->val);
 }
 
 sw_error_t
@@ -137,13 +124,85 @@ mppe_prx_hdr_rcv_pri_mapping_set(
 		a_uint32_t index,
 		union prx_hdr_rcv_pri_mapping_u *value)
 {
-	if (index >= PRX_HDR_RCV_PRI_MAPPING_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
-	return hppe_reg_tbl_set(
+	return hppe_reg_set(
 				dev_id,
-				NSS_PRX_CSR_BASE_ADDR + PRX_HDR_RCV_PRI_MAPPING_ADDRESS + \
+				PRX_BASE_ADDR + PRX_HDR_RCV_PRI_MAPPING_ADDRESS + \
 				index * PRX_HDR_RCV_PRI_MAPPING_INC,
-				&value->val,
-				1);
+				value->val);
 }
+
+sw_error_t
+mppe_eg_hdr_xmit_pri_mapping_pri_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_hdr_xmit_pri_mapping_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = mppe_eg_hdr_xmit_pri_mapping_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pri;
+	return ret;
+}
+
+sw_error_t
+mppe_eg_hdr_xmit_pri_mapping_pri_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_hdr_xmit_pri_mapping_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = mppe_eg_hdr_xmit_pri_mapping_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pri = value;
+	ret = mppe_eg_hdr_xmit_pri_mapping_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+mppe_edma_vp_remap_0_get(
+		a_uint32_t dev_id,
+		union edma_vp_remap_0_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				NSS_BM_CSR_BASE_ADDR + EDMA_VP_REMAP_0_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+mppe_edma_vp_remap_0_set(
+		a_uint32_t dev_id,
+		union edma_vp_remap_0_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_BM_CSR_BASE_ADDR + EDMA_VP_REMAP_0_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+mppe_edma_vp_remap_1_get(
+		a_uint32_t dev_id,
+		union edma_vp_remap_1_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				NSS_BM_CSR_BASE_ADDR + EDMA_VP_REMAP_1_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+mppe_edma_vp_remap_1_set(
+		a_uint32_t dev_id,
+		union edma_vp_remap_1_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_BM_CSR_BASE_ADDR + EDMA_VP_REMAP_1_ADDRESS,
+				value->val);
+}
+

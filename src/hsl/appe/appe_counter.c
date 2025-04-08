@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,12 +14,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#include "hsl_reg.h"
 
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_counter_reg.h"
-#include "appe_counter.h"
 sw_error_t
 appe_port_rx_cnt_tbl_get(
 		a_uint32_t dev_id,
@@ -30,7 +27,7 @@ appe_port_rx_cnt_tbl_get(
 				INGRESS_POLICER_BASE_ADDR + PORT_RX_CNT_TBL_ADDRESS + \
 				index * PORT_RX_CNT_TBL_INC,
 				value->val,
-				5);
+				sizeof(union port_rx_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -44,7 +41,7 @@ appe_port_rx_cnt_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + PORT_RX_CNT_TBL_ADDRESS + \
 				index * PORT_RX_CNT_TBL_INC,
 				value->val,
-				5);
+				sizeof(union port_rx_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -56,10 +53,10 @@ appe_port_vp_rx_cnt_mode_tbl_get(
 	if (index >= PORT_VP_RX_CNT_MODE_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
 	return hppe_reg_get(
-			dev_id,
-			INGRESS_POLICER_BASE_ADDR + PORT_VP_RX_CNT_MODE_ADDRESS + \
-			index * PORT_VP_RX_CNT_MODE_INC,
-			&value->val);
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + PORT_VP_RX_CNT_MODE_ADDRESS + \
+				index * PORT_VP_RX_CNT_MODE_INC,
+				&value->val);
 }
 
 sw_error_t
@@ -68,13 +65,11 @@ appe_port_vp_rx_cnt_mode_tbl_set(
 		a_uint32_t index,
 		union port_vp_rx_cnt_mode_tbl_u *value)
 {
-	if (index >= PORT_VP_RX_CNT_MODE_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
-			dev_id,
-			INGRESS_POLICER_BASE_ADDR + PORT_VP_RX_CNT_MODE_ADDRESS + \
-			index * PORT_VP_RX_CNT_MODE_INC,
-			value->val);
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + PORT_VP_RX_CNT_MODE_ADDRESS + \
+				index * PORT_VP_RX_CNT_MODE_INC,
+				value->val);
 }
 
 sw_error_t
@@ -218,7 +213,7 @@ appe_phy_port_rx_cnt_tbl_get(
 				INGRESS_POLICER_BASE_ADDR + PHY_PORT_RX_CNT_TBL_ADDRESS + \
 				index * PHY_PORT_RX_CNT_TBL_INC,
 				value->val,
-				5);
+				sizeof(union phy_port_rx_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -232,7 +227,7 @@ appe_phy_port_rx_cnt_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + PHY_PORT_RX_CNT_TBL_ADDRESS + \
 				index * PHY_PORT_RX_CNT_TBL_INC,
 				value->val,
-				5);
+				sizeof(union phy_port_rx_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -364,3 +359,4 @@ appe_phy_port_rx_cnt_tbl_rx_drop_byte_cnt_set(
 	ret = appe_phy_port_rx_cnt_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+

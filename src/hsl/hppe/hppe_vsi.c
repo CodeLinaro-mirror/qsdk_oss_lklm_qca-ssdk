@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -11,17 +12,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_vsi_reg.h"
-#include "hppe_vsi.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_vsi_tbl_get(
@@ -34,7 +29,7 @@ hppe_vsi_tbl_get(
 				IPE_L2_BASE_ADDR + VSI_TBL_ADDRESS + \
 				index * VSI_TBL_INC,
 				value->val,
-				2);
+				sizeof(union vsi_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -48,10 +43,9 @@ hppe_vsi_tbl_set(
 				IPE_L2_BASE_ADDR + VSI_TBL_ADDRESS + \
 				index * VSI_TBL_INC,
 				value->val,
-				2);
+				sizeof(union vsi_tbl_u)/sizeof(a_uint32_t));
 }
 
-#ifndef IN_VSI_MINI
 sw_error_t
 hppe_vsi_tbl_umc_bitmap_get(
 		a_uint32_t dev_id,
@@ -239,37 +233,6 @@ hppe_vsi_tbl_new_addr_lrn_en_set(
 }
 
 sw_error_t
-hppe_vsi_tbl_bc_bitmap_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union vsi_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_vsi_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.bc_bitmap;
-	return ret;
-}
-
-sw_error_t
-hppe_vsi_tbl_bc_bitmap_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union vsi_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_vsi_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.bc_bitmap = value;
-	ret = hppe_vsi_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_vsi_tbl_station_move_fwd_cmd_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -299,7 +262,6 @@ hppe_vsi_tbl_station_move_fwd_cmd_set(
 	ret = hppe_vsi_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
 sw_error_t
 hppe_vlan_cnt_tbl_get(
@@ -312,7 +274,7 @@ hppe_vlan_cnt_tbl_get(
 				INGRESS_POLICER_BASE_ADDR + VLAN_CNT_TBL_ADDRESS + \
 				index * VLAN_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union vlan_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -326,10 +288,9 @@ hppe_vlan_cnt_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + VLAN_CNT_TBL_ADDRESS + \
 				index * VLAN_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union vlan_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
-#ifndef IN_VSI_MINI
 sw_error_t
 hppe_vlan_cnt_tbl_rx_byte_cnt_get(
 		a_uint32_t dev_id,
@@ -393,8 +354,6 @@ hppe_vlan_cnt_tbl_rx_pkt_cnt_set(
 	ret = hppe_vlan_cnt_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
-
 
 sw_error_t
 hppe_eg_vsi_counter_tbl_get(
@@ -407,7 +366,7 @@ hppe_eg_vsi_counter_tbl_get(
 				NSS_PTX_CSR_BASE_ADDR + EG_VSI_COUNTER_TBL_ADDRESS + \
 				index * EG_VSI_COUNTER_TBL_INC,
 				value->val,
-				3);
+				sizeof(union eg_vsi_counter_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -421,10 +380,9 @@ hppe_eg_vsi_counter_tbl_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_VSI_COUNTER_TBL_ADDRESS + \
 				index * EG_VSI_COUNTER_TBL_INC,
 				value->val,
-				3);
+				sizeof(union eg_vsi_counter_tbl_u)/sizeof(a_uint32_t));
 }
 
-#ifndef IN_VSI_MINI
 sw_error_t
 hppe_eg_vsi_counter_tbl_tx_bytes_get(
 		a_uint32_t dev_id,
@@ -488,7 +446,6 @@ hppe_eg_vsi_counter_tbl_tx_packets_set(
 	ret = hppe_eg_vsi_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
 sw_error_t
 hppe_pre_l2_cnt_tbl_get(
@@ -501,7 +458,7 @@ hppe_pre_l2_cnt_tbl_get(
 				INGRESS_POLICER_BASE_ADDR + PRE_L2_CNT_TBL_ADDRESS + \
 				index * PRE_L2_CNT_TBL_INC,
 				value->val,
-				5);
+				sizeof(union pre_l2_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -515,9 +472,9 @@ hppe_pre_l2_cnt_tbl_set(
 				INGRESS_POLICER_BASE_ADDR + PRE_L2_CNT_TBL_ADDRESS + \
 				index * PRE_L2_CNT_TBL_INC,
 				value->val,
-				5);
+				sizeof(union pre_l2_cnt_tbl_u)/sizeof(a_uint32_t));
 }
-#ifndef IN_VSI_MINI
+
 sw_error_t
 hppe_pre_l2_cnt_tbl_rx_drop_byte_cnt_get(
 		a_uint32_t dev_id,
@@ -647,4 +604,35 @@ hppe_pre_l2_cnt_tbl_rx_drop_pkt_cnt_set(
 	ret = hppe_pre_l2_cnt_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+
+sw_error_t
+hppe_vsi_tbl_ipmc_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union vsi_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_vsi_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipmc_en;
+	return ret;
+}
+
+sw_error_t
+hppe_vsi_tbl_ipmc_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union vsi_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_vsi_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipmc_en = value;
+	ret = hppe_vsi_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+

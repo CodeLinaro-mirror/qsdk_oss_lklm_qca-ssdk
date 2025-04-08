@@ -13,17 +13,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_mac_enable_get(
@@ -82,6 +76,118 @@ hppe_mac_speed_set(
 }
 
 sw_error_t
+hppe_gol_mac_addr0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union gol_mac_addr0_u *value)
+{
+	if (index >= GOL_MAC_ADDR0_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + GOL_MAC_ADDR0_ADDRESS + \
+				index * GOL_MAC_ADDR0_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_gol_mac_addr0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union gol_mac_addr0_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + GOL_MAC_ADDR0_ADDRESS + \
+				index * GOL_MAC_ADDR0_INC,
+				value->val);
+}
+
+sw_error_t
+hppe_gol_mac_addr1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union gol_mac_addr1_u *value)
+{
+	if (index >= GOL_MAC_ADDR1_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + GOL_MAC_ADDR1_ADDRESS + \
+				index * GOL_MAC_ADDR1_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_gol_mac_addr1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union gol_mac_addr1_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + GOL_MAC_ADDR1_ADDRESS + \
+				index * GOL_MAC_ADDR1_INC,
+				value->val);
+}
+
+sw_error_t
+hppe_mac_ctrl0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_ctrl0_u *value)
+{
+	if (index >= MAC_CTRL0_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_CTRL0_ADDRESS + \
+				index * MAC_CTRL0_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_mac_ctrl0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_ctrl0_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_CTRL0_ADDRESS + \
+				index * MAC_CTRL0_INC,
+				value->val);
+}
+
+sw_error_t
+hppe_mac_ctrl1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_ctrl1_u *value)
+{
+	if (index >= MAC_CTRL1_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_CTRL1_ADDRESS + \
+				index * MAC_CTRL1_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_mac_ctrl1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_ctrl1_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_CTRL1_ADDRESS + \
+				index * MAC_CTRL1_INC,
+				value->val);
+}
+
+sw_error_t
 hppe_mac_ctrl2_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -135,6 +241,49 @@ hppe_mac_dbg_ctrl_set(
 				NSS_MAC_CSR_BASE_ADDR + MAC_DBG_CTRL_ADDRESS + \
 				index * MAC_DBG_CTRL_INC,
 				value->val);
+}
+
+sw_error_t
+hppe_mac_dbg_addr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_dbg_addr_u *value)
+{
+	if (index >= MAC_DBG_ADDR_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_DBG_ADDR_ADDRESS + \
+				index * MAC_DBG_ADDR_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_mac_dbg_addr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_dbg_addr_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_DBG_ADDR_ADDRESS + \
+				index * MAC_DBG_ADDR_INC,
+				value->val);
+}
+
+sw_error_t
+hppe_mac_dbg_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_dbg_data_u *value)
+{
+	if (index >= MAC_DBG_DATA_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_MAC_CSR_BASE_ADDR + MAC_DBG_DATA_ADDRESS + \
+				index * MAC_DBG_DATA_INC,
+				&value->val);
 }
 
 sw_error_t
@@ -222,6 +371,17 @@ hppe_mc_mtu_ctrl_tbl_set(
 }
 
 sw_error_t
+hppe_tdm_ctrl_get(
+		a_uint32_t dev_id,
+		union tdm_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				NSS_PRX_CSR_BASE_ADDR + TDM_CTRL_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
 hppe_tdm_ctrl_set(
 		a_uint32_t dev_id,
 		union tdm_ctrl_u *value)
@@ -231,6 +391,7 @@ hppe_tdm_ctrl_set(
 				NSS_PRX_CSR_BASE_ADDR + TDM_CTRL_ADDRESS,
 				value->val);
 }
+
 sw_error_t
 hppe_rx_fifo_cfg_get(
 		a_uint32_t dev_id,
@@ -257,6 +418,21 @@ hppe_rx_fifo_cfg_set(
 				NSS_PRX_CSR_BASE_ADDR + RX_FIFO_CFG_ADDRESS + \
 				index * RX_FIFO_CFG_INC,
 				value->val);
+}
+
+sw_error_t
+hppe_tdm_cfg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tdm_cfg_u *value)
+{
+	if (index >= TDM_CFG_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_PRX_CSR_BASE_ADDR + TDM_CFG_ADDRESS + \
+				index * TDM_CFG_INC,
+				&value->val);
 }
 
 sw_error_t
@@ -301,6 +477,967 @@ hppe_drop_stat_set(
 }
 
 sw_error_t
+hppe_gol_mac_addr0_mac_addr_byte4_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union gol_mac_addr0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_addr_byte4;
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr0_mac_addr_byte4_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union gol_mac_addr0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_addr_byte4 = value;
+	ret = hppe_gol_mac_addr0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr0_mac_addr_byte5_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union gol_mac_addr0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_addr_byte5;
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr0_mac_addr_byte5_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union gol_mac_addr0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_addr_byte5 = value;
+	ret = hppe_gol_mac_addr0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_addr_byte1;
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_addr_byte1 = value;
+	ret = hppe_gol_mac_addr1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte2_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_addr_byte2;
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte2_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_addr_byte2 = value;
+	ret = hppe_gol_mac_addr1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_addr_byte0;
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_addr_byte0 = value;
+	ret = hppe_gol_mac_addr1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte3_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_addr_byte3;
+	return ret;
+}
+
+sw_error_t
+hppe_gol_mac_addr1_mac_addr_byte3_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union gol_mac_addr1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_gol_mac_addr1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_addr_byte3 = value;
+	ret = hppe_gol_mac_addr1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_amaxc_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.amaxc_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_amaxc_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.amaxc_en = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_ipgt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipgt;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_ipgt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipgt = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_nobo_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.nobo;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_nobo_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.nobo = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_half_thdf_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.half_thdf_ctrl;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_half_thdf_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.half_thdf_ctrl = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_hugen_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.hugen;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_hugen_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.hugen = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_bpnb_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.bpnb;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_bpnb_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.bpnb = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_flchk_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.flchk;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_flchk_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.flchk = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_ipgr2_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipgr2;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_ipgr2_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipgr2 = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_drbnib_rxok_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.drbnib_rxok_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_drbnib_rxok_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.drbnib_rxok_en = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_huge_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.huge;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_huge_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.huge = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_abebe_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.abebe;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl0_abebe_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl0_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl0_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.abebe = value;
+	ret = hppe_mac_ctrl0_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_povr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.povr;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_povr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.povr = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_simr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.simr;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_simr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.simr = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_jam_ipg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.jam_ipg;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_jam_ipg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.jam_ipg = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_lcol_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.lcol;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_lcol_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.lcol = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_tctl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.tctl;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_tctl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tctl = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_retry_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.retry;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_retry_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.retry = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_prlen_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.prlen;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_prlen_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.prlen = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_ppad_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ppad;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_ppad_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ppad = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_long_jam_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.long_jam_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_long_jam_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.long_jam_en = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_phug_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.phug;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_phug_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.phug = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_sstct_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.sstct;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_sstct_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.sstct = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_mbof_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mbof;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_mbof_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mbof = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_tpause_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.tpause;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl1_tpause_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl1_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl1_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tpause = value;
+	ret = hppe_mac_ctrl1_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_ipg_dec_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipg_dec_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_ipg_dec_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipg_dec_en = value;
+	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
 hppe_mac_ctrl2_mac_tx_thd_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -312,10 +1449,56 @@ hppe_mac_ctrl2_mac_tx_thd_set(
 	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.mac_tx_thd = value;
+	//reg_val.bf.mac_tx_thd = value;//TO BE FIXED
 	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
 	return ret;
 }
+
+sw_error_t
+hppe_mac_ctrl2_crc_rsv_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.crc_rsv_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_crc_rsv_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.crc_rsv_en = value;
+	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_crs_sel_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.crs_sel;
+	return ret;
+}
+
 sw_error_t
 hppe_mac_ctrl2_crs_sel_set(
 		a_uint32_t dev_id,
@@ -332,6 +1515,52 @@ hppe_mac_ctrl2_crs_sel_set(
 	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
 	return ret;
 }
+
+sw_error_t
+hppe_mac_ctrl2_ipg_dec_len_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipg_dec_len;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_ipg_dec_len_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipg_dec_len = value;
+	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_maxfr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.maxfr;
+	return ret;
+}
+
 sw_error_t
 hppe_mac_ctrl2_maxfr_set(
 		a_uint32_t dev_id,
@@ -348,7 +1577,38 @@ hppe_mac_ctrl2_maxfr_set(
 	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
 	return ret;
 }
-#ifndef IN_PORTCONTROL_MINI
+
+sw_error_t
+hppe_mac_ctrl2_mac_lpi_tx_idle_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_lpi_tx_idle;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_mac_lpi_tx_idle_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_lpi_tx_idle = value;
+	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
+	return ret;
+}
+
 sw_error_t
 hppe_mac_ctrl2_mac_loop_back_get(
 		a_uint32_t dev_id,
@@ -379,9 +1639,54 @@ hppe_mac_ctrl2_mac_loop_back_set(
 	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+
 sw_error_t
-hppe_mac_dbg_ctrl_high_ipg_set(
+hppe_mac_ctrl2_test_pause_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.test_pause;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_ctrl2_test_pause_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_ctrl2_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_ctrl2_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.test_pause = value;
+	ret = hppe_mac_ctrl2_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_edxsdfr_transmit_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.edxsdfr_transmit_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_edxsdfr_transmit_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value)
@@ -392,10 +1697,149 @@ hppe_mac_dbg_ctrl_high_ipg_set(
 	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.high_ipg = value;
+	reg_val.bf.edxsdfr_transmit_en = value;
 	ret = hppe_mac_dbg_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
+sw_error_t
+hppe_mac_dbg_ctrl_mac_ipg_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_ipg_ctrl;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_mac_ipg_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_ipg_ctrl = value;
+	ret = hppe_mac_dbg_ctrl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_mac_len_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_len_ctrl;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_mac_len_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_len_ctrl = value;
+	ret = hppe_mac_dbg_ctrl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_ipgr1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipgr1;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_ipgr1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipgr1 = value;
+	ret = hppe_mac_dbg_ctrl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_addr_mac_debug_addr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_addr_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_addr_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_debug_addr;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_addr_mac_debug_addr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_dbg_addr_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_addr_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mac_debug_addr = value;
+	ret = hppe_mac_dbg_addr_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_data_mac_debug_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_data_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_data_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mac_debug_data;
+	return ret;
+}
+
 sw_error_t
 hppe_mac_jumbo_size_mac_jumbo_size_get(
 		a_uint32_t dev_id,
@@ -428,6 +1872,20 @@ hppe_mac_jumbo_size_mac_jumbo_size_set(
 }
 
 sw_error_t
+hppe_mru_mtu_ctrl_tbl_mtu_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mtu_cmd;
+	return ret;
+}
+
+sw_error_t
 hppe_mru_mtu_ctrl_tbl_mtu_cmd_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -441,6 +1899,20 @@ hppe_mru_mtu_ctrl_tbl_mtu_cmd_set(
 		return ret;
 	reg_val.bf.mtu_cmd = value;
 	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_mtu_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mtu;
 	return ret;
 }
 
@@ -462,36 +1934,78 @@ hppe_mru_mtu_ctrl_tbl_mtu_set(
 }
 
 sw_error_t
-hppe_mc_mtu_ctrl_tbl_mtu_cmd_set(
+hppe_mru_mtu_ctrl_tbl_rx_cnt_en_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint32_t value)
+		a_uint32_t *value)
 {
-	union mc_mtu_ctrl_tbl_u reg_val;
+	union mru_mtu_ctrl_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.mtu_cmd = value;
-	ret = hppe_mc_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.rx_cnt_en;
 	return ret;
 }
 
 sw_error_t
-hppe_mc_mtu_ctrl_tbl_mtu_set(
+hppe_mru_mtu_ctrl_tbl_rx_cnt_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value)
 {
-	union mc_mtu_ctrl_tbl_u reg_val;
+	union mru_mtu_ctrl_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.mtu = value;
-	ret = hppe_mc_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	reg_val.bf.rx_cnt_en = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_tx_cnt_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.tx_cnt_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_tx_cnt_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tx_cnt_en = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_mru_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mru_cmd;
 	return ret;
 }
 
@@ -542,7 +2056,7 @@ hppe_mru_mtu_ctrl_tbl_mru_set(
 	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#if (defined(CPPE) || defined(APPE))
+
 sw_error_t
 ppe_mru_mtu_ctrl_tbl_source_filtering_mode_get(
 		a_uint32_t dev_id,
@@ -604,7 +2118,6 @@ ppe_mru_mtu_ctrl_tbl_source_filtering_bypass_set(
 	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
 sw_error_t
 hppe_mru_mtu_ctrl_tbl_src_profile_get(
@@ -634,6 +2147,99 @@ hppe_mru_mtu_ctrl_tbl_src_profile_set(
 		return ret;
 	reg_val.bf.src_profile = value;
 	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mc_mtu_ctrl_tbl_mtu_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mc_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mtu_cmd;
+	return ret;
+}
+
+sw_error_t
+hppe_mc_mtu_ctrl_tbl_mtu_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mc_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mtu_cmd = value;
+	ret = hppe_mc_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mc_mtu_ctrl_tbl_tx_cnt_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mc_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.tx_cnt_en;
+	return ret;
+}
+
+sw_error_t
+hppe_mc_mtu_ctrl_tbl_tx_cnt_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mc_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tx_cnt_en = value;
+	ret = hppe_mc_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mc_mtu_ctrl_tbl_mtu_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mc_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.mtu;
+	return ret;
+}
+
+sw_error_t
+hppe_mc_mtu_ctrl_tbl_mtu_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mc_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mc_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.mtu = value;
+	ret = hppe_mc_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -740,7 +2346,7 @@ hppe_port_tx_counter_tbl_reg_get(
 				NSS_PTX_CSR_BASE_ADDR + PORT_TX_COUNTER_TBL_REG_ADDRESS + \
 				index * PORT_TX_COUNTER_TBL_REG_INC,
 				value->val,
-				3);
+				sizeof(union port_tx_counter_tbl_reg_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -754,7 +2360,7 @@ hppe_port_tx_counter_tbl_reg_set(
 				NSS_PTX_CSR_BASE_ADDR + PORT_TX_COUNTER_TBL_REG_ADDRESS + \
 				index * PORT_TX_COUNTER_TBL_REG_INC,
 				value->val,
-				3);
+				sizeof(union port_tx_counter_tbl_reg_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -768,7 +2374,7 @@ hppe_vp_tx_counter_tbl_reg_get(
 				NSS_PTX_CSR_BASE_ADDR + VP_TX_COUNTER_TBL_REG_ADDRESS + \
 				index * VP_TX_COUNTER_TBL_REG_INC,
 				value->val,
-				3);
+				sizeof(union vp_tx_counter_tbl_reg_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -782,10 +2388,137 @@ hppe_vp_tx_counter_tbl_reg_set(
 				NSS_PTX_CSR_BASE_ADDR + VP_TX_COUNTER_TBL_REG_ADDRESS + \
 				index * VP_TX_COUNTER_TBL_REG_INC,
 				value->val,
-				3);
+				sizeof(union vp_tx_counter_tbl_reg_u)/sizeof(a_uint32_t));
 }
 
-#ifdef MRPPE
+sw_error_t
+hppe_port_tx_counter_tbl_reg_tx_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value)
+{
+	union port_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_port_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	*value = (a_uint64_t)reg_val.bf.tx_bytes_1 << 32 | \
+		reg_val.bf.tx_bytes_0;
+	return ret;
+}
+
+sw_error_t
+hppe_port_tx_counter_tbl_reg_tx_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value)
+{
+	union port_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_port_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tx_bytes_1 = value >> 32;
+	reg_val.bf.tx_bytes_0 = value & (((a_uint64_t)1<<32)-1);
+	ret = hppe_port_tx_counter_tbl_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_port_tx_counter_tbl_reg_tx_packets_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_port_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.tx_packets;
+	return ret;
+}
+
+sw_error_t
+hppe_port_tx_counter_tbl_reg_tx_packets_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_port_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tx_packets = value;
+	ret = hppe_port_tx_counter_tbl_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_vp_tx_counter_tbl_reg_tx_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value)
+{
+	union vp_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_vp_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	*value = (a_uint64_t)reg_val.bf.tx_bytes_1 << 32 | \
+		reg_val.bf.tx_bytes_0;
+	return ret;
+}
+
+sw_error_t
+hppe_vp_tx_counter_tbl_reg_tx_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value)
+{
+	union vp_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_vp_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tx_bytes_1 = value >> 32;
+	reg_val.bf.tx_bytes_0 = value & (((a_uint64_t)1<<32)-1);
+	ret = hppe_vp_tx_counter_tbl_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_vp_tx_counter_tbl_reg_tx_packets_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union vp_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_vp_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.tx_packets;
+	return ret;
+}
+
+sw_error_t
+hppe_vp_tx_counter_tbl_reg_tx_packets_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union vp_tx_counter_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_vp_tx_counter_tbl_reg_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.tx_packets = value;
+	ret = hppe_vp_tx_counter_tbl_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
 sw_error_t
 mrppe_lpi_port_enable_get(
 		a_uint32_t dev_id,
@@ -889,7 +2622,7 @@ mrppe_lpi_1us_cnt_set(
 				index * LPI_1US_CNT_INC,
 				value->val);
 }
-#else
+
 sw_error_t
 hppe_lpi_enable_get(
 		a_uint32_t dev_id,
@@ -967,7 +2700,6 @@ hppe_lpi_cnt_set(
 				index * LPI_CNT_INC,
 				value->val);
 }
-#endif
 
 sw_error_t
 hppe_drop_cnt_get(
@@ -1113,6 +2845,20 @@ hppe_ipr_byte_high_reg_set(
 }
 
 sw_error_t
+hppe_ipr_pkt_num_tbl_reg_packets_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipr_pkt_num_tbl_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipr_pkt_num_tbl_reg_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipr_pkt_num_tbl_reg;
+	return ret;
+}
+
+sw_error_t
 hppe_ipr_pkt_num_tbl_reg_packets_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1124,8 +2870,22 @@ hppe_ipr_pkt_num_tbl_reg_packets_set(
 	ret = hppe_ipr_pkt_num_tbl_reg_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.packets = value;
+	reg_val.bf.ipr_pkt_num_tbl_reg = value;
 	ret = hppe_ipr_pkt_num_tbl_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_ipr_byte_low_reg_reg_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipr_byte_low_reg_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipr_byte_low_reg_reg_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipr_byte_low_reg_reg;
 	return ret;
 }
 
@@ -1141,8 +2901,22 @@ hppe_ipr_byte_low_reg_reg_bytes_set(
 	ret = hppe_ipr_byte_low_reg_reg_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.bytes = value;
+	reg_val.bf.ipr_byte_low_reg_reg = value;
 	ret = hppe_ipr_byte_low_reg_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_ipr_byte_high_reg_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipr_byte_high_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipr_byte_high_reg_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ipr_byte_high_reg;
 	return ret;
 }
 
@@ -1158,13 +2932,11 @@ hppe_ipr_byte_high_reg_bytes_set(
 	ret = hppe_ipr_byte_high_reg_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.bytes = value;
+	reg_val.bf.ipr_byte_high_reg = value;
 	ret = hppe_ipr_byte_high_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
 
-#ifdef APPE
-#ifndef IN_PORTCONTROL_MINI
 sw_error_t
 appe_link_oam_ctrl_get(
 		a_uint32_t dev_id,
@@ -1186,9 +2958,6 @@ appe_link_oam_ctrl_set(
 		a_uint32_t index,
 		union link_oam_ctrl_u *value)
 {
-	if (index >= LINK_OAM_CTRL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
 	return hppe_reg_set(
 				dev_id,
 				IPE_L2_BASE_ADDR + LINK_OAM_CTRL_ADDRESS + \
@@ -1226,5 +2995,502 @@ appe_link_oam_ctrl_loopback_state_set(
 	ret = appe_link_oam_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
-#endif
+
+sw_error_t
+hppe_ipr_byte_high_reg_clear_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipr_byte_high_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipr_byte_high_reg_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.clear;
+	return ret;
+}
+
+sw_error_t
+hppe_ipr_byte_high_reg_clear_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union ipr_byte_high_reg_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipr_byte_high_reg_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.clear = value;
+	ret = hppe_ipr_byte_high_reg_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_default_pcp_dei_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.default_pcp_dei;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_default_pcp_dei_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.default_pcp_dei = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_dscp_qos_group_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.dscp_qos_group_id;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_dscp_qos_group_id_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.dscp_qos_group_id = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_dscp_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.dscp_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_dscp_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.dscp_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_dscp_res_prec_force_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.dscp_res_prec_force;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_dscp_res_prec_force_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.dscp_res_prec_force = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_flow_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.flow_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_flow_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.flow_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_qos_group_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_qos_group_id;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_qos_group_id_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_qos_group_id = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_qos_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_qos_mode;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_qos_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_qos_mode = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_res_prec_force_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_res_prec_force;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pcp_res_prec_force_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_res_prec_force = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_post_acl_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.post_acl_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_post_acl_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.post_acl_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pre_acl_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pre_acl_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pre_acl_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pre_acl_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pre_ipo_inner_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pre_ipo_inner_res_prec_1 << 1 | \
+		reg_val.bf.pre_ipo_inner_res_prec_0;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pre_ipo_inner_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pre_ipo_inner_res_prec_1 = value >> 1;
+	reg_val.bf.pre_ipo_inner_res_prec_0 = value & (((a_uint64_t)1<<1)-1);
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pre_ipo_outer_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pre_ipo_outer_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_pre_ipo_outer_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pre_ipo_outer_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_preheader_res_prec_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.preheader_res_prec;
+	return ret;
+}
+
+sw_error_t
+hppe_mru_mtu_ctrl_tbl_preheader_res_prec_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mru_mtu_ctrl_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mru_mtu_ctrl_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.preheader_res_prec = value;
+	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_high_ipg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.high_ipg;
+	return ret;
+}
+
+sw_error_t
+hppe_mac_dbg_ctrl_high_ipg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_dbg_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_dbg_ctrl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.high_ipg = value;
+	ret = hppe_mac_dbg_ctrl_set(dev_id, index, &reg_val);
+	return ret;
+}
+

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,12 +14,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_global_reg.h"
-#include "appe_global.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_port_mux_ctrl_get(
@@ -31,6 +26,7 @@ appe_port_mux_ctrl_get(
 				NSS_GLOBAL_BASE_ADDR + SWITCH_PORT_MUX_CTRL_ADDRESS,
 				&value->val);
 }
+
 sw_error_t
 appe_port_mux_ctrl_set(
 		a_uint32_t dev_id,
@@ -50,7 +46,6 @@ appe_tx_buff_thrsh_get(
 {
 	if (index >= TX_BUFF_THRSH_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
-
 	return hppe_reg_get(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + TX_BUFF_THRSH_ADDRESS + \
@@ -64,12 +59,72 @@ appe_tx_buff_thrsh_set(
 		a_uint32_t index,
 		union tx_buff_thrsh_u *value)
 {
-	if (index >= TX_BUFF_THRSH_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
 	return hppe_reg_set(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + TX_BUFF_THRSH_ADDRESS + \
 				index * TX_BUFF_THRSH_INC,
 				value->val);
 }
+
+sw_error_t
+appe_tx_buff_thrsh_xoff_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union tx_buff_thrsh_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tx_buff_thrsh_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.xoff;
+	return ret;
+}
+
+sw_error_t
+appe_tx_buff_thrsh_xoff_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union tx_buff_thrsh_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tx_buff_thrsh_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.xoff = value;
+	ret = appe_tx_buff_thrsh_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_tx_buff_thrsh_xon_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union tx_buff_thrsh_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tx_buff_thrsh_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.xon;
+	return ret;
+}
+
+sw_error_t
+appe_tx_buff_thrsh_xon_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union tx_buff_thrsh_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tx_buff_thrsh_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.xon = value;
+	ret = appe_tx_buff_thrsh_set(dev_id, index, &reg_val);
+	return ret;
+}
+

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_vxlan_reg.h"
-#include "appe_vxlan.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_udp_port_cfg_get(
@@ -98,7 +92,6 @@ appe_tpr_vxlan_gpe_cfg_set(
 				value->val);
 }
 
-#ifndef IN_VXLAN_MINI
 sw_error_t
 appe_tpr_vxlan_gpe_prot_cfg_get(
 		a_uint32_t dev_id,
@@ -120,9 +113,7 @@ appe_tpr_vxlan_gpe_prot_cfg_set(
 				TUNNEL_PARSER_BASE_ADDR + TPR_VXLAN_GPE_PROT_CFG_ADDRESS,
 				value->val);
 }
-#endif
 
-#if 0
 sw_error_t
 appe_udp_port_cfg_udp_type_get(
 		a_uint32_t dev_id,
@@ -246,7 +237,6 @@ appe_udp_port_cfg_port_value_set(
 	ret = appe_udp_port_cfg_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
 sw_error_t
 appe_tpr_vxlan_cfg_udp_port_map_get(
@@ -306,7 +296,6 @@ appe_tpr_vxlan_gpe_cfg_udp_port_map_set(
 	return ret;
 }
 
-#if 0
 sw_error_t
 appe_tpr_vxlan_gpe_prot_cfg_ipv6_get(
 		a_uint32_t dev_id,
@@ -393,4 +382,4 @@ appe_tpr_vxlan_gpe_prot_cfg_ipv4_set(
 	ret = appe_tpr_vxlan_gpe_prot_cfg_set(dev_id, &reg_val);
 	return ret;
 }
-#endif
+

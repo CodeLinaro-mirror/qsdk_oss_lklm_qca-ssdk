@@ -15,16 +15,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_ctrlpkt_reg.h"
-#include "hppe_ctrlpkt.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_ethertype_ctrl_get(
@@ -65,7 +60,7 @@ hppe_app_ctrl_get(
 				IPE_L2_BASE_ADDR + APP_CTRL_ADDRESS + \
 				index * APP_CTRL_INC,
 				value->val,
-				3);
+				sizeof(union app_ctrl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -79,7 +74,7 @@ hppe_app_ctrl_set(
 				IPE_L2_BASE_ADDR + APP_CTRL_ADDRESS + \
 				index * APP_CTRL_INC,
 				value->val,
-				3);
+				sizeof(union app_ctrl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -114,6 +109,20 @@ hppe_ethertype_ctrl_ethertype_set(
 }
 
 sw_error_t
+hppe_ethertype_ctrl_ethertype_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ethertype_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ethertype_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ethertype_en;
+	return ret;
+}
+
+sw_error_t
 hppe_ethertype_ctrl_ethertype_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -129,14 +138,14 @@ hppe_ethertype_ctrl_ethertype_en_set(
 	ret = hppe_ethertype_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#ifdef APPE
+
 sw_error_t
 appe_l2_cpu_code_ctrl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union l2_cpu_code_ctrl_u *value)
 {
-	if (index >= L2_CPU_CODE_CTRL_NUM)
+	if (index >= L2_CPU_CODE_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
 	return hppe_reg_get(
 				dev_id,
@@ -151,8 +160,6 @@ appe_l2_cpu_code_ctrl_set(
 		a_uint32_t index,
 		union l2_cpu_code_ctrl_u *value)
 {
-	if (index >= L2_CPU_CODE_CTRL_NUM)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				IPE_L2_BASE_ADDR + L2_CPU_CODE_CTRL_ADDRESS + \
@@ -190,4 +197,35 @@ appe_l2_cpu_code_ctrl_exception_fmt_ctrl_en_set(
 	ret = appe_l2_cpu_code_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+
+sw_error_t
+hppe_l2_cpu_code_ctrl_enqueue_disable_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union l2_cpu_code_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_l2_cpu_code_ctrl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.enqueue_disable;
+	return ret;
+}
+
+sw_error_t
+hppe_l2_cpu_code_ctrl_enqueue_disable_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union l2_cpu_code_ctrl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_l2_cpu_code_ctrl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.enqueue_disable = value;
+	ret = appe_l2_cpu_code_ctrl_set(dev_id, index, &reg_val);
+	return ret;
+}
+

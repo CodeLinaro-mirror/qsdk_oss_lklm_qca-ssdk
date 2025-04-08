@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,16 +15,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_trunk_reg.h"
-#include "hppe_trunk.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_trunk_hash_field_reg_get(
@@ -103,6 +98,7 @@ hppe_trunk_member_set(
 				index * TRUNK_MEMBER_INC,
 				value->val);
 }
+
 sw_error_t
 hppe_port_trunk_id_get(
 		a_uint32_t dev_id,
@@ -130,7 +126,7 @@ hppe_port_trunk_id_set(
 				index * PORT_TRUNK_ID_INC,
 				value->val);
 }
-#if 0
+
 sw_error_t
 hppe_trunk_hash_field_reg_udf2_incl_get(
 		a_uint32_t dev_id,
@@ -482,254 +478,6 @@ hppe_trunk_filter_mem_bitmap_set(
 }
 
 sw_error_t
-hppe_trunk_member_member_2_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_2_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_2_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_2_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_0_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_0_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_0_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_0_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_1_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_1_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_1_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_1_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_6_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_6_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_6_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_6_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_4_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_4_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_4_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_4_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_3_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_3_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_3_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_3_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_5_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_5_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_5_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_5_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_7_port_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.member_7_port_id;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_member_member_7_port_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_member_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_member_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.member_7_port_id = value;
-	ret = hppe_trunk_member_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_port_trunk_id_trunk_id_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -790,4 +538,4 @@ hppe_port_trunk_id_trunk_en_set(
 	ret = hppe_port_trunk_id_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+

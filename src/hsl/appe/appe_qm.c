@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,12 +14,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_qm_reg.h"
-#include "appe_qm.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_port_vsi_enqueue_map_get(
@@ -49,66 +44,3 @@ appe_port_vsi_enqueue_map_set(
 				value->val);
 }
 
-#if 0
-sw_error_t
-appe_port_vsi_enqueue_map_enqueue_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union port_vsi_enqueue_map_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_port_vsi_enqueue_map_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.enqueue_valid;
-	return ret;
-}
-
-sw_error_t
-appe_port_vsi_enqueue_map_enqueue_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union port_vsi_enqueue_map_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_port_vsi_enqueue_map_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.enqueue_valid = value;
-	ret = appe_port_vsi_enqueue_map_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_port_vsi_enqueue_map_enqueue_vp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union port_vsi_enqueue_map_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_port_vsi_enqueue_map_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.enqueue_vp;
-	return ret;
-}
-
-sw_error_t
-appe_port_vsi_enqueue_map_enqueue_vp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union port_vsi_enqueue_map_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_port_vsi_enqueue_map_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.enqueue_vp = value;
-	ret = appe_port_vsi_enqueue_map_set(dev_id, index, &reg_val);
-	return ret;
-}
-#endif

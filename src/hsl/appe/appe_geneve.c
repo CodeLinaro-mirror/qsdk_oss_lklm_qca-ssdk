@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,65 +14,60 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_geneve_reg.h"
-#include "appe_geneve.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_tpr_geneve_cfg_get(
-                a_uint32_t dev_id,
-                union tpr_geneve_cfg_u *value)
+		a_uint32_t dev_id,
+		union tpr_geneve_cfg_u *value)
 {
-        return hppe_reg_get(
-                                dev_id,
-                                TUNNEL_PARSER_BASE_ADDR + TPR_GENEVE_CFG_ADDRESS,
-                                &value->val);
+	return hppe_reg_get(
+				dev_id,
+				TUNNEL_PARSER_BASE_ADDR + TPR_GENEVE_CFG_ADDRESS,
+				&value->val);
 }
 
 sw_error_t
 appe_tpr_geneve_cfg_set(
-                a_uint32_t dev_id,
-                union tpr_geneve_cfg_u *value)
+		a_uint32_t dev_id,
+		union tpr_geneve_cfg_u *value)
 {
-        return hppe_reg_set(
-                                dev_id,
-                                TUNNEL_PARSER_BASE_ADDR + TPR_GENEVE_CFG_ADDRESS,
-                                value->val);
+	return hppe_reg_set(
+				dev_id,
+				TUNNEL_PARSER_BASE_ADDR + TPR_GENEVE_CFG_ADDRESS,
+				value->val);
 }
 
 sw_error_t
 appe_tpr_geneve_cfg_udp_port_map_get(
-                a_uint32_t dev_id,
-                a_uint32_t *value)
+		a_uint32_t dev_id,
+		a_uint32_t *value)
 {
-        union tpr_geneve_cfg_u reg_val;
-        sw_error_t ret = SW_OK;
+	union tpr_geneve_cfg_u reg_val;
+	sw_error_t ret = SW_OK;
 
-        ret = appe_tpr_geneve_cfg_get(dev_id, &reg_val);
-        *value = reg_val.bf.udp_port_map;
-        return ret;
+	ret = appe_tpr_geneve_cfg_get(dev_id, &reg_val);
+	*value = reg_val.bf.udp_port_map;
+	return ret;
 }
 
 sw_error_t
 appe_tpr_geneve_cfg_udp_port_map_set(
-                a_uint32_t dev_id,
-                a_uint32_t value)
+		a_uint32_t dev_id,
+		a_uint32_t value)
 {
-        union tpr_geneve_cfg_u reg_val;
-        sw_error_t ret = SW_OK;
+	union tpr_geneve_cfg_u reg_val;
+	sw_error_t ret = SW_OK;
 
-        ret = appe_tpr_geneve_cfg_get(dev_id, &reg_val);
-        if (SW_OK != ret)
-                return ret;
-        reg_val.bf.udp_port_map = value;
-        ret = appe_tpr_geneve_cfg_set(dev_id, &reg_val);
-        return ret;
+	ret = appe_tpr_geneve_cfg_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.udp_port_map = value;
+	ret = appe_tpr_geneve_cfg_set(dev_id, &reg_val);
+	return ret;
 }
+

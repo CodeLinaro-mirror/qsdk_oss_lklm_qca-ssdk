@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,17 +15,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
  /**
   * @defgroup
   * @{
   */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_sec_reg.h"
-#include "appe_sec.h"
-
+#include "hsl_reg.h"
 
 sw_error_t
 appe_l2_flow_hit_exp_ctrl_get(
@@ -48,8 +42,6 @@ appe_l2_flow_hit_exp_ctrl_set(
 		a_uint32_t index,
 		union l2_flow_hit_exp_ctrl_u *value)
 {
-	if (index >= L2_FLOW_HIT_EXP_CTRL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				IPE_L3_BASE_ADDR + L2_FLOW_HIT_EXP_CTRL_ADDRESS + \
@@ -78,8 +70,6 @@ appe_l3_flow_hit_exp_ctrl_set(
 		a_uint32_t index,
 		union l3_flow_hit_exp_ctrl_u *value)
 {
-	if (index >= L3_FLOW_HIT_EXP_CTRL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				IPE_L3_BASE_ADDR + L3_FLOW_HIT_EXP_CTRL_ADDRESS + \
@@ -108,8 +98,6 @@ appe_l3_flow_hit_miss_exp_ctrl_set(
 		a_uint32_t index,
 		union l3_flow_hit_miss_exp_ctrl_u *value)
 {
-    if (index >= L3_FLOW_HIT_MISS_EXP_CTRL_MAX_ENTRY)
-            return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				IPE_L3_BASE_ADDR + L3_FLOW_HIT_MISS_EXP_CTRL_ADDRESS + \
@@ -138,8 +126,6 @@ appe_l2_flow_hit_miss_exp_ctrl_set(
 		a_uint32_t index,
 		union l2_flow_hit_miss_exp_ctrl_u *value)
 {
-    if (index >= L2_FLOW_HIT_MISS_EXP_CTRL_MAX_ENTRY)
-            return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				IPE_L3_BASE_ADDR + L2_FLOW_HIT_MISS_EXP_CTRL_ADDRESS + \
@@ -147,7 +133,6 @@ appe_l2_flow_hit_miss_exp_ctrl_set(
 				value->val);
 }
 
-#ifndef IN_SEC_MINI
 sw_error_t
 appe_l2_excep_ctrl_get(
 		a_uint32_t dev_id,
@@ -344,8 +329,6 @@ appe_tl_exception_cmd_set(
 		a_uint32_t index,
 		union tl_exception_cmd_u *value)
 {
-	if (index >= TL_EXCEPTION_CMD_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_LOOKUP_BASE_ADDR + TL_EXCEPTION_CMD_ADDRESS + \
@@ -374,8 +357,6 @@ appe_tl_exp_ctrl_profile0_set(
 		a_uint32_t index,
 		union tl_exp_ctrl_profile0_u *value)
 {
-	if (index >= TL_EXP_CTRL_PROFILE0_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_LOOKUP_BASE_ADDR + TL_EXP_CTRL_PROFILE0_ADDRESS + \
@@ -404,8 +385,6 @@ appe_tl_exp_ctrl_profile1_set(
 		a_uint32_t index,
 		union tl_exp_ctrl_profile1_u *value)
 {
-	if (index >= TL_EXP_CTRL_PROFILE1_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_LOOKUP_BASE_ADDR + TL_EXP_CTRL_PROFILE1_ADDRESS + \
@@ -434,8 +413,6 @@ appe_tl_exp_ctrl_profile2_set(
 		a_uint32_t index,
 		union tl_exp_ctrl_profile2_u *value)
 {
-	if (index >= TL_EXP_CTRL_PROFILE2_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_LOOKUP_BASE_ADDR + TL_EXP_CTRL_PROFILE2_ADDRESS + \
@@ -464,8 +441,6 @@ appe_tl_exp_ctrl_profile3_set(
 		a_uint32_t index,
 		union tl_exp_ctrl_profile3_u *value)
 {
-	if (index >= TL_EXP_CTRL_PROFILE3_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_LOOKUP_BASE_ADDR + TL_EXP_CTRL_PROFILE3_ADDRESS + \
@@ -680,8 +655,6 @@ appe_tpr_exception_ctrl_0_set(
 		a_uint32_t index,
 		union tpr_exception_ctrl_0_u *value)
 {
-	if (index >= TPR_EXCEPTION_CTRL_0_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_PARSER_BASE_ADDR + TPR_EXCEPTION_CTRL_0_ADDRESS + \
@@ -710,8 +683,6 @@ appe_tpr_exception_ctrl_1_set(
 		a_uint32_t index,
 		union tpr_exception_ctrl_1_u *value)
 {
-	if (index >= TPR_EXCEPTION_CTRL_1_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_set(
 				dev_id,
 				TUNNEL_PARSER_BASE_ADDR + TPR_EXCEPTION_CTRL_1_ADDRESS + \
@@ -1505,6 +1476,4 @@ appe_tpr_exception_ctrl_1_comp_mode_set(
 	ret = appe_tpr_exception_ctrl_1_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
-
 

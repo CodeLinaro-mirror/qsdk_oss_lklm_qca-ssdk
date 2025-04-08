@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_acl_reg.h"
-#include "hppe_acl.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_ipo_rule_reg_get(
@@ -172,14 +166,12 @@ hppe_ipo_cnt_tbl_get(
 		a_uint32_t index,
 		union ipo_cnt_tbl_u *value)
 {
-	if (index >= IPO_CNT_TBL_NUM)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_tbl_get(
 				dev_id,
 				INGRESS_POLICER_BASE_ADDR + IPO_CNT_TBL_ADDRESS + \
 				index * IPO_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union ipo_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -188,14 +180,76 @@ hppe_ipo_cnt_tbl_set(
 		a_uint32_t index,
 		union ipo_cnt_tbl_u *value)
 {
-	if (index >= IPO_CNT_TBL_NUM)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_tbl_set(
 				dev_id,
 				INGRESS_POLICER_BASE_ADDR + IPO_CNT_TBL_ADDRESS + \
 				index * IPO_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union ipo_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+hppe_ipo_cnt_tbl_hit_byte_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value)
+{
+	union ipo_cnt_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipo_cnt_tbl_get(dev_id, index, &reg_val);
+	*value = (a_uint64_t)reg_val.bf.hit_byte_cnt_1 << 32 | \
+		reg_val.bf.hit_byte_cnt_0;
+	return ret;
+}
+
+sw_error_t
+hppe_ipo_cnt_tbl_hit_byte_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value)
+{
+	union ipo_cnt_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipo_cnt_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.hit_byte_cnt_1 = value >> 32;
+	reg_val.bf.hit_byte_cnt_0 = value & (((a_uint64_t)1<<32)-1);
+	ret = hppe_ipo_cnt_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_ipo_cnt_tbl_hit_pkt_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipo_cnt_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipo_cnt_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.hit_pkt_cnt;
+	return ret;
+}
+
+sw_error_t
+hppe_ipo_cnt_tbl_hit_pkt_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union ipo_cnt_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_ipo_cnt_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.hit_pkt_cnt = value;
+	ret = hppe_ipo_cnt_tbl_set(dev_id, index, &reg_val);
+	return ret;
 }
 
 sw_error_t

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -14,18 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_sec_reg.h"
-#include "hppe_sec.h"
-
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_l3_exception_cmd_get(
@@ -283,7 +276,6 @@ hppe_l4_exception_parsing_ctrl_3_reg_set(
 				value->val);
 }
 
-#ifndef IN_SEC_MINI
 sw_error_t
 hppe_l3_exception_cmd_l3_excep_cmd_get(
 		a_uint32_t dev_id,
@@ -609,6 +601,7 @@ hppe_l4_exception_parsing_ctrl_0_reg_tcp_flags0_set(
 	ret = hppe_l4_exception_parsing_ctrl_0_reg_set(dev_id, &reg_val);
 	return ret;
 }
+
 sw_error_t
 hppe_l4_exception_parsing_ctrl_0_reg_tcp_flags0_mask_get(
 		a_uint32_t dev_id,
@@ -1043,5 +1036,4 @@ hppe_l4_exception_parsing_ctrl_3_reg_tcp_flags7_mask_set(
 	ret = hppe_l4_exception_parsing_ctrl_3_reg_set(dev_id, &reg_val);
 	return ret;
 }
-#endif
 
