@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -28,6 +28,12 @@ sw_error_t fal_port_vlan_trans_adv_add(a_uint32_t dev_id, fal_port_t port_id, fa
 
 sw_error_t fal_port_vlan_trans_adv_del(a_uint32_t dev_id, fal_port_t port_id, fal_port_vlan_direction_t direction, fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_trans_adv_del, dev_id, port_id, direction, rule, action)
+
+sw_error_t fal_port_vlan_trans_adv_get(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint32_t index, fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_trans_adv_get, dev_id, direction, index, rule, action)
+
+sw_error_t fal_port_vlan_trans_adv_set(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint32_t index, fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_trans_adv_set, dev_id, direction, index, rule, action)
 
 sw_error_t fal_port_vlan_trans_adv_getfirst(a_uint32_t dev_id, fal_port_t port_id, fal_port_vlan_direction_t direction, fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_trans_adv_getfirst, dev_id, port_id, direction, rule, action)

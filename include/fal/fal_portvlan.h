@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -377,6 +377,8 @@ typedef struct
 				   * added for ipq95xx
 				   * */
 	a_uint32_t vni_resv; /* vni or gre key filed value, added for ipq95xx*/
+
+	a_uint32_t index; /* output, indicate the entry index*/
 } fal_vlan_trans_adv_rule_t;
 
 typedef struct
@@ -553,6 +555,16 @@ fal_port_vlan_trans_adv_add(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_vlan_trans_adv_del(a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_vlan_direction_t direction,
+		fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
+
+sw_error_t
+fal_port_vlan_trans_adv_get(a_uint32_t dev_id, fal_port_vlan_direction_t direction,
+		a_uint32_t index,
+		fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
+
+sw_error_t
+fal_port_vlan_trans_adv_set(a_uint32_t dev_id, fal_port_vlan_direction_t direction,
+		a_uint32_t index,
 		fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action);
 
 sw_error_t

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -443,6 +443,40 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		eg_vlan_xlt_action.bf.vni_resv_1 = (action->vni_resv >> 12) & 0xfffff;
 #endif
 		rtn = hppe_eg_vlan_xlt_action_set(dev_id, index, &eg_vlan_xlt_action);
+		SW_RTN_ON_ERROR(rtn);
+	}
+
+	return rtn;
+}
+
+sw_error_t
+_delete_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
+		fal_port_vlan_direction_t direction)
+{
+	sw_error_t rtn = SW_OK;
+	union xlt_rule_tbl_u in_vlan_xlt_rule;
+	union eg_vlan_xlt_rule_u eg_vlan_xlt_rule;
+	union xlt_action_tbl_u in_vlan_xlt_action;
+	union eg_vlan_xlt_action_u eg_vlan_xlt_action;
+
+	memset(&in_vlan_xlt_rule, 0, sizeof(in_vlan_xlt_rule));
+	memset(&eg_vlan_xlt_rule, 0, sizeof(struct eg_vlan_xlt_rule));
+	memset(&in_vlan_xlt_action, 0, sizeof(struct xlt_action_tbl));
+	memset(&eg_vlan_xlt_action, 0, sizeof(struct eg_vlan_xlt_action));
+
+	if (direction == FAL_PORT_VLAN_INGRESS) {
+		rtn = hppe_xlt_rule_tbl_set(dev_id,
+				index, &in_vlan_xlt_rule);
+		SW_RTN_ON_ERROR(rtn);
+		rtn = hppe_xlt_action_tbl_set(dev_id,
+				index, &in_vlan_xlt_action);
+		SW_RTN_ON_ERROR(rtn);
+	} else {
+		rtn = hppe_eg_vlan_xlt_rule_set(dev_id,
+				index, &eg_vlan_xlt_rule);
+		SW_RTN_ON_ERROR(rtn);
+		rtn = hppe_eg_vlan_xlt_action_set(dev_id,
+				index, &eg_vlan_xlt_action);
 		SW_RTN_ON_ERROR(rtn);
 	}
 
@@ -1141,11 +1175,13 @@ adpt_hppe_port_vlan_trans_adv_add(a_uint32_t dev_id,
 					return SW_ALREADY_EXIST;
 				} else if (entry_found == ADPT_PORT_ID_EXCLD) {
 					SW_PBMP_ADD_PORT(temp_rule.port_bitmap, port_id);
-					_insert_vlan_trans_adv_rule_action(
+					rtn = _insert_vlan_trans_adv_rule_action(
 							dev_id,
 							idx, direction,
 							&temp_rule,
 							&temp_action);
+					SW_RTN_ON_ERROR(rtn);
+					rule->index = idx;
 					return SW_OK;
 				} else {
 					/* need to insert a new portvlan entry */
@@ -1156,10 +1192,12 @@ adpt_hppe_port_vlan_trans_adv_add(a_uint32_t dev_id,
 						port_id);
 				if (entry_found == ADPT_PORT_ID_EQUAL) {
 					/* port equal, need update action */
-					_insert_vlan_trans_adv_rule_action(dev_id,
+					rtn = _insert_vlan_trans_adv_rule_action(dev_id,
 							idx, direction,
 							&temp_rule,
 							action);
+					SW_RTN_ON_ERROR(rtn);
+					rule->index = idx;
 					return SW_OK;
 				} else {
 					if (entry_found == ADPT_PORT_ID_INCLD) {
@@ -1190,6 +1228,8 @@ adpt_hppe_port_vlan_trans_adv_add(a_uint32_t dev_id,
 		/* insert new rule and action */
 		rtn = _insert_vlan_trans_adv_rule_action(dev_id, entry_idx,
 				direction, rule, action);
+		SW_RTN_ON_ERROR(rtn);
+		rule->index = entry_idx;
 	}
 
 	return rtn;
@@ -1204,15 +1244,6 @@ adpt_hppe_port_vlan_trans_adv_del(a_uint32_t dev_id,
 	a_uint32_t idx, rule_valid, entry_found;
 	fal_vlan_trans_adv_rule_t temp_rule;
 	fal_vlan_trans_adv_action_t temp_action;
-	union xlt_rule_tbl_u in_vlan_xlt_rule;
-	union eg_vlan_xlt_rule_u eg_vlan_xlt_rule;
-	union xlt_action_tbl_u in_vlan_xlt_action;
-	union eg_vlan_xlt_action_u eg_vlan_xlt_action;
-
-	memset(&in_vlan_xlt_rule, 0, sizeof(in_vlan_xlt_rule));
-	memset(&eg_vlan_xlt_rule, 0, sizeof(struct eg_vlan_xlt_rule));
-	memset(&in_vlan_xlt_action, 0, sizeof(struct xlt_action_tbl));
-	memset(&eg_vlan_xlt_action, 0, sizeof(struct eg_vlan_xlt_action));
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
@@ -1245,21 +1276,9 @@ adpt_hppe_port_vlan_trans_adv_del(a_uint32_t dev_id,
 
 				if (entry_found == ADPT_PORT_ID_EQUAL) {
 					/* port equal, need delete existing rule and action */
-					if (direction == FAL_PORT_VLAN_INGRESS) {
-						rtn = hppe_xlt_rule_tbl_set(dev_id,
-								idx, &in_vlan_xlt_rule);
-						SW_RTN_ON_ERROR(rtn);
-						rtn = hppe_xlt_action_tbl_set(dev_id,
-								idx, &in_vlan_xlt_action);
-						SW_RTN_ON_ERROR(rtn);
-					} else {
-						rtn = hppe_eg_vlan_xlt_rule_set(dev_id,
-								idx, &eg_vlan_xlt_rule);
-						SW_RTN_ON_ERROR(rtn);
-						rtn = hppe_eg_vlan_xlt_action_set(dev_id,
-								idx, &eg_vlan_xlt_action);
-						SW_RTN_ON_ERROR(rtn);
-					}
+					rtn = _delete_vlan_trans_adv_rule_action(dev_id, idx, direction);
+					SW_RTN_ON_ERROR(rtn);
+					rule->index = idx;
 				} else if (entry_found == ADPT_PORT_ID_INCLD) {
 					/* current port_bitmap includes this port_id,
 					   remove port from port_bitmap and update rule
@@ -1283,6 +1302,46 @@ adpt_hppe_port_vlan_trans_adv_del(a_uint32_t dev_id,
 		return SW_NOT_FOUND;
 
 	return rtn;
+}
+
+sw_error_t
+adpt_hppe_port_vlan_trans_adv_get(a_uint32_t dev_id,
+		fal_port_vlan_direction_t direction, a_uint32_t index,
+		fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
+{
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (1 == _get_port_vlan_trans_adv_rule_by_index(dev_id,
+		index, direction,rule, action)) {
+		rule->index = index;
+		return SW_OK;
+	} else
+		return SW_NOT_FOUND;
+}
+
+sw_error_t
+adpt_hppe_port_vlan_trans_adv_set(a_uint32_t dev_id,
+		fal_port_vlan_direction_t direction, a_uint32_t index,
+		fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
+{
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	fal_vlan_trans_adv_rule_t tmp_rule = {.port_bitmap = 0};
+	fal_vlan_trans_adv_action_t tmp_action = {.svid_xlt = 0};
+	memset(&tmp_rule, 0, sizeof(tmp_rule));
+	memset(&tmp_action, 0, sizeof(tmp_action));
+
+	if (!memcmp(&tmp_rule, rule, sizeof(*rule)) &&
+		!memcmp(&tmp_action, action, sizeof(*action)))
+		return _delete_vlan_trans_adv_rule_action(dev_id, index, direction);
+
+	if (FAL_PORT_ID_TYPE(rule->port_bitmap) == FAL_PORT_TYPE_PPORT) {
+		rule->port_bitmap = BIT(rule->port_bitmap);
+	} else {
+		rule->port_bitmap = rule->port_bitmap;
+	}
+
+	return _insert_vlan_trans_adv_rule_action(dev_id, index, direction, rule, action);;
 }
 
 sw_error_t
@@ -1315,6 +1374,7 @@ adpt_hppe_port_vlan_trans_adv_getfirst(a_uint32_t dev_id,
 					entry_found == ADPT_PORT_ID_INCLD) {
 				aos_mem_copy(rule, &temp_rule,
 						sizeof(fal_vlan_trans_adv_rule_t));
+				rule->index = idx;
 				aos_mem_copy(action, &temp_action,
 						sizeof(fal_vlan_trans_adv_action_t));
 				break;
@@ -1366,6 +1426,7 @@ adpt_hppe_port_vlan_trans_adv_getnext(a_uint32_t dev_id,
 			{
 				aos_mem_copy(rule, &temp_rule,
 						sizeof (fal_vlan_trans_adv_rule_t));
+				rule->index = idx;
 				aos_mem_copy(action, &temp_action,
 						sizeof (fal_vlan_trans_adv_action_t));
 				break;
@@ -2789,6 +2850,8 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_hppe_port_vlantag_vsi_egmode_enable_get;
 		p_adpt_api->adpt_port_vlan_trans_adv_add = adpt_hppe_port_vlan_trans_adv_add;
 		p_adpt_api->adpt_port_vlan_trans_adv_del = adpt_hppe_port_vlan_trans_adv_del;
+		p_adpt_api->adpt_port_vlan_trans_adv_get = adpt_hppe_port_vlan_trans_adv_get;
+		p_adpt_api->adpt_port_vlan_trans_adv_set = adpt_hppe_port_vlan_trans_adv_set;
 		p_adpt_api->adpt_port_vlan_trans_adv_getfirst =
 			adpt_hppe_port_vlan_trans_adv_getfirst;
 		p_adpt_api->adpt_port_vlan_trans_adv_getnext =
