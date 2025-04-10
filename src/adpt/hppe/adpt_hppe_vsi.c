@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -498,12 +498,8 @@ adpt_hppe_vsi_member_set(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 	if( rv != SW_OK )
 		return rv;
 #ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE||
-	   adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rv = adpt_appe_vsi_vp_member_set(dev_id, vsi_id, vsi_member);
-		return rv;
-	}
+	rv = adpt_appe_vsi_vp_member_set(dev_id, vsi_id, vsi_member);
+	SW_RTN_ON_ERROR(rv);
 #endif
 	return SW_OK;
 
@@ -532,12 +528,8 @@ adpt_hppe_vsi_member_get(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 		return rv;
 
 #ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	   adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rv = adpt_appe_vsi_vp_member_get(dev_id, vsi_id, vsi_member);
-		return rv;
-	}
+	rv = adpt_appe_vsi_vp_member_get(dev_id, vsi_id, vsi_member);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 	return SW_OK;
@@ -641,14 +633,11 @@ sw_error_t adpt_hppe_vsi_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_vsi_member_set = adpt_hppe_vsi_member_set;
 	p_adpt_api->adpt_vsi_member_get = adpt_hppe_vsi_member_get;
 
-#ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
-		p_adpt_api->adpt_vsi_bridge_vsi_get = adpt_appe_vsi_bridge_vsi_get;
-		p_adpt_api->adpt_vsi_bridge_vsi_set = adpt_appe_vsi_bridge_vsi_set;
-		p_adpt_api->adpt_vsi_invalidvsi_ctrl_get = adpt_appe_vsi_invalidvsi_ctrl_get;
-		p_adpt_api->adpt_vsi_invalidvsi_ctrl_set = adpt_appe_vsi_invalidvsi_ctrl_set;
-	}
+#if defined(APPE)
+	p_adpt_api->adpt_vsi_bridge_vsi_get = adpt_appe_vsi_bridge_vsi_get;
+	p_adpt_api->adpt_vsi_bridge_vsi_set = adpt_appe_vsi_bridge_vsi_set;
+	p_adpt_api->adpt_vsi_invalidvsi_ctrl_get = adpt_appe_vsi_invalidvsi_ctrl_get;
+	p_adpt_api->adpt_vsi_invalidvsi_ctrl_set = adpt_appe_vsi_invalidvsi_ctrl_set;
 #endif
 
 	return SW_OK;

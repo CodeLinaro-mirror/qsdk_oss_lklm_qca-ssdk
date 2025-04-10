@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -259,11 +259,7 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 	}
 
 #ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		xg_port_index = SSDK_PHYSICAL_PORT1;
-	}
+	xg_port_index = SSDK_PHYSICAL_PORT1;
 #endif
 	for (port_id = xg_port_index; port_id <= port_num; port_id++) {
 		xg_port_id = HPPE_TO_XGMAC_PORT_ID(port_id);

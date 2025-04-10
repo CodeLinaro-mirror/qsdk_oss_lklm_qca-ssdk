@@ -1889,12 +1889,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_DSCP);
 		rule->dscp = hw_act->bf.dscp_tc;
 #if defined(CPPE) || defined(APPE)
-		if(adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-			adpt_chip_type_get(dev_id) == CHIP_APPE ||
-			adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-		{
-			rule->dscp_mask = hw_act->bf.dscp_tc_mask;
-		}
+		rule->dscp_mask = hw_act->bf.dscp_tc_mask;
 #endif
 	}
 	if(hw_act->bf.int_dp_change_en == 1)
@@ -1940,12 +1935,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 #endif
 	}
 #if defined(CPPE) || defined(APPE)
-	if(adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rule->qos_res_prec = hw_act->bf.qos_res_prec;
-	}
+	rule->qos_res_prec = hw_act->bf.qos_res_prec;
 #endif
 	return SW_OK;
 }
@@ -2386,16 +2376,12 @@ _adpt_hppe_acl_rule_range_count(a_uint32_t dev_id,
 		}
 	}
 #if defined(APPE)
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
+	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_UDF2) ||
+		FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_UDF2))
 	{
-		if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_UDF2) ||
-			FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_UDF2))
+		if (FAL_ACL_FIELD_MASK != rule->udf2_op)
 		{
-			if (FAL_ACL_FIELD_MASK != rule->udf2_op)
-			{
-				rangecount++;
-			}
+			rangecount++;
 		}
 	}
 #endif
@@ -2410,14 +2396,10 @@ static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t 
 
 	rangecount = _adpt_hppe_acl_rule_range_count(dev_id, rule_id, rule_nr, rule);
 #if defined(APPE)
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
+	if(hw_list_index >= ADPT_ACL_HW_LIST_NUM)
 	{
-		if(hw_list_index >= ADPT_ACL_HW_LIST_NUM)
-		{
-			rangecount += _adpt_hppe_acl_rule_range_count(dev_id,
-						rule_id, rule_nr, inner_rule);
-		}
+		rangecount += _adpt_hppe_acl_rule_range_count(dev_id,
+					rule_id, rule_nr, inner_rule);
 	}
 #endif
 	even_entry_count = _acl_bits_count(entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 2);
@@ -3903,12 +3885,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 		hw_act->bf.dscp_tc_change_en = 1;
 		hw_act->bf.dscp_tc = rule->dscp;
 #if defined(CPPE) || defined(APPE)
-		if(adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-			adpt_chip_type_get(dev_id) == CHIP_APPE ||
-			adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-		{
-			hw_act->bf.dscp_tc_mask = rule->dscp_mask;
-		}
+		hw_act->bf.dscp_tc_mask = rule->dscp_mask;
 #endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_INT_DP))
@@ -3955,12 +3932,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 #endif
 	}
 #if defined(CPPE) || defined(APPE)
-	if(adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		hw_act->bf.qos_res_prec = rule->qos_res_prec;
-	}
+	hw_act->bf.qos_res_prec = rule->qos_res_prec;
 #endif
 	return SW_OK;
 }
@@ -5265,32 +5237,6 @@ adpt_hppe_acl_list_destroy(a_uint32_t dev_id, a_uint32_t list_id)
 }
 
 sw_error_t
-adpt_ppe_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type, a_uint32_t udf_idx,
-			fal_acl_udf_type_t udf_type, a_uint32_t offset)
-{
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		return adpt_appe_acl_udf_profile_set(dev_id, pkt_type, udf_idx, udf_type, offset);
-	}
-
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
-adpt_ppe_acl_udf_profile_get(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type, a_uint32_t udf_idx,
-			fal_acl_udf_type_t * udf_type, a_uint32_t * offset)
-{
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		return adpt_appe_acl_udf_profile_get(dev_id, pkt_type, udf_idx, udf_type, offset);
-	}
-
-	return SW_NOT_SUPPORTED;
-}
-
-sw_error_t
 adpt_hppe_acl_counter_get(a_uint32_t dev_id,
 			a_uint32_t entry_index, fal_entry_counter_t *acl_counter)
 {
@@ -5352,12 +5298,8 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 
 	_adpt_hppe_acl_hw_list_init(dev_id, 0, ADPT_ACL_HW_LIST_NUM);
 #if defined(APPE)
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		_adpt_hppe_acl_hw_list_init(dev_id, ADPT_ACL_HW_LIST_NUM,
+	_adpt_hppe_acl_hw_list_init(dev_id, ADPT_ACL_HW_LIST_NUM,
 			ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM);
-	}
 #endif
 	p_adpt_api->adpt_acl_list_bind = adpt_hppe_acl_list_bind;
 	p_adpt_api->adpt_acl_list_dump = adpt_hppe_acl_list_dump;
@@ -5368,29 +5310,25 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_acl_rule_dump = adpt_hppe_acl_rule_dump;
 	p_adpt_api->adpt_acl_list_creat = adpt_hppe_acl_list_creat;
 	p_adpt_api->adpt_acl_list_destroy = adpt_hppe_acl_list_destroy;
-	p_adpt_api->adpt_acl_udf_profile_set = adpt_ppe_acl_udf_profile_set;
-	p_adpt_api->adpt_acl_udf_profile_get = adpt_ppe_acl_udf_profile_get;
 #if defined(APPE)
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		p_adpt_api->adpt_acl_udf_profile_entry_add =
+	p_adpt_api->adpt_acl_udf_profile_set = adpt_appe_acl_udf_profile_set;
+	p_adpt_api->adpt_acl_udf_profile_get = adpt_appe_acl_udf_profile_get;
+	p_adpt_api->adpt_acl_udf_profile_entry_add =
 				adpt_appe_acl_udf_profile_entry_add;
-		p_adpt_api->adpt_acl_udf_profile_entry_del =
+	p_adpt_api->adpt_acl_udf_profile_entry_del =
 				adpt_appe_acl_udf_profile_entry_del;
-		p_adpt_api->adpt_acl_udf_profile_entry_getfirst =
+	p_adpt_api->adpt_acl_udf_profile_entry_getfirst =
 				adpt_appe_acl_udf_profile_entry_getfirst;
-		p_adpt_api->adpt_acl_udf_profile_entry_getnext =
+	p_adpt_api->adpt_acl_udf_profile_entry_getnext =
 				adpt_appe_acl_udf_profile_entry_getnext;
-		p_adpt_api->adpt_acl_udf_profile_cfg_set =
+	p_adpt_api->adpt_acl_udf_profile_cfg_set =
 				adpt_appe_acl_udf_profile_cfg_set;
-		p_adpt_api->adpt_acl_udf_profile_cfg_get =
+	p_adpt_api->adpt_acl_udf_profile_cfg_get =
 				adpt_appe_acl_udf_profile_cfg_get;
-		p_adpt_api->adpt_acl_vpgroup_set =
+	p_adpt_api->adpt_acl_vpgroup_set =
 				adpt_appe_acl_vpgroup_set;
-		p_adpt_api->adpt_acl_vpgroup_get =
+	p_adpt_api->adpt_acl_vpgroup_get =
 				adpt_appe_acl_vpgroup_get;
-	}
 #endif
 	p_adpt_api->adpt_acl_counter_get = adpt_hppe_acl_counter_get;
 

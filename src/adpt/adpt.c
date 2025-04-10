@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2020, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -340,37 +340,27 @@ sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capa
 {
 	ADPT_NULL_POINT_CHECK(ppe_capacity);
 
-#if defined(HPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HPPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		ppe_capacity->flow_caps = IN_FLOW_TBL_NUM;
-		ppe_capacity->host_caps = HOST_TBL_NUM;
-		ppe_capacity->nexthop_caps = IN_NEXTHOP_TBL_NUM;
-		ppe_capacity->pub_ip_caps = IN_PUB_IP_ADDR_TBL_NUM;
-		ppe_capacity->vsi_caps = VSI_TBL_NUM;
-		ppe_capacity->port_caps = PPE_CAPACITY_PORT_NUM;
-		ppe_capacity->l3_if_caps = IN_L3_IF_TBL_NUM;
-		ppe_capacity->my_mac_caps = MY_MAC_TBL_NUM;
-		ppe_capacity->queue_caps = PPE_CAPACITY_QUEUES_NUM;
-		ppe_capacity->service_code_caps = SERVICE_TBL_NUM;
-		ppe_capacity->pppoe_session_caps = PPPOE_SESSION_NUM;
-		ppe_capacity->policer_caps = IN_ACL_METER_CFG_TBL_NUM;
+	ppe_capacity->flow_caps = IN_FLOW_TBL_NUM;
+	ppe_capacity->host_caps = HOST_TBL_NUM;
+	ppe_capacity->nexthop_caps = IN_NEXTHOP_TBL_NUM;
+	ppe_capacity->pub_ip_caps = IN_PUB_IP_ADDR_TBL_NUM;
+	ppe_capacity->vsi_caps = VSI_TBL_NUM;
+	ppe_capacity->port_caps = PPE_CAPACITY_PORT_NUM;
+	ppe_capacity->l3_if_caps = IN_L3_IF_TBL_NUM;
+	ppe_capacity->my_mac_caps = MY_MAC_TBL_NUM;
+	ppe_capacity->queue_caps = PPE_CAPACITY_QUEUES_NUM;
+	ppe_capacity->service_code_caps = SERVICE_TBL_NUM;
+	ppe_capacity->pppoe_session_caps = PPPOE_SESSION_NUM;
+	ppe_capacity->policer_caps = IN_ACL_METER_CFG_TBL_NUM;
 #if defined(MRPPE)
-		ppe_capacity->ipv6_prefix_caps = EG_IPV6_PREFIX_TBL_NUM;
-		ppe_capacity->ipv6_iid_caps = EG_FLOW_IPV6_IID_TBL_NUM;
+	ppe_capacity->ipv6_prefix_caps = EG_IPV6_PREFIX_TBL_NUM;
+	ppe_capacity->ipv6_iid_caps = EG_FLOW_IPV6_IID_TBL_NUM;
 #else
-		ppe_capacity->ipv6_prefix_caps = 0;
-		ppe_capacity->ipv6_iid_caps = 0;
+	ppe_capacity->ipv6_prefix_caps = 0;
+	ppe_capacity->ipv6_iid_caps = 0;
 #endif
-	}
 
 	return SW_OK;
-#else
-	return SW_NOT_SUPPORTED;
-#endif
-
 }
 
 sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)

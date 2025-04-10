@@ -606,11 +606,8 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 
 			vp_parsing_reg.bf.port_role = mode->ingress_port_role;
 #if defined(MPPE)
-			if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
-				adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-				vp_parsing_reg.bf.src_port_sel =
+			vp_parsing_reg.bf.src_port_sel =
 					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
-			}
 #endif
 			rtn = appe_ipr_vp_parsing_set(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
@@ -633,11 +630,8 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 
 			port_parsing_reg.bf.port_role = mode->ingress_port_role;
 #if defined(MPPE)
-			if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
-				adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-				port_parsing_reg.bf.src_port_sel =
+			port_parsing_reg.bf.src_port_sel =
 					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
-			}
 #endif
 			rtn = hppe_port_parsing_reg_set(dev_id, port_value, &port_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
@@ -677,11 +671,8 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 
 		mode->ingress_port_role = (fal_qinq_port_role_t)vp_parsing_reg.bf.port_role;
 #if defined(MPPE)
-		if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
-			adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-			mode->ingress_port_sel =
+		mode->ingress_port_sel =
 				vp_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
-		}
 #endif
 
 		rtn = appe_eg_vp_tbl_port_vlan_type_get(dev_id, port_value,
@@ -698,11 +689,8 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 
 		mode->ingress_port_role = (fal_qinq_port_role_t)port_parsing_reg.bf.port_role;
 #if defined(MPPE)
-		if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
-			adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-			mode->ingress_port_sel =
+		mode->ingress_port_sel =
 				port_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
-		}
 #endif
 
 		SW_RTN_ON_ERROR(hppe_port_eg_vlan_port_vlan_type_get(dev_id, port_value,
@@ -1458,14 +1446,10 @@ adpt_hppe_portvlan_member_update(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
+#if defined(APPE)
+	if(ADPT_IS_VPORT(port_id))
 	{
-		if(ADPT_IS_VPORT(port_id))
-		{
-			return adpt_appe_portvlan_vpmember_update(dev_id, port_id, mem_port_map);
-		}
+		return adpt_appe_portvlan_vpmember_update(dev_id, port_id, mem_port_map);
 	}
 #endif
 
@@ -1489,14 +1473,10 @@ adpt_hppe_portvlan_member_get(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp_t 
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
+#if defined(APPE)
+	if(ADPT_IS_VPORT(port_id))
 	{
-		if(ADPT_IS_VPORT(port_id))
-		{
-			return adpt_appe_portvlan_vpmember_get(dev_id, port_id, mem_port_map);
-		}
+		return adpt_appe_portvlan_vpmember_get(dev_id, port_id, mem_port_map);
 	}
 #endif
 
@@ -1845,14 +1825,10 @@ adpt_hppe_portvlan_member_add(a_uint32_t dev_id, fal_port_t port_id, fal_port_t 
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
+#if defined(APPE)
+	if(ADPT_IS_VPORT(port_id))
 	{
-		if(ADPT_IS_VPORT(port_id))
-		{
-			return adpt_appe_portvlan_vpmember_add(dev_id, port_id, mem_port_id);
-		}
+		return adpt_appe_portvlan_vpmember_add(dev_id, port_id, mem_port_id);
 	}
 #endif
 
@@ -1878,14 +1854,10 @@ adpt_hppe_portvlan_member_del(a_uint32_t dev_id, fal_port_t port_id, fal_port_t 
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#ifdef APPE
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
+#if defined(APPE)
+	if(ADPT_IS_VPORT(port_id))
 	{
-		if(ADPT_IS_VPORT(port_id))
-		{
-			return adpt_appe_portvlan_vpmember_del(dev_id, port_id, mem_port_id);
-		}
+		return adpt_appe_portvlan_vpmember_del(dev_id, port_id, mem_port_id);
 	}
 #endif
 

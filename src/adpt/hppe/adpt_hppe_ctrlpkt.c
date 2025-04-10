@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -67,13 +67,9 @@ _get_mgmtctrl_ctrlpkt_profile_by_index(a_uint32_t dev_id, a_uint32_t index, fal_
 		ctrlpkt->protocol_types.mgt_ns = (entry.bf.protocol_bitmap & (0x1 << 7))?1:0;
 		ctrlpkt->protocol_types.mgt_na = (entry.bf.protocol_bitmap & (0x1 << 8))?1:0;
 		ctrlpkt->protocol_types.mgt_dhcp6 = (entry.bf.protocol_bitmap & (0x1 << 9))?1:0;
-#ifdef APPE
-		if(adpt_chip_type_get (dev_id) == CHIP_APPE ||
-			adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-		{
-			ctrlpkt->protocol_types.mgt_8023ah_oam =
-				(entry.bf.protocol_bitmap & (0x1 << 10))?1:0;
-		}
+#if defined(APPE)
+		ctrlpkt->protocol_types.mgt_8023ah_oam =
+			(entry.bf.protocol_bitmap & (0x1 << 10))?1:0;
 #endif
 	}
 
@@ -239,13 +235,9 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 		entry.bf.protocol_bitmap |= (0x1 << 8);
 	if (ctrlpkt->protocol_types.mgt_dhcp6)
 		entry.bf.protocol_bitmap |= (0x1 << 9);
-#ifdef APPE
-	if(adpt_chip_type_get (dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		if (ctrlpkt->protocol_types.mgt_8023ah_oam)
-			entry.bf.protocol_bitmap |= (0x1 << 10);
-	}
+#if defined(APPE)
+	if (ctrlpkt->protocol_types.mgt_8023ah_oam)
+		entry.bf.protocol_bitmap |= (0x1 << 10);
 #endif
 	entry.bf.protocol_include = entry.bf.protocol_bitmap?1:0;
 
@@ -358,19 +350,11 @@ sw_error_t adpt_hppe_ctrlpkt_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_del = adpt_hppe_mgmtctrl_ctrlpkt_profile_del;
 	p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getfirst = adpt_hppe_mgmtctrl_ctrlpkt_profile_getfirst;
 	p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getnext = adpt_hppe_mgmtctrl_ctrlpkt_profile_getnext;
-#ifdef APPE
-	if(adpt_chip_type_get (dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		p_adpt_api->adpt_mgmtctrl_vpgroup_set =
-			adpt_appe_mgmtctrl_vpgroup_set;
-		p_adpt_api->adpt_mgmtctrl_vpgroup_get =
-			adpt_appe_mgmtctrl_vpgroup_get;
-		p_adpt_api->adpt_mgmtctrl_tunnel_decap_set =
-			adpt_appe_mgmtctrl_tunnel_decap_set;
-		p_adpt_api->adpt_mgmtctrl_tunnel_decap_get =
-			adpt_appe_mgmtctrl_tunnel_decap_get;
-	}
+#if defined(APPE)
+	p_adpt_api->adpt_mgmtctrl_vpgroup_set = adpt_appe_mgmtctrl_vpgroup_set;
+	p_adpt_api->adpt_mgmtctrl_vpgroup_get = adpt_appe_mgmtctrl_vpgroup_get;
+	p_adpt_api->adpt_mgmtctrl_tunnel_decap_set = adpt_appe_mgmtctrl_tunnel_decap_set;
+	p_adpt_api->adpt_mgmtctrl_tunnel_decap_get = adpt_appe_mgmtctrl_tunnel_decap_get;
 #endif
 	return SW_OK;
 }

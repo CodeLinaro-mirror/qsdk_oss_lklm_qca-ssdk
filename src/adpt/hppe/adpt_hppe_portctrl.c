@@ -3035,11 +3035,7 @@ adpt_ppe_port_source_filter_get(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		return _adpt_ppe_port_source_filter_get(dev_id, port_id, enable);
-	}
+	return _adpt_ppe_port_source_filter_get(dev_id, port_id, enable);
 #endif
 	return adpt_hppe_port_source_filter_get(dev_id, port_id, enable);
 }
@@ -3051,11 +3047,7 @@ adpt_ppe_port_source_filter_set(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		return _adpt_ppe_port_source_filter_set(dev_id, port_id, enable);
-	}
+	return _adpt_ppe_port_source_filter_set(dev_id, port_id, enable);
 #endif
 	return adpt_hppe_port_source_filter_set(dev_id, port_id, enable);
 }
@@ -3066,12 +3058,7 @@ adpt_ppe_port_source_filter_config_get(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		return _adpt_ppe_port_source_filter_config_get(dev_id, port_id,
-				src_filter_config);
-	}
+	return _adpt_ppe_port_source_filter_config_get(dev_id, port_id, src_filter_config);
 #endif
 	return SW_NOT_SUPPORTED;
 }
@@ -3083,11 +3070,7 @@ adpt_ppe_port_source_filter_config_set(a_uint32_t dev_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 #if (defined(CPPE) || defined(APPE))
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE ||
-		adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		return _adpt_ppe_port_source_filter_config_set(dev_id, port_id, src_filter_config);
-	}
+	return _adpt_ppe_port_source_filter_config_set(dev_id, port_id, src_filter_config);
 #endif
 	return SW_NOT_SUPPORTED;
 }
@@ -3102,9 +3085,7 @@ adpt_hppe_port_promisc_mode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 	ADPT_NULL_POINT_CHECK(enable);
 
 #ifdef APPE
-	if((adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) &&
-		ADPT_IS_VPORT(port_id))
+	if(ADPT_IS_VPORT(port_id))
 	{
 		a_uint32_t port_value = 0;
 		port_value = FAL_PORT_ID_VALUE(port_id);
@@ -3130,9 +3111,7 @@ adpt_hppe_port_promisc_mode_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 
 	ADPT_DEV_ID_CHECK(dev_id);
 #ifdef APPE
-	if((adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) &&
-		ADPT_IS_VPORT(port_id))
+	if(ADPT_IS_VPORT(port_id))
 	{
 		a_uint32_t port_value = 0;
 		port_value = FAL_PORT_ID_VALUE(port_id);
@@ -3398,11 +3377,9 @@ _adpt_ppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
 	SW_RTN_ON_ERROR (rv);
 #ifdef MRPPE
-	if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-		rv = _adpt_mrppe_gmac_port_interface_eee_cfg_set(dev_id,
+	rv = _adpt_mrppe_gmac_port_interface_eee_cfg_set(dev_id,
 			port_id, port_eee_cfg);
-		SW_RTN_ON_ERROR (rv);
-	}
+	SW_RTN_ON_ERROR (rv);
 #else
 	rv = _adpt_hppe_gmac_port_interface_eee_cfg_set(dev_id,
 			port_id, port_eee_cfg);
@@ -3445,11 +3422,9 @@ _adpt_ppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 		port_eee_cfg->enable = A_FALSE;
 	}
 #ifdef MRPPE
-	if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-		rv = _adpt_mrppe_gmac_port_interface_eee_cfg_get(dev_id,
+	rv = _adpt_mrppe_gmac_port_interface_eee_cfg_get(dev_id,
 			port_id, port_eee_cfg);
-		SW_RTN_ON_ERROR (rv);
-	}
+	SW_RTN_ON_ERROR (rv);
 #else
 	rv = _adpt_hppe_gmac_port_interface_eee_cfg_get(dev_id,
 			port_id, port_eee_cfg);
@@ -4585,18 +4560,14 @@ _adpt_hppe_port_cnt_enable_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_c
 	}
 
 #if defined(APPE) && defined(IN_TUNNEL)
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		aos_mem_zero(&tl_port_vp_tbl, sizeof(union tl_port_vp_tbl_u));
-		rv = appe_tl_port_vp_tbl_get(dev_id, port_value, &tl_port_vp_tbl);
-		SW_RTN_ON_ERROR(rv);
+	aos_mem_zero(&tl_port_vp_tbl, sizeof(union tl_port_vp_tbl_u));
+	rv = appe_tl_port_vp_tbl_get(dev_id, port_value, &tl_port_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
 
-		tl_port_vp_tbl.bf.rx_cnt_en = cnt_cfg->tl_rx_cnt_en;
+	tl_port_vp_tbl.bf.rx_cnt_en = cnt_cfg->tl_rx_cnt_en;
 
-		rv = appe_tl_port_vp_tbl_set(dev_id, port_value, &tl_port_vp_tbl);
-		SW_RTN_ON_ERROR(rv);
-	}
+	rv = appe_tl_port_vp_tbl_set(dev_id, port_value, &tl_port_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 	return SW_OK;
@@ -4645,15 +4616,11 @@ _adpt_hppe_port_cnt_enable_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_c
 	}
 
 #if defined(APPE) && defined(IN_TUNNEL)
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		aos_mem_zero(&tl_port_vp_tbl, sizeof(union tl_port_vp_tbl_u));
-		rv = appe_tl_port_vp_tbl_get(dev_id, port_value, &tl_port_vp_tbl);
-		SW_RTN_ON_ERROR(rv);
+	aos_mem_zero(&tl_port_vp_tbl, sizeof(union tl_port_vp_tbl_u));
+	rv = appe_tl_port_vp_tbl_get(dev_id, port_value, &tl_port_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
 
-		cnt_cfg->tl_rx_cnt_en = tl_port_vp_tbl.bf.rx_cnt_en;
-	}
+	cnt_cfg->tl_rx_cnt_en = tl_port_vp_tbl.bf.rx_cnt_en;
 #endif
 
 	return SW_OK;
@@ -4688,12 +4655,8 @@ adpt_ppe_port_cnt_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cf
 
 	/* set counter mode configs */
 #if defined(APPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rv = adpt_appe_port_cnt_mode_set(dev_id, port_id, cnt_cfg);
-		SW_RTN_ON_ERROR(rv);
-	}
+	rv = adpt_appe_port_cnt_mode_set(dev_id, port_id, cnt_cfg);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 	return rv;
@@ -4728,12 +4691,8 @@ adpt_ppe_port_cnt_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_cf
 
 	/* get counter mode configs */
 #if defined(APPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rv = adpt_appe_port_cnt_mode_get(dev_id, port_id, cnt_cfg);
-		SW_RTN_ON_ERROR(rv);
-	}
+	rv = adpt_appe_port_cnt_mode_get(dev_id, port_id, cnt_cfg);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 	return rv;
@@ -4910,12 +4869,8 @@ adpt_ppe_port_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t *por
 	}
 
 #if defined(APPE)
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rv = adpt_appe_port_rx_cnt_get(dev_id, port_id, port_cnt);
-		SW_RTN_ON_ERROR(rv);
-	}
+	rv = adpt_appe_port_rx_cnt_get(dev_id, port_id, port_cnt);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 	rv = _adpt_hppe_port_tx_cnt_get(dev_id, port_id, port_cnt);
@@ -4937,12 +4892,8 @@ adpt_ppe_port_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 	}
 
 #if defined(APPE)
-	if(adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE)
-	{
-		rv = adpt_appe_port_rx_cnt_flush(dev_id, port_id);
-		SW_RTN_ON_ERROR(rv);
-	}
+	rv = adpt_appe_port_rx_cnt_flush(dev_id, port_id);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 	rv = _adpt_hppe_port_tx_cnt_flush(dev_id, port_id);
@@ -5063,8 +5014,6 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	}
 #endif
 #if defined(APPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
 #ifndef IN_PORTCONTROL_MINI
 		p_adpt_api->adpt_port_8023ah_set = adpt_appe_port_8023ah_set;
 		p_adpt_api->adpt_port_8023ah_get = adpt_appe_port_8023ah_get;
@@ -5077,7 +5026,6 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 			adpt_appe_port_tx_buff_thresh_get;
 		p_adpt_api->adpt_port_erp_power_mode_set =
 			adpt_appe_port_erp_power_mode_set;
-	}
 #endif
 	p_adpt_api->adpt_port_cnt_cfg_set = adpt_ppe_port_cnt_cfg_set;
 	p_adpt_api->adpt_port_cnt_cfg_get = adpt_ppe_port_cnt_cfg_get;

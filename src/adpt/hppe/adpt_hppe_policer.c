@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -538,12 +538,9 @@ adpt_hppe_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index,
 	hppe_ebs = in_acl_meter_cfg_tbl.bf.ebs;
 
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
-		appe_cir_max = (in_acl_meter_cfg_tbl.bf.cir_max_1 << 7) |
-					in_acl_meter_cfg_tbl.bf.cir_max_0;
-		appe_eir_max = in_acl_meter_cfg_tbl.bf.eir_max;
-	}
+	appe_cir_max = (in_acl_meter_cfg_tbl.bf.cir_max_1 << 7) |
+				in_acl_meter_cfg_tbl.bf.cir_max_0;
+	appe_eir_max = in_acl_meter_cfg_tbl.bf.eir_max;
 #endif
 	__adpt_hppe_policer_refresh_to_rate(hppe_cir,
 				&policer->cir,
@@ -555,18 +552,15 @@ adpt_hppe_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index,
 				in_acl_meter_cfg_tbl.bf.meter_unit,
 				in_acl_meter_cfg_tbl.bf.token_unit);
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
-		__adpt_hppe_policer_refresh_to_rate(appe_cir_max,
+	__adpt_hppe_policer_refresh_to_rate(appe_cir_max,
 				&policer->cir_max,
 				in_acl_meter_cfg_tbl.bf.meter_unit,
 				in_acl_meter_cfg_tbl.bf.token_unit);
 
-		__adpt_hppe_policer_refresh_to_rate(appe_eir_max,
+	__adpt_hppe_policer_refresh_to_rate(appe_eir_max,
 				&policer->eir_max,
 				in_acl_meter_cfg_tbl.bf.meter_unit,
 				in_acl_meter_cfg_tbl.bf.token_unit);
-	}
 #endif
 	__adpt_hppe_policer_bucket_size_to_burst_size(hppe_cbs,
 				&policer->cbs,
@@ -605,20 +599,17 @@ adpt_hppe_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index,
 	action->red_dei = in_acl_meter_cfg_tbl.bf.violate_dei;
 
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		policer->meter_type = appe_policer_type[dev_id][index];
-		policer->grp_end = in_acl_meter_cfg_tbl.bf.grp_end;
-		policer->grp_couple_en = in_acl_meter_cfg_tbl.bf.grp_cf;
-		policer->next_ptr = (in_acl_meter_cfg_tbl.bf.nxt_ptr_1 << 1) |
+	policer->meter_type = appe_policer_type[dev_id][index];
+	policer->grp_end = in_acl_meter_cfg_tbl.bf.grp_end;
+	policer->grp_couple_en = in_acl_meter_cfg_tbl.bf.grp_cf;
+	policer->next_ptr = (in_acl_meter_cfg_tbl.bf.nxt_ptr_1 << 1) |
 			in_acl_meter_cfg_tbl.bf.nxt_ptr_0;
-		action->yellow_dscp_en = in_acl_meter_cfg_tbl.bf.exceed_chg_dscp_cmd;
-		action->yellow_dscp = in_acl_meter_cfg_tbl.bf.exceed_dscp;
-		action->red_dscp_en = in_acl_meter_cfg_tbl.bf.violate_chg_dscp_cmd;
-		action->red_dscp = in_acl_meter_cfg_tbl.bf.violate_dscp;
-		action->yellow_remap_en = in_acl_meter_cfg_tbl.bf.exceed_remap_cmd;
-		action->red_remap_en = in_acl_meter_cfg_tbl.bf.violate_remap_cmd;
-	}
+	action->yellow_dscp_en = in_acl_meter_cfg_tbl.bf.exceed_chg_dscp_cmd;
+	action->yellow_dscp = in_acl_meter_cfg_tbl.bf.exceed_dscp;
+	action->red_dscp_en = in_acl_meter_cfg_tbl.bf.violate_chg_dscp_cmd;
+	action->red_dscp = in_acl_meter_cfg_tbl.bf.violate_dscp;
+	action->yellow_remap_en = in_acl_meter_cfg_tbl.bf.exceed_remap_cmd;
+	action->red_remap_en = in_acl_meter_cfg_tbl.bf.violate_remap_cmd;
 #endif
 	return SW_OK;
 }
@@ -691,18 +682,15 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 	temp_ebs = ((a_uint64_t)policer->ebs) * 1000;
 
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		if (policer->meter_type == FAL_POLICER_METER_MEF10_3) {
-			temp_cir_max = ((a_uint64_t)policer->cir_max) * 1000;
-			temp_eir_max = ((a_uint64_t)policer->eir_max) * 1000;
+	if (policer->meter_type == FAL_POLICER_METER_MEF10_3) {
+		temp_cir_max = ((a_uint64_t)policer->cir_max) * 1000;
+		temp_eir_max = ((a_uint64_t)policer->eir_max) * 1000;
 
-			if (temp_cir_max >= temp_cir) {
-				temp_cir = temp_cir_max;
-			}
-			if (temp_eir_max >= temp_eir) {
-				temp_eir = temp_eir_max;
-			}
+		if (temp_cir_max >= temp_cir) {
+			temp_cir = temp_cir_max;
+		}
+		if (temp_eir_max >= temp_eir) {
+			temp_eir = temp_eir_max;
 		}
 	}
 #endif
@@ -728,27 +716,24 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 				policer->meter_unit,
 				token_unit);
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		if (policer->meter_type == FAL_POLICER_METER_MEF10_3) {
-			__adpt_hppe_policer_rate_to_refresh(policer->cir_max,
+	if (policer->meter_type == FAL_POLICER_METER_MEF10_3) {
+		__adpt_hppe_policer_rate_to_refresh(policer->cir_max,
 				&appe_cir_max,
 				policer->meter_unit,
 				token_unit);
 
-			__adpt_hppe_policer_rate_to_refresh(policer->eir_max,
+		__adpt_hppe_policer_rate_to_refresh(policer->eir_max,
 				&appe_eir_max,
 				policer->meter_unit,
 				token_unit);
-		}
-		if (policer->meter_type == FAL_POLICER_METER_RFC) {
-			if (policer->couple_en == A_FALSE) {
-				appe_cir_max = hppe_cir;
-				appe_eir_max = hppe_eir;
-			} else {
-				appe_cir_max = hppe_cir;
-				appe_eir_max = ADPT_APPE_POLICER_MAX;
-			}
+	}
+	if (policer->meter_type == FAL_POLICER_METER_RFC) {
+		if (policer->couple_en == A_FALSE) {
+			appe_cir_max = hppe_cir;
+			appe_eir_max = hppe_eir;
+		} else {
+			appe_cir_max = hppe_cir;
+			appe_eir_max = ADPT_APPE_POLICER_MAX;
 		}
 	}
 #endif
@@ -799,27 +784,24 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 	in_acl_meter_cfg_tbl.bf.violate_dei = action->red_dei;
 
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		in_acl_meter_cfg_tbl.bf.cir_max_0 = appe_cir_max & 0x7f;
-		in_acl_meter_cfg_tbl.bf.cir_max_1 = appe_cir_max >> 7;
-		in_acl_meter_cfg_tbl.bf.eir_max = appe_eir_max;
-		if (policer->meter_type == FAL_POLICER_METER_MEF10_3) {
-			in_acl_meter_cfg_tbl.bf.grp_end = policer->grp_end;
-			in_acl_meter_cfg_tbl.bf.grp_cf = policer->grp_couple_en;
-			in_acl_meter_cfg_tbl.bf.nxt_ptr_0 = policer->next_ptr & 0x1;
-			in_acl_meter_cfg_tbl.bf.nxt_ptr_1 = policer->next_ptr >> 1;
-		} else {
-			in_acl_meter_cfg_tbl.bf.grp_end = 0x1;
-		}
-		in_acl_meter_cfg_tbl.bf.exceed_chg_dscp_cmd = action->yellow_dscp_en;
-		in_acl_meter_cfg_tbl.bf.exceed_dscp = action->yellow_dscp;
-		in_acl_meter_cfg_tbl.bf.violate_chg_dscp_cmd = action->red_dscp_en;
-		in_acl_meter_cfg_tbl.bf.violate_dscp = action->red_dscp;
-		in_acl_meter_cfg_tbl.bf.exceed_remap_cmd = action->yellow_remap_en;
-		in_acl_meter_cfg_tbl.bf.violate_remap_cmd = action->red_remap_en;
-		appe_policer_type[dev_id][index] = policer->meter_type;
+	in_acl_meter_cfg_tbl.bf.cir_max_0 = appe_cir_max & 0x7f;
+	in_acl_meter_cfg_tbl.bf.cir_max_1 = appe_cir_max >> 7;
+	in_acl_meter_cfg_tbl.bf.eir_max = appe_eir_max;
+	if (policer->meter_type == FAL_POLICER_METER_MEF10_3) {
+		in_acl_meter_cfg_tbl.bf.grp_end = policer->grp_end;
+		in_acl_meter_cfg_tbl.bf.grp_cf = policer->grp_couple_en;
+		in_acl_meter_cfg_tbl.bf.nxt_ptr_0 = policer->next_ptr & 0x1;
+		in_acl_meter_cfg_tbl.bf.nxt_ptr_1 = policer->next_ptr >> 1;
+	} else {
+		in_acl_meter_cfg_tbl.bf.grp_end = 0x1;
 	}
+	in_acl_meter_cfg_tbl.bf.exceed_chg_dscp_cmd = action->yellow_dscp_en;
+	in_acl_meter_cfg_tbl.bf.exceed_dscp = action->yellow_dscp;
+	in_acl_meter_cfg_tbl.bf.violate_chg_dscp_cmd = action->red_dscp_en;
+	in_acl_meter_cfg_tbl.bf.violate_dscp = action->red_dscp;
+	in_acl_meter_cfg_tbl.bf.exceed_remap_cmd = action->yellow_remap_en;
+	in_acl_meter_cfg_tbl.bf.violate_remap_cmd = action->red_remap_en;
+	appe_policer_type[dev_id][index] = policer->meter_type;
 #endif
 	hppe_in_acl_meter_cfg_tbl_set(dev_id, index, &in_acl_meter_cfg_tbl);
 
@@ -845,20 +827,17 @@ adpt_hppe_port_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(action);
 
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		if (ADPT_IS_VPORT(port_id)) {
-			port_id = FAL_PORT_ID_VALUE(port_id);
-			rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
-			SW_RTN_ON_ERROR(rv);
-			policer->vp_meter_index = l2_vp_port_tbl.bf.policer_index;
-			rv = adpt_hppe_acl_policer_entry_get(dev_id,
-					policer->vp_meter_index, policer, action);
-			SW_RTN_ON_ERROR(rv);
-			policer->meter_en = (policer->meter_en & l2_vp_port_tbl.bf.policer_en);
+	if (ADPT_IS_VPORT(port_id)) {
+		port_id = FAL_PORT_ID_VALUE(port_id);
+		rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
+		SW_RTN_ON_ERROR(rv);
+		policer->vp_meter_index = l2_vp_port_tbl.bf.policer_index;
+		rv = adpt_hppe_acl_policer_entry_get(dev_id,
+				policer->vp_meter_index, policer, action);
+		SW_RTN_ON_ERROR(rv);
+		policer->meter_en = (policer->meter_en & l2_vp_port_tbl.bf.policer_en);
 
-			return rv;
-		}
+		return rv;
 	}
 #endif
 	if (port_id < 0 || port_id > 7)
@@ -964,22 +943,19 @@ adpt_hppe_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(action);
 
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		if (ADPT_IS_VPORT(port_id)) {
-			port_id = FAL_PORT_ID_VALUE(port_id);
-			rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
-			SW_RTN_ON_ERROR(rv);
-			l2_vp_port_tbl.bf.policer_en = policer->meter_en;
-			l2_vp_port_tbl.bf.policer_index = policer->vp_meter_index;
-			rv = appe_l2_vp_port_tbl_set(dev_id, port_id, &l2_vp_port_tbl);
-			SW_RTN_ON_ERROR(rv);
-			rv = adpt_hppe_acl_policer_entry_set(dev_id,
-					policer->vp_meter_index, policer, action);
-			SW_RTN_ON_ERROR(rv);
+	if (ADPT_IS_VPORT(port_id)) {
+		port_id = FAL_PORT_ID_VALUE(port_id);
+		rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
+		SW_RTN_ON_ERROR(rv);
+		l2_vp_port_tbl.bf.policer_en = policer->meter_en;
+		l2_vp_port_tbl.bf.policer_index = policer->vp_meter_index;
+		rv = appe_l2_vp_port_tbl_set(dev_id, port_id, &l2_vp_port_tbl);
+		SW_RTN_ON_ERROR(rv);
+		rv = adpt_hppe_acl_policer_entry_set(dev_id,
+				policer->vp_meter_index, policer, action);
+		SW_RTN_ON_ERROR(rv);
 
-			return rv;
-		}
+		return rv;
 	}
 #endif
 	if (port_id < 0 || port_id > 7)
@@ -1115,17 +1091,14 @@ adpt_hppe_policer_time_slot_set(a_uint32_t dev_id, a_uint32_t time_slot)
 	memset(&time_slot_reg, 0, sizeof(time_slot_reg));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
 #ifdef APPE
-		if ((time_slot > APPE_POLICER_TIME_SLOT_MAX) ||
-			(time_slot < APPE_POLICER_TIME_SLOT_MIN))
-			return SW_BAD_PARAM;
+	if ((time_slot > APPE_POLICER_TIME_SLOT_MAX) ||
+		(time_slot < APPE_POLICER_TIME_SLOT_MIN))
+		return SW_BAD_PARAM;
+#else
+	if ((time_slot > 1024) || (time_slot < 512))
+		return SW_BAD_PARAM;
 #endif
-	} else {
-		if ((time_slot > 1024) || (time_slot < 512))
-			return SW_BAD_PARAM;
-	}
 
 	time_slot_reg.bf.time_slot = time_slot;
 	hppe_time_slot_reg_set(dev_id, &time_slot_reg);
@@ -1227,11 +1200,8 @@ sw_error_t adpt_hppe_policer_init(a_uint32_t dev_id)
 #ifndef IN_POLICER_MINI
 	p_adpt_api->adpt_policer_global_counter_get = adpt_hppe_policer_global_counter_get;
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		p_adpt_api->adpt_policer_priority_remap_get = adpt_appe_policer_priority_remap_get;
-		p_adpt_api->adpt_policer_priority_remap_set = adpt_appe_policer_priority_remap_set;
-	}
+	p_adpt_api->adpt_policer_priority_remap_get = adpt_appe_policer_priority_remap_get;
+	p_adpt_api->adpt_policer_priority_remap_set = adpt_appe_policer_priority_remap_set;
 #endif
 #endif
 	p_adpt_api->adpt_acl_policer_counter_get = adpt_hppe_acl_policer_counter_get;
@@ -1247,11 +1217,8 @@ sw_error_t adpt_hppe_policer_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_policer_time_slot_set = adpt_hppe_policer_time_slot_set;
 	p_adpt_api->adpt_policer_bypass_en_set = adpt_hppe_policer_bypass_en_set;
 #ifdef APPE
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-	    adpt_chip_type_get(dev_id) == CHIP_MRPPE){
-		p_adpt_api->adpt_policer_ctrl_get = adpt_appe_policer_ctrl_get;
-		p_adpt_api->adpt_policer_ctrl_set = adpt_appe_policer_ctrl_set;
-	}
+	p_adpt_api->adpt_policer_ctrl_get = adpt_appe_policer_ctrl_get;
+	p_adpt_api->adpt_policer_ctrl_set = adpt_appe_policer_ctrl_set;
 #endif
 	return SW_OK;
 }
