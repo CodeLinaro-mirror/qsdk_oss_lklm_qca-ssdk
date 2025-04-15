@@ -146,6 +146,8 @@ sw_error_t
 cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_ring_queue(char *cmd_str, void * val, a_uint32_t size);
+sw_error_t
+cmd_data_check_pcp_cfg(char *cmd_str, void * val, a_uint32_t size);
 #endif
 #endif
 #ifdef IN_RATE

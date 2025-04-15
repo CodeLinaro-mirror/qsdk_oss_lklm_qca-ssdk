@@ -868,6 +868,7 @@ struct sub_cmd_des_t g_qos_des[] =
 	{"ringqueue", "set", SW_API_QOS_RING_QUEUE_MAP_SET, NULL},
 	{"dequeue", "set", SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, NULL},
 	{"portscheduler", "set", SW_API_QOS_PORT_SCHEDULER_CFG_RESET, NULL},
+	{"pcpcfg", "set", SW_API_QOS_PORT_PCP_CFG_SET, NULL},
 #endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };

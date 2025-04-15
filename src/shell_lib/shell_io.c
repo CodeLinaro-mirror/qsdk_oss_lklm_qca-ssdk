@@ -641,6 +641,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_COSMAP, (param_check_t)cmd_data_check_cosmap, NULL),
     SW_TYPE_DEF(SW_SCHEDULER, (param_check_t)cmd_data_check_queue_scheduler, NULL),
     SW_TYPE_DEF(SW_QUEUEBMP, (param_check_t)cmd_data_check_ring_queue, NULL),
+    SW_TYPE_DEF(SW_PCP_CFG, (param_check_t)cmd_data_check_pcp_cfg, NULL),
 #endif
 #endif
 #ifdef IN_RATE
@@ -2413,6 +2414,42 @@ cmd_data_check_qos_pt(char *cmdstr, fal_qos_mode_t * val, a_uint32_t size)
 
     return SW_OK;
 }
+
+sw_error_t
+cmd_data_check_pcp_cfg(char *cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    sw_error_t rv;
+    fal_qos_pcp_cfg_t entry;
+
+    aos_mem_zero(&entry, sizeof (fal_qos_pcp_cfg_t));
+
+    do
+    {
+        cmd = get_sub_cmd("pcp_mode", "0");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_uint8(cmd, (a_uint32_t *)&(entry.pcp_mode),
+                                   sizeof (a_uint8_t));
+
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("default_pcp_dei", "0");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_uint8(cmd, (a_uint32_t *)&(entry.default_pcp_dei),
+                                   sizeof (a_uint8_t));
+
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    *(fal_qos_pcp_cfg_t *)val = entry;
+    return SW_OK;
+}
+
 #endif
 #endif
 

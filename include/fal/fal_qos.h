@@ -144,6 +144,11 @@ typedef struct {
 	a_uint16_t l1edrr_num;
 } fal_portscheduler_resource_t;
 
+typedef struct {
+	a_uint8_t pcp_mode;
+	a_uint8_t default_pcp_dei; /* untag pcp + dei value */
+} fal_qos_pcp_cfg_t;
+
 #define FAL_DOT1P_MIN    0
 #define FAL_DOT1P_MAX    7
 
@@ -405,6 +410,14 @@ fal_reservedpool_scheduler_resource_get(
 		a_uint32_t dev_id,
 		fal_portscheduler_resource_t *cfg);
 #endif
+
+sw_error_t
+fal_qos_port_pcp_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pcp_cfg_t *pcp_cfg);
+
+sw_error_t
+fal_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pcp_cfg_t *pcp_cfg);
 
 #ifdef __cplusplus
 }

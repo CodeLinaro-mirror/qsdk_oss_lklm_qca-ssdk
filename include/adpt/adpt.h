@@ -983,6 +983,10 @@ typedef sw_error_t (*adpt_qos_port_group_get_func)(a_uint32_t dev_id, fal_port_t
 					fal_qos_group_t *group);
 typedef sw_error_t (*adpt_ring_queue_map_get_func)(a_uint32_t dev_id,
 					a_uint32_t ring_id, fal_queue_bmp_t *queue_bmp);
+typedef sw_error_t (*adpt_qos_port_pcp_cfg_set_func)(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pcp_cfg_t *pcp_cfg);
+typedef sw_error_t (*adpt_qos_port_pcp_cfg_get_func)(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pcp_cfg_t *pcp_cfg);
 
 //shaper
 
@@ -1872,6 +1876,8 @@ typedef struct
 	adpt_port_scheduler_cfg_reset_func adpt_port_scheduler_cfg_reset;
 	adpt_port_scheduler_resource_get_func adpt_port_scheduler_resource_get;
 	adpt_reservedpool_scheduler_resource_get_func adpt_reservedpool_scheduler_resource_get;
+	adpt_qos_port_pcp_cfg_set_func adpt_qos_port_pcp_cfg_set;
+	adpt_qos_port_pcp_cfg_get_func adpt_qos_port_pcp_cfg_get;
 
 	/* bm */
 	adpt_port_bufgroup_map_get_func adpt_port_bufgroup_map_get;
