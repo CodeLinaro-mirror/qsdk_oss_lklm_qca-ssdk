@@ -3270,10 +3270,19 @@ extern "C" {
 #ifdef IN_PKTEDIT
 #define PKTEDIT_API \
         SW_API_DEF(SW_API_PKTEDIT_PADDING_SET, fal_pktedit_padding_set), \
-        SW_API_DEF(SW_API_PKTEDIT_PADDING_GET, fal_pktedit_padding_get),
+        SW_API_DEF(SW_API_PKTEDIT_PADDING_GET, fal_pktedit_padding_get), \
+	SW_API_DEF(SW_API_PKTEDIT_EN_SET, fal_pktedit_en_set), \
+	SW_API_DEF(SW_API_PKTEDIT_EN_GET, fal_pktedit_en_get), \
+	SW_API_DEF(SW_API_RXDESC_CPUCODE_EN_SET, fal_rxdesc_cpucode_en_set), \
+	SW_API_DEF(SW_API_RXDESC_CPUCODE_EN_GET, fal_rxdesc_cpucode_en_get),
+
 #define PKTEDIT_API_PARAM \
         SW_API_DESC(SW_API_PKTEDIT_PADDING_SET) \
-        SW_API_DESC(SW_API_PKTEDIT_PADDING_GET)
+        SW_API_DESC(SW_API_PKTEDIT_PADDING_GET) \
+	SW_API_DESC(SW_API_PKTEDIT_EN_SET) \
+	SW_API_DESC(SW_API_PKTEDIT_EN_GET) \
+	SW_API_DESC(SW_API_RXDESC_CPUCODE_EN_SET) \
+	SW_API_DESC(SW_API_RXDESC_CPUCODE_EN_GET)
 #else
 #define PKTEDIT_API
 #define PKTEDIT_API_PARAM

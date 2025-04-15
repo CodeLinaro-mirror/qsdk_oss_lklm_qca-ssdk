@@ -6276,6 +6276,38 @@ extern "C" {
 	SW_PARAM_DEF(SW_API_PKTEDIT_PADDING_GET, SW_PKTEDIT_PADDING, \
 		     sizeof(fal_pktedit_padding_t), SW_PARAM_PTR|SW_PARAM_OUT, "Padding"),
 
+#define SW_API_PKTEDIT_EN_SET_DESC \
+	SW_PARAM_DEF(SW_API_PKTEDIT_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PKTEDIT_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Cpu Code"),\
+	SW_PARAM_DEF(SW_API_PKTEDIT_EN_SET, SW_ENABLE, \
+			 sizeof(a_bool_t), SW_PARAM_IN, "Enable"),
+
+#define SW_API_PKTEDIT_EN_GET_DESC \
+	SW_PARAM_DEF(SW_API_PKTEDIT_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PKTEDIT_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Cpu Code"),\
+	SW_PARAM_DEF(SW_API_PKTEDIT_EN_GET, SW_ENABLE, \
+			sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "Enable"),
+
+#define SW_API_RXDESC_CPUCODE_EN_SET_DESC \
+	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Cpu Code"),\
+	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_SET, SW_ENABLE, \
+			sizeof(a_bool_t), SW_PARAM_IN, "Enable"),
+
+#define SW_API_RXDESC_CPUCODE_EN_GET_DESC \
+	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Cpu Code"),\
+	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_GET, SW_ENABLE, \
+			sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "Enable"),
+
 /* auto_insert_flag */
 /*qca808x_start*/
 
