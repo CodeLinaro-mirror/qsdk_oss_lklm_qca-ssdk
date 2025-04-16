@@ -152,7 +152,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_ERP_POWER_MODE_SET, fal_port_erp_power_mode_set), \
     SW_API_DEF(SW_API_PT_ERP_POWER_MODE_GET, fal_port_erp_power_mode_get), \
     SW_API_DEF(SW_API_PT_ERP_STANDBY_ENTER, fal_erp_standby_enter), \
-    SW_API_DEF(SW_API_PT_ERP_STANDBY_EXIT, fal_erp_standby_exit),
+    SW_API_DEF(SW_API_PT_ERP_STANDBY_EXIT, fal_erp_standby_exit), \
+    SW_API_DEF(SW_API_PT_SWITCH_LOOPBACK_PORT_GET, fal_switch_loopback_port_get),
 /*qca808x_start*/
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
@@ -281,7 +282,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_ERP_POWER_MODE_SET) \
     SW_API_DESC(SW_API_PT_ERP_POWER_MODE_GET) \
     SW_API_DESC(SW_API_PT_ERP_STANDBY_ENTER) \
-    SW_API_DESC(SW_API_PT_ERP_STANDBY_EXIT)
+    SW_API_DESC(SW_API_PT_ERP_STANDBY_EXIT) \
+    SW_API_DESC(SW_API_PT_SWITCH_LOOPBACK_PORT_GET)
 /*qca808x_start*/
 /*end of PORTCONTROL_API_PARAM*/
 /*qca808x_end*/
@@ -342,7 +344,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_ERP_POWER_MODE_SET, fal_port_erp_power_mode_set), \
     SW_API_DEF(SW_API_PT_ERP_POWER_MODE_GET, fal_port_erp_power_mode_get), \
     SW_API_DEF(SW_API_PT_ERP_STANDBY_ENTER, fal_erp_standby_enter), \
-    SW_API_DEF(SW_API_PT_ERP_STANDBY_EXIT, fal_erp_standby_exit),
+    SW_API_DEF(SW_API_PT_ERP_STANDBY_EXIT, fal_erp_standby_exit), \
+    SW_API_DEF(SW_API_PT_SWITCH_LOOPBACK_PORT_GET, fal_switch_loopback_port_get),
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
     SW_API_DESC(SW_API_PT_CDT) \
@@ -400,7 +403,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_ERP_POWER_MODE_SET) \
     SW_API_DESC(SW_API_PT_ERP_POWER_MODE_GET) \
     SW_API_DESC(SW_API_PT_ERP_STANDBY_ENTER) \
-    SW_API_DESC(SW_API_PT_ERP_STANDBY_EXIT)
+    SW_API_DESC(SW_API_PT_ERP_STANDBY_EXIT) \
+    SW_API_DESC(SW_API_PT_SWITCH_LOOPBACK_PORT_GET)
 /*end of PORTCONTROL_API_PARAM*/
 #endif
 
