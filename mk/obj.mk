@@ -217,7 +217,6 @@ endif
 ifeq (TRUE, $(IN_INTERFACECONTROL))
 OBJ-COMMON  += src/fal/fal_interface_ctrl.o
 OBJ-ISISC   += src/hsl/isisc/isisc_interface_ctrl.o
-OBJ-MHT     += src/hsl/mht/mht_interface_ctrl.o
 endif
 
 ###############################################################################

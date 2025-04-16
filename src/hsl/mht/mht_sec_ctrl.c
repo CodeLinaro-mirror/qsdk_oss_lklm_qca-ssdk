@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -23,7 +23,6 @@
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "mht_sec_ctrl.h"
-#include "mht_interface_ctrl.h"
 #include "ssdk_mht_pinctrl.h"
 
 sw_error_t
@@ -53,32 +52,6 @@ qca_mht_work_mode_get(a_uint32_t dev_id, mht_work_mode_t *work_mode)
 	SSDK_DEBUG("work mode reg is 0x%x\n", data);
 
 	*work_mode = data & MHT_WORK_MODE_MASK;
-
-	return SW_OK;
-}
-
-sw_error_t
-qca_mht_serdes_addr_get(a_uint32_t dev_id, a_uint32_t serdes_id,
-	a_uint32_t *address)
-{
-	a_uint32_t data = 0;
-
-	HSL_DEV_ID_CHECK(dev_id);
-	data = qca_mht_mii_read(dev_id, SERDES_CFG_OFFSET);
-	switch(serdes_id)
-	{
-		case MHT_UNIPHY_SGMII_0:
-			*address = (data >> SERDES_CFG_S0_ADDR_BOFFSET) & 0x1f;
-			break;
-		case MHT_UNIPHY_SGMII_1:
-			*address = (data >> SERDES_CFG_S1_ADDR_BOFFSET) & 0x1f;
-			break;
-		case MHT_UNIPHY_XPCS:
-			*address = (data >> SERDES_CFG_S1_XPCS_ADDR_BOFFSET) & 0x1f;
-			break;
-		default:
-			return SW_NOT_SUPPORTED;
-	}
 
 	return SW_OK;
 }
@@ -461,20 +434,6 @@ qca_mht_sku_check(a_uint32_t dev_id, a_uint32_t mht_sku)
 		return A_TRUE;
 
 	return A_FALSE;
-}
-
-a_bool_t
-qca_mht_sku_uniphy_enabled(a_uint32_t dev_id, a_uint32_t uniphy_index)
-{
-	if(qca_mht_sku_check(dev_id, MHT_SKU_8082) ||
-		qca_mht_sku_check(dev_id, MHT_SKU_8084) ||
-		qca_mht_sku_check(dev_id, MHT_SKU_8085))
-	{
-		if(uniphy_index == MHT_UNIPHY_SGMII_0)
-			return A_FALSE;
-	}
-
-	return A_TRUE;;
 }
 
 a_bool_t
