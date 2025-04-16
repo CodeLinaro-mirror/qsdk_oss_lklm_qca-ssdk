@@ -30,17 +30,18 @@
 #include "fal_port_ctrl.h"
 #include "mht_port_ctrl.h"
 #include "ref_port_ctrl.h"
-#include "mht_interface_ctrl.h"
 #include "hsl_port_prop.h"
 #ifdef IN_LED
 #include "ssdk_led.h"
 #endif
 #include "qca-nss-phy/qca8k_clk.h"
+#include "qca-nss-phy/qcom_phy_lib.h"
 
 static sw_error_t
 qca_mht_work_mode_init(a_uint32_t dev_id, a_uint32_t mac_mode0, a_uint32_t mac_mode1)
 {
 	sw_error_t ret = SW_OK;
+	struct phy_device *phydev = NULL;
 
 	switch (mac_mode0) {
 		case PORT_WRAPPER_SGMII_PLUS:
@@ -50,7 +51,10 @@ qca_mht_work_mode_init(a_uint32_t dev_id, a_uint32_t mac_mode0, a_uint32_t mac_m
 			return SW_NOT_SUPPORTED;
 	}
 
-	if(mht_uniphy_mode_check(dev_id, MHT_UNIPHY_SGMII_0, MHT_UNIPHY_PHY))
+	ret = hsl_port_phydev_get(dev_id, SSDK_PHYSICAL_PORT1, &phydev);
+	SW_RTN_ON_ERROR(ret);
+	if (qcom_phy_pcs_mode_check(phydev, PCS0_ADDR_OFFSET,
+		QCOM_PHY_PCS_MMD1_SGMII_PHY_MODE))
 	{
 		return qca_mht_work_mode_set(dev_id, MHT_SWITCH_BYPASS_PORT5_MODE);
 	}

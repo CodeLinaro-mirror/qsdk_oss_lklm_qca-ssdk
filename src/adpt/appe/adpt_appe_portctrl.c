@@ -32,8 +32,9 @@
 #include "adpt_hppe_portctrl.h"
 #include "hsl_phy.h"
 #if defined(MHT)
-#include "ssdk_mht_clk.h"
-#include "mht_interface_ctrl.h"
+#include "ssdk_dts.h"
+#include "qca-nss-phy/qcom_phy_lib.h"
+#include "qca-nss-phy/qca8k_clk.h"
 #endif
 
 sw_error_t
@@ -492,9 +493,14 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 	fal_port_interface_mode_t port_mode, port5_mode = PORT_INTERFACE_MODE_MAX;
 	a_uint32_t i = 0, port_end = port_id;
 	sw_error_t rv = SW_OK;
+	struct mdio_device *clk_dev = NULL;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 	SW_RTN_ON_ERROR(adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode));
+
+	clk_dev = ssdk_dt_clk_mdiodev_get(dev_id);
+	if (!clk_dev)
+		return SW_FAIL;
 
 	switch (power_mode) {
 	case FAL_ERP_LOW_POWER:
@@ -551,14 +557,14 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 		if (hsl_port_phyid_get(dev_id, port_id) == QCA8084_PHY) {
 			if (port_mode == PHY_SGMII_BASET || port_mode == PORT_SGMII_PLUS) {
 				SSDK_DEBUG("assert manhattan serdes0\n");
-				SW_RTN_ON_ERROR(ssdk_mht_clk_assert(dev_id, MHT_SRDS0_SYS_CLK));
+				SW_RTN_ON_ERROR(qca8k_clk_assert(clk_dev, MHT_SRDS0_SYS_CLK));
 			} else if (port_mode == PORT_UQXGMII) {
 				SSDK_DEBUG("assert manhattan serdes1\n");
-				SW_RTN_ON_ERROR(ssdk_mht_clk_parent_set(dev_id,
+				SW_RTN_ON_ERROR(qca8k_clk_parent_set(clk_dev,
 						MHT_AHB_CLK, MHT_P_XO));
-				SW_RTN_ON_ERROR(ssdk_mht_clk_rate_set(dev_id,
+				SW_RTN_ON_ERROR(qca8k_clk_rate_set(clk_dev,
 						MHT_AHB_CLK, MHT_XO_CLK_RATE_50M));
-				SW_RTN_ON_ERROR(ssdk_mht_clk_assert(dev_id, MHT_SRDS1_SYS_CLK));
+				SW_RTN_ON_ERROR(qca8k_clk_assert(clk_dev, MHT_SRDS1_SYS_CLK));
 			}
 		}
 #endif
@@ -575,21 +581,23 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 #if defined(MHT)
 		/* resume manhattan serdes */
 		if (hsl_port_phyid_get(dev_id, port_id) == QCA8084_PHY) {
+			struct qcom_phy_pcs_cfg config = {0};
+			struct phy_device *phydev = NULL;
+
+			SW_RTN_ON_ERROR(hsl_port_phydev_get(dev_id, port_id, &phydev));
 			if (hsl_port_feature_get(dev_id, SSDK_PHYSICAL_PORT1, PHY_F_FORCE)) {
 				/* switch bypass mode */
-				if (ssdk_mht_clk_is_asserted(dev_id, MHT_SRDS0_SYS_CLK)) {
-					fal_mac_config_t mac_config = {0};
+				if (qca8k_clk_is_asserted(clk_dev, MHT_SRDS0_SYS_CLK)) {
 					SSDK_DEBUG("configure manhattan serdes0\n");
-					mac_config.mac_mode = FAL_MAC_MODE_SGMII;
-					mac_config.config.sgmii.clock_mode =
-						FAL_INTERFACE_CLOCK_PHY_MODE;
-					mac_config.config.sgmii.auto_neg = A_TRUE;
-					SW_RTN_ON_ERROR(mht_interface_sgmii_mode_set(dev_id,
-					MHT_UNIPHY_SGMII_0, SSDK_PHYSICAL_PORT4, &mac_config));
+					config.type = PHY_INTERFACE_MODE_SGMII;
+					config.addr_offset = PCS0_ADDR_OFFSET;
+					config.clock_mode = CLOCK_PHY_MODE;
+					config.auto_neg = A_TRUE;
+					qcom_phy_pcs_interface_set(phydev, config);
 				}
 			} else {
 				/* uqxgmii mode */
-				if (ssdk_mht_clk_is_asserted(dev_id, MHT_SRDS1_SYS_CLK)) {
+				if (qca8k_clk_is_asserted(clk_dev, MHT_SRDS1_SYS_CLK)) {
 					SSDK_DEBUG("configure manhattan serdes1\n");
 
 					/* set the alder port mode as uqxgmii and apply to configure
@@ -603,10 +611,12 @@ sw_error_t adpt_appe_port_erp_power_mode_set(a_uint32_t dev_id,
 					 * MHT PHY when apply ppe port interface mode, so manually
 					 * configure MHT PHY serdes to uqxgmii mode here.
 					 */
-					SW_RTN_ON_ERROR(mht_interface_uqxgmii_mode_set(dev_id));
-					SW_RTN_ON_ERROR(ssdk_mht_clk_parent_set(dev_id,
+					config.type = PHY_INTERFACE_MODE_QUSGMII;
+					config.addr_offset = PCS1_ADDR_OFFSET;
+					qcom_phy_pcs_interface_set(phydev, config);
+					SW_RTN_ON_ERROR(qca8k_clk_parent_set(clk_dev,
 							MHT_AHB_CLK, MHT_P_UNIPHY1_TX312P5M));
-					SW_RTN_ON_ERROR(ssdk_mht_clk_rate_set(dev_id,
+					SW_RTN_ON_ERROR(qca8k_clk_rate_set(clk_dev,
 							MHT_AHB_CLK, MHT_AHB_CLK_RATE_104P17M));
 				}
 			}
