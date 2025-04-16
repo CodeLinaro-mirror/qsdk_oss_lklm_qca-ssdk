@@ -292,6 +292,10 @@ ifeq (TRUE, $(IN_PKTEDIT))
   MODULE_CFLAG += -DIN_PKTEDIT
 endif
 
+ifeq (TRUE, $(IN_SAMPL))
+  MODULE_CFLAG += -DIN_SAMPL
+endif
+
 ifneq (TRUE, $(FAL))
   MODULE_CFLAG += -DHSL_STANDALONG
 endif
@@ -398,6 +402,7 @@ endif
 ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/hmsppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/hmsppe
+  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/jhppe
   MODULE_CFLAG += -DJHPPE
   ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
   MODULE_CFLAG += -DSSDK_RAW_CLOCK

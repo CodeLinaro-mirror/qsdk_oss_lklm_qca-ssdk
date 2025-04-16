@@ -1,19 +1,9 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
+
 
 /*qca808x_start*/
 #ifndef _SW_IOCTL_H_
@@ -1191,6 +1181,22 @@ extern "C" {
 #define SW_API_PKTEDIT_EN_GET			(3 + SW_API_PKTEDIT_OFFSET)
 #define SW_API_RXDESC_CPUCODE_EN_SET		(4 + SW_API_PKTEDIT_OFFSET)
 #define SW_API_RXDESC_CPUCODE_EN_GET		(5 + SW_API_PKTEDIT_OFFSET)
+
+/* sampling */
+#define SW_API_SAMPL_OFFSET			4100
+#define SW_API_SAMPL_TIME_SET			(0 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_TIME_GET			(1 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_BUFF_STATUS_GET		(2 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_BUFF_STATUS_CLEAR		(3 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_DONE_MISS_CNT_GET		(4 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_DONE_MISS_CNT_CLEAR	(5 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_BURST_CFG_SET		(6 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_BURST_CFG_GET		(7 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_CTRL_SET			(8 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_CTRL_GET			(9 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_WINDOW_EN_SET		(10 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_WINDOW_EN_GET		(11 + SW_API_SAMPL_OFFSET)
+#define SW_API_SAMPL_COUNTER_GET		(12 + SW_API_SAMPL_OFFSET)
 
 /* auto_insert_flag */
 /*qca808x_start*/

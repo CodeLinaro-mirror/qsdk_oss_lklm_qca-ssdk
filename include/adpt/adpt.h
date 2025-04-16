@@ -1,20 +1,9 @@
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
+
 
 /**
  * @defgroup
@@ -62,6 +51,7 @@ extern "C" {
 #include "fal_vport.h"
 #include "fal_athtag.h"
 #include "fal_pktedit.h"
+#include "fal_sampling.h"
 #include "ssdk_plat.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
@@ -601,10 +591,10 @@ typedef sw_error_t (*adpt_flow_npt66_iid_get_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_flow_npt66_iid_del_func)(a_uint32_t dev_id,
 		a_uint32_t flow_index);
 
-typedef sw_error_t (*adpt_flow_npt66_status_set_func)(a_uint32_t dev_id, 
+typedef sw_error_t (*adpt_flow_npt66_status_set_func)(a_uint32_t dev_id,
 		a_bool_t enable);
 
-typedef sw_error_t (*adpt_flow_npt66_status_get_func)(a_uint32_t dev_id, 
+typedef sw_error_t (*adpt_flow_npt66_status_get_func)(a_uint32_t dev_id,
 		a_bool_t *enable);
 
 typedef sw_error_t (*adpt_ucast_hash_map_set_func)(
@@ -1420,6 +1410,7 @@ typedef sw_error_t (*adpt_pktedit_padding_set_func)(a_uint32_t dev_id,
 		fal_pktedit_padding_t *padding);
 typedef sw_error_t (*adpt_pktedit_padding_get_func)(a_uint32_t dev_id,
 		fal_pktedit_padding_t *padding);
+
 typedef sw_error_t (*adpt_pktedit_en_set_func)(a_uint32_t dev_id,
 		a_uint32_t cpucode, a_bool_t enable);
 typedef sw_error_t (*adpt_pktedit_en_get_func)(a_uint32_t dev_id,
@@ -1428,6 +1419,36 @@ typedef sw_error_t (*adpt_rxdesc_cpucode_en_set_func)(a_uint32_t dev_id,
 		a_uint32_t cpucode, a_bool_t enable);
 typedef sw_error_t (*adpt_rxdesc_cpucode_en_get_func)(a_uint32_t dev_id,
 		a_uint32_t cpucode, a_bool_t *enable);
+
+/* sampling */
+typedef sw_error_t (*adpt_sampling_time_set_func)(a_uint32_t dev_id,
+		a_uint32_t buff_index, a_uint32_t time_value);
+typedef sw_error_t (*adpt_sampling_time_get_func)(a_uint32_t dev_id,
+		a_uint32_t buff_index, a_uint32_t *time_value);
+typedef sw_error_t (*adpt_sampling_buff_status_get_func)(a_uint32_t dev_id,
+		a_uint32_t buff_index, a_bool_t *done_status);
+typedef sw_error_t (*adpt_sampling_buff_status_clear_func)(a_uint32_t dev_id,
+		a_uint32_t buff_index);
+typedef sw_error_t (*adpt_sampling_done_miss_counter_get_func)(
+		a_uint32_t dev_id, a_uint32_t *done_miss);
+typedef sw_error_t (*adpt_sampling_done_miss_counter_clear_func)(
+		a_uint32_t dev_id);
+typedef sw_error_t (*adpt_sampling_burst_cfg_set_func)(a_uint32_t dev_id,
+		fal_sampling_burst_cfg_t *burst_cfg);
+typedef sw_error_t (*adpt_sampling_burst_cfg_get_func)(a_uint32_t dev_id,
+		fal_sampling_burst_cfg_t *burst_cfg);
+typedef sw_error_t (*adpt_sampling_ctrl_set_func)(a_uint32_t dev_id,
+		fal_sampling_ctrl_t *ctrl_cfg);
+typedef sw_error_t (*adpt_sampling_ctrl_get_func)(a_uint32_t dev_id,
+		fal_sampling_ctrl_t *ctrl_cfg);
+typedef sw_error_t (*adpt_sampling_window_en_set_func)(a_uint32_t dev_id,
+		a_uint32_t window_index, a_bool_t enable);
+typedef sw_error_t (*adpt_sampling_window_en_get_func)(a_uint32_t dev_id,
+		a_uint32_t window_index, a_bool_t *enable);
+typedef sw_error_t (*adpt_sampling_counter_get_func)(a_uint32_t dev_id,
+		a_uint32_t buff_index, a_uint32_t counter_id,
+		fal_sampling_counter_entry_t *counter);
+
 /* auto_insert_flag */
 typedef struct
 {
@@ -2108,6 +2129,23 @@ typedef struct
 	adpt_pktedit_en_get_func adpt_pktedit_en_get;
 	adpt_rxdesc_cpucode_en_set_func adpt_rxdesc_cpucode_en_set;
 	adpt_rxdesc_cpucode_en_get_func adpt_rxdesc_cpucode_en_get;
+	/* sampling */
+	adpt_sampling_time_set_func adpt_sampling_time_set;
+	adpt_sampling_time_get_func adpt_sampling_time_get;
+	adpt_sampling_buff_status_get_func adpt_sampling_buff_status_get;
+	adpt_sampling_buff_status_clear_func adpt_sampling_buff_status_clear;
+	adpt_sampling_done_miss_counter_get_func
+		adpt_sampling_done_miss_counter_get;
+	adpt_sampling_done_miss_counter_clear_func
+		adpt_sampling_done_miss_counter_clear;
+	adpt_sampling_burst_cfg_set_func adpt_sampling_burst_cfg_set;
+	adpt_sampling_burst_cfg_get_func adpt_sampling_burst_cfg_get;
+	adpt_sampling_ctrl_set_func adpt_sampling_ctrl_set;
+	adpt_sampling_ctrl_get_func adpt_sampling_ctrl_get;
+	adpt_sampling_window_en_set_func adpt_sampling_window_en_set;
+	adpt_sampling_window_en_get_func adpt_sampling_window_en_get;
+	adpt_sampling_counter_get_func adpt_sampling_counter_get;
+
 /* auto_insert_flag_1 */
 }adpt_api_t;
 

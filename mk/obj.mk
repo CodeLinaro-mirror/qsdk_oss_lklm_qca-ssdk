@@ -400,6 +400,14 @@ OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_pktedit.o
 endif
 
 ###############################################################################
+#                             IN_SAMPL
+###############################################################################
+ifeq (TRUE, $(IN_SAMPL))
+OBJ-COMMON  += src/fal/fal_sampling.o
+OBJ-JHPPE  += src/hsl/jhppe/jhppe_policer.o src/adpt/jhppe/adpt_jhppe_sampling.o
+endif
+
+###############################################################################
 #                                PHY
 ###############################################################################
 OBJ-COMMON  += src/hsl/phy/hsl_phy.o
