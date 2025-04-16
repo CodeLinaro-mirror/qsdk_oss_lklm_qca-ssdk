@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,11 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 #include "sw.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_appe_vsi.h"
-#include "appe_vsi.h"
-#include "appe_l2_vp.h"
 
 sw_error_t
 adpt_appe_vsi_bridge_vsi_get(a_uint32_t dev_id, a_uint32_t vsi_id,

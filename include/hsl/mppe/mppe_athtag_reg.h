@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -78,9 +78,9 @@ union eg_gen_ctrl_u {
 #define PRX_PORT_TO_VP_MAPPING_DEFAULT 0x0
 
 struct prx_port_to_vp_mapping {
-	a_uint32_t  prx_ath_hdr_type:16;
-	a_uint32_t  prx_port_vp:8;
-	a_uint32_t  prx_ath_hdr_en:1;
+	a_uint32_t  atheros_hdr_type:16;
+	a_uint32_t  port_vp:8;
+	a_uint32_t  atheros_hdr_en:1;
 	a_uint32_t  _reserved0:7;
 };
 
@@ -97,7 +97,7 @@ union prx_port_to_vp_mapping_u {
 #define PRX_HDR_RCV_PRI_MAPPING_DEFAULT 0x0
 
 struct prx_hdr_rcv_pri_mapping {
-	a_uint32_t  pri:4;
+	a_uint32_t  int_pri:4;
 	a_uint32_t  _reserved0:28;
 };
 

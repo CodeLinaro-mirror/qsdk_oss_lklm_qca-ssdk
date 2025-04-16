@@ -21,8 +21,7 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_shaper_reg.h"
-#include "hppe_shaper.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
 #ifdef APPE

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,11 +19,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "adpt.h"
-#include "mrppe_pktedit_reg.h"
-#include "mrppe_pktedit.h"
-#include "mppe_athtag_reg.h"
-#include "mppe_athtag.h"
 
 sw_error_t
 adpt_mrppe_pktedit_padding_set(a_uint32_t dev_id, fal_pktedit_padding_t *padding)

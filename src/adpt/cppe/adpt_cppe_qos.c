@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -20,11 +20,9 @@
  * @{
  */
 #include "sw.h"
-#include "fal_qos.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
-#include "cppe_qos_reg.h"
+#include "hsl_reg.h"
 #include "cppe_qos.h"
+#include "fal_qos.h"
 #include "adpt.h"
 
 static sw_error_t

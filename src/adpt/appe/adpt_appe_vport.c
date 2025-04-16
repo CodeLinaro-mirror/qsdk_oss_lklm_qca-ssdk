@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,15 +20,11 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "fal_vport.h"
 #if defined(IN_QM)
 #include "fal_qm.h"
 #endif
-#include "appe_l2_vp_reg.h"
-#include "appe_l2_vp.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
-
 #include "adpt.h"
 
 sw_error_t
@@ -110,11 +106,14 @@ adpt_appe_vport_state_check_get(a_uint32_t dev_id, fal_port_t port_id, fal_vport
 
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
-
+#ifdef HMSPPE
+	//to be fix
+#else
 	vp_state->check_en = l2_vp_port_tbl.bf.vp_state_check_en;
 	vp_state->vp_type = l2_vp_port_tbl.bf.vp_type;
 	vp_state->vp_active = l2_vp_port_tbl.bf.vp_context_active;
 	vp_state->eg_data_valid = l2_vp_port_tbl.bf.vp_eg_data_valid;
+#endif
 
 	return rv;
 }
@@ -133,11 +132,14 @@ adpt_appe_vport_state_check_set(a_uint32_t dev_id, fal_port_t port_id, fal_vport
 
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
-
+#ifdef HMSPPE
+	//to be fix
+#else
 	l2_vp_port_tbl.bf.vp_state_check_en = vp_state->check_en;
 	l2_vp_port_tbl.bf.vp_type = vp_state->vp_type;
 	l2_vp_port_tbl.bf.vp_context_active = vp_state->vp_active;
 	l2_vp_port_tbl.bf.vp_eg_data_valid = vp_state->eg_data_valid;
+#endif
 
 	rv = appe_l2_vp_port_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
 

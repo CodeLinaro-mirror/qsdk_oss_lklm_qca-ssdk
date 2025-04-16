@@ -21,11 +21,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "fal_mapt.h"
-#include "appe_tunnel_reg.h"
-#include "appe_tunnel.h"
-#include "appe_tunnel_map_reg.h"
-#include "appe_tunnel_map.h"
 #include "adpt.h"
 #include <net/ipv6.h>
 

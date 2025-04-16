@@ -20,19 +20,10 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
-#include "hppe_vsi_reg.h"
-#include "hppe_vsi.h"
-#include "hppe_policer_reg.h"
-#include "hppe_policer.h"
-#include "hppe_qm_reg.h"
-#include "hppe_qm.h"
+#include "hsl_reg.h"
 #include "adpt_hppe.h"
 #include "adpt.h"
-#ifdef APPE
-#include "appe_counter.h"
-#endif
+
 
 char *cpucode[] = {
 "Forwarding to CPU",
@@ -658,10 +649,16 @@ adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type, char **bu
 		hppe_ipr_byte_low_reg_reg_get(dev_id, i, &ipr_byte_low_reg);
 		hppe_ipr_byte_high_reg_get(dev_id, i, &ipr_byte_high_reg);
 		if (show_type == A_FALSE)
+	#ifdef HMSPPE
+			value = (a_uint64_t)ipr_pkt_num_tbl_reg.bf.ipr_pkt_num_tbl_reg;
+		else
+			value = ipr_byte_low_reg.bf.ipr_byte_low_reg_reg |\
+				((a_uint64_t)ipr_byte_high_reg.bf.ipr_byte_high_reg << 32);
+	#else
 			value = (a_uint64_t)ipr_pkt_num_tbl_reg.bf.packets;
 		else
 			value = ipr_byte_low_reg.bf.bytes | ((a_uint64_t)ipr_byte_high_reg.bf.bytes << 32);
-
+	#endif
 		if (value > 0)
 		{
 			if (sign) {

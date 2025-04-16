@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -63,21 +63,21 @@
 struct pppoe_session {
 	a_uint32_t  session_id:16;
 	a_uint32_t  port_bitmap:8;
-	a_uint32_t  port_type:2;
+	a_uint32_t  type:2;
 	a_uint32_t  _reserved0:6;
 };
 
 struct pppoe_session_1 {
 	a_uint32_t  session_id:16;
 	a_uint32_t  port_vp_id:8;
-	a_uint32_t  port_type:2;
+	a_uint32_t  type:2;
 	a_uint32_t  _reserved0:6;
 };
 
 struct pppoe_session_2 {
 	a_uint32_t  session_id:16;
 	a_uint32_t  vp_profile:8;
-	a_uint32_t  port_type:2;
+	a_uint32_t  type:2;
 	a_uint32_t  _reserved0:6;
 };
 

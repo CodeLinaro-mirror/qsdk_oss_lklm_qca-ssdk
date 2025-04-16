@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -21,13 +21,10 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "fal_sec.h"
-#include "hppe_sec_reg.h"
-#include "hppe_sec.h"
 #include "adpt.h"
 #if defined(APPE)
-#include "appe_sec_reg.h"
-#include "appe_sec.h"
 #include "adpt_appe_sec.h"
 #endif
 

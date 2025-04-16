@@ -21,10 +21,7 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_pppoe_reg.h"
-#include "hppe_pppoe.h"
-#include "hppe_ip_reg.h"
-#include "hppe_ip.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #if defined(APPE)
 #include "adpt_appe_pppoe.h"

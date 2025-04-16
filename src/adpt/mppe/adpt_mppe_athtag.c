@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,11 +19,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "adpt.h"
-#include "mppe_athtag_reg.h"
-#include "mppe_athtag.h"
-#include "appe_portvlan_reg.h"
-#include "appe_portvlan.h"
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "hsl_port_prop.h"
@@ -43,7 +40,7 @@ adpt_mppe_athtag_pri_mapping_set(a_uint32_t dev_id,
 		/*ingress priority mapping*/
 		SW_RTN_ON_ERROR(mppe_prx_hdr_rcv_pri_mapping_get(dev_id,
 					pri_mapping->ath_pri, &prx_pri_map));
-		prx_pri_map.bf.pri = pri_mapping->int_pri;
+		prx_pri_map.bf.int_pri = pri_mapping->int_pri;
 		SW_RTN_ON_ERROR(mppe_prx_hdr_rcv_pri_mapping_set(dev_id,
 					pri_mapping->ath_pri, &prx_pri_map));
 	}
@@ -73,7 +70,7 @@ adpt_mppe_athtag_pri_mapping_get(a_uint32_t dev_id,
 	{
 		SW_RTN_ON_ERROR(mppe_prx_hdr_rcv_pri_mapping_get(dev_id,
 					pri_mapping->ath_pri, &prx_pri_map));
-		pri_mapping->int_pri = prx_pri_map.bf.pri;
+		pri_mapping->int_pri = prx_pri_map.bf.int_pri;
 	}
 	else if (direction == FAL_DIR_EGRESS)
 	{
@@ -114,8 +111,8 @@ adpt_mppe_port_athtag_rx_set(a_uint32_t dev_id,
 	/*enable rx athtag for a specific athtag type*/
 	SW_RTN_ON_ERROR(mppe_prx_port_to_vp_mapping_get(dev_id,
 				port_id, &prx_port_to_vp_map));
-	prx_port_to_vp_map.bf.prx_ath_hdr_en = cfg->athtag_en;
-	prx_port_to_vp_map.bf.prx_ath_hdr_type = cfg->athtag_type;
+	prx_port_to_vp_map.bf.atheros_hdr_en = cfg->athtag_en;
+	prx_port_to_vp_map.bf.atheros_hdr_type = cfg->athtag_type;
 	return mppe_prx_port_to_vp_mapping_set(dev_id,
 				port_id, &prx_port_to_vp_map);
 }
@@ -131,8 +128,8 @@ adpt_mppe_port_athtag_rx_get(a_uint32_t dev_id,
 
 	SW_RTN_ON_ERROR(mppe_prx_port_to_vp_mapping_get(dev_id,
 				port_id, &prx_port_to_vp_map));
-	cfg->athtag_en = prx_port_to_vp_map.bf.prx_ath_hdr_en;
-	cfg->athtag_type = prx_port_to_vp_map.bf.prx_ath_hdr_type;
+	cfg->athtag_en = prx_port_to_vp_map.bf.atheros_hdr_en;
+	cfg->athtag_type = prx_port_to_vp_map.bf.atheros_hdr_type;
 
 	return SW_OK;
 }
@@ -253,8 +250,8 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 				continue;
 			SW_RTN_ON_ERROR(mppe_prx_port_to_vp_mapping_get(dev_id,
 						port_id, &prx_port_to_vp_map));
-			prx_port_to_vp_map.bf.prx_port_vp =
-						FAL_PORT_ID_VALUE(port_mapping->int_port);
+			prx_port_to_vp_map.bf.port_vp =
+				FAL_PORT_ID_VALUE(port_mapping->int_port);
 			SW_RTN_ON_ERROR(mppe_prx_port_to_vp_mapping_set(dev_id,
 						port_id, &prx_port_to_vp_map));
 		}
@@ -338,7 +335,7 @@ adpt_mppe_athtag_port_mapping_get(a_uint32_t dev_id,
 		port_id = _adpt_mppe_athtag_bit_index(port_mapping->ath_port);
 		SW_RTN_ON_ERROR(mppe_prx_port_to_vp_mapping_get(dev_id,
 					port_id, &prx_port_to_vp_map));
-		port_mapping->int_port = prx_port_to_vp_map.bf.prx_port_vp;
+		port_mapping->int_port = prx_port_to_vp_map.bf.port_vp;
 	}
 	else if (direction == FAL_DIR_EGRESS)
 	{

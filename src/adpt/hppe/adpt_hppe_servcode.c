@@ -21,10 +21,7 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_servcode_reg.h"
-#include "hppe_servcode.h"
-#include "hppe_fdb_reg.h"
-#include "hppe_fdb.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
 #if defined(APPE)

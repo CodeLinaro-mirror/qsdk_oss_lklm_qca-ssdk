@@ -607,7 +607,7 @@ struct l3_route_ctrl_ext {
 	a_uint32_t  _reserved0:24;
 #endif
 
-	a_uint32_t  l3_flow_copy_escape:1;
+	a_uint32_t  flow_cpy_escape:1;
 	a_uint32_t  host_hash_mode_1:2;
 	a_uint32_t  host_hash_mode_0:2;
 	a_uint32_t  flow_service_code_loop_en:1;

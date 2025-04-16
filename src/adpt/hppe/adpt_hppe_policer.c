@@ -20,14 +20,12 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_policer_reg.h"
-#include "hppe_policer.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #ifdef APPE
 #include "adpt_appe_policer.h"
-#include "appe_l2_vp_reg.h"
-#include "appe_l2_vp.h"
 #endif
+
 
 #define NR_ADPT_HPPE_POLICER_METER_UNIT         2
 #define NR_ADPT_HPPE_POLICER_METER_TOKEN_UNIT         8
