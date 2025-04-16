@@ -11091,7 +11091,7 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		cmd = get_sub_cmd("field_update_bitmap", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
-		rv = cmd_data_check_uint32(cmd, &entry.field_update_bitmap, sizeof (a_uint32_t));
+		rv = cmd_data_check_uint64(cmd, &entry.field_update_bitmap, sizeof (a_uint64_t));
 	}
 	while (talk_mode && (SW_OK != rv));
 

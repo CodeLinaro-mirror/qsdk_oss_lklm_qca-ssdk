@@ -72,6 +72,9 @@ enum {
 	FLD_UPDATE_DST_INFO_BYPASS,
 	FLD_UPDATE_MAC_HDR_BYPASS,
 	FLD_UPDATE_FAKE_MAC_CLEAR,
+	/* New added extention field update bitmap for IPQ96xx */
+	FLD_UPDATE_XLAN_XLT_DROP_BYPASS = 32,
+	FLD_UPDATE_CPU_EDIT_EN,
 };
 
 /* athtag field update bitmap, new add for IPQ53xx */
@@ -146,7 +149,7 @@ enum {
 	SMAC_MC_DROP_BYP,
 	L2_FLOODING_BYP,
 	TUNNEL_EXP_CNT_CTRL,
-	/* new add for JHPPE */
+	/* new add for IPQ96xx */
 	VLAN_PORT_ISOLATION_BYP,
 	L2_VP_SERVICE_CODE_ENQ_BYP,
 };
@@ -191,7 +194,7 @@ typedef struct {
 	a_uint32_t  bypass_bitmap[SERVICE_BYP_NUM]; /* refer to enum IN_VLAN_TAG_FMT_CHECK_BYP... */
 	a_uint32_t  direction; /* if dest is vp, fill it in dest_info or src_info, 0:dest, 1:src */
 
-	a_uint32_t  field_update_bitmap; /* refer to enum FLD_UPDATE_CAPWAP_EN... */
+	a_uint64_t  field_update_bitmap; /* refer to enum FLD_UPDATE_CAPWAP_EN... */
 	a_uint32_t  next_service_code; /* next service code */
 	a_uint32_t  hw_services; /* HW_SERVICES to IP-197 */
 	a_uint32_t  offset_sel; /* Select the offset value to IP-197:0: l3_offset, 1:l4_offset */
