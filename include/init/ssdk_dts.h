@@ -100,6 +100,7 @@ typedef struct
 	a_uint32_t pcie_hw_base;
 	led_ctrl_pattern_t source_pattern[SSDK_MAX_PORT_NUM][PORT_LED_SOURCE_MAX];
 	a_bool_t uniphy_status[SSDK_MAX_UNIPHY_INSTANCE];
+	struct mdio_device *clk_mdiodev;
 } ssdk_dt_cfg;
 
 #define SSDK_MAX_NR_ETH 6
@@ -196,6 +197,7 @@ ssdk_netdev_switch_t *
 ssdk_dts_netdev_switch_find_by_netdev(struct net_device *netdev);
 ssdk_netdev_switch_t *
 ssdk_dts_netdev_switch_find_by_devid(a_uint32_t dev_id);
+struct mdio_device *ssdk_dt_clk_mdiodev_get(a_uint32_t dev_id);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

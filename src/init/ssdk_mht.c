@@ -28,7 +28,6 @@
 #include "ssdk_dts.h"
 #include "fal_interface_ctrl.h"
 #include "fal_port_ctrl.h"
-#include "ssdk_mht_clk.h"
 #include "mht_port_ctrl.h"
 #include "ref_port_ctrl.h"
 #include "mht_interface_ctrl.h"
@@ -36,6 +35,7 @@
 #ifdef IN_LED
 #include "ssdk_led.h"
 #endif
+#include "qca-nss-phy/qca8k_clk.h"
 
 static sw_error_t
 qca_mht_work_mode_init(a_uint32_t dev_id, a_uint32_t mac_mode0, a_uint32_t mac_mode1)
@@ -79,11 +79,17 @@ _qca_mht_interface_mode_init(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_speed_t force_speed = FAL_SPEED_BUTT;
 	mht_work_mode_t work_mode = MHT_SWITCH_MODE;
 	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
+	struct mdio_device *clk_dev;
 
 	/* The clock parent need to be configured before initializing
 	 * the interface mode.*/
 	qca_mht_work_mode_get(dev_id, &work_mode);
-	ssdk_mht_gcc_port_clk_parent_set(dev_id, work_mode, port_id);
+
+	clk_dev = ssdk_dt_clk_mdiodev_get(dev_id);
+	if (!clk_dev)
+		return SW_FAIL;
+
+	qca8k_gcc_port_clk_parent_set(clk_dev, work_mode, port_id);
 
 	force_en = hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE);
 	if(force_en)
@@ -127,24 +133,24 @@ qca_mht_interface_mode_init(a_uint32_t dev_id, a_uint32_t mac_mode0,
 	return SW_OK;
 }
 
-static inline void qca_mht_switch_reset(a_uint32_t dev_id)
+static inline void qca_mht_switch_reset(struct mdio_device *clk_dev)
 {
 	/* Reset switch core */
-	ssdk_mht_clk_reset(dev_id, MHT_SWITCH_CORE_CLK);
+	qca8k_clk_reset(clk_dev, MHT_SWITCH_CORE_CLK);
 
 	/* Reset MAC ports */
-	ssdk_mht_clk_reset(dev_id, MHT_MAC0_TX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC0_RX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC1_TX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC1_RX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC2_TX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC2_RX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC3_TX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC3_RX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC4_TX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC4_RX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC5_TX_CLK);
-	ssdk_mht_clk_reset(dev_id, MHT_MAC5_RX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC0_TX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC0_RX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC1_TX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC1_RX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC2_TX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC2_RX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC3_TX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC3_RX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC4_TX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC4_RX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC5_TX_CLK);
+	qca8k_clk_reset(clk_dev, MHT_MAC5_RX_CLK);
 
 	return;
 }
@@ -242,6 +248,7 @@ int qca_mht_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	int ret = 0;
 	mht_work_mode_t work_mode;
 	a_uint32_t port_bmp = 0;
+	struct mdio_device *clk_dev;
 
 	if(!qca_mht_sku_switch_core_enabled(dev_id))
 	{
@@ -254,7 +261,11 @@ int qca_mht_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	ret = qca_mht_interface_mode_init(dev_id, cfg->mac_mode, cfg->mac_mode1);
 	SW_RTN_ON_ERROR(ret);
 
-	qca_mht_switch_reset(dev_id);
+	clk_dev = ssdk_dt_clk_mdiodev_get(dev_id);
+	if (!clk_dev)
+		return SW_FAIL;
+
+	qca_mht_switch_reset(clk_dev);
 
 	ret = qca_switch_init(dev_id);
 	SW_RTN_ON_ERROR(ret);
@@ -265,7 +276,7 @@ int qca_mht_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 
 	port_bmp = ssdk_cpu_bmp_get(dev_id) | ssdk_wan_bmp_get(dev_id) | ssdk_lan_bmp_get(dev_id);
 	qca_mht_work_mode_get(dev_id, &work_mode);
-	ssdk_mht_gcc_clock_init(dev_id, work_mode, port_bmp);
+	qca8k_gcc_clock_init(clk_dev, work_mode, port_bmp);
 
 	ret = ssdk_mht_pinctrl_init(dev_id);
 	SW_RTN_ON_ERROR(ret);
