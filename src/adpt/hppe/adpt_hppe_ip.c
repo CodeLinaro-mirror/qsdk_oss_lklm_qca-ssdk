@@ -20,10 +20,8 @@
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "fal_ip.h"
-#include "hppe_ip_reg.h"
-#include "hppe_ip.h"
+#include "hsl_reg.h"
+#include "adpt_hppe.h"
 #include "adpt.h"
 #include <linux/etherdevice.h>
 
@@ -995,8 +993,8 @@ adpt_hppe_ip_nexthop_get(a_uint32_t dev_id,
 		return rv;
 
 	entry->type = in_nexthop_tbl.bf.type;
-	entry->vsi = in_nexthop_tbl.bf1.vsi;
-	entry->port = in_nexthop_tbl.bf.port;
+	entry->vsi = in_nexthop_tbl.bf.vsi;
+	entry->port = in_nexthop_tbl.bf1.port;
 	entry->if_index = in_nexthop_tbl.bf.post_l3_if;
 	entry->ip_to_me_en = in_nexthop_tbl.bf.ip_to_me;
 	entry->pub_ip_index = in_nexthop_tbl.bf1.ip_pub_addr_index;
@@ -1459,9 +1457,9 @@ adpt_hppe_ip_nexthop_set(a_uint32_t dev_id,
 
 	in_nexthop_tbl.bf.type = entry->type;
 	if (entry->type == 0)
-		in_nexthop_tbl.bf1.vsi = entry->vsi;
+		in_nexthop_tbl.bf.vsi = entry->vsi;
 	else
-		in_nexthop_tbl.bf.port = entry->port;
+		in_nexthop_tbl.bf1.port = entry->port;
 	in_nexthop_tbl.bf.post_l3_if = entry->if_index;
 	in_nexthop_tbl.bf.ip_to_me = entry->ip_to_me_en;
 	in_nexthop_tbl.bf.ip_pub_addr_index = entry->pub_ip_index;
