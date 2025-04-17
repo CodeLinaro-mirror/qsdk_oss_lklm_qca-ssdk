@@ -1,5 +1,8 @@
 /*
  * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+ *
+ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -55,6 +58,26 @@ typedef struct{
 	ref_vlan_info_t *pHead;
 }ref_vsi_t;
 
+typedef struct {
+	a_uint32_t stag_vid;
+	a_uint32_t ctag_vid;
+	fal_pbmp_t vlan_port_bitmap; /*vlan based vsi*/
+}ref_vsi_vlan_info_t;
+
+typedef struct{
+	a_uint32_t pport_bitmap; /*port based vsi*/
+	a_uint32_t vport_bitmap[SSDK_MAX_VIRTUAL_PORT_NUM/32];
+}ref_vsi_port_info_t;
+
+#define VSI_VLAN_XLT_RULE_NUM 128
+
+typedef struct {
+	a_uint32_t vsi_id;
+	a_uint32_t valid;
+	ref_vsi_port_info_t port_info;
+	ref_vsi_vlan_info_t vlan_info[VSI_VLAN_XLT_RULE_NUM];
+} ref_vsi_info_t;
+
 #define PPE_VSI_PPORT_NR 7
 #define PPE_VSI_INVALID FAL_VSI_INVALID
 
@@ -68,7 +91,7 @@ sw_error_t ppe_port_vsi_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t *vsi_id);
 sw_error_t ppe_vsi_alloc(a_uint32_t dev_id, a_uint32_t *vsi);
 sw_error_t ppe_vsi_free(a_uint32_t dev_id, a_uint32_t vsi_id);
-sw_error_t ppe_vsi_tbl_dump(a_uint32_t dev_id);
+sw_error_t ppe_vsi_tbl_dump(a_uint32_t dev_id, a_uint32_t vsi_id, ref_vsi_info_t *vsi_info);
 sw_error_t ppe_vsi_init(a_uint32_t dev_id);
 #endif
 

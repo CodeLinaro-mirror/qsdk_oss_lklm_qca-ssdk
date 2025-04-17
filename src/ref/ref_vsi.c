@@ -586,33 +586,33 @@ sw_error_t ppe_vsi_init(a_uint32_t dev_id)
 	return SW_OK;
 }
 
-
-sw_error_t ppe_vsi_tbl_dump(a_uint32_t dev_id)
+sw_error_t ppe_vsi_tbl_dump(a_uint32_t dev_id, a_uint32_t vsi_id, ref_vsi_info_t *vsi_info)
 {
-	a_uint32_t vsi_id, i = 0;
 	ref_vlan_info_t *p_vsi_info = NULL;
+	a_uint32_t i = 0;
 
 	REF_DEV_ID_CHECK(dev_id);
-	printk("########Software VSI mapping table\n");
-	for( vsi_id = 0; vsi_id <= PPE_VSI_MAX; vsi_id++ )
+	if(ref_vsi_mapping[dev_id][vsi_id].valid == 0)
+		return SW_OK;
+	vsi_info->vsi_id = vsi_id;
+	vsi_info->valid =
+		ref_vsi_mapping[dev_id][vsi_id].valid;
+	vsi_info->port_info.pport_bitmap =
+		ref_vsi_mapping[dev_id][vsi_id].pport_bitmap;
+	p_vsi_info = ref_vsi_mapping[dev_id][vsi_id].pHead;
+	for(i = 0; i < SSDK_MAX_VIRTUAL_PORT_NUM/32; i++)
 	{
-		if(ref_vsi_mapping[dev_id][vsi_id].valid == 0)
-			continue;
-		p_vsi_info = ref_vsi_mapping[dev_id][vsi_id].pHead;
-		printk("vsi %d, pport bitmap 0x%x\n",vsi_id,
-			ref_vsi_mapping[dev_id][vsi_id].pport_bitmap);
-		for(i = 0; i < SSDK_MAX_VIRTUAL_PORT_NUM/32; i++)
-		{
-			printk("vsi %d, vport bitmap[%d] 0x%x\n",
-				vsi_id, i, ref_vsi_mapping[dev_id][vsi_id].vport_bitmap[i]);
-		}
-		while(p_vsi_info != NULL)
-		{
-			printk("%8s svlan %d, cvlan %d, port bitmap 0x%x\n","",
-				p_vsi_info->stag_vid, p_vsi_info->ctag_vid,
-				p_vsi_info->vlan_port_bitmap);
-			p_vsi_info = p_vsi_info->pNext;
-		}
+		vsi_info->port_info.vport_bitmap[i] =
+			ref_vsi_mapping[dev_id][vsi_id].vport_bitmap[i];
+	}
+	i = 0;
+	while(p_vsi_info != NULL && i < VSI_VLAN_XLT_RULE_NUM)
+	{
+		vsi_info->vlan_info[i].ctag_vid = p_vsi_info->ctag_vid;
+		vsi_info->vlan_info[i].stag_vid = p_vsi_info->stag_vid;
+		vsi_info->vlan_info[i].vlan_port_bitmap = p_vsi_info->vlan_port_bitmap;
+		p_vsi_info = p_vsi_info->pNext;
+		i++;
 	}
 
 	return SW_OK;
