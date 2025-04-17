@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -257,8 +257,8 @@ sw_error_t fal_fdb_rfs_set(a_uint32_t dev_id, const fal_fdb_rfs_t * entry)
 sw_error_t fal_fdb_rfs_del(a_uint32_t dev_id, const fal_fdb_rfs_t * entry)
     DEFINE_FAL_FUNC_HSL_EXPORT(fdb_rfs_del, dev_id, entry)
 
-sw_error_t fal_fdb_learning_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_ADPT(fdb_learn_ctrl_set, dev_id, enable)
+sw_error_t fal_fdb_learning_ctrl_set(a_uint32_t dev_id, fal_fdb_learning_ctrl ctrl)
+    DEFINE_FAL_FUNC_ADPT(fdb_learn_ctrl_set, dev_id, ctrl)
     EXPORT_SYMBOL(fal_fdb_learning_ctrl_set);
 
 sw_error_t fal_fdb_port_maclimit_ctrl_set(a_uint32_t dev_id, fal_port_t port_id, fal_maclimit_ctrl_t * maclimit_ctrl)
@@ -295,8 +295,8 @@ sw_error_t fal_fdb_port_del(a_uint32_t dev_id, a_uint32_t fid, fal_mac_addr_t * 
     DEFINE_FAL_FUNC_ADPT_HSL_ENDFUNC(fdb_port_del, fdb_port_del, _fal_fdb_sw_sync, dev_id, fid, addr, port_id)
     EXPORT_SYMBOL(fal_fdb_port_del);
 
-sw_error_t fal_fdb_learning_ctrl_get(a_uint32_t dev_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_ADPT(fdb_learn_ctrl_get, dev_id, enable)
+sw_error_t fal_fdb_learning_ctrl_get(a_uint32_t dev_id, fal_fdb_learning_ctrl *ctrl)
+    DEFINE_FAL_FUNC_ADPT(fdb_learn_ctrl_get, dev_id, ctrl)
     EXPORT_SYMBOL(fal_fdb_learning_ctrl_get);
 
 sw_error_t fal_fdb_port_learned_mac_counter_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t * cnt)

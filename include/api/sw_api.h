@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -63,6 +63,7 @@ typedef enum
 	SW_MACADDR,
 	SW_FDBENTRY,
 	SW_MACLIMIT_CTRL,
+	SW_FDB_LEARN_CTRL,
 	SW_SCH,
 	SW_QOS,
 	SW_STORM,

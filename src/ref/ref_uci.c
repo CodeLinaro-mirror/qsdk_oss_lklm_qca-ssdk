@@ -4435,7 +4435,7 @@ parse_fdb_learnctrl(struct switch_val *val)
 		if (!strcmp(ext_value_p->option_name, "name")) {
 			switch_ext_p = switch_ext_p->next;
 			continue;
-		} else if (!strcmp(ext_value_p->option_name, "learn_status")) {
+		} else if (!strcmp(ext_value_p->option_name, "learn_ctrl")) {
 			val_ptr[0] = (char*)ext_value_p->option_value;
 		}  else {
 			rv = -1;
