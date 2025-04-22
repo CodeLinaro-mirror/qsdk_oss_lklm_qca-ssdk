@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014, 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -778,6 +778,8 @@ typedef struct
         FAL_ACL_BIND_TUNNEL_PORT = 6,  /** <  Acl will work on tunnel decap port and virtual port*/
         FAL_ACL_BIND_TUNNEL_VP_GROUP = 7, /** <  Acl will work on tunnel decap vp group*/
         FAL_ACL_BIND_SERVICE_PORTBITMAP = 8, /** <  Acl will work on service port bitmap*/
+        FAL_ACL_BIND_L3_DST_PORT = 9, /** < Acl will work on Dest port/virtual port from L3 */
+        FAL_ACL_BIND_DST_PORT = 10, /** < Acl will work on Dest port/virtural port */
     } fal_acl_bind_obj_t;
 
 #define	IFNAMSIZ	16
