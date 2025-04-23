@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -876,10 +876,10 @@ union pre_ipo_cnt_tbl_u {
 	#define PRE_IPO_ACTION_LEARN_DIS_DEFAULT 0x0
 #if defined(MPPE)
 	/*[field] METADATA_PRI*/
-	#define IPO_ACTION_METADATA_PRI
-	#define IPO_ACTION_METADATA_PRI_OFFSET  162
-	#define IPO_ACTION_METADATA_PRI_LEN     4
-	#define IPO_ACTION_METADATA_PRI_DEFAULT 0x0
+	#define PRE_IPO_ACTION_METADATA_PRI
+	#define PRE_IPO_ACTION_METADATA_PRI_OFFSET  162
+	#define PRE_IPO_ACTION_METADATA_PRI_LEN     4
+	#define PRE_IPO_ACTION_METADATA_PRI_DEFAULT 0x0
 #endif
 
 struct pre_ipo_action {
