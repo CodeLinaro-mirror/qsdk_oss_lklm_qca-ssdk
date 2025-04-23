@@ -98,6 +98,10 @@ static inline sw_error_t hsl_set_current_chip_type(a_uint32_t dev_id, ssdk_chip_
 		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_HPPE;
 #elif defined(MRPPE)
 		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_MRPPE;
+#elif defined(JHPPE)
+		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_JHPPE;
+#elif defined(HMSPPE)
+		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_HMSPPE;
 #elif defined(SCOMPHY)
 		/*qca808x_start*/
 		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_SCOMPHY;
@@ -196,6 +200,8 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
             rv = dess_init(dev_id, cfg);
 #endif
             break;
+	case CHIP_HMSPPE:
+	case CHIP_JHPPE:
         case CHIP_MRPPE:
         case CHIP_APPE:
         case CHIP_HPPE:
@@ -288,6 +294,12 @@ hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
             aos_mem_copy(ssdk_cfg->chip_type, "mht", sizeof("mht"));
             break;
 
+	case CHIP_JHPPE:
+	    aos_mem_copy(ssdk_cfg->chip_type, "jhppe", sizeof("jhppe"));
+	    break;
+	case CHIP_HMSPPE:
+	    aos_mem_copy(ssdk_cfg->chip_type, "hmsppe", sizeof("hmsppe"));
+	    break;
         case CHIP_SCOMPHY:
 #ifdef MP
             if(dev_ssdk_cfg[dev_id]->phy_id == MP_GEPHY)

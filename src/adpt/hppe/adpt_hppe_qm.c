@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1254,6 +1254,8 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 		case HPPE_TYPE:
 		case MRPPE_TYPE:
 		case APPE_TYPE:
+		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
 			ceiling = 1200;
 			weight = 7;
 			resume_offset = 36;

@@ -1914,7 +1914,7 @@ static sw_error_t
 _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t xgmac_port = 0, port_type = 0;
+	a_uint32_t port_type = 0;
 	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
 
 	port_type = qca_hppe_port_mac_type_get(dev_id, port_id);
@@ -1940,14 +1940,8 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 			SW_RTN_ON_ERROR(rv);
 		}
 	}
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
-		xgmac_port = SSDK_PHYSICAL_PORT1;
-	} else {
-		xgmac_port = SSDK_PHYSICAL_PORT5;
-	}
 
-	if (port_id >= xgmac_port) {
+	if (port_id >= SSDK_PHYSICAL_PORT1) {
 		a_bool_t gmac_rxfc = A_FALSE, gmac_txfc = A_FALSE, xgmac_rxfc = A_FALSE,
 			xgmac_txfc = A_FALSE;
 		struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
@@ -1974,7 +1968,9 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 		rv = adpt_hppe_port_interface_mode_switch_mac_reset(dev_id, port_id);
 	}
 	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
+		adpt_chip_type_get(dev_id) == CHIP_MRPPE||
+		adpt_chip_type_get(dev_id) == CHIP_JHPPE ||
+		adpt_chip_type_get(dev_id) == CHIP_HMSPPE) {
 #if defined(APPE)
 		rv = _adpt_appe_port_mux_mac_set(dev_id, port_id, port_type);
 #endif

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -943,7 +943,7 @@ void ssdk_uniphy_clock_rate_set(
 #endif
 #endif
 	uniphy_clk = uniphy_port_clks[clock_type];
-	if (!IS_ERR(uniphy_clk)) {
+	if (!IS_ERR_OR_NULL(uniphy_clk)) {
 		if (rate) {
 #if defined(SSDK_RAW_CLOCK)
 			if (!ssdk_clock_rate_set(uniphy_clk->con_id, rate))
@@ -1000,7 +1000,7 @@ void ssdk_uniphy_clock_enable(
 	}
 #endif
 	uniphy_clk = uniphy_port_clks[clock_type];
-	if (!IS_ERR(uniphy_clk)) {
+	if (!IS_ERR_OR_NULL(uniphy_clk)) {
 #if defined(SSDK_RAW_CLOCK)
 		if (!ssdk_clock_en_set(uniphy_clk->con_id, enable))
 #endif

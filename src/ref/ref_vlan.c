@@ -447,7 +447,8 @@ qca_ar8327_sw_hw_apply(struct switch_dev *dev)
     int i, j;
 
     if (priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE ||
-		priv->version == QCA_VER_MRPPE) {
+		priv->version == QCA_VER_MRPPE || priv->version == QCA_VER_JHPPE ||
+		priv->version == QCA_VER_HMSPPE) {
         return 0;
     }
 

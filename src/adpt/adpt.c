@@ -92,6 +92,12 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 		case CHIP_MRPPE:
 			ppe_type = MRPPE_TYPE;
 			break;
+		case CHIP_JHPPE:
+			ppe_type = JHPPE_TYPE;
+			break;
+		case CHIP_HMSPPE:
+			ppe_type = HMSPPE_TYPE;
+			break;
 		default:
 			break;
 	}
@@ -140,6 +146,12 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 			break;
 		case MRPPE_TYPE:
 			ppe_freq = ADPT_MRPPE_FREQUENCY;
+			break;
+		case JHPPE_TYPE:
+			ppe_freq = ADPT_JHPPE_FREQUENCY;
+			break;
+		case HMSPPE_TYPE:
+			ppe_freq = ADPT_HMSPPE_FREQUENCY;
 			break;
 		default:
 			SSDK_ERROR("Unknown chip type: %d\n", ppe_type);
@@ -370,6 +382,8 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 	switch (cfg->chip_type)
 	{
 #if defined(APPE)
+		case CHIP_HMSPPE:
+		case CHIP_JHPPE:
 		case CHIP_MRPPE:
 		case CHIP_APPE:
 			/* APPE specific module initialization */
