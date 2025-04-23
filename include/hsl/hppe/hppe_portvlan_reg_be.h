@@ -1594,10 +1594,10 @@ union eg_vlan_xlt_action_u {
 	#define VLAN_DEV_TX_COUNTER_TBL_TX_BYTE_CNT_DEFAULT 0x0
 
 struct vlan_dev_tx_counter_tbl {
-	a_uint32_t  tx_pkt_cnt:32;
-	a_uint32_t  tx_byte_cnt_0:32;
+	a_uint32_t  tx_packets:32;
+	a_uint32_t  tx_bytes_0:32;
 	a_uint32_t  _reserved0:24;
-        a_uint32_t  tx_byte_cnt_1:8;
+	a_uint32_t  tx_bytes_1:8;
 };
 
 union vlan_dev_tx_counter_tbl_u {

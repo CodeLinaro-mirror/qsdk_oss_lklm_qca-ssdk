@@ -55,12 +55,13 @@ adpt_appe_portvlan_vpmember_add(a_uint32_t dev_id, fal_port_t port_id, fal_port_
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
-#ifdef JHPPE
-	l2_vp_port_tbl.bf.port_isolation_bitmap_0 |= (0x1 << mem_port_id) & 0x1;
-	l2_vp_port_tbl.bf.port_isolation_bitmap_1 |= ((0x1 << mem_port_id) >> 1) & 0xff;
+#if defined(JHPPE)
+	l2_vp_port_tbl.bf.port_isolation_bitmap_0 |= (0x1 << mem_port_id);
+	l2_vp_port_tbl.bf.port_isolation_bitmap_1 |= (0x1 << (mem_port_id - 1));
 #else
 	l2_vp_port_tbl.bf.port_isolation_bitmap |= (0x1 << mem_port_id);
 #endif
+
 	rv = appe_l2_vp_port_tbl_set(dev_id, port_id, &l2_vp_port_tbl);
 
 	return rv;
@@ -79,12 +80,13 @@ adpt_appe_portvlan_vpmember_del(a_uint32_t dev_id, fal_port_t port_id, fal_port_
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
-#ifdef JHPPE
-	l2_vp_port_tbl.bf.port_isolation_bitmap_0 &= ~((0x1 << mem_port_id) & 0x1);
-	l2_vp_port_tbl.bf.port_isolation_bitmap_1 &= ~(((0x1 << mem_port_id) >> 1) & 0xff);
+#if defined(JHPPE)
+	l2_vp_port_tbl.bf.port_isolation_bitmap_0 &= ~(0x1 << mem_port_id);
+	l2_vp_port_tbl.bf.port_isolation_bitmap_1 &= ~(0x1 << (mem_port_id - 1));
 #else
 	l2_vp_port_tbl.bf.port_isolation_bitmap &= ~(0x1 << mem_port_id);
 #endif
+
 	rv = appe_l2_vp_port_tbl_set(dev_id, port_id, &l2_vp_port_tbl);
 
 	return rv;
@@ -160,6 +162,7 @@ adpt_appe_portvlan_isol_set(a_uint32_t dev_id,
 
 	l2_vp_port_tbl.bf.isol_profile_en = isol_ctrl->enable;
 	l2_vp_port_tbl.bf.isol_profile = isol_ctrl->group_id;
+
 	rv = appe_l2_vp_port_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
 
 	return rv;
@@ -217,70 +220,36 @@ adpt_appe_portvlan_isol_group_get(a_uint32_t dev_id,
 	return rv;
 }
 
-#ifdef JHPPE
 sw_error_t
 adpt_appe_port_egress_vlan_filter_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter)
 {
 	sw_error_t rv = SW_OK;
+#if defined(JHPPE)
 	union l2_vp_port_post_tbl_u l2_vp_port_tbl;
-	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(filter);
-
-	aos_mem_zero(&l2_vp_port_tbl, sizeof(union l2_vp_port_post_tbl_u));
-
-	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
-	SW_RTN_ON_ERROR(rv);
-
-	l2_vp_port_tbl.bf.eg_vlan_fltr_cmd = filter->membership_filter;
-
-	rv = jhppe_l2_vp_port_post_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
-
-	return rv;
-}
-
-sw_error_t
-adpt_appe_port_egress_vlan_filter_get(a_uint32_t dev_id,
-		fal_port_t port_id, fal_egress_vlan_filter_t *filter)
-{
-	sw_error_t rv = SW_OK;
-	union l2_vp_port_post_tbl_u l2_vp_port_tbl;
-	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(filter);
-
-	aos_mem_zero(&l2_vp_port_tbl, sizeof(union l2_vp_port_post_tbl_u));
-
-	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
-	SW_RTN_ON_ERROR(rv);
-
-	filter->membership_filter = l2_vp_port_tbl.bf.eg_vlan_fltr_cmd;
-
-	return rv;
-}
 #else
-sw_error_t
-adpt_appe_port_egress_vlan_filter_set(a_uint32_t dev_id,
-		fal_port_t port_id, fal_egress_vlan_filter_t *filter)
-{
-	sw_error_t rv = SW_OK;
 	union l2_vp_port_tbl_u l2_vp_port_tbl;
+#endif
 	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(filter);
 
-	aos_mem_zero(&l2_vp_port_tbl, sizeof(union l2_vp_port_tbl_u));
-
+	aos_mem_zero(&l2_vp_port_tbl, sizeof(l2_vp_port_tbl));
+#if defined(JHPPE)
+	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
+#else
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
+#endif
 	SW_RTN_ON_ERROR(rv);
 
 	l2_vp_port_tbl.bf.eg_vlan_fltr_cmd = filter->membership_filter;
 
+#if defined(JHPPE)
+	rv = jhppe_l2_vp_port_post_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
+#else
 	rv = appe_l2_vp_port_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
+#endif
 
 	return rv;
 }
@@ -290,22 +259,29 @@ adpt_appe_port_egress_vlan_filter_get(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter)
 {
 	sw_error_t rv = SW_OK;
+#if defined(JHPPE)
+	union l2_vp_port_post_tbl_u l2_vp_port_tbl;
+#else
 	union l2_vp_port_tbl_u l2_vp_port_tbl;
+#endif
 	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(filter);
 
-	aos_mem_zero(&l2_vp_port_tbl, sizeof(union l2_vp_port_tbl_u));
+	aos_mem_zero(&l2_vp_port_tbl, sizeof(l2_vp_port_tbl));
 
+#if defined(JHPPE)
+	rv = jhppe_l2_vp_port_post_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
+#else
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
+#endif
 	SW_RTN_ON_ERROR(rv);
 
 	filter->membership_filter = l2_vp_port_tbl.bf.eg_vlan_fltr_cmd;
 
 	return rv;
 }
-#endif
 #endif
 
 /**

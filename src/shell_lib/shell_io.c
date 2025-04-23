@@ -4676,18 +4676,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 
 		rv = cmd_data_check_confirm(cmd, A_TRUE, &(pEntry->swap_spcp_cpcp),
 				sizeof (a_bool_t));
-
 	}
 	while (talk_mode && (SW_OK != rv));
 
 	do
 	{
-		cmd = get_sub_cmd("spcp_translation_en", "yes");
+		cmd = get_sub_cmd("spcp_translation_cmd", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
-		rv = cmd_data_check_confirm(cmd, A_TRUE, &(pEntry->spcp_xlt_enable),
-				sizeof (a_bool_t));
-
+		rv = cmd_data_check_uint32(cmd, &(pEntry->spcp_xlt_cmd), sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
 
@@ -4702,12 +4699,10 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 
 	do
 	{
-		cmd = get_sub_cmd("cpcp_translation_en", "yes");
+		cmd = get_sub_cmd("cpcp_translation_cmd", "0");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
-		rv = cmd_data_check_confirm(cmd, A_TRUE, &(pEntry->cpcp_xlt_enable),
-				sizeof (a_bool_t));
-
+		rv = cmd_data_check_uint32(cmd, &(pEntry->cpcp_xlt_cmd), sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
 
@@ -4733,12 +4728,10 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 
 	do
 	{
-		cmd = get_sub_cmd("sdei_translation_en", "yes");
+		cmd = get_sub_cmd("sdei_translation_cmd", "yes");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
-		rv = cmd_data_check_confirm(cmd, A_TRUE, &(pEntry->sdei_xlt_enable),
-				sizeof (a_bool_t));
-
+		rv = cmd_data_check_uint32(cmd, &(pEntry->sdei_xlt_cmd), sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
 
@@ -4753,12 +4746,10 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 
 	do
 	{
-		cmd = get_sub_cmd("cdei_translation_en", "yes");
+		cmd = get_sub_cmd("cdei_translation_cmd", "yes");
 		SW_RTN_ON_NULL_PARAM(cmd);
 
-		rv = cmd_data_check_confirm(cmd, A_TRUE, &(pEntry->cdei_xlt_enable),
-				sizeof (a_bool_t));
-
+		rv = cmd_data_check_uint32(cmd, &(pEntry->cdei_xlt_cmd), sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
 

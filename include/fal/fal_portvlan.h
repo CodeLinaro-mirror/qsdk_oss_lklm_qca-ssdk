@@ -102,7 +102,38 @@ typedef enum
 	FAL_VID_XLT_CMD_UNCHANGED = 0,
 	FAL_VID_XLT_CMD_ADDORREPLACE = 1,
 	FAL_VID_XLT_CMD_DELETE = 2,
+	FAL_VID_XLT_CMD_CPFRM_SVID = 3,
+	FAL_VID_XLT_CMD_CPFRM_CVID = 4,
 } fal_vid_xlt_cmd_t;
+
+typedef enum
+{
+	FAL_PCP_XLT_CMD_UNCHANGED = 0,
+	FAL_PCP_XLT_CMD_REPLACE = 1,
+	FAL_PCP_XLT_CMD_CPFRM_SPCP = 2,
+	FAL_PCP_XLT_CMD_CPFRM_CPCP = 3,
+	FAL_PCP_XLT_CMD_MAPFRM_DSCP = 4,
+	FAL_PCP_XLT_CMD_ADD_TAG_AND_REPLACE = 5,
+	FAL_PCP_XLT_CMD_ADD_TAG_AND_CPFRM_SPCP = 6,
+	FAL_PCP_XLT_CMD_ADD_TAG_AND_CPFRM_CPCP = 7,
+	FAL_PCP_XLT_CMD_ADD_TAG_AND_MAPFRM_DSCP = 8,
+} fal_pcp_xlt_cmd_t;
+
+typedef enum
+{
+	FAL_DEI_XLT_CMD_UNCHANGED = 0,
+	FAL_DEI_XLT_CMD_REPLACE = 1,
+	FAL_DEI_XLT_CMD_CPFRM_SDEI = 2,
+	FAL_DEI_XLT_CMD_CPFRM_CDEI = 3,
+} fal_dei_xlt_cmd_t;
+
+typedef enum
+{
+	FAL_TPID_IDX_XLT_CMD_UNCHANGED = 0,
+	FAL_TPID_IDX_XLT_CMD_REPLACE = 1,
+	FAL_TPID_IDX_XLT_CMD_CPFRM_STPID_IDX = 2,
+	FAL_TPID_IDX_XLT_CMD_CPFRM_CTPID_IDX = 3,
+} fal_tpid_idx_xlt_cmd_t;
 
 typedef enum
 {
@@ -359,12 +390,14 @@ typedef struct
 	a_uint8_t c_pcp; /* customer pcp value */
 	a_bool_t c_dei_enable; /* check if rule will include customer dei value */
 	a_uint8_t c_dei; /* customert dei value */
+	a_bool_t protocol_enable; /* check if rule will include protocol value,
+							*contained both in hmsppe inxlt and egxlt */
+	a_uint16_t protocol; /* protocol value,
+							*contained both in hmsppe inxlt and egxlt */
 
-	/* these four fields just for vlan ingress rule */
+	/* these two fields just for vlan ingress rule */
 	a_bool_t frmtype_enable; /* check if rule will include frame type value */
 	fal_frametype_t	frmtype; /* frame type value */
-	a_bool_t protocol_enable; /* check if rule will include protocol value */
-	a_uint16_t protocol; /* protocol value */
 
 	/* these three fields just for vlan egress rule */
 	a_bool_t vsi_valid; /* check if rule will include vsi value valid */
@@ -378,6 +411,15 @@ typedef struct
 				   * */
 	a_uint32_t vni_resv; /* vni or gre key filed value, added for ipq95xx*/
 
+	/* added for hmsppe */
+	a_bool_t stpid_idx_en; /* check if rule will include stpid index */
+	a_uint8_t stpid_idx; /* stpid index */
+	a_bool_t ctpid_idx_en; /* check if rule will include ctpid index */
+	a_uint8_t ctpid_idx; /* ctpid index */
+
+	a_uint8_t dhcp_type; /* Bit 0 = Non-DHCP ,Bit 1 = DHCP v4, Bit 2 = DHCP v6 */
+	a_uint8_t mc_type; /* Bit 0 = Non_MC, Bit 1 = IP_MC, Bit 2 = NONIP_MC */
+
 	a_uint32_t index; /* output, indicate the entry index*/
 } fal_vlan_trans_adv_rule_t;
 
@@ -389,17 +431,18 @@ typedef struct
 	fal_vid_xlt_cmd_t cvid_xlt_cmd; /* check if action will do cvid xlt operation */
 	a_uint16_t cvid_xlt; /* customer vid xlt value */
 	a_bool_t swap_spcp_cpcp; /* check if action will do spcp and cpcp swap operation */
-	a_bool_t spcp_xlt_enable; /* check if action will enable spcp xlt */
+	fal_pcp_xlt_cmd_t spcp_xlt_cmd; /* check if action will do spcp xlt operation */
 	a_uint8_t spcp_xlt; /* service pcp xlt value */
-	a_bool_t cpcp_xlt_enable; /* check if action will enable cpcp xlt */
+	fal_pcp_xlt_cmd_t cpcp_xlt_cmd; /* check if action will do cpcp xlt operation */
 	a_uint8_t cpcp_xlt; /* customer pcp xlt value */
 	a_bool_t swap_sdei_cdei; /* check if action will do sdei and cdei swap operation */
-	a_bool_t sdei_xlt_enable; /* check if action will enable sdei xlt */
+	fal_dei_xlt_cmd_t sdei_xlt_cmd; /* check if action will do sdei xlt operation */
 	a_uint8_t sdei_xlt; /* service dei xlt value */
-	a_bool_t cdei_xlt_enable; /* check if action will enable cdei xlt */
+	fal_dei_xlt_cmd_t cdei_xlt_cmd; /* check if action will do cdei xlt operation */
 	a_uint8_t cdei_xlt; /* customer dei xlt value */
 	a_bool_t counter_enable; /* check if action will enable counter_id */
 	a_uint8_t counter_id;  /* counter id */
+	a_uint8_t counter_mode;  /* counter mode, add for hmsppe, 0 vlan counter tbl, 1 pon pm tbl */
 	/* these two fields just for vlan ingress action */
 	a_bool_t vsi_xlt_enable; /* check if action will enable vsi xlt */
 	a_uint8_t vsi_xlt; /* vsi xlt value */
@@ -411,7 +454,25 @@ typedef struct
 	/*vni fields for egress added by appe*/
 	a_bool_t vni_resv_enable; /* vni xlat or not, added for ipq95xx*/
 	a_uint32_t vni_resv;	/* vni xlt value, added for ipq95xx*/
+
+	/* added for hmsppe */
+	a_uint8_t tags_to_rm; /* 0,1,2, means to remove how many tags */
+	fal_tpid_idx_xlt_cmd_t stpid_idx_xlt_cmd; /* check if action will do stpid idx xlt operation */
+	a_uint8_t stpid_idx_xlt; /* stpid idx xlt value */
+	fal_tpid_idx_xlt_cmd_t ctpid_idx_xlt_cmd; /* check if action will do ctpid idx xlt operation */
+	a_uint8_t ctpid_idx_xlt; /* ctpid idx xlt value */
+	a_uint8_t dscp_map_idx;	/* used to choose pcp value by index in IN_VLAN_DSCP_PBIT_MAP_TBL */
+	fal_fwd_cmd_t fwd_cmd; /* action command, egress xlt only supports forward and drop */
+
+	/* ingress xlt action for hmsppe */
+	a_bool_t svc_code_en; /* check if action will enable service code xlt */
+	a_uint8_t svc_code; /* service code xlt value */
+	a_bool_t dst_valid; /* check if action will generate dest info */
+	fal_dest_info_t dst_port; /* dest info, physical port or virtual port */
 } fal_vlan_trans_adv_action_t;
+
+#define FAL_PORTVLAN_TRANS_TBL_NUM(dir) \
+    ((dir == FAL_PORT_VLAN_INGRESS) ? (XLT_RULE_TBL_NUM) : (EG_VLAN_XLT_RULE_NUM))
 
 typedef struct
 {

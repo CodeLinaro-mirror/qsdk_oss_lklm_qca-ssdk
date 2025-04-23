@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -36,6 +36,7 @@ extern "C" {
 #define FAL_PORT_TYPE_TRUNK 1
 #define FAL_PORT_TYPE_VPORT 2
 #define FAL_PORT_TYPE_VP_GROUP 3
+#define FAL_PORT_TYPE_GEM_PORT 4
 
 #define FAL_PORT_ID_TYPE(port_id) (((port_id)>>24)&0xff)
 #define FAL_PORT_ID_VALUE(port_id) ((port_id)&0xffffff)
@@ -45,6 +46,7 @@ extern "C" {
 #define FAL_IS_TRUNK(port_id) (((FAL_PORT_ID_TYPE(port_id))==FAL_PORT_TYPE_TRUNK)?1:0)
 #define FAL_IS_VPORT(port_id) (((FAL_PORT_ID_TYPE(port_id))==FAL_PORT_TYPE_VPORT)?1:0)
 #define FAL_IS_VP_GROUP(port_id) (((FAL_PORT_ID_TYPE(port_id))==FAL_PORT_TYPE_VP_GROUP)?1:0)
+#define FAL_IS_GEM_PORT(port_id) (((FAL_PORT_ID_TYPE(port_id))==FAL_PORT_TYPE_GEM_PORT)?1:0)
 
 /*
 * Source info change types for vlan translation/tunnel decap
