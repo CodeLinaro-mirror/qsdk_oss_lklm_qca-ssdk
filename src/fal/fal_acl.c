@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -100,6 +100,12 @@ sw_error_t fal_acl_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport_id, fal_vport
 
 sw_error_t fal_acl_counter_get(a_uint32_t dev_id, a_uint32_t entry_index, fal_entry_counter_t *acl_counter)
     DEFINE_FAL_FUNC_ADPT_EXPORT(acl_counter_get, dev_id, entry_index, acl_counter)
+
+sw_error_t fal_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t priority)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_rule_priority_set, dev_id, list_id, rule_id, priority)
+
+sw_error_t fal_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t *priority)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_rule_priority_get, dev_id, list_id, rule_id, priority)
 
 sw_error_t fal_acl_list_dump(a_uint32_t dev_id)
 	DEFINE_FAL_FUNC_HSL_EXPORT(acl_list_dump, dev_id)

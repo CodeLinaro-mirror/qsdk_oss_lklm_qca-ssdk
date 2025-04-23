@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -225,6 +225,12 @@ sw_error_t
 _adpt_appe_pre_acl_counter_get(a_uint32_t dev_id,
 	a_uint32_t entry_index, fal_entry_counter_t *acl_counter);
 
+sw_error_t
+_adpt_appe_pre_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t list_id,
+		a_uint32_t rule_id, a_uint32_t priority);
+sw_error_t
+_adpt_appe_pre_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t list_id,
+		a_uint32_t rule_id, a_uint32_t *priority);
 sw_error_t
 adpt_appe_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,
 	a_uint32_t udf_idx, fal_acl_udf_type_t udf_type, a_uint32_t offset);
