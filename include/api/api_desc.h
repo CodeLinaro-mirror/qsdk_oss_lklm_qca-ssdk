@@ -1305,6 +1305,30 @@ extern "C" {
 		    sizeof(fal_egress_vlan_filter_t), SW_PARAM_PTR|SW_PARAM_IN, \
 		    "egress filter mode"),
 
+#define SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET_DESC \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, SW_PT_VLAN_DIRECTION, \
+		    sizeof(fal_port_vlan_direction_t), SW_PARAM_IN, "vlan direction"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, SW_UINT8, \
+		    sizeof(a_uint8_t), SW_PARAM_IN, "Group ID"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, SW_UINT8, \
+		    sizeof(a_uint8_t), SW_PARAM_IN, "Dscp"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, SW_UINT8, \
+		    sizeof(a_uint8_t), SW_PARAM_IN, "Pcp"),
+
+#define SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET_DESC \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, SW_PT_VLAN_DIRECTION, \
+		    sizeof(fal_port_vlan_direction_t), SW_PARAM_IN, "vlan direction"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, SW_UINT8, \
+		    sizeof(a_uint8_t), SW_PARAM_IN, "Group ID"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, SW_UINT8, \
+		    sizeof(a_uint8_t), SW_PARAM_IN, "Dscp"), \
+    SW_PARAM_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, SW_UINT8, \
+		    sizeof(a_uint8_t), SW_PARAM_PTR|SW_PARAM_OUT, "Pcp"),
+
 #define SW_API_FDB_ADD_DESC \
     SW_PARAM_DEF(SW_API_FDB_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\
     SW_PARAM_DEF(SW_API_FDB_ADD, SW_FDBENTRY, \
