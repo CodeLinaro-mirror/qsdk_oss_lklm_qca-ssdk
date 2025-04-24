@@ -184,6 +184,11 @@ sw_error_t fal_port_scheduler_cfg_reset( a_uint32_t dev_id, fal_port_t port_id)
 sw_error_t fal_port_scheduler_resource_get( a_uint32_t dev_id, fal_port_t port_id, fal_portscheduler_resource_t *cfg)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_scheduler_resource_get, dev_id, port_id, cfg)
 
+sw_error_t fal_qos_port_pcp_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_qos_pcp_cfg_t *pcp_cfg)
+    DEFINE_FAL_FUNC_ADPT(qos_port_pcp_cfg_set, dev_id, port_id, pcp_cfg)
+sw_error_t fal_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_qos_pcp_cfg_t *pcp_cfg)
+    DEFINE_FAL_FUNC_ADPT(qos_port_pcp_cfg_get, dev_id, port_id, pcp_cfg)
+
 #ifndef IN_QOS_MINI
 sw_error_t fal_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qos_cosmap_pcp_get, dev_id, group_id, pcp, cosmap)

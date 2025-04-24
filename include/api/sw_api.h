@@ -15,8 +15,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-
 #ifndef _SW_API_H
 #define _SW_API_H
 
@@ -322,6 +320,7 @@ typedef enum
 	SW_FLOW_NPT66_IID_CAL,
 	SW_FLOW_NPT66_IID,
 	SW_PKTEDIT_PADDING,
+	SW_PCP_CFG,
 /* auto_insert_flag */
 } sw_data_type_e;
 
