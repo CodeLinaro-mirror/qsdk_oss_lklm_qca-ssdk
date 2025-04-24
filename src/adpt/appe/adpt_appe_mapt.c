@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -304,8 +304,10 @@ adpt_appe_mapt_decap_entry_add(a_uint32_t dev_id,
 				update_index = index;
 			}
 
-			if (adpt_lpm_compare(*mapt_entry, tl_map_lpm))
-				return SW_ALREADY_EXIST;
+			if (adpt_lpm_compare(*mapt_entry, tl_map_lpm)) {
+				update_index = index;
+				break;
+			}
 			index++;
 		}
 	}
