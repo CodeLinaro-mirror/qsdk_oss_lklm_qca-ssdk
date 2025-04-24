@@ -944,6 +944,12 @@ typedef sw_error_t
 typedef sw_error_t
 (*adpt_acl_rule_priority_get_func)(a_uint32_t dev_id, a_uint32_t list_id,
 		a_uint32_t rule_id, a_uint32_t *priority);
+typedef sw_error_t
+(*adpt_acl_dscp_pcp_mapping_set_func)(a_uint32_t dev_id, a_uint8_t group_id,
+		a_uint8_t dscp, a_uint8_t pcp);
+typedef sw_error_t
+(*adpt_acl_dscp_pcp_mapping_get_func)(a_uint32_t dev_id, a_uint8_t group_id,
+		a_uint8_t dscp, a_uint8_t *pcp);
 
 typedef sw_error_t (*adpt_qos_port_pri_set_func)(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_pri_precedence_t *pri);
@@ -1891,6 +1897,8 @@ typedef struct
 	adpt_acl_counter_get_func adpt_acl_counter_get;
 	adpt_acl_rule_priority_set_func adpt_acl_rule_priority_set;
 	adpt_acl_rule_priority_get_func adpt_acl_rule_priority_get;
+	adpt_acl_dscp_pcp_mapping_set_func adpt_acl_dscp_pcp_mapping_set;
+	adpt_acl_dscp_pcp_mapping_get_func adpt_acl_dscp_pcp_mapping_get;
 
 	/* qos */
 	adpt_qos_port_pri_set_func adpt_qos_port_pri_set;
