@@ -175,6 +175,10 @@ sw_error_t fal_switch_port_loopback_set(a_uint32_t dev_id, fal_port_t port_id, f
 sw_error_t fal_switch_port_loopback_get(a_uint32_t dev_id, fal_port_t port_id, fal_loopback_config_t *loopback_cfg)
     DEFINE_FAL_FUNC_ADPT_EXPORT(switch_port_loopback_get, dev_id, port_id, loopback_cfg)
 
+sw_error_t
+fal_switch_loopback_port_get(a_uint32_t dev_id, fal_port_t *port_id)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(switch_loopback_port_get, dev_id, port_id)
+
 sw_error_t fal_port_flow_ctrl_thres_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint16_t on_thres, a_uint16_t off_thres)
     DEFINE_FAL_FUNC_ADPT_HSL(port_tx_buff_thresh_set, port_flowctrl_thresh_set, dev_id, port_id, on_thres, off_thres)
     EXPORT_SYMBOL(fal_port_flow_ctrl_thres_set);
