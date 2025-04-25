@@ -1246,6 +1246,12 @@ extern "C" {
 #define SW_API_PON_GEMPORT_PLC_SET			(14 + SW_API_PON_OFFSET)
 #define SW_API_PON_GEMPORT_PLC_GET			(15 + SW_API_PON_OFFSET)
 
+/* PON PM */
+#define SW_API_PON_PM_OFFSET			4300
+#define SW_API_PON_PM_COUNTER_ENTRY_SET		(0 + SW_API_PON_PM_OFFSET)
+#define SW_API_PON_PM_COUNTER_ENTRY_GET		(1 + SW_API_PON_PM_OFFSET)
+#define SW_API_PON_PM_COUNTER_GET		(2 + SW_API_PON_PM_OFFSET)
+#define SW_API_PON_PM_COUNTER_FLUSH             (3 + SW_API_PON_PM_OFFSET)
 /* auto_insert_flag */
 /*qca808x_start*/
     /*debug*/

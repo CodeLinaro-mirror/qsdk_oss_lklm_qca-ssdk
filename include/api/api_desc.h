@@ -6737,6 +6737,46 @@ extern "C" {
 			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
 	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_GET, SW_GEMPORT_PLC, \
 			sizeof(fal_gemport_policer_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Policer CFG"),
+
+#define SW_API_PON_PM_COUNTER_ENTRY_SET_DESC \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_SET, SW_UINT32, \
+                        sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_SET, SW_UINT32, \
+                        sizeof(a_uint32_t), SW_PARAM_IN, "Entry index"), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_SET, SW_DIRECTION, \
+                        sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_SET, SW_PON_PM_COUNTER_ENTRY, \
+                        sizeof(fal_pon_pm_counter_entry_t), \
+                        SW_PARAM_PTR|SW_PARAM_IN, "counter entry"),
+
+#define SW_API_PON_PM_COUNTER_ENTRY_GET_DESC \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_GET, SW_UINT32, \
+                        sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_GET, SW_UINT32, \
+                        sizeof(a_uint32_t), SW_PARAM_IN, "Entry index"), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_GET, SW_DIRECTION, \
+                        sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_ENTRY_GET, SW_PON_PM_COUNTER_ENTRY, \
+                        sizeof(fal_pon_pm_counter_entry_t), \
+                        SW_PARAM_PTR|SW_PARAM_OUT, "counter entry"),
+
+#define SW_API_PON_PM_COUNTER_GET_DESC \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_GET, SW_UINT32, \
+                        sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_GET, SW_UINT32, \
+                        sizeof(a_uint32_t), SW_PARAM_IN, "Counter ID"), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_GET, SW_DIRECTION, \
+                        sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+        SW_PARAM_DEF(SW_API_PON_PM_COUNTER_GET, SW_PON_PM_COUNTER, \
+                        sizeof(fal_pon_pm_counter_t), SW_PARAM_PTR|SW_PARAM_OUT, "Counter"), \
+
+#define SW_API_PON_PM_COUNTER_FLUSH_DESC \
+	SW_PARAM_DEF(SW_API_PON_PM_COUNTER_FLUSH, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "), \
+	SW_PARAM_DEF(SW_API_PON_PM_COUNTER_FLUSH, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Counter ID"), \
+	SW_PARAM_DEF(SW_API_PON_PM_COUNTER_FLUSH, SW_DIRECTION, \
+			sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
 /* auto_insert_flag */
 /*qca808x_start*/
 

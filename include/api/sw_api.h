@@ -329,6 +329,8 @@ typedef enum
 	SW_GEMPORT_MAP,
 	SW_GEMPORT_CFG,
 	SW_GEMPORT_PLC,
+	SW_PON_PM_COUNTER_ENTRY,
+	SW_PON_PM_COUNTER,
 /* auto_insert_flag */
 } sw_data_type_e;
 
