@@ -677,6 +677,223 @@ hppe_host_ipv6_mcast_get(
 sw_error_t
 hppe_host_flush_common(a_uint32_t dev_id);
 
+/* from adpt_hppe_flow.c */
+sw_error_t
+hppe_flow_host_ipv4_data_rd_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv6_data_rd_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv4_data_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv6_data_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv4_data_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv6_data_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv4_data_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_ipv6_data_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_3tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_tbl_op_rslt_host_entry_index_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_flow_host_tbl_rd_op_rslt_host_entry_index_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_flow_ipv4_5tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv4_3tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv6_5tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_5tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv6_3tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv4_5tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv4_3tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv6_5tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_5tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv6_3tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv4_5tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv4_3tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv6_5tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_5tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_ipv6_3tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+sw_error_t
+hppe_flow_host_flush_common(a_uint32_t dev_id);
+
+sw_error_t
+hppe_flow_entry_host_op_ipv4_5tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv4_3tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_3tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_5tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_5tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_3tuple_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv4_5tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv4_3tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_3tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_5tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_5tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_3tuple_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv4_5tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv4_3tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_3tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_5tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_5tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_entry_host_op_ipv6_3tuple_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union in_flow_ipv6_3tuple_tbl_u *entry);
+
+
+sw_error_t
+hppe_flow_host_data_op_common(
+		a_uint32_t dev_id,
+		a_uint32_t op_type,
+		a_uint32_t op_mode,
+		a_uint32_t *index);
+
+sw_error_t
+hppe_flow_flush_common(a_uint32_t dev_id);
+
+#if defined(MPPE)
+sw_error_t
+mppe_qos_mapping_tbl_flow_policer_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *policer_en,
+		a_uint32_t *policer_index);
+
+sw_error_t
+mppe_qos_mapping_tbl_flow_policer_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t policer_en,
+		a_uint32_t policer_index);
+#endif
+
 //from adpt_hppe_portvlan.c
 sw_error_t
 hppe_bridge_config_bridge_type_get(

@@ -20,6 +20,14 @@
  * @defgroup
  * @{
  */
+#include "hsl_reg.h"
+#include "adpt_hppe.h"
+#include "adpt.h"
+#if defined(CPPE) || defined(APPE)
+#include "adpt_cppe_flow.h"
+#endif
+
+#if 0
 #include "sw.h"
 #include "fal_flow.h"
 #include "hppe_ip_reg.h"
@@ -36,6 +44,7 @@
 #include "cppe_qos.h"
 #include "mppe_athtag_reg.h"
 #include "mppe_athtag.h"
+#endif
 #endif
 
 #define FLOW_ENTRY_TYPE_IPV4 0
@@ -290,33 +299,33 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 	case FAL_FLOW_QOS_TYPE_COOKIE_40B:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->cookie_40b, sizeof(flow_qos->cookie_40b));
-			eg_treemap->bf1.flow_cookie_low = FIELD_GET(FLOW_COOKIE_40BIT_LOW, tmp);
-			eg_treemap->bf1.flow_cookie_high_0 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_16BIT_L, tmp);
-			eg_treemap->bf1.flow_cookie_high_1 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_8BIT_H, tmp);
+			eg_treemap->bf1.flow_cookie = FIELD_GET(FLOW_COOKIE_40BIT_LOW, tmp);
+			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_16BIT_L, tmp);
+			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_8BIT_H, tmp);
 			eg_treemap->bf1.type = 1;
 		} else {
-			tmp = FIELD_PREP(FLOW_COOKIE_40BIT_LOW, eg_treemap->bf1.flow_cookie_low);
-			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_high_0);
-			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_high_1);
+			tmp = FIELD_PREP(FLOW_COOKIE_40BIT_LOW, eg_treemap->bf1.flow_cookie);
+			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_ext_0);
+			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_ext_1);
 			memcpy(flow_qos->cookie_40b, &tmp, sizeof(flow_qos->cookie_40b));
 		}
 		break;
 	case FAL_FLOW_QOS_TYPE_COOKIE_48B:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->cookie_48b, sizeof(flow_qos->cookie_48b));
-			eg_treemap->bf1.flow_cookie_low = FIELD_GET(FLOW_COOKIE_48BIT_LOW, tmp);
+			eg_treemap->bf1.flow_cookie = FIELD_GET(FLOW_COOKIE_48BIT_LOW, tmp);
 			eg_treemap->bf1.wifi_qos = FIELD_GET(FLOW_COOKIE_48BIT_MIDDLE, tmp);
-			eg_treemap->bf1.flow_cookie_high_0 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
-			eg_treemap->bf1.flow_cookie_high_1 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
+			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
+			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
 
 			/* wifi qos is valid only when the flag is true. */
 			eg_treemap->bf1.wifi_qos_flag = true;
 			eg_treemap->bf1.type = 1;
 		} else {
-			tmp = FIELD_PREP(FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie_low);
+			tmp = FIELD_PREP(FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie);
 			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_MIDDLE, eg_treemap->bf1.wifi_qos);
-			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_high_0);
-			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_high_1);
+			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_ext_0);
+			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_ext_1);
 			memcpy(flow_qos->cookie_48b, &tmp, sizeof(flow_qos->cookie_48b));
 
 			/* qos & qos_valid is already assigned before this function called. */
@@ -451,43 +460,50 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
-			entry.bf3.l4_port2 = flow_entry->dnat_dstport;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
+
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -504,32 +520,40 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -539,12 +563,18 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
+#if defined(HMSPPE)
+		entry.bf.l4_dport = flow_entry->dst_port;
+		entry.bf.l4_sport_0 = flow_entry->src_port;
+		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -561,41 +591,53 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 3;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7;
-		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
+#if defined(HMSPPE)
+		entry.bf.pmtu = flow_entry->pmtu;
+		entry.bf.vpn_id_0 = flow_entry->vpn_id;
+		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.vpn_id = flow_entry->vpn_id;
+#endif
+		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 #endif
 		rv = hppe_flow_entry_host_op_ipv4_3tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
@@ -610,32 +652,38 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
-			entry.bf1.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -647,8 +695,8 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -698,7 +746,7 @@ adpt_hppe_flow_entry_host_op_get(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -710,43 +758,50 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry.bf.next_hop1;
 			flow_entry->snat_srcport = entry.bf.l4_port1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
-			flow_entry->dnat_dstport = entry.bf3.l4_port2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
+			flow_entry->dnat_dstport = entry.bf1.l4_port2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
 			flow_entry->route_port = entry.bf2.port_vp1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf1.port_vp2;
+			flow_entry->bridge_port = entry.bf3.port_vp2;
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf1.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf1.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf1.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf1.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf1.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv4 = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
 		flow_entry->src_port = entry.bf.l4_sport;
-		flow_entry->dst_port = entry.bf.l4_dport_0 |\
-					entry.bf.l4_dport_1 << 4;
+		flow_entry->dst_port = entry.bf.l4_dport_0;
+		flow_entry->dst_port |= entry.bf.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 11;
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PMTU_OFFSET);
 		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 		flow_entry->vpn_id = entry.bf.vpn_id;
 #endif
@@ -766,9 +821,15 @@ adpt_hppe_flow_entry_host_op_get(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
+#if defined(HMSPPE)
+		entry.bf.l4_dport = flow_entry->dst_port;
+		entry.bf.l4_sport_0 = flow_entry->src_port;
+		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -780,33 +841,41 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry.bf.next_hop1;
+			flow_entry->snat_srcport = entry.bf.l4_port1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
+			flow_entry->dnat_dstport = entry.bf1.l4_port2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
 			flow_entry->route_port = entry.bf2.port_vp1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf1.port_vp2;
+			flow_entry->bridge_port = entry.bf3.port_vp2;
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf1.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf1.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf1.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf1.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf1.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv6.ul[3] = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
@@ -816,11 +885,18 @@ adpt_hppe_flow_entry_host_op_get(
 					   entry.bf.ip_addr_3 << 20;
 		flow_entry->flow_ip.ipv6.ul[0] = entry.bf.ip_addr_3 >> 12 |\
 					   entry.bf.ip_addr_4 << 20;
+#if defined(HMSPPE)
+		flow_entry->dst_port = entry.bf.l4_dport;
+		flow_entry->src_port = entry.bf.l4_sport_0;
+		flow_entry->src_port |= entry.bf.l4_sport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		flow_entry->src_port = entry.bf.l4_sport;
-		flow_entry->dst_port = entry.bf.l4_dport_0 |\
-					entry.bf.l4_dport_1 << 4;
+		flow_entry->dst_port = entry.bf.l4_dport_0;
+		flow_entry->dst_port |= entry.bf.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 11;
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET);
 		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 		flow_entry->vpn_id = entry.bf.vpn_id;
 #endif
@@ -836,7 +912,12 @@ adpt_hppe_flow_entry_host_op_get(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
+#if defined(HMSPPE)
+		entry.bf.vpn_id_0 = flow_entry->vpn_id;
+		entry.bf.vpn_id_1 = flow_entry->vpn_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
 		entry.bf.vpn_id = flow_entry->vpn_id;
+#endif
 #endif
 		rv = hppe_flow_entry_host_op_ipv4_3tuple_get(dev_id, get_mode, &entry_id, &entry);
 		flow_entry->entry_id = entry_id;
@@ -846,41 +927,54 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry.bf.next_hop1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
 			flow_entry->route_port = entry.bf2.port_vp1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf1.port_vp2;
+			flow_entry->bridge_port = entry.bf3.port_vp2;
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf1.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf1.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf1.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf1.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf1.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv4 = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
 		flow_entry->ip_type = entry.bf.ip_protocol;
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 3;
-		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
+#if defined(HMSPPE)
+		flow_entry->pmtu = entry.bf.pmtu;
+		flow_entry->vpn_id = entry.bf.vpn_id_0;
+		flow_entry->vpn_id |= entry.bf.vpn_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
 		flow_entry->vpn_id = entry.bf.vpn_id;
+#endif
+		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 #endif
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
@@ -910,33 +1004,39 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
-			flow_entry->snat_nexthop = entry.bf1.next_hop1;
+			flow_entry->snat_nexthop = entry.bf.next_hop1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
 			flow_entry->route_port = entry.bf2.port_vp1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf.port_vp2;
+			flow_entry->bridge_port = entry.bf3.port_vp2;
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv6.ul[3] = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
@@ -948,7 +1048,8 @@ adpt_hppe_flow_entry_host_op_get(
 					   entry.bf.ip_addr_4 << 20;
 		flow_entry->ip_type = entry.bf.ip_protocol;
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 11;
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET);
 		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 		flow_entry->vpn_id = entry.bf.vpn_id;
 #endif
@@ -1002,43 +1103,49 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
-			entry.bf3.l4_port2 = flow_entry->dnat_dstport;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1054,32 +1161,40 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -1089,12 +1204,18 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
+#if defined(HMSPPE)
+		entry.bf.l4_dport = flow_entry->dst_port;
+		entry.bf.l4_sport_0 = flow_entry->src_port;
+		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1110,41 +1231,53 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 3;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7;
-		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
+#if defined(HMSPPE)
+		entry.bf.pmtu = flow_entry->pmtu;
+		entry.bf.vpn_id_0 = flow_entry->vpn_id;
+		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.vpn_id = flow_entry->vpn_id;
+#endif
+		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 #endif
 		rv = hppe_flow_entry_host_op_ipv4_3tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
@@ -1158,32 +1291,38 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
-			entry.bf1.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf.port_vp2 = flow_entry->bridge_port;
+			entry.bf3.port_vp2 = flow_entry->bridge_port;
 #if defined(APPE)
-			entry.bf.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -1195,8 +1334,8 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1297,7 +1436,7 @@ adpt_hppe_flow_entry_get(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1312,14 +1451,22 @@ adpt_hppe_flow_entry_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry.bf.next_hop1;
 			flow_entry->snat_srcport = entry.bf.l4_port1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
-			flow_entry->dnat_dstport = entry.bf3.l4_port2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
+			flow_entry->dnat_dstport = entry.bf1.l4_port2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
@@ -1328,33 +1475,32 @@ adpt_hppe_flow_entry_get(
 				flow_entry->route_port =
 					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf2.port_vp1);
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf1.port_vp2;
-			if (entry.bf1.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
+			flow_entry->bridge_port = entry.bf3.port_vp2;
+			if (entry.bf3.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
 				flow_entry->bridge_port =
-					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf1.port_vp2);
+					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf3.port_vp2);
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf1.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf1.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf1.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf1.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf1.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv4 = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
 		flow_entry->src_port = entry.bf.l4_sport;
-		flow_entry->dst_port = entry.bf.l4_dport_0 |\
-					entry.bf.l4_dport_1 << 4;
+		flow_entry->dst_port = entry.bf.l4_dport_0;
+		flow_entry->dst_port |= entry.bf.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 11;
+		flow_entry->pmtu = entry.bf.pmtu_0;;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PMTU_OFFSET);
 		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 		flow_entry->vpn_id = entry.bf.vpn_id;
 #endif
@@ -1374,9 +1520,15 @@ adpt_hppe_flow_entry_get(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
+#if defined(HMSPPE)
+		entry.bf.l4_dport = flow_entry->dst_port;
+		entry.bf.l4_sport_0 = flow_entry->src_port;
+		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1391,12 +1543,22 @@ adpt_hppe_flow_entry_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry.bf.next_hop1;
+			flow_entry->snat_srcport = entry.bf.l4_port1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
+			flow_entry->dnat_dstport = entry.bf1.l4_port2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
@@ -1405,25 +1567,23 @@ adpt_hppe_flow_entry_get(
 				flow_entry->route_port =
 					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf2.port_vp1);
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf1.port_vp2;
-			if (entry.bf1.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
+			flow_entry->bridge_port = entry.bf3.port_vp2;
+			if (entry.bf3.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
 				flow_entry->bridge_port =
-					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf1.port_vp2);
+					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf3.port_vp2);
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf1.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf1.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf1.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf1.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf1.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv6.ul[3] = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
@@ -1433,11 +1593,18 @@ adpt_hppe_flow_entry_get(
 					   entry.bf.ip_addr_3 << 20;
 		flow_entry->flow_ip.ipv6.ul[0] = entry.bf.ip_addr_3 >> 12 |\
 					   entry.bf.ip_addr_4 << 20;
+#if defined(HMSPPE)
+		flow_entry->dst_port = entry.bf.l4_dport;
+		flow_entry->src_port = entry.bf.l4_sport_0;
+		flow_entry->src_port |= entry.bf.l4_sport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		flow_entry->src_port = entry.bf.l4_sport;
-		flow_entry->dst_port = entry.bf.l4_dport_0 |\
-					entry.bf.l4_dport_1 << 4;
+		flow_entry->dst_port = entry.bf.l4_dport_0;
+		flow_entry->dst_port |= entry.bf.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 11;
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET);
 		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 		flow_entry->vpn_id = entry.bf.vpn_id;
 #endif
@@ -1454,7 +1621,12 @@ adpt_hppe_flow_entry_get(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
+#if defined(HMSPPE)
+		entry.bf.vpn_id_0 = flow_entry->vpn_id;
+		entry.bf.vpn_id_1 = flow_entry->vpn_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
 		entry.bf.vpn_id = flow_entry->vpn_id;
+#endif
 #endif
 		rv = hppe_flow_ipv4_3tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
 		if (entry.bf.entry_type != FLOW_ENTRY_TYPE_IPV4 ||
@@ -1467,12 +1639,20 @@ adpt_hppe_flow_entry_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry.bf.next_hop1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
@@ -1481,33 +1661,38 @@ adpt_hppe_flow_entry_get(
 				flow_entry->route_port =
 					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf2.port_vp1);
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf1.port_vp2;
-			if (entry.bf1.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
+			flow_entry->bridge_port = entry.bf3.port_vp2;
+			if (entry.bf3.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
 				flow_entry->bridge_port =
-					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf1.port_vp2);
+					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf3.port_vp2);
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf1.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf1.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf1.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf1.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf1.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv4 = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
 		flow_entry->ip_type = entry.bf.ip_protocol;
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 3;
-		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
+#if defined(HMSPPE)
+		flow_entry->pmtu = entry.bf.pmtu;
+		flow_entry->vpn_id = entry.bf.vpn_id_0;
+		flow_entry->vpn_id |= entry.bf.vpn_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
 		flow_entry->vpn_id = entry.bf.vpn_id;
+#endif
+		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 #endif
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
@@ -1540,12 +1725,20 @@ adpt_hppe_flow_entry_get(
 		flow_entry->age = entry.bf.age;
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
-		flow_entry->fwd_type = entry.bf.fwd_type;
 		flow_entry->invalid = !entry.bf.valid;
+#if defined(HMSPPE)
+		flow_entry->fwd_type = entry.bf.fwd_type_0;
+		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
+		flow_entry->pri_profile = entry.bf.pri_profile;
+#else
+		flow_entry->fwd_type = entry.bf.fwd_type;
+		flow_entry->pri_profile = entry.bf.pri_profile_0;
+		flow_entry->pri_profile |= entry.bf.pri_profile_1 << 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
-			flow_entry->snat_nexthop = entry.bf1.next_hop1;
+			flow_entry->snat_nexthop = entry.bf.next_hop1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			flow_entry->dnat_nexthop = entry.bf3.next_hop2;
+			flow_entry->dnat_nexthop = entry.bf1.next_hop2;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			flow_entry->route_nexthop = entry.bf2.next_hop3;
 			flow_entry->port_valid = entry.bf2.port_vp_valid1;
@@ -1554,25 +1747,23 @@ adpt_hppe_flow_entry_get(
 				flow_entry->route_port =
 					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf2.port_vp1);
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			flow_entry->bridge_port = entry.bf.port_vp2;
-			if (entry.bf.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
+			flow_entry->bridge_port = entry.bf3.port_vp2;
+			if (entry.bf3.port_vp2 >= SSDK_MIN_VIRTUAL_PORT_ID)
 				flow_entry->bridge_port =
-					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf.port_vp2);
+					FAL_PORT_ID(FAL_PORT_TYPE_VPORT, entry.bf3.port_vp2);
 #if defined(APPE)
-			flow_entry->vlan_fmt_valid = entry.bf.vlan_fmt_valid;
-			flow_entry->svlan_fmt = entry.bf.svlan_fmt;
-			flow_entry->cvlan_fmt = entry.bf.cvlan_fmt;
+			flow_entry->vlan_fmt_valid = entry.bf3.vlan_fmt_valid;
+			flow_entry->svlan_fmt = entry.bf3.svlan_fmt;
+			flow_entry->cvlan_fmt = entry.bf3.cvlan_fmt;
 #endif
 #if defined(MPPE)
-			flow_entry->bridge_nexthop_valid = entry.bf.next_hop4_valid;
-			flow_entry->bridge_nexthop = entry.bf.next_hop4;
+			flow_entry->bridge_nexthop_valid = entry.bf3.next_hop4_valid;
+			flow_entry->bridge_nexthop = entry.bf3.next_hop4;
 #endif
 		}
 		flow_entry->deacclr_en = entry.bf.de_acce;
 		flow_entry->copy_tocpu_en = entry.bf.copy_to_cpu_en;
 		flow_entry->syn_toggle = entry.bf.syn_toggle;
-		flow_entry->pri_profile = entry.bf.pri_profile_0 |\
-								entry.bf.pri_profile_1 << 1;
 		flow_entry->sevice_code = entry.bf.service_code;
 		flow_entry->flow_ip.ipv6.ul[3] = entry.bf.ip_addr_0 |\
 					   entry.bf.ip_addr_1 << 20;
@@ -1584,7 +1775,8 @@ adpt_hppe_flow_entry_get(
 					   entry.bf.ip_addr_4 << 20;
 		flow_entry->ip_type = entry.bf.ip_protocol;
 #if defined(APPE)
-		flow_entry->pmtu = entry.bf.pmtu_0 | entry.bf.pmtu_1 << 11;
+		flow_entry->pmtu = entry.bf.pmtu_0;
+		flow_entry->pmtu |= entry.bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET);
 		flow_entry->pmtu_check_l3 = entry.bf.pmtu_check_type;
 		flow_entry->vpn_id = entry.bf.vpn_id;
 #endif
@@ -1678,43 +1870,49 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
-			entry.bf3.l4_port2 = flow_entry->dnat_dstport;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1730,32 +1928,40 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -1765,12 +1971,18 @@ adpt_hppe_flow_entry_del(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
+#if defined(HMSPPE)
+		entry.bf.l4_dport = flow_entry->dst_port;
+		entry.bf.l4_sport_0 = flow_entry->src_port;
+		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -1786,41 +1998,53 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 3;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7;
-		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
+#if defined(HMSPPE)
+		entry.bf.pmtu = flow_entry->pmtu;
+		entry.bf.vpn_id_0 = flow_entry->vpn_id;
+		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.vpn_id = flow_entry->vpn_id;
+#endif
+		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 #endif
 		rv = hppe_flow_ipv4_3tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
@@ -1834,32 +2058,38 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
-			entry.bf1.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -1871,10 +2101,10 @@ adpt_hppe_flow_entry_del(
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
-		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET);
+		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 #endif
 		rv = hppe_flow_ipv6_3tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else
@@ -2094,43 +2324,49 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
-			entry.bf3.l4_port2 = flow_entry->dnat_dstport;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -2147,32 +2383,40 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.l4_port1 = flow_entry->snat_srcport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.l4_port2 = flow_entry->dnat_dstport;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -2182,12 +2426,18 @@ adpt_hppe_flow_entry_add(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
+#if defined(HMSPPE)
+		entry.bf.l4_dport = flow_entry->dst_port;
+		entry.bf.l4_sport_0 = flow_entry->src_port;
+		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
+#else
 		entry.bf.l4_sport = flow_entry->src_port;
 		entry.bf.l4_dport_0 = flow_entry->dst_port;
-		entry.bf.l4_dport_1 = flow_entry->dst_port >> 4;
+		entry.bf.l4_dport_1 = flow_entry->dst_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_DPORT_OFFSET);
+#endif
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -2204,41 +2454,53 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf1.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf1.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf1.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf1.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf1.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf1.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 3;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7;
-		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
+#if defined(HMSPPE)
+		entry.bf.pmtu = flow_entry->pmtu;
+		entry.bf.vpn_id_0 = flow_entry->vpn_id;
+		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
+#else
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.vpn_id = flow_entry->vpn_id;
+#endif
+		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 #endif
 		rv = hppe_flow_ipv4_3tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
@@ -2253,32 +2515,38 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
+#if defined(HMSPPE)
+		entry.bf.fwd_type_0 = flow_entry->fwd_type;
+		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
+		entry.bf.pri_profile = flow_entry->pri_profile;
+#else
 		entry.bf.fwd_type = flow_entry->fwd_type;
+		entry.bf.pri_profile_0 = flow_entry->pri_profile;
+		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
+#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
-			entry.bf1.next_hop1 = flow_entry->snat_nexthop;
+			entry.bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
-			entry.bf3.next_hop2 = flow_entry->dnat_nexthop;
+			entry.bf1.next_hop2 = flow_entry->dnat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_ROUTE) {
 			entry.bf2.next_hop3 = flow_entry->route_nexthop;
 			entry.bf2.port_vp_valid1= flow_entry->port_valid;
 			entry.bf2.port_vp1 = flow_entry->route_port & 0xffffff;
 		} else if (flow_entry->fwd_type == FAL_FLOW_BRIDGE) {
-			entry.bf.port_vp2 = flow_entry->bridge_port & 0xffffff;
+			entry.bf3.port_vp2 = flow_entry->bridge_port & 0xffffff;
 #if defined(APPE)
-			entry.bf.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
-			entry.bf.svlan_fmt = flow_entry->svlan_fmt;
-			entry.bf.cvlan_fmt = flow_entry->cvlan_fmt;
+			entry.bf3.vlan_fmt_valid = flow_entry->vlan_fmt_valid;
+			entry.bf3.svlan_fmt = flow_entry->svlan_fmt;
+			entry.bf3.cvlan_fmt = flow_entry->cvlan_fmt;
 #endif
 #if defined(MPPE)
-			entry.bf.next_hop4_valid = flow_entry->bridge_nexthop_valid;
-			entry.bf.next_hop4 = flow_entry->bridge_nexthop;
+			entry.bf3.next_hop4_valid = flow_entry->bridge_nexthop_valid;
+			entry.bf3.next_hop4 = flow_entry->bridge_nexthop;
 #endif
 		}
 		entry.bf.de_acce = flow_entry->deacclr_en;
 		entry.bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry.bf.syn_toggle = flow_entry->syn_toggle;
-		entry.bf.pri_profile_0 = flow_entry->pri_profile;
-		entry.bf.pri_profile_1 = flow_entry->pri_profile >> 1;
 		entry.bf.service_code = flow_entry->sevice_code;
 		entry.bf.ip_addr_0 = flow_entry->flow_ip.ipv6.ul[3];
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv6.ul[3] >> 20 |\
@@ -2290,8 +2558,8 @@ adpt_hppe_flow_entry_add(
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-		entry.bf.pmtu_1 = flow_entry->pmtu >> 11;
-		entry.bf.pmtu_0 = flow_entry->pmtu & 0x7ff;
+		entry.bf.pmtu_0 = flow_entry->pmtu;
+		entry.bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET);
 		entry.bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 		entry.bf.vpn_id = flow_entry->vpn_id;
 #endif
@@ -2638,26 +2906,35 @@ ip6_offset_find(fal_ip6_addr_t ip6, a_uint32_t prefix_len)
 	return -1;
 }
 
-#define SWAP_IP6(dst, src) \
-	do { \
-		(dst)[3] = (src)[0]; \
-		(dst)[2] = (src)[1]; \
-		(dst)[1] = (src)[2]; \
-		(dst)[0] = (src)[3]; \
-	} while (0)
+static int napt66_convert(fal_ip6_addr_t *ip6, union eg_ipv6_prefix_tbl_u *entry, a_bool_t to_hsl)
+{
+	if (to_hsl) {
+		entry->bf.prefix_0 = ip6->ul[3];
+		entry->bf.prefix_1 = ip6->ul[2];
+		entry->bf.prefix_2 = ip6->ul[1];
+		entry->bf.prefix_3 = ip6->ul[0];
+	} else {
+		ip6->ul[0] = entry->bf.prefix_3;
+		ip6->ul[1] = entry->bf.prefix_2;
+		ip6->ul[2] = entry->bf.prefix_1;
+		ip6->ul[3] = entry->bf.prefix_0;
+	}
+
+	return 0;
+}
 
 sw_error_t
 adpt_hppe_flow_npt66_prefix_add(a_uint32_t dev_id, a_uint32_t l3_if_index, fal_ip6_addr_t *ip6, a_uint32_t prefix_len)
 {
 	union eg_ipv6_prefix_tbl_u entry = { 0 };
 
-	SWAP_IP6(entry.bf.prefix, ip6->ul);
+	napt66_convert(ip6, &entry, A_TRUE);
 	entry.bf.length = prefix_len;
 
 	hppe_eg_ipv6_prefix_tbl_set(dev_id, l3_if_index, &entry);
 
 	SSDK_DEBUG("**********%s:%d*****[%d]*%x:%x:%x:%x %d*******\n", __func__, __LINE__, l3_if_index, 
-		entry.bf.prefix[0], entry.bf.prefix[1], entry.bf.prefix[2], entry.bf.prefix[3], entry.bf.length);
+		entry.bf.prefix_0, entry.bf.prefix_1, entry.bf.prefix_2, entry.bf.prefix_3, entry.bf.length);
 
 	return SW_OK;
 	/*
@@ -2674,11 +2951,11 @@ adpt_hppe_flow_npt66_prefix_get(a_uint32_t dev_id, a_uint32_t l3_if_index, fal_i
 
 	hppe_eg_ipv6_prefix_tbl_get(dev_id, l3_if_index, &entry);
 
-	SWAP_IP6(ip6->ul, entry.bf.prefix);
+	napt66_convert(ip6, &entry, A_FALSE);
 	*prefix_len = entry.bf.length;
 
 	SSDK_DEBUG("**********%s:%d*****[%d]*%x:%x:%x:%x %d*******\n", __func__, __LINE__, l3_if_index, 
-		entry.bf.prefix[0], entry.bf.prefix[1], entry.bf.prefix[2], entry.bf.prefix[3], entry.bf.length);
+		entry.bf.prefix_0, entry.bf.prefix_1, entry.bf.prefix_2, entry.bf.prefix_3, entry.bf.length);
 
 	return SW_OK;
 }
@@ -2691,7 +2968,7 @@ adpt_hppe_flow_npt66_prefix_del(a_uint32_t dev_id, a_uint32_t l3_if_index)
 	hppe_eg_ipv6_prefix_tbl_set(dev_id, l3_if_index, &entry);
 
 	SSDK_DEBUG("**********%s:%d*****[%d]*%x:%x:%x:%x %d*******\n", __func__, __LINE__, l3_if_index, 
-		entry.bf.prefix[0], entry.bf.prefix[1], entry.bf.prefix[2], entry.bf.prefix[3], entry.bf.length);
+		entry.bf.prefix_0, entry.bf.prefix_1, entry.bf.prefix_2, entry.bf.prefix_3, entry.bf.length);
 
 	return SW_OK;
 }

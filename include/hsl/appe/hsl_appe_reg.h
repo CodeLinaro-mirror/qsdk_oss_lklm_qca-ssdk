@@ -86,6 +86,7 @@
 #include "hppe/hppe_reg_access.h"
 
 #include "cppe/cppe_qos_reg.h"
+#include "cppe/cppe_qos.h"
 #include "cppe/cppe_loopback_reg.h"
 
 #include "mppe/mppe_athtag_reg.h"

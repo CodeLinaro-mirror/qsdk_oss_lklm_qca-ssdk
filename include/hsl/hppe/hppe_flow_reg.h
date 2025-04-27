@@ -933,7 +933,7 @@ union flow_host_tbl_rd_rslt_data_u {
 	#define IN_FLOW_3TUPLE_TBL_PMTU_DEFAULT 0x0
 #endif
 
-struct in_flow_tbl_1 {
+struct in_flow_tbl_3 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -980,7 +980,7 @@ struct in_flow_tbl_1 {
 #endif
 };
 
-struct in_flow_tbl_3 {
+struct in_flow_tbl_1 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -1248,7 +1248,7 @@ union in_flow_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_IP_ADDR_LEN     128
 	#define IN_FLOW_IPV6_3TUPLE_TBL_IP_ADDR_DEFAULT 0x0
 
-struct in_flow_3tuple_tbl_3 {
+struct in_flow_3tuple_tbl_1 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -1281,7 +1281,7 @@ struct in_flow_3tuple_tbl_3 {
 #endif
 };
 
-struct in_flow_3tuple_tbl_1 {
+struct in_flow_3tuple_tbl_3 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -1572,7 +1572,7 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_IP_ADDR_LEN     128
 	#define IN_FLOW_IPV6_5TUPLE_TBL_IP_ADDR_DEFAULT 0x0
 
-struct in_flow_ipv6_5tuple_tbl_1 {
+struct in_flow_ipv6_5tuple_tbl_3 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -1708,7 +1708,7 @@ struct in_flow_ipv6_5tuple_tbl_2 {
 	a_uint32_t  _reserved2:20;
 };
 
-struct in_flow_ipv6_5tuple_tbl_3 {
+struct in_flow_ipv6_5tuple_tbl_1 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -1932,7 +1932,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_TBL_PMTU_DEFAULT 0x0
 #endif
 
-struct in_flow_ipv6_3tuple_tbl_3 {
+struct in_flow_ipv6_3tuple_tbl_1 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -1971,7 +1971,7 @@ struct in_flow_ipv6_3tuple_tbl_3 {
 	a_uint32_t  _reserved3:20;
 };
 
-struct in_flow_ipv6_3tuple_tbl_1 {
+struct in_flow_ipv6_3tuple_tbl_0 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -2010,7 +2010,7 @@ struct in_flow_ipv6_3tuple_tbl_1 {
 	a_uint32_t  _reserved3:20;
 };
 
-struct in_flow_ipv6_3tuple_tbl_0 {
+struct in_flow_ipv6_3tuple_tbl_3 {
 	a_uint32_t  valid:1;
 	a_uint32_t  entry_type:1;
 	a_uint32_t  host_addr_index_type:1;
@@ -2175,9 +2175,9 @@ struct eg_flow_tree_map_tbl {
 };
 
 struct eg_flow_tree_map_tbl_1 {
-	a_uint32_t  flow_cookie_low:16;
-	a_uint32_t  flow_cookie_high_0:16;
-	a_uint32_t  flow_cookie_high_1:8;
+	a_uint32_t  flow_cookie:16;
+	a_uint32_t  flow_cookie_ext_0:16;
+	a_uint32_t  flow_cookie_ext_1:8;
 	a_uint32_t  wifi_qos:8;
 	a_uint32_t  wifi_qos_flag:1;
 	a_uint32_t  type:2;
@@ -2332,7 +2332,10 @@ union in_flow_cnt_tbl_u {
 	#define EG_GLOBAL_CTRL_PREFIX_XLT_EN_DEFAULT 0x0
 
 struct eg_ipv6_prefix_tbl {
-	a_uint32_t  prefix[4];
+	a_uint32_t  prefix_0:32;
+	a_uint32_t  prefix_1:32;
+	a_uint32_t  prefix_2:32;
+	a_uint32_t  prefix_3:32;
 	a_uint32_t  length:7;
 	a_uint32_t  _reserved0:25;
 };
