@@ -80,17 +80,18 @@ adpt_hppe_mirr_port_in_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	/* mirror port just support physical port, not support trunk and virtual port */
-	if (FAL_PORT_ID_TYPE(port_id) != 0)
-		return SW_BAD_PARAM;
+	if (ADPT_IS_PPORT(port_id)) {
+		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
+		SW_RTN_ON_ERROR(rv);
 
-	rv = hppe_port_mirror_get(dev_id, port_id, &port_mirror);
-
-	if( rv != SW_OK )
-		return rv;
-
-	*enable = port_mirror.bf.in_mirr_en;
-
+		*enable = port_mirror.bf.in_mirr_en;
+	}
+#if defined(JHPPE)
+	if (ADPT_IS_VPORT(port_id)) {
+		rv = appe_l2_vp_port_tbl_mirror_en_get(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+#endif
 	return SW_OK;
 }
 
@@ -105,17 +106,18 @@ adpt_hppe_mirr_port_eg_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	/* mirror port just support physical port, not support trunk and virtual port */
-	if (FAL_PORT_ID_TYPE(port_id) != 0)
-		return SW_BAD_PARAM;
+	if (ADPT_IS_PPORT(port_id)) {
+		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
+		SW_RTN_ON_ERROR(rv);
 
-	rv = hppe_port_mirror_get(dev_id, port_id, &port_mirror);
-
-	if( rv != SW_OK )
-		return rv;
-
-	*enable = port_mirror.bf.eg_mirr_en;
-
+		*enable = port_mirror.bf.eg_mirr_en;
+	}
+#if defined(JHPPE)
+	if (ADPT_IS_VPORT(port_id)) {
+		rv = jhppe_l2_vp_port_post_tbl_mirror_en_get(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+#endif
 	return SW_OK;
 }
 
@@ -149,52 +151,65 @@ sw_error_t
 adpt_hppe_mirr_port_in_set(a_uint32_t dev_id, fal_port_t port_id,
                          a_bool_t enable)
 {
+	sw_error_t rv = SW_OK;
 	union port_mirror_u port_mirror;
 	fal_mirr_analysis_config_t analysis_cfg = {0};
 
 	memset(&port_mirror, 0, sizeof(port_mirror));
 	ADPT_DEV_ID_CHECK(dev_id);
-
-	/* mirror port just support physical port, not support trunk and virtual port */
-	if (FAL_PORT_ID_TYPE(port_id) != 0)
-		return SW_BAD_PARAM;
 
 	SW_RTN_ON_ERROR(adpt_hppe_mirr_analysis_config_get(dev_id, FAL_MIRR_INGRESS,
 		&analysis_cfg));
 	if(!(ADPT_IS_PPORT(analysis_cfg.port_id) || ADPT_IS_TRUNK(analysis_cfg.port_id)))
 		return SW_BAD_VALUE;
 
-	hppe_port_mirror_get(dev_id, port_id, &port_mirror);
-	port_mirror.bf.in_mirr_en = enable;
+	if (ADPT_IS_PPORT(port_id)) {
+		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
+		SW_RTN_ON_ERROR(rv);
+		port_mirror.bf.in_mirr_en = enable;
 
-	hppe_port_mirror_set(dev_id, port_id, &port_mirror);
-
+		rv = hppe_port_mirror_set(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
+		SW_RTN_ON_ERROR(rv);
+	}
+#if defined(JHPPE)
+	if (ADPT_IS_VPORT(port_id)) {
+		rv = appe_l2_vp_port_tbl_mirror_en_set(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+#endif
 	return SW_OK;
 }
 sw_error_t
 adpt_hppe_mirr_port_eg_set(a_uint32_t dev_id, fal_port_t port_id,
                          a_bool_t enable)
 {
+	sw_error_t rv = SW_OK;
 	union port_mirror_u port_mirror;
 	fal_mirr_analysis_config_t analysis_cfg = {0};
 
 	memset(&port_mirror, 0, sizeof(port_mirror));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	/* mirror port just support physical port, not support trunk and virtual port */
-	if (FAL_PORT_ID_TYPE(port_id) != 0)
-		return SW_BAD_PARAM;
-
 	SW_RTN_ON_ERROR(adpt_hppe_mirr_analysis_config_get(dev_id, FAL_MIRR_EGRESS,
 		&analysis_cfg));
 	if(!(ADPT_IS_PPORT(analysis_cfg.port_id) || ADPT_IS_TRUNK(analysis_cfg.port_id)))
 		return SW_BAD_VALUE;
 
-	hppe_port_mirror_get(dev_id, port_id, &port_mirror);
-	port_mirror.bf.eg_mirr_en = enable;
+	/* from Juhu Mirror is supported on VP */
+	if (ADPT_IS_PPORT(port_id)) {
+		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
+		SW_RTN_ON_ERROR(rv);
+		port_mirror.bf.eg_mirr_en = enable;
 
-	hppe_port_mirror_set(dev_id, port_id, &port_mirror);
-
+		rv = hppe_port_mirror_set(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
+		SW_RTN_ON_ERROR(rv);
+	}
+#if defined(JHPPE)
+	if (ADPT_IS_VPORT(port_id)) {
+		rv = jhppe_l2_vp_port_post_tbl_mirror_en_set(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+		SW_RTN_ON_ERROR(rv);
+	}
+#endif
 	return SW_OK;
 }
 sw_error_t
