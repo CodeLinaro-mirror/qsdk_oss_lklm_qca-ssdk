@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
   *
- * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -113,6 +113,42 @@ sw_error_t fal_qm_enqueue_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *enque
 
 sw_error_t fal_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qm_threshold_reset, dev_id, queue_id)
+
+sw_error_t
+fal_qm_counter_monitor_en_set(a_uint32_t dev_id, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_en_set, dev_id, enable)
+
+sw_error_t
+fal_qm_counter_monitor_en_get(a_uint32_t dev_id, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_en_get, dev_id, enable)
+
+sw_error_t
+fal_qm_counter_monitor_stats_cleanup(a_uint32_t dev_id)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_stats_cleanup, dev_id)
+
+sw_error_t
+fal_qm_counter_monitor_status_get(a_uint32_t dev_id, fal_qm_queue_type_t type, a_uint32_t cnt_id, a_bool_t *status)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_status_get, dev_id, type, cnt_id, status)
+
+sw_error_t
+fal_qm_counter_monitor_map_set(a_uint32_t dev_id, fal_qm_queue_type_t type, a_uint32_t map_id, fal_qm_monitor_map_t *monitor_map)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_map_set, dev_id, type, map_id, monitor_map)
+
+sw_error_t
+fal_qm_counter_monitor_map_get(a_uint32_t dev_id, fal_qm_queue_type_t type, a_uint32_t map_id, fal_qm_monitor_map_t *monitor_map)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_map_get, dev_id, type, map_id, monitor_map)
+
+sw_error_t
+fal_qm_counter_monitor_ctrl_set(a_uint32_t dev_id, fal_qm_queue_type_t type, a_uint32_t cnt_id, fal_qm_monitor_ctrl_t *monitor_ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_ctrl_set, dev_id, type, cnt_id, monitor_ctrl)
+
+sw_error_t
+fal_qm_counter_monitor_ctrl_get(a_uint32_t dev_id, fal_qm_queue_type_t type, a_uint32_t cnt_id, fal_qm_monitor_ctrl_t *monitor_ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_ctrl_get, dev_id, type, cnt_id, monitor_ctrl)
+
+sw_error_t
+fal_qm_counter_monitor_stats_get(a_uint32_t dev_id, fal_qm_queue_type_t type, a_uint32_t cnt_id, fal_qm_monitor_stats_t *monitor_stats)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_counter_monitor_stats_get, dev_id, type, cnt_id, monitor_stats)
 
 #if !defined(IN_QM_MINI)
 sw_error_t fal_ucast_default_hash_get( a_uint32_t dev_id, a_uint8_t *hash_value)

@@ -1275,6 +1275,12 @@ struct sub_cmd_des_t g_qm_des[] =
     {"cnt", "set", SW_API_QUEUE_CNT_CLEANUP, NULL},
     {"enqueue", "set", SW_API_QM_ENQUEUE_CTRL_SET, NULL},
     {"srcprofile", "set", SW_API_QM_SOURCE_PROFILE_SET, NULL},
+#ifdef JHPPE
+    {"cntmonitoren", "set", SW_API_QM_COUNTER_MONITOR_EN_SET, NULL},
+    {"cntmonitorstatscleanup", "set", SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP, NULL},
+    {"cntmonitormap", "set", SW_API_QM_COUNTER_MONITOR_MAP_SET, NULL},
+    {"cntmonitorctrl", "set", SW_API_QM_COUNTER_MONITOR_CTRL_SET, NULL},
+#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 
 };

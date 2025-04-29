@@ -419,22 +419,22 @@ cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size);
 #ifdef IN_QM
 sw_error_t
 cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size);
-
 sw_error_t
 cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size);
-
 sw_error_t
 cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size);
-
 sw_error_t
 cmd_data_check_ac_group_buff(char *cmd_str, void * val, a_uint32_t size);
-
 sw_error_t
 cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size);
-
 sw_error_t
 cmd_data_check_ac_obj(char *cmd_str, void * val, a_uint32_t size);
-
+#ifdef JHPPE
+sw_error_t
+cmd_data_check_monitor_map(char *cmd_str, void * val, a_uint32_t size);
+sw_error_t
+cmd_data_check_monitor_ctrl(char *cmd_str, void * val, a_uint32_t size);
+#endif
 sw_error_t
 cmd_data_check_queue_profile(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size);
 sw_error_t
