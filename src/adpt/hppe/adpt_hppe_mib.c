@@ -21,8 +21,7 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_mib_reg.h"
-#include "hppe_mib.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "hppe_xgmacmib_reg.h"
 #include "hppe_xgmacmib.h"

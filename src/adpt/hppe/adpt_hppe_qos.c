@@ -20,12 +20,9 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "ssdk_dts.h"
 #include "fal_qos.h"
-#include "hppe_qos_reg.h"
-#include "hppe_qos.h"
-#include "hppe_shaper_reg.h"
-#include "hppe_shaper.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
 #if defined(CPPE) || defined(APPE)
@@ -59,7 +56,7 @@ adpt_hppe_l1_flow_map_get(a_uint32_t dev_id,
 	scheduler_cfg->e_pri = l1_flow_map_tbl.bf.e_pri;
 	scheduler_cfg->c_pri = l1_flow_map_tbl.bf.c_pri;
 	scheduler_cfg->sp_id = l1_flow_map_tbl.bf.sp_id;
-	
+
 	c_sp_id = scheduler_cfg->sp_id * 8 + scheduler_cfg->c_pri;
 	hppe_l1_c_sp_cfg_tbl_get(dev_id, c_sp_id, &l1_c_sp_cfg_tbl);
 	scheduler_cfg->c_drr_unit = l1_c_sp_cfg_tbl.bf.drr_credit_unit;
@@ -202,7 +199,7 @@ adpt_hppe_l0_queue_map_get(a_uint32_t dev_id,
 	scheduler_cfg->e_pri = l0_flow_map_tbl.bf.e_pri;
 	scheduler_cfg->c_pri = l0_flow_map_tbl.bf.c_pri;
 	scheduler_cfg->sp_id = l0_flow_map_tbl.bf.sp_id;
-	
+
 	c_sp_id = scheduler_cfg->sp_id * 8 + scheduler_cfg->c_pri;
 	hppe_l0_c_sp_cfg_tbl_get(dev_id, c_sp_id, &l0_c_sp_cfg_tbl);
 	scheduler_cfg->c_drr_unit = l0_c_sp_cfg_tbl.bf.drr_credit_unit;
@@ -280,7 +277,7 @@ adpt_ppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-adpt_hppe_ring_queue_map_set(a_uint32_t dev_id, 
+adpt_hppe_ring_queue_map_set(a_uint32_t dev_id,
 					a_uint32_t ring_id, fal_queue_bmp_t *queue_bmp)
 {
 	union ring_q_map_tbl_u ring_q_map_tbl;
@@ -411,7 +408,7 @@ adpt_ppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-adpt_hppe_ring_queue_map_get(a_uint32_t dev_id, 
+adpt_hppe_ring_queue_map_get(a_uint32_t dev_id,
 					a_uint32_t ring_id, fal_queue_bmp_t *queue_bmp)
 {
 	union ring_q_map_tbl_u ring_q_map_tbl;
@@ -429,14 +426,14 @@ adpt_hppe_ring_queue_map_get(a_uint32_t dev_id,
 
 #ifndef IN_QOS_MINI
 sw_error_t
-adpt_hppe_port_queues_get(a_uint32_t dev_id, 
+adpt_hppe_port_queues_get(a_uint32_t dev_id,
 				fal_port_t port_id, fal_queue_bmp_t *queue_bmp)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(queue_bmp);
 
 	*queue_bmp = port_queue_map[port_id];
-	
+
 	return SW_OK;
 }
 #endif
@@ -536,8 +533,8 @@ adpt_hppe_port_scheduler_cfg_set(a_uint32_t dev_id,
 	psch_tdm_cfg.bf.ens_port = cfg->en_scheduler_port;
 	psch_tdm_cfg.bf.des_port = cfg->de_scheduler_port;
 #if defined(APPE)
-	psch_tdm_cfg.bf.des_second_port_en = cfg->de_scheduler_2nd_port_en;
-	psch_tdm_cfg.bf.des_second_port = cfg->de_scheduler_2nd_port;
+	psch_tdm_cfg.bf.des_sec_port_en = cfg->de_scheduler_2nd_port_en;
+	psch_tdm_cfg.bf.des_sec_port = cfg->de_scheduler_2nd_port;
 #endif
 
 	return hppe_psch_tdm_cfg_tbl_set(dev_id, tick_index, &psch_tdm_cfg);
@@ -558,8 +555,8 @@ adpt_hppe_port_scheduler_cfg_get(a_uint32_t dev_id,
 	cfg->en_scheduler_port = psch_tdm_cfg.bf.ens_port;
 	cfg->de_scheduler_port = psch_tdm_cfg.bf.des_port;
 #if defined(APPE)
-	cfg->de_scheduler_2nd_port_en = psch_tdm_cfg.bf.des_second_port_en;
-	cfg->de_scheduler_2nd_port = psch_tdm_cfg.bf.des_second_port;
+	cfg->de_scheduler_2nd_port_en = psch_tdm_cfg.bf.des_sec_port_en;
+	cfg->de_scheduler_2nd_port = psch_tdm_cfg.bf.des_sec_port;
 #endif
 
 	return SW_OK;

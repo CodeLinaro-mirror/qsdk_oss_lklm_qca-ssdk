@@ -18,22 +18,9 @@
 
 #include "adpt.h"
 #include "ssdk_init.h"
+#include "hsl_reg.h"
 #if defined(HPPE)
 #include "adpt_hppe.h"
-#include "hppe_flow_reg.h"
-#include "hppe_ip_reg.h"
-#include "hppe_vsi_reg.h"
-#include "hppe_servcode_reg.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
-#include "hppe_qm_reg.h"
-#include "hppe_qm.h"
-#include "hppe_policer_reg.h"
-#if defined(APPE)
-#include "appe_pppoe_reg.h"
-#else
-#include "hppe_pppoe_reg.h"
-#endif
 #endif
 #if defined(IN_SFP)
 #include "adpt_sfp.h"

@@ -711,4 +711,385 @@ hppe_eg_vsi_tag_tagged_mode_port_bitmap_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
+
+//hppe_portctrl.h
+#define PPE_CAPACITY_PORT_NUM	256
+
+sw_error_t
+appe_link_oam_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union link_oam_ctrl_u *value);
+
+sw_error_t
+appe_link_oam_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union link_oam_ctrl_u *value);
+
+sw_error_t
+appe_link_oam_ctrl_loopback_state_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_link_oam_ctrl_loopback_state_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+mrppe_lpi_port_enable_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_port_enable_u *value);
+
+sw_error_t
+mrppe_lpi_port_enable_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_port_enable_u *value);
+
+sw_error_t
+mrppe_lpi_wakeup_timer_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_port_wakeup_timer_u *value);
+
+sw_error_t
+mrppe_lpi_wakeup_timer_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_port_wakeup_timer_u *value);
+
+sw_error_t
+mrppe_lpi_sleep_timer_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_port_sleep_timer_u *value);
+
+sw_error_t
+mrppe_lpi_sleep_timer_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_port_sleep_timer_u *value);
+
+sw_error_t
+mrppe_lpi_1us_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_1us_cnt_u *value);
+
+sw_error_t
+mrppe_lpi_1us_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union lpi_1us_cnt_u *value);
+
+sw_error_t
+ppe_mru_mtu_ctrl_tbl_source_filtering_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+ppe_mru_mtu_ctrl_tbl_source_filtering_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+ppe_mru_mtu_ctrl_tbl_source_filtering_bypass_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+ppe_mru_mtu_ctrl_tbl_source_filtering_bypass_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_mac_ctrl2_mac_tx_thd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_mac_jumbo_size_mac_jumbo_size_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mac_jumbo_size_mac_jumbo_size_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+sw_error_t
+hppe_drop_cnt_drop_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+sw_error_t
+hppe_drop_cnt_drop_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+sw_error_t
+hppe_rx_fifo_cfg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union rx_fifo_cfg_u *value);
+
+sw_error_t
+hppe_rx_fifo_cfg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union rx_fifo_cfg_u *value);
+sw_error_t
+hppe_tdm_ctrl_set(
+		a_uint32_t dev_id,
+		union tdm_ctrl_u *value);
+
+sw_error_t
+hppe_tdm_cfg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tdm_cfg_u *value);
+sw_error_t
+hppe_drop_stat_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union drop_stat_u *value);
+sw_error_t
+hppe_drop_stat_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+sw_error_t
+hppe_drop_stat_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+sw_error_t
+hppe_drop_stat_pkts_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+sw_error_t
+hppe_drop_stat_pkts_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+sw_error_t
+hppe_ipr_pkt_num_tbl_reg_packets_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_ipr_byte_low_reg_reg_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+sw_error_t
+hppe_ipr_byte_high_reg_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+//hppe_policer.h
+#define CPU_CODE_CNT_TBL_MAX_ENTRY	256
+
+//hppe_qm.h
+#define PPE_CAPACITY_QUEUES_NUM	300
+//hppe_ctrlpkt.h
+sw_error_t
+appe_l2_cpu_code_ctrl_exception_fmt_ctrl_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_l2_cpu_code_ctrl_exception_fmt_ctrl_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+//appe_geneve.h
+sw_error_t
+appe_tpr_geneve_cfg_udp_port_map_get(
+                a_uint32_t dev_id,
+                unsigned int *value);
+
+sw_error_t
+appe_tpr_geneve_cfg_udp_port_map_set(
+                a_uint32_t dev_id,
+                unsigned int value);
+//appe_global.h
+sw_error_t
+appe_port_mux_ctrl_get(
+		a_uint32_t dev_id,
+		union appe_port_mux_ctrl_u *value);
+
+sw_error_t
+appe_port_mux_ctrl_set(
+		a_uint32_t dev_id,
+		union appe_port_mux_ctrl_u *value);
+//appe_portvlan.h
+#ifndef IN_PORTVLAN_MINI
+sw_error_t
+appe_vp_isol_tbl_vp_profile_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+appe_vp_isol_tbl_vp_profile_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+#endif
+
+//appe_vxlan.h
+sw_error_t
+appe_tpr_vxlan_cfg_udp_port_map_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tpr_vxlan_cfg_udp_port_map_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+appe_tpr_vxlan_gpe_cfg_udp_port_map_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tpr_vxlan_gpe_cfg_udp_port_map_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+//appe_l2_vp.h
+sw_error_t
+appe_l2_vp_port_tbl_physical_port_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_l2_vp_port_tbl_physical_port_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+//cppe_qos.h
+#if defined(MRPPE)
+#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	4096
+#elif defined(MPPE)
+#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	2048
+#elif defined(APPE)
+#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	4096
+#else
+#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	2048
+#endif
+#define QOS_MAPPING_DSCP_TBL_MAX_ENTRY	256
+#define QOS_MAPPING_PCP_TBL_MAX_ENTRY	16
+#define QOS_MAPPING_TBL_MAX_GROUP	2
+sw_error_t
+cppe_qos_mapping_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union qos_mapping_tbl_u *value);
+
+sw_error_t
+cppe_qos_mapping_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union qos_mapping_tbl_u *value);
+//hppe_rss.h
+#define TOEPLITZ_HASH_TYPE_SEL_0_MAX_ENTRY	12
+#define TOEPLITZ_HASH_TYPE_SEL_1_MAX_ENTRY	12
+#define TOEPLITZ_HASH_TYPE_TUPLE_MAX_ENTRY	12
+
+sw_error_t
+mrppe_toeplitz_secret_key_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_secret_key_u *value);
+
+sw_error_t
+mrppe_toeplitz_secret_key_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_secret_key_u *value);
+
+sw_error_t
+mrppe_rss_hash_type_sel_get(
+		a_uint32_t dev_id,
+		union rss_hash_type_sel_u *value);
+
+sw_error_t
+mrppe_rss_hash_type_sel_set(
+		a_uint32_t dev_id,
+		union rss_hash_type_sel_u *value);
+
+sw_error_t
+mrppe_toeplitz_hash_type_sel_0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_hash_type_sel_0_u *value);
+
+sw_error_t
+mrppe_toeplitz_hash_type_sel_0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_hash_type_sel_0_u *value);
+
+sw_error_t
+mrppe_toeplitz_hash_type_sel_1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_hash_type_sel_1_u *value);
+
+sw_error_t
+mrppe_toeplitz_hash_type_sel_1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_hash_type_sel_1_u *value);
+
+sw_error_t
+mrppe_toeplitz_hash_type_tuple_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_hash_type_tuple_u *value);
+
+sw_error_t
+mrppe_toeplitz_hash_type_tuple_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union toeplitz_hash_type_tuple_u *value);
+
+sw_error_t
+mrppe_rss_hash_type_sel_toeplitz_enable_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+mrppe_rss_hash_type_sel_toeplitz_enable_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+mrppe_rss_hash_type_sel_extract_bit_pos_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+mrppe_rss_hash_type_sel_extract_bit_pos_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #endif

@@ -16,19 +16,9 @@
  */
 
 #include "sw.h"
-#include "appe_global_reg.h"
-#include "appe_global.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_appe_portctrl.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
-#include "hppe_policer_reg.h"
-#include "hppe_policer.h"
-#include "appe_counter_reg.h"
-#include "appe_counter.h"
-#include "appe_portvlan_reg.h"
-#include "appe_portvlan.h"
-#include "appe_l2_vp.h"
 #include "adpt_hppe_portctrl.h"
 #include "hsl_phy.h"
 #if defined(MHT)
@@ -159,6 +149,9 @@ adpt_appe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	port_value = FAL_PORT_ID_VALUE(port_id);
 
 	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
+#ifdef HMSPPE
+	//to be fix
+#else
 	l2_vp_port_tbl.bf.mtu_check_type = mtu_cfg->mtu_type;
 	l2_vp_port_tbl.bf.extra_header_len = mtu_cfg->extra_header_len;
 
@@ -198,7 +191,7 @@ adpt_appe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 			return SW_NOT_SUPPORTED;
 		}
 	}
-
+#endif
 	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_set (dev_id, port_value, &l2_vp_port_tbl));
 
 	return SW_OK;
@@ -218,6 +211,9 @@ adpt_appe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	port_value = FAL_PORT_ID_VALUE(port_id);
 
 	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
+#ifdef HMSPPE
+	//to be fix
+#else
 	mtu_cfg->mtu_type = l2_vp_port_tbl.bf.mtu_check_type;
 	mtu_cfg->extra_header_len = l2_vp_port_tbl.bf.extra_header_len;
 	mtu_cfg->eg_vlan_tag_flag = 0;
@@ -240,7 +236,7 @@ adpt_appe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 			mtu_cfg->mtu_enable = A_FALSE;
 		}
 	}
-
+#endif
 	return SW_OK;
 }
 

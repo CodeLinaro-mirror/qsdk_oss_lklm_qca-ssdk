@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, 2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -334,7 +334,7 @@ union age_timer_u {
 
 struct l2_global_conf {
 	a_uint32_t  _reserved0:19;
-	a_uint32_t  l2_flow_copy_escape:1;
+	a_uint32_t  flow_cpy_escape:1;
 	a_uint32_t  service_code_loop:1;
 	a_uint32_t  failover_en:1;
 	a_uint32_t  age_ctrl_mode:1;

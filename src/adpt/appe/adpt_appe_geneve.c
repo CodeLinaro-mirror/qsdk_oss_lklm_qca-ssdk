@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,9 +20,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "adpt.h"
-#include "appe_geneve_reg.h"
-#include "appe_geneve.h"
 #include "adpt_appe_vxlan.h"
 
 #define ADPT_GENEVE_ENTRY_MAX_NUM 6

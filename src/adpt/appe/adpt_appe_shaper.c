@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
  *
+ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -14,9 +16,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 #include "sw.h"
-#include "appe_shaper_reg.h"
-#include "appe_shaper.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_appe_shaper.h"
 

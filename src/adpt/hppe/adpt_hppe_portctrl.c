@@ -21,18 +21,11 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
+#include "hsl_reg.h"
 #include "hppe_xgportctrl_reg.h"
 #include "hppe_xgportctrl.h"
 #include "hppe_uniphy_reg.h"
 #include "hppe_uniphy.h"
-#include "hppe_fdb_reg.h"
-#include "hppe_fdb.h"
-#include "hppe_policer_reg.h"
-#include "hppe_policer.h"
-#include "hppe_portvlan_reg.h"
-#include "hppe_portvlan.h"
 #include "hppe_global_reg.h"
 #include "hppe_global.h"
 #include "adpt.h"
@@ -54,9 +47,6 @@
 #include "sfp_phy.h"
 #if defined(APPE)
 #include "adpt_appe_portctrl.h"
-#include "appe_l2_vp.h"
-#include "appe_tunnel_reg.h"
-#include "appe_tunnel.h"
 #endif
 #include "ref_port_ctrl.h"
 

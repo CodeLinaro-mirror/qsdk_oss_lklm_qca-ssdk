@@ -20,10 +20,7 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_ctrlpkt_reg.h"
-#include "hppe_ctrlpkt.h"
-#include "hppe_fdb_reg.h"
-#include "hppe_fdb.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 #ifdef APPE
 #include "adpt_appe_ctrlpkt.h"

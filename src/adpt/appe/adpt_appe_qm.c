@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2024-2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,11 +20,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "fal_qm.h"
-#include "appe_qm_reg.h"
-#include "appe_qm.h"
-#include "appe_l2_vp_reg.h"
-#include "appe_l2_vp.h"
 #include "adpt.h"
 
 #define FLOW_ENQUEUE_MAP_INDEX	512
@@ -67,12 +64,15 @@ adpt_appe_qm_enqueue_config_set(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 			index = enqueue_cfg->rule_entry.dst_port;
 			rv = appe_l2_vp_port_tbl_get(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
-
+		#ifdef HMSPPE
+			//to be fix
+		#else
 			l2_vp_tbl.bf.enq_service_code_en = enqueue_cfg->index_entry.enqueue_en;
 			l2_vp_tbl.bf.enq_service_code =
 				enqueue_cfg->index_entry.enqueue_servcode.service_code;
 			l2_vp_tbl.bf.enq_phy_port =
 				enqueue_cfg->index_entry.enqueue_servcode.phy_port;
+		#endif
 
 			rv = appe_l2_vp_port_tbl_set(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
@@ -121,13 +121,16 @@ adpt_appe_qm_enqueue_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 			index = enqueue_cfg->rule_entry.dst_port;
 			rv = appe_l2_vp_port_tbl_get(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
-
-			enqueue_cfg->index_entry.enqueue_en = l2_vp_tbl.bf.enq_service_code_en;
+		#ifdef HMSPPE
+			//to be fix
+		#else
+			enqueue_cfg->index_entry.enqueue_en =
+				l2_vp_tbl.bf.enq_service_code_en;
 			enqueue_cfg->index_entry.enqueue_servcode.service_code =
 				l2_vp_tbl.bf.enq_service_code;
 			enqueue_cfg->index_entry.enqueue_servcode.phy_port =
 				l2_vp_tbl.bf.enq_phy_port;
-
+		#endif
 			break;
 		default:
 			SSDK_ERROR("Unsupported enqueue type\n");

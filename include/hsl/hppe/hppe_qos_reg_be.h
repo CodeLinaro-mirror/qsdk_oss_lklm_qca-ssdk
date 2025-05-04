@@ -1345,8 +1345,8 @@ union l1_flow_status_tbl_u {
 struct psch_tdm_cfg_tbl {
 #if defined(APPE)
 	a_uint32_t  _reserved0:11;
-	a_uint32_t  des_second_port:4;
-	a_uint32_t  des_second_port_en:1;
+	a_uint32_t  des_sec_port:4;
+	a_uint32_t  des_sec_port_en:1;
 #else
 	a_uint32_t  _reserved0:16;
 #endif

@@ -1344,8 +1344,8 @@ struct psch_tdm_cfg_tbl {
 	a_uint32_t  ens_port:4;
 	a_uint32_t  ens_port_bitmap:8;
 #if defined(APPE)
-	a_uint32_t  des_second_port_en:1;
-	a_uint32_t  des_second_port:4;
+	a_uint32_t  des_sec_port_en:1;
+	a_uint32_t  des_sec_port:4;
 	a_uint32_t  _reserved0:11;
 #else
 	a_uint32_t  _reserved0:16;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2021 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -21,15 +21,11 @@
  * @{
  */
 #include "sw.h"
-#include "appe_pppoe_reg.h"
-#include "appe_pppoe.h"
-#include "hppe_ip_reg.h"
-#include "hppe_ip.h"
-#include "appe_tunnel_reg.h"
-#include "appe_tunnel.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 
 #define MAX_SESSION_ID 0xffff
+
 
 static a_uint32_t
 adpt_pppoe_session_compare(a_uint32_t dev_id, a_uint32_t entry_index,
@@ -59,8 +55,8 @@ adpt_pppoe_session_compare(a_uint32_t dev_id, a_uint32_t entry_index,
 	}
 
 	if (pppoe_session.bf.session_id == session_tbl->session_id &&
-			pppoe_session.bf.port_type == adpt_port_type_convert(A_TRUE, port_type) &&
-			pppoe_session_ext.bf.smac_valid == session_tbl->smac_valid) {
+		pppoe_session.bf.type == adpt_port_type_convert(A_TRUE, port_type) &&
+		pppoe_session_ext.bf.smac_valid == session_tbl->smac_valid) {
 		if (session_tbl->smac_valid == A_FALSE ||
 				(session_tbl->smac_valid == A_TRUE &&
 				 smac_ext == pppoe_session_ext.bf.smac &&
@@ -167,8 +163,8 @@ adpt_appe_pppoe_session_table_add(a_uint32_t dev_id, fal_pppoe_session_t *sessio
 	}
 
 	pppoe_session.bf.port_bitmap = FAL_PORT_ID_VALUE(session_tbl->port_bitmap);
-	pppoe_session.bf.port_type = adpt_port_type_convert(A_TRUE,
-			FAL_PORT_ID_TYPE(session_tbl->port_bitmap));
+	pppoe_session.bf.type = adpt_port_type_convert(A_TRUE,
+				FAL_PORT_ID_TYPE(session_tbl->port_bitmap));
 	pppoe_session.bf.session_id = session_tbl->session_id;
 
 	pppoe_session_ext.bf.mc_valid = session_tbl->multi_session;
@@ -198,7 +194,6 @@ adpt_appe_pppoe_session_table_add(a_uint32_t dev_id, fal_pppoe_session_t *sessio
 	SW_RTN_ON_ERROR(rv);
 
 	session_tbl->entry_id = entry_idx;
-
 	return rv;
 }
 
@@ -271,7 +266,6 @@ adpt_appe_pppoe_session_table_del(a_uint32_t dev_id, fal_pppoe_session_t *sessio
 
 		return rv;
 	}
-
 	return SW_NOT_FOUND;
 }
 
@@ -323,8 +317,8 @@ adpt_appe_pppoe_session_table_get(a_uint32_t dev_id, fal_pppoe_session_t *sessio
 		session_tbl->tl_l3_if_index = pppoe_session_ext2.bf.tl_l3_if_index;
 		session_tbl->tl_l3_if_valid = pppoe_session_ext2.bf.tl_l3_if_valid;
 		session_tbl->port_bitmap = FAL_PORT_ID(adpt_port_type_convert(A_FALSE,
-					pppoe_session.bf.port_type),
-				pppoe_session.bf.port_bitmap);
+							pppoe_session.bf.type),
+						pppoe_session.bf.port_bitmap);
 		session_tbl->session_id = pppoe_session.bf.session_id;
 		session_tbl->multi_session = pppoe_session_ext.bf.mc_valid;
 		session_tbl->uni_session = pppoe_session_ext.bf.uc_valid;
@@ -339,7 +333,6 @@ adpt_appe_pppoe_session_table_get(a_uint32_t dev_id, fal_pppoe_session_t *sessio
 
 		return rv;
 	}
-
 	return SW_NOT_FOUND;
 }
 

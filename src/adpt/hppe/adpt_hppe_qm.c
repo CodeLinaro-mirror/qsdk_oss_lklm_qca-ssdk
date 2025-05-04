@@ -21,16 +21,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "fal_qm.h"
-#include "hppe_reg_access.h"
-#include "hppe_qm_reg.h"
-#include "hppe_qm.h"
-#include "hppe_qos_reg.h"
-#include "hppe_qos.h"
-#include "hppe_portvlan_reg.h"
-#include "hppe_portvlan.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
 #if defined(APPE)
@@ -73,7 +65,7 @@ adpt_hppe_ucast_hash_map_set(
 
 	index = profile << 8 | rss_hash;
 	ucast_hash_map_tbl.bf.hash = queue_hash;
-	
+
 	return hppe_ucast_hash_map_tbl_set(dev_id, index, &ucast_hash_map_tbl);
 }
 
@@ -151,7 +143,7 @@ adpt_hppe_ucast_queue_base_profile_get(
 		return rv;
 	*queue_base = ucast_queue_map_tbl.bf.queue_id;
 	*profile = ucast_queue_map_tbl.bf.profile_id;
-	
+
 	return SW_OK;
 }
 
@@ -257,7 +249,7 @@ adpt_hppe_ac_prealloc_buffer_set(
 		ac_grp_cfg_tbl.bf.ac_grp_palloc_limit = num;
 
 		return hppe_ac_grp_cfg_tbl_set(dev_id, obj->obj_id, &ac_grp_cfg_tbl);
-		
+
 	} else if (obj->type == FAL_AC_QUEUE) {
 		if (obj->obj_id < UCAST_QUEUE_ID_MAX) {
 			union ac_uni_queue_cfg_tbl_u ac_uni_queue_cfg_tbl;
@@ -268,7 +260,7 @@ adpt_hppe_ac_prealloc_buffer_set(
 			return hppe_ac_uni_queue_cfg_tbl_set(dev_id,
 					obj->obj_id,
 					&ac_uni_queue_cfg_tbl);;
-			
+
 		} else {
 			union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 			hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -317,7 +309,7 @@ adpt_hppe_ucast_default_hash_set(
 
 	ucast_default_hash.bf.hash = hash_value;
 	rv = hppe_ucast_default_hash_set(dev_id, &ucast_default_hash);
-	
+
 	return rv;
 }
 #endif
@@ -340,7 +332,7 @@ adpt_hppe_ac_queue_group_get(
 				queue_id,
 				&ac_uni_queue_cfg_tbl);
 		*group_id = ac_uni_queue_cfg_tbl.bf.ac_cfg_grp_id;
-		
+
 	} else {
 		union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 		rv = hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -378,7 +370,7 @@ adpt_hppe_ac_ctrl_get(
 					&ac_uni_queue_cfg_tbl);
 			cfg->ac_en = ac_uni_queue_cfg_tbl.bf.ac_cfg_ac_en;
 			cfg->ac_fc_en = ac_uni_queue_cfg_tbl.bf.ac_cfg_force_ac_en;
-			
+
 		} else {
 			union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 			rv = hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -411,7 +403,7 @@ adpt_hppe_ac_prealloc_buffer_get(
 		*num = ac_grp_cfg_tbl.bf.ac_grp_palloc_limit;
 
 		return rv;
-		
+
 	} else if (obj->type == FAL_AC_QUEUE) {
 		if (obj->obj_id < UCAST_QUEUE_ID_MAX) {
 			union ac_uni_queue_cfg_tbl_u ac_uni_queue_cfg_tbl;
@@ -446,7 +438,7 @@ adpt_hppe_port_mcast_priority_class_set(
 	port = FAL_PORT_ID_VALUE(port);
 
 	mcast_priority_map0.bf.class = queue_class;
-	
+
 	if (port == 0){
 		rv = hppe_mcast_priority_map0_set(dev_id, priority, &mcast_priority_map0);
 	} else if (port == 1) {
@@ -491,7 +483,7 @@ adpt_hppe_ucast_hash_map_get(
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	index = profile << 8 | rss_hash;
-	
+
 	rv = hppe_ucast_hash_map_tbl_get(dev_id, index, &ucast_hash_map_tbl);
 	if (rv)
 		return rv;
@@ -524,7 +516,7 @@ adpt_hppe_ac_static_threshold_set(
 		ac_grp_cfg_tbl.bf.ac_grp_red_resume_offset = cfg->red_resume_off;
 
 		return hppe_ac_grp_cfg_tbl_set(dev_id, obj->obj_id, &ac_grp_cfg_tbl);
-		
+
 	} else if (obj->type == FAL_AC_QUEUE) {
 		if (obj->obj_id < UCAST_QUEUE_ID_MAX) {
 			union ac_uni_queue_cfg_tbl_u ac_uni_queue_cfg_tbl;
@@ -548,7 +540,7 @@ adpt_hppe_ac_static_threshold_set(
 			return hppe_ac_uni_queue_cfg_tbl_set(dev_id,
 					obj->obj_id,
 					&ac_uni_queue_cfg_tbl);;
-			
+
 		} else {
 			union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 			hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -591,7 +583,7 @@ adpt_hppe_ac_queue_group_set(
 		return hppe_ac_uni_queue_cfg_tbl_set(dev_id,
 				queue_id,
 				&ac_uni_queue_cfg_tbl);
-		
+
 	} else {
 		union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 		hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -682,7 +674,7 @@ adpt_hppe_ac_ctrl_set(
 			return hppe_ac_uni_queue_cfg_tbl_set(dev_id,
 					obj->obj_id,
 					&ac_uni_queue_cfg_tbl);
-			
+
 		} else {
 			union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 			hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -815,7 +807,7 @@ adpt_hppe_queue_flush(
 	}
 	flush_cfg.bf.flush_dst_port = FAL_PORT_ID_VALUE(port);
 	flush_cfg.bf.flush_busy = 1;
-	
+
 	hppe_clk_gating_ctrl_get(dev_id, &clk_gate_ctrl);
 	qm_clk_gate_bak = clk_gate_ctrl.bf.qm_clk_gate_en;
 
@@ -904,7 +896,7 @@ adpt_hppe_ucast_priority_class_set(
 
 	index = profile << 4 | priority;
 	ucast_priority_map_tbl.bf.class = class;
-	
+
 	return hppe_ucast_priority_map_tbl_set(dev_id, index, &ucast_priority_map_tbl);
 }
 
@@ -935,7 +927,7 @@ adpt_hppe_ac_static_threshold_get(
 		cfg->red_resume_off = ac_grp_cfg_tbl.bf.ac_grp_red_resume_offset;
 
 		return rv;
-		
+
 	} else if (obj->type == FAL_AC_QUEUE) {
 		if (obj->obj_id < UCAST_QUEUE_ID_MAX) {
 			union ac_uni_queue_cfg_tbl_u ac_uni_queue_cfg_tbl;
@@ -957,7 +949,7 @@ adpt_hppe_ac_static_threshold_get(
 			cfg->green_max = ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling;
 			cfg->status = !ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_dynamic;
 			return rv;
-			
+
 		} else {
 			union ac_mul_queue_cfg_tbl_u ac_mul_queue_cfg_tbl;
 			rv = hppe_ac_mul_queue_cfg_tbl_get(dev_id,
@@ -1011,7 +1003,7 @@ adpt_hppe_ucast_queue_base_profile_set(
 
 	ucast_queue_map_tbl.bf.queue_id = queue_base;
 	ucast_queue_map_tbl.bf.profile_id = profile;
-	
+
 	return hppe_ucast_queue_map_tbl_set(dev_id, index, &ucast_queue_map_tbl);
 }
 

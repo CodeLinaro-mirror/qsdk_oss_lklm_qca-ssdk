@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -20,11 +20,8 @@
  * @{
  */
 #include "sw.h"
+#include "hsl_reg.h"
 #include "fal_bm.h"
-#include "hppe_bm_reg.h"
-#include "hppe_bm.h"
-#include "hppe_portctrl_reg.h"
-#include "hppe_portctrl.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
 

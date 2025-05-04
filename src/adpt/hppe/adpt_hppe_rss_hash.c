@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,8 +20,7 @@
  * @{
  */
 #include "sw.h"
-#include "hppe_rss_reg.h"
-#include "hppe_rss.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 
 #define ADPT_RSS_HASH_IP_MIX_MAX_NUM 4
@@ -45,8 +44,7 @@ adpt_hppe_rss_hash_config_set(a_uint32_t dev_id, fal_rss_hash_mode_t mode,
 	if (mode == FAL_RSS_HASH_IPV4V6 || mode == FAL_RSS_HASH_IPV4ONLY)
 	{
 		rss_hash_mask_ipv4.bf.mask = config->hash_mask & 0x1fffff;
-		rss_hash_mask_ipv4.bf.fragment = config->hash_fragment_mode;
-
+		rss_hash_mask_ipv4.bf.rss_hash_fragment = config->hash_fragment_mode;
 		rss_hash_seed_ipv4.bf.seed = config->hash_seed;
 
 		rss_hash_mix_ipv4[0].bf.hash_mix = config->hash_sip_mix[0] & 0x1f;
@@ -80,8 +78,7 @@ adpt_hppe_rss_hash_config_set(a_uint32_t dev_id, fal_rss_hash_mode_t mode,
 	if (mode == FAL_RSS_HASH_IPV4V6 || mode == FAL_RSS_HASH_IPV6ONLY)
 	{
 		rss_hash_mask_ipv6.bf.mask = config->hash_mask & 0x1fffff;
-		rss_hash_mask_ipv6.bf.fragment = config->hash_fragment_mode;
-
+		rss_hash_mask_ipv6.bf.rss_hash_fragment = config->hash_fragment_mode;
 		rss_hash_seed_ipv6.bf.seed = config->hash_seed;
 
 		for (index = 0; index < ADPT_RSS_HASH_IP_MIX_MAX_NUM; index++)
@@ -165,7 +162,7 @@ adpt_hppe_rss_hash_config_get(a_uint32_t dev_id, fal_rss_hash_mode_t mode,
 	if (mode == FAL_RSS_HASH_IPV4ONLY)
 	{
 		config->hash_mask = rss_hash_mask_ipv4.bf.mask;
-		config->hash_fragment_mode = rss_hash_mask_ipv4.bf.fragment;
+		config->hash_fragment_mode = rss_hash_mask_ipv4.bf.rss_hash_fragment;
 		config->hash_seed = rss_hash_seed_ipv4.bf.seed;
 		config->hash_sip_mix[0] = rss_hash_mix_ipv4[0].bf.hash_mix;
 		config->hash_dip_mix[0] = rss_hash_mix_ipv4[1].bf.hash_mix;
@@ -181,7 +178,7 @@ adpt_hppe_rss_hash_config_get(a_uint32_t dev_id, fal_rss_hash_mode_t mode,
 	else if (mode == FAL_RSS_HASH_IPV6ONLY)
 	{
 		config->hash_mask = rss_hash_mask_ipv6.bf.mask;
-		config->hash_fragment_mode = rss_hash_mask_ipv6.bf.fragment;
+		config->hash_fragment_mode = rss_hash_mask_ipv6.bf.rss_hash_fragment;
 		config->hash_seed = rss_hash_seed_ipv6.bf.seed;
 		for (index = 0; index < ADPT_RSS_HASH_IP_MIX_MAX_NUM; index++)
 		{
@@ -201,7 +198,7 @@ adpt_hppe_rss_hash_config_get(a_uint32_t dev_id, fal_rss_hash_mode_t mode,
 	else
 	{
 		if ((rss_hash_mask_ipv4.bf.mask == rss_hash_mask_ipv6.bf.mask) &&
-			(rss_hash_mask_ipv4.bf.fragment == rss_hash_mask_ipv6.bf.fragment) &&
+			(rss_hash_mask_ipv4.bf.rss_hash_fragment == rss_hash_mask_ipv6.bf.rss_hash_fragment) &&
 			(rss_hash_seed_ipv4.bf.seed == rss_hash_seed_ipv6.bf.seed) &&
 			(rss_hash_mix_ipv4[0].bf.hash_mix == rss_hash_mix_ipv6[0].bf.hash_mix) &&
 			(rss_hash_mix_ipv4[1].bf.hash_mix == rss_hash_mix_ipv6[4].bf.hash_mix) &&
@@ -220,7 +217,7 @@ adpt_hppe_rss_hash_config_get(a_uint32_t dev_id, fal_rss_hash_mode_t mode,
 			(rss_hash_fin_ipv4[4].bf.fin_outer == rss_hash_fin_ipv6[4].bf.fin_outer))
 		{
 			config->hash_mask = rss_hash_mask_ipv6.bf.mask;
-			config->hash_fragment_mode = rss_hash_mask_ipv6.bf.fragment;
+			config->hash_fragment_mode = rss_hash_mask_ipv6.bf.rss_hash_fragment;
 			config->hash_seed = rss_hash_seed_ipv6.bf.seed;
 			for (index = 0; index < ADPT_RSS_HASH_IP_MIX_MAX_NUM; index++)
 			{

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -41,7 +41,7 @@
 
 struct rss_hash_mask_reg {
 	a_uint32_t  _reserved1:3;
-	a_uint32_t  fragment:1;
+	a_uint32_t  rss_hash_fragment:1;
 	a_uint32_t  _reserved0:7;
 	a_uint32_t  mask:21;
 };
@@ -145,7 +145,7 @@ union rss_hash_fin_reg_u {
 
 struct rss_hash_mask_ipv4_reg {
 	a_uint32_t  _reserved1:3;
-	a_uint32_t  fragment:1;
+	a_uint32_t  rss_hash_fragment:1;
 	a_uint32_t  _reserved0:7;
 	a_uint32_t  mask:21;
 };

@@ -91,6 +91,7 @@
 #include "mppe/mppe_athtag_reg.h"
 #include "mppe/mppe_servcode_reg.h"
 #include "mrppe/mrppe_pktedit_reg.h"
+#include "mrppe/mrppe_pktedit.h"
 #include "mppe/mppe_servcode.h"
 #include "mppe/mppe_athtag.h"
 
@@ -101,5 +102,5 @@
 #define PORT_DEF_VID_MAX_ENTRY			PORT_DEF_VID_NUM
 #define PORT_VLAN_CONFIG_MAX_ENTRY 		PORT_VLAN_CONFIG_NUM
 #define EG_VSI_TAG_MAX_ENTRY        	EG_VSI_TAG_NUM
-#define EG_FLOW_IPV6_IID_TBL_MAX_ENTRY  EG_FLOW_IPV6_IID_TBL_NUM  
+#define EG_FLOW_IPV6_IID_TBL_MAX_ENTRY  EG_FLOW_IPV6_IID_TBL_NUM
 
