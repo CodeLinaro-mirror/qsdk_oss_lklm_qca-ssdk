@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -79,8 +79,8 @@ union port_parsing_reg_u {
 	#define EDMA_VLAN_TPID_REG_CTAG_TPID_DEFAULT 0x8100
 
 struct edma_vlan_tpid_reg {
-	a_uint32_t  stag_tpid:16;
-	a_uint32_t  ctag_tpid:16;
+	a_uint32_t  svlan_tpid:16;
+	a_uint32_t  cvlan_tpid:16;
 };
 
 union edma_vlan_tpid_reg_u {

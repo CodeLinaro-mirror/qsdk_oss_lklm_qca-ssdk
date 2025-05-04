@@ -308,20 +308,21 @@ union pre_ipo_mask_reg_u {
 	struct pre_ipo_mask_reg bf;
 };
 
+/*Confirmed with Lei*/
 struct pre_ipo_rule_reg {
-	a_uint32_t  rule_field_0:32;
-	a_uint32_t  rule_field_1:20;
-	a_uint32_t  fake_mac_header:1;
-	a_uint32_t  range_en:1;
-	a_uint32_t  inverse_en:1;
-	a_uint32_t  rule_type:5;
-	a_uint32_t  src_type:3;
-	a_uint32_t  src_0:1;
-	a_uint32_t  src_1:7;
-	a_uint32_t  pri:9;
-	a_uint32_t  res_chain:1;
-	a_uint32_t  inner_outer_sel:1;
-	a_uint32_t  _reserved0:14;
+	a_uint32_t rule_field_0:32;
+	a_uint32_t rule_field_1:20;
+	a_uint32_t fake_mac_header:1;
+	a_uint32_t range_en:1;
+	a_uint32_t inverse_en:1;
+	a_uint32_t rule_type:5;
+	a_uint32_t src_type:3;
+	a_uint32_t src_0:1;
+	a_uint32_t src_1:8;
+	a_uint32_t pri:9;
+	a_uint32_t res_chain:1;
+	a_uint32_t inner_outer_sel:1;
+	a_uint32_t _reserved1:13;
 };
 
 union pre_ipo_rule_reg_u {
@@ -340,20 +341,21 @@ union ipo_mask_reg_u {
 	struct ipo_mask_reg bf;
 };
 
+/*Confirmed with Lei*/
 struct ipo_rule_reg {
-	a_uint32_t  rule_field_0:32;
-	a_uint32_t  rule_field_1:20;
-	a_uint32_t  fake_mac_header:1;
-	a_uint32_t  range_en:1;
-	a_uint32_t  inverse_en:1;
-	a_uint32_t  rule_type:4;
-	a_uint32_t  src_type:2;
-	a_uint32_t  src_0:3;
-	a_uint32_t  src_1:5;
-	a_uint32_t  pri:9;
-	a_uint32_t  res_chain:1;
-	a_uint32_t  post_routing_en:1;
-	a_uint32_t  _reserved0:16;
+	a_uint32_t rule_field_0:32;
+	a_uint32_t rule_field_1:20;
+	a_uint32_t fake_mac_header:1;
+	a_uint32_t range_en:1;
+	a_uint32_t inverse_en:1;
+	a_uint32_t rule_type:5;
+	a_uint32_t src_type:3;
+	a_uint32_t src_0:1;
+	a_uint32_t src_1:8;
+	a_uint32_t pri:9;
+	a_uint32_t res_chain:1;
+	a_uint32_t post_routing_en:1;
+	a_uint32_t _reserved0:13;
 };
 
 union ipo_rule_reg_u {
@@ -525,4 +527,188 @@ union toeplitz_secret_key_u {
 	struct toeplitz_secret_key bf;
 };
 
+//from adpt_appe_acl.c
+sw_error_t
+appe_pre_ipo_rule_reg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union pre_ipo_rule_reg_u *value);
+
+sw_error_t
+appe_pre_ipo_rule_reg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union pre_ipo_rule_reg_u *value);
+
+sw_error_t
+appe_pre_ipo_mask_reg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union pre_ipo_mask_reg_u *value);
+
+sw_error_t
+appe_pre_ipo_mask_reg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union pre_ipo_mask_reg_u *value);
+sw_error_t
+appe_l3_vp_port_tbl_ipo_vp_profile_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+sw_error_t
+appe_l3_vp_port_tbl_ipo_vp_profile_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+#define PRE_IPO_RULE_REG_SRC_OFFSET  63 //to be fixed by leiwei
+#define IPO_RULE_REG_SRC_OFFSET  63 //to be fixed by leiwei
+
+//from adpt_appe_portvlan.c
+sw_error_t
+appe_vp_isol_tbl_vp_profile_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+
+sw_error_t
+appe_vp_isol_tbl_vp_profile_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+//from adpt_appe_tunnel_program.c
+sw_error_t
+appe_tpr_program_hdr_hdr_type_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+sw_error_t
+appe_tpr_program_hdr_hdr_type_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+//from adpt_hppe_acl.c
+sw_error_t
+hppe_ipo_rule_reg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipo_rule_reg_u *value);
+sw_error_t
+hppe_ipo_rule_reg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipo_rule_reg_u *value);
+sw_error_t
+hppe_ipo_mask_reg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipo_mask_reg_u *value);
+
+sw_error_t
+hppe_ipo_mask_reg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipo_mask_reg_u *value);
+
+//from adpt_hppe_ip.c
+sw_error_t
+hppe_host_ipv4_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv6_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv4_mcast_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv4_mcast_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv6_mcast_add(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_mcast_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv4_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv6_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv4_mcast_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv4_mcast_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv6_mcast_del(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_mcast_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv4_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv6_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv4_mcast_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv4_mcast_tbl_u *entry);
+
+sw_error_t
+hppe_host_ipv6_mcast_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, union host_ipv6_mcast_tbl_u *entry);
+
+sw_error_t
+hppe_host_flush_common(a_uint32_t dev_id);
+
+//from adpt_hppe_portvlan.c
+sw_error_t
+hppe_bridge_config_bridge_type_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_bridge_config_bridge_type_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+appe_eg_vsi_vp_tag_tagged_mode_vp_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_eg_vsi_vp_tag_tagged_mode_vp_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_vsi_tag_tagged_mode_port_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_vsi_tag_tagged_mode_port_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 #endif

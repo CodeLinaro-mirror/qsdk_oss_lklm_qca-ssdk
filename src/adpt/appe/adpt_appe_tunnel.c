@@ -20,16 +20,7 @@
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "fal_tunnel.h"
-#include "appe_tunnel_reg.h"
-#include "appe_tunnel.h"
-#include "appe_portvlan_reg.h"
-#include "appe_portvlan.h"
-#include "hppe_ip_reg.h"
-#include "hppe_ip.h"
-#include "appe_l2_vp_reg.h"
-#include "appe_l2_vp.h"
+#include "hsl_reg.h"
 #include "adpt.h"
 
 #define TUNNEL_ENCAP_FROM_VP	0
@@ -334,47 +325,47 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 		tl_tbl.bf.protocol = rule_key->l4_proto;
 
 		if (rule_key->ip_ver) {
-			tl_tbl.bf.ipv6_src_addr_0 = rule_key->sip.ip6_addr.ul[3] &
+			tl_tbl.bf1.ipv6_src_addr_0 = rule_key->sip.ip6_addr.ul[3] &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			tl_tbl.bf.ipv6_src_addr_1 = (rule_key->sip.ip6_addr.ul[3] >>
+			tl_tbl.bf1.ipv6_src_addr_1 = (rule_key->sip.ip6_addr.ul[3] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET)) |
 				rule_key->sip.ip6_addr.ul[2] << TL_TBL_IPV6_SRC_ADDR_OFFSET % 32;
 
-			tl_tbl.bf.ipv6_src_addr_2 = (rule_key->sip.ip6_addr.ul[2] >>
+			tl_tbl.bf1.ipv6_src_addr_2 = (rule_key->sip.ip6_addr.ul[2] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET)) |
 				rule_key->sip.ip6_addr.ul[1] << TL_TBL_IPV6_SRC_ADDR_OFFSET % 32;
 
-			tl_tbl.bf.ipv6_src_addr_3 = (rule_key->sip.ip6_addr.ul[1] >>
+			tl_tbl.bf1.ipv6_src_addr_3 = (rule_key->sip.ip6_addr.ul[1] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET)) |
 				rule_key->sip.ip6_addr.ul[0] << TL_TBL_IPV6_SRC_ADDR_OFFSET % 32;
 
-			tl_tbl.bf.ipv6_src_addr_4 = rule_key->sip.ip6_addr.ul[0] >>
+			tl_tbl.bf1.ipv6_src_addr_4 = rule_key->sip.ip6_addr.ul[0] >>
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET);
 
-			tl_tbl.bf.ipv6_dst_addr_0 = rule_key->dip.ip6_addr.ul[3] &
+			tl_tbl.bf1.ipv6_dst_addr_0 = rule_key->dip.ip6_addr.ul[3] &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			tl_tbl.bf.ipv6_dst_addr_1 = (rule_key->dip.ip6_addr.ul[3] >>
+			tl_tbl.bf1.ipv6_dst_addr_1 = (rule_key->dip.ip6_addr.ul[3] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET)) |
 				rule_key->dip.ip6_addr.ul[2] << TL_TBL_IPV6_DST_ADDR_OFFSET % 32;
 
-			tl_tbl.bf.ipv6_dst_addr_2 = (rule_key->dip.ip6_addr.ul[2] >>
+			tl_tbl.bf1.ipv6_dst_addr_2 = (rule_key->dip.ip6_addr.ul[2] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET)) |
 				rule_key->dip.ip6_addr.ul[1] << TL_TBL_IPV6_DST_ADDR_OFFSET % 32;
 
-			tl_tbl.bf.ipv6_dst_addr_3 = (rule_key->dip.ip6_addr.ul[1] >>
+			tl_tbl.bf1.ipv6_dst_addr_3 = (rule_key->dip.ip6_addr.ul[1] >>
 					SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET)) |
 				rule_key->dip.ip6_addr.ul[0] << TL_TBL_IPV6_DST_ADDR_OFFSET % 32;
 
-			tl_tbl.bf.ipv6_dst_addr_4 = rule_key->dip.ip6_addr.ul[0] >>
+			tl_tbl.bf1.ipv6_dst_addr_4 = rule_key->dip.ip6_addr.ul[0] >>
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET);
 		} else {
-			tl_tbl.bf1.ipv4_src_addr_0 = rule_key->sip.ip4_addr;
-			tl_tbl.bf1.ipv4_src_addr_1 = rule_key->sip.ip4_addr >>
+			tl_tbl.bf.ipv4_src_addr_0 = rule_key->sip.ip4_addr;
+			tl_tbl.bf.ipv4_src_addr_1 = rule_key->sip.ip4_addr >>
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV4_SRC_ADDR_OFFSET);
-			tl_tbl.bf1.ipv4_dst_addr_0 = rule_key->dip.ip4_addr;
-			tl_tbl.bf1.ipv4_dst_addr_1 = rule_key->dip.ip4_addr >>
+			tl_tbl.bf.ipv4_dst_addr_0 = rule_key->dip.ip4_addr;
+			tl_tbl.bf.ipv4_dst_addr_1 = rule_key->dip.ip4_addr >>
 				SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV4_DST_ADDR_OFFSET);
 		}
 
@@ -442,58 +433,58 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 		rule_key->l4_proto = tl_tbl.bf.protocol;
 
 		if (tl_tbl.bf.entry_type) {
-			rule_key->sip.ip6_addr.ul[3] = (tl_tbl.bf.ipv6_src_addr_0 &
+			rule_key->sip.ip6_addr.ul[3] = (tl_tbl.bf1.ipv6_src_addr_0 &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_src_addr_1 <<
+				(tl_tbl.bf1.ipv6_src_addr_1 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->sip.ip6_addr.ul[2] = ((tl_tbl.bf.ipv6_src_addr_1 >>
+			rule_key->sip.ip6_addr.ul[2] = ((tl_tbl.bf1.ipv6_src_addr_1 >>
 				TL_TBL_IPV6_SRC_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_src_addr_2 <<
+				(tl_tbl.bf1.ipv6_src_addr_2 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->sip.ip6_addr.ul[1] = ((tl_tbl.bf.ipv6_src_addr_2 >>
+			rule_key->sip.ip6_addr.ul[1] = ((tl_tbl.bf1.ipv6_src_addr_2 >>
 				TL_TBL_IPV6_SRC_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_src_addr_3 <<
+				(tl_tbl.bf1.ipv6_src_addr_3 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->sip.ip6_addr.ul[0] = ((tl_tbl.bf.ipv6_src_addr_3 >>
+			rule_key->sip.ip6_addr.ul[0] = ((tl_tbl.bf1.ipv6_src_addr_3 >>
 				TL_TBL_IPV6_SRC_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_src_addr_4 <<
+				(tl_tbl.bf1.ipv6_src_addr_4 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_SRC_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[3] = (tl_tbl.bf.ipv6_dst_addr_0 &
+			rule_key->dip.ip6_addr.ul[3] = (tl_tbl.bf1.ipv6_dst_addr_0 &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_dst_addr_1 <<
+				(tl_tbl.bf1.ipv6_dst_addr_1 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[2] = ((tl_tbl.bf.ipv6_dst_addr_1 >>
+			rule_key->dip.ip6_addr.ul[2] = ((tl_tbl.bf1.ipv6_dst_addr_1 >>
 				TL_TBL_IPV6_DST_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_dst_addr_2 <<
+				(tl_tbl.bf1.ipv6_dst_addr_2 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[1] = ((tl_tbl.bf.ipv6_dst_addr_2 >>
+			rule_key->dip.ip6_addr.ul[1] = ((tl_tbl.bf1.ipv6_dst_addr_2 >>
 				TL_TBL_IPV6_DST_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_dst_addr_3 <<
+				(tl_tbl.bf1.ipv6_dst_addr_3 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 
-			rule_key->dip.ip6_addr.ul[0] = ((tl_tbl.bf.ipv6_dst_addr_3 >>
+			rule_key->dip.ip6_addr.ul[0] = ((tl_tbl.bf1.ipv6_dst_addr_3 >>
 				TL_TBL_IPV6_DST_ADDR_OFFSET % 32) &
 				BITS(0, SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET))) |
-				(tl_tbl.bf.ipv6_dst_addr_4 <<
+				(tl_tbl.bf1.ipv6_dst_addr_4 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV6_DST_ADDR_OFFSET));
 		} else {
-			rule_key->sip.ip4_addr = tl_tbl.bf1.ipv4_src_addr_0 |
-				(tl_tbl.bf1.ipv4_src_addr_1 <<
+			rule_key->sip.ip4_addr = tl_tbl.bf.ipv4_src_addr_0 |
+				(tl_tbl.bf.ipv4_src_addr_1 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV4_SRC_ADDR_OFFSET));
 
-			rule_key->dip.ip4_addr = tl_tbl.bf1.ipv4_dst_addr_0 |
-				(tl_tbl.bf1.ipv4_dst_addr_1 <<
+			rule_key->dip.ip4_addr = tl_tbl.bf.ipv4_dst_addr_0 |
+				(tl_tbl.bf.ipv4_dst_addr_1 <<
 				 SW_FIELD_OFFSET_IN_WORD(TL_TBL_IPV4_DST_ADDR_OFFSET));
 		}
 
@@ -1406,22 +1397,26 @@ adpt_appe_tunnel_vlan_entry_compare(fal_tunnel_vlan_intf_t vlan_cfg,
 
 	a_uint16_t tbl_key_bmp = 0;
 
-	tbl_key_bmp |= (tl_vlan_tbl.bf.skey_vid_incl ? FAL_TUNNEL_SVLAN_CHECK_EN : 0);
-	tbl_key_bmp |= (tl_vlan_tbl.bf.ckey_vid_incl ? FAL_TUNNEL_CVLAN_CHECK_EN : 0);
+	tbl_key_bmp |= (tl_vlan_tbl.bf1.skey_vid_incl ? FAL_TUNNEL_SVLAN_CHECK_EN : 0);
+	tbl_key_bmp |= (tl_vlan_tbl.bf1.ckey_vid_incl ? FAL_TUNNEL_CVLAN_CHECK_EN : 0);
 
-	if (tl_vlan_tbl.bf.type != adpt_port_type_convert(A_TRUE,
+	if (tl_vlan_tbl.bf1.type != adpt_port_type_convert(A_TRUE,
 				FAL_PORT_ID_TYPE(vlan_cfg.port_id)) ||
-			tl_vlan_tbl.bf.port_vp_id != FAL_PORT_ID_VALUE(vlan_cfg.port_id) ||
-			tl_vlan_tbl.bf.skey_fmt != vlan_cfg.svlan_fmt ||
-			tl_vlan_tbl.bf.ckey_fmt != vlan_cfg.cvlan_fmt ||
+			tl_vlan_tbl.bf1.port_vp_id != FAL_PORT_ID_VALUE(vlan_cfg.port_id) ||
+			tl_vlan_tbl.bf1.skey_fmt != vlan_cfg.svlan_fmt ||
+			tl_vlan_tbl.bf1.ckey_fmt != vlan_cfg.cvlan_fmt ||
 			tbl_key_bmp != vlan_cfg.key_bmp)
 		return A_FALSE;
 	if (vlan_cfg.key_bmp & FAL_TUNNEL_SVLAN_CHECK_EN &&
-			tl_vlan_tbl.bf.skey_vid != vlan_cfg.svlan_id)
+			tl_vlan_tbl.bf1.skey_vid != vlan_cfg.svlan_id)
 		return A_FALSE;
 	if (vlan_cfg.key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN &&
-			(tl_vlan_tbl.bf.ckey_vid_0 | (tl_vlan_tbl.bf.ckey_vid_1 <<
+#ifdef HMSPPE
+			(tl_vlan_tbl.bf1.ckey_vid)
+#else
+			(tl_vlan_tbl.bf1.ckey_vid_0 | (tl_vlan_tbl.bf1.ckey_vid_1 <<
 					SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET)))
+#endif
 			!= vlan_cfg.cvlan_id)
 		return A_FALSE;
 
@@ -1438,47 +1433,53 @@ adpt_appe_tunnel_vlan_entry_convert(fal_tunnel_vlan_intf_t *vlan_cfg,
 	ADPT_NULL_POINT_CHECK(tl_vlan_tbl);
 
 	if (to_hsl) {
-		tl_vlan_tbl->bf.valid = A_TRUE;
-		tl_vlan_tbl->bf.type = adpt_port_type_convert(A_TRUE,
+		tl_vlan_tbl->bf1.valid = A_TRUE;
+		tl_vlan_tbl->bf1.type = adpt_port_type_convert(A_TRUE,
 				FAL_PORT_ID_TYPE(vlan_cfg->port_id));
-		tl_vlan_tbl->bf.port_vp_id = FAL_PORT_ID_VALUE(vlan_cfg->port_id);
-		tl_vlan_tbl->bf.skey_fmt = vlan_cfg->svlan_fmt;
-		tl_vlan_tbl->bf.skey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_SVLAN_CHECK_EN) ?
+		tl_vlan_tbl->bf1.port_vp_id = FAL_PORT_ID_VALUE(vlan_cfg->port_id);
+		tl_vlan_tbl->bf1.skey_fmt = vlan_cfg->svlan_fmt;
+		tl_vlan_tbl->bf1.skey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_SVLAN_CHECK_EN) ?
 			A_TRUE : A_FALSE;
-		tl_vlan_tbl->bf.skey_vid = vlan_cfg->svlan_id;
-		tl_vlan_tbl->bf.ckey_fmt = vlan_cfg->cvlan_fmt;
-		tl_vlan_tbl->bf.ckey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN) ?
+		tl_vlan_tbl->bf1.skey_vid = vlan_cfg->svlan_id;
+		tl_vlan_tbl->bf1.ckey_fmt = vlan_cfg->cvlan_fmt;
+		tl_vlan_tbl->bf1.ckey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN) ?
 			A_TRUE : A_FALSE;
-		tl_vlan_tbl->bf.ckey_vid_0 = vlan_cfg->cvlan_id;
-		tl_vlan_tbl->bf.ckey_vid_1 = vlan_cfg->cvlan_id >>
+#ifdef HMSPPE
+		tl_vlan_tbl->bf1.ckey_vid = vlan_cfg->cvlan_id;
+#else
+		tl_vlan_tbl->bf1.ckey_vid_0 = vlan_cfg->cvlan_id;
+		tl_vlan_tbl->bf1.ckey_vid_1 = vlan_cfg->cvlan_id >>
 			SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET);
-
-		tl_vlan_tbl->bf.tl_l3_if_valid = vlan_cfg->l3_if.l3_if_valid;
-		tl_vlan_tbl->bf.tl_l3_if_index = vlan_cfg->l3_if.l3_if_index;
-		tl_vlan_tbl->bf.pppoe_en = vlan_cfg->pppoe_en;
+#endif
+		tl_vlan_tbl->bf1.tl_l3_if_valid = vlan_cfg->l3_if.l3_if_valid;
+		tl_vlan_tbl->bf1.tl_l3_if_index = vlan_cfg->l3_if.l3_if_index;
+		tl_vlan_tbl->bf1.pppoe_en = vlan_cfg->pppoe_en;
 	} else {
 		vlan_cfg->port_id = FAL_PORT_ID(adpt_port_type_convert(A_FALSE,
-					tl_vlan_tbl->bf.type),
-				tl_vlan_tbl->bf.port_vp_id);
-		vlan_cfg->svlan_fmt = tl_vlan_tbl->bf.skey_fmt;
-		vlan_cfg->svlan_id = tl_vlan_tbl->bf.skey_vid;
-		vlan_cfg->cvlan_fmt = tl_vlan_tbl->bf.ckey_fmt;
-		vlan_cfg->cvlan_id = tl_vlan_tbl->bf.ckey_vid_0 | (tl_vlan_tbl->bf.ckey_vid_1 <<
+					tl_vlan_tbl->bf1.type),
+				tl_vlan_tbl->bf1.port_vp_id);
+		vlan_cfg->svlan_fmt = tl_vlan_tbl->bf1.skey_fmt;
+		vlan_cfg->svlan_id = tl_vlan_tbl->bf1.skey_vid;
+		vlan_cfg->cvlan_fmt = tl_vlan_tbl->bf1.ckey_fmt;
+#ifdef HMSPPE
+		vlan_cfg->cvlan_id = tl_vlan_tbl->bf1.ckey_vid;
+#else
+		vlan_cfg->cvlan_id = tl_vlan_tbl->bf1.ckey_vid_0 | (tl_vlan_tbl->bf1.ckey_vid_1 <<
 				SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET));
-
-		if (tl_vlan_tbl->bf.skey_vid_incl)
+#endif
+		if (tl_vlan_tbl->bf1.skey_vid_incl)
 			vlan_cfg->key_bmp |= FAL_TUNNEL_SVLAN_CHECK_EN;
 		else
 			vlan_cfg->key_bmp &= ~FAL_TUNNEL_SVLAN_CHECK_EN;
 
-		if (tl_vlan_tbl->bf.ckey_vid_incl)
+		if (tl_vlan_tbl->bf1.ckey_vid_incl)
 			vlan_cfg->key_bmp |= FAL_TUNNEL_CVLAN_CHECK_EN;
 		else
 			vlan_cfg->key_bmp &= ~FAL_TUNNEL_CVLAN_CHECK_EN;
 
-		vlan_cfg->l3_if.l3_if_valid = tl_vlan_tbl->bf.tl_l3_if_valid;
-		vlan_cfg->l3_if.l3_if_index = tl_vlan_tbl->bf.tl_l3_if_index;
-		vlan_cfg->pppoe_en = tl_vlan_tbl->bf.pppoe_en;
+		vlan_cfg->l3_if.l3_if_valid = tl_vlan_tbl->bf1.tl_l3_if_valid;
+		vlan_cfg->l3_if.l3_if_index = tl_vlan_tbl->bf1.tl_l3_if_index;
+		vlan_cfg->pppoe_en = tl_vlan_tbl->bf1.pppoe_en;
 	}
 
 	return rv;

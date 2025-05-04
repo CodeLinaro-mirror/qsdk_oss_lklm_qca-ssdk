@@ -2067,7 +2067,7 @@ union host_ipv6_tbl_u {
 	#define IN_NEXTHOP_TBL_IP_ADDR_DNAT_LEN     32
 	#define IN_NEXTHOP_TBL_IP_ADDR_DNAT_DEFAULT 0x0
 
-struct in_nexthop_tbl_1 {
+struct in_nexthop_tbl_0 {
 #if defined(APPE)
 	a_uint32_t  ctag_fmt:1;
 	a_uint32_t  svid:12;
@@ -2096,7 +2096,7 @@ struct in_nexthop_tbl_1 {
 	a_uint32_t  ip_addr_dnat:32;
 };
 
-struct in_nexthop_tbl_0 {
+struct in_nexthop_tbl_1 {
 	a_uint32_t  ctag_fmt:1;
 	a_uint32_t  svid:12;
 	a_uint32_t  stag_fmt:1;

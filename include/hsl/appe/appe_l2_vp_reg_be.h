@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -227,7 +227,7 @@ struct l2_vp_port_tbl {
 	a_uint32_t  vp_state_check_en:1;
 	a_uint32_t  policer_index:9;
 	a_uint32_t  policer_en:1;
-	a_uint32_t  isol_en:1;
+	a_uint32_t  isol_profile_en:1;
 	a_uint32_t  isol_profile:6;
 	a_uint32_t  port_isolation_bitmap:8;
 	a_uint32_t  eg_vlan_fltr_cmd:1;

@@ -2006,7 +2006,7 @@ union host_ipv6_tbl_u {
 	#define IN_NEXTHOP_TBL_IP_ADDR_DNAT_LEN     32
 	#define IN_NEXTHOP_TBL_IP_ADDR_DNAT_DEFAULT 0x0
 
-struct in_nexthop_tbl_1 {
+struct in_nexthop_tbl_0 {
 	a_uint32_t  type:1;
 #if defined(APPE)
 	a_uint32_t  vsi:6;
@@ -2027,7 +2027,7 @@ struct in_nexthop_tbl_1 {
 	a_uint32_t  ip_addr_dnat:32;
 };
 
-struct in_nexthop_tbl_0 {
+struct in_nexthop_tbl_1 {
 	a_uint32_t  type:1;
 	a_uint32_t  port:8;
 	a_uint32_t  post_l3_if:8;

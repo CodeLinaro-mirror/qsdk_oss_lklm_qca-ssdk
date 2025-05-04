@@ -20,17 +20,12 @@
  * @defgroup
  * @{
  */
-#include "sw.h"
+
+#include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
-#include "appe_acl_reg.h"
-#include "appe_acl.h"
 #include "adpt_hppe_acl.h"
 #include "adpt_appe_acl.h"
-#include "hppe_ip_reg.h"
-#include "hppe_ip.h"
-#include "appe_tunnel_reg.h"
-#include "appe_tunnel.h"
 
 #define NON_IP_PROFILE_ID 7
 #define IP4_PROFILE_ID 6
@@ -200,7 +195,11 @@ _adpt_appe_acl_ext_set(a_uint32_t dev_id, fal_acl_rule_t * rule,
 			reg_val.bf.policy_id = rule->policy_id;
 #if defined(MPPE)
 			reg_val.bf.cookie = rule->cookie_val;
+#ifdef HMSPPE //to be fixed/checked by leiwei
+			reg_val.bf.metadata_pri = rule->cookie_pri;
+#else
 			reg_val.bf.cookie_pri = rule->cookie_pri;
+#endif
 #endif
 #if defined(MRPPE)
 			reg_val.bf.cookie_ext = (rule->cookie_val >> 16) & 0xffffff;
@@ -232,7 +231,11 @@ _adpt_appe_acl_ext_get(a_uint32_t dev_id,
 	rule->policy_id = reg_val.bf.policy_id;
 #if defined(MPPE)
 	rule->cookie_val = reg_val.bf.cookie;
+#ifdef HMSPPE //to be fixed/checked by leiwei
+	rule->cookie_pri = reg_val.bf.metadata_pri;
+#else
 	rule->cookie_pri = reg_val.bf.cookie_pri;
+#endif
 #endif
 #if defined(MRPPE)
 	rule->cookie_val |= (a_uint64_t)(reg_val.bf.cookie_ext) << 16;
@@ -366,6 +369,8 @@ static sw_error_t
 _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 		fal_acl_rule_t *rule, union pre_ipo_action_u *hw_act)
 {
+	a_uint32_t nat_action = 0;
+
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REDPT))
 	{
 		a_uint32_t dest_type = FAL_ACL_DEST_TYPE(rule->ports);
@@ -419,7 +424,12 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	{
 		hw_act->bf.svid_change_en = 1;
 		hw_act->bf.stag_fmt = rule->stag_fmt;
+#ifdef HMSPPE
+		hw_act->bf.svid_0 = rule->stag_vid & 0x7f;
+		hw_act->bf.svid_1 = (rule->stag_vid >> 11) & 0x1;
+#else
 		hw_act->bf.svid = rule->stag_vid;
+#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_PRI))
 	{
@@ -440,8 +450,12 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI))
 	{
 		hw_act->bf.ctag_pcp_change_en = 1;
+#ifdef HMSPPE
+		hw_act->bf.ctag_pcp = rule->ctag_pri&0x7;
+#else
 		hw_act->bf.ctag_pcp_0 = rule->ctag_pri&0x3;
 		hw_act->bf.ctag_pcp_1 = (rule->ctag_pri>>2)&0x1;
+#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_CFI))
 	{
@@ -477,8 +491,12 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE))
 	{
 		hw_act->bf.service_code_en = 1;
+#ifdef HMSPPE
+		hw_act->bf.service_code = rule->service_code & 0xff;
+#else
 		hw_act->bf.service_code_0 = rule->service_code&0x1;
 		hw_act->bf.service_code_1 = (rule->service_code>>1)&0x7f;
+#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SYN_TOGGLE))
 	{
@@ -503,46 +521,60 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_CASCADE))
 	{
 		hw_act->bf.cascade_en = 1;
+#ifdef HMSPPE
+		hw_act->bf.cascade_data = rule->cascade_data;;
+#else
 		hw_act->bf.cascade_data_0 = rule->cascade_data;
 		hw_act->bf.cascade_data_1 = rule->cascade_data>>
 			SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_CASCADE_DATA_OFFSET);
+#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_VPN))
 	{
 		hw_act->bf.vpn_valid = 1;
 		hw_act->bf.vpn_type = rule->vpn_type;
+#ifdef HMSPPE
+		hw_act->bf.vpn_id = rule->vpn_id;
+#else
 		hw_act->bf.vpn_id_0 = rule->vpn_id;
 		hw_act->bf.vpn_id_1 = rule->vpn_id>>
 			SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_VPN_ID_OFFSET);
+#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_POLICY_FORWARD_EN))
 	{
 		if(FAL_ACL_POLICY_ROUTE == rule->policy_fwd)
 		{
-			hw_act->bf.nat_action = APPE_ACL_POLICY_ROUTE;/*no nat*/
+			nat_action = APPE_ACL_POLICY_ROUTE;/*no nat*/
 		}
 		else if (FAL_ACL_POLICY_SNAT == rule->policy_fwd)
 		{
-			hw_act->bf.nat_action = APPE_ACL_POLICY_SNAT;/*snat*/
+			nat_action = APPE_ACL_POLICY_SNAT;/*snat*/
 		}
 		else if (FAL_ACL_POLICY_DNAT == rule->policy_fwd)
 		{
-			hw_act->bf.nat_action = APPE_ACL_POLICY_DNAT;/*dnat*/
+			nat_action = APPE_ACL_POLICY_DNAT;/*dnat*/
 		}
 		else if (FAL_ACL_POLICY_SNAPT == rule->policy_fwd)
 		{
-			hw_act->bf.nat_action = APPE_ACL_POLICY_SNAPT;/*snapt*/
+			nat_action = APPE_ACL_POLICY_SNAPT;/*snapt*/
 			hw_act->bf.l4_port = rule->napt_l4_port;
 		}
 		else if (FAL_ACL_POLICY_DNAPT == rule->policy_fwd)
 		{
-			hw_act->bf.nat_action = APPE_ACL_POLICY_DNAPT;/*dnapt*/
+			nat_action = APPE_ACL_POLICY_DNAPT;/*dnapt*/
 			hw_act->bf.l4_port = rule->napt_l4_port;
 		}
 		else
 		{
 			return SW_BAD_PARAM;
 		}
+#ifdef HMSPPE
+		hw_act->bf.nat_action_0 = nat_action&3;
+		hw_act->bf.nat_action_1 = (nat_action>>2) & 0x1;
+#else
+		hw_act->bf.nat_action = nat_action;
+#endif
 	}
 	if (FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_LEARN_DIS))
 	{
@@ -761,6 +793,7 @@ static sw_error_t
 _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	union pre_ipo_action_u *hw_act, fal_acl_rule_t *rule)
 {
+	a_uint32_t nat_action = 0;
 	if(hw_act->bf.dest_info_change_en)
 	{
 		a_uint32_t dest_type = HPPE_ACL_DEST_TYPE(hw_act->bf.dest_info);
@@ -811,7 +844,11 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_VID);
 		rule->stag_fmt = hw_act->bf.stag_fmt;
+#ifdef HMSPPE
+		rule->stag_vid = (hw_act->bf.svid_0 & 0x7f) | ((hw_act->bf.svid_1& 0x1) << 11);
+#else
 		rule->stag_vid = hw_act->bf.svid;
+#endif
 	}
 	if(hw_act->bf.stag_pcp_change_en == 1)
 	{
@@ -832,7 +869,12 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.ctag_pcp_change_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI);
+
+#ifdef HMSPPE
+		rule->ctag_pri = hw_act->bf.ctag_pcp & 0x7;
+#else
 		rule->ctag_pri = (hw_act->bf.ctag_pcp_1<<2)|hw_act->bf.ctag_pcp_0;
+#endif
 	}
 	if(hw_act->bf.ctag_dei_change_en == 1)
 	{
@@ -868,7 +910,11 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.service_code_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE);
+#ifdef HMSPPE
+		rule->service_code = hw_act->bf.service_code & 0xff;
+#else
 		rule->service_code = (hw_act->bf.service_code_1<<1)|hw_act->bf.service_code_0;
+#endif
 	}
 	if(hw_act->bf.syn_toggle)
 	{
@@ -893,38 +939,55 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.cascade_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_CASCADE);
+#ifdef HMSPPE
+		rule->cascade_data = hw_act->bf.cascade_data;
+#else
 		rule->cascade_data = (hw_act->bf.cascade_data_1 <<
 				SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_CASCADE_DATA_OFFSET)) |
 				hw_act->bf.cascade_data_0;
+#endif
 	}
 	if(hw_act->bf.vpn_valid == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_VPN);
 		rule->vpn_type = hw_act->bf.vpn_type;
+#ifdef HMSPPE
+		rule->vpn_id = hw_act->bf.vpn_id;
+#else
 		rule->vpn_id = (hw_act->bf.vpn_id_1 <<
 				SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_VPN_ID_OFFSET)) |
 				hw_act->bf.vpn_id_0;
+#endif
 	}
 	if(FAL_ACL_DEST_TYPE(rule->ports) == FAL_ACL_DEST_NEXTHOP)
 	{
-		if(hw_act->bf.nat_action == APPE_ACL_POLICY_ROUTE)
+#ifdef HMSPPE
+		nat_action = (hw_act->bf.nat_action_0 & 0x3) | 
+					((hw_act->bf.nat_action_0 & 0x1) << 2);
+#else
+		nat_action = hw_act->bf.nat_action;
+
+#endif
+
+
+		if(nat_action == APPE_ACL_POLICY_ROUTE)
 		{
 			rule->policy_fwd = FAL_ACL_POLICY_ROUTE;
 		}
-		else if(hw_act->bf.nat_action == APPE_ACL_POLICY_SNAT)
+		else if(nat_action == APPE_ACL_POLICY_SNAT)
 		{
 			rule->policy_fwd = FAL_ACL_POLICY_SNAT;
 		}
-		else if(hw_act->bf.nat_action == APPE_ACL_POLICY_DNAT)
+		else if(nat_action == APPE_ACL_POLICY_DNAT)
 		{
 			rule->policy_fwd = FAL_ACL_POLICY_DNAT;
 		}
-		else if(hw_act->bf.nat_action == APPE_ACL_POLICY_SNAPT)
+		else if(nat_action == APPE_ACL_POLICY_SNAPT)
 		{
 			rule->policy_fwd = FAL_ACL_POLICY_SNAPT;
 			rule->napt_l4_port = hw_act->bf.l4_port;
 		}
-		else if(hw_act->bf.nat_action == APPE_ACL_POLICY_DNAPT)
+		else if(nat_action == APPE_ACL_POLICY_DNAPT)
 		{
 			rule->policy_fwd = FAL_ACL_POLICY_DNAPT;
 			rule->napt_l4_port = hw_act->bf.l4_port;
