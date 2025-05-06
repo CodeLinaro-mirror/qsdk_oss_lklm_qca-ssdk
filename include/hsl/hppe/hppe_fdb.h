@@ -1,20 +1,9 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
+
 
 /**
  * @defgroup
@@ -580,7 +569,6 @@ hppe_l2_global_conf_age_ctrl_mode_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 #endif
-#ifndef IN_FDB_MINI
 sw_error_t
 hppe_l2_global_conf_service_code_loop_get(
 		a_uint32_t dev_id,
@@ -590,7 +578,6 @@ sw_error_t
 hppe_l2_global_conf_service_code_loop_set(
 		a_uint32_t dev_id,
 		unsigned int value);
-#endif
 #if 0
 sw_error_t
 hppe_l2_dbgcnt_cmd_type_get(

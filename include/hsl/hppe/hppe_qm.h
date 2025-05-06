@@ -1,20 +1,9 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
+
 
 /**
  * @defgroup
@@ -123,7 +112,6 @@ hppe_eg_mirror_priority_ctrl_set(
 		a_uint32_t dev_id,
 		union eg_mirror_priority_ctrl_u *value);
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 hppe_ucast_default_hash_get(
 		a_uint32_t dev_id,
@@ -133,7 +121,6 @@ sw_error_t
 hppe_ucast_default_hash_set(
 		a_uint32_t dev_id,
 		union ucast_default_hash_u *value);
-#endif
 
 sw_error_t
 hppe_spare_reg0_get(
@@ -155,7 +142,6 @@ hppe_spare_reg1_set(
 		a_uint32_t dev_id,
 		union spare_reg1_u *value);
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 hppe_mcast_priority_map0_get(
 		a_uint32_t dev_id,
@@ -251,7 +237,6 @@ hppe_mcast_priority_map7_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mcast_priority_map7_u *value);
-#endif
 
 sw_error_t
 hppe_ucast_queue_map_tbl_get(
@@ -289,7 +274,6 @@ hppe_ucast_priority_map_tbl_set(
 		a_uint32_t index,
 		union ucast_priority_map_tbl_u *value);
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 hppe_mcast_queue_map_tbl_get(
 		a_uint32_t dev_id,
@@ -301,7 +285,6 @@ hppe_mcast_queue_map_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mcast_queue_map_tbl_u *value);
-#endif
 
 sw_error_t
 hppe_ac_mseq_tbl_get(

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -594,7 +583,6 @@ appe_eg_udp_entropy_ctrl_set(
 		a_uint32_t dev_id,
 		union eg_udp_entropy_ctrl_u *value);
 
-#ifndef IN_TUNNEL_MINI
 sw_error_t
 appe_ecn_profile_get(
 		a_uint32_t dev_id,
@@ -604,7 +592,6 @@ sw_error_t
 appe_ecn_profile_set(
 		a_uint32_t dev_id,
 		union ecn_profile_u *value);
-#endif
 
 sw_error_t
 appe_eg_proto_mapping0_get(
@@ -702,7 +689,6 @@ appe_tl_port_vp_tbl_pre_ipo_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#ifndef IN_TUNNEL_MINI
 sw_error_t
 appe_tl_vlan_tbl_get(
 		a_uint32_t dev_id,
@@ -774,5 +760,4 @@ sw_error_t
 appe_ecn_map_mode2_1_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode2_1_u *value);
-#endif
 #endif

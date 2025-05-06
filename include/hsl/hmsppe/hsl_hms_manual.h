@@ -1156,7 +1156,6 @@ appe_port_mux_ctrl_set(
 		a_uint32_t dev_id,
 		union appe_port_mux_ctrl_u *value);
 //appe_portvlan.h
-#ifndef IN_PORTVLAN_MINI
 sw_error_t
 appe_vp_isol_tbl_vp_profile_map_get(
 		a_uint32_t dev_id,
@@ -1168,7 +1167,6 @@ appe_vp_isol_tbl_vp_profile_map_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint64_t value);
-#endif
 
 //appe_vxlan.h
 sw_error_t
