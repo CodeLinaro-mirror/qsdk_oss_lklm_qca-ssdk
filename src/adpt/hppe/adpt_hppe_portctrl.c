@@ -92,9 +92,13 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
+	if (hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE)) {
+		phy_status->link_status = PORT_LINK_UP;
+		phy_status->speed = hsl_port_force_speed_get(dev_id, port_id);
+		phy_status->duplex = hsl_port_force_duplex_get(dev_id, port_id);
+		return SW_OK;
+	} else if (hsl_port_is_sfp(dev_id, port_id)) {
 #if defined(IN_SFP_PHY)
-	if(hsl_port_is_sfp(dev_id, port_id))
-	{
 		a_bool_t rx_los_status = A_TRUE;
 
 		rv = sfp_phy_rx_los_status_get(dev_id, port_id, &rx_los_status);
@@ -105,8 +109,9 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 			phy_status->duplex = FAL_DUPLEX_BUTT;
 			return SW_OK;
 		}
-	}
 #endif
+	}
+
 	if (port_id == SSDK_PHYSICAL_PORT5)
 	{
 		rv = hppe_port_phy_status_1_port5_1_phy_status_get(dev_id,
@@ -1890,8 +1895,6 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 		} else if (port_type == PORT_XGMAC_TYPE) {
 			xgmac_rxfc = priv->ports[port_id].port_old_rx_flowctrl;
 			xgmac_txfc = priv->ports[port_id].port_old_tx_flowctrl;
-		} else {
-			return SW_NOT_SUPPORTED;
 		}
 
 		rv = _adpt_gmac_port_txfc_status_set( dev_id, port_id, gmac_txfc);
@@ -2081,6 +2084,10 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 		case PORT_WRAPPER_10GBASE_R:
 			qca_hppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
 			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_10GBASE_R);
+			break;
+		case PORT_WRAPPER_PON_SERDES:
+			qca_hppe_port_mac_type_set(dev_id, port_id, PORT_PON_MAC_TYPE);
+			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_PON_SERDES);
 			break;
 		default:
 			break;

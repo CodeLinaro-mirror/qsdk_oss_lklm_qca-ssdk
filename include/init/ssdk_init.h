@@ -50,6 +50,8 @@ extern "C" {
 
 #define PORT_GMAC_TYPE                  1
 #define PORT_XGMAC_TYPE                 2
+#define PORT_PON_MAC_TYPE		3
+
 #define SSDK_MAX_UNIPHY_INSTANCE        3
 
 #define IOCTL_COMPAT
@@ -157,6 +159,7 @@ enum ssdk_port_wrapper_cfg {
 	PORT_WRAPPER_UQXGMII, /* for four channels manhattan phy mode*/
 	PORT_WRAPPER_UDXGMII,
 	PORT_WRAPPER_UQXGMII_3CHANNELS, /* for three channels manhattan phy mode*/
+	PORT_WRAPPER_PON_SERDES, /* PON serdes */
 	PORT_WRAPPER_MAX = 0xFF
 };
 

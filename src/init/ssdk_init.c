@@ -1056,10 +1056,6 @@ ssdk_mac_sw_sync_work_stop(a_uint32_t dev_id)
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	if (ssdk_is_emulation(priv->device_id))
-	{
-		return SW_NOT_SUPPORTED;
-	}
 	rv = _ssdk_mac_sw_sync_chip_check(priv);
 	SW_RTN_ON_ERROR(rv);
 
@@ -1073,22 +1069,8 @@ sw_error_t
 ssdk_mac_sw_sync_work_start(a_uint32_t dev_id)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t port_id = 0;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
-
-	if (ssdk_is_emulation(priv->device_id))
-	{
-		for (port_id = SSDK_PHYSICAL_PORT1; port_id < SSDK_PHYSICAL_PORT7; port_id++)
-		{ /* enable mac for rumi ports */
-			if (SW_IS_PBMP_MEMBER(qca_ssdk_port_bmp_get(dev_id), port_id))
-			{
-				fal_port_txmac_status_set(dev_id, port_id, A_TRUE);
-				fal_port_rxmac_status_set(dev_id, port_id, A_TRUE);
-			}
-		}
-		return SW_NOT_SUPPORTED;
-	}
 
 	rv = _ssdk_mac_sw_sync_chip_check(priv);
 	SW_RTN_ON_ERROR(rv);
@@ -1377,13 +1359,11 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 			return 0;
 		}
 
-		if (!ssdk_is_emulation(dev_id)) {
-			ret = qca_mac_sw_sync_work_init(priv);
-			if (ret != 0) {
-				SSDK_ERROR("qca_mac_sw_sync_work_init failed on chip 0x%02x%02x\n",
-						priv->version, priv->revision);
-				return ret;
-			}
+		ret = qca_mac_sw_sync_work_init(priv);
+		if (ret != 0) {
+			SSDK_ERROR("qca_mac_sw_sync_work_init failed on chip 0x%02x%02x\n",
+					priv->version, priv->revision);
+			return ret;
 		}
 #endif
 	}
@@ -1529,13 +1509,10 @@ ssdk_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
 		SSDK_ERROR("ssdk fal init failed: %d. \r\n", rv);
 
 /*qca808x_end*/
-	if(!ssdk_is_emulation(dev_id))
 /*qca808x_start*/
-	{
-		rv = ssdk_phy_driver_init(dev_id);
+	rv = ssdk_phy_driver_init(dev_id);
 		if (rv != SW_OK)
 			SSDK_ERROR("ssdk phy init failed: %d. \r\n", rv);
-	}
 
 	return rv;
 }
@@ -1546,14 +1523,10 @@ ssdk_cleanup(a_uint32_t dev_id)
 	sw_error_t rv;
 
 	rv = fal_cleanup(dev_id);
+	SW_RTN_ON_ERROR(rv);
 /*qca808x_end*/
-	if(!ssdk_is_emulation(dev_id))
 /*qca808x_start*/
-	{
-		rv = ssdk_phy_driver_cleanup(dev_id);
-	}
-
-	return rv;
+	return  ssdk_phy_driver_cleanup(dev_id);
 }
 /*qca808x_end*/
 
@@ -1562,7 +1535,7 @@ static void ssdk_driver_register(a_uint32_t dev_id)
 	hsl_reg_mode reg_mode;
 
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
-	if(reg_mode == HSL_REG_LOCAL_BUS) {
+	if(reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS) {
 		platform_driver_register(&ssdk_driver);
 	}
 }
@@ -1572,7 +1545,7 @@ static void ssdk_driver_unregister(a_uint32_t dev_id)
 	hsl_reg_mode reg_mode;
 
 	reg_mode= ssdk_switch_reg_access_mode_get(dev_id);
-	if (reg_mode == HSL_REG_LOCAL_BUS) {
+	if (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS) {
 		platform_driver_unregister(&ssdk_driver);
 	}
 }

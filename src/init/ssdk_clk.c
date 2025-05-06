@@ -2107,12 +2107,6 @@ void ssdk_mp_raw_clock_set(
 	      clock != UNIPHY_CLK_RATE_312M))
 		return;
 
-	if(ssdk_is_emulation(0)){
-		SSDK_INFO("uniphy_index %d direction %d clock %d on emulation platform\n",
-					uniphy_index, direction, clock);
-		return;
-	}
-
 	id = uniphy_index*2 + direction;
 	old_clock = clk_get_rate(mp_raw_clks[id]->clk);
 

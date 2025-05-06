@@ -43,6 +43,14 @@ _adpt_appe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id,
 		mux_mac_type = APPE_PORT_MUX_MAC_TYPE;
 	} else if (port_type == PORT_XGMAC_TYPE) {
 		mux_mac_type = APPE_PORT_MUX_XMAC_TYPE;
+#if defined(HMSPPE)
+	} else if (port_type == PORT_PON_MAC_TYPE) {
+		/* Mux to select PON MAC */
+		union hmsppe_pon_mode_u hmsppe_pon_mode = { 0 };
+		SW_RTN_ON_ERROR(hmsppe_pon_mode_get(dev_id, &hmsppe_pon_mode));
+		hmsppe_pon_mode.bf.pon_mode = 1;
+		return hmsppe_pon_mode_set(dev_id, &hmsppe_pon_mode);
+#endif
 	} else {
 		return SW_BAD_VALUE;
 	}
