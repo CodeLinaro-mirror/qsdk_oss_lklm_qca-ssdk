@@ -159,7 +159,7 @@ union dot1p_mapper_default_u {
 	#define DOT1P_MAPPER_RULE_DEI_INCL_OFFSET  39
 	#define DOT1P_MAPPER_RULE_DEI_INCL_LEN     1
 	#define DOT1P_MAPPER_RULE_DEI_INCL_DEFAULT 0x0
-	/*[field] DEI reuse PRIORITY_TYPE[0]*/
+	/*[field] DEI reuse PRIORITY_TYPE[1]*/
 	#define DOT1P_MAPPER_RULE_DEI
 	#define DOT1P_MAPPER_RULE_DEI_OFFSET  40
 	#define DOT1P_MAPPER_RULE_DEI_LEN     1

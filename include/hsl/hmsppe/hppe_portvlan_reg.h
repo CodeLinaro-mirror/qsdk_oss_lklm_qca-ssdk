@@ -247,22 +247,22 @@ union port_vlan_config_u {
 	#define XLT_RULE_TBL_VALID_OFFSET  0
 	#define XLT_RULE_TBL_VALID_LEN     1
 	#define XLT_RULE_TBL_VALID_DEFAULT 0x0
-	/*[field] PORT_BITMAP reuse PORT_TYPE[3]*/
+	/*[field] PORT_BITMAP reuse PORT_TYPE[2]*/
 	#define XLT_RULE_TBL_PORT_BITMAP
 	#define XLT_RULE_TBL_PORT_BITMAP_OFFSET  1
 	#define XLT_RULE_TBL_PORT_BITMAP_LEN     9
 	#define XLT_RULE_TBL_PORT_BITMAP_DEFAULT 0x0
-	/*[field] PORT_VP_ID reuse PORT_TYPE[3]*/
+	/*[field] PORT_VP_ID reuse PORT_TYPE[0]*/
 	#define XLT_RULE_TBL_PORT_VP_ID
 	#define XLT_RULE_TBL_PORT_VP_ID_OFFSET  1
 	#define XLT_RULE_TBL_PORT_VP_ID_LEN     9
 	#define XLT_RULE_TBL_PORT_VP_ID_DEFAULT 0x0
-	/*[field] VP_PROFILE reuse PORT_TYPE[3]*/
+	/*[field] VP_PROFILE reuse PORT_TYPE[0]*/
 	#define XLT_RULE_TBL_VP_PROFILE
 	#define XLT_RULE_TBL_VP_PROFILE_OFFSET  1
 	#define XLT_RULE_TBL_VP_PROFILE_LEN     9
 	#define XLT_RULE_TBL_VP_PROFILE_DEFAULT 0x0
-	/*[field] GEM_PORT_ID reuse PORT_TYPE[1]*/
+	/*[field] GEM_PORT_ID reuse PORT_TYPE[3]*/
 	#define XLT_RULE_TBL_GEM_PORT_ID
 	#define XLT_RULE_TBL_GEM_PORT_ID_OFFSET  1
 	#define XLT_RULE_TBL_GEM_PORT_ID_LEN     9
@@ -917,7 +917,7 @@ union eg_vlan_tpid_u {
 #define EG_BRIDGE_CONFIG_NUM     1
 #define EG_BRIDGE_CONFIG_INC     0x4
 #define EG_BRIDGE_CONFIG_TYPE    REG_TYPE_RW
-#define EG_BRIDGE_CONFIG_DEFAULT 0x0
+#define EG_BRIDGE_CONFIG_DEFAULT 0x7cfd000
 	/*[field] BRIDGE_TYPE*/
 	#define EG_BRIDGE_CONFIG_BRIDGE_TYPE
 	#define EG_BRIDGE_CONFIG_BRIDGE_TYPE_OFFSET  0
@@ -943,6 +943,16 @@ union eg_vlan_tpid_u {
 	#define EG_BRIDGE_CONFIG_FIELD_UPDATE_ENABLE_OFFSET  10
 	#define EG_BRIDGE_CONFIG_FIELD_UPDATE_ENABLE_LEN     1
 	#define EG_BRIDGE_CONFIG_FIELD_UPDATE_ENABLE_DEFAULT 0x0
+	/*[field] PASSTHROUGH_CPU_CODE0*/
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE0
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE0_OFFSET  11
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE0_LEN     8
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE0_DEFAULT 0xfa
+	/*[field] PASSTHROUGH_CPU_CODE1*/
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE1
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE1_OFFSET  19
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE1_LEN     8
+	#define EG_BRIDGE_CONFIG_PASSTHROUGH_CPU_CODE1_DEFAULT 0xf9
 
 struct eg_bridge_config {
 	a_uint32_t  bridge_type:1;
@@ -951,7 +961,9 @@ struct eg_bridge_config {
 	a_uint32_t  _reserved0:5;
 	a_uint32_t  ppe_eip_rsv_w4_3130:2;
 	a_uint32_t  field_update_enable:1;
-	a_uint32_t  _reserved1:21;
+	a_uint32_t  passthrough_cpu_code0:8;
+	a_uint32_t  passthrough_cpu_code1:8;
+	a_uint32_t  _reserved1:5;
 };
 
 union eg_bridge_config_u {
@@ -1344,7 +1356,7 @@ union eg_vlan_xlt_rule_u {
 
 /*[table] VLAN_DEV_TX_COUNTER_TBL*/
 #define VLAN_DEV_TX_COUNTER_TBL
-#define VLAN_DEV_TX_COUNTER_TBL_ADDRESS 0x29000
+#define VLAN_DEV_TX_COUNTER_TBL_ADDRESS 0x18000
 #define VLAN_DEV_TX_COUNTER_TBL_NUM     128
 #define VLAN_DEV_TX_COUNTER_TBL_INC     0x20
 #define VLAN_DEV_TX_COUNTER_TBL_TYPE    REG_TYPE_RW

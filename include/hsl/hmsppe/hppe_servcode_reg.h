@@ -108,7 +108,7 @@ union service_tbl_u {
 
 /*[table] EG_SERVICE_TBL*/
 #define EG_SERVICE_TBL
-#define EG_SERVICE_TBL_ADDRESS 0x23000
+#define EG_SERVICE_TBL_ADDRESS 0x12000
 #define EG_SERVICE_TBL_NUM     256
 #define EG_SERVICE_TBL_INC     0x10
 #define EG_SERVICE_TBL_TYPE    REG_TYPE_RW

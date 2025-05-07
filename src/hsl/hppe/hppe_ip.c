@@ -736,68 +736,6 @@ hppe_network_route_ip_ip_addr_set(
 }
 
 sw_error_t
-hppe_network_route_ip_ext_entry_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union network_route_ip_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_network_route_ip_ext_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.entry_type;
-	return ret;
-}
-
-sw_error_t
-hppe_network_route_ip_ext_entry_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union network_route_ip_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_network_route_ip_ext_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.entry_type = value;
-	ret = hppe_network_route_ip_ext_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_network_route_ip_ext_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union network_route_ip_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_network_route_ip_ext_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.valid;
-	return ret;
-}
-
-sw_error_t
-hppe_network_route_ip_ext_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union network_route_ip_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_network_route_ip_ext_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.valid = value;
-	ret = hppe_network_route_ip_ext_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_host_tbl_op_entry_index_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)

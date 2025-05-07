@@ -1376,6 +1376,26 @@ hppe_eg_bridge_config_field_update_enable_set(
 		unsigned int value);
 
 sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code0_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code0_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code1_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code1_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
 hppe_eg_bridge_config_pkt_l2_edit_en_get(
 		a_uint32_t dev_id,
 		unsigned int *value);

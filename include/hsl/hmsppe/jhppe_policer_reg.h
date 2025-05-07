@@ -256,29 +256,6 @@ union sawf_flow_statis_state_u {
 	struct sawf_flow_statis_state bf;
 };
 
-/*[register] SAWF_FLOW_BLOCK_MAP*/
-#define SAWF_FLOW_BLOCK_MAP
-#define SAWF_FLOW_BLOCK_MAP_ADDRESS 0x244
-#define SAWF_FLOW_BLOCK_MAP_NUM     16
-#define SAWF_FLOW_BLOCK_MAP_INC     0x4
-#define SAWF_FLOW_BLOCK_MAP_TYPE    REG_TYPE_RW
-#define SAWF_FLOW_BLOCK_MAP_DEFAULT 0x0
-	/*[field] VALID*/
-	#define SAWF_FLOW_BLOCK_MAP_VALID
-	#define SAWF_FLOW_BLOCK_MAP_VALID_OFFSET  0
-	#define SAWF_FLOW_BLOCK_MAP_VALID_LEN     1
-	#define SAWF_FLOW_BLOCK_MAP_VALID_DEFAULT 0x0
-
-struct sawf_flow_block_map {
-	a_uint32_t  valid:1;
-	a_uint32_t  _reserved0:31;
-};
-
-union sawf_flow_block_map_u {
-	a_uint32_t val;
-	struct sawf_flow_block_map bf;
-};
-
 /*[register] SAWF_FLOW_STATIS_CTRL8*/
 #define SAWF_FLOW_STATIS_CTRL8
 #define SAWF_FLOW_STATIS_CTRL8_ADDRESS 0x284
@@ -345,6 +322,29 @@ struct sawf_flow_statis_ctrl10 {
 union sawf_flow_statis_ctrl10_u {
 	a_uint32_t val;
 	struct sawf_flow_statis_ctrl10 bf;
+};
+
+/*[register] SAWF_FLOW_BLOCK_MAP*/
+#define SAWF_FLOW_BLOCK_MAP
+#define SAWF_FLOW_BLOCK_MAP_ADDRESS 0x300
+#define SAWF_FLOW_BLOCK_MAP_NUM     16
+#define SAWF_FLOW_BLOCK_MAP_INC     0x4
+#define SAWF_FLOW_BLOCK_MAP_TYPE    REG_TYPE_RW
+#define SAWF_FLOW_BLOCK_MAP_DEFAULT 0x0
+	/*[field] VALID*/
+	#define SAWF_FLOW_BLOCK_MAP_VALID
+	#define SAWF_FLOW_BLOCK_MAP_VALID_OFFSET  0
+	#define SAWF_FLOW_BLOCK_MAP_VALID_LEN     1
+	#define SAWF_FLOW_BLOCK_MAP_VALID_DEFAULT 0x0
+
+struct sawf_flow_block_map {
+	a_uint32_t  valid:1;
+	a_uint32_t  _reserved0:31;
+};
+
+union sawf_flow_block_map_u {
+	a_uint32_t val;
+	struct sawf_flow_block_map bf;
 };
 
 /*[table] PM_COUNTER_TBL*/

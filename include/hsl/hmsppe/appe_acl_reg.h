@@ -643,7 +643,7 @@ union pre_ipo_action_u {
 
 /*[table] EG_IPO_EXT_TBL*/
 #define EG_IPO_EXT_TBL
-#define EG_IPO_EXT_TBL_ADDRESS 0x2c000
+#define EG_IPO_EXT_TBL_ADDRESS 0x1b000
 #define EG_IPO_EXT_TBL_NUM     256
 #define EG_IPO_EXT_TBL_INC     0x10
 #define EG_IPO_EXT_TBL_TYPE    REG_TYPE_RW

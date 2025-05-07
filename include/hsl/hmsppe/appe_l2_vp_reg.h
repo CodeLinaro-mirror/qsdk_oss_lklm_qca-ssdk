@@ -32,7 +32,7 @@ union vp_lrn_limit_counter_u {
 
 /*[table] L2_VP_PORT_TBL*/
 #define L2_VP_PORT_TBL
-#define L2_VP_PORT_TBL_ADDRESS 0x36000
+#define L2_VP_PORT_TBL_ADDRESS 0x23000
 #define L2_VP_PORT_TBL_NUM     256
 #define L2_VP_PORT_TBL_INC     0x10
 #define L2_VP_PORT_TBL_TYPE    REG_TYPE_RW

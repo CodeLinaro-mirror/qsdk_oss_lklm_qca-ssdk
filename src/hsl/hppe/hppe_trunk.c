@@ -447,37 +447,6 @@ hppe_trunk_hash_field_reg_mac_sa_incl_set(
 }
 
 sw_error_t
-hppe_trunk_filter_mem_bitmap_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union trunk_filter_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_filter_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.mem_bitmap;
-	return ret;
-}
-
-sw_error_t
-hppe_trunk_filter_mem_bitmap_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union trunk_filter_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_trunk_filter_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.mem_bitmap = value;
-	ret = hppe_trunk_filter_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_port_trunk_id_trunk_id_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

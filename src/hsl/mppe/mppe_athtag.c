@@ -131,36 +131,6 @@ mppe_prx_hdr_rcv_pri_mapping_set(
 				value->val);
 }
 
-sw_error_t
-mppe_eg_hdr_xmit_pri_mapping_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union eg_hdr_xmit_pri_mapping_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = mppe_eg_hdr_xmit_pri_mapping_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.pri;
-	return ret;
-}
-
-sw_error_t
-mppe_eg_hdr_xmit_pri_mapping_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union eg_hdr_xmit_pri_mapping_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = mppe_eg_hdr_xmit_pri_mapping_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.pri = value;
-	ret = mppe_eg_hdr_xmit_pri_mapping_set(dev_id, index, &reg_val);
-	return ret;
-}
 #ifdef HMSPPE
 sw_error_t
 mppe_edma_vp_remap_0_get(

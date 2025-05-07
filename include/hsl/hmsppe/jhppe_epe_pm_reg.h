@@ -74,91 +74,95 @@ union eg_pm_counter_gen_u {
 
 /*[table] EG_PM_COUNTER_TBL*/
 #define EG_PM_COUNTER_TBL
-#define EG_PM_COUNTER_TBL_ADDRESS 0x3d000
+#define EG_PM_COUNTER_TBL_ADDRESS 0x29000
 #define EG_PM_COUNTER_TBL_NUM     32
 #define EG_PM_COUNTER_TBL_INC     0x40
 #define EG_PM_COUNTER_TBL_TYPE    REG_TYPE_RW
 #define EG_PM_COUNTER_TBL_DEFAULT 0x0
+	/*[field] OCTETS*/
+	#define EG_PM_COUNTER_TBL_OCTETS
+	#define EG_PM_COUNTER_TBL_OCTETS_OFFSET  0
+	#define EG_PM_COUNTER_TBL_OCTETS_LEN     40
+	#define EG_PM_COUNTER_TBL_OCTETS_DEFAULT 0x0
 	/*[field] UCAST_PACKET*/
 	#define EG_PM_COUNTER_TBL_UCAST_PACKET
-	#define EG_PM_COUNTER_TBL_UCAST_PACKET_OFFSET  0
+	#define EG_PM_COUNTER_TBL_UCAST_PACKET_OFFSET  40
 	#define EG_PM_COUNTER_TBL_UCAST_PACKET_LEN     32
 	#define EG_PM_COUNTER_TBL_UCAST_PACKET_DEFAULT 0x0
 	/*[field] BCAST_PACKET*/
 	#define EG_PM_COUNTER_TBL_BCAST_PACKET
-	#define EG_PM_COUNTER_TBL_BCAST_PACKET_OFFSET  32
+	#define EG_PM_COUNTER_TBL_BCAST_PACKET_OFFSET  72
 	#define EG_PM_COUNTER_TBL_BCAST_PACKET_LEN     32
 	#define EG_PM_COUNTER_TBL_BCAST_PACKET_DEFAULT 0x0
 	/*[field] MCAST_PACKET*/
 	#define EG_PM_COUNTER_TBL_MCAST_PACKET
-	#define EG_PM_COUNTER_TBL_MCAST_PACKET_OFFSET  64
+	#define EG_PM_COUNTER_TBL_MCAST_PACKET_OFFSET  104
 	#define EG_PM_COUNTER_TBL_MCAST_PACKET_LEN     32
 	#define EG_PM_COUNTER_TBL_MCAST_PACKET_DEFAULT 0x0
 	/*[field] OVERSIZE*/
 	#define EG_PM_COUNTER_TBL_OVERSIZE
-	#define EG_PM_COUNTER_TBL_OVERSIZE_OFFSET  96
+	#define EG_PM_COUNTER_TBL_OVERSIZE_OFFSET  136
 	#define EG_PM_COUNTER_TBL_OVERSIZE_LEN     32
 	#define EG_PM_COUNTER_TBL_OVERSIZE_DEFAULT 0x0
-	/*[field] OCTETS*/
-	#define EG_PM_COUNTER_TBL_OCTETS
-	#define EG_PM_COUNTER_TBL_OCTETS_OFFSET  128
-	#define EG_PM_COUNTER_TBL_OCTETS_LEN     40
-	#define EG_PM_COUNTER_TBL_OCTETS_DEFAULT 0x0
 	/*[field] FRAME_64*/
 	#define EG_PM_COUNTER_TBL_FRAME_64
 	#define EG_PM_COUNTER_TBL_FRAME_64_OFFSET  168
-	#define EG_PM_COUNTER_TBL_FRAME_64_LEN     40
+	#define EG_PM_COUNTER_TBL_FRAME_64_LEN     32
 	#define EG_PM_COUNTER_TBL_FRAME_64_DEFAULT 0x0
 	/*[field] FRAME_65_127*/
 	#define EG_PM_COUNTER_TBL_FRAME_65_127
-	#define EG_PM_COUNTER_TBL_FRAME_65_127_OFFSET  208
-	#define EG_PM_COUNTER_TBL_FRAME_65_127_LEN     40
+	#define EG_PM_COUNTER_TBL_FRAME_65_127_OFFSET  200
+	#define EG_PM_COUNTER_TBL_FRAME_65_127_LEN     32
 	#define EG_PM_COUNTER_TBL_FRAME_65_127_DEFAULT 0x0
 	/*[field] FRAME_128_255*/
 	#define EG_PM_COUNTER_TBL_FRAME_128_255
-	#define EG_PM_COUNTER_TBL_FRAME_128_255_OFFSET  248
-	#define EG_PM_COUNTER_TBL_FRAME_128_255_LEN     40
+	#define EG_PM_COUNTER_TBL_FRAME_128_255_OFFSET  232
+	#define EG_PM_COUNTER_TBL_FRAME_128_255_LEN     32
 	#define EG_PM_COUNTER_TBL_FRAME_128_255_DEFAULT 0x0
 	/*[field] FRAME_256_511*/
 	#define EG_PM_COUNTER_TBL_FRAME_256_511
-	#define EG_PM_COUNTER_TBL_FRAME_256_511_OFFSET  288
-	#define EG_PM_COUNTER_TBL_FRAME_256_511_LEN     40
+	#define EG_PM_COUNTER_TBL_FRAME_256_511_OFFSET  264
+	#define EG_PM_COUNTER_TBL_FRAME_256_511_LEN     32
 	#define EG_PM_COUNTER_TBL_FRAME_256_511_DEFAULT 0x0
 	/*[field] FRAME_512_1023*/
 	#define EG_PM_COUNTER_TBL_FRAME_512_1023
-	#define EG_PM_COUNTER_TBL_FRAME_512_1023_OFFSET  328
-	#define EG_PM_COUNTER_TBL_FRAME_512_1023_LEN     40
+	#define EG_PM_COUNTER_TBL_FRAME_512_1023_OFFSET  296
+	#define EG_PM_COUNTER_TBL_FRAME_512_1023_LEN     32
 	#define EG_PM_COUNTER_TBL_FRAME_512_1023_DEFAULT 0x0
 	/*[field] FRAME_1024_1518*/
 	#define EG_PM_COUNTER_TBL_FRAME_1024_1518
-	#define EG_PM_COUNTER_TBL_FRAME_1024_1518_OFFSET  368
-	#define EG_PM_COUNTER_TBL_FRAME_1024_1518_LEN     40
+	#define EG_PM_COUNTER_TBL_FRAME_1024_1518_OFFSET  328
+	#define EG_PM_COUNTER_TBL_FRAME_1024_1518_LEN     32
 	#define EG_PM_COUNTER_TBL_FRAME_1024_1518_DEFAULT 0x0
 
 struct eg_pm_counter_tbl {
-	a_uint32_t  ucast_packet:32;
-	a_uint32_t  bcast_packet:32;
-	a_uint32_t  mcast_packet:32;
-	a_uint32_t  oversize:32;
 	a_uint32_t  octets_0:32;
 	a_uint32_t  octets_1:8;
+	a_uint32_t  ucast_packet_0:24;
+	a_uint32_t  ucast_packet_1:8;
+	a_uint32_t  bcast_packet_0:24;
+	a_uint32_t  bcast_packet_1:8;
+	a_uint32_t  mcast_packet_0:24;
+	a_uint32_t  mcast_packet_1:8;
+	a_uint32_t  oversize_0:24;
+	a_uint32_t  oversize_1:8;
 	a_uint32_t  frame_64_0:24;
-	a_uint32_t  frame_64_1:16;
-	a_uint32_t  frame_65_127_0:16;
-	a_uint32_t  frame_65_127_1:24;
-	a_uint32_t  frame_128_255_0:8;
-	a_uint32_t  frame_128_255_1:32;
-	a_uint32_t  frame_256_511_0:32;
+	a_uint32_t  frame_64_1:8;
+	a_uint32_t  frame_65_127_0:24;
+	a_uint32_t  frame_65_127_1:8;
+	a_uint32_t  frame_128_255_0:24;
+	a_uint32_t  frame_128_255_1:8;
+	a_uint32_t  frame_256_511_0:24;
 	a_uint32_t  frame_256_511_1:8;
 	a_uint32_t  frame_512_1023_0:24;
-	a_uint32_t  frame_512_1023_1:16;
-	a_uint32_t  frame_1024_1518_0:16;
-	a_uint32_t  frame_1024_1518_1:24;
-	a_uint32_t  _reserved0:8;
+	a_uint32_t  frame_512_1023_1:8;
+	a_uint32_t  frame_1024_1518_0:24;
+	a_uint32_t  frame_1024_1518_1:8;
+	a_uint32_t  _reserved0:24;
 };
 
 union eg_pm_counter_tbl_u {
-	a_uint32_t val[13];
+	a_uint32_t val[12];
 	struct eg_pm_counter_tbl bf;
 };
 

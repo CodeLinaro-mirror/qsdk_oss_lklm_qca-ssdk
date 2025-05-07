@@ -1687,4 +1687,62 @@ hppe_port_parsing_reg_vlan_mode_set(
 	ret = hppe_port_parsing_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code0_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.passthrough_cpu_code0;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code0_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.passthrough_cpu_code0 = value;
+	ret = hppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code1_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.passthrough_cpu_code1;
+	return ret;
+}
+
+sw_error_t
+hppe_eg_bridge_config_passthrough_cpu_code1_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.passthrough_cpu_code1 = value;
+	ret = hppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
+}
 #endif

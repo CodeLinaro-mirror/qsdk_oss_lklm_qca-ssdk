@@ -1568,7 +1568,7 @@ union host_ipv6_mcast_tbl_u {
 
 /*[table] IN_NEXTHOP_TBL*/
 #define IN_NEXTHOP_TBL
-#define IN_NEXTHOP_TBL_ADDRESS 0x60000
+#define IN_NEXTHOP_TBL_ADDRESS 0x40000
 #define IN_NEXTHOP_TBL_NUM     768
 #define IN_NEXTHOP_TBL_INC     0x20
 #define IN_NEXTHOP_TBL_TYPE    REG_TYPE_RW
@@ -1578,7 +1578,7 @@ union host_ipv6_mcast_tbl_u {
 	#define IN_NEXTHOP_TBL_TYPE_F_OFFSET  0
 	#define IN_NEXTHOP_TBL_TYPE_F_LEN     1
 	#define IN_NEXTHOP_TBL_TYPE_F_DEFAULT 0x0
-	/*[field] VSI reuse TYPE[1]*/
+	/*[field] VSI reuse TYPE[0]*/
 	#define IN_NEXTHOP_TBL_VSI
 	#define IN_NEXTHOP_TBL_VSI_OFFSET  1
 	#define IN_NEXTHOP_TBL_VSI_LEN     6

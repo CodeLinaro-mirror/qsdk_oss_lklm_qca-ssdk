@@ -9,7 +9,7 @@
 
 /*[table] IN_FLOW_CNT_TBL*/
 #define IN_FLOW_CNT_TBL
-#define IN_FLOW_CNT_TBL_ADDRESS 0x20000
+#define IN_FLOW_CNT_TBL_ADDRESS 0x80000
 #define IN_FLOW_CNT_TBL_NUM     4096
 #define IN_FLOW_CNT_TBL_INC     0x10
 #define IN_FLOW_CNT_TBL_TYPE    REG_TYPE_RW
@@ -296,7 +296,7 @@ union flow_ctrl1_u {
 	/*[field] ENTRY_INDEX*/
 	#define IN_FLOW_TBL_OP_ENTRY_INDEX
 	#define IN_FLOW_TBL_OP_ENTRY_INDEX_OFFSET  12
-	#define IN_FLOW_TBL_OP_ENTRY_INDEX_LEN     12
+	#define IN_FLOW_TBL_OP_ENTRY_INDEX_LEN     14
 	#define IN_FLOW_TBL_OP_ENTRY_INDEX_DEFAULT 0x0
 
 struct in_flow_tbl_op {
@@ -306,8 +306,8 @@ struct in_flow_tbl_op {
 	a_uint32_t  hash_block_bitmap:2;
 	a_uint32_t  op_mode:1;
 	a_uint32_t  op_host_en:1;
-	a_uint32_t  entry_index:12;
-	a_uint32_t  _reserved0:8;
+	a_uint32_t  entry_index:14;
+	a_uint32_t  _reserved0:6;
 };
 
 union in_flow_tbl_op_u {
@@ -364,20 +364,20 @@ union in_flow_host_tbl_op_u {
 	/*[field] FLOW_ENTRY_INDEX*/
 	#define IN_FLOW_TBL_OP_RSLT_FLOW_ENTRY_INDEX
 	#define IN_FLOW_TBL_OP_RSLT_FLOW_ENTRY_INDEX_OFFSET  5
-	#define IN_FLOW_TBL_OP_RSLT_FLOW_ENTRY_INDEX_LEN     12
+	#define IN_FLOW_TBL_OP_RSLT_FLOW_ENTRY_INDEX_LEN     14
 	#define IN_FLOW_TBL_OP_RSLT_FLOW_ENTRY_INDEX_DEFAULT 0x0
 	/*[field] VALID_CNT*/
 	#define IN_FLOW_TBL_OP_RSLT_VALID_CNT
-	#define IN_FLOW_TBL_OP_RSLT_VALID_CNT_OFFSET  17
+	#define IN_FLOW_TBL_OP_RSLT_VALID_CNT_OFFSET  19
 	#define IN_FLOW_TBL_OP_RSLT_VALID_CNT_LEN     4
 	#define IN_FLOW_TBL_OP_RSLT_VALID_CNT_DEFAULT 0x0
 
 struct in_flow_tbl_op_rslt {
 	a_uint32_t  cmd_id:4;
 	a_uint32_t  op_rslt:1;
-	a_uint32_t  flow_entry_index:12;
+	a_uint32_t  flow_entry_index:14;
 	a_uint32_t  valid_cnt:4;
-	a_uint32_t  _reserved0:11;
+	a_uint32_t  _reserved0:9;
 };
 
 union in_flow_tbl_op_rslt_u {
@@ -448,7 +448,7 @@ union flow_host_tbl_op_rslt_u {
 	/*[field] ENTRY_INDEX*/
 	#define IN_FLOW_TBL_RD_OP_ENTRY_INDEX
 	#define IN_FLOW_TBL_RD_OP_ENTRY_INDEX_OFFSET  12
-	#define IN_FLOW_TBL_RD_OP_ENTRY_INDEX_LEN     12
+	#define IN_FLOW_TBL_RD_OP_ENTRY_INDEX_LEN     14
 	#define IN_FLOW_TBL_RD_OP_ENTRY_INDEX_DEFAULT 0x0
 
 struct in_flow_tbl_rd_op {
@@ -458,8 +458,8 @@ struct in_flow_tbl_rd_op {
 	a_uint32_t  hash_block_bitmap:2;
 	a_uint32_t  op_mode:1;
 	a_uint32_t  op_host_en:1;
-	a_uint32_t  entry_index:12;
-	a_uint32_t  _reserved0:8;
+	a_uint32_t  entry_index:14;
+	a_uint32_t  _reserved0:6;
 };
 
 union in_flow_tbl_rd_op_u {
@@ -516,20 +516,20 @@ union in_flow_host_tbl_rd_op_u {
 	/*[field] FLOW_ENTRY_INDEX*/
 	#define IN_FLOW_TBL_RD_OP_RSLT_FLOW_ENTRY_INDEX
 	#define IN_FLOW_TBL_RD_OP_RSLT_FLOW_ENTRY_INDEX_OFFSET  5
-	#define IN_FLOW_TBL_RD_OP_RSLT_FLOW_ENTRY_INDEX_LEN     12
+	#define IN_FLOW_TBL_RD_OP_RSLT_FLOW_ENTRY_INDEX_LEN     14
 	#define IN_FLOW_TBL_RD_OP_RSLT_FLOW_ENTRY_INDEX_DEFAULT 0x0
 	/*[field] VALID_CNT*/
 	#define IN_FLOW_TBL_RD_OP_RSLT_VALID_CNT
-	#define IN_FLOW_TBL_RD_OP_RSLT_VALID_CNT_OFFSET  17
+	#define IN_FLOW_TBL_RD_OP_RSLT_VALID_CNT_OFFSET  19
 	#define IN_FLOW_TBL_RD_OP_RSLT_VALID_CNT_LEN     4
 	#define IN_FLOW_TBL_RD_OP_RSLT_VALID_CNT_DEFAULT 0x0
 
 struct in_flow_tbl_rd_op_rslt {
 	a_uint32_t  cmd_id:4;
 	a_uint32_t  op_rslt:1;
-	a_uint32_t  flow_entry_index:12;
+	a_uint32_t  flow_entry_index:14;
 	a_uint32_t  valid_cnt:4;
-	a_uint32_t  _reserved0:11;
+	a_uint32_t  _reserved0:9;
 };
 
 union in_flow_tbl_rd_op_rslt_u {
@@ -562,7 +562,7 @@ union flow_host_tbl_rd_op_rslt_u {
 
 /*[table] IN_FLOW_TBL*/
 #define IN_FLOW_TBL
-#define IN_FLOW_TBL_ADDRESS 0x40000
+#define IN_FLOW_TBL_ADDRESS 0x80000
 #define IN_FLOW_TBL_NUM     4096
 #define IN_FLOW_TBL_INC     0x20
 #define IN_FLOW_TBL_TYPE    REG_TYPE_RW
@@ -612,7 +612,7 @@ union flow_host_tbl_rd_op_rslt_u {
 	#define IN_FLOW_TBL_FWD_TYPE_OFFSET  30
 	#define IN_FLOW_TBL_FWD_TYPE_LEN     3
 	#define IN_FLOW_TBL_FWD_TYPE_DEFAULT 0x0
-	/*[field] NEXT_HOP1 reuse FWD_TYPE[3]*/
+	/*[field] NEXT_HOP1 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_TBL_NEXT_HOP1
 	#define IN_FLOW_TBL_NEXT_HOP1_OFFSET  33
 	#define IN_FLOW_TBL_NEXT_HOP1_LEN     12
@@ -622,22 +622,22 @@ union flow_host_tbl_rd_op_rslt_u {
 	#define IN_FLOW_TBL_NEXT_HOP2_OFFSET  33
 	#define IN_FLOW_TBL_NEXT_HOP2_LEN     12
 	#define IN_FLOW_TBL_NEXT_HOP2_DEFAULT 0x0
-	/*[field] NEXT_HOP3 reuse FWD_TYPE[1]*/
+	/*[field] NEXT_HOP3 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_TBL_NEXT_HOP3
 	#define IN_FLOW_TBL_NEXT_HOP3_OFFSET  33
 	#define IN_FLOW_TBL_NEXT_HOP3_LEN     12
 	#define IN_FLOW_TBL_NEXT_HOP3_DEFAULT 0x0
-	/*[field] PORT_VP2 reuse FWD_TYPE[2]*/
+	/*[field] PORT_VP2 reuse FWD_TYPE[1]*/
 	#define IN_FLOW_TBL_PORT_VP2
 	#define IN_FLOW_TBL_PORT_VP2_OFFSET  33
 	#define IN_FLOW_TBL_PORT_VP2_LEN     8
 	#define IN_FLOW_TBL_PORT_VP2_DEFAULT 0x0
-	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[3]*/
+	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[2]*/
 	#define IN_FLOW_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_TBL_VLAN_FMT_VALID_OFFSET  41
 	#define IN_FLOW_TBL_VLAN_FMT_VALID_LEN     1
 	#define IN_FLOW_TBL_VLAN_FMT_VALID_DEFAULT 0x0
-	/*[field] SVLAN_FMT reuse FWD_TYPE[2]*/
+	/*[field] SVLAN_FMT reuse FWD_TYPE[3]*/
 	#define IN_FLOW_TBL_SVLAN_FMT
 	#define IN_FLOW_TBL_SVLAN_FMT_OFFSET  42
 	#define IN_FLOW_TBL_SVLAN_FMT_LEN     1
@@ -647,22 +647,22 @@ union flow_host_tbl_rd_op_rslt_u {
 	#define IN_FLOW_TBL_CVLAN_FMT_OFFSET  43
 	#define IN_FLOW_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_TBL_CVLAN_FMT_DEFAULT 0x0
-	/*[field] NEXT_HOP4_VALID reuse FWD_TYPE[2]*/
+	/*[field] NEXT_HOP4_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_TBL_NEXT_HOP4_VALID
 	#define IN_FLOW_TBL_NEXT_HOP4_VALID_OFFSET  44
 	#define IN_FLOW_TBL_NEXT_HOP4_VALID_LEN     1
 	#define IN_FLOW_TBL_NEXT_HOP4_VALID_DEFAULT 0x0
-	/*[field] L4_PORT1 reuse FWD_TYPE[3]*/
+	/*[field] L4_PORT1 reuse FWD_TYPE[1]*/
 	#define IN_FLOW_TBL_L4_PORT1
 	#define IN_FLOW_TBL_L4_PORT1_OFFSET  45
 	#define IN_FLOW_TBL_L4_PORT1_LEN     16
 	#define IN_FLOW_TBL_L4_PORT1_DEFAULT 0x0
-	/*[field] L4_PORT2 reuse FWD_TYPE[0]*/
+	/*[field] L4_PORT2 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_TBL_L4_PORT2
 	#define IN_FLOW_TBL_L4_PORT2_OFFSET  45
 	#define IN_FLOW_TBL_L4_PORT2_LEN     16
 	#define IN_FLOW_TBL_L4_PORT2_DEFAULT 0x0
-	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[1]*/
+	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_TBL_PORT_VP_VALID1
 	#define IN_FLOW_TBL_PORT_VP_VALID1_OFFSET  45
 	#define IN_FLOW_TBL_PORT_VP_VALID1_LEN     1
@@ -677,7 +677,7 @@ union flow_host_tbl_rd_op_rslt_u {
 	#define IN_FLOW_TBL_PORT_VP1_OFFSET  46
 	#define IN_FLOW_TBL_PORT_VP1_LEN     8
 	#define IN_FLOW_TBL_PORT_VP1_DEFAULT 0x0
-	/*[field] NAT_ACTION1 reuse FWD_TYPE[2]*/
+	/*[field] NAT_ACTION1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_TBL_NAT_ACTION1
 	#define IN_FLOW_TBL_NAT_ACTION1_OFFSET  54
 	#define IN_FLOW_TBL_NAT_ACTION1_LEN     2
@@ -745,7 +745,7 @@ union flow_host_tbl_rd_op_rslt_u {
 	/*[field] COUNTER_ID*/
 	#define IN_FLOW_TBL_COUNTER_ID
 	#define IN_FLOW_TBL_COUNTER_ID_OFFSET  170
-	#define IN_FLOW_TBL_COUNTER_ID_LEN     12
+	#define IN_FLOW_TBL_COUNTER_ID_LEN     14
 	#define IN_FLOW_TBL_COUNTER_ID_DEFAULT 0x0
 
 struct in_flow_tbl_0 {
@@ -776,8 +776,8 @@ struct in_flow_tbl_0 {
 	a_uint32_t  pmtu_0:5;
 	a_uint32_t  pmtu_1:9;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved0:10;
+	a_uint32_t  counter_id:14;
+	a_uint32_t  _reserved0:8;
 };
 
 struct in_flow_tbl_1 {
@@ -808,8 +808,8 @@ struct in_flow_tbl_1 {
 	a_uint32_t  pmtu_0:5;
 	a_uint32_t  pmtu_1:9;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved0:10;
+	a_uint32_t  counter_id:14;
+	a_uint32_t  _reserved0:8;
 };
 
 struct in_flow_tbl_2 {
@@ -843,8 +843,8 @@ struct in_flow_tbl_2 {
 	a_uint32_t  pmtu_0:5;
 	a_uint32_t  pmtu_1:9;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:10;
+	a_uint32_t  counter_id:14;
+	a_uint32_t  _reserved1:8;
 };
 
 struct in_flow_tbl_3 {
@@ -880,8 +880,8 @@ struct in_flow_tbl_3 {
 	a_uint32_t  pmtu_0:5;
 	a_uint32_t  pmtu_1:9;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:10;
+	a_uint32_t  counter_id:14;
+	a_uint32_t  _reserved1:8;
 };
 
 union in_flow_tbl_u {
@@ -894,7 +894,7 @@ union in_flow_tbl_u {
 
 /*[table] IN_FLOW_3TUPLE_TBL*/
 #define IN_FLOW_3TUPLE_TBL
-#define IN_FLOW_3TUPLE_TBL_ADDRESS 0x40000
+#define IN_FLOW_3TUPLE_TBL_ADDRESS 0x80000
 #define IN_FLOW_3TUPLE_TBL_NUM     4096
 #define IN_FLOW_3TUPLE_TBL_INC     0x20
 #define IN_FLOW_3TUPLE_TBL_TYPE    REG_TYPE_RW
@@ -944,57 +944,57 @@ union in_flow_tbl_u {
 	#define IN_FLOW_3TUPLE_TBL_FWD_TYPE_OFFSET  30
 	#define IN_FLOW_3TUPLE_TBL_FWD_TYPE_LEN     3
 	#define IN_FLOW_3TUPLE_TBL_FWD_TYPE_DEFAULT 0x0
-	/*[field] NEXT_HOP1 reuse FWD_TYPE[2]*/
+	/*[field] NEXT_HOP1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP1
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP1_OFFSET  33
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP1_LEN     12
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP1_DEFAULT 0x0
-	/*[field] NEXT_HOP2 reuse FWD_TYPE[0]*/
+	/*[field] NEXT_HOP2 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2_OFFSET  33
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2_LEN     12
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2_DEFAULT 0x0
-	/*[field] NEXT_HOP3 reuse FWD_TYPE[1]*/
+	/*[field] NEXT_HOP3 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP3
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP3_OFFSET  33
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP3_LEN     12
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP3_DEFAULT 0x0
-	/*[field] PORT_VP2 reuse FWD_TYPE[0]*/
+	/*[field] PORT_VP2 reuse FWD_TYPE[1]*/
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP2
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP2_OFFSET  33
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP2_LEN     8
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP2_DEFAULT 0x0
-	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[1]*/
+	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[3]*/
 	#define IN_FLOW_3TUPLE_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_3TUPLE_TBL_VLAN_FMT_VALID_OFFSET  41
 	#define IN_FLOW_3TUPLE_TBL_VLAN_FMT_VALID_LEN     1
 	#define IN_FLOW_3TUPLE_TBL_VLAN_FMT_VALID_DEFAULT 0x0
-	/*[field] SVLAN_FMT reuse FWD_TYPE[3]*/
+	/*[field] SVLAN_FMT reuse FWD_TYPE[1]*/
 	#define IN_FLOW_3TUPLE_TBL_SVLAN_FMT
 	#define IN_FLOW_3TUPLE_TBL_SVLAN_FMT_OFFSET  42
 	#define IN_FLOW_3TUPLE_TBL_SVLAN_FMT_LEN     1
 	#define IN_FLOW_3TUPLE_TBL_SVLAN_FMT_DEFAULT 0x0
-	/*[field] CVLAN_FMT reuse FWD_TYPE[0]*/
+	/*[field] CVLAN_FMT reuse FWD_TYPE[2]*/
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT_OFFSET  43
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT_DEFAULT 0x0
-	/*[field] NEXT_HOP4_VALID reuse FWD_TYPE[3]*/
+	/*[field] NEXT_HOP4_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_VALID
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_VALID_OFFSET  44
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_VALID_LEN     1
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_VALID_DEFAULT 0x0
-	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[3]*/
+	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP_VALID1_OFFSET  45
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP_VALID1_LEN     1
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP_VALID1_DEFAULT 0x0
-	/*[field] NEXT_HOP4 reuse FWD_TYPE[0]*/
+	/*[field] NEXT_HOP4 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_OFFSET  45
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_LEN     12
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP4_DEFAULT 0x0
-	/*[field] PORT_VP1 reuse FWD_TYPE[1]*/
+	/*[field] PORT_VP1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP1
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP1_OFFSET  46
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP1_LEN     8
@@ -1062,7 +1062,7 @@ union in_flow_tbl_u {
 	/*[field] COUNTER_ID*/
 	#define IN_FLOW_3TUPLE_TBL_COUNTER_ID
 	#define IN_FLOW_3TUPLE_TBL_COUNTER_ID_OFFSET  146
-	#define IN_FLOW_3TUPLE_TBL_COUNTER_ID_LEN     12
+	#define IN_FLOW_3TUPLE_TBL_COUNTER_ID_LEN     14
 	#define IN_FLOW_3TUPLE_TBL_COUNTER_ID_DEFAULT 0x0
 
 struct in_flow_3tuple_tbl_0 {
@@ -1091,8 +1091,7 @@ struct in_flow_3tuple_tbl_0 {
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu:14;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:2;
+	a_uint32_t  counter_id:14;
 };
 
 struct in_flow_3tuple_tbl_1 {
@@ -1121,8 +1120,7 @@ struct in_flow_3tuple_tbl_1 {
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu:14;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:2;
+	a_uint32_t  counter_id:14;
 };
 
 struct in_flow_3tuple_tbl_2 {
@@ -1154,8 +1152,7 @@ struct in_flow_3tuple_tbl_2 {
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu:14;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:2;
+	a_uint32_t  counter_id:14;
 };
 
 struct in_flow_3tuple_tbl_3 {
@@ -1189,8 +1186,7 @@ struct in_flow_3tuple_tbl_3 {
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu:14;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:2;
+	a_uint32_t  counter_id:14;
 };
 
 union in_flow_3tuple_tbl_u {
@@ -1203,7 +1199,7 @@ union in_flow_3tuple_tbl_u {
 
 /*[table] IN_FLOW_IPV6_5TUPLE_TBL*/
 #define IN_FLOW_IPV6_5TUPLE_TBL
-#define IN_FLOW_IPV6_5TUPLE_TBL_ADDRESS 0x40000
+#define IN_FLOW_IPV6_5TUPLE_TBL_ADDRESS 0x80000
 #define IN_FLOW_IPV6_5TUPLE_TBL_NUM     2048
 #define IN_FLOW_IPV6_5TUPLE_TBL_INC     0x40
 #define IN_FLOW_IPV6_5TUPLE_TBL_TYPE    REG_TYPE_RW
@@ -1253,22 +1249,22 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_FWD_TYPE_OFFSET  30
 	#define IN_FLOW_IPV6_5TUPLE_TBL_FWD_TYPE_LEN     3
 	#define IN_FLOW_IPV6_5TUPLE_TBL_FWD_TYPE_DEFAULT 0x0
-	/*[field] NEXT_HOP1 reuse FWD_TYPE[0]*/
+	/*[field] NEXT_HOP1 reuse FWD_TYPE[1]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1_OFFSET  33
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1_LEN     12
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1_DEFAULT 0x0
-	/*[field] NEXT_HOP2 reuse FWD_TYPE[1]*/
+	/*[field] NEXT_HOP2 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP2
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP2_OFFSET  33
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP2_LEN     12
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP2_DEFAULT 0x0
-	/*[field] NEXT_HOP3 reuse FWD_TYPE[1]*/
+	/*[field] NEXT_HOP3 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP3
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP3_OFFSET  33
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP3_LEN     12
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP3_DEFAULT 0x0
-	/*[field] PORT_VP2 reuse FWD_TYPE[2]*/
+	/*[field] PORT_VP2 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP2
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP2_OFFSET  33
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP2_LEN     8
@@ -1278,47 +1274,47 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VLAN_FMT_VALID_OFFSET  41
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VLAN_FMT_VALID_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VLAN_FMT_VALID_DEFAULT 0x0
-	/*[field] SVLAN_FMT reuse FWD_TYPE[2]*/
+	/*[field] SVLAN_FMT reuse FWD_TYPE[3]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SVLAN_FMT
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SVLAN_FMT_OFFSET  42
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SVLAN_FMT_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SVLAN_FMT_DEFAULT 0x0
-	/*[field] CVLAN_FMT reuse FWD_TYPE[2]*/
+	/*[field] CVLAN_FMT reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT_OFFSET  43
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT_DEFAULT 0x0
-	/*[field] NEXT_HOP4_VALID reuse FWD_TYPE[2]*/
+	/*[field] NEXT_HOP4_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_VALID
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_VALID_OFFSET  44
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_VALID_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_VALID_DEFAULT 0x0
-	/*[field] L4_PORT1 reuse FWD_TYPE[2]*/
+	/*[field] L4_PORT1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT1_OFFSET  45
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT1_LEN     16
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT1_DEFAULT 0x0
-	/*[field] L4_PORT2 reuse FWD_TYPE[3]*/
+	/*[field] L4_PORT2 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2_OFFSET  45
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2_LEN     16
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2_DEFAULT 0x0
-	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[2]*/
+	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1_OFFSET  45
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1_DEFAULT 0x0
-	/*[field] NEXT_HOP4 reuse FWD_TYPE[1]*/
+	/*[field] NEXT_HOP4 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_OFFSET  45
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_LEN     12
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP4_DEFAULT 0x0
-	/*[field] PORT_VP1 reuse FWD_TYPE[2]*/
+	/*[field] PORT_VP1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP1_OFFSET  46
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP1_LEN     8
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP1_DEFAULT 0x0
-	/*[field] NAT_ACTION1 reuse FWD_TYPE[0]*/
+	/*[field] NAT_ACTION1 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NAT_ACTION1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NAT_ACTION1_OFFSET  54
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NAT_ACTION1_LEN     2
@@ -1386,7 +1382,7 @@ union in_flow_3tuple_tbl_u {
 	/*[field] COUNTER_ID*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID
 	#define IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_OFFSET  275
-	#define IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_LEN     12
+	#define IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_LEN     14
 	#define IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_DEFAULT 0x0
 
 struct in_flow_ipv6_5tuple_tbl_0 {
@@ -1421,8 +1417,9 @@ struct in_flow_ipv6_5tuple_tbl_0 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved1:31;
 };
 
 struct in_flow_ipv6_5tuple_tbl_1 {
@@ -1457,8 +1454,9 @@ struct in_flow_ipv6_5tuple_tbl_1 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved1:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved1:31;
 };
 
 struct in_flow_ipv6_5tuple_tbl_2 {
@@ -1496,8 +1494,9 @@ struct in_flow_ipv6_5tuple_tbl_2 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved2:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved2:31;
 };
 
 struct in_flow_ipv6_5tuple_tbl_3 {
@@ -1537,12 +1536,13 @@ struct in_flow_ipv6_5tuple_tbl_3 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved2:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved2:31;
 };
 
 union in_flow_ipv6_5tuple_tbl_u {
-	a_uint32_t val[9];
+	a_uint32_t val[10];
 	struct in_flow_ipv6_5tuple_tbl_0 bf;
 	struct in_flow_ipv6_5tuple_tbl_1 bf1;
 	struct in_flow_ipv6_5tuple_tbl_2 bf2;
@@ -1551,7 +1551,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 
 /*[table] IN_FLOW_IPV6_3TUPLE_TBL*/
 #define IN_FLOW_IPV6_3TUPLE_TBL
-#define IN_FLOW_IPV6_3TUPLE_TBL_ADDRESS 0x40000
+#define IN_FLOW_IPV6_3TUPLE_TBL_ADDRESS 0x80000
 #define IN_FLOW_IPV6_3TUPLE_TBL_NUM     2048
 #define IN_FLOW_IPV6_3TUPLE_TBL_INC     0x40
 #define IN_FLOW_IPV6_3TUPLE_TBL_TYPE    REG_TYPE_RW
@@ -1611,7 +1611,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP2_OFFSET  33
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP2_LEN     12
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP2_DEFAULT 0x0
-	/*[field] NEXT_HOP3 reuse FWD_TYPE[2]*/
+	/*[field] NEXT_HOP3 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP3
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP3_OFFSET  33
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP3_LEN     12
@@ -1621,7 +1621,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP2_OFFSET  33
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP2_LEN     8
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP2_DEFAULT 0x0
-	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[1]*/
+	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VLAN_FMT_VALID_OFFSET  41
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VLAN_FMT_VALID_LEN     1
@@ -1631,7 +1631,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_SVLAN_FMT_OFFSET  42
 	#define IN_FLOW_IPV6_3TUPLE_TBL_SVLAN_FMT_LEN     1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_SVLAN_FMT_DEFAULT 0x0
-	/*[field] CVLAN_FMT reuse FWD_TYPE[3]*/
+	/*[field] CVLAN_FMT reuse FWD_TYPE[1]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_CVLAN_FMT
 	#define IN_FLOW_IPV6_3TUPLE_TBL_CVLAN_FMT_OFFSET  43
 	#define IN_FLOW_IPV6_3TUPLE_TBL_CVLAN_FMT_LEN     1
@@ -1641,22 +1641,22 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4_VALID_OFFSET  44
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4_VALID_LEN     1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4_VALID_DEFAULT 0x0
-	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[3]*/
+	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP_VALID1_OFFSET  45
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP_VALID1_LEN     1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP_VALID1_DEFAULT 0x0
-	/*[field] NEXT_HOP4 reuse FWD_TYPE[2]*/
+	/*[field] NEXT_HOP4 reuse FWD_TYPE[1]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4_OFFSET  45
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4_LEN     12
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NEXT_HOP4_DEFAULT 0x0
-	/*[field] PORT_VP1 reuse FWD_TYPE[1]*/
+	/*[field] PORT_VP1 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP1_OFFSET  46
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP1_LEN     8
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP1_DEFAULT 0x0
-	/*[field] NAT_ACTION1 reuse FWD_TYPE[1]*/
+	/*[field] NAT_ACTION1 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NAT_ACTION1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NAT_ACTION1_OFFSET  54
 	#define IN_FLOW_IPV6_3TUPLE_TBL_NAT_ACTION1_LEN     2
@@ -1719,7 +1719,7 @@ union in_flow_ipv6_5tuple_tbl_u {
 	/*[field] COUNTER_ID*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID
 	#define IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_OFFSET  275
-	#define IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_LEN     12
+	#define IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_LEN     14
 	#define IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_DEFAULT 0x0
 
 struct in_flow_ipv6_3tuple_tbl_0 {
@@ -1754,8 +1754,9 @@ struct in_flow_ipv6_3tuple_tbl_0 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved3:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved3:31;
 };
 
 struct in_flow_ipv6_3tuple_tbl_1 {
@@ -1790,8 +1791,9 @@ struct in_flow_ipv6_3tuple_tbl_1 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved3:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved3:31;
 };
 
 struct in_flow_ipv6_3tuple_tbl_2 {
@@ -1829,8 +1831,9 @@ struct in_flow_ipv6_3tuple_tbl_2 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved3:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved3:31;
 };
 
 struct in_flow_ipv6_3tuple_tbl_3 {
@@ -1870,12 +1873,13 @@ struct in_flow_ipv6_3tuple_tbl_3 {
 	a_uint32_t  ip_addr_3:32;
 	a_uint32_t  ip_addr_4:18;
 	a_uint32_t  routing:1;
-	a_uint32_t  counter_id:12;
-	a_uint32_t  _reserved3:1;
+	a_uint32_t  counter_id_0:13;
+	a_uint32_t  counter_id_1:1;
+	a_uint32_t  _reserved3:31;
 };
 
 union in_flow_ipv6_3tuple_tbl_u {
-	a_uint32_t val[9];
+	a_uint32_t val[10];
 	struct in_flow_ipv6_3tuple_tbl_0 bf;
 	struct in_flow_ipv6_3tuple_tbl_1 bf1;
 	struct in_flow_ipv6_3tuple_tbl_2 bf2;
@@ -1935,68 +1939,36 @@ union eg_global_ctrl_u {
 	struct eg_global_ctrl bf;
 };
 
-/*[table] EG_FLOW_TREE_MAP_TBL*/
-#define EG_FLOW_TREE_MAP_TBL
-#define EG_FLOW_TREE_MAP_TBL_ADDRESS 0x10000
-#define EG_FLOW_TREE_MAP_TBL_NUM     4096
-#define EG_FLOW_TREE_MAP_TBL_INC     0x10
-#define EG_FLOW_TREE_MAP_TBL_TYPE    REG_TYPE_RW
-#define EG_FLOW_TREE_MAP_TBL_DEFAULT 0x0
-	/*[field] TREE_ID reuse TYPE[0]*/
-	#define EG_FLOW_TREE_MAP_TBL_TREE_ID
-	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_OFFSET  0
-	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_LEN     24
-	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_DEFAULT 0x0
-	/*[field] FLOW_COOKIE reuse TYPE[1]*/
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_OFFSET  0
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_LEN     16
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_DEFAULT 0x0
-	/*[field] FLOW_COOKIE_EXT reuse TYPE[0]*/
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT_OFFSET  16
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT_LEN     24
-	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT_DEFAULT 0x0
-	/*[field] WIFI_QOS*/
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_OFFSET  40
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_LEN     8
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_DEFAULT 0x0
-	/*[field] WIFI_QOS_FLAG*/
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_OFFSET  48
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_LEN     1
-	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_DEFAULT 0x0
-	/*[field] TYPE*/
-	#define EG_FLOW_TREE_MAP_TBL_TYPE_F
-	#define EG_FLOW_TREE_MAP_TBL_TYPE_F_OFFSET  49
-	#define EG_FLOW_TREE_MAP_TBL_TYPE_F_LEN     2
-	#define EG_FLOW_TREE_MAP_TBL_TYPE_F_DEFAULT 0x0
+/*[table] EG_IPV6_PREFIX_TBL*/
+#define EG_IPV6_PREFIX_TBL
+#define EG_IPV6_PREFIX_TBL_ADDRESS 0x2a000
+#define EG_IPV6_PREFIX_TBL_NUM     256
+#define EG_IPV6_PREFIX_TBL_INC     0x20
+#define EG_IPV6_PREFIX_TBL_TYPE    REG_TYPE_RW
+#define EG_IPV6_PREFIX_TBL_DEFAULT 0x0
+	/*[field] PREFIX*/
+	#define EG_IPV6_PREFIX_TBL_PREFIX
+	#define EG_IPV6_PREFIX_TBL_PREFIX_OFFSET  0
+	#define EG_IPV6_PREFIX_TBL_PREFIX_LEN     128
+	#define EG_IPV6_PREFIX_TBL_PREFIX_DEFAULT 0x0
+	/*[field] LENGTH*/
+	#define EG_IPV6_PREFIX_TBL_LENGTH
+	#define EG_IPV6_PREFIX_TBL_LENGTH_OFFSET  128
+	#define EG_IPV6_PREFIX_TBL_LENGTH_LEN     7
+	#define EG_IPV6_PREFIX_TBL_LENGTH_DEFAULT 0x0
 
-struct eg_flow_tree_map_tbl_0 {
-	a_uint32_t  tree_id:24;
-	a_uint32_t  _reserved0_0:8;
-	a_uint32_t  _reserved0_1:8;
-	a_uint32_t  wifi_qos:8;
-	a_uint32_t  wifi_qos_flag:1;
-	a_uint32_t  type:2;
-	a_uint32_t  _reserved1:13;
+struct eg_ipv6_prefix_tbl {
+	a_uint32_t  prefix_0:32;
+	a_uint32_t  prefix_1:32;
+	a_uint32_t  prefix_2:32;
+	a_uint32_t  prefix_3:32;
+	a_uint32_t  length:7;
+	a_uint32_t  _reserved0:25;
 };
 
-struct eg_flow_tree_map_tbl_1 {
-	a_uint32_t  flow_cookie:16;
-	a_uint32_t  flow_cookie_ext_0:16;
-	a_uint32_t  flow_cookie_ext_1:8;
-	a_uint32_t  wifi_qos:8;
-	a_uint32_t  wifi_qos_flag:1;
-	a_uint32_t  type:2;
-	a_uint32_t  _reserved0:13;
-};
-
-union eg_flow_tree_map_tbl_u {
-	a_uint32_t val[2];
-	struct eg_flow_tree_map_tbl_0 bf;
-	struct eg_flow_tree_map_tbl_1 bf1;
+union eg_ipv6_prefix_tbl_u {
+	a_uint32_t val[5];
+	struct eg_ipv6_prefix_tbl bf;
 };
 
 /*[table] EG_FLOW_IPV6_IID_TBL*/
@@ -2046,36 +2018,80 @@ union eg_flow_ipv6_iid_tbl_u {
 	struct eg_flow_ipv6_iid_tbl bf;
 };
 
-/*[table] EG_IPV6_PREFIX_TBL*/
-#define EG_IPV6_PREFIX_TBL
-#define EG_IPV6_PREFIX_TBL_ADDRESS 0x3e000
-#define EG_IPV6_PREFIX_TBL_NUM     256
-#define EG_IPV6_PREFIX_TBL_INC     0x20
-#define EG_IPV6_PREFIX_TBL_TYPE    REG_TYPE_RW
-#define EG_IPV6_PREFIX_TBL_DEFAULT 0x0
-	/*[field] PREFIX*/
-	#define EG_IPV6_PREFIX_TBL_PREFIX
-	#define EG_IPV6_PREFIX_TBL_PREFIX_OFFSET  0
-	#define EG_IPV6_PREFIX_TBL_PREFIX_LEN     128
-	#define EG_IPV6_PREFIX_TBL_PREFIX_DEFAULT 0x0
-	/*[field] LENGTH*/
-	#define EG_IPV6_PREFIX_TBL_LENGTH
-	#define EG_IPV6_PREFIX_TBL_LENGTH_OFFSET  128
-	#define EG_IPV6_PREFIX_TBL_LENGTH_LEN     7
-	#define EG_IPV6_PREFIX_TBL_LENGTH_DEFAULT 0x0
+/*[table] EG_FLOW_TREE_MAP_TBL*/
+#define EG_FLOW_TREE_MAP_TBL
+#define EG_FLOW_TREE_MAP_TBL_ADDRESS 0x40000
+#define EG_FLOW_TREE_MAP_TBL_NUM     4096
+#define EG_FLOW_TREE_MAP_TBL_INC     0x8
+#define EG_FLOW_TREE_MAP_TBL_TYPE    REG_TYPE_RW
+#define EG_FLOW_TREE_MAP_TBL_DEFAULT 0x0
+	/*[field] TREE_ID_COOKIE reuse TYPE[0]*/
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_COOKIE
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_COOKIE_OFFSET  0
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_COOKIE_LEN     16
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_COOKIE_DEFAULT 0x0
+	/*[field] FLOW_COOKIE reuse TYPE[0]*/
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_OFFSET  0
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_LEN     16
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_DEFAULT 0x0
+	/*[field] TREE_ID reuse TYPE[0]*/
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_OFFSET  16
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_LEN     24
+	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_DEFAULT 0x0
+	/*[field] FLOW_COOKIE_EXT reuse TYPE[0]*/
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT_OFFSET  16
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT_LEN     24
+	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT_DEFAULT 0x0
+	/*[field] WIFI_QOS*/
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_OFFSET  40
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_LEN     8
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_DEFAULT 0x0
+	/*[field] WIFI_QOS_FLAG*/
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_OFFSET  48
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_LEN     1
+	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_DEFAULT 0x0
+	/*[field] TYPE*/
+	#define EG_FLOW_TREE_MAP_TBL_TYPE_F
+	#define EG_FLOW_TREE_MAP_TBL_TYPE_F_OFFSET  49
+	#define EG_FLOW_TREE_MAP_TBL_TYPE_F_LEN     2
+	#define EG_FLOW_TREE_MAP_TBL_TYPE_F_DEFAULT 0x0
+	/*[field] GRO*/
+	#define EG_FLOW_TREE_MAP_TBL_GRO
+	#define EG_FLOW_TREE_MAP_TBL_GRO_OFFSET  51
+	#define EG_FLOW_TREE_MAP_TBL_GRO_LEN     1
+	#define EG_FLOW_TREE_MAP_TBL_GRO_DEFAULT 0x0
 
-struct eg_ipv6_prefix_tbl {
-	a_uint32_t  prefix_0:32;
-	a_uint32_t  prefix_1:32;
-	a_uint32_t  prefix_2:32;
-	a_uint32_t  prefix_3:32;
-	a_uint32_t  length:7;
-	a_uint32_t  _reserved0:25;
+struct eg_flow_tree_map_tbl_0 {
+	a_uint32_t  tree_id_cookie:16;
+	a_uint32_t  tree_id_0:16;
+	a_uint32_t  tree_id_1:8;
+	a_uint32_t  wifi_qos:8;
+	a_uint32_t  wifi_qos_flag:1;
+	a_uint32_t  type:2;
+	a_uint32_t  gro:1;
+	a_uint32_t  _reserved0:12;
 };
 
-union eg_ipv6_prefix_tbl_u {
-	a_uint32_t val[5];
-	struct eg_ipv6_prefix_tbl bf;
+struct eg_flow_tree_map_tbl_1 {
+	a_uint32_t  flow_cookie:16;
+	a_uint32_t  flow_cookie_ext_0:16;
+	a_uint32_t  flow_cookie_ext_1:8;
+	a_uint32_t  wifi_qos:8;
+	a_uint32_t  wifi_qos_flag:1;
+	a_uint32_t  type:2;
+	a_uint32_t  gro:1;
+	a_uint32_t  _reserved0:12;
+};
+
+union eg_flow_tree_map_tbl_u {
+	a_uint32_t val[2];
+	struct eg_flow_tree_map_tbl_0 bf;
+	struct eg_flow_tree_map_tbl_1 bf1;
 };
 
 #endif

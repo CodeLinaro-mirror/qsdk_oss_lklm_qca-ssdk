@@ -130,7 +130,7 @@ union ipr_vp_parsing_u {
 
 /*[table] VP_ISOL_TBL*/
 #define VP_ISOL_TBL
-#define VP_ISOL_TBL_ADDRESS 0x3c000
+#define VP_ISOL_TBL_ADDRESS 0x28000
 #define VP_ISOL_TBL_NUM     64
 #define VP_ISOL_TBL_INC     0x10
 #define VP_ISOL_TBL_TYPE    REG_TYPE_RW
@@ -449,12 +449,12 @@ union eg_vp_tbl_u {
 	/*[field] TAGGED_MODE_VP_BITMAP*/
 	#define EG_VSI_VP_TAG_TAGGED_MODE_VP_BITMAP
 	#define EG_VSI_VP_TAG_TAGGED_MODE_VP_BITMAP_OFFSET  0
-	#define EG_VSI_VP_TAG_TAGGED_MODE_VP_BITMAP_LEN     18
+	#define EG_VSI_VP_TAG_TAGGED_MODE_VP_BITMAP_LEN     16
 	#define EG_VSI_VP_TAG_TAGGED_MODE_VP_BITMAP_DEFAULT 0x0
 
 struct eg_vsi_vp_tag {
-	a_uint32_t  tagged_mode_vp_bitmap:18;
-	a_uint32_t  _reserved0:14;
+	a_uint32_t  tagged_mode_vp_bitmap:16;
+	a_uint32_t  _reserved0:16;
 };
 
 union eg_vsi_vp_tag_u {
