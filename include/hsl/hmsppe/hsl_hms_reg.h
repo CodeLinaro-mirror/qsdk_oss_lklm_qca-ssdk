@@ -155,4 +155,4 @@ sw_error_t hppe_reg_tbl_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t *
 sw_error_t hppe_reg_tbl_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t *val, a_uint32_t num);
 
 //to be fixed
-#include "hmsppe/hsl_hms_manual.h"
+#include "hmsppe/hsl_misc.h"

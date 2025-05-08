@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: ISC
  */
 
-#ifndef _HSL_HMS_MANUAL_H_
-#define _HSL_HMS_MANUAL_H_
+#ifndef _HSL_MISC_H_
+#define _HSL_MISC_H_
 
 enum {
 	OP_ADD = 0,
@@ -187,6 +187,24 @@ enum {
 #define SWITCH_PORT_MUX_CTRL_INC     0x4
 #define SWITCH_PORT_MUX_CTRL_TYPE    REG_TYPE_RW
 #define SWITCH_PORT_MUX_CTRL_DEFAULT 0x0
+
+/* [register] PON_MODE */
+#define SWITCH_PON_MODE
+#define SWITCH_PON_MODE_ADDRESS 0x54
+#define SWITCH_PON_MODE_NUM     1
+#define SWITCH_PON_MODE_INC     0x4
+#define SWITCH_PON_MODE_TYPE    REG_TYPE_RW
+#define SWITCH_PON_MODE_DEFAULT 0x0
+
+struct hmsppe_pon_mode {
+	a_uint32_t  pon_mode:1;
+	a_uint32_t  _reserved1:31;
+};
+
+union hmsppe_pon_mode_u {
+	a_uint32_t val;
+	struct hmsppe_pon_mode bf;
+};
 
 /*[register] TDM_CTRL*/
 #define TDM_CTRL
@@ -1155,6 +1173,15 @@ sw_error_t
 appe_port_mux_ctrl_set(
 		a_uint32_t dev_id,
 		union appe_port_mux_ctrl_u *value);
+
+sw_error_t
+hmsppe_pon_mode_get(
+		a_uint32_t dev_id,
+		union hmsppe_pon_mode_u *value);
+sw_error_t
+hmsppe_pon_mode_set(
+		a_uint32_t dev_id,
+		union hmsppe_pon_mode_u *value);
 //appe_portvlan.h
 sw_error_t
 appe_vp_isol_tbl_vp_profile_map_get(

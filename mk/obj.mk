@@ -468,6 +468,7 @@ OBJ-APPE    += src/hsl/appe/appe_counter.o src/hsl/appe/appe_global.o \
                src/hsl/appe/appe_l2_vp.o
 OBJ-CPPE    += src/hsl/cppe/cppe_loopback.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_counter.o src/hsl/jhppe/jhppe_l2_vp.o
+OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_misc.o
 
 ###############################################################################
 #                                 PON
