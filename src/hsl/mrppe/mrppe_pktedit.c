@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,17 +13,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "mrppe_pktedit_reg.h"
-#include "mrppe_pktedit.h"
+#include "hsl_reg.h"
 
 sw_error_t
 mrppe_ipr_spare_reg_get(
@@ -46,3 +40,4 @@ mrppe_ipr_spare_reg_set(
 				IPR_CSR_BASE_ADDR + IPR_SPARE_REG_ADDRESS,
 				value->val);
 }
+

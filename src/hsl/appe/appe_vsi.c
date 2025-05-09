@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,12 +14,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_vsi_reg.h"
-#include "appe_vsi.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_vsi_remap_tbl_get(
@@ -31,7 +27,7 @@ appe_vsi_remap_tbl_get(
 				IPE_L2_BASE_ADDR + VSI_REMAP_TBL_ADDRESS + \
 				index * VSI_REMAP_TBL_INC,
 				value->val,
-				9);
+				sizeof(union vsi_remap_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -45,7 +41,7 @@ appe_vsi_remap_tbl_set(
 				IPE_L2_BASE_ADDR + VSI_REMAP_TBL_ADDRESS + \
 				index * VSI_REMAP_TBL_INC,
 				value->val,
-				9);
+				sizeof(union vsi_remap_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -357,3 +353,4 @@ appe_vsi_remap_tbl_br_vsi_set(
 	ret = appe_vsi_remap_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+

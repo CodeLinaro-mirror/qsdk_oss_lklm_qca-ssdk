@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_tunnel_map_reg.h"
-#include "appe_tunnel_map.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_tl_map_lpm_counter_get(
@@ -37,7 +31,7 @@ appe_tl_map_lpm_counter_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_LPM_COUNTER_ADDRESS + \
 				index * TL_MAP_LPM_COUNTER_INC,
 				value->val,
-				3);
+				sizeof(union tl_map_lpm_counter_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -51,7 +45,7 @@ appe_tl_map_lpm_counter_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_LPM_COUNTER_ADDRESS + \
 				index * TL_MAP_LPM_COUNTER_INC,
 				value->val,
-				3);
+				sizeof(union tl_map_lpm_counter_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -65,7 +59,7 @@ appe_tl_map_rule_tbl_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_RULE_TBL_ADDRESS + \
 				index * TL_MAP_RULE_TBL_INC,
 				value->val,
-				3);
+				sizeof(union tl_map_rule_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -79,7 +73,7 @@ appe_tl_map_rule_tbl_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_RULE_TBL_ADDRESS + \
 				index * TL_MAP_RULE_TBL_INC,
 				value->val,
-				3);
+				sizeof(union tl_map_rule_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -93,7 +87,7 @@ appe_tl_map_lpm_tbl_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_LPM_TBL_ADDRESS + \
 				index * TL_MAP_LPM_TBL_INC,
 				value->val,
-				5);
+				sizeof(union tl_map_lpm_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -107,7 +101,7 @@ appe_tl_map_lpm_tbl_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_LPM_TBL_ADDRESS + \
 				index * TL_MAP_LPM_TBL_INC,
 				value->val,
-				5);
+				sizeof(union tl_map_lpm_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -121,7 +115,7 @@ appe_tl_map_lpm_act_get(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_LPM_ACT_ADDRESS + \
 				index * TL_MAP_LPM_ACT_INC,
 				value->val,
-				2);
+				sizeof(union tl_map_lpm_act_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -135,10 +129,9 @@ appe_tl_map_lpm_act_set(
 				TUNNEL_LOOKUP_BASE_ADDR + TL_MAP_LPM_ACT_ADDRESS + \
 				index * TL_MAP_LPM_ACT_INC,
 				value->val,
-				2);
+				sizeof(union tl_map_lpm_act_u)/sizeof(a_uint32_t));
 }
 
-#if 0
 sw_error_t
 appe_tl_map_lpm_counter_byte_cnt_get(
 		a_uint32_t dev_id,
@@ -671,7 +664,6 @@ appe_tl_map_lpm_tbl_ipv6_addr_set(
 	ret = appe_tl_map_lpm_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
 sw_error_t
 appe_tl_map_lpm_tbl_valid_get(
@@ -704,502 +696,3 @@ appe_tl_map_lpm_tbl_valid_set(
 	return ret;
 }
 
-#if 0
-sw_error_t
-appe_tl_map_lpm_act_exp_profile_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.exp_profile;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_exp_profile_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.exp_profile = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_cvlan_fmt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.cvlan_fmt;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_cvlan_fmt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.cvlan_fmt = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_tl_l3_if_check_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tl_l3_if_check_en;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_tl_l3_if_check_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tl_l3_if_check_en = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_svlan_check_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.svlan_check_en;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_svlan_check_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.svlan_check_en = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_cvlan_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.cvlan_id;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_cvlan_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.cvlan_id = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_ip_to_me_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ip_to_me;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_ip_to_me_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ip_to_me = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_map_rule_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.map_rule_id;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_map_rule_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.map_rule_id = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_src_info_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.src_info_type;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_src_info_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.src_info_type = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_svlan_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.svlan_id;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_svlan_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.svlan_id = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_tl_l3_if_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tl_l3_if;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_tl_l3_if_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tl_l3_if = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_svlan_fmt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.svlan_fmt;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_svlan_fmt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.svlan_fmt = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_cvlan_check_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.cvlan_check_en;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_cvlan_check_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.cvlan_check_en = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_src_info_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.src_info;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_src_info_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.src_info = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_src_info_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.src_info_valid;
-	return ret;
-}
-
-sw_error_t
-appe_tl_map_lpm_act_src_info_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.src_info_valid = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-#if defined(MPPE)
-sw_error_t
-mppe_tl_map_lpm_act_service_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.service_code;
-	return ret;
-}
-
-sw_error_t
-mppe_tl_map_lpm_act_service_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.service_code = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-mppe_tl_map_lpm_act_service_code_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.service_code_en;
-	return ret;
-}
-
-sw_error_t
-mppe_tl_map_lpm_act_service_code_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_map_lpm_act_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tl_map_lpm_act_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.service_code_en = value;
-	ret = appe_tl_map_lpm_act_set(dev_id, index, &reg_val);
-	return ret;
-}
-#endif
-#endif

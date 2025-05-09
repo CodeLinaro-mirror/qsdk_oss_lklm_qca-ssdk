@@ -15,16 +15,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_qm_reg.h"
-#include "hppe_qm.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_queue_tx_counter_tbl_get(
@@ -37,7 +32,7 @@ hppe_queue_tx_counter_tbl_get(
 				NSS_PTX_CSR_BASE_ADDR + QUEUE_TX_COUNTER_TBL_ADDRESS + \
 				index * QUEUE_TX_COUNTER_TBL_INC,
 				value->val,
-				3);
+				sizeof(union queue_tx_counter_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -51,7 +46,7 @@ hppe_queue_tx_counter_tbl_set(
 				NSS_PTX_CSR_BASE_ADDR + QUEUE_TX_COUNTER_TBL_ADDRESS + \
 				index * QUEUE_TX_COUNTER_TBL_INC,
 				value->val,
-				3);
+				sizeof(union queue_tx_counter_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -120,7 +115,6 @@ hppe_eg_mirror_priority_ctrl_set(
 				value->val);
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 hppe_ucast_default_hash_get(
 		a_uint32_t dev_id,
@@ -142,7 +136,6 @@ hppe_ucast_default_hash_set(
 				QUEUE_MANAGER_BASE_ADDR + UCAST_DEFAULT_HASH_ADDRESS,
 				value->val);
 }
-#endif
 
 sw_error_t
 hppe_spare_reg0_get(
@@ -188,7 +181,6 @@ hppe_spare_reg1_set(
 				value->val);
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 hppe_mcast_priority_map0_get(
 		a_uint32_t dev_id,
@@ -412,7 +404,6 @@ hppe_mcast_priority_map7_set(
 				index * MCAST_PRIORITY_MAP7_INC,
 				value->val);
 }
-#endif
 
 sw_error_t
 hppe_ucast_queue_map_tbl_get(
@@ -498,7 +489,6 @@ hppe_ucast_priority_map_tbl_set(
 				value->val);
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 hppe_mcast_queue_map_tbl_get(
 		a_uint32_t dev_id,
@@ -526,7 +516,6 @@ hppe_mcast_queue_map_tbl_set(
 				index * MCAST_QUEUE_MAP_TBL_INC,
 				value->val);
 }
-#endif
 
 sw_error_t
 hppe_ac_mseq_tbl_get(
@@ -567,7 +556,7 @@ hppe_ac_uni_queue_cfg_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + AC_UNI_QUEUE_CFG_TBL_ADDRESS + \
 				index * AC_UNI_QUEUE_CFG_TBL_INC,
 				value->val,
-				4);
+				sizeof(union ac_uni_queue_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -581,7 +570,7 @@ hppe_ac_uni_queue_cfg_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + AC_UNI_QUEUE_CFG_TBL_ADDRESS + \
 				index * AC_UNI_QUEUE_CFG_TBL_INC,
 				value->val,
-				4);
+				sizeof(union ac_uni_queue_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -595,7 +584,7 @@ hppe_ac_mul_queue_cfg_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + AC_MUL_QUEUE_CFG_TBL_ADDRESS + \
 				index * AC_MUL_QUEUE_CFG_TBL_INC,
 				value->val,
-				3);
+				sizeof(union ac_mul_queue_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -609,7 +598,7 @@ hppe_ac_mul_queue_cfg_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + AC_MUL_QUEUE_CFG_TBL_ADDRESS + \
 				index * AC_MUL_QUEUE_CFG_TBL_INC,
 				value->val,
-				3);
+				sizeof(union ac_mul_queue_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -623,7 +612,7 @@ hppe_ac_grp_cfg_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + AC_GRP_CFG_TBL_ADDRESS + \
 				index * AC_GRP_CFG_TBL_INC,
 				value->val,
-				3);
+				sizeof(union ac_grp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -637,7 +626,7 @@ hppe_ac_grp_cfg_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + AC_GRP_CFG_TBL_ADDRESS + \
 				index * AC_GRP_CFG_TBL_INC,
 				value->val,
-				3);
+				sizeof(union ac_grp_cfg_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -735,7 +724,7 @@ hppe_ac_uni_queue_drop_state_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + AC_UNI_QUEUE_DROP_STATE_TBL_ADDRESS + \
 				index * AC_UNI_QUEUE_DROP_STATE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union ac_uni_queue_drop_state_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -749,7 +738,7 @@ hppe_ac_uni_queue_drop_state_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + AC_UNI_QUEUE_DROP_STATE_TBL_ADDRESS + \
 				index * AC_UNI_QUEUE_DROP_STATE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union ac_uni_queue_drop_state_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -763,7 +752,7 @@ hppe_ac_mul_queue_drop_state_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + AC_MUL_QUEUE_DROP_STATE_TBL_ADDRESS + \
 				index * AC_MUL_QUEUE_DROP_STATE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union ac_mul_queue_drop_state_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -777,7 +766,7 @@ hppe_ac_mul_queue_drop_state_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + AC_MUL_QUEUE_DROP_STATE_TBL_ADDRESS + \
 				index * AC_MUL_QUEUE_DROP_STATE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union ac_mul_queue_drop_state_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -791,7 +780,7 @@ hppe_ac_grp_drop_state_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + AC_GRP_DROP_STATE_TBL_ADDRESS + \
 				index * AC_GRP_DROP_STATE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union ac_grp_drop_state_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -805,7 +794,7 @@ hppe_ac_grp_drop_state_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + AC_GRP_DROP_STATE_TBL_ADDRESS + \
 				index * AC_GRP_DROP_STATE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union ac_grp_drop_state_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1183,7 +1172,7 @@ hppe_pkt_desp_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + PKT_DESP_TBL_ADDRESS + \
 				index * PKT_DESP_TBL_INC,
 				value->val,
-				13);
+				sizeof(union pkt_desp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1197,7 +1186,7 @@ hppe_pkt_desp_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + PKT_DESP_TBL_ADDRESS + \
 				index * PKT_DESP_TBL_INC,
 				value->val,
-				13);
+				sizeof(union pkt_desp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1211,7 +1200,7 @@ hppe_uni_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + UNI_DROP_CNT_TBL_ADDRESS + \
 				index * UNI_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union uni_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1225,7 +1214,7 @@ hppe_uni_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + UNI_DROP_CNT_TBL_ADDRESS + \
 				index * UNI_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union uni_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1239,7 +1228,7 @@ hppe_mul_p0_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P0_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P0_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p0_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1253,7 +1242,7 @@ hppe_mul_p0_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P0_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P0_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p0_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1267,7 +1256,7 @@ hppe_mul_p1_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P1_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P1_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p1_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1281,7 +1270,7 @@ hppe_mul_p1_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P1_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P1_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p1_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1295,7 +1284,7 @@ hppe_mul_p2_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P2_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P2_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p2_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1309,7 +1298,7 @@ hppe_mul_p2_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P2_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P2_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p2_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1323,7 +1312,7 @@ hppe_mul_p3_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P3_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P3_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p3_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1337,7 +1326,7 @@ hppe_mul_p3_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P3_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P3_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p3_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1351,7 +1340,7 @@ hppe_mul_p4_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P4_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P4_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p4_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1365,7 +1354,7 @@ hppe_mul_p4_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P4_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P4_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p4_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1379,7 +1368,7 @@ hppe_mul_p5_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P5_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P5_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p5_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1393,7 +1382,7 @@ hppe_mul_p5_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P5_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P5_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p5_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1407,7 +1396,7 @@ hppe_mul_p6_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P6_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P6_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p6_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1421,7 +1410,7 @@ hppe_mul_p6_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P6_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P6_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p6_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1435,7 +1424,7 @@ hppe_mul_p7_drop_cnt_tbl_get(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P7_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P7_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p7_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1449,10 +1438,9 @@ hppe_mul_p7_drop_cnt_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + MUL_P7_DROP_CNT_TBL_ADDRESS + \
 				index * MUL_P7_DROP_CNT_TBL_INC,
 				value->val,
-				3);
+				sizeof(union mul_p7_drop_cnt_tbl_u)/sizeof(a_uint32_t));
 }
 
-#if 0
 sw_error_t
 hppe_flush_cfg_flush_busy_get(
 		a_uint32_t dev_id,
@@ -1773,316 +1761,6 @@ hppe_spare_reg1_spare_reg1_set(
 }
 
 sw_error_t
-hppe_mcast_priority_map0_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map0_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map0_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map0_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map0_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map0_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map1_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map1_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map2_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map2_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map2_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map2_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map2_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map2_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map2_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map3_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map3_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map3_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map3_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map3_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map3_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map3_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map4_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map4_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map4_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map4_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map4_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map4_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map4_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map5_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map5_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map5_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map5_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map5_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map5_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map5_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map6_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map6_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map6_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map6_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map6_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map6_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map6_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map7_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union mcast_priority_map7_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map7_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_mcast_priority_map7_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mcast_priority_map7_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mcast_priority_map7_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_mcast_priority_map7_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_ucast_queue_map_tbl_profile_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ucast_queue_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ucast_queue_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.profile_id;
-	return ret;
-}
-
-sw_error_t
-hppe_ucast_queue_map_tbl_profile_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ucast_queue_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ucast_queue_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.profile_id = value;
-	ret = hppe_ucast_queue_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_ucast_queue_map_tbl_queue_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ucast_queue_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ucast_queue_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.queue_id;
-	return ret;
-}
-
-sw_error_t
-hppe_ucast_queue_map_tbl_queue_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ucast_queue_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ucast_queue_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.queue_id = value;
-	ret = hppe_ucast_queue_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_ucast_hash_map_tbl_hash_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2110,37 +1788,6 @@ hppe_ucast_hash_map_tbl_hash_set(
 		return ret;
 	reg_val.bf.hash = value;
 	ret = hppe_ucast_hash_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_ucast_priority_map_tbl_class_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ucast_priority_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ucast_priority_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.class;
-	return ret;
-}
-
-sw_error_t
-hppe_ucast_priority_map_tbl_class_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ucast_priority_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ucast_priority_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.class = value;
-	ret = hppe_ucast_priority_map_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -3428,68 +3075,6 @@ hppe_ac_grp_cfg_tbl_ac_grp_limit_set(
 }
 
 sw_error_t
-hppe_ac_uni_queue_cnt_tbl_ac_uni_queue_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ac_uni_queue_cnt_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ac_uni_queue_cnt_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ac_uni_queue_cnt;
-	return ret;
-}
-
-sw_error_t
-hppe_ac_uni_queue_cnt_tbl_ac_uni_queue_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ac_uni_queue_cnt_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ac_uni_queue_cnt_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ac_uni_queue_cnt = value;
-	ret = hppe_ac_uni_queue_cnt_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_ac_mul_queue_cnt_tbl_ac_mul_queue_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ac_mul_queue_cnt_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ac_mul_queue_cnt_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ac_mul_queue_cnt;
-	return ret;
-}
-
-sw_error_t
-hppe_ac_mul_queue_cnt_tbl_ac_mul_queue_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ac_mul_queue_cnt_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ac_mul_queue_cnt_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ac_mul_queue_cnt = value;
-	ret = hppe_ac_mul_queue_cnt_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_ac_grp_cnt_tbl_ac_grp_alloc_used_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -4116,37 +3701,6 @@ hppe_ac_grp_drop_state_tbl_grn_resume_thrd_set(
 }
 
 sw_error_t
-hppe_oq_enq_opr_tbl_enq_disable_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_enq_opr_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_enq_opr_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.enq_disable;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_enq_opr_tbl_enq_disable_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_enq_opr_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_enq_opr_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.enq_disable = value;
-	ret = hppe_oq_enq_opr_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_oq_deq_opr_tbl_deq_drop_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -4267,192 +3821,6 @@ hppe_oq_head_uni_tbl_empty_set(
 		return ret;
 	reg_val.bf.empty = value;
 	ret = hppe_oq_head_uni_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_head_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.head;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_head_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.head = value;
-	ret = hppe_oq_head_mul_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_tail_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tail;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_tail_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tail = value;
-	ret = hppe_oq_head_mul_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_ingress_mirr_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ingress_mirr;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_ingress_mirr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ingress_mirr = value;
-	ret = hppe_oq_head_mul_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_empty_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.empty;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_empty_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.empty = value;
-	ret = hppe_oq_head_mul_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_egress_mirr_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.egress_mirr;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_egress_mirr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.egress_mirr = value;
-	ret = hppe_oq_head_mul_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_normal_fwd_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.normal_fwd;
-	return ret;
-}
-
-sw_error_t
-hppe_oq_head_mul_tbl_normal_fwd_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union oq_head_mul_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_oq_head_mul_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.normal_fwd = value;
-	ret = hppe_oq_head_mul_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -5480,2167 +4848,6 @@ hppe_oq_ll_mul_p7_tbl_normal_fwd_set(
 }
 
 sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ip_addr_index_valid;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ip_addr_index_valid = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_route_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.route_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_route_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.route_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_cpcp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_cpcp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_cpcp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_cpcp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pkt_l3_edit_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.pkt_l3_edit_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pkt_l3_edit_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.pkt_l3_edit_bypass = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_ctag_fmt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_ctag_fmt;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_ctag_fmt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_ctag_fmt = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fake_mac_header_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.fake_mac_header;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fake_mac_header_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.fake_mac_header = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_acl_index_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.acl_index;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_acl_index_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.acl_index = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l4_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.l4_type;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l4_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.l4_type = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_svid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_svid;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_svid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_svid = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_sdei_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_sdei;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_sdei_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_sdei = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fc_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.fc_en;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fc_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.fc_en = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_packet_length_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.packet_length_1 << 8 | \
-		reg_val.bf1.packet_length_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_packet_length_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.packet_length_1 = value >> 8;
-	reg_val.bf1.packet_length_0 = value & (((a_uint64_t)1<<8)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rx_ts_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf1.rx_ts_1 << 24 | \
-		reg_val.bf1.rx_ts_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rx_ts_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.rx_ts_1 = value >> 24;
-	reg_val.bf1.rx_ts_0 = value & (((a_uint64_t)1<<24)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ts_dir_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ts_dir;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ts_dir_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ts_dir = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_chg_port_vp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.chg_port_vp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_chg_port_vp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.chg_port_vp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_pri;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_pri = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_one_enq_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.one_enq_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_one_enq_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.one_enq_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fc_grp_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.fc_grp_id;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fc_grp_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.fc_grp_id = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fake_l2_prot_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.fake_l2_prot;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_fake_l2_prot_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.fake_l2_prot = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_org_src_port_vp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.org_src_port_vp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_org_src_port_vp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.org_src_port_vp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_hash_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.hash_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_hash_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.hash_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_stag_fmt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_stag_fmt;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_stag_fmt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_stag_fmt = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_service_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.service_code_1 << 2 | \
-		reg_val.bf1.service_code_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_service_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.service_code_1 = value >> 2;
-	reg_val.bf1.service_code_0 = value & (((a_uint64_t)1<<2)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rx_ptp_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.rx_ptp_type;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rx_ptp_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.rx_ptp_type = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_mac_da_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf1.mac_da_1 << 18 | \
-		reg_val.bf1.mac_da_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_mac_da_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.mac_da_1 = value >> 18;
-	reg_val.bf1.mac_da_0 = value & (((a_uint64_t)1<<18)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_cpu_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.cpu_code;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_cpu_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.cpu_code = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_eg_vlan_tag_fmt_bypass_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.eg_vlan_tag_fmt_bypass_en;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_eg_vlan_tag_fmt_bypass_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.eg_vlan_tag_fmt_bypass_en = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ip_addr_index_type;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ip_addr_index_type = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_cvid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_cvid_1 << 9 | \
-		reg_val.bf1.int_cvid_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_cvid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_cvid_1 = value >> 9;
-	reg_val.bf1.int_cvid_0 = value & (((a_uint64_t)1<<9)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_eg_vlan_xlt_bypass_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.eg_vlan_xlt_bypass_en;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_eg_vlan_xlt_bypass_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.eg_vlan_xlt_bypass_en = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_hash_value_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.hash_value_1 << 5 | \
-		reg_val.bf1.hash_value_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_hash_value_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.hash_value_1 = value >> 5;
-	reg_val.bf1.hash_value_0 = value & (((a_uint64_t)1<<5)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_stag_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.stag_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_stag_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.stag_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_dst_l3_if_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.dst_l3_if;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_dst_l3_if_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.dst_l3_if = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_cdei_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_cdei;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_cdei_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_cdei = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_edma_vp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.edma_vp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_edma_vp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.edma_vp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ac_group_bitmap_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ac_group_bitmap;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ac_group_bitmap_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ac_group_bitmap = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_vp_tx_cnt_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.vp_tx_cnt_en;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_vp_tx_cnt_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.vp_tx_cnt_en = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_src_port_vp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.src_port_vp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_src_port_vp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.src_port_vp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_nat_action_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.nat_action;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_nat_action_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.nat_action = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_dscp_update_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.dscp_update;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_dscp_update_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.dscp_update = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pppoe_strip_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.pppoe_strip_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pppoe_strip_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.pppoe_strip_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_snap_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.snap_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_snap_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.snap_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_vsi_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.vsi;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_vsi_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.vsi = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pkt_l2_edit_bypass_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.pkt_l2_edit_bypass;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pkt_l2_edit_bypass_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.pkt_l2_edit_bypass = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_tx_ptp_tag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tx_ptp_tag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_tx_ptp_tag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tx_ptp_tag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ip_addr_index_1 << 1 | \
-		reg_val.bf1.ip_addr_index_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ip_addr_index_1 = value >> 1;
-	reg_val.bf1.ip_addr_index_0 = value & (((a_uint64_t)1<<1)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_dp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_dp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_dp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_dp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_src_pn_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.src_pn;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_src_pn_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.src_pn = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_tx_ts_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tx_ts_en;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_tx_ts_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tx_ts_en = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l4_offset_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.l4_offset_1 << 6 | \
-		reg_val.bf1.l4_offset_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l4_offset_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.l4_offset_1 = value >> 6;
-	reg_val.bf1.l4_offset_0 = value & (((a_uint64_t)1<<6)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ttl_update_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ttl_update;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ttl_update_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ttl_update = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_napt_port_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.napt_port;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_napt_port_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.napt_port = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_napt_addr_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.napt_addr_1 << 13 | \
-		reg_val.bf1.napt_addr_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_napt_addr_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.napt_addr_1 = value >> 13;
-	reg_val.bf1.napt_addr_0 = value & (((a_uint64_t)1<<13)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_copy_cpu_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.copy_cpu_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_copy_cpu_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.copy_cpu_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ttl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ttl_1 << 3 | \
-		reg_val.bf1.ttl_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ttl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ttl_1 = value >> 3;
-	reg_val.bf1.ttl_0 = value & (((a_uint64_t)1<<3)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l3_offset_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.l3_offset;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l3_offset_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.l3_offset = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rsv0_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.rsv0_1 << 3 | \
-		reg_val.bf1.rsv0_0;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rsv0_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.rsv0_1 = value >> 3;
-	reg_val.bf1.rsv0_0 = value & (((a_uint64_t)1<<3)-1);
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_next_header_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.next_header;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_next_header_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.next_header = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_acl_index_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.acl_index_valid;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_acl_index_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.acl_index_valid = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rx_ts_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.rx_ts_valid;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_rx_ts_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.rx_ts_valid = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_dscp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.dscp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_dscp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.dscp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_acl_index_toggle_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.acl_index_toggle;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_acl_index_toggle_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.acl_index_toggle = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ctag_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ctag_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ctag_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ctag_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_toggle_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.ip_addr_index_toggle;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_ip_addr_index_toggle_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.ip_addr_index_toggle = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_tx_os_correction_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.tx_os_correction_en;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_tx_os_correction_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.tx_os_correction_en = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_spcp_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.int_spcp;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_int_spcp_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.int_spcp = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pppoe_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.pppoe_flag;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_pppoe_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.pppoe_flag = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l3_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.l3_type;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_l3_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.l3_type = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_vsi_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf1.vsi_valid;
-	return ret;
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_vsi_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union pkt_desp_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_pkt_desp_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf1.vsi_valid = value;
-	ret = hppe_pkt_desp_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_uni_drop_cnt_tbl_uni_drop_byte_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -8279,4 +5486,4 @@ hppe_queue_tx_counter_tbl_tx_packets_set(
 	ret = hppe_queue_tx_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+

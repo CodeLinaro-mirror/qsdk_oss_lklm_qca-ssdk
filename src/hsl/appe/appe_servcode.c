@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_servcode_reg.h"
-#include "appe_servcode.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_tl_service_tbl_get(
@@ -53,3 +47,4 @@ appe_tl_service_tbl_set(
 				index * TL_SERVICE_TBL_INC,
 				value->val);
 }
+

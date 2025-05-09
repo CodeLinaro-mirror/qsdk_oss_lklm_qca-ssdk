@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "hppe_servcode_reg.h"
-#include "hppe_servcode.h"
+#include "hsl_reg.h"
 
 sw_error_t
 hppe_service_tbl_get(
@@ -37,7 +31,7 @@ hppe_service_tbl_get(
 				INGRESS_VLAN_BASE_ADDR + SERVICE_TBL_ADDRESS + \
 				index * SERVICE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union service_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -51,7 +45,7 @@ hppe_service_tbl_set(
 				INGRESS_VLAN_BASE_ADDR + SERVICE_TBL_ADDRESS + \
 				index * SERVICE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union service_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -60,8 +54,6 @@ hppe_in_l2_service_tbl_get(
 		a_uint32_t index,
 		union in_l2_service_tbl_u *value)
 {
-	if (index >= IN_L2_SERVICE_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
 	return hppe_reg_tbl_get(
 				dev_id,
 				IPE_L2_BASE_ADDR + IN_L2_SERVICE_TBL_ADDRESS + \
@@ -95,7 +87,7 @@ hppe_eg_service_tbl_get(
 				NSS_PTX_CSR_BASE_ADDR + EG_SERVICE_TBL_ADDRESS + \
 				index * EG_SERVICE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union eg_service_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -109,5 +101,6 @@ hppe_eg_service_tbl_set(
 				NSS_PTX_CSR_BASE_ADDR + EG_SERVICE_TBL_ADDRESS + \
 				index * EG_SERVICE_TBL_INC,
 				value->val,
-				2);
+				sizeof(union eg_service_tbl_u)/sizeof(a_uint32_t));
 }
+

@@ -26,7 +26,7 @@ endif
 #                                IN_FDB
 ###############################################################################
 ifeq (TRUE, $(IN_FDB))
-OBJ-COMMON += src/ref/ref_fdb.o src/fal/fal_fdb.o src/hsl/hppe/hppe_fdb.o
+OBJ-COMMON += src/ref/ref_fdb.o src/fal/fal_fdb.o
 OBJ-ISISC  += src/hsl/isisc/isisc_fdb.o
 OBJ-HPPE   += src/hsl/hppe/hppe_fdb.o src/adpt/hppe/adpt_hppe_fdb.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_fdb.o
@@ -447,6 +447,149 @@ OBJ-APPE    += src/hsl/appe/appe_counter.o src/hsl/appe/appe_global.o \
                src/hsl/appe/appe_l2_vp.o
 OBJ-CPPE    += src/hsl/cppe/cppe_loopback.o
 
+
+###############################################################################
+#                                 HMSPPE specific
+###############################################################################
+OBJ-HPPE-ADPT    = \
+			src/init/ssdk_hppe.o  \
+			src/adpt/hppe/adpt_hppe_bm.o \
+			src/adpt/hppe/adpt_hppe_uniphy.o \
+			src/adpt/hppe/adpt_hppe_ctrlpkt.o \
+			src/adpt/hppe/adpt_hppe_fdb.o \
+			src/adpt/hppe/adpt_hppe_acl.o \
+			src/adpt/hppe/adpt_hppe_flow.o \
+			src/adpt/hppe/adpt_hppe_ip.o \
+			src/adpt/hppe/adpt_hppe_mib.o \
+			src/adpt/hppe/adpt_hppe_mirror.o \
+			src/adpt/hppe/adpt_hppe_misc.o \
+			src/adpt/hppe/adpt_hppe_policer.o \
+			src/adpt/hppe/adpt_hppe_portctrl.o \
+			src/adpt/hppe/adpt_hppe_portvlan.o \
+			src/adpt/hppe/adpt_hppe_qm.o \
+			src/adpt/hppe/adpt_hppe_qos.o \
+			src/adpt/hppe/adpt_hppe_rss_hash.o \
+			src/adpt/hppe/adpt_hppe_sec.o \
+			src/adpt/hppe/adpt_hppe_servcode.o \
+			src/adpt/hppe/adpt_hppe_shaper.o \
+			src/adpt/hppe/adpt_hppe_stp.o \
+			src/adpt/hppe/adpt_hppe_trunk.o \
+			src/adpt/hppe/adpt_hppe_vsi.o \
+			src/adpt/hppe/adpt_hppe_pppoe.o
+
+OBJ-APPE-ADPT   = \
+			src/init/ssdk_appe.o \
+			src/adpt/appe/adpt_appe_acl.o  \
+			src/adpt/appe/adpt_appe_fdb.o  \
+			src/adpt/appe/adpt_appe_portctrl.o  \
+			src/adpt/appe/adpt_appe_portvlan.o  \
+			src/adpt/appe/adpt_appe_sec.o  \
+			src/adpt/appe/adpt_appe_pppoe.o  \
+			src/adpt/appe/adpt_appe_qm.o  \
+			src/adpt/appe/adpt_appe_vsi.o  \
+			src/adpt/appe/adpt_appe_ctrlpkt.o  \
+			src/adpt/appe/adpt_appe_servcode.o  \
+			src/adpt/appe/adpt_appe_shaper.o  \
+			src/adpt/appe/adpt_appe_policer.o  \
+			src/adpt/appe/adpt_appe_vport.o  \
+			src/adpt/appe/adpt_appe_tunnel.o  \
+			src/adpt/appe/adpt_appe_tunnel_program.o  \
+			src/adpt/appe/adpt_appe_vxlan.o  \
+			src/adpt/appe/adpt_appe_mapt.o  \
+			src/adpt/appe/adpt_appe_geneve.o \
+			\
+			src/adpt/mppe/adpt_mppe_athtag.o \
+			src/adpt/mppe/adpt_mppe_servcode.o \
+			src/adpt/mrppe/adpt_mrppe_pktedit.o
+
+OBJ-CPPE-ADPT = 	\
+			src/adpt/cppe/adpt_cppe_qos.o  \
+			src/adpt/cppe/adpt_cppe_flow.o
+
+OBJ-HPPE-HSL	= 	\
+			src/hsl/hppe/hppe_qos.o \
+			src/hsl/hppe/hppe_mib.o \
+			src/hsl/hppe/hppe_bm.o \
+			src/hsl/hppe/hppe_ctrlpkt.o \
+			src/hsl/hppe/hppe_flow.o \
+			src/hsl/hppe/hppe_mirror.o \
+			src/hsl/hppe/hppe_policer.o \
+			src/hsl/hppe/hppe_servcode.o \
+			src/hsl/hppe/hppe_shaper.o \
+			src/hsl/hppe/hppe_stp.o \
+			src/hsl/hppe/hppe_trunk.o \
+			src/hsl/hppe/hppe_vsi.o \
+			src/hsl/hppe/hppe_sec.o \
+			src/hsl/hppe/hppe_qm.o  \
+			src/hsl/hppe/hppe_ip.o \
+			src/hsl/hppe/hppe_rss.o \
+			src/hsl/hppe/hppe_portctrl.o \
+			src/hsl/hppe/hppe_fdb.o \
+			src/hsl/hppe/hppe_portvlan.o \
+			src/hsl/hppe/hppe_acl.o
+
+OBJ-APPE-HSL	= 	\
+			src/hsl/appe/appe_counter.o \
+			src/hsl/appe/appe_geneve.o	\
+			src/hsl/appe/appe_tunnel_program.o \
+			src/hsl/appe/appe_sec.o \
+			src/hsl/appe/appe_acl.o \
+			src/hsl/appe/appe_global.o \
+			src/hsl/appe/appe_l2_vp.o \
+			src/hsl/appe/appe_policer.o \
+			src/hsl/appe/appe_portvlan.o \
+			src/hsl/appe/appe_qm.o \
+			src/hsl/appe/appe_servcode.o \
+			src/hsl/appe/appe_shaper.o \
+			src/hsl/appe/appe_tunnel_map.o \
+			src/hsl/appe/appe_vsi.o \
+			src/hsl/appe/appe_vxlan.o \
+			src/hsl/appe/appe_tunnel.o \
+			src/hsl/appe/appe_pppoe.o \
+			\
+			src/hsl/mppe/mppe_athtag.o \
+			src/hsl/mppe/mppe_servcode.o \
+			src/hsl/mrppe/mrppe_pktedit.o
+
+OBJ-JHPPE-HSL  +=  \
+			src/hsl/jhppe/jhppe_counter.o  \
+			src/hsl/jhppe/jhppe_ctrlpkt.o  \
+			src/hsl/jhppe/jhppe_epe_pm.o  \
+			src/hsl/jhppe/jhppe_ipmc.o  \
+			src/hsl/jhppe/jhppe_l2_vp.o  \
+			src/hsl/jhppe/jhppe_l3_flow.o  \
+			src/hsl/jhppe/jhppe_policer.o  \
+			src/hsl/jhppe/jhppe_portvlan.o  \
+			src/hsl/jhppe/jhppe_qm.o  \
+			src/hsl/jhppe/jhppe_servcode.o  \
+			src/hsl/jhppe/jhppe_tunnel.o  \
+			src/hsl/jhppe/jhppe_tunnel_program.o  \
+			src/hsl/jhppe/jhppe_pktedit.o  \
+			src/hsl/jhppe/jhppe_portvlan.o  \
+			src/hsl/jhppe/jhppe_servcode.o  \
+			src/hsl/jhppe/jhppe_acl.o
+
+OBJ-HMSPPE-HSL   +=  \
+			src/hsl/hmsppe/hmsppe_pon_pm.o  \
+			src/hsl/hmsppe/hmsppe_prx_pon.o
+			
+OBJ-HMSPPE-MISS   +=  \
+			src/hsl/hppe/hppe_init.o \
+			src/hsl/hppe/hppe_xgmacmib.o \
+			src/hsl/hppe/hppe_uniphy.o  \
+			src/hsl/hppe/hppe_xgportctrl.o \
+			src/hsl/hppe/hppe_global.o \
+			src/hsl/hppe/hppe_reg_access.o \
+			src/hsl/cppe/cppe_qos.o \
+
+OBJ-HMSPPE   =  \
+			${OBJ-COMMON} \
+			${OBJ-MHT} ${OBJ-ISISC} \
+			${OBJ-HPPE-ADPT} ${OBJ-APPE-ADPT} ${OBJ-CPPE-ADPT} \
+			${OBJ-HPPE-HSL}  ${OBJ-APPE-HSL} 	\
+			${OBJ-JHPPE-HSL} ${OBJ-HMSPPE-HSL}	\
+			${OBJ-HMSPPE-MISS}
+
 ###############################################################################
 #                              Collect OBJ
 ###############################################################################
@@ -482,6 +625,10 @@ endif
 
 ifneq (,$(findstring SCOMPHY, $(SUPPORT_CHIP)))
 OBJ += $(OBJ-SCOMPHY)
+endif
+
+ifneq (,$(findstring HMSPPE, $(SUPPORT_CHIP)))
+OBJ = $(OBJ-HMSPPE)
 endif
 
 SSDK_OBJ=$(addprefix ../, $(OBJ))

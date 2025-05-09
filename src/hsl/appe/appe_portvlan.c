@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,17 +14,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "appe_portvlan_reg.h"
-#include "appe_portvlan.h"
+#include "hsl_reg.h"
 
 sw_error_t
 appe_ipr_vp_parsing_get(
@@ -65,7 +59,7 @@ appe_vlan_port_vp_tbl_get(
 				INGRESS_VLAN_BASE_ADDR + VLAN_PORT_VP_TBL_ADDRESS + \
 				index * VLAN_PORT_VP_TBL_INC,
 				value->val,
-				2);
+				sizeof(union vlan_port_vp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -79,7 +73,7 @@ appe_vlan_port_vp_tbl_set(
 				INGRESS_VLAN_BASE_ADDR + VLAN_PORT_VP_TBL_ADDRESS + \
 				index * VLAN_PORT_VP_TBL_INC,
 				value->val,
-				2);
+				sizeof(union vlan_port_vp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -405,22 +399,18 @@ appe_tpr_port_parsing_port_role_set(
 	return ret;
 }
 
-#ifndef IN_PORTVLAN_MINI
 sw_error_t
 appe_vp_isol_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union vp_isol_tbl_u *value)
 {
-	if (index >= VP_ISOL_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
 	return hppe_reg_tbl_get(
 				dev_id,
 				IPE_L2_BASE_ADDR + VP_ISOL_TBL_ADDRESS + \
 				index * VP_ISOL_TBL_INC,
 				value->val,
-				2);
+				sizeof(union vp_isol_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -429,17 +419,13 @@ appe_vp_isol_tbl_set(
 		a_uint32_t index,
 		union vp_isol_tbl_u *value)
 {
-	if (index >= VP_ISOL_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
 	return hppe_reg_tbl_set(
 				dev_id,
 				IPE_L2_BASE_ADDR + VP_ISOL_TBL_ADDRESS + \
 				index * VP_ISOL_TBL_INC,
 				value->val,
-				2);
+				sizeof(union vp_isol_tbl_u)/sizeof(a_uint32_t));
 }
-
 
 sw_error_t
 appe_vport_parsing_port_role_get(
@@ -1410,8 +1396,6 @@ appe_vp_isol_tbl_vp_profile_map_get(
 	sw_error_t ret = SW_OK;
 
 	ret = appe_vp_isol_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
 	*value = (a_uint64_t)reg_val.bf.vp_profile_map_1 << 32 | \
 		reg_val.bf.vp_profile_map_0;
 	return ret;
@@ -1434,4 +1418,468 @@ appe_vp_isol_tbl_vp_profile_map_set(
 	ret = appe_vp_isol_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+
+sw_error_t
+appe_tpr_port_parsing_vlan_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union tpr_port_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tpr_port_parsing_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.vlan_mode;
+	return ret;
+}
+
+sw_error_t
+appe_tpr_port_parsing_vlan_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union tpr_port_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tpr_port_parsing_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.vlan_mode = value;
+	ret = appe_tpr_port_parsing_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_tpr_vp_parsing_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tpr_vp_parsing_u *value)
+{
+	if (index >= TPR_VP_PARSING_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				TUNNEL_PARSER_BASE_ADDR + TPR_VP_PARSING_ADDRESS + \
+				index * TPR_VP_PARSING_INC,
+				&value->val);
+}
+
+sw_error_t
+appe_tpr_vp_parsing_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tpr_vp_parsing_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				TUNNEL_PARSER_BASE_ADDR + TPR_VP_PARSING_ADDRESS + \
+				index * TPR_VP_PARSING_INC,
+				value->val);
+}
+
+sw_error_t
+appe_tpr_vp_parsing_port_role_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union tpr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tpr_vp_parsing_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_role;
+	return ret;
+}
+
+sw_error_t
+appe_tpr_vp_parsing_port_role_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union tpr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tpr_vp_parsing_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_role = value;
+	ret = appe_tpr_vp_parsing_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_tpr_vp_parsing_vlan_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union tpr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tpr_vp_parsing_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.vlan_mode;
+	return ret;
+}
+
+sw_error_t
+appe_tpr_vp_parsing_vlan_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union tpr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_tpr_vp_parsing_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.vlan_mode = value;
+	ret = appe_tpr_vp_parsing_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_ipr_vp_parsing_src_port_sel_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.src_port_sel;
+	return ret;
+}
+
+sw_error_t
+appe_ipr_vp_parsing_src_port_sel_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union ipr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.src_port_sel = value;
+	ret = appe_ipr_vp_parsing_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_ipr_vp_parsing_vlan_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union ipr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.vlan_mode;
+	return ret;
+}
+
+sw_error_t
+appe_ipr_vp_parsing_vlan_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union ipr_vp_parsing_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.vlan_mode = value;
+	ret = appe_ipr_vp_parsing_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_default_type_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ath_hdr_default_type;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_default_type_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ath_hdr_default_type = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_disable_bit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ath_hdr_disable_bit;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_disable_bit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ath_hdr_disable_bit = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_from_cpu_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ath_hdr_from_cpu;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_from_cpu_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ath_hdr_from_cpu = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_insert_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ath_hdr_insert;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_insert_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ath_hdr_insert = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_ver_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ath_hdr_ver;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_hdr_ver_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ath_hdr_ver = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_port_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ath_port_bitmap_1 << 6 | \
+		reg_val.bf.ath_port_bitmap_0;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_ath_port_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ath_port_bitmap_1 = value >> 6;
+	reg_val.bf.ath_port_bitmap_0 = value & (((a_uint64_t)1<<6)-1);
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_cnt_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.cnt_mode;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_cnt_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.cnt_mode = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_private_tag_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.private_tag_en;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_private_tag_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.private_tag_en = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_private_tag_tci_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.private_tag_tci;
+	return ret;
+}
+
+sw_error_t
+appe_eg_vp_tbl_private_tag_tci_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_vp_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = appe_egress_vp_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.private_tag_tci = value;
+	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,17 +13,11 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-
 /**
  * @defgroup
  * @{
  */
-#include "sw.h"
-#include "hsl.h"
-#include "hppe_reg_access.h"
-#include "mppe_servcode_reg.h"
-#include "mppe_servcode.h"
+#include "hsl_reg.h"
 
 sw_error_t
 mppe_tl_vp_service_code_gen_get(
@@ -53,66 +47,3 @@ mppe_tl_vp_service_code_gen_set(
 				value->val);
 }
 
-#if 0
-sw_error_t
-mppe_tl_vp_service_code_gen_service_code_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_vp_service_code_gen_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = mppe_tl_vp_service_code_gen_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.service_code_en;
-	return ret;
-}
-
-sw_error_t
-mppe_tl_vp_service_code_gen_service_code_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_vp_service_code_gen_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = mppe_tl_vp_service_code_gen_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.service_code_en = value;
-	ret = mppe_tl_vp_service_code_gen_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-mppe_tl_vp_service_code_gen_service_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tl_vp_service_code_gen_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = mppe_tl_vp_service_code_gen_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.service_code;
-	return ret;
-}
-
-sw_error_t
-mppe_tl_vp_service_code_gen_service_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tl_vp_service_code_gen_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = mppe_tl_vp_service_code_gen_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.service_code = value;
-	ret = mppe_tl_vp_service_code_gen_set(dev_id, index, &reg_val);
-	return ret;
-}
-#endif
