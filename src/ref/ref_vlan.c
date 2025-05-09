@@ -453,7 +453,7 @@ qca_ar8327_sw_hw_apply(struct switch_dev *dev)
     }
 
 #if IS_ENABLED(CONFIG_NET_DSA)
-	if (ssdk_switch_enable_8021q_dsa(priv->device_id) == A_TRUE)
+	if (ssdk_switch_enable_dsa(priv->device_id) == A_TRUE)
 		return 0;
 #endif
 

@@ -1373,11 +1373,10 @@ void ssdk_switch_set_standby_status(a_uint32_t dev_id, bool enable)
 }
 
 #if IS_ENABLED(CONFIG_NET_DSA)
-a_bool_t ssdk_switch_enable_8021q_dsa(a_uint32_t dev_id)
+a_bool_t ssdk_switch_enable_dsa(a_uint32_t dev_id)
 {
 	ssdk_netdev_switch_t *netdev_switch = ssdk_dts_netdev_switch_find_by_devid(dev_id);
-	if (netdev_switch && netdev_switch->dev && netdev_uses_dsa(netdev_switch->dev) &&
-		netdev_switch->dev->dsa_ptr->tag_ops->proto == DSA_TAG_PROTO_QCA_8021Q)
+	if (netdev_switch && netdev_switch->dev && netdev_uses_dsa(netdev_switch->dev))
 		return A_TRUE;
 
 	return A_FALSE;
