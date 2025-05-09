@@ -454,7 +454,7 @@ ifeq (KSLIB, $(MODULE_TYPE))
        endif
   endif
   ifeq ($(CONFIG_KASAN),y)
-      MODULE_CFLAG += $(KASAN_OPTION)
+      #MODULE_CFLAG += $(KASAN_OPTION)
   endif
 
   #to review
