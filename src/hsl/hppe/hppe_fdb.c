@@ -791,6 +791,7 @@ hppe_rfdb_tbl_valid_set(
 	return ret;
 }
 
+#ifdef HMSPPE
 sw_error_t
 hppe_l2_global_conf_bc_pvlan_isol_en_get(
 		a_uint32_t dev_id,
@@ -1109,4 +1110,4 @@ hppe_l2_global_conf_mc_vlan_match_mode_set(
 	ret = hppe_l2_global_conf_set(dev_id, &reg_val);
 	return ret;
 }
-
+#endif

@@ -63,6 +63,11 @@ prepare_compile() {
 	fi
 	export STAGING_DIR=${QSDK_DIR}/staging_dir
 	export PATH=${PATH}:${TOOL_PATH}
+
+	if [ -z "$KBUILD_EXTRA_SYMBOLS" ]; then
+		export KBUILD_EXTRA_SYMBOLS=$(ls -d ${QSDK_DIR}/build_dir/target-*/linux-*/symvers/qca-nss-phy.symvers | head -n 1)
+		[ -z "$KBUILD_EXTRA_SYMBOLS" ] && echo "warning!!! \$KBUILD_EXTRA_SYMBOLS not exist" && sleep 3
+	fi
 }
 
 ################################################################################
@@ -109,7 +114,7 @@ ssdk_compile() {
     LNX_MAKEOPTS='-C ${SYS_PATH} KCFLAGS="-fno-caller-saves" HOSTCFLAGS="-O2 \
     -Wall -Wmissing-prototypes -Wstrict-prototypes" CROSS_COMPILE="${IN_COMPILE}" ARCH="${IN_ARCH}" \
     KBUILD_HAVE_NLS=no KBUILD_BUILD_USER="" KBUILD_BUILD_HOST="" KBUILD_BUILD_VERSION="0" \
-    CONFIG_SHELL="bash" V=''  cmd_syscalls= KBUILD_EXTRA_SYMBOLS="" MYSOC=${IN_SOC} \
+    CONFIG_SHELL="bash" V=''  cmd_syscalls= KBUILD_EXTRA_SYMBOLS=${KBUILD_EXTRA_SYMBOLS} MYSOC=${IN_SOC} \
     EXTRA_CFLAGS=-I${IN_INC}' MAKEFLAGS=${makeflags}
 
 	wait

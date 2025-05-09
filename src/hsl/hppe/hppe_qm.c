@@ -4846,6 +4846,7 @@ hppe_oq_ll_mul_p7_tbl_normal_fwd_set(
 	ret = hppe_oq_ll_mul_p7_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+#ifdef HMSPPE
 
 sw_error_t
 hppe_uni_drop_cnt_tbl_uni_drop_byte_get(
@@ -5486,4 +5487,4 @@ hppe_queue_tx_counter_tbl_tx_packets_set(
 	ret = hppe_queue_tx_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-
+#endif

@@ -1419,6 +1419,7 @@ appe_vp_isol_tbl_vp_profile_map_set(
 	return ret;
 }
 
+#ifdef HMSPPE
 sw_error_t
 appe_tpr_port_parsing_vlan_mode_get(
 		a_uint32_t dev_id,
@@ -1882,4 +1883,4 @@ appe_eg_vp_tbl_private_tag_tci_set(
 	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-
+#endif

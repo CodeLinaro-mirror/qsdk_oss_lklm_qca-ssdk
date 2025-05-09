@@ -220,6 +220,7 @@ hppe_rss_hash_fin_ipv4_reg_set(
 				value->val);
 }
 
+#if defined(MRPPE)
 sw_error_t
 mrppe_toeplitz_secret_key_get(
 		a_uint32_t dev_id,
@@ -413,4 +414,5 @@ mrppe_rss_hash_type_sel_extract_bit_pos_set(
 	ret = mrppe_rss_hash_type_sel_set(dev_id, &reg_val);
 	return ret;
 }
+#endif
 
