@@ -321,7 +321,8 @@ jhppe_eg_pm_counter_tbl_bcast_packet_get(
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.bcast_packet;
+	*value = reg_val.bf.bcast_packet_1 << 24 | \
+		reg_val.bf.bcast_packet_0;
 	return ret;
 }
 
@@ -337,7 +338,8 @@ jhppe_eg_pm_counter_tbl_bcast_packet_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.bcast_packet = value;
+	reg_val.bf.bcast_packet_1 = value >> 24;
+	reg_val.bf.bcast_packet_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -346,13 +348,13 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_1024_1518_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value)
+		a_uint32_t *value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf.frame_1024_1518_1 << 16 | \
+	*value = reg_val.bf.frame_1024_1518_1 << 24 | \
 		reg_val.bf.frame_1024_1518_0;
 	return ret;
 }
@@ -361,7 +363,7 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_1024_1518_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value)
+		a_uint32_t value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
@@ -369,8 +371,8 @@ jhppe_eg_pm_counter_tbl_frame_1024_1518_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.frame_1024_1518_1 = value >> 16;
-	reg_val.bf.frame_1024_1518_0 = value & (((a_uint64_t)1<<16)-1);
+	reg_val.bf.frame_1024_1518_1 = value >> 24;
+	reg_val.bf.frame_1024_1518_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -379,13 +381,13 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_128_255_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value)
+		a_uint32_t *value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf.frame_128_255_1 << 8 | \
+	*value = reg_val.bf.frame_128_255_1 << 24 | \
 		reg_val.bf.frame_128_255_0;
 	return ret;
 }
@@ -394,7 +396,7 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_128_255_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value)
+		a_uint32_t value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
@@ -402,8 +404,8 @@ jhppe_eg_pm_counter_tbl_frame_128_255_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.frame_128_255_1 = value >> 8;
-	reg_val.bf.frame_128_255_0 = value & (((a_uint64_t)1<<8)-1);
+	reg_val.bf.frame_128_255_1 = value >> 24;
+	reg_val.bf.frame_128_255_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -412,13 +414,13 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_256_511_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value)
+		a_uint32_t *value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf.frame_256_511_1 << 32 | \
+	*value = reg_val.bf.frame_256_511_1 << 24 | \
 		reg_val.bf.frame_256_511_0;
 	return ret;
 }
@@ -427,7 +429,7 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_256_511_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value)
+		a_uint32_t value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
@@ -435,8 +437,8 @@ jhppe_eg_pm_counter_tbl_frame_256_511_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.frame_256_511_1 = value >> 32;
-	reg_val.bf.frame_256_511_0 = value & (((a_uint64_t)1<<32)-1);
+	reg_val.bf.frame_256_511_1 = value >> 24;
+	reg_val.bf.frame_256_511_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -445,13 +447,13 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_512_1023_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value)
+		a_uint32_t *value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf.frame_512_1023_1 << 24 | \
+	*value = reg_val.bf.frame_512_1023_1 << 24 | \
 		reg_val.bf.frame_512_1023_0;
 	return ret;
 }
@@ -460,7 +462,7 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_512_1023_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value)
+		a_uint32_t value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
@@ -478,13 +480,13 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_64_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value)
+		a_uint32_t *value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf.frame_64_1 << 24 | \
+	*value = reg_val.bf.frame_64_1 << 24 | \
 		reg_val.bf.frame_64_0;
 	return ret;
 }
@@ -493,7 +495,7 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_64_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value)
+		a_uint32_t value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
@@ -511,13 +513,13 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_65_127_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value)
+		a_uint32_t *value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = (a_uint64_t)reg_val.bf.frame_65_127_1 << 16 | \
+	*value = reg_val.bf.frame_65_127_1 << 24 | \
 		reg_val.bf.frame_65_127_0;
 	return ret;
 }
@@ -526,7 +528,7 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_65_127_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value)
+		a_uint32_t value)
 {
 	union eg_pm_counter_tbl_u reg_val;
 	sw_error_t ret = SW_OK;
@@ -534,8 +536,8 @@ jhppe_eg_pm_counter_tbl_frame_65_127_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.frame_65_127_1 = value >> 16;
-	reg_val.bf.frame_65_127_0 = value & (((a_uint64_t)1<<16)-1);
+	reg_val.bf.frame_65_127_1 = value >> 24;
+	reg_val.bf.frame_65_127_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -550,7 +552,8 @@ jhppe_eg_pm_counter_tbl_mcast_packet_get(
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.mcast_packet;
+	*value = reg_val.bf.mcast_packet_1 << 24 | \
+		reg_val.bf.mcast_packet_0;
 	return ret;
 }
 
@@ -566,7 +569,8 @@ jhppe_eg_pm_counter_tbl_mcast_packet_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.mcast_packet = value;
+	reg_val.bf.mcast_packet_1 = value >> 24;
+	reg_val.bf.mcast_packet_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -614,7 +618,8 @@ jhppe_eg_pm_counter_tbl_oversize_get(
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.oversize;
+	*value = reg_val.bf.oversize_1 << 24 | \
+		reg_val.bf.oversize_0;
 	return ret;
 }
 
@@ -630,7 +635,8 @@ jhppe_eg_pm_counter_tbl_oversize_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.oversize = value;
+	reg_val.bf.oversize_1 = value >> 24;
+	reg_val.bf.oversize_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
@@ -645,7 +651,8 @@ jhppe_eg_pm_counter_tbl_ucast_packet_get(
 	sw_error_t ret = SW_OK;
 
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ucast_packet;
+	*value = reg_val.bf.ucast_packet_1 << 24 | \
+		reg_val.bf.ucast_packet_0;
 	return ret;
 }
 
@@ -661,7 +668,8 @@ jhppe_eg_pm_counter_tbl_ucast_packet_set(
 	ret = jhppe_eg_pm_counter_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.ucast_packet = value;
+	reg_val.bf.ucast_packet_1 = value >> 24;
+	reg_val.bf.ucast_packet_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = jhppe_eg_pm_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }

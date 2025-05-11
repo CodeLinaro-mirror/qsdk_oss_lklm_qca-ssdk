@@ -478,7 +478,7 @@ union eg_proto_mapping1_u {
 
 /*[table] EG_HEADER_DATA*/
 #define EG_HEADER_DATA
-#define EG_HEADER_DATA_ADDRESS 0x34000
+#define EG_HEADER_DATA_ADDRESS 0x20000
 #define EG_HEADER_DATA_NUM     128
 #define EG_HEADER_DATA_INC     0x80
 #define EG_HEADER_DATA_TYPE    REG_TYPE_RW
@@ -531,7 +531,7 @@ union eg_header_data_u {
 
 /*[table] EG_XLAT_TUN_CTRL*/
 #define EG_XLAT_TUN_CTRL
-#define EG_XLAT_TUN_CTRL_ADDRESS 0x3a000
+#define EG_XLAT_TUN_CTRL_ADDRESS 0x26000
 #define EG_XLAT_TUN_CTRL_NUM     128
 #define EG_XLAT_TUN_CTRL_INC     0x10
 #define EG_XLAT_TUN_CTRL_TYPE    REG_TYPE_RW
@@ -771,7 +771,7 @@ union eg_xlat_tun_ctrl_u {
 
 /*[table] EG_EDIT_RULE*/
 #define EG_EDIT_RULE
-#define EG_EDIT_RULE_ADDRESS 0x3c000
+#define EG_EDIT_RULE_ADDRESS 0x28000
 #define EG_EDIT_RULE_NUM     16
 #define EG_EDIT_RULE_INC     0x10
 #define EG_EDIT_RULE_TYPE    REG_TYPE_RW
@@ -2264,12 +2264,12 @@ union tl_ctrl_u {
 	#define TL_VLAN_TBL_PORT_BITMAP_OFFSET  3
 	#define TL_VLAN_TBL_PORT_BITMAP_LEN     9
 	#define TL_VLAN_TBL_PORT_BITMAP_DEFAULT 0x0
-	/*[field] PORT_VP_ID reuse TYPE[0]*/
+	/*[field] PORT_VP_ID reuse TYPE[1]*/
 	#define TL_VLAN_TBL_PORT_VP_ID
 	#define TL_VLAN_TBL_PORT_VP_ID_OFFSET  3
 	#define TL_VLAN_TBL_PORT_VP_ID_LEN     9
 	#define TL_VLAN_TBL_PORT_VP_ID_DEFAULT 0x0
-	/*[field] VP_PROFILE reuse TYPE[2]*/
+	/*[field] VP_PROFILE reuse TYPE[1]*/
 	#define TL_VLAN_TBL_VP_PROFILE
 	#define TL_VLAN_TBL_VP_PROFILE_OFFSET  3
 	#define TL_VLAN_TBL_VP_PROFILE_LEN     9
@@ -2689,12 +2689,12 @@ union tl_key_gen_u {
 	#define TL_TBL_IPV4_SRC_ADDR_OFFSET  15
 	#define TL_TBL_IPV4_SRC_ADDR_LEN     32
 	#define TL_TBL_IPV4_SRC_ADDR_DEFAULT 0x0
-	/*[field] IPV6_SRC_ADDR reuse ENTRY_TYPE[1]*/
+	/*[field] IPV6_SRC_ADDR reuse ENTRY_TYPE[0]*/
 	#define TL_TBL_IPV6_SRC_ADDR
 	#define TL_TBL_IPV6_SRC_ADDR_OFFSET  15
 	#define TL_TBL_IPV6_SRC_ADDR_LEN     128
 	#define TL_TBL_IPV6_SRC_ADDR_DEFAULT 0x0
-	/*[field] IPV4_DST_ADDR reuse ENTRY_TYPE[1]*/
+	/*[field] IPV4_DST_ADDR reuse ENTRY_TYPE[0]*/
 	#define TL_TBL_IPV4_DST_ADDR
 	#define TL_TBL_IPV4_DST_ADDR_OFFSET  47
 	#define TL_TBL_IPV4_DST_ADDR_LEN     32

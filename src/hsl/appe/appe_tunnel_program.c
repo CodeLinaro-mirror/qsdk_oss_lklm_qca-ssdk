@@ -329,68 +329,6 @@ appe_tpr_program_udf_action_set(
 }
 
 sw_error_t
-appe_tpr_hdr_match_1_protocol_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tpr_hdr_match_1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_hdr_match_1_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.protocol;
-	return ret;
-}
-
-sw_error_t
-appe_tpr_hdr_match_1_protocol_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tpr_hdr_match_1_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_hdr_match_1_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.protocol = value;
-	ret = appe_tpr_hdr_match_1_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tpr_hdr_match_2_mask_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union tpr_hdr_match_2_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_hdr_match_2_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.mask;
-	return ret;
-}
-
-sw_error_t
-appe_tpr_hdr_match_2_mask_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union tpr_hdr_match_2_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_hdr_match_2_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.mask = value;
-	ret = appe_tpr_hdr_match_2_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 appe_tpr_program_hdr_hdr_type_map_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

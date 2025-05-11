@@ -146,73 +146,73 @@ sw_error_t
 jhppe_eg_pm_counter_tbl_frame_1024_1518_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_1024_1518_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_128_255_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_128_255_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_256_511_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_256_511_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_512_1023_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_512_1023_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_64_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_64_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_65_127_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_frame_65_127_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_mcast_packet_get(

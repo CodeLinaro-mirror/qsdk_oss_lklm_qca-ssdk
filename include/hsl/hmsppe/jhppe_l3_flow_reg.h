@@ -261,7 +261,7 @@ union l3_my_mac_tbl_u {
 
 /*[table] IN_FLOW_6TUPLE_TBL*/
 #define IN_FLOW_6TUPLE_TBL
-#define IN_FLOW_6TUPLE_TBL_ADDRESS 0x40000
+#define IN_FLOW_6TUPLE_TBL_ADDRESS 0x80000
 #define IN_FLOW_6TUPLE_TBL_NUM     2048
 #define IN_FLOW_6TUPLE_TBL_INC     0x40
 #define IN_FLOW_6TUPLE_TBL_TYPE    REG_TYPE_RW
@@ -311,17 +311,17 @@ union l3_my_mac_tbl_u {
 	#define IN_FLOW_6TUPLE_TBL_FWD_TYPE_OFFSET  30
 	#define IN_FLOW_6TUPLE_TBL_FWD_TYPE_LEN     3
 	#define IN_FLOW_6TUPLE_TBL_FWD_TYPE_DEFAULT 0x0
-	/*[field] NEXT_HOP1 reuse FWD_TYPE[2]*/
+	/*[field] NEXT_HOP1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP1
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP1_OFFSET  33
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP1_LEN     12
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP1_DEFAULT 0x0
-	/*[field] NEXT_HOP2 reuse FWD_TYPE[3]*/
+	/*[field] NEXT_HOP2 reuse FWD_TYPE[1]*/
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP2
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP2_OFFSET  33
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP2_LEN     12
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP2_DEFAULT 0x0
-	/*[field] NEXT_HOP3 reuse FWD_TYPE[1]*/
+	/*[field] NEXT_HOP3 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP3
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP3_OFFSET  33
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP3_LEN     12
@@ -331,7 +331,7 @@ union l3_my_mac_tbl_u {
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP2_OFFSET  33
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP2_LEN     8
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP2_DEFAULT 0x0
-	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[2]*/
+	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_6TUPLE_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_6TUPLE_TBL_VLAN_FMT_VALID_OFFSET  41
 	#define IN_FLOW_6TUPLE_TBL_VLAN_FMT_VALID_LEN     1
@@ -341,7 +341,7 @@ union l3_my_mac_tbl_u {
 	#define IN_FLOW_6TUPLE_TBL_SVLAN_FMT_OFFSET  42
 	#define IN_FLOW_6TUPLE_TBL_SVLAN_FMT_LEN     1
 	#define IN_FLOW_6TUPLE_TBL_SVLAN_FMT_DEFAULT 0x0
-	/*[field] CVLAN_FMT reuse FWD_TYPE[3]*/
+	/*[field] CVLAN_FMT reuse FWD_TYPE[1]*/
 	#define IN_FLOW_6TUPLE_TBL_CVLAN_FMT
 	#define IN_FLOW_6TUPLE_TBL_CVLAN_FMT_OFFSET  43
 	#define IN_FLOW_6TUPLE_TBL_CVLAN_FMT_LEN     1
@@ -351,27 +351,27 @@ union l3_my_mac_tbl_u {
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4_VALID_OFFSET  44
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4_VALID_LEN     1
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4_VALID_DEFAULT 0x0
-	/*[field] L4_PORT1 reuse FWD_TYPE[3]*/
+	/*[field] L4_PORT1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT1
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT1_OFFSET  45
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT1_LEN     16
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT1_DEFAULT 0x0
-	/*[field] L4_PORT2 reuse FWD_TYPE[0]*/
+	/*[field] L4_PORT2 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT2
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT2_OFFSET  45
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT2_LEN     16
 	#define IN_FLOW_6TUPLE_TBL_L4_PORT2_DEFAULT 0x0
-	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[2]*/
+	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP_VALID1_OFFSET  45
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP_VALID1_LEN     1
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP_VALID1_DEFAULT 0x0
-	/*[field] NEXT_HOP4 reuse FWD_TYPE[3]*/
+	/*[field] NEXT_HOP4 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4_OFFSET  45
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4_LEN     12
 	#define IN_FLOW_6TUPLE_TBL_NEXT_HOP4_DEFAULT 0x0
-	/*[field] PORT_VP1 reuse FWD_TYPE[0]*/
+	/*[field] PORT_VP1 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP1
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP1_OFFSET  46
 	#define IN_FLOW_6TUPLE_TBL_PORT_VP1_LEN     8
@@ -464,7 +464,7 @@ union l3_my_mac_tbl_u {
 	/*[field] COUNTER_ID*/
 	#define IN_FLOW_6TUPLE_TBL_COUNTER_ID
 	#define IN_FLOW_6TUPLE_TBL_COUNTER_ID_OFFSET  308
-	#define IN_FLOW_6TUPLE_TBL_COUNTER_ID_LEN     12
+	#define IN_FLOW_6TUPLE_TBL_COUNTER_ID_LEN     14
 	#define IN_FLOW_6TUPLE_TBL_COUNTER_ID_DEFAULT 0x0
 
 struct in_flow_6tuple_tbl_0 {
@@ -503,7 +503,9 @@ struct in_flow_6tuple_tbl_0 {
 	a_uint32_t  match_more_1:18;
 	a_uint32_t  udf0_valid:1;
 	a_uint32_t  udf1_valid:1;
-	a_uint32_t  counter_id:12;
+	a_uint32_t  counter_id_0:12;
+	a_uint32_t  counter_id_1:2;
+	a_uint32_t  _reserved0:30;
 };
 
 struct in_flow_6tuple_tbl_1 {
@@ -542,7 +544,9 @@ struct in_flow_6tuple_tbl_1 {
 	a_uint32_t  match_more_1:18;
 	a_uint32_t  udf0_valid:1;
 	a_uint32_t  udf1_valid:1;
-	a_uint32_t  counter_id:12;
+	a_uint32_t  counter_id_0:12;
+	a_uint32_t  counter_id_1:2;
+	a_uint32_t  _reserved0:30;
 };
 
 struct in_flow_6tuple_tbl_2 {
@@ -584,7 +588,9 @@ struct in_flow_6tuple_tbl_2 {
 	a_uint32_t  match_more_1:18;
 	a_uint32_t  udf0_valid:1;
 	a_uint32_t  udf1_valid:1;
-	a_uint32_t  counter_id:12;
+	a_uint32_t  counter_id_0:12;
+	a_uint32_t  counter_id_1:2;
+	a_uint32_t  _reserved1:30;
 };
 
 struct in_flow_6tuple_tbl_3 {
@@ -628,11 +634,13 @@ struct in_flow_6tuple_tbl_3 {
 	a_uint32_t  match_more_1:18;
 	a_uint32_t  udf0_valid:1;
 	a_uint32_t  udf1_valid:1;
-	a_uint32_t  counter_id:12;
+	a_uint32_t  counter_id_0:12;
+	a_uint32_t  counter_id_1:2;
+	a_uint32_t  _reserved1:30;
 };
 
 union in_flow_6tuple_tbl_u {
-	a_uint32_t val[10];
+	a_uint32_t val[11];
 	struct in_flow_6tuple_tbl_0 bf;
 	struct in_flow_6tuple_tbl_1 bf1;
 	struct in_flow_6tuple_tbl_2 bf2;

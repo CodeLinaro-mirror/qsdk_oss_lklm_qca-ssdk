@@ -31,7 +31,7 @@ union port_isol_action_u {
 
 /*[table] L2_VP_PORT_POST_TBL*/
 #define L2_VP_PORT_POST_TBL
-#define L2_VP_PORT_POST_TBL_ADDRESS 0x38000
+#define L2_VP_PORT_POST_TBL_ADDRESS 0x26000
 #define L2_VP_PORT_POST_TBL_NUM     256
 #define L2_VP_PORT_POST_TBL_INC     0x10
 #define L2_VP_PORT_POST_TBL_TYPE    REG_TYPE_RW
@@ -169,7 +169,7 @@ union l2_vp_port_post_tbl_u {
 
 /*[table] VP_ISOL_ACTION_TBL*/
 #define VP_ISOL_ACTION_TBL
-#define VP_ISOL_ACTION_TBL_ADDRESS 0x3c800
+#define VP_ISOL_ACTION_TBL_ADDRESS 0x28800
 #define VP_ISOL_ACTION_TBL_NUM     64
 #define VP_ISOL_ACTION_TBL_INC     0x10
 #define VP_ISOL_ACTION_TBL_TYPE    REG_TYPE_RW

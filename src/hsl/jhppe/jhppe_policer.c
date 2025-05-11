@@ -611,65 +611,6 @@ jhppe_sawf_flow_statis_state_sawf0_active1_get(
 }
 
 sw_error_t
-jhppe_sawf_flow_block_map_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union sawf_flow_block_map_u *value)
-{
-	if (index >= SAWF_FLOW_BLOCK_MAP_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-	return hppe_reg_get(
-				dev_id,
-				INGRESS_POLICER_BASE_ADDR + SAWF_FLOW_BLOCK_MAP_ADDRESS + \
-				index * SAWF_FLOW_BLOCK_MAP_INC,
-				&value->val);
-}
-
-sw_error_t
-jhppe_sawf_flow_block_map_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union sawf_flow_block_map_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				INGRESS_POLICER_BASE_ADDR + SAWF_FLOW_BLOCK_MAP_ADDRESS + \
-				index * SAWF_FLOW_BLOCK_MAP_INC,
-				value->val);
-}
-
-sw_error_t
-jhppe_sawf_flow_block_map_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union sawf_flow_block_map_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_sawf_flow_block_map_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.valid;
-	return ret;
-}
-
-sw_error_t
-jhppe_sawf_flow_block_map_valid_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union sawf_flow_block_map_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_sawf_flow_block_map_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.valid = value;
-	ret = jhppe_sawf_flow_block_map_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 jhppe_sawf_flow_statis_ctrl8_get(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl8_u *value)
@@ -792,6 +733,65 @@ jhppe_sawf_flow_statis_ctrl10_sawf1_done_set(
 		return ret;
 	reg_val.bf.sawf1_done = value;
 	ret = jhppe_sawf_flow_statis_ctrl10_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+jhppe_sawf_flow_block_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sawf_flow_block_map_u *value)
+{
+	if (index >= SAWF_FLOW_BLOCK_MAP_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + SAWF_FLOW_BLOCK_MAP_ADDRESS + \
+				index * SAWF_FLOW_BLOCK_MAP_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sawf_flow_block_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sawf_flow_block_map_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + SAWF_FLOW_BLOCK_MAP_ADDRESS + \
+				index * SAWF_FLOW_BLOCK_MAP_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_sawf_flow_block_map_valid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union sawf_flow_block_map_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_sawf_flow_block_map_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.valid;
+	return ret;
+}
+
+sw_error_t
+jhppe_sawf_flow_block_map_valid_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union sawf_flow_block_map_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_sawf_flow_block_map_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.valid = value;
+	ret = jhppe_sawf_flow_block_map_set(dev_id, index, &reg_val);
 	return ret;
 }
 

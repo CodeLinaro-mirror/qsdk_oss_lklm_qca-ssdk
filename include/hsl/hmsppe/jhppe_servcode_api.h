@@ -130,7 +130,7 @@ jhppe_in_spec_service_tbl_rx_counting_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_SPEC_SERVICE_TBL_MAX_ENTRY	6
+#define EG_SPEC_SERVICE_TBL_MAX_ENTRY	10
 
 sw_error_t
 jhppe_eg_spec_service_tbl_get(

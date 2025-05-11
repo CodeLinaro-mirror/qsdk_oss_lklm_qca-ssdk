@@ -92,7 +92,7 @@ union in_spec_service_tbl_u {
 /*[register] EG_SPEC_SERVICE_TBL*/
 #define EG_SPEC_SERVICE_TBL
 #define EG_SPEC_SERVICE_TBL_ADDRESS 0x138
-#define EG_SPEC_SERVICE_TBL_NUM     6
+#define EG_SPEC_SERVICE_TBL_NUM     10
 #define EG_SPEC_SERVICE_TBL_INC     0x8
 #define EG_SPEC_SERVICE_TBL_TYPE    REG_TYPE_RW
 #define EG_SPEC_SERVICE_TBL_DEFAULT 0x0

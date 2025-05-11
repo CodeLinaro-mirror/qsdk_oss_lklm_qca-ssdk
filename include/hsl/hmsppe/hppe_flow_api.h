@@ -905,91 +905,43 @@ hppe_eg_global_ctrl_vsi_cnt_byp_xlt_drop_en_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define EG_FLOW_TREE_MAP_TBL_MAX_ENTRY	4096
+#define EG_IPV6_PREFIX_TBL_MAX_ENTRY	256
 
 sw_error_t
-hppe_eg_flow_tree_map_tbl_get(
+hppe_eg_ipv6_prefix_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union eg_flow_tree_map_tbl_u *value);
+		union eg_ipv6_prefix_tbl_u *value);
 
 sw_error_t
-hppe_eg_flow_tree_map_tbl_set(
+hppe_eg_ipv6_prefix_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union eg_flow_tree_map_tbl_u *value);
+		union eg_ipv6_prefix_tbl_u *value);
 
 sw_error_t
-hppe_eg_flow_tree_map_tbl_flow_cookie_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_flow_cookie_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_flow_cookie_ext_get(
+hppe_eg_ipv6_prefix_tbl_length_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hppe_eg_flow_tree_map_tbl_flow_cookie_ext_set(
+hppe_eg_ipv6_prefix_tbl_length_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-hppe_eg_flow_tree_map_tbl_tree_id_get(
+hppe_eg_ipv6_prefix_tbl_prefix_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint32_t *value);
+		a_uint64_t *value);
 
 sw_error_t
-hppe_eg_flow_tree_map_tbl_tree_id_set(
+hppe_eg_ipv6_prefix_tbl_prefix_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_type_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_type_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_wifi_qos_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_wifi_qos_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_wifi_qos_flag_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_eg_flow_tree_map_tbl_wifi_qos_flag_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
+		a_uint64_t value);
 
 #define EG_FLOW_IPV6_IID_TBL_MAX_ENTRY	2048
 
@@ -1065,42 +1017,114 @@ hppe_eg_flow_ipv6_iid_tbl_src_dst_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_IPV6_PREFIX_TBL_MAX_ENTRY	256
+#define EG_FLOW_TREE_MAP_TBL_MAX_ENTRY	4096
 
 sw_error_t
-hppe_eg_ipv6_prefix_tbl_get(
+hppe_eg_flow_tree_map_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union eg_ipv6_prefix_tbl_u *value);
+		union eg_flow_tree_map_tbl_u *value);
 
 sw_error_t
-hppe_eg_ipv6_prefix_tbl_set(
+hppe_eg_flow_tree_map_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union eg_ipv6_prefix_tbl_u *value);
+		union eg_flow_tree_map_tbl_u *value);
 
 sw_error_t
-hppe_eg_ipv6_prefix_tbl_length_get(
+hppe_eg_flow_tree_map_tbl_flow_cookie_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hppe_eg_ipv6_prefix_tbl_length_set(
+hppe_eg_flow_tree_map_tbl_flow_cookie_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-hppe_eg_ipv6_prefix_tbl_prefix_get(
+hppe_eg_flow_tree_map_tbl_flow_cookie_ext_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t *value);
+		a_uint32_t *value);
 
 sw_error_t
-hppe_eg_ipv6_prefix_tbl_prefix_set(
+hppe_eg_flow_tree_map_tbl_flow_cookie_ext_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		a_uint64_t value);
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_gro_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_gro_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_tree_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_tree_id_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_tree_id_cookie_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_tree_id_cookie_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_type_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_type_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_wifi_qos_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_wifi_qos_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_wifi_qos_flag_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_flow_tree_map_tbl_wifi_qos_flag_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #endif

@@ -208,7 +208,7 @@ union eg_vlan_tpid_ext1_u {
 
 /*[table] DSCP_PBIT_MAP_TBL*/
 #define DSCP_PBIT_MAP_TBL
-#define DSCP_PBIT_MAP_TBL_ADDRESS 0x3c800
+#define DSCP_PBIT_MAP_TBL_ADDRESS 0x28800
 #define DSCP_PBIT_MAP_TBL_NUM     256
 #define DSCP_PBIT_MAP_TBL_INC     0x4
 #define DSCP_PBIT_MAP_TBL_TYPE    REG_TYPE_RW
