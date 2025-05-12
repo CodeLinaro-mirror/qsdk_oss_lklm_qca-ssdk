@@ -266,6 +266,10 @@ __adpt_hppe_policer_burst_size_to_bucket_size(a_uint32_t burst_size,
 	{
 		temp_bucket_size = ADPT_HPPE_POLICER_BUCKET_SIZE_MAX;
 	}
+	if(temp_bucket_size == 0)
+	{
+		temp_bucket_size = 1;
+	}
 
 	*bucket_size = temp_bucket_size;
 
