@@ -63,6 +63,8 @@
 #define FLOW_COOKIE_16BIT		GENMASK_ULL(15, 0)
 
 #define FLOW_TREE_ID_24BIT		GENMASK_ULL(23, 0)
+#define FLOW_TREE_ID_24BIT_L		GENMASK_ULL(15, 0)
+#define FLOW_TREE_ID_24BIT_H		GENMASK_ULL(23, 16)
 
 #if defined(MRPPE)
 static DECLARE_BITMAP(flow_cookie_48bit, EG_FLOW_TREE_MAP_TBL_NUM);
@@ -286,12 +288,22 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 	case FAL_FLOW_QOS_TYPE_TREE_ID:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->tree_id, sizeof(flow_qos->tree_id));
+#if defined(HMSPPE)
+			eg_treemap->bf.tree_id_0 = FIELD_GET(FLOW_TREE_ID_24BIT_L, tmp);
+			eg_treemap->bf.tree_id_1 = FIELD_GET(FLOW_TREE_ID_24BIT_H, tmp);
+#else
 			eg_treemap->bf.tree_id = FIELD_GET(FLOW_TREE_ID_24BIT, tmp);
+#endif
 #if defined(MPPE)
 			eg_treemap->bf.type = 0;
 #endif
 		} else {
+#if defined(HMSPPE)
+			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT_L, eg_treemap->bf.tree_id_0);
+			tmp |= FIELD_PREP(FLOW_TREE_ID_24BIT_H, eg_treemap->bf.tree_id_1);
+#else
 			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT, eg_treemap->bf.tree_id);
+#endif
 			memcpy(flow_qos->tree_id, &tmp, sizeof(flow_qos->tree_id));
 		}
 		break;
