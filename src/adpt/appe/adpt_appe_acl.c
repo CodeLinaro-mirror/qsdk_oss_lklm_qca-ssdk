@@ -195,11 +195,7 @@ _adpt_appe_acl_ext_set(a_uint32_t dev_id, fal_acl_rule_t * rule,
 			reg_val.bf.policy_id = rule->policy_id;
 #if defined(MPPE)
 			reg_val.bf.cookie = rule->cookie_val;
-#ifdef HMSPPE //to be fixed/checked by leiwei
 			reg_val.bf.metadata_pri = rule->cookie_pri;
-#else
-			reg_val.bf.cookie_pri = rule->cookie_pri;
-#endif
 #endif
 #if defined(MRPPE)
 			reg_val.bf.cookie_ext = (rule->cookie_val >> 16) & 0xffffff;
@@ -231,11 +227,7 @@ _adpt_appe_acl_ext_get(a_uint32_t dev_id,
 	rule->policy_id = reg_val.bf.policy_id;
 #if defined(MPPE)
 	rule->cookie_val = reg_val.bf.cookie;
-#ifdef HMSPPE //to be fixed/checked by leiwei
 	rule->cookie_pri = reg_val.bf.metadata_pri;
-#else
-	rule->cookie_pri = reg_val.bf.cookie_pri;
-#endif
 #endif
 #if defined(MRPPE)
 	rule->cookie_val |= (a_uint64_t)(reg_val.bf.cookie_ext) << 16;
@@ -424,7 +416,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	{
 		hw_act->bf.svid_change_en = 1;
 		hw_act->bf.stag_fmt = rule->stag_fmt;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.svid_0 = rule->stag_vid & 0x7f;
 		hw_act->bf.svid_1 = (rule->stag_vid >> 11) & 0x1;
 #else
@@ -450,7 +442,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI))
 	{
 		hw_act->bf.ctag_pcp_change_en = 1;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.ctag_pcp = rule->ctag_pri&0x7;
 #else
 		hw_act->bf.ctag_pcp_0 = rule->ctag_pri&0x3;
@@ -491,7 +483,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE))
 	{
 		hw_act->bf.service_code_en = 1;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.service_code = rule->service_code & 0xff;
 #else
 		hw_act->bf.service_code_0 = rule->service_code&0x1;
@@ -521,7 +513,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_CASCADE))
 	{
 		hw_act->bf.cascade_en = 1;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.cascade_data = rule->cascade_data;;
 #else
 		hw_act->bf.cascade_data_0 = rule->cascade_data;
@@ -533,7 +525,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	{
 		hw_act->bf.vpn_valid = 1;
 		hw_act->bf.vpn_type = rule->vpn_type;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.vpn_id = rule->vpn_id;
 #else
 		hw_act->bf.vpn_id_0 = rule->vpn_id;
@@ -569,7 +561,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 		{
 			return SW_BAD_PARAM;
 		}
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.nat_action_0 = nat_action&3;
 		hw_act->bf.nat_action_1 = (nat_action>>2) & 0x1;
 #else
@@ -844,7 +836,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_VID);
 		rule->stag_fmt = hw_act->bf.stag_fmt;
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->stag_vid = (hw_act->bf.svid_0 & 0x7f) | ((hw_act->bf.svid_1& 0x1) << 11);
 #else
 		rule->stag_vid = hw_act->bf.svid;
@@ -870,7 +862,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI);
 
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->ctag_pri = hw_act->bf.ctag_pcp & 0x7;
 #else
 		rule->ctag_pri = (hw_act->bf.ctag_pcp_1<<2)|hw_act->bf.ctag_pcp_0;
@@ -910,7 +902,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.service_code_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE);
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->service_code = hw_act->bf.service_code & 0xff;
 #else
 		rule->service_code = (hw_act->bf.service_code_1<<1)|hw_act->bf.service_code_0;
@@ -939,7 +931,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.cascade_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_CASCADE);
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->cascade_data = hw_act->bf.cascade_data;
 #else
 		rule->cascade_data = (hw_act->bf.cascade_data_1 <<
@@ -951,7 +943,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_VPN);
 		rule->vpn_type = hw_act->bf.vpn_type;
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->vpn_id = hw_act->bf.vpn_id;
 #else
 		rule->vpn_id = (hw_act->bf.vpn_id_1 <<
@@ -961,8 +953,8 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	}
 	if(FAL_ACL_DEST_TYPE(rule->ports) == FAL_ACL_DEST_NEXTHOP)
 	{
-#ifdef HMSPPE
-		nat_action = (hw_act->bf.nat_action_0 & 0x3) | 
+#ifdef JHPPE
+		nat_action = (hw_act->bf.nat_action_0 & 0x3) |
 					((hw_act->bf.nat_action_0 & 0x1) << 2);
 #else
 		nat_action = hw_act->bf.nat_action;

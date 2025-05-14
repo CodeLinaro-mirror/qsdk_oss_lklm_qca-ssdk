@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -274,46 +274,6 @@ appe_eg_ipo_ext_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union eg_ipo_ext_tbl_u *value);
-
-#if 0
-sw_error_t
-appe_eg_ipo_ext_tbl_policy_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-appe_eg_ipo_ext_tbl_policy_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-#if defined(MPPE)
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-mppe_eg_ipo_ext_tbl_cookie_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-#endif
-#endif
 
 sw_error_t
 appe_pre_ipo_rule_reg_get(

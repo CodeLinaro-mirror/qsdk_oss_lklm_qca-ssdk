@@ -308,7 +308,6 @@ union pre_ipo_mask_reg_u {
 	struct pre_ipo_mask_reg bf;
 };
 
-/*Confirmed with Lei*/
 struct pre_ipo_rule_reg {
 	a_uint32_t rule_field_0:32;
 	a_uint32_t rule_field_1:20;
@@ -341,7 +340,6 @@ union ipo_mask_reg_u {
 	struct ipo_mask_reg bf;
 };
 
-/*Confirmed with Lei*/
 struct ipo_rule_reg {
 	a_uint32_t rule_field_0:32;
 	a_uint32_t rule_field_1:20;
@@ -562,8 +560,8 @@ appe_l3_vp_port_tbl_ipo_vp_profile_get(
 		a_uint32_t index,
 		a_uint32_t *value);
 
-#define PRE_IPO_RULE_REG_SRC_OFFSET  63 //to be fixed by leiwei
-#define IPO_RULE_REG_SRC_OFFSET  63 //to be fixed by leiwei
+#define PRE_IPO_RULE_REG_SRC_OFFSET  63
+#define IPO_RULE_REG_SRC_OFFSET  63
 
 //from adpt_appe_portvlan.c
 sw_error_t
