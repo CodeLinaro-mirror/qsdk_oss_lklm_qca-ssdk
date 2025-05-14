@@ -6618,6 +6618,125 @@ extern "C" {
 		     sizeof(fal_sampling_counter_entry_t), \
 		     SW_PARAM_PTR|SW_PARAM_OUT, "counter"),
 
+#define SW_API_PON_GEMPORT_GLB_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GLB_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GLB_SET, SW_GEMPORT_GLB_CFG, \
+			sizeof(fal_gemport_global_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, "GemPort Global CFG"),
+
+#define SW_API_PON_GEMPORT_GLB_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GLB_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GLB_GET, SW_GEMPORT_GLB_CFG, \
+			sizeof(fal_gemport_global_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Global CFG"),
+
+#define SW_API_PON_GEMPORT_GEN_DFT_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_DFT_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_DFT_SET, SW_GEMPORT_GEN_DFT, \
+			sizeof(fal_gemport_gen_default_t), SW_PARAM_PTR|SW_PARAM_IN, "GemPort Default Properties"),
+
+#define SW_API_PON_GEMPORT_GEN_DFT_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_DFT_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_DFT_GET, SW_GEMPORT_GEN_DFT, \
+			sizeof(fal_gemport_gen_default_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Default Properties"),
+
+#define SW_API_PON_GEMPORT_GEN_ENTRY_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Index"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_SET, SW_GEMPORT_GEN, \
+			sizeof(fal_gemport_gen_t), SW_PARAM_PTR|SW_PARAM_IN, "GemPort Generation Rule"),
+
+#define SW_API_PON_GEMPORT_GEN_ENTRY_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Index"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_GET, SW_GEMPORT_GEN, \
+			sizeof(fal_gemport_gen_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Generation Rule"),
+
+#define SW_API_PON_GEMPORT_GEN_EN_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_EN_SET, SW_ENABLE, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Enable"),
+
+#define SW_API_PON_GEMPORT_GEN_EN_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_GEN_EN_GET, SW_ENABLE, \
+			sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "Enable"),
+
+#define SW_API_PON_GEMPORT_MAP_EN_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_EN_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Port ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_EN_SET, SW_ENABLE, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Enable"),
+
+#define SW_API_PON_GEMPORT_MAP_EN_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_EN_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Port ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_EN_GET, SW_ENABLE, \
+			sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "Enable"),
+
+#define SW_API_PON_GEMPORT_MAP_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_SET, SW_GEMPORT_MAP, \
+			sizeof(fal_gemport_map_t), SW_PARAM_PTR|SW_PARAM_IN, "GemPort Mapping"),
+
+#define SW_API_PON_GEMPORT_MAP_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_MAP_GET, SW_GEMPORT_MAP, \
+			sizeof(fal_gemport_map_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Mapping"),
+
+#define SW_API_PON_GEMPORT_CFG_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_CFG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_CFG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_CFG_SET, SW_GEMPORT_CFG, \
+			sizeof(fal_gemport_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, "GemPort Config"),
+
+#define SW_API_PON_GEMPORT_CFG_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_CFG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_CFG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_CFG_GET, SW_GEMPORT_CFG, \
+			sizeof(fal_gemport_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Config"),
+
+#define SW_API_PON_GEMPORT_PLC_SET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_SET, SW_GEMPORT_PLC, \
+			sizeof(fal_gemport_policer_t), SW_PARAM_PTR|SW_PARAM_IN, "GemPort Policer CFG"),
+
+#define SW_API_PON_GEMPORT_PLC_GET_DESC \
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "GemPort ID"),\
+	SW_PARAM_DEF(SW_API_PON_GEMPORT_PLC_GET, SW_GEMPORT_PLC, \
+			sizeof(fal_gemport_policer_t), SW_PARAM_PTR|SW_PARAM_OUT, "GemPort Policer CFG"),
 /* auto_insert_flag */
 /*qca808x_start*/
 

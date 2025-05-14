@@ -293,6 +293,10 @@ ifeq (TRUE, $(IN_SAMPL))
   MODULE_CFLAG += -DIN_SAMPL
 endif
 
+ifeq (TRUE, $(IN_PON))
+  MODULE_CFLAG += -DIN_PON
+endif
+
 ifneq (TRUE, $(FAL))
   MODULE_CFLAG += -DHSL_STANDALONG
 endif

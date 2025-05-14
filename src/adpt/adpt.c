@@ -30,6 +30,9 @@
 #include "adpt_jhppe.h"
 #include "adpt_jhppe_loopback.h"
 #endif
+#if defined(HMSPPE)
+#include "adpt_hmsppe.h"
+#endif
 
 #include "hsl_phy.h"
 #include "ssdk_dts.h"
@@ -196,7 +199,11 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 			rv = adpt_jhppe_sampling_init(dev_id);
 			break;
 #endif
-
+#if defined(IN_PON)
+		case FAL_MODULE_PON:
+			rv = adpt_hmsppe_pon_init(dev_id);
+			break;
+#endif
 		default:
 			break;
 	}
@@ -416,7 +423,10 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_SAMPL);
 			SW_RTN_ON_ERROR(rv);
 #endif
-
+#if defined(HMSPPE)
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON);
+			SW_RTN_ON_ERROR(rv);
+#endif
 #if defined(FALLTHROUGH)
 			fallthrough;
 #else

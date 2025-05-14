@@ -51,6 +51,7 @@ extern "C" {
 #include "fal_athtag.h"
 #include "fal_pktedit.h"
 #include "fal_sampling.h"
+#include "fal_pon.h"
 #include "ssdk_plat.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
@@ -1536,6 +1537,40 @@ typedef sw_error_t (*adpt_sampling_counter_get_func)(a_uint32_t dev_id,
 		a_uint32_t buff_index, a_uint32_t counter_id,
 		fal_sampling_counter_entry_t *counter);
 
+/* pon */
+typedef sw_error_t (*adpt_pon_gemport_global_set_func)(a_uint32_t dev_id,
+		fal_gemport_global_cfg_t *cfg);
+typedef sw_error_t (*adpt_pon_gemport_global_get_func)(a_uint32_t dev_id,
+		fal_gemport_global_cfg_t *cfg);
+typedef sw_error_t (*adpt_pon_gemport_gen_default_set_func)(a_uint32_t dev_id,
+		fal_gemport_gen_default_t *def_property);
+typedef sw_error_t (*adpt_pon_gemport_gen_default_get_func)(a_uint32_t dev_id,
+		fal_gemport_gen_default_t *def_property);
+typedef sw_error_t (*adpt_pon_gemport_gen_entry_set_func)(a_uint32_t dev_id,
+		a_uint32_t index, fal_gemport_gen_t *gen_entry);
+typedef sw_error_t (*adpt_pon_gemport_gen_entry_get_func)(a_uint32_t dev_id,
+		a_uint32_t index, fal_gemport_gen_t *gen_entry);
+typedef sw_error_t (*adpt_pon_gemport_gen_en_set_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, a_bool_t enable);
+typedef sw_error_t (*adpt_pon_gemport_gen_en_get_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, a_bool_t *enable);
+typedef sw_error_t (*adpt_pon_gemport_map_en_set_func)(a_uint32_t dev_id,
+		fal_port_t port_id, a_bool_t mapping_en);
+typedef sw_error_t (*adpt_pon_gemport_map_en_get_func)(a_uint32_t dev_id,
+		fal_port_t port_id, a_bool_t *mapping_en);
+typedef sw_error_t (*adpt_pon_gemport_map_set_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, fal_gemport_map_t *map_entry);
+typedef sw_error_t (*adpt_pon_gemport_map_get_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, fal_gemport_map_t *map_entry);
+typedef sw_error_t (*adpt_pon_gemport_cfg_set_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, fal_gemport_cfg_t *cfg);
+typedef sw_error_t (*adpt_pon_gemport_cfg_get_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, fal_gemport_cfg_t *cfg);
+typedef sw_error_t (*adpt_pon_gemport_policer_set_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, fal_gemport_policer_t *policer_cfg);
+typedef sw_error_t (*adpt_pon_gemport_policer_get_func)(a_uint32_t dev_id,
+		a_uint32_t gemport, fal_gemport_policer_t *policer_cfg);
+
 /* auto_insert_flag */
 typedef struct
 {
@@ -2261,7 +2296,23 @@ typedef struct
 	adpt_sampling_window_en_set_func adpt_sampling_window_en_set;
 	adpt_sampling_window_en_get_func adpt_sampling_window_en_get;
 	adpt_sampling_counter_get_func adpt_sampling_counter_get;
-
+	/* pon */
+	adpt_pon_gemport_global_set_func adpt_pon_gemport_global_set;
+	adpt_pon_gemport_global_get_func adpt_pon_gemport_global_get;
+	adpt_pon_gemport_gen_default_set_func adpt_pon_gemport_gen_default_set;
+	adpt_pon_gemport_gen_default_get_func adpt_pon_gemport_gen_default_get;
+	adpt_pon_gemport_gen_entry_set_func adpt_pon_gemport_gen_entry_set;
+	adpt_pon_gemport_gen_entry_get_func adpt_pon_gemport_gen_entry_get;
+	adpt_pon_gemport_gen_en_set_func adpt_pon_gemport_gen_en_set;
+	adpt_pon_gemport_gen_en_get_func adpt_pon_gemport_gen_en_get;
+	adpt_pon_gemport_map_en_set_func adpt_pon_gemport_map_en_set;
+	adpt_pon_gemport_map_en_get_func adpt_pon_gemport_map_en_get;
+	adpt_pon_gemport_map_set_func adpt_pon_gemport_map_set;
+	adpt_pon_gemport_map_get_func adpt_pon_gemport_map_get;
+	adpt_pon_gemport_cfg_set_func adpt_pon_gemport_cfg_set;
+	adpt_pon_gemport_cfg_get_func adpt_pon_gemport_cfg_get;
+	adpt_pon_gemport_policer_set_func adpt_pon_gemport_policer_set;
+	adpt_pon_gemport_policer_get_func adpt_pon_gemport_policer_get;
 /* auto_insert_flag_1 */
 }adpt_api_t;
 
@@ -2291,6 +2342,42 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id);
 
 #define DROP_CODE_L2_EXP_MTU_FAIL 80
 #define ADPT_GET_DROP_CODE_IDX(port_id, code_cats) ((port_id) + ((code_cats) * 8) + 256)
+
+static inline a_uint32_t adpt_dest_type_convert(a_bool_t to_hsl, a_uint32_t dest_type) {
+	a_uint32_t ret_type = 0;
+
+	if (to_hsl == A_TRUE) {
+		switch (dest_type) {
+			case FAL_DEST_INFO_PORT_ID:
+				ret_type = 2;
+				break;
+			case FAL_DEST_INFO_PORT_BMP:
+				ret_type = 3;
+				break;
+			default:
+				ret_type = 0xf;
+				break;
+		}
+	} else {
+		switch (dest_type) {
+			case 2:
+				ret_type = FAL_DEST_INFO_PORT_ID;
+				break;
+			case 3:
+				ret_type = FAL_DEST_INFO_PORT_BMP;
+				break;
+			default:
+				ret_type = 0xf;
+				break;
+		}
+	}
+
+	return ret_type;
+}
+
+#define ADPT_DEST_INFO(type, value) (((type) << 12) | (value))
+#define ADPT_DEST_TYPE(dest) (((dest) >> 12) & 0x3)
+#define ADPT_DEST_VAL(dest) (dest & 0xfff)
 
 static inline a_uint32_t adpt_port_type_convert(a_bool_t to_hsl, a_uint32_t port_type) {
 	a_uint32_t ptype = 0;

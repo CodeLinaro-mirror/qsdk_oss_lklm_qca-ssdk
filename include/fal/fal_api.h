@@ -3445,6 +3445,50 @@ extern "C" {
 #define SAMPL_API_PARAM
 #endif
 
+#ifdef IN_PON
+#define PON_API \
+	SW_API_DEF(SW_API_PON_GEMPORT_GLB_SET, fal_pon_gemport_global_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GLB_GET, fal_pon_gemport_global_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GEN_DFT_SET, \
+			fal_pon_gemport_gen_default_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GEN_DFT_GET, \
+			fal_pon_gemport_gen_default_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_SET, \
+			fal_pon_gemport_gen_entry_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_GET, \
+			fal_pon_gemport_gen_entry_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GEN_EN_SET, fal_pon_gemport_gen_en_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_GEN_EN_GET, fal_pon_gemport_gen_en_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_MAP_EN_SET, fal_pon_gemport_map_en_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_MAP_EN_GET, fal_pon_gemport_map_en_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_MAP_SET, fal_pon_gemport_map_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_MAP_GET, fal_pon_gemport_map_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_CFG_SET, fal_pon_gemport_cfg_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_CFG_GET, fal_pon_gemport_cfg_get), \
+	SW_API_DEF(SW_API_PON_GEMPORT_PLC_SET, fal_pon_gemport_policer_set), \
+	SW_API_DEF(SW_API_PON_GEMPORT_PLC_GET, fal_pon_gemport_policer_get),
+#define PON_API_PARAM \
+	SW_API_DESC(SW_API_PON_GEMPORT_GLB_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GLB_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GEN_DFT_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GEN_DFT_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GEN_ENTRY_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GEN_ENTRY_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GEN_EN_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_GEN_EN_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_MAP_EN_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_MAP_EN_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_MAP_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_MAP_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_CFG_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_CFG_GET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_PLC_SET) \
+	SW_API_DESC(SW_API_PON_GEMPORT_PLC_GET)
+#else
+#define PON_API
+#define PON_API_PARAM
+#endif
+
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3499,6 +3543,7 @@ extern "C" {
     ATHTAG_API \
     PKTEDIT_API \
     SAMPL_API \
+    PON_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3560,6 +3605,7 @@ extern "C" {
     ATHTAG_API_PARAM \
     PKTEDIT_API_PARAM \
     SAMPL_API_PARAM \
+    PON_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),
