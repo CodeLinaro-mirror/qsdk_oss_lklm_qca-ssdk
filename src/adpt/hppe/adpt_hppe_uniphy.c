@@ -1,20 +1,8 @@
 /*
  * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
+ */ 
 
 /**
  * @defgroup
@@ -33,10 +21,6 @@
 #include "hsl_port_prop.h"
 #include "adpt_hppe.h"
 #include "adpt_hppe_uniphy.h"
-#if defined(CPPE)
-#include "adpt_cppe_uniphy.h"
-#include "adpt_cppe_portctrl.h"
-#endif
 #include <linux/mdio-bitbang.h>
 #ifdef MHT
 #include "qca-nss-phy/qcom_phy_lib.h"
@@ -393,11 +377,6 @@ __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	case HPPE_TYPE:
 		__adpt_hppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
 		break;
-#if defined(CPPE)
-	case CPPE_TYPE:
-		__adpt_cppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-		break;
-#endif
 #if defined(APPE)
 	case APPE_TYPE:
 		__adpt_appe_gcc_uniphy_software_reset(dev_id, uniphy_index);
@@ -861,15 +840,6 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is sgmiiplus mode\n", uniphy_index);
-#if defined(CPPE)
-	if ((adpt_ppe_type_get(dev_id) == CPPE_TYPE)
-		&& (uniphy_index == SSDK_UNIPHY_INSTANCE0)) {
-		SSDK_DEBUG("cypress uniphy %d is sgmiiplus mode\n", uniphy_index);
-		rv = __adpt_cppe_uniphy_mode_set(dev_id, uniphy_index,
-			PORT_WRAPPER_SGMII_PLUS);
-		return rv;
-	}
-#endif
 	if((adpt_chip_type_get(dev_id) == CHIP_HPPE ||
 		adpt_ppe_type_get(dev_id) == APPE_TYPE)
 		&& uniphy_index == SSDK_UNIPHY_INSTANCE0)
@@ -969,21 +939,6 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is sgmii mode\n", uniphy_index);
-#if defined(CPPE)
-	if ((uniphy_index == SSDK_UNIPHY_INSTANCE0) &&
-		(channel == SSDK_UNIPHY_CHANNEL0)) {
-		if (adpt_ppe_type_get(dev_id) == CPPE_TYPE) {
-			if (hsl_port_prop_check(dev_id, SSDK_PHYSICAL_PORT4,
-					HSL_PP_EXCL_CPU) == A_TRUE) {
-				SSDK_DEBUG("cypress uniphy %d is sgmii mode\n", uniphy_index);
-				rv = __adpt_cppe_uniphy_mode_set(dev_id,
-					uniphy_index, PORT_WRAPPER_SGMII_CHANNEL0);
-				return rv;
-			}
-		}
-	}
-#endif
-
 	/*set the PHY mode to SGMII*/
 	hppe_uniphy_reg_set(dev_id, UNIPHY_MISC2_REG_OFFSET,
 		uniphy_index, UNIPHY_MISC2_REG_SGMII_MODE);
@@ -1011,18 +966,6 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_FALSE);
 	}
-
-#if defined(CPPE)
-	if ((adpt_ppe_type_get(dev_id) == CPPE_TYPE) &&
-		(uniphy_index == SSDK_UNIPHY_INSTANCE0)) {
-		SSDK_DEBUG("uniphy %d sgmii channel selection\n", uniphy_index);
-		rv = __adpt_cppe_uniphy_channel_selection_set(dev_id,
-			CPPE_PCS0_CHANNEL0_SEL_PSGMII,
-			CPPE_PCS0_CHANNEL4_SEL_PORT5_CLOCK);
-		SW_RTN_ON_ERROR (rv);
-	}
-#endif
-
 	/* configure uniphy to Athr mode and sgmii mode */
 	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -1209,9 +1152,6 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
 	a_uint32_t i;
 	sw_error_t rv = SW_OK;
-#if defined(CPPE)
-	a_uint32_t phy_type = 0;
-#endif
 
 	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
 
@@ -1219,19 +1159,6 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is psgmii mode\n", uniphy_index);
-#if defined(CPPE)
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE) {
-		phy_type = hsl_port_phyid_get(dev_id,
-				SSDK_PHYSICAL_PORT3);
-		if (phy_type == MALIBU2PORT_PHY) {
-			SSDK_INFO("cypress uniphy %d is qca8072 psgmii mode\n", uniphy_index);
-			rv = __adpt_cppe_uniphy_mode_set(dev_id, uniphy_index,
-				PORT_WRAPPER_PSGMII);
-			return rv;
-		}
-	}
-#endif
-
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
@@ -1241,18 +1168,6 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_FALSE);
 	}
-
-#if defined(CPPE)
-	if ((adpt_ppe_type_get(dev_id) == CPPE_TYPE) &&
-		(uniphy_index == SSDK_UNIPHY_INSTANCE0)) {
-		SSDK_INFO("uniphy %d psgmii channel selection\n", uniphy_index);
-		rv = __adpt_cppe_uniphy_channel_selection_set(dev_id,
-			CPPE_PCS0_CHANNEL0_SEL_PSGMII,
-			CPPE_PCS0_CHANNEL4_SEL_PORT5_CLOCK);
-		SW_RTN_ON_ERROR (rv);
-	}
-#endif
-
 	/* configure uniphy to Athr mode and psgmii mode */
 	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
 	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode =

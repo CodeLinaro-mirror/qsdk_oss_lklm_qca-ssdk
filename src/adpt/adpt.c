@@ -28,6 +28,7 @@
 #endif
 #if defined(JHPPE)
 #include "adpt_jhppe.h"
+#include "adpt_jhppe_loopback.h"
 #endif
 
 #include "hsl_phy.h"
@@ -557,3 +558,21 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 	}
 	return rv;
 }
+
+a_bool_t
+adpt_ppe_loopback_port_validate(a_uint32_t dev_id, fal_port_t port_id)
+{
+#if defined(JHPPE)
+	sw_error_t rv = SW_OK;
+	fal_port_t ppe_loopback_port = 0;
+
+	rv = adpt_jhppe_switch_loopback_port_get(dev_id, &ppe_loopback_port);
+	if (rv == SW_OK) {
+		if (port_id == ppe_loopback_port) {
+			return A_TRUE;
+		}
+	}
+#endif
+	return A_FALSE;
+}
+

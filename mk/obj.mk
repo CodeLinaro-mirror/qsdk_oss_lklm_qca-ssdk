@@ -67,7 +67,7 @@ OBJ-COMMON += src/fal/fal_mib.o src/ref/ref_mib.o
 OBJ-ISISC  += src/hsl/isisc/isisc_mib.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_mib.o src/hsl/hppe/hppe_mib.o \
               src/hsl/hppe/hppe_xgmacmib.o
-OBJ-CPPE   += src/adpt/cppe/adpt_cppe_mib.o
+OBJ-JHPPE   += src/adpt/jhppe/adpt_jhppe_mib.o
 endif
 
 ###############################################################################
@@ -97,8 +97,9 @@ OBJ-ISISC  += src/hsl/isisc/isisc_port_ctrl.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_portctrl.o src/hsl/hppe/hppe_portctrl.o \
               src/hsl/hppe/hppe_xgportctrl.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_portctrl.o
-OBJ-CPPE   += src/hsl/cppe/cppe_portctrl.o src/adpt/cppe/adpt_cppe_portctrl.o
+OBJ-CPPE   += src/hsl/cppe/cppe_portctrl.o
 OBJ-MHT    += src/hsl/mht/mht_port_ctrl.o
+OBJ-JHPPE  += src/hsl/jhppe/jhppe_loopback.o src/adpt/jhppe/adpt_jhppe_loopback.o
 endif
 
 ###############################################################################
@@ -310,7 +311,6 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_UNIPHY))
 OBJ-HPPE    += src/hsl/hppe/hppe_uniphy.o src/adpt/hppe/adpt_hppe_uniphy.o
-OBJ-CPPE    += src/adpt/cppe/adpt_cppe_uniphy.o
 endif
 
 ###############################################################################
