@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -30,3 +30,14 @@ sw_error_t fal_pktedit_padding_set(a_uint32_t dev_id, fal_pktedit_padding_t *pad
 sw_error_t fal_pktedit_padding_get(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
     DEFINE_FAL_FUNC_ADPT_EXPORT(pktedit_padding_get, dev_id, padding)
 
+sw_error_t fal_pktedit_en_set(a_uint32_t dev_id, a_uint32_t cpucode, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(pktedit_en_set, dev_id, cpucode, enable)
+
+sw_error_t fal_pktedit_en_get(a_uint32_t dev_id, a_uint32_t cpucode, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(pktedit_en_get, dev_id, cpucode, enable)
+
+sw_error_t fal_rxdesc_cpucode_en_set(a_uint32_t dev_id, a_uint32_t cpucode, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(rxdesc_cpucode_en_set, dev_id, cpucode, enable)
+
+sw_error_t fal_rxdesc_cpucode_en_get(a_uint32_t dev_id, a_uint32_t cpucode, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(rxdesc_cpucode_en_get, dev_id, cpucode, enable)

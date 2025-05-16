@@ -1420,6 +1420,14 @@ typedef sw_error_t (*adpt_pktedit_padding_set_func)(a_uint32_t dev_id,
 		fal_pktedit_padding_t *padding);
 typedef sw_error_t (*adpt_pktedit_padding_get_func)(a_uint32_t dev_id,
 		fal_pktedit_padding_t *padding);
+typedef sw_error_t (*adpt_pktedit_en_set_func)(a_uint32_t dev_id,
+		a_uint32_t cpucode, a_bool_t enable);
+typedef sw_error_t (*adpt_pktedit_en_get_func)(a_uint32_t dev_id,
+		a_uint32_t cpucode, a_bool_t *enable);
+typedef sw_error_t (*adpt_rxdesc_cpucode_en_set_func)(a_uint32_t dev_id,
+		a_uint32_t cpucode, a_bool_t enable);
+typedef sw_error_t (*adpt_rxdesc_cpucode_en_get_func)(a_uint32_t dev_id,
+		a_uint32_t cpucode, a_bool_t *enable);
 /* auto_insert_flag */
 typedef struct
 {
@@ -2096,6 +2104,10 @@ typedef struct
 	/* pktedit */
 	adpt_pktedit_padding_set_func adpt_pktedit_padding_set;
 	adpt_pktedit_padding_get_func adpt_pktedit_padding_get;
+	adpt_pktedit_en_set_func adpt_pktedit_en_set;
+	adpt_pktedit_en_get_func adpt_pktedit_en_get;
+	adpt_rxdesc_cpucode_en_set_func adpt_rxdesc_cpucode_en_set;
+	adpt_rxdesc_cpucode_en_get_func adpt_rxdesc_cpucode_en_get;
 /* auto_insert_flag_1 */
 }adpt_api_t;
 
