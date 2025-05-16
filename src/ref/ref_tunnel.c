@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -152,6 +152,7 @@ static const char *tunnel_encapentry[] = {
 	"ecn_mode",
 	"ip_proto_update",
 	"ipv4_df_mode",
+	"ipv4_df_mode_ext",
 	"ipv4_id_mode",
 	"ipv6_flowlable_mode",
 	"sport_entry_en",

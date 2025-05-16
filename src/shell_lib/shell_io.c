@@ -12990,6 +12990,11 @@ cmd_data_check_tunnel_encap_entry(char *cmd_str, fal_tunnel_encap_cfg_t *arg_val
 			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
 	entry.ipv4_df_mode = tmp;
 
+	cmd_data_check_element("ipv4_df_mode_ext", "0",
+			"usage: ipv4 df mode ext\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.ipv4_df_mode_ext = tmp;
+
 	cmd_data_check_element("ipv4_id_mode", "0",
 			"usage: ipv4 id mode\n",
 			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
