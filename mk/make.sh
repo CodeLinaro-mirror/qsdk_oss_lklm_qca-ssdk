@@ -93,6 +93,9 @@ check_soc () {
         'HMSPPE')
             IN_SOC=ipq52xx
             ;;
+        'JHPPE')
+            IN_SOC=ipq96xx
+            ;;
          *)
             echo "error: No such CHIP type [$1]"
             exit 1

@@ -10,11 +10,11 @@ devtest_path=/local/mnt2/workspace/devtest/trigger_extra_plat/build_alder_nss64_
 check_param() {
 	qsdk_path=${2:-"${devtest_path}"}
 
-	if [[ "$1" =~ ^(HMSPPE|MRPPE|APPE|MPPE|ALL)$ ]]; then
+	if [[ "$1" =~ ^(JHPPE|HMSPPE|MRPPE|APPE|MPPE|ALL)$ ]]; then
 		chip_type="$1"
 		echo "----------Start compile ${chip_type} ${qsdk_path}--------"
 	else
-		echo -e "error: chip $1\nusage: ./build.sh <HMSPPE|MRPPE|APPE|MPPE|ALL> [QSDK_PATH]" &&  exit 1
+		echo -e "error: chip $1\nusage: ./build.sh <JHPPE|HMSPPE|MRPPE|APPE|MPPE|ALL> [QSDK_PATH]" &&  exit 1
 	fi
 }
 
@@ -41,6 +41,7 @@ if [[ "$chip_type" == "ALL" ]];then
 	build_ssdk MRPPE  ${qsdk_path}
 	build_ssdk APPE   ${qsdk_path}
 	build_ssdk MPPE   ${qsdk_path}
+	build_ssdk JHPPE  ${qsdk_path}
 else
 	build_ssdk $chip_type ${qsdk_path}
 fi
