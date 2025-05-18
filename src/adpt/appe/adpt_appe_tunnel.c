@@ -1821,8 +1821,8 @@ adpt_appe_tunnel_encap_entry_add(a_uint32_t dev_id,
 	eg_xlat_tun_ctrl.bf.cdei_mode = tunnel_encap_cfg->cdei_mode;
 	eg_xlat_tun_ctrl.bf.ecn_mode = tunnel_encap_cfg->ecn_mode;
 	eg_xlat_tun_ctrl.bf.ttl_mode = tunnel_encap_cfg->ttl_mode;
-	eg_xlat_tun_ctrl.bf.ipv4_df_mode = tunnel_encap_cfg->ipv4_df_mode >> 1;
-	eg_xlat_tun_ctrl.bf.ipv4_df_mode_ext = tunnel_encap_cfg->ipv4_df_mode & 1;
+	eg_xlat_tun_ctrl.bf.ipv4_df_mode = tunnel_encap_cfg->ipv4_df_mode;
+	eg_xlat_tun_ctrl.bf.ipv4_df_mode_ext = tunnel_encap_cfg->ipv4_df_mode_ext;
 	eg_xlat_tun_ctrl.bf.ipv4_id_mode = tunnel_encap_cfg->ipv4_id_mode;
 	eg_xlat_tun_ctrl.bf.ipv6_fl_mode = tunnel_encap_cfg->ipv6_flowlable_mode;
 	eg_xlat_tun_ctrl.bf.ip_proto_update = tunnel_encap_cfg->ip_proto_update;
@@ -1915,8 +1915,8 @@ adpt_appe_tunnel_encap_entry_get(a_uint32_t dev_id,
 	tunnel_encap_cfg->cdei_mode = eg_xlat_tun_ctrl.bf.cdei_mode;
 	tunnel_encap_cfg->ecn_mode = eg_xlat_tun_ctrl.bf.ecn_mode;
 	tunnel_encap_cfg->ttl_mode = eg_xlat_tun_ctrl.bf.ttl_mode;
-	tunnel_encap_cfg->ipv4_df_mode = eg_xlat_tun_ctrl.bf.ipv4_df_mode << 1 |
-		eg_xlat_tun_ctrl.bf.ipv4_df_mode_ext;
+	tunnel_encap_cfg->ipv4_df_mode = eg_xlat_tun_ctrl.bf.ipv4_df_mode;
+	tunnel_encap_cfg->ipv4_df_mode_ext = eg_xlat_tun_ctrl.bf.ipv4_df_mode_ext;
 	tunnel_encap_cfg->ipv4_id_mode = eg_xlat_tun_ctrl.bf.ipv4_id_mode;
 	tunnel_encap_cfg->ipv6_flowlable_mode = eg_xlat_tun_ctrl.bf.ipv6_fl_mode;
 	tunnel_encap_cfg->ip_proto_update = eg_xlat_tun_ctrl.bf.ip_proto_update;
