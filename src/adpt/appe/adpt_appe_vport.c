@@ -106,7 +106,7 @@ adpt_appe_vport_state_check_get(a_uint32_t dev_id, fal_port_t port_id, fal_vport
 
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
-#ifdef HMSPPE
+#ifdef JHPPE
 	//to be fix
 #else
 	vp_state->check_en = l2_vp_port_tbl.bf.vp_state_check_en;
@@ -132,7 +132,7 @@ adpt_appe_vport_state_check_set(a_uint32_t dev_id, fal_port_t port_id, fal_vport
 
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
-#ifdef HMSPPE
+#ifdef JHPPE
 	//to be fix
 #else
 	l2_vp_port_tbl.bf.vp_state_check_en = vp_state->check_en;

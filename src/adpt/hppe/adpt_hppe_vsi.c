@@ -35,7 +35,7 @@ enum{
 static a_bool_t _adpt_hppe_vsi_xlt_match(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t stag_vid, a_uint32_t ctag_vid, union xlt_rule_tbl_u *xlt_rule)
 {
-#ifdef HMSPPE
+#ifdef JHPPE
 	struct xlt_rule_tbl_0 bf = xlt_rule->bf;
 #else
 	struct xlt_rule_tbl bf = xlt_rule->bf;
@@ -118,7 +118,7 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 	sw_error_t rv;
 	union xlt_rule_tbl_u xlt_rule;
 	union xlt_action_tbl_u xlt_action;
-#ifdef HMSPPE
+#ifdef JHPPE
 	struct xlt_rule_tbl_0 bf;
 #else
 	struct xlt_rule_tbl bf;
@@ -208,7 +208,7 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 #endif
 			xlt_rule.bf.valid = A_TRUE;
 
-#ifdef HMSPPE
+#ifdef JHPPE
 			if(ctag_vid != FAL_VLAN_INVALID)
 			{
 				xlt_rule.bf.ckey_vid_incl = A_TRUE;
@@ -504,7 +504,7 @@ adpt_hppe_vsi_member_set(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 	if( rv != SW_OK )
 		return rv;
 
-#ifdef HMSPPE
+#ifdef JHPPE
 	vsi_tbl.bf.bc_bitmap_0 = vsi_member->bc_ports & 0x1f;
 	vsi_tbl.bf.bc_bitmap_1 = (vsi_member->bc_ports >> 5) & 0xf;
 #else
@@ -538,7 +538,7 @@ adpt_hppe_vsi_member_get(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 	if( rv != SW_OK )
 		return rv;
 
-#ifdef HMSPPE
+#ifdef JHPPE
 	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap_0 | ((vsi_tbl.bf.bc_bitmap_1 & 0xf) << 5);
 #else
 	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap;

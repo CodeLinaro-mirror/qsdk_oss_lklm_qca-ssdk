@@ -149,7 +149,7 @@ adpt_appe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	port_value = FAL_PORT_ID_VALUE(port_id);
 
 	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
-#ifdef HMSPPE
+#ifdef JHPPE
 	//to be fix
 #else
 	l2_vp_port_tbl.bf.mtu_check_type = mtu_cfg->mtu_type;
@@ -211,7 +211,7 @@ adpt_appe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	port_value = FAL_PORT_ID_VALUE(port_id);
 
 	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
-#ifdef HMSPPE
+#ifdef JHPPE
 	//to be fix
 #else
 	mtu_cfg->mtu_type = l2_vp_port_tbl.bf.mtu_check_type;
