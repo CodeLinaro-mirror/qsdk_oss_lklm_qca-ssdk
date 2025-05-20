@@ -96,24 +96,29 @@ sw_error_t
 adpt_appe_vport_state_check_get(a_uint32_t dev_id, fal_port_t port_id, fal_vport_state_t *vp_state)
 {
 	sw_error_t rv = SW_OK;
+#ifdef JHPPE
+	union l2_vp_port_post_tbl_u l2_vp_port_tbl;
+#else
 	union l2_vp_port_tbl_u l2_vp_port_tbl;
+#endif
 	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(vp_state);
 
-	aos_mem_zero(&l2_vp_port_tbl, sizeof(union l2_vp_port_tbl_u));
+	aos_mem_zero(&l2_vp_port_tbl, sizeof(l2_vp_port_tbl));
 
-	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
-	SW_RTN_ON_ERROR(rv);
 #ifdef JHPPE
-	//to be fix
+	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 #else
+	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
+#endif
+	SW_RTN_ON_ERROR(rv);
+
 	vp_state->check_en = l2_vp_port_tbl.bf.vp_state_check_en;
 	vp_state->vp_type = l2_vp_port_tbl.bf.vp_type;
 	vp_state->vp_active = l2_vp_port_tbl.bf.vp_context_active;
 	vp_state->eg_data_valid = l2_vp_port_tbl.bf.vp_eg_data_valid;
-#endif
 
 	return rv;
 }
@@ -122,28 +127,35 @@ sw_error_t
 adpt_appe_vport_state_check_set(a_uint32_t dev_id, fal_port_t port_id, fal_vport_state_t *vp_state)
 {
 	sw_error_t rv = SW_OK;
+#ifdef JHPPE
+	union l2_vp_port_post_tbl_u l2_vp_port_tbl;
+#else
 	union l2_vp_port_tbl_u l2_vp_port_tbl;
+#endif
 	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(vp_state);
 
-	aos_mem_zero(&l2_vp_port_tbl, sizeof(union l2_vp_port_tbl_u));
+	aos_mem_zero(&l2_vp_port_tbl, sizeof(l2_vp_port_tbl));
 
-	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
-	SW_RTN_ON_ERROR(rv);
 #ifdef JHPPE
-	//to be fix
+	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 #else
+	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
+#endif
+
+	SW_RTN_ON_ERROR(rv);
 	l2_vp_port_tbl.bf.vp_state_check_en = vp_state->check_en;
 	l2_vp_port_tbl.bf.vp_type = vp_state->vp_type;
 	l2_vp_port_tbl.bf.vp_context_active = vp_state->vp_active;
 	l2_vp_port_tbl.bf.vp_eg_data_valid = vp_state->eg_data_valid;
+
+#ifdef JHPPE
+	return jhppe_l2_vp_port_post_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
+#else
+	return appe_l2_vp_port_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
 #endif
-
-	rv = appe_l2_vp_port_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
-
-	return rv;
 }
 
 sw_error_t

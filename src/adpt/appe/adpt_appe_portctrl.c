@@ -140,7 +140,11 @@ adpt_appe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_mtu_cfg_t *mtu_cfg)
 {
 	a_uint32_t port_type = 0, port_value = 0;
+#ifdef JHPPE
+	union l2_vp_port_post_tbl_u l2_vp_port_tbl = {0};
+#else
 	union l2_vp_port_tbl_u l2_vp_port_tbl = {0};
+#endif
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mtu_cfg);
@@ -148,10 +152,11 @@ adpt_appe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	port_type = FAL_PORT_ID_TYPE(port_id);
 	port_value = FAL_PORT_ID_VALUE(port_id);
 
-	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
 #ifdef JHPPE
-	//to be fix
+	SW_RTN_ON_ERROR(jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
 #else
+	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
+#endif
 	l2_vp_port_tbl.bf.mtu_check_type = mtu_cfg->mtu_type;
 	l2_vp_port_tbl.bf.extra_header_len = mtu_cfg->extra_header_len;
 
@@ -191,10 +196,11 @@ adpt_appe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 			return SW_NOT_SUPPORTED;
 		}
 	}
+#ifdef JHPPE
+	return jhppe_l2_vp_port_post_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
+#else
+	return appe_l2_vp_port_tbl_set (dev_id, port_value, &l2_vp_port_tbl);
 #endif
-	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_set (dev_id, port_value, &l2_vp_port_tbl));
-
-	return SW_OK;
 }
 
 sw_error_t
@@ -202,7 +208,12 @@ adpt_appe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 		fal_mtu_cfg_t *mtu_cfg)
 {
 	a_uint32_t port_type, port_value;
+#ifdef JHPPE
+	union l2_vp_port_post_tbl_u l2_vp_port_tbl = {0};
+#else
 	union l2_vp_port_tbl_u l2_vp_port_tbl = {0};
+#endif
+
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mtu_cfg);
@@ -210,10 +221,11 @@ adpt_appe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	port_type = FAL_PORT_ID_TYPE(port_id);
 	port_value = FAL_PORT_ID_VALUE(port_id);
 
-	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
 #ifdef JHPPE
-	//to be fix
+	SW_RTN_ON_ERROR(jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
 #else
+	SW_RTN_ON_ERROR(appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl));
+#endif
 	mtu_cfg->mtu_type = l2_vp_port_tbl.bf.mtu_check_type;
 	mtu_cfg->extra_header_len = l2_vp_port_tbl.bf.extra_header_len;
 	mtu_cfg->eg_vlan_tag_flag = 0;
@@ -236,7 +248,7 @@ adpt_appe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 			mtu_cfg->mtu_enable = A_FALSE;
 		}
 	}
-#endif
+
 	return SW_OK;
 }
 
