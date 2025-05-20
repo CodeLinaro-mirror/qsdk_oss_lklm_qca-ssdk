@@ -1803,7 +1803,7 @@ hppe_ipr_byte_high_reg_set(
 				value->val);
 }
 
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 hppe_ipr_pkt_num_tbl_reg_packets_get(
 		a_uint32_t dev_id,
@@ -2007,7 +2007,7 @@ appe_link_oam_ctrl_loopback_state_set(
 	ret = appe_link_oam_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 hppe_ipr_byte_high_reg_clear_get(
 		a_uint32_t dev_id,

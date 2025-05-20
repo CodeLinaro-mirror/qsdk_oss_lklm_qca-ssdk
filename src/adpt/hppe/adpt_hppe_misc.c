@@ -649,7 +649,7 @@ adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type, char **bu
 		hppe_ipr_byte_low_reg_reg_get(dev_id, i, &ipr_byte_low_reg);
 		hppe_ipr_byte_high_reg_get(dev_id, i, &ipr_byte_high_reg);
 		if (show_type == A_FALSE)
-	#ifdef HMSPPE
+	#ifdef JHPPE
 			value = (a_uint64_t)ipr_pkt_num_tbl_reg.bf.ipr_pkt_num_tbl_reg;
 		else
 			value = ipr_byte_low_reg.bf.ipr_byte_low_reg_reg |\

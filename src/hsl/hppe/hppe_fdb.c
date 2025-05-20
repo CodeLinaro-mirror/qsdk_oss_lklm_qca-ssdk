@@ -791,7 +791,7 @@ hppe_rfdb_tbl_valid_set(
 	return ret;
 }
 
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 hppe_l2_global_conf_bc_pvlan_isol_en_get(
 		a_uint32_t dev_id,

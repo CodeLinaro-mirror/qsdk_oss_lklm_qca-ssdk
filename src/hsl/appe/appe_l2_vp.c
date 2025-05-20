@@ -321,7 +321,7 @@ appe_l2_vp_port_tbl_lrn_lmt_exceed_fwd_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 appe_l2_vp_port_tbl_port_isolation_bitmap_get(
 		a_uint32_t dev_id,
@@ -606,7 +606,7 @@ appe_l2_vp_port_tbl_invalid_vsi_forwarding_en_set(
 	return ret;
 }
 
-#ifndef HMSPPE
+#ifndef JHPPE
 sw_error_t
 appe_l2_vp_port_tbl_physical_port_get(
 		a_uint32_t dev_id,

@@ -198,7 +198,7 @@ appe_l2_cpu_code_ctrl_exception_fmt_ctrl_en_set(
 	return ret;
 }
 
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 hppe_l2_cpu_code_ctrl_enqueue_disable_get(
 		a_uint32_t dev_id,
