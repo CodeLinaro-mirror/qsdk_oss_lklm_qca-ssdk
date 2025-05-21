@@ -192,11 +192,11 @@ union ipr_udf_profile_offset_u {
 	#define EG_IPO_EXT_TBL_COOKIE_OFFSET  16
 	#define EG_IPO_EXT_TBL_COOKIE_LEN     16
 	#define EG_IPO_EXT_TBL_COOKIE_DEFAULT 0x0
-	/*[field] COOKIE_PRI*/
-	#define EG_IPO_EXT_TBL_COOKIE_PRI
-	#define EG_IPO_EXT_TBL_COOKIE_PRI_OFFSET  32
-	#define EG_IPO_EXT_TBL_COOKIE_PRI_LEN     4
-	#define EG_IPO_EXT_TBL_COOKIE_PRI_DEFAULT 0x0
+	/*[field] METADATA_PRI*/
+	#define EG_IPO_EXT_TBL_METADATA_PRI
+	#define EG_IPO_EXT_TBL_METADATA_PRI_OFFSET  32
+	#define EG_IPO_EXT_TBL_METADATA_PRI_LEN     4
+	#define EG_IPO_EXT_TBL_METADATA_PRI_DEFAULT 0x0
 #endif
 #if defined(MRPPE)
 	/*[field] COOKIE_EXT*/
@@ -220,7 +220,7 @@ struct eg_ipo_ext_tbl {
 	a_uint32_t  policy_id:16;
 #if defined(MPPE)
 	a_uint32_t  cookie:16;
-	a_uint32_t  cookie_pri:4;
+	a_uint32_t  metadata_pri:4;
 #if defined(MRPPE)
 	a_uint32_t  cookie_ext:24;
 	a_uint32_t  wifi_qos_0:4;

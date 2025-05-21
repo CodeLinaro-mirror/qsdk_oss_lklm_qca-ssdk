@@ -1853,8 +1853,8 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_VID);
 		rule->stag_fmt = hw_act->bf.stag_fmt;
-#ifdef HMSPPE
-		rule->stag_vid = (hw_act->bf.svid_0 & 0x7ff) | 
+#ifdef JHPPE
+		rule->stag_vid = (hw_act->bf.svid_0 & 0x7ff) |
 						((hw_act->bf.svid_1 & 0x1) << 11);
 #else
 		rule->stag_vid = hw_act->bf.svid;
@@ -1879,7 +1879,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 	if(hw_act->bf.ctag_pcp_change_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI);
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->ctag_pri = hw_act->bf.ctag_pcp & 0x7;
 #else
 		rule->ctag_pri = (hw_act->bf.ctag_pcp_1<<2)|hw_act->bf.ctag_pcp_0;
@@ -1936,7 +1936,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_METADATA_EN);
 #if defined(MPPE)
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->metadata_pri = hw_act->bf.metadata_pri & 0xf;
 #else
 		rule->metadata_pri =
@@ -3875,7 +3875,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 	{
 		hw_act->bf.svid_change_en = 1;
 		hw_act->bf.stag_fmt = rule->stag_fmt;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.svid_0 = rule->stag_vid & 0x7ff;
 		hw_act->bf.svid_1 = (rule->stag_vid > 11) & 0x1;
 #else
@@ -3901,7 +3901,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI))
 	{
 		hw_act->bf.ctag_pcp_change_en = 1;
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.ctag_pcp = rule->ctag_pri&0x7;
 #else
 		hw_act->bf.ctag_pcp_0 = rule->ctag_pri&0x3;
@@ -3960,7 +3960,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 	{
 		hw_act->bf.metadata_en = 1;
 #if defined(MPPE)
-#ifdef HMSPPE
+#ifdef JHPPE
 		hw_act->bf.metadata_pri = rule->metadata_pri&0xf;
 #else
 		hw_act->bf.metadata_pri_0 = rule->metadata_pri&0x7;

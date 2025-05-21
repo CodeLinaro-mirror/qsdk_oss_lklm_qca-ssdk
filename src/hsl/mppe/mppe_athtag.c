@@ -131,7 +131,7 @@ mppe_prx_hdr_rcv_pri_mapping_set(
 				value->val);
 }
 
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 mppe_edma_vp_remap_0_get(
 		a_uint32_t dev_id,

@@ -1411,7 +1411,7 @@ adpt_appe_tunnel_vlan_entry_compare(fal_tunnel_vlan_intf_t vlan_cfg,
 			tl_vlan_tbl.bf1.skey_vid != vlan_cfg.svlan_id)
 		return A_FALSE;
 	if (vlan_cfg.key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN &&
-#ifdef HMSPPE
+#ifdef JHPPE
 			(tl_vlan_tbl.bf1.ckey_vid)
 #else
 			(tl_vlan_tbl.bf1.ckey_vid_0 | (tl_vlan_tbl.bf1.ckey_vid_1 <<
@@ -1444,7 +1444,7 @@ adpt_appe_tunnel_vlan_entry_convert(fal_tunnel_vlan_intf_t *vlan_cfg,
 		tl_vlan_tbl->bf1.ckey_fmt = vlan_cfg->cvlan_fmt;
 		tl_vlan_tbl->bf1.ckey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN) ?
 			A_TRUE : A_FALSE;
-#ifdef HMSPPE
+#ifdef JHPPE
 		tl_vlan_tbl->bf1.ckey_vid = vlan_cfg->cvlan_id;
 #else
 		tl_vlan_tbl->bf1.ckey_vid_0 = vlan_cfg->cvlan_id;
@@ -1461,7 +1461,7 @@ adpt_appe_tunnel_vlan_entry_convert(fal_tunnel_vlan_intf_t *vlan_cfg,
 		vlan_cfg->svlan_fmt = tl_vlan_tbl->bf1.skey_fmt;
 		vlan_cfg->svlan_id = tl_vlan_tbl->bf1.skey_vid;
 		vlan_cfg->cvlan_fmt = tl_vlan_tbl->bf1.ckey_fmt;
-#ifdef HMSPPE
+#ifdef JHPPE
 		vlan_cfg->cvlan_id = tl_vlan_tbl->bf1.ckey_vid;
 #else
 		vlan_cfg->cvlan_id = tl_vlan_tbl->bf1.ckey_vid_0 | (tl_vlan_tbl->bf1.ckey_vid_1 <<
