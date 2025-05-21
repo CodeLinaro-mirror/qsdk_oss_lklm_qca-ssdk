@@ -61,7 +61,7 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 		rule->s_pcp = in_vlan_xlt_rule.bf.skey_pcp;
 		rule->s_dei_enable = in_vlan_xlt_rule.bf.skey_dei_incl;
 		rule->s_dei = in_vlan_xlt_rule.bf.skey_dei;
-#ifdef HMSPPE
+#ifdef JHPPE
 		rule->c_tagged = in_vlan_xlt_rule.bf.ckey_fmt;
 #else
 		rule->c_tagged = in_vlan_xlt_rule.bf.ckey_fmt_0 |
@@ -96,7 +96,7 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 
 		action->swap_spcp_cpcp = in_vlan_xlt_action.bf.pcp_swap_cmd;
 		action->spcp_xlt_enable = in_vlan_xlt_action.bf.xlt_spcp_cmd;
-#ifdef HMSPPE
+#ifdef JHPPE
 		action->spcp_xlt = in_vlan_xlt_action.bf.xlt_spcp;
 #else
 		action->spcp_xlt = (in_vlan_xlt_action.bf.xlt_spcp_0 |
@@ -116,7 +116,7 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 		action->src_info_enable = in_vlan_xlt_action.bf.src_info_valid;
 		action->src_info_type = in_vlan_xlt_action.bf.src_info_type;
 		action->src_info = in_vlan_xlt_action.bf.src_info;
-#ifdef HMSPPE
+#ifdef JHPPE
 		action->counter_id = in_vlan_xlt_action.bf.counter_id;	
 #else
 		action->counter_id = in_vlan_xlt_action.bf.counter_id_0 |\
@@ -183,7 +183,7 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 
 		action->swap_spcp_cpcp = eg_vlan_xlt_action.bf.pcp_swap_cmd;
 		action->spcp_xlt_enable = eg_vlan_xlt_action.bf.xlt_spcp_cmd;
-#ifdef HMSPPE
+#ifdef JHPPE
 		action->spcp_xlt = eg_vlan_xlt_action.bf.xlt_spcp;
 #else
 		action->spcp_xlt = (eg_vlan_xlt_action.bf.xlt_spcp_0 |
@@ -326,7 +326,7 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		in_vlan_xlt_rule.bf.skey_pcp = rule->s_pcp;
 		in_vlan_xlt_rule.bf.skey_dei_incl = rule->s_dei_enable;
 		in_vlan_xlt_rule.bf.skey_dei = rule->s_dei;
-#ifdef HMSPPE
+#ifdef JHPPE
 		in_vlan_xlt_rule.bf.ckey_fmt = rule->c_tagged;
 #else
 		in_vlan_xlt_rule.bf.ckey_fmt_0 = (rule->c_tagged & 0x1);
@@ -357,7 +357,7 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 
 		in_vlan_xlt_action.bf.pcp_swap_cmd = action->swap_spcp_cpcp;
 		in_vlan_xlt_action.bf.xlt_spcp_cmd = action->spcp_xlt_enable;
-#ifdef HMSPPE
+#ifdef JHPPE
 		in_vlan_xlt_action.bf.xlt_spcp = action->spcp_xlt;
 #else
 		in_vlan_xlt_action.bf.xlt_spcp_0 = (action->spcp_xlt & 0x1);
@@ -377,7 +377,7 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		in_vlan_xlt_action.bf.src_info_valid = action->src_info_enable;
 		in_vlan_xlt_action.bf.src_info_type = action->src_info_type;
 		in_vlan_xlt_action.bf.src_info = action->src_info;
-#ifdef HMSPPE
+#ifdef JHPPE
 		in_vlan_xlt_action.bf.counter_id = action->counter_id;
 #else
 		in_vlan_xlt_action.bf.counter_id_0 = action->counter_id & 0x7;
@@ -437,7 +437,7 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 
 		eg_vlan_xlt_action.bf.pcp_swap_cmd = action->swap_spcp_cpcp;
 		eg_vlan_xlt_action.bf.xlt_spcp_cmd = action->spcp_xlt_enable;
-#ifdef HMSPPE
+#ifdef JHPPE
 		eg_vlan_xlt_action.bf.xlt_spcp = action->spcp_xlt;
 #else
 		eg_vlan_xlt_action.bf.xlt_spcp_0 = (action->spcp_xlt & 0x1);
@@ -2070,7 +2070,7 @@ _get_port_vlan_ingress_trans_by_index(a_uint32_t dev_id,
 			(in_vlan_xlt_rule.bf.prot_value_0));
 
 	entry->port_bitmap = in_vlan_xlt_rule.bf.port_bitmap;
-#ifdef HMSPPE
+#ifdef JHPPE
 	entry->c_tagged = in_vlan_xlt_rule.bf.ckey_fmt;
 #else
 	entry->c_tagged = in_vlan_xlt_rule.bf.ckey_fmt_0 | (in_vlan_xlt_rule.bf.ckey_fmt_1 << 1);
@@ -2101,7 +2101,7 @@ _get_port_vlan_ingress_trans_by_index(a_uint32_t dev_id,
 
 	entry->counter_enable = in_vlan_xlt_action.bf.counter_en;
 #if defined(APPE)
-#ifdef HMSPPE
+#ifdef JHPPE
 	entry->counter_id = in_vlan_xlt_action.bf.counter_id;
 #else
 	entry->counter_id = in_vlan_xlt_action.bf.counter_id_0 | \
@@ -2122,7 +2122,7 @@ _get_port_vlan_ingress_trans_by_index(a_uint32_t dev_id,
 	entry->cpcp_xlt_enable = in_vlan_xlt_action.bf.xlt_cpcp_cmd;
 	entry->cpcp_xlt = in_vlan_xlt_action.bf.xlt_cpcp;
 	entry->spcp_xlt_enable = in_vlan_xlt_action.bf.xlt_spcp_cmd;
-#ifdef HMSPPE
+#ifdef JHPPE
 	entry->spcp_xlt = in_vlan_xlt_action.bf.xlt_spcp;
 #else
 	entry->spcp_xlt = (in_vlan_xlt_action.bf.xlt_spcp_0 |
@@ -2204,7 +2204,7 @@ _get_port_vlan_egress_trans_by_index(a_uint32_t dev_id,
 	entry->cpcp_xlt_enable = eg_vlan_xlt_action.bf.xlt_cpcp_cmd;
 	entry->cpcp_xlt = eg_vlan_xlt_action.bf.xlt_cpcp;
 	entry->spcp_xlt_enable = eg_vlan_xlt_action.bf.xlt_spcp_cmd;
-#ifdef HMSPPE
+#ifdef JHPPE
 	entry->spcp_xlt = eg_vlan_xlt_action.bf.xlt_spcp;
 #else
 	entry->spcp_xlt = (eg_vlan_xlt_action.bf.xlt_spcp_0 |
@@ -2518,7 +2518,7 @@ adpt_hppe_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_tr
 		in_vlan_xlt_rule.bf.frm_type_incl = entry->frmtype_enable;
 		in_vlan_xlt_rule.bf.frm_type = entry->frmtype;
 
-#ifdef HMSPPE
+#ifdef JHPPE
 		in_vlan_xlt_rule.bf.ckey_fmt = entry->c_tagged;
 #else
 		in_vlan_xlt_rule.bf.ckey_fmt_0 = (entry->c_tagged & 0x1);
@@ -2546,7 +2546,7 @@ adpt_hppe_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_tr
 		/*action part*/
 		in_vlan_xlt_action.bf.counter_en = entry->counter_enable;
 #if defined(APPE)
-#ifdef HMSPPE
+#ifdef JHPPE
 		in_vlan_xlt_action.bf.counter_id = entry->counter_id;
 #else
 		in_vlan_xlt_action.bf.counter_id_0 = entry->counter_id & 0x7;
@@ -2567,7 +2567,7 @@ adpt_hppe_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_tr
 		in_vlan_xlt_action.bf.xlt_cpcp_cmd = entry->cpcp_xlt_enable;
 		in_vlan_xlt_action.bf.xlt_cpcp = entry->cpcp_xlt;
 		in_vlan_xlt_action.bf.xlt_spcp_cmd = entry->spcp_xlt_enable;
-#ifdef HMSPPE
+#ifdef JHPPE
 		in_vlan_xlt_action.bf.xlt_spcp = entry->spcp_xlt;
 #else
 		in_vlan_xlt_action.bf.xlt_spcp_0 = (entry->spcp_xlt & 0x1);
@@ -2655,7 +2655,7 @@ adpt_hppe_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_tr
 		eg_vlan_xlt_action.bf.xlt_cpcp_cmd = entry->cpcp_xlt_enable;
 		eg_vlan_xlt_action.bf.xlt_cpcp = entry->cpcp_xlt;
 		eg_vlan_xlt_action.bf.xlt_spcp_cmd = entry->spcp_xlt_enable;
-#ifdef HMSPPE
+#ifdef JHPPE
 		eg_vlan_xlt_action.bf.xlt_spcp = entry->spcp_xlt;
 #else
 		eg_vlan_xlt_action.bf.xlt_spcp_0 = (entry->spcp_xlt & 0x1);
@@ -2797,7 +2797,7 @@ adpt_hppe_port_vlan_counter_get(a_uint32_t dev_id,
 	counter->rx_byte_counter = ((a_uint64_t)vlan_dev_cnt_tbl.bf.rx_byte_cnt_1 << 32) |
 		vlan_dev_cnt_tbl.bf.rx_byte_cnt_0;
 
-#ifdef HMSPPE
+#ifdef JHPPE
 	counter->tx_packet_counter = vlan_dev_tx_counter_tbl.bf.tx_packets;
 	counter->tx_byte_counter = ((a_uint64_t)vlan_dev_tx_counter_tbl.bf.tx_bytes_1 << 32) |
 		vlan_dev_tx_counter_tbl.bf.tx_bytes_0;

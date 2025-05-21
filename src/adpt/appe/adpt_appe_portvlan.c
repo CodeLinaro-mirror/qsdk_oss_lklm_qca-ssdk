@@ -55,7 +55,7 @@ adpt_appe_portvlan_vpmember_add(a_uint32_t dev_id, fal_port_t port_id, fal_port_
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
-#ifdef HMSPPE
+#ifdef JHPPE
 	l2_vp_port_tbl.bf.port_isolation_bitmap_0 |= (0x1 << mem_port_id) & 0x1;
 	l2_vp_port_tbl.bf.port_isolation_bitmap_1 |= ((0x1 << mem_port_id) >> 1) & 0xff;
 #else
@@ -79,7 +79,7 @@ adpt_appe_portvlan_vpmember_del(a_uint32_t dev_id, fal_port_t port_id, fal_port_
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
-#ifdef HMSPPE
+#ifdef JHPPE
 	l2_vp_port_tbl.bf.port_isolation_bitmap_0 &= ~((0x1 << mem_port_id) & 0x1);
 	l2_vp_port_tbl.bf.port_isolation_bitmap_1 &= ~(((0x1 << mem_port_id) >> 1) & 0xff);
 #else
@@ -217,7 +217,7 @@ adpt_appe_portvlan_isol_group_get(a_uint32_t dev_id,
 	return rv;
 }
 
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 adpt_appe_port_egress_vlan_filter_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter)
