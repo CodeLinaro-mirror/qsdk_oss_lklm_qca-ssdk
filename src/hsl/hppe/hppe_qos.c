@@ -40,6 +40,36 @@ hppe_tdm_depth_cfg_set(
 				value->val);
 }
 
+#if defined(JHPPE)
+sw_error_t
+hppe_l0_flow_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l0_flow_map_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + L0_FLOW_MAP_TBL_ADDRESS + \
+				index * L0_FLOW_MAP_TBL_INC,
+				value->val,
+				sizeof(union l0_flow_map_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+hppe_l0_flow_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l0_flow_map_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + L0_FLOW_MAP_TBL_ADDRESS + \
+				index * L0_FLOW_MAP_TBL_INC,
+				value->val,
+				sizeof(union l0_flow_map_tbl_u)/sizeof(a_uint32_t));
+}
+
+#else
 sw_error_t
 hppe_l0_flow_map_tbl_get(
 		a_uint32_t dev_id,
@@ -123,6 +153,7 @@ hppe_l0_e_sp_cfg_tbl_set(
 				index * L0_E_SP_CFG_TBL_INC,
 				value->val);
 }
+#endif
 
 sw_error_t
 hppe_l0_flow_port_map_tbl_get(
@@ -414,6 +445,36 @@ hppe_deq_dis_tbl_set(
 				value->val);
 }
 
+#if defined(JHPPE)
+sw_error_t
+hppe_l1_flow_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l1_flow_map_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + L1_FLOW_MAP_TBL_ADDRESS + \
+				index * L1_FLOW_MAP_TBL_INC,
+				value->val,
+				sizeof(union l1_flow_map_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+hppe_l1_flow_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l1_flow_map_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + L1_FLOW_MAP_TBL_ADDRESS + \
+				index * L1_FLOW_MAP_TBL_INC,
+				value->val,
+				sizeof(union l1_flow_map_tbl_u)/sizeof(a_uint32_t));
+}
+
+#else
 sw_error_t
 hppe_l1_flow_map_tbl_get(
 		a_uint32_t dev_id,
@@ -497,6 +558,7 @@ hppe_l1_e_sp_cfg_tbl_set(
 				index * L1_E_SP_CFG_TBL_INC,
 				value->val);
 }
+#endif
 
 sw_error_t
 hppe_l1_flow_port_map_tbl_get(
@@ -629,36 +691,6 @@ hppe_l1_e_drr_reverse_ll_tbl_get(
 }
 
 sw_error_t
-hppe_l1_a_flow_entry_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_a_flow_entry_tbl_u *value)
-{
-	if (index >= L1_A_FLOW_ENTRY_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-	return hppe_reg_get(
-				dev_id,
-				TRAFFIC_MANAGER_BASE_ADDR + L1_A_FLOW_ENTRY_TBL_ADDRESS + \
-				index * L1_A_FLOW_ENTRY_TBL_INC,
-				&value->val);
-}
-
-sw_error_t
-hppe_l1_b_flow_entry_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_b_flow_entry_tbl_u *value)
-{
-	if (index >= L1_B_FLOW_ENTRY_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-	return hppe_reg_get(
-				dev_id,
-				TRAFFIC_MANAGER_BASE_ADDR + L1_B_FLOW_ENTRY_TBL_ADDRESS + \
-				index * L1_B_FLOW_ENTRY_TBL_INC,
-				&value->val);
-}
-
-sw_error_t
 hppe_l1_sp_entry_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -786,285 +818,6 @@ hppe_tdm_depth_cfg_tdm_depth_set(
 		return ret;
 	reg_val.bf.tdm_depth = value;
 	ret = hppe_tdm_depth_cfg_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_e_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.e_pri;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_e_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.e_pri = value;
-	ret = hppe_l0_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_c_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.c_pri;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_c_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.c_pri = value;
-	ret = hppe_l0_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_e_drr_wt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.e_drr_wt;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_e_drr_wt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.e_drr_wt = value;
-	ret = hppe_l0_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_c_drr_wt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.c_drr_wt;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_c_drr_wt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.c_drr_wt = value;
-	ret = hppe_l0_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_sp_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.sp_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_flow_map_tbl_sp_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.sp_id = value;
-	ret = hppe_l0_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_credit_unit;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_credit_unit = value;
-	ret = hppe_l0_c_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_id = value;
-	ret = hppe_l0_c_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_credit_unit;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_credit_unit = value;
-	ret = hppe_l0_e_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l0_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l0_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l0_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_id = value;
-	ret = hppe_l0_e_sp_cfg_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -1700,285 +1453,6 @@ hppe_deq_dis_tbl_deq_dis_set(
 }
 
 sw_error_t
-hppe_l1_flow_map_tbl_e_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.e_pri;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_e_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.e_pri = value;
-	ret = hppe_l1_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_c_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.c_pri;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_c_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.c_pri = value;
-	ret = hppe_l1_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_e_drr_wt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.e_drr_wt;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_e_drr_wt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.e_drr_wt = value;
-	ret = hppe_l1_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_c_drr_wt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.c_drr_wt;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_c_drr_wt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.c_drr_wt = value;
-	ret = hppe_l1_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_sp_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.sp_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_flow_map_tbl_sp_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_flow_map_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_flow_map_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.sp_id = value;
-	ret = hppe_l1_flow_map_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_credit_unit;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_credit_unit = value;
-	ret = hppe_l1_c_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_c_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_c_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_id = value;
-	ret = hppe_l1_c_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_credit_unit;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_credit_unit = value;
-	ret = hppe_l1_e_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.drr_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l1_e_sp_cfg_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_e_sp_cfg_tbl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drr_id = value;
-	ret = hppe_l1_e_sp_cfg_tbl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_l1_flow_port_map_tbl_port_num_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -2345,34 +1819,6 @@ hppe_l1_e_drr_reverse_ll_tbl_pre_ptr_get(
 
 	ret = hppe_l1_e_drr_reverse_ll_tbl_get(dev_id, index, &reg_val);
 	*value = reg_val.bf.pre_ptr;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_a_flow_entry_tbl_entry_path_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_a_flow_entry_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_a_flow_entry_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.entry_path_id;
-	return ret;
-}
-
-sw_error_t
-hppe_l1_b_flow_entry_tbl_entry_path_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l1_b_flow_entry_tbl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_l1_b_flow_entry_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.entry_path_id;
 	return ret;
 }
 

@@ -33,6 +33,30 @@ hppe_l0_flow_map_tbl_set(
 		union l0_flow_map_tbl_u *value);
 
 sw_error_t
+hppe_l0_flow_map_tbl_c_drr_credit_unit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_c_drr_credit_unit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_c_drr_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_c_drr_id_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
 hppe_l0_flow_map_tbl_c_drr_wt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -52,6 +76,30 @@ hppe_l0_flow_map_tbl_c_pri_get(
 
 sw_error_t
 hppe_l0_flow_map_tbl_c_pri_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_e_drr_credit_unit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_e_drr_credit_unit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_e_drr_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l0_flow_map_tbl_e_drr_id_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
@@ -92,82 +140,6 @@ hppe_l0_flow_map_tbl_sp_id_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L0_C_SP_CFG_TBL_MAX_ENTRY	512
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_c_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_c_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l0_c_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-#define L0_E_SP_CFG_TBL_MAX_ENTRY	512
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_e_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_e_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l0_e_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
 #define L0_FLOW_PORT_MAP_TBL_MAX_ENTRY	300
 
 sw_error_t
@@ -182,7 +154,7 @@ hppe_l0_flow_port_map_tbl_set(
 		a_uint32_t index,
 		union l0_flow_port_map_tbl_u *value);
 
-#define L0_C_DRR_HEAD_TBL_MAX_ENTRY	160
+#define L0_C_DRR_HEAD_TBL_MAX_ENTRY	256
 
 sw_error_t
 hppe_l0_c_drr_head_tbl_get(
@@ -292,7 +264,7 @@ hppe_l0_c_drr_head_tbl_backup_vld_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L0_E_DRR_HEAD_TBL_MAX_ENTRY	160
+#define L0_E_DRR_HEAD_TBL_MAX_ENTRY	256
 
 sw_error_t
 hppe_l0_e_drr_head_tbl_get(
@@ -572,7 +544,7 @@ hppe_l0_ens_q_ll_tbl_set(
 		a_uint32_t index,
 		union l0_ens_q_ll_tbl_u *value);
 
-#define L0_ENS_Q_HEAD_TBL_MAX_ENTRY	8
+#define L0_ENS_Q_HEAD_TBL_MAX_ENTRY	9
 
 sw_error_t
 hppe_l0_ens_q_head_tbl_get(
@@ -722,20 +694,6 @@ hppe_l0_flow_status_tbl_en_level_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RING_Q_MAP_TBL_MAX_ENTRY	24
-
-sw_error_t
-hppe_ring_q_map_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ring_q_map_tbl_u *value);
-
-sw_error_t
-hppe_ring_q_map_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ring_q_map_tbl_u *value);
-
 #define RFC_BLOCK_TBL_MAX_ENTRY	300
 
 sw_error_t
@@ -778,6 +736,20 @@ hppe_deq_dis_tbl_set(
 		a_uint32_t index,
 		union deq_dis_tbl_u *value);
 
+#define RING_Q_MAP_TBL_MAX_ENTRY	176
+
+sw_error_t
+hppe_ring_q_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ring_q_map_tbl_u *value);
+
+sw_error_t
+hppe_ring_q_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ring_q_map_tbl_u *value);
+
 #define L1_FLOW_MAP_TBL_MAX_ENTRY	64
 
 sw_error_t
@@ -791,6 +763,30 @@ hppe_l1_flow_map_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union l1_flow_map_tbl_u *value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_c_drr_credit_unit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_c_drr_credit_unit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_c_drr_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_c_drr_id_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 sw_error_t
 hppe_l1_flow_map_tbl_c_drr_wt_get(
@@ -812,6 +808,30 @@ hppe_l1_flow_map_tbl_c_pri_get(
 
 sw_error_t
 hppe_l1_flow_map_tbl_c_pri_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_e_drr_credit_unit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_e_drr_credit_unit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_e_drr_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l1_flow_map_tbl_e_drr_id_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
@@ -852,82 +872,6 @@ hppe_l1_flow_map_tbl_sp_id_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L1_C_SP_CFG_TBL_MAX_ENTRY	64
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_c_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_c_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l1_c_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-#define L1_E_SP_CFG_TBL_MAX_ENTRY	64
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_e_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_e_sp_cfg_tbl_u *value);
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_credit_unit_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_credit_unit_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_id_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_l1_e_sp_cfg_tbl_drr_id_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
 #define L1_FLOW_PORT_MAP_TBL_MAX_ENTRY	64
 
 sw_error_t
@@ -942,7 +886,7 @@ hppe_l1_flow_port_map_tbl_set(
 		a_uint32_t index,
 		union l1_flow_port_map_tbl_u *value);
 
-#define L1_C_DRR_HEAD_TBL_MAX_ENTRY	36
+#define L1_C_DRR_HEAD_TBL_MAX_ENTRY	64
 
 sw_error_t
 hppe_l1_c_drr_head_tbl_get(
@@ -1052,7 +996,7 @@ hppe_l1_c_drr_head_tbl_backup_vld_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L1_E_DRR_HEAD_TBL_MAX_ENTRY	36
+#define L1_E_DRR_HEAD_TBL_MAX_ENTRY	64
 
 sw_error_t
 hppe_l1_e_drr_head_tbl_get(
@@ -1280,35 +1224,7 @@ hppe_l1_e_drr_reverse_ll_tbl_set(
 		a_uint32_t index,
 		union l1_e_drr_reverse_ll_tbl_u *value);
 
-#define L1_A_FLOW_ENTRY_TBL_MAX_ENTRY	64
-
-sw_error_t
-hppe_l1_a_flow_entry_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_a_flow_entry_tbl_u *value);
-
-sw_error_t
-hppe_l1_a_flow_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_a_flow_entry_tbl_u *value);
-
-#define L1_B_FLOW_ENTRY_TBL_MAX_ENTRY	64
-
-sw_error_t
-hppe_l1_b_flow_entry_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_b_flow_entry_tbl_u *value);
-
-sw_error_t
-hppe_l1_b_flow_entry_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_b_flow_entry_tbl_u *value);
-
-#define L1_SP_ENTRY_TBL_MAX_ENTRY	8
+#define L1_SP_ENTRY_TBL_MAX_ENTRY	41
 
 sw_error_t
 hppe_l1_sp_entry_tbl_get(
@@ -1360,7 +1276,7 @@ hppe_l1_ens_q_ll_tbl_set(
 		a_uint32_t index,
 		union l1_ens_q_ll_tbl_u *value);
 
-#define L1_ENS_Q_HEAD_TBL_MAX_ENTRY	8
+#define L1_ENS_Q_HEAD_TBL_MAX_ENTRY	9
 
 sw_error_t
 hppe_l1_ens_q_head_tbl_get(

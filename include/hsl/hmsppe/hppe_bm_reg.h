@@ -56,7 +56,7 @@ union fp_fifo_cfg_u {
 /*[register] DEQ_FIFO_CFG*/
 #define DEQ_FIFO_CFG
 #define DEQ_FIFO_CFG_ADDRESS 0x8
-#define DEQ_FIFO_CFG_NUM     4
+#define DEQ_FIFO_CFG_NUM     9
 #define DEQ_FIFO_CFG_INC     0x4
 #define DEQ_FIFO_CFG_TYPE    REG_TYPE_RW
 #define DEQ_FIFO_CFG_DEFAULT 0x2
@@ -78,7 +78,7 @@ union deq_fifo_cfg_u {
 
 /*[register] TICK_DLY_CFG*/
 #define TICK_DLY_CFG
-#define TICK_DLY_CFG_ADDRESS 0x2c
+#define TICK_DLY_CFG_ADDRESS 0x30
 #define TICK_DLY_CFG_NUM     1
 #define TICK_DLY_CFG_INC     0x4
 #define TICK_DLY_CFG_TYPE    REG_TYPE_RW
@@ -101,7 +101,7 @@ union tick_dly_cfg_u {
 
 /*[register] BM_RSV_0*/
 #define BM_RSV_0
-#define BM_RSV_0_ADDRESS 0x30
+#define BM_RSV_0_ADDRESS 0x34
 #define BM_RSV_0_NUM     1
 #define BM_RSV_0_INC     0x4
 #define BM_RSV_0_TYPE    REG_TYPE_RW
@@ -123,7 +123,7 @@ union bm_rsv_0_u {
 
 /*[register] BM_RSV_1*/
 #define BM_RSV_1
-#define BM_RSV_1_ADDRESS 0x34
+#define BM_RSV_1_ADDRESS 0x38
 #define BM_RSV_1_NUM     1
 #define BM_RSV_1_INC     0x4
 #define BM_RSV_1_TYPE    REG_TYPE_RW
@@ -146,7 +146,7 @@ union bm_rsv_1_u {
 /*[register] PORT_FC_MODE*/
 #define PORT_FC_MODE
 #define PORT_FC_MODE_ADDRESS 0x100
-#define PORT_FC_MODE_NUM     19
+#define PORT_FC_MODE_NUM     40
 #define PORT_FC_MODE_INC     0x4
 #define PORT_FC_MODE_TYPE    REG_TYPE_RW
 #define PORT_FC_MODE_DEFAULT 0x0
@@ -168,27 +168,27 @@ union port_fc_mode_u {
 
 /*[register] PORT_FC_STATUS*/
 #define PORT_FC_STATUS
-#define PORT_FC_STATUS_ADDRESS 0x160
-#define PORT_FC_STATUS_NUM     19
+#define PORT_FC_STATUS_ADDRESS 0x1a0
+#define PORT_FC_STATUS_NUM     40
 #define PORT_FC_STATUS_INC     0x4
 #define PORT_FC_STATUS_TYPE    REG_TYPE_RO
 #define PORT_FC_STATUS_DEFAULT 0x0
 	/*[field] PORT_XON_TH*/
 	#define PORT_FC_STATUS_PORT_XON_TH
 	#define PORT_FC_STATUS_PORT_XON_TH_OFFSET  0
-	#define PORT_FC_STATUS_PORT_XON_TH_LEN     11
+	#define PORT_FC_STATUS_PORT_XON_TH_LEN     12
 	#define PORT_FC_STATUS_PORT_XON_TH_DEFAULT 0x0
 	/*[field] PORT_FC_STATUS*/
 	#define PORT_FC_STATUS_PORT_FC_STATUS
-	#define PORT_FC_STATUS_PORT_FC_STATUS_OFFSET  16
+	#define PORT_FC_STATUS_PORT_FC_STATUS_OFFSET  17
 	#define PORT_FC_STATUS_PORT_FC_STATUS_LEN     2
 	#define PORT_FC_STATUS_PORT_FC_STATUS_DEFAULT 0x0
 
 struct port_fc_status {
-	a_uint32_t  port_xon_th:11;
+	a_uint32_t  port_xon_th:12;
 	a_uint32_t  _reserved0:5;
 	a_uint32_t  port_fc_status:2;
-	a_uint32_t  _reserved1:14;
+	a_uint32_t  _reserved1:13;
 };
 
 union port_fc_status_u {
@@ -198,8 +198,8 @@ union port_fc_status_u {
 
 /*[register] PORT_GROUP_ID*/
 #define PORT_GROUP_ID
-#define PORT_GROUP_ID_ADDRESS 0x1c0
-#define PORT_GROUP_ID_NUM     19
+#define PORT_GROUP_ID_ADDRESS 0x240
+#define PORT_GROUP_ID_NUM     40
 #define PORT_GROUP_ID_INC     0x4
 #define PORT_GROUP_ID_TYPE    REG_TYPE_RW
 #define PORT_GROUP_ID_DEFAULT 0x0
@@ -221,20 +221,20 @@ union port_group_id_u {
 
 /*[register] PORT_CNT*/
 #define PORT_CNT
-#define PORT_CNT_ADDRESS 0x220
-#define PORT_CNT_NUM     19
+#define PORT_CNT_ADDRESS 0x2e0
+#define PORT_CNT_NUM     40
 #define PORT_CNT_INC     0x4
 #define PORT_CNT_TYPE    REG_TYPE_RO
 #define PORT_CNT_DEFAULT 0x0
 	/*[field] PORT_CNT*/
 	#define PORT_CNT_PORT_CNT
 	#define PORT_CNT_PORT_CNT_OFFSET  0
-	#define PORT_CNT_PORT_CNT_LEN     11
+	#define PORT_CNT_PORT_CNT_LEN     12
 	#define PORT_CNT_PORT_CNT_DEFAULT 0x0
 
 struct port_cnt {
-	a_uint32_t  port_cnt:11;
-	a_uint32_t  _reserved0:21;
+	a_uint32_t  port_cnt:12;
+	a_uint32_t  _reserved0:20;
 };
 
 union port_cnt_u {
@@ -244,20 +244,20 @@ union port_cnt_u {
 
 /*[register] PORT_REACTED_CNT*/
 #define PORT_REACTED_CNT
-#define PORT_REACTED_CNT_ADDRESS 0x280
-#define PORT_REACTED_CNT_NUM     19
+#define PORT_REACTED_CNT_ADDRESS 0x380
+#define PORT_REACTED_CNT_NUM     40
 #define PORT_REACTED_CNT_INC     0x4
 #define PORT_REACTED_CNT_TYPE    REG_TYPE_RO
 #define PORT_REACTED_CNT_DEFAULT 0x0
 	/*[field] PORT_REACTED_CNT*/
 	#define PORT_REACTED_CNT_PORT_REACTED_CNT
 	#define PORT_REACTED_CNT_PORT_REACTED_CNT_OFFSET  0
-	#define PORT_REACTED_CNT_PORT_REACTED_CNT_LEN     9
+	#define PORT_REACTED_CNT_PORT_REACTED_CNT_LEN     10
 	#define PORT_REACTED_CNT_PORT_REACTED_CNT_DEFAULT 0x0
 
 struct port_reacted_cnt {
-	a_uint32_t  port_reacted_cnt:9;
-	a_uint32_t  _reserved0:23;
+	a_uint32_t  port_reacted_cnt:10;
+	a_uint32_t  _reserved0:22;
 };
 
 union port_reacted_cnt_u {
@@ -267,7 +267,7 @@ union port_reacted_cnt_u {
 
 /*[register] SHARED_GROUP_CNT*/
 #define SHARED_GROUP_CNT
-#define SHARED_GROUP_CNT_ADDRESS 0x2e0
+#define SHARED_GROUP_CNT_ADDRESS 0x420
 #define SHARED_GROUP_CNT_NUM     4
 #define SHARED_GROUP_CNT_INC     0x4
 #define SHARED_GROUP_CNT_TYPE    REG_TYPE_RO
@@ -275,12 +275,12 @@ union port_reacted_cnt_u {
 	/*[field] SHARED_GROUP_CNT*/
 	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT
 	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_OFFSET  0
-	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_LEN     11
+	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_LEN     12
 	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_DEFAULT 0x0
 
 struct shared_group_cnt {
-	a_uint32_t  shared_group_cnt:11;
-	a_uint32_t  _reserved0:21;
+	a_uint32_t  shared_group_cnt:12;
+	a_uint32_t  _reserved0:20;
 };
 
 union shared_group_cnt_u {
@@ -290,7 +290,7 @@ union shared_group_cnt_u {
 
 /*[register] SHARED_GROUP_CFG*/
 #define SHARED_GROUP_CFG
-#define SHARED_GROUP_CFG_ADDRESS 0x2f0
+#define SHARED_GROUP_CFG_ADDRESS 0x460
 #define SHARED_GROUP_CFG_NUM     4
 #define SHARED_GROUP_CFG_INC     0x4
 #define SHARED_GROUP_CFG_TYPE    REG_TYPE_RW
@@ -298,12 +298,12 @@ union shared_group_cnt_u {
 	/*[field] SHARED_GROUP_LIMIT*/
 	#define SHARED_GROUP_CFG_SHARED_GROUP_LIMIT
 	#define SHARED_GROUP_CFG_SHARED_GROUP_LIMIT_OFFSET  0
-	#define SHARED_GROUP_CFG_SHARED_GROUP_LIMIT_LEN     11
+	#define SHARED_GROUP_CFG_SHARED_GROUP_LIMIT_LEN     12
 	#define SHARED_GROUP_CFG_SHARED_GROUP_LIMIT_DEFAULT 0x0
 
 struct shared_group_cfg {
-	a_uint32_t  shared_group_limit:11;
-	a_uint32_t  _reserved0:21;
+	a_uint32_t  shared_group_limit:12;
+	a_uint32_t  _reserved0:20;
 };
 
 union shared_group_cfg_u {
@@ -311,316 +311,22 @@ union shared_group_cfg_u {
 	struct shared_group_cfg bf;
 };
 
-/*[register] PORT_PROFILE_CNT_EN*/
-#define PORT_PROFILE_CNT_EN
-#define PORT_PROFILE_CNT_EN_ADDRESS 0x300
-#define PORT_PROFILE_CNT_EN_NUM     1
-#define PORT_PROFILE_CNT_EN_INC     0x4
-#define PORT_PROFILE_CNT_EN_TYPE    REG_TYPE_RW
-#define PORT_PROFILE_CNT_EN_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_0*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_0
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_0_OFFSET  0
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_0_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_0_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_1*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_1_OFFSET  1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_1_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_1_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_2*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_2
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_2_OFFSET  2
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_2_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_2_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_3*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_3
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_3_OFFSET  3
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_3_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_3_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_4*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_4
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_4_OFFSET  4
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_4_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_4_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_5*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_5
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_5_OFFSET  5
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_5_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_5_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_6*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_6
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_6_OFFSET  6
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_6_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_6_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_7*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_7
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_7_OFFSET  7
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_7_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_7_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_8*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_8
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_8_OFFSET  8
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_8_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_8_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_9*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_9
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_9_OFFSET  9
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_9_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_9_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_10*/
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_10
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_10_OFFSET  10
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_10_LEN     1
-	#define PORT_PROFILE_CNT_EN_PORT_CNT_EN_10_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_0*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_0
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_0_OFFSET  16
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_0_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_0_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_1*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_1_OFFSET  17
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_1_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_1_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_2*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_2
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_2_OFFSET  18
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_2_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_2_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_3*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_3
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_3_OFFSET  19
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_3_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_3_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_4*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_4
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_4_OFFSET  20
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_4_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_4_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_5*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_5
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_5_OFFSET  21
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_5_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_5_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_6*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_6
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_6_OFFSET  22
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_6_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_6_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_7*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_7
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_7_OFFSET  23
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_7_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_7_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_8*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_8
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_8_OFFSET  24
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_8_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_8_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_9*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_9
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_9_OFFSET  25
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_9_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_9_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_10*/
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_10
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_10_OFFSET  26
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_10_LEN     1
-	#define PORT_PROFILE_CNT_EN_REACT_CNT_EN_10_DEFAULT 0x0
-
-struct port_profile_cnt_en {
-	a_uint32_t  port_cnt_en_0:1;
-	a_uint32_t  port_cnt_en_1:1;
-	a_uint32_t  port_cnt_en_2:1;
-	a_uint32_t  port_cnt_en_3:1;
-	a_uint32_t  port_cnt_en_4:1;
-	a_uint32_t  port_cnt_en_5:1;
-	a_uint32_t  port_cnt_en_6:1;
-	a_uint32_t  port_cnt_en_7:1;
-	a_uint32_t  port_cnt_en_8:1;
-	a_uint32_t  port_cnt_en_9:1;
-	a_uint32_t  port_cnt_en_10:1;
-	a_uint32_t  _reserved0:5;
-	a_uint32_t  react_cnt_en_0:1;
-	a_uint32_t  react_cnt_en_1:1;
-	a_uint32_t  react_cnt_en_2:1;
-	a_uint32_t  react_cnt_en_3:1;
-	a_uint32_t  react_cnt_en_4:1;
-	a_uint32_t  react_cnt_en_5:1;
-	a_uint32_t  react_cnt_en_6:1;
-	a_uint32_t  react_cnt_en_7:1;
-	a_uint32_t  react_cnt_en_8:1;
-	a_uint32_t  react_cnt_en_9:1;
-	a_uint32_t  react_cnt_en_10:1;
-	a_uint32_t  _reserved1:5;
-};
-
-union port_profile_cnt_en_u {
-	a_uint32_t val;
-	struct port_profile_cnt_en bf;
-};
-
-/*[register] GRP_PROFILE_CNT_EN*/
-#define GRP_PROFILE_CNT_EN
-#define GRP_PROFILE_CNT_EN_ADDRESS 0x304
-#define GRP_PROFILE_CNT_EN_NUM     1
-#define GRP_PROFILE_CNT_EN_INC     0x4
-#define GRP_PROFILE_CNT_EN_TYPE    REG_TYPE_RW
-#define GRP_PROFILE_CNT_EN_DEFAULT 0x0
-	/*[field] GRP_CNT_EN_0*/
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_0
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_0_OFFSET  0
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_0_LEN     1
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_0_DEFAULT 0x0
-	/*[field] GRP_CNT_EN_1*/
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_1
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_1_OFFSET  1
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_1_LEN     1
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_1_DEFAULT 0x0
-	/*[field] GRP_CNT_EN_2*/
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_2
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_2_OFFSET  2
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_2_LEN     1
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_2_DEFAULT 0x0
-	/*[field] GRP_CNT_EN_3*/
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_3
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_3_OFFSET  3
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_3_LEN     1
-	#define GRP_PROFILE_CNT_EN_GRP_CNT_EN_3_DEFAULT 0x0
-	/*[field] TOT_RECT_CNT_EN*/
-	#define GRP_PROFILE_CNT_EN_TOT_RECT_CNT_EN
-	#define GRP_PROFILE_CNT_EN_TOT_RECT_CNT_EN_OFFSET  4
-	#define GRP_PROFILE_CNT_EN_TOT_RECT_CNT_EN_LEN     1
-	#define GRP_PROFILE_CNT_EN_TOT_RECT_CNT_EN_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_11*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_11
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_11_OFFSET  8
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_11_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_11_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_12*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_12
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_12_OFFSET  9
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_12_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_12_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_13*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_13
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_13_OFFSET  10
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_13_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_13_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_14*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_14
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_14_OFFSET  11
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_14_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_14_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_15*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_15
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_15_OFFSET  12
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_15_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_15_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_16*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_16
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_16_OFFSET  13
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_16_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_16_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_17*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_17
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_17_OFFSET  14
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_17_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_17_DEFAULT 0x0
-	/*[field] PORT_CNT_EN_18*/
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_18
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_18_OFFSET  15
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_18_LEN     1
-	#define GRP_PROFILE_CNT_EN_PORT_CNT_EN_18_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_11*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_11
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_11_OFFSET  16
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_11_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_11_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_12*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_12
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_12_OFFSET  17
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_12_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_12_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_13*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_13
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_13_OFFSET  18
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_13_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_13_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_14*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_14
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_14_OFFSET  19
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_14_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_14_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_15*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_15
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_15_OFFSET  20
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_15_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_15_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_16*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_16
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_16_OFFSET  21
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_16_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_16_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_17*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_17
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_17_OFFSET  22
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_17_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_17_DEFAULT 0x0
-	/*[field] REACT_CNT_EN_18*/
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_18
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_18_OFFSET  23
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_18_LEN     1
-	#define GRP_PROFILE_CNT_EN_REACT_CNT_EN_18_DEFAULT 0x0
-
-struct grp_profile_cnt_en {
-	a_uint32_t  grp_cnt_en_0:1;
-	a_uint32_t  grp_cnt_en_1:1;
-	a_uint32_t  grp_cnt_en_2:1;
-	a_uint32_t  grp_cnt_en_3:1;
-	a_uint32_t  tot_rect_cnt_en:1;
-	a_uint32_t  _reserved0:3;
-	a_uint32_t  port_cnt_en_11:1;
-	a_uint32_t  port_cnt_en_12:1;
-	a_uint32_t  port_cnt_en_13:1;
-	a_uint32_t  port_cnt_en_14:1;
-	a_uint32_t  port_cnt_en_15:1;
-	a_uint32_t  port_cnt_en_16:1;
-	a_uint32_t  port_cnt_en_17:1;
-	a_uint32_t  port_cnt_en_18:1;
-	a_uint32_t  react_cnt_en_11:1;
-	a_uint32_t  react_cnt_en_12:1;
-	a_uint32_t  react_cnt_en_13:1;
-	a_uint32_t  react_cnt_en_14:1;
-	a_uint32_t  react_cnt_en_15:1;
-	a_uint32_t  react_cnt_en_16:1;
-	a_uint32_t  react_cnt_en_17:1;
-	a_uint32_t  react_cnt_en_18:1;
-	a_uint32_t  _reserved1:8;
-};
-
-union grp_profile_cnt_en_u {
-	a_uint32_t val;
-	struct grp_profile_cnt_en bf;
-};
-
 /*[register] PORT_PROFILE_TH_CFG*/
 #define PORT_PROFILE_TH_CFG
-#define PORT_PROFILE_TH_CFG_ADDRESS 0x308
-#define PORT_PROFILE_TH_CFG_NUM     19
+#define PORT_PROFILE_TH_CFG_ADDRESS 0x4b0
+#define PORT_PROFILE_TH_CFG_NUM     40
 #define PORT_PROFILE_TH_CFG_INC     0x4
 #define PORT_PROFILE_TH_CFG_TYPE    REG_TYPE_RW
 #define PORT_PROFILE_TH_CFG_DEFAULT 0x0
 	/*[field] PORT_PROFILE_TH_CFG*/
 	#define PORT_PROFILE_TH_CFG_PORT_PROFILE_TH_CFG
 	#define PORT_PROFILE_TH_CFG_PORT_PROFILE_TH_CFG_OFFSET  0
-	#define PORT_PROFILE_TH_CFG_PORT_PROFILE_TH_CFG_LEN     11
+	#define PORT_PROFILE_TH_CFG_PORT_PROFILE_TH_CFG_LEN     12
 	#define PORT_PROFILE_TH_CFG_PORT_PROFILE_TH_CFG_DEFAULT 0x0
 
 struct port_profile_th_cfg {
-	a_uint32_t  port_profile_th_cfg:11;
-	a_uint32_t  _reserved0:21;
+	a_uint32_t  port_profile_th_cfg:12;
+	a_uint32_t  _reserved0:20;
 };
 
 union port_profile_th_cfg_u {
@@ -630,20 +336,20 @@ union port_profile_th_cfg_u {
 
 /*[register] REACT_PROFILE_TH_CFG*/
 #define REACT_PROFILE_TH_CFG
-#define REACT_PROFILE_TH_CFG_ADDRESS 0x368
-#define REACT_PROFILE_TH_CFG_NUM     19
+#define REACT_PROFILE_TH_CFG_ADDRESS 0x550
+#define REACT_PROFILE_TH_CFG_NUM     40
 #define REACT_PROFILE_TH_CFG_INC     0x4
 #define REACT_PROFILE_TH_CFG_TYPE    REG_TYPE_RW
 #define REACT_PROFILE_TH_CFG_DEFAULT 0x0
 	/*[field] REACT_PROFILE_TH_CFG*/
 	#define REACT_PROFILE_TH_CFG_REACT_PROFILE_TH_CFG
 	#define REACT_PROFILE_TH_CFG_REACT_PROFILE_TH_CFG_OFFSET  0
-	#define REACT_PROFILE_TH_CFG_REACT_PROFILE_TH_CFG_LEN     9
+	#define REACT_PROFILE_TH_CFG_REACT_PROFILE_TH_CFG_LEN     10
 	#define REACT_PROFILE_TH_CFG_REACT_PROFILE_TH_CFG_DEFAULT 0x0
 
 struct react_profile_th_cfg {
-	a_uint32_t  react_profile_th_cfg:9;
-	a_uint32_t  _reserved0:23;
+	a_uint32_t  react_profile_th_cfg:10;
+	a_uint32_t  _reserved0:22;
 };
 
 union react_profile_th_cfg_u {
@@ -653,7 +359,7 @@ union react_profile_th_cfg_u {
 
 /*[register] GRP_PROFILE_TH_CFG*/
 #define GRP_PROFILE_TH_CFG
-#define GRP_PROFILE_TH_CFG_ADDRESS 0x3c8
+#define GRP_PROFILE_TH_CFG_ADDRESS 0x5f0
 #define GRP_PROFILE_TH_CFG_NUM     4
 #define GRP_PROFILE_TH_CFG_INC     0x4
 #define GRP_PROFILE_TH_CFG_TYPE    REG_TYPE_RW
@@ -661,12 +367,12 @@ union react_profile_th_cfg_u {
 	/*[field] GRP_PROFILE_TH_CFG*/
 	#define GRP_PROFILE_TH_CFG_GRP_PROFILE_TH_CFG
 	#define GRP_PROFILE_TH_CFG_GRP_PROFILE_TH_CFG_OFFSET  0
-	#define GRP_PROFILE_TH_CFG_GRP_PROFILE_TH_CFG_LEN     11
+	#define GRP_PROFILE_TH_CFG_GRP_PROFILE_TH_CFG_LEN     12
 	#define GRP_PROFILE_TH_CFG_GRP_PROFILE_TH_CFG_DEFAULT 0x0
 
 struct grp_profile_th_cfg {
-	a_uint32_t  grp_profile_th_cfg:11;
-	a_uint32_t  _reserved0:21;
+	a_uint32_t  grp_profile_th_cfg:12;
+	a_uint32_t  _reserved0:20;
 };
 
 union grp_profile_th_cfg_u {
@@ -676,7 +382,7 @@ union grp_profile_th_cfg_u {
 
 /*[register] TOT_REACT_PROFILE_TH_CFG*/
 #define TOT_REACT_PROFILE_TH_CFG
-#define TOT_REACT_PROFILE_TH_CFG_ADDRESS 0x3d8
+#define TOT_REACT_PROFILE_TH_CFG_ADDRESS 0x600
 #define TOT_REACT_PROFILE_TH_CFG_NUM     1
 #define TOT_REACT_PROFILE_TH_CFG_INC     0x4
 #define TOT_REACT_PROFILE_TH_CFG_TYPE    REG_TYPE_RW
@@ -684,12 +390,12 @@ union grp_profile_th_cfg_u {
 	/*[field] TOT_REACT_PROFILE_TH_CFG*/
 	#define TOT_REACT_PROFILE_TH_CFG_TOT_REACT_PROFILE_TH_CFG
 	#define TOT_REACT_PROFILE_TH_CFG_TOT_REACT_PROFILE_TH_CFG_OFFSET  0
-	#define TOT_REACT_PROFILE_TH_CFG_TOT_REACT_PROFILE_TH_CFG_LEN     11
+	#define TOT_REACT_PROFILE_TH_CFG_TOT_REACT_PROFILE_TH_CFG_LEN     12
 	#define TOT_REACT_PROFILE_TH_CFG_TOT_REACT_PROFILE_TH_CFG_DEFAULT 0x0
 
 struct tot_react_profile_th_cfg {
-	a_uint32_t  tot_react_profile_th_cfg:11;
-	a_uint32_t  _reserved0:21;
+	a_uint32_t  tot_react_profile_th_cfg:12;
+	a_uint32_t  _reserved0:20;
 };
 
 union tot_react_profile_th_cfg_u {
@@ -699,8 +405,8 @@ union tot_react_profile_th_cfg_u {
 
 /*[register] PORT_OUT_PROFILE_CNT*/
 #define PORT_OUT_PROFILE_CNT
-#define PORT_OUT_PROFILE_CNT_ADDRESS 0x3e0
-#define PORT_OUT_PROFILE_CNT_NUM     19
+#define PORT_OUT_PROFILE_CNT_ADDRESS 0x604
+#define PORT_OUT_PROFILE_CNT_NUM     40
 #define PORT_OUT_PROFILE_CNT_INC     0x4
 #define PORT_OUT_PROFILE_CNT_TYPE    REG_TYPE_RW
 #define PORT_OUT_PROFILE_CNT_DEFAULT 0x0
@@ -721,8 +427,8 @@ union port_out_profile_cnt_u {
 
 /*[register] PORT_IN_PROFILE_CNT*/
 #define PORT_IN_PROFILE_CNT
-#define PORT_IN_PROFILE_CNT_ADDRESS 0x440
-#define PORT_IN_PROFILE_CNT_NUM     19
+#define PORT_IN_PROFILE_CNT_ADDRESS 0x6a4
+#define PORT_IN_PROFILE_CNT_NUM     40
 #define PORT_IN_PROFILE_CNT_INC     0x4
 #define PORT_IN_PROFILE_CNT_TYPE    REG_TYPE_RW
 #define PORT_IN_PROFILE_CNT_DEFAULT 0x0
@@ -743,8 +449,8 @@ union port_in_profile_cnt_u {
 
 /*[register] REACT_OUT_PROFILE_CNT*/
 #define REACT_OUT_PROFILE_CNT
-#define REACT_OUT_PROFILE_CNT_ADDRESS 0x4a0
-#define REACT_OUT_PROFILE_CNT_NUM     19
+#define REACT_OUT_PROFILE_CNT_ADDRESS 0x744
+#define REACT_OUT_PROFILE_CNT_NUM     40
 #define REACT_OUT_PROFILE_CNT_INC     0x4
 #define REACT_OUT_PROFILE_CNT_TYPE    REG_TYPE_RW
 #define REACT_OUT_PROFILE_CNT_DEFAULT 0x0
@@ -765,8 +471,8 @@ union react_out_profile_cnt_u {
 
 /*[register] REACT_IN_PROFILE_CNT*/
 #define REACT_IN_PROFILE_CNT
-#define REACT_IN_PROFILE_CNT_ADDRESS 0x500
-#define REACT_IN_PROFILE_CNT_NUM     19
+#define REACT_IN_PROFILE_CNT_ADDRESS 0x7e4
+#define REACT_IN_PROFILE_CNT_NUM     40
 #define REACT_IN_PROFILE_CNT_INC     0x4
 #define REACT_IN_PROFILE_CNT_TYPE    REG_TYPE_RW
 #define REACT_IN_PROFILE_CNT_DEFAULT 0x0
@@ -787,7 +493,7 @@ union react_in_profile_cnt_u {
 
 /*[register] GRP_OUT_PROFILE_CNT*/
 #define GRP_OUT_PROFILE_CNT
-#define GRP_OUT_PROFILE_CNT_ADDRESS 0x5a0
+#define GRP_OUT_PROFILE_CNT_ADDRESS 0x884
 #define GRP_OUT_PROFILE_CNT_NUM     4
 #define GRP_OUT_PROFILE_CNT_INC     0x4
 #define GRP_OUT_PROFILE_CNT_TYPE    REG_TYPE_RW
@@ -809,7 +515,7 @@ union grp_out_profile_cnt_u {
 
 /*[register] GRP_IN_PROFILE_CNT*/
 #define GRP_IN_PROFILE_CNT
-#define GRP_IN_PROFILE_CNT_ADDRESS 0x5b0
+#define GRP_IN_PROFILE_CNT_ADDRESS 0x894
 #define GRP_IN_PROFILE_CNT_NUM     4
 #define GRP_IN_PROFILE_CNT_INC     0x4
 #define GRP_IN_PROFILE_CNT_TYPE    REG_TYPE_RW
@@ -831,7 +537,7 @@ union grp_in_profile_cnt_u {
 
 /*[register] TOT_REACT_OUT_PROFILE_CNT*/
 #define TOT_REACT_OUT_PROFILE_CNT
-#define TOT_REACT_OUT_PROFILE_CNT_ADDRESS 0x5c0
+#define TOT_REACT_OUT_PROFILE_CNT_ADDRESS 0x8a4
 #define TOT_REACT_OUT_PROFILE_CNT_NUM     1
 #define TOT_REACT_OUT_PROFILE_CNT_INC     0x4
 #define TOT_REACT_OUT_PROFILE_CNT_TYPE    REG_TYPE_RW
@@ -853,7 +559,7 @@ union tot_react_out_profile_cnt_u {
 
 /*[register] TOT_REACT_IN_PROFILE_CNT*/
 #define TOT_REACT_IN_PROFILE_CNT
-#define TOT_REACT_IN_PROFILE_CNT_ADDRESS 0x5c4
+#define TOT_REACT_IN_PROFILE_CNT_ADDRESS 0x8a8
 #define TOT_REACT_IN_PROFILE_CNT_NUM     1
 #define TOT_REACT_IN_PROFILE_CNT_INC     0x4
 #define TOT_REACT_IN_PROFILE_CNT_TYPE    REG_TYPE_RW
@@ -876,56 +582,56 @@ union tot_react_in_profile_cnt_u {
 /*[table] PORT_FC_CFG*/
 #define PORT_FC_CFG
 #define PORT_FC_CFG_ADDRESS 0x1000
-#define PORT_FC_CFG_NUM     19
+#define PORT_FC_CFG_NUM     40
 #define PORT_FC_CFG_INC     0x10
 #define PORT_FC_CFG_TYPE    REG_TYPE_RW
 #define PORT_FC_CFG_DEFAULT 0x0
 	/*[field] PORT_REACT_LIMIT*/
 	#define PORT_FC_CFG_PORT_REACT_LIMIT
 	#define PORT_FC_CFG_PORT_REACT_LIMIT_OFFSET  0
-	#define PORT_FC_CFG_PORT_REACT_LIMIT_LEN     9
+	#define PORT_FC_CFG_PORT_REACT_LIMIT_LEN     10
 	#define PORT_FC_CFG_PORT_REACT_LIMIT_DEFAULT 0x0
 	/*[field] PORT_RESUME_FLOOR_TH*/
 	#define PORT_FC_CFG_PORT_RESUME_FLOOR_TH
-	#define PORT_FC_CFG_PORT_RESUME_FLOOR_TH_OFFSET  9
+	#define PORT_FC_CFG_PORT_RESUME_FLOOR_TH_OFFSET  10
 	#define PORT_FC_CFG_PORT_RESUME_FLOOR_TH_LEN     9
 	#define PORT_FC_CFG_PORT_RESUME_FLOOR_TH_DEFAULT 0x0
 	/*[field] PORT_RESUME_OFFSET*/
 	#define PORT_FC_CFG_PORT_RESUME_OFFSET
-	#define PORT_FC_CFG_PORT_RESUME_OFFSET_OFFSET  18
-	#define PORT_FC_CFG_PORT_RESUME_OFFSET_LEN     11
+	#define PORT_FC_CFG_PORT_RESUME_OFFSET_OFFSET  19
+	#define PORT_FC_CFG_PORT_RESUME_OFFSET_LEN     12
 	#define PORT_FC_CFG_PORT_RESUME_OFFSET_DEFAULT 0x0
 	/*[field] PORT_SHARED_CEILING*/
 	#define PORT_FC_CFG_PORT_SHARED_CEILING
-	#define PORT_FC_CFG_PORT_SHARED_CEILING_OFFSET  29
-	#define PORT_FC_CFG_PORT_SHARED_CEILING_LEN     11
+	#define PORT_FC_CFG_PORT_SHARED_CEILING_OFFSET  31
+	#define PORT_FC_CFG_PORT_SHARED_CEILING_LEN     12
 	#define PORT_FC_CFG_PORT_SHARED_CEILING_DEFAULT 0x0
 	/*[field] PORT_SHARED_WEIGHT*/
 	#define PORT_FC_CFG_PORT_SHARED_WEIGHT
-	#define PORT_FC_CFG_PORT_SHARED_WEIGHT_OFFSET  40
+	#define PORT_FC_CFG_PORT_SHARED_WEIGHT_OFFSET  43
 	#define PORT_FC_CFG_PORT_SHARED_WEIGHT_LEN     3
 	#define PORT_FC_CFG_PORT_SHARED_WEIGHT_DEFAULT 0x0
 	/*[field] PORT_SHARED_DYNAMIC*/
 	#define PORT_FC_CFG_PORT_SHARED_DYNAMIC
-	#define PORT_FC_CFG_PORT_SHARED_DYNAMIC_OFFSET  43
+	#define PORT_FC_CFG_PORT_SHARED_DYNAMIC_OFFSET  46
 	#define PORT_FC_CFG_PORT_SHARED_DYNAMIC_LEN     1
 	#define PORT_FC_CFG_PORT_SHARED_DYNAMIC_DEFAULT 0x0
 	/*[field] PORT_PRE_ALLOC*/
 	#define PORT_FC_CFG_PORT_PRE_ALLOC
-	#define PORT_FC_CFG_PORT_PRE_ALLOC_OFFSET  44
-	#define PORT_FC_CFG_PORT_PRE_ALLOC_LEN     11
+	#define PORT_FC_CFG_PORT_PRE_ALLOC_OFFSET  47
+	#define PORT_FC_CFG_PORT_PRE_ALLOC_LEN     12
 	#define PORT_FC_CFG_PORT_PRE_ALLOC_DEFAULT 0x0
 
 struct port_fc_cfg {
-	a_uint32_t  port_react_limit:9;
+	a_uint32_t  port_react_limit:10;
 	a_uint32_t  port_resume_floor_th:9;
-	a_uint32_t  port_resume_offset:11;
-	a_uint32_t  port_shared_ceiling_0:3;
-	a_uint32_t  port_shared_ceiling_1:8;
+	a_uint32_t  port_resume_offset:12;
+	a_uint32_t  port_shared_ceiling_0:1;
+	a_uint32_t  port_shared_ceiling_1:11;
 	a_uint32_t  port_shared_weight:3;
 	a_uint32_t  port_shared_dynamic:1;
-	a_uint32_t  port_pre_alloc:11;
-	a_uint32_t  _reserved0:9;
+	a_uint32_t  port_pre_alloc:12;
+	a_uint32_t  _reserved0:5;
 };
 
 union port_fc_cfg_u {
@@ -936,25 +642,25 @@ union port_fc_cfg_u {
 /*[table] LLM*/
 #define LLM
 #define LLM_ADDRESS 0x10000
-#define LLM_NUM     2048
+#define LLM_NUM     3072
 #define LLM_INC     0x10
 #define LLM_TYPE    REG_TYPE_RW
 #define LLM_DEFAULT 0x0
 	/*[field] NXT_PTR*/
 	#define LLM_NXT_PTR
 	#define LLM_NXT_PTR_OFFSET  0
-	#define LLM_NXT_PTR_LEN     11
+	#define LLM_NXT_PTR_LEN     12
 	#define LLM_NXT_PTR_DEFAULT 0x0
 	/*[field] EOP*/
 	#define LLM_EOP
-	#define LLM_EOP_OFFSET  11
+	#define LLM_EOP_OFFSET  12
 	#define LLM_EOP_LEN     1
 	#define LLM_EOP_DEFAULT 0x0
 
 struct llm {
-	a_uint32_t  nxt_ptr:11;
+	a_uint32_t  nxt_ptr:12;
 	a_uint32_t  eop:1;
-	a_uint32_t  _reserved0:20;
+	a_uint32_t  _reserved0:19;
 };
 
 union llm_u {
@@ -965,7 +671,7 @@ union llm_u {
 /*[table] RCM*/
 #define RCM
 #define RCM_ADDRESS 0x20000
-#define RCM_NUM     2048
+#define RCM_NUM     3072
 #define RCM_INC     0x10
 #define RCM_TYPE    REG_TYPE_RW
 #define RCM_DEFAULT 0x0
@@ -987,8 +693,8 @@ union rcm_u {
 
 /*[table] DM*/
 #define DM
-#define DM_ADDRESS 0x80000
-#define DM_NUM     8192
+#define DM_ADDRESS 0x100000
+#define DM_NUM     12288
 #define DM_INC     0x40
 #define DM_TYPE    REG_TYPE_RW
 #define DM_DEFAULT 0x0
