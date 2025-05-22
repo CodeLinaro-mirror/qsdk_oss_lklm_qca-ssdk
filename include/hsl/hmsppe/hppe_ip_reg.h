@@ -1583,7 +1583,7 @@ union host_ipv6_mcast_tbl_u {
 	#define IN_NEXTHOP_TBL_VSI_OFFSET  1
 	#define IN_NEXTHOP_TBL_VSI_LEN     6
 	#define IN_NEXTHOP_TBL_VSI_DEFAULT 0x0
-	/*[field] PORT reuse TYPE[0]*/
+	/*[field] PORT reuse TYPE[1]*/
 	#define IN_NEXTHOP_TBL_PORT
 	#define IN_NEXTHOP_TBL_PORT_OFFSET  1
 	#define IN_NEXTHOP_TBL_PORT_LEN     8

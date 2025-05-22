@@ -931,7 +931,7 @@ hppe_l1_comp_cfg_tbl_shaper_meter_len_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PSCH_SHP_SIGN_TBL_MAX_ENTRY	8
+#define PSCH_SHP_SIGN_TBL_MAX_ENTRY	41
 
 sw_error_t
 hppe_psch_shp_sign_tbl_get(
@@ -945,7 +945,7 @@ hppe_psch_shp_sign_tbl_set(
 		a_uint32_t index,
 		union psch_shp_sign_tbl_u *value);
 
-#define PSCH_SHP_CREDIT_TBL_MAX_ENTRY	8
+#define PSCH_SHP_CREDIT_TBL_MAX_ENTRY	41
 
 sw_error_t
 hppe_psch_shp_credit_tbl_get(
@@ -959,7 +959,7 @@ hppe_psch_shp_credit_tbl_set(
 		a_uint32_t index,
 		union psch_shp_credit_tbl_u *value);
 
-#define PSCH_SHP_CFG_TBL_MAX_ENTRY	8
+#define PSCH_SHP_CFG_TBL_MAX_ENTRY	41
 
 sw_error_t
 hppe_psch_shp_cfg_tbl_get(
@@ -1033,7 +1033,7 @@ hppe_psch_shp_cfg_tbl_token_unit_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PSCH_COMP_TBL_MAX_ENTRY	8
+#define PSCH_COMP_TBL_MAX_ENTRY	41
 
 sw_error_t
 hppe_psch_comp_tbl_get(
@@ -1083,7 +1083,7 @@ hppe_psch_comp_tbl_shaper_compensate_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PSCH_COMP_CFG_TBL_MAX_ENTRY	8
+#define PSCH_COMP_CFG_TBL_MAX_ENTRY	41
 
 sw_error_t
 hppe_psch_comp_cfg_tbl_get(

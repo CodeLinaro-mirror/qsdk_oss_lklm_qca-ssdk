@@ -20,7 +20,6 @@
  * @{
  */
 #include "hsl_reg.h"
-#include "shared_func.h"
 
 sw_error_t
 hppe_queue_tx_counter_tbl_get(
@@ -1752,6 +1751,8 @@ hppe_ac_grp_drop_state_tbl_yel_drop_state_set(
 	return ret;
 }
 
+
+#ifdef JHPPE
 sw_error_t
 hppe_ac_grp_drop_state_tbl_grn_resume_thrd_get(
 		a_uint32_t dev_id,
@@ -1762,8 +1763,8 @@ hppe_ac_grp_drop_state_tbl_grn_resume_thrd_get(
 	sw_error_t ret = SW_OK;
 
 	ret = hppe_ac_grp_drop_state_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.grn_resume_thrd_1 << SW_FIELD_OFFSET_IN_WORD(AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET) | \
-		 reg_val.bf.grn_resume_thrd_0;
+	*value = reg_val.bf.grn_resume_thrd_1 << 8 | \
+		reg_val.bf.grn_resume_thrd_0;
 	return ret;
 }
 
@@ -1779,11 +1780,12 @@ hppe_ac_grp_drop_state_tbl_grn_resume_thrd_set(
 	ret = hppe_ac_grp_drop_state_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.grn_resume_thrd_0 = value;
-	reg_val.bf.grn_resume_thrd_1 = value >> SW_FIELD_OFFSET_IN_WORD(AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+	reg_val.bf.grn_resume_thrd_1 = value >> 8;
+	reg_val.bf.grn_resume_thrd_0 = value & (((a_uint64_t)1<<8)-1);
 	ret = hppe_ac_grp_drop_state_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+#endif
 
 sw_error_t
 hppe_uni_drop_cnt_tbl_uni_drop_byte_get(
