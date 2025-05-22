@@ -477,7 +477,7 @@ hppe_eg_ipv6_prefix_tbl_set(
 				value->val,
 				sizeof(union eg_ipv6_prefix_tbl_u)/sizeof(a_uint32_t));
 }
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 hppe_eg_flow_ipv6_iid_tbl_get(
 		a_uint32_t dev_id,
@@ -1915,7 +1915,7 @@ hppe_flow_ipv6_3tuple_get(
 			entry->val, ARRAY_SIZE(entry->val), A_FALSE);
 }
 
-#ifdef HMSPPE
+#ifdef JHPPE
 sw_error_t
 hppe_eg_global_ctrl_pm_port_bitmap_for_gem_get(
 		a_uint32_t dev_id,

@@ -288,7 +288,7 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 	case FAL_FLOW_QOS_TYPE_TREE_ID:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->tree_id, sizeof(flow_qos->tree_id));
-#if defined(HMSPPE)
+#if defined(JHPPE)
 			eg_treemap->bf.tree_id_0 = FIELD_GET(FLOW_TREE_ID_24BIT_L, tmp);
 			eg_treemap->bf.tree_id_1 = FIELD_GET(FLOW_TREE_ID_24BIT_H, tmp);
 #else
@@ -298,7 +298,7 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 			eg_treemap->bf.type = 0;
 #endif
 		} else {
-#if defined(HMSPPE)
+#if defined(JHPPE)
 			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT_L, eg_treemap->bf.tree_id_0);
 			tmp |= FIELD_PREP(FLOW_TREE_ID_24BIT_H, eg_treemap->bf.tree_id_1);
 #else
@@ -472,7 +472,7 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -532,7 +532,7 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -575,7 +575,7 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.l4_dport = flow_entry->dst_port;
 		entry.bf.l4_sport_0 = flow_entry->src_port;
 		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -603,7 +603,7 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -640,7 +640,7 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.pmtu = flow_entry->pmtu;
 		entry.bf.vpn_id_0 = flow_entry->vpn_id;
 		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
@@ -664,7 +664,7 @@ adpt_hppe_flow_entry_host_op_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -771,7 +771,7 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -833,7 +833,7 @@ adpt_hppe_flow_entry_host_op_get(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.l4_dport = flow_entry->dst_port;
 		entry.bf.l4_sport_0 = flow_entry->src_port;
 		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -854,7 +854,7 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -897,7 +897,7 @@ adpt_hppe_flow_entry_host_op_get(
 					   entry.bf.ip_addr_3 << 20;
 		flow_entry->flow_ip.ipv6.ul[0] = entry.bf.ip_addr_3 >> 12 |\
 					   entry.bf.ip_addr_4 << 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->dst_port = entry.bf.l4_dport;
 		flow_entry->src_port = entry.bf.l4_sport_0;
 		flow_entry->src_port |= entry.bf.l4_sport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -924,7 +924,7 @@ adpt_hppe_flow_entry_host_op_get(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.vpn_id_0 = flow_entry->vpn_id;
 		entry.bf.vpn_id_1 = flow_entry->vpn_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
 #else
@@ -940,7 +940,7 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -977,7 +977,7 @@ adpt_hppe_flow_entry_host_op_get(
 					   entry.bf.ip_addr_1 << 20;
 		flow_entry->ip_type = entry.bf.ip_protocol;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->pmtu = entry.bf.pmtu;
 		flow_entry->vpn_id = entry.bf.vpn_id_0;
 		flow_entry->vpn_id |= entry.bf.vpn_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
@@ -1017,7 +1017,7 @@ adpt_hppe_flow_entry_host_op_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -1115,7 +1115,7 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -1173,7 +1173,7 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -1216,7 +1216,7 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.l4_dport = flow_entry->dst_port;
 		entry.bf.l4_sport_0 = flow_entry->src_port;
 		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -1243,7 +1243,7 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -1280,7 +1280,7 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.pmtu = flow_entry->pmtu;
 		entry.bf.vpn_id_0 = flow_entry->vpn_id;
 		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
@@ -1303,7 +1303,7 @@ adpt_hppe_flow_entry_host_op_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -1464,7 +1464,7 @@ adpt_hppe_flow_entry_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -1532,7 +1532,7 @@ adpt_hppe_flow_entry_get(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.l4_dport = flow_entry->dst_port;
 		entry.bf.l4_sport_0 = flow_entry->src_port;
 		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -1556,7 +1556,7 @@ adpt_hppe_flow_entry_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -1605,7 +1605,7 @@ adpt_hppe_flow_entry_get(
 					   entry.bf.ip_addr_3 << 20;
 		flow_entry->flow_ip.ipv6.ul[0] = entry.bf.ip_addr_3 >> 12 |\
 					   entry.bf.ip_addr_4 << 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->dst_port = entry.bf.l4_dport;
 		flow_entry->src_port = entry.bf.l4_sport_0;
 		flow_entry->src_port |= entry.bf.l4_sport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -1633,7 +1633,7 @@ adpt_hppe_flow_entry_get(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.vpn_id_0 = flow_entry->vpn_id;
 		entry.bf.vpn_id_1 = flow_entry->vpn_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
 #else
@@ -1652,7 +1652,7 @@ adpt_hppe_flow_entry_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -1695,7 +1695,7 @@ adpt_hppe_flow_entry_get(
 					   entry.bf.ip_addr_1 << 20;
 		flow_entry->ip_type = entry.bf.ip_protocol;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->pmtu = entry.bf.pmtu;
 		flow_entry->vpn_id = entry.bf.vpn_id_0;
 		flow_entry->vpn_id |= entry.bf.vpn_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
@@ -1738,7 +1738,7 @@ adpt_hppe_flow_entry_get(
 		flow_entry->src_intf_valid = entry.bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry.bf.src_l3_if;
 		flow_entry->invalid = !entry.bf.valid;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		flow_entry->fwd_type = entry.bf.fwd_type_0;
 		flow_entry->fwd_type |= entry.bf.fwd_type_1 << 2;
 		flow_entry->pri_profile = entry.bf.pri_profile;
@@ -1882,7 +1882,7 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -1940,7 +1940,7 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -1983,7 +1983,7 @@ adpt_hppe_flow_entry_del(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.l4_dport = flow_entry->dst_port;
 		entry.bf.l4_sport_0 = flow_entry->src_port;
 		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -2010,7 +2010,7 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -2047,7 +2047,7 @@ adpt_hppe_flow_entry_del(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.pmtu = flow_entry->pmtu;
 		entry.bf.vpn_id_0 = flow_entry->vpn_id;
 		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
@@ -2070,7 +2070,7 @@ adpt_hppe_flow_entry_del(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -2336,7 +2336,7 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -2395,7 +2395,7 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -2438,7 +2438,7 @@ adpt_hppe_flow_entry_add(
 		entry.bf.ip_addr_3 = flow_entry->flow_ip.ipv6.ul[1] >> 20 |\
 							flow_entry->flow_ip.ipv6.ul[0] << 12;
 		entry.bf.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.l4_dport = flow_entry->dst_port;
 		entry.bf.l4_sport_0 = flow_entry->src_port;
 		entry.bf.l4_sport_1 = flow_entry->src_port >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET);
@@ -2466,7 +2466,7 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;
@@ -2503,7 +2503,7 @@ adpt_hppe_flow_entry_add(
 		entry.bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf.ip_protocol = flow_entry->ip_type;
 #if defined(APPE)
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.pmtu = flow_entry->pmtu;
 		entry.bf.vpn_id_0 = flow_entry->vpn_id;
 		entry.bf.vpn_id_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
@@ -2527,7 +2527,7 @@ adpt_hppe_flow_entry_add(
 		entry.bf.age = flow_entry->age;
 		entry.bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry.bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 		entry.bf.fwd_type_0 = flow_entry->fwd_type;
 		entry.bf.fwd_type_1 = flow_entry->fwd_type >> 2;
 		entry.bf.pri_profile = flow_entry->pri_profile;

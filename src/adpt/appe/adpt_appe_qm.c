@@ -64,7 +64,7 @@ adpt_appe_qm_enqueue_config_set(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 			index = enqueue_cfg->rule_entry.dst_port;
 			rv = appe_l2_vp_port_tbl_get(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
-		#ifdef HMSPPE
+		#ifdef JHPPE
 			//to be fix
 		#else
 			l2_vp_tbl.bf.enq_service_code_en = enqueue_cfg->index_entry.enqueue_en;
@@ -121,7 +121,7 @@ adpt_appe_qm_enqueue_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 			index = enqueue_cfg->rule_entry.dst_port;
 			rv = appe_l2_vp_port_tbl_get(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
-		#ifdef HMSPPE
+		#ifdef JHPPE
 			//to be fix
 		#else
 			enqueue_cfg->index_entry.enqueue_en =
