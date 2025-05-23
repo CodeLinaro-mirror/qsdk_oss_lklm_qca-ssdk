@@ -1,19 +1,9 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
+
 
 /*qca808x_start*/
 #ifndef _API_DESC_H_
@@ -4043,7 +4033,7 @@ extern "C" {
 	SW_PARAM_DEF(SW_API_FLOW_NPT66_PREFIX_GET, SW_UINT32, \
 			sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "Prefix length"),
 
-		
+
 #define SW_API_FLOW_NPT66_PREFIX_DEL_DESC \
 	SW_PARAM_DEF(SW_API_FLOW_NPT66_PREFIX_DEL, SW_UINT32, \
 			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
@@ -4073,7 +4063,7 @@ extern "C" {
 			sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
 	SW_PARAM_DEF(SW_API_FLOW_NPT66_IID_ADD, SW_FLOW_NPT66_IID, \
 			sizeof(fal_flow_npt66_iid_t), SW_PARAM_PTR|SW_PARAM_IN, "iid entry"),
-	
+
 #define SW_API_FLOW_NPT66_IID_GET_DESC \
 	SW_PARAM_DEF(SW_API_FLOW_NPT66_IID_GET, SW_UINT32, \
 			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
@@ -6307,6 +6297,101 @@ extern "C" {
 			sizeof(a_uint32_t), SW_PARAM_IN, "Cpu Code"),\
 	SW_PARAM_DEF(SW_API_RXDESC_CPUCODE_EN_GET, SW_ENABLE, \
 			sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "Enable"),
+
+#define SW_API_SAMPL_TIME_SET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_TIME_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_TIME_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "buff_index"),\
+	SW_PARAM_DEF(SW_API_SAMPL_TIME_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "time_value"),
+
+#define SW_API_SAMPL_TIME_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_TIME_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_TIME_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "buff_index"),\
+	SW_PARAM_DEF(SW_API_SAMPL_TIME_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "time_value"),
+
+#define SW_API_SAMPL_BUFF_STATUS_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_BUFF_STATUS_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_BUFF_STATUS_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "buff_index"),\
+	SW_PARAM_DEF(SW_API_SAMPL_BUFF_STATUS_GET, SW_ENABLE, \
+		     sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "done_status"),
+
+#define SW_API_SAMPL_BUFF_STATUS_CLEAR_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_BUFF_STATUS_CLEAR, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_BUFF_STATUS_CLEAR, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "buff_index"),
+
+#define SW_API_SAMPL_DONE_MISS_CNT_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_DONE_MISS_CNT_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_DONE_MISS_CNT_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_PTR|SW_PARAM_OUT, "done_miss"),
+
+#define SW_API_SAMPL_DONE_MISS_CNT_CLEAR_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_DONE_MISS_CNT_CLEAR, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),
+
+#define SW_API_SAMPL_BURST_CFG_SET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_BURST_CFG_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_BURST_CFG_SET, SW_SAMPL_BURST_CFG, \
+		     sizeof(fal_sampling_burst_cfg_t), \
+		     SW_PARAM_PTR|SW_PARAM_IN, "burst_cfg"),
+
+#define SW_API_SAMPL_BURST_CFG_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_BURST_CFG_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_BURST_CFG_GET, SW_SAMPL_BURST_CFG, \
+		     sizeof(fal_sampling_burst_cfg_t), \
+		     SW_PARAM_PTR|SW_PARAM_OUT, "burst_cfg"),
+
+#define SW_API_SAMPL_CTRL_SET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_CTRL_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_CTRL_SET, SW_SAMPL_CTRL, \
+		     sizeof(fal_sampling_ctrl_t), \
+		     SW_PARAM_PTR|SW_PARAM_IN, "ctrl_cfg"),
+
+#define SW_API_SAMPL_CTRL_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_CTRL_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_CTRL_GET, SW_SAMPL_CTRL, \
+		     sizeof(fal_sampling_ctrl_t), \
+		     SW_PARAM_PTR|SW_PARAM_OUT, "ctrl_cfg"),
+
+#define SW_API_SAMPL_WINDOW_EN_SET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_WINDOW_EN_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_WINDOW_EN_SET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "window_index"),\
+	SW_PARAM_DEF(SW_API_SAMPL_WINDOW_EN_SET, SW_ENABLE, \
+		     sizeof(a_bool_t), SW_PARAM_IN, "enable"),
+
+#define SW_API_SAMPL_WINDOW_EN_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_WINDOW_EN_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_WINDOW_EN_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "window_index"),\
+	SW_PARAM_DEF(SW_API_SAMPL_WINDOW_EN_GET, SW_ENABLE, \
+		     sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "enable"),
+
+#define SW_API_SAMPL_COUNTER_GET_DESC \
+	SW_PARAM_DEF(SW_API_SAMPL_COUNTER_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_SAMPL_COUNTER_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "buff_index"),\
+	SW_PARAM_DEF(SW_API_SAMPL_COUNTER_GET, SW_UINT32, \
+		     sizeof(a_uint32_t), SW_PARAM_IN, "counter_id"), \
+	SW_PARAM_DEF(SW_API_SAMPL_COUNTER_GET, SW_SAMPL_COUNTER, \
+		     sizeof(fal_sampling_counter_entry_t), \
+		     SW_PARAM_PTR|SW_PARAM_OUT, "counter"),
 
 /* auto_insert_flag */
 /*qca808x_start*/

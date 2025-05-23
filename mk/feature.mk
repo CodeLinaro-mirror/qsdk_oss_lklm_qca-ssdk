@@ -63,6 +63,7 @@ IN_NAT=TRUE
 IN_TRUNK=TRUE
 IN_SEC=TRUE
 IN_PPPOE=TRUE
+IN_SAMPL=FALSE
 
 ifeq ($(HNAT_FEATURE), enable)
 	IN_NAT_HELPER=TRUE
@@ -262,5 +263,9 @@ endif
 
 ifneq (, $(filter JHPPE HMSPPE MRPPE, $(CHIP_TYPE)))
 	IN_PKTEDIT=TRUE
+endif
+
+ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
+	IN_SAMPL=TRUE
 endif
 #auto_insert_flag

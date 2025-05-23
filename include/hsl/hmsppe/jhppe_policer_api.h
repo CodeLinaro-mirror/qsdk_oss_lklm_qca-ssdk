@@ -272,6 +272,48 @@ jhppe_sawf_flow_block_map_set(
 		a_uint32_t index,
 		union sawf_flow_block_map_u *value);
 
+sw_error_t
+jhppe_sawf_flow_statis_ctrl2_sawf0_done_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl10_sawf1_done_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl2_sawf0_done_set(
+		a_uint32_t dev_id,
+		a_uint32_t value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl10_sawf1_done_set(
+		a_uint32_t dev_id,
+		a_uint32_t value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl9_sawf_done_miss_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl9_sawf_done_miss_set(
+		a_uint32_t dev_id,
+		a_uint32_t value);
+
+sw_error_t
+jhppe_sawf_flow_block_map_valid_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+jhppe_sawf_flow_block_map_valid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
 #define PM_COUNTER_TBL_MAX_ENTRY	32
 
 sw_error_t
