@@ -606,14 +606,11 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 
 #if defined(IN_QOS)
 
-void qca_qos_scheduler_port_id_convert(a_uint32_t *port_id)
+void qca_qos_scheduler_port_id_convert(a_uint32_t dev_id, a_uint32_t *port_id)
 {
-#if defined(MRPPE)
-#define QOS_QSCHEDULER_PORT_MAX		SSDK_PHYSICAL_PORT4
-#else
-#define QOS_QSCHEDULER_PORT_MAX		SSDK_PHYSICAL_PORT3
-#endif
-	if (*port_id >= QOS_QSCHEDULER_PORT_MAX && *port_id <= SSDK_PHYSICAL_PORT6)
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if (*port_id >= priv->ports_num)
 		*port_id = SSDK_PHYSICAL_PORT1;
 }
 
@@ -634,7 +631,7 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 		if (dt_cfg->l1cfg[i].valid) {
 			port_id = dt_cfg->l1cfg[i].port_id;
 #if defined(IN_ATHTAG) && !defined(JHPPE)
-			qca_qos_scheduler_port_id_convert(&port_id);
+			qca_qos_scheduler_port_id_convert(dev_id, &port_id);
 #endif
 			cfg.sp_id = port_id;
 			cfg.c_pri = dt_cfg->l1cfg[i].cpri;
@@ -653,7 +650,7 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 		if (dt_cfg->l0cfg[i].valid) {
 			port_id = dt_cfg->l0cfg[i].port_id;
 #if defined(IN_ATHTAG) && !defined(JHPPE)
-			qca_qos_scheduler_port_id_convert(&port_id);
+			qca_qos_scheduler_port_id_convert(dev_id, &port_id);
 #endif
 			cfg.sp_id = dt_cfg->l0cfg[i].sp_id;
 			cfg.c_pri = dt_cfg->l0cfg[i].cpri;
