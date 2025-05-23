@@ -306,22 +306,6 @@ void ssdk_portvlan_init(a_uint32_t dev_id)
 }
 #endif
 
-sw_error_t ssdk_port_eee_init(a_uint32_t dev_id, a_uint32_t port_id)
-{
-	struct phy_device *phydev = NULL;
-	fal_port_eee_cfg_t port_eee_cfg = {0};
-
-	hsl_port_phydev_get(dev_id, port_id, &phydev);
-	if (phydev && phydev->eee_enabled) {
-		fal_port_interface_eee_cfg_get(dev_id, port_id, &port_eee_cfg);
-		port_eee_cfg.enable = A_TRUE;
-		port_eee_cfg.lpi_tx_enable = A_TRUE;
-		fal_port_interface_eee_cfg_set(dev_id, port_id, &port_eee_cfg);
-	}
-
-	return SW_OK;
-}
-
 sw_error_t
 qca_switch_init(a_uint32_t dev_id)
 {
@@ -335,6 +319,7 @@ qca_switch_init(a_uint32_t dev_id)
 	int i = 0;
 	a_uint32_t port_bmp = 0;
 	hsl_reg_mode reg_mode = HSL_REG_MDIO;
+	fal_port_eee_cfg_t port_eee_cfg = {0};
 	ssdk_chip_type chip_type = hsl_get_current_chip_type(dev_id);
 
 	/*fal_reset(dev_id);*/
@@ -402,7 +387,10 @@ qca_switch_init(a_uint32_t dev_id)
 			fal_igmp_mld_entry_v3_set(dev_id, A_FALSE);
 #endif
 #ifdef IN_PORTCONTROL
-			ssdk_port_eee_init(dev_id, i);
+			fal_port_interface_eee_cfg_get(dev_id, i, &port_eee_cfg);
+			port_eee_cfg.enable = A_FALSE;
+			port_eee_cfg.lpi_tx_enable = A_FALSE;
+			fal_port_interface_eee_cfg_set(dev_id, i, &port_eee_cfg);
 #endif
 
 			switch (chip_type) {

@@ -3532,24 +3532,23 @@ adpt_ppe_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	a_uint32_t port_mac_type;
-	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id)) {
+		return SW_NOT_SUPPORTED;
+	}
 
 	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
 	if (port_mac_type == PORT_XGMAC_TYPE) {
 #if defined(APPE)
-		rv = _adpt_hppe_xgmac_port_interface_eee_cfg_set( dev_id, port_id, port_eee_cfg);
+		_adpt_hppe_xgmac_port_interface_eee_cfg_set( dev_id, port_id, port_eee_cfg);
 #endif
 	} else if (port_mac_type == PORT_GMAC_TYPE) {
-		rv = _adpt_ppe_gmac_port_interface_eee_cfg_set( dev_id, port_id, port_eee_cfg);
+		_adpt_ppe_gmac_port_interface_eee_cfg_set( dev_id, port_id, port_eee_cfg);
 	} else {
 		return SW_BAD_VALUE;
 	}
-
-	/* rv may be from nss PHY driver that is different from SSDK */
-	if (rv != SW_OK)
-		return SW_FAIL;
 
 	return SW_OK;
 }
@@ -3559,24 +3558,22 @@ adpt_ppe_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	a_uint32_t port_mac_type;
-	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
+	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id)) {
+		return SW_NOT_SUPPORTED;
+	}
 
 	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
 	if (port_mac_type == PORT_XGMAC_TYPE) {
 #if defined(APPE)
-		rv = _adpt_hppe_xgmac_port_interface_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+		_adpt_hppe_xgmac_port_interface_eee_cfg_get( dev_id, port_id, port_eee_cfg);
 #endif
 	} else if (port_mac_type == PORT_GMAC_TYPE) {
-		rv = _adpt_ppe_gmac_port_interface_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+		_adpt_ppe_gmac_port_interface_eee_cfg_get( dev_id, port_id, port_eee_cfg);
 	} else {
 		return SW_BAD_VALUE;
 	}
-
-	/* rv may be from nss PHY driver that is different from SSDK */
-	if (rv != SW_OK)
-		return SW_FAIL;
 
 	return SW_OK;
 }
