@@ -318,6 +318,7 @@ typedef enum
 	SW_SAMPL_BURST_CFG,
 	SW_SAMPL_CTRL,
 	SW_SAMPL_COUNTER,
+	SW_TCONT_CFG,
 /* auto_insert_flag */
 } sw_data_type_e;
 

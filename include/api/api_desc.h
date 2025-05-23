@@ -4788,6 +4788,24 @@ extern "C" {
     SW_PARAM_DEF(SW_API_QM_COUNTER_MONITOR_STATS_GET, SW_MONITOR_STATS, \
             sizeof(fal_qm_monitor_stats_t), SW_PARAM_PTR|SW_PARAM_OUT, "monitor stats"),
 
+#define SW_API_QM_TCONT_GET_DESC \
+    SW_PARAM_DEF(SW_API_QM_TCONT_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_QM_TCONT_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "queue ID"), \
+    SW_PARAM_DEF(SW_API_QM_TCONT_GET, SW_TCONT_CFG, \
+		    sizeof(fal_queue_tcont_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+		    "TCONT configuration"),
+
+#define SW_API_QM_TCONT_SET_DESC \
+    SW_PARAM_DEF(SW_API_QM_TCONT_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_QM_TCONT_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "queue ID"), \
+    SW_PARAM_DEF(SW_API_QM_TCONT_SET, SW_TCONT_CFG, \
+		    sizeof(fal_queue_tcont_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, \
+		    "TCONT configuration"),
+
 #define SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET_DESC \
     SW_PARAM_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, SW_UINT32, 4, SW_PARAM_IN, "Profile ID"), \

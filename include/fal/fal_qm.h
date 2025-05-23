@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -156,6 +146,21 @@ typedef struct {
       a_uint32_t peak_packets;
       a_uint32_t peak_bytes;
 } fal_qm_monitor_stats_t;
+
+typedef struct {
+	a_bool_t valid;
+	a_uint32_t tcont_id;
+} fal_queue_tcont_cfg_t;
+
+sw_error_t
+fal_qm_tcont_set(a_uint32_t dev_id,
+		 a_uint32_t queue_id,
+		 fal_queue_tcont_cfg_t *cfg);
+
+sw_error_t
+fal_qm_tcont_get(a_uint32_t dev_id,
+		 a_uint32_t queue_id,
+		 fal_queue_tcont_cfg_t *cfg);
 
 sw_error_t
 fal_ac_ctrl_set(
