@@ -27,7 +27,9 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#if defined(MRPPE)
+#if defined(HMSPPE)
+#define ADPT_PRE_ACL_HW_LIST_NUM 16
+#elif defined(MRPPE)
 #define ADPT_PRE_ACL_HW_LIST_NUM 64 /* hw list number */
 #elif defined(MPPE)
 #define ADPT_PRE_ACL_HW_LIST_NUM 16

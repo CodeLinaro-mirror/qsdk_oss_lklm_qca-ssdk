@@ -42,7 +42,9 @@
 #define ADPT_ACL_HPPE_IPV6_SIP2_RULE 11
 #define ADPT_ACL_HPPE_IPMISC_RULE 12
 
-#if defined(MRPPE)
+#if defined(HMSPPE)
+#define ADPT_ACL_HW_LIST_NUM 16
+#elif defined(MRPPE)
 #define ADPT_ACL_HW_LIST_NUM 64 /* hw list number */
 #elif defined(MPPE)
 #define ADPT_ACL_HW_LIST_NUM 16
@@ -51,7 +53,9 @@
 #endif
 #define ADPT_ACL_ENTRY_NUM_PER_LIST 8 /* hw rule entries number per hw list */
 
-#if defined(MRPPE)
+#if defined(HMSPPE)
+#define ADPT_ACL_SW_LIST_NUM 256
+#elif defined(MRPPE)
 #define ADPT_ACL_SW_LIST_NUM 1024
 #elif defined(MPPE)
 #define ADPT_ACL_SW_LIST_NUM 256
@@ -1921,7 +1925,9 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 	if(hw_act->bf.service_code_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE);
-		rule->service_code = (hw_act->bf.service_code_1<<1)|hw_act->bf.service_code_0;
+		rule->service_code = (hw_act->bf.service_code_1 <<
+				SW_FIELD_OFFSET_IN_WORD(IPO_ACTION_SERVICE_CODE_OFFSET)) |
+				hw_act->bf.service_code_0;
 	}
 	if(hw_act->bf.syn_toggle)
 	{
@@ -3944,8 +3950,9 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE))
 	{
 		hw_act->bf.service_code_en = 1;
-		hw_act->bf.service_code_0 = rule->service_code&0x1;
-		hw_act->bf.service_code_1 = (rule->service_code>>1)&0x7f;
+		hw_act->bf.service_code_0 = rule->service_code;
+		hw_act->bf.service_code_1 = rule->service_code >>
+			SW_FIELD_OFFSET_IN_WORD(IPO_ACTION_SERVICE_CODE_OFFSET);
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SYN_TOGGLE))
 	{
