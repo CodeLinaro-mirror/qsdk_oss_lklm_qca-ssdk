@@ -20,6 +20,7 @@
  * @{
  */
 #include "hsl_reg.h"
+#include "shared_func.h"
 
 sw_error_t
 hppe_queue_tx_counter_tbl_get(
@@ -405,6 +406,114 @@ hppe_mcast_priority_map7_set(
 				value->val);
 }
 
+#ifdef JHPPE
+sw_error_t
+hppe_agg_profile_cnt_en_get(
+		a_uint32_t dev_id,
+		union agg_profile_cnt_en_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AGG_PROFILE_CNT_EN_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+hppe_agg_profile_cnt_en_set(
+		a_uint32_t dev_id,
+		union agg_profile_cnt_en_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AGG_PROFILE_CNT_EN_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+hppe_grp_agg_profile_cfg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union grp_agg_profile_cfg_u *value)
+{
+	if (index >= GRP_AGG_PROFILE_CFG_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + GRP_AGG_PROFILE_CFG_ADDRESS + \
+				index * GRP_AGG_PROFILE_CFG_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_grp_agg_profile_cfg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union grp_agg_profile_cfg_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + GRP_AGG_PROFILE_CFG_ADDRESS + \
+				index * GRP_AGG_PROFILE_CFG_INC,
+				value->val);
+}
+
+sw_error_t
+hppe_grp_agg_in_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union grp_agg_in_profile_cnt_u *value)
+{
+	if (index >= GRP_AGG_IN_PROFILE_CNT_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + GRP_AGG_IN_PROFILE_CNT_ADDRESS + \
+				index * GRP_AGG_IN_PROFILE_CNT_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_grp_agg_in_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union grp_agg_in_profile_cnt_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + GRP_AGG_IN_PROFILE_CNT_ADDRESS + \
+				index * GRP_AGG_IN_PROFILE_CNT_INC,
+				value->val);
+}
+
+sw_error_t
+hppe_grp_agg_out_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union grp_agg_out_profile_cnt_u *value)
+{
+	if (index >= GRP_AGG_OUT_PROFILE_CNT_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + GRP_AGG_OUT_PROFILE_CNT_ADDRESS + \
+				index * GRP_AGG_OUT_PROFILE_CNT_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_grp_agg_out_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union grp_agg_out_profile_cnt_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + GRP_AGG_OUT_PROFILE_CNT_ADDRESS + \
+				index * GRP_AGG_OUT_PROFILE_CNT_INC,
+				value->val);
+}
+#endif
+
 sw_error_t
 hppe_ucast_queue_map_tbl_get(
 		a_uint32_t dev_id,
@@ -685,6 +794,35 @@ hppe_ac_mul_queue_cnt_tbl_set(
 				value->val);
 }
 
+#ifdef JHPPE
+sw_error_t
+hppe_ac_grp_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AC_GRP_CNT_TBL_ADDRESS + \
+				index * AC_GRP_CNT_TBL_INC,
+				value->val,
+				sizeof(union ac_grp_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+hppe_ac_grp_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AC_GRP_CNT_TBL_ADDRESS + \
+				index * AC_GRP_CNT_TBL_INC,
+				value->val,
+				sizeof(union ac_grp_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+#else
 sw_error_t
 hppe_ac_grp_cnt_tbl_get(
 		a_uint32_t dev_id,
@@ -712,6 +850,7 @@ hppe_ac_grp_cnt_tbl_set(
 				index * AC_GRP_CNT_TBL_INC,
 				value->val);
 }
+#endif
 
 sw_error_t
 hppe_ac_uni_queue_drop_state_tbl_get(
@@ -823,34 +962,6 @@ hppe_oq_enq_opr_tbl_set(
 				QUEUE_MANAGER_BASE_ADDR + OQ_ENQ_OPR_TBL_ADDRESS + \
 				index * OQ_ENQ_OPR_TBL_INC,
 				value->val);
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union pkt_desp_tbl_u *value)
-{
-	return hppe_reg_tbl_get(
-				dev_id,
-				QUEUE_MANAGER_BASE_ADDR + PKT_DESP_TBL_ADDRESS + \
-				index * PKT_DESP_TBL_INC,
-				value->val,
-				sizeof(union pkt_desp_tbl_u)/sizeof(a_uint32_t));
-}
-
-sw_error_t
-hppe_pkt_desp_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union pkt_desp_tbl_u *value)
-{
-	return hppe_reg_tbl_set(
-				dev_id,
-				QUEUE_MANAGER_BASE_ADDR + PKT_DESP_TBL_ADDRESS + \
-				index * PKT_DESP_TBL_INC,
-				value->val,
-				sizeof(union pkt_desp_tbl_u)/sizeof(a_uint32_t));
 }
 
 sw_error_t
@@ -1651,8 +1762,8 @@ hppe_ac_grp_drop_state_tbl_grn_resume_thrd_get(
 	sw_error_t ret = SW_OK;
 
 	ret = hppe_ac_grp_drop_state_tbl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.grn_resume_thrd_1 << 10 | \
-		reg_val.bf.grn_resume_thrd_0;
+	*value = reg_val.bf.grn_resume_thrd_1 << SW_FIELD_OFFSET_IN_WORD(AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET) | \
+		 reg_val.bf.grn_resume_thrd_0;
 	return ret;
 }
 
@@ -1668,13 +1779,12 @@ hppe_ac_grp_drop_state_tbl_grn_resume_thrd_set(
 	ret = hppe_ac_grp_drop_state_tbl_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.grn_resume_thrd_1 = value >> 10;
-	reg_val.bf.grn_resume_thrd_0 = value & (((a_uint64_t)1<<10)-1);
+	reg_val.bf.grn_resume_thrd_0 = value;
+	reg_val.bf.grn_resume_thrd_1 = value >> SW_FIELD_OFFSET_IN_WORD(AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
 	ret = hppe_ac_grp_drop_state_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
-#ifdef HMSPPE
 sw_error_t
 hppe_uni_drop_cnt_tbl_uni_drop_byte_get(
 		a_uint32_t dev_id,
@@ -2314,4 +2424,4 @@ hppe_queue_tx_counter_tbl_tx_packets_set(
 	ret = hppe_queue_tx_counter_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+
