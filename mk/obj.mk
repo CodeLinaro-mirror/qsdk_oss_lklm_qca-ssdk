@@ -121,6 +121,7 @@ OBJ-ISISC  += src/hsl/isisc/isisc_qos.o
 OBJ-HPPE   += src/hsl/hppe/hppe_qos.o src/adpt/hppe/adpt_hppe_qos.o
 OBJ-CPPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o
 OBJ-APPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o #to be fixed
+OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_qos.o
 endif
 
 ###############################################################################

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -27,6 +16,9 @@
 #include "adpt_hppe.h"
 #if defined(CPPE) || defined(APPE)
 #include "adpt_cppe_qos.h"
+#endif
+#if defined(JHPPE)
+#include "adpt_jhppe_qos.h"
 #endif
 
 static fal_queue_bmp_t port_queue_map[8] = {0};
@@ -711,7 +703,10 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_reservedpool_scheduler_resource_get =
 		adpt_ppe_reservedpool_scheduler_resource_get;
 #endif
-
+#if defined(JHPPE)
+	p_adpt_api->adpt_qos_port_pcp_cfg_set = adpt_jhppe_qos_port_pcp_cfg_set;
+	p_adpt_api->adpt_qos_port_pcp_cfg_get = adpt_jhppe_qos_port_pcp_cfg_get;
+#endif
 	return SW_OK;
 }
 
