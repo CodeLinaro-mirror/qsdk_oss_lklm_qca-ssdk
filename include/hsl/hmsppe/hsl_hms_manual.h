@@ -26,9 +26,7 @@ enum {
 /*[register]*/
 #define IPO_MASK_REG
 #define IPO_MASK_REG_ADDRESS 0x2000
-#if defined(MRPPE)
-#define IPO_MASK_REG_NUM     512
-#elif defined(MPPE)
+#if defined(HMSPPE)
 #define IPO_MASK_REG_NUM     128
 #else
 #define IPO_MASK_REG_NUM     512
@@ -39,7 +37,11 @@ enum {
 
 #define IPO_RULE_REG
 #define IPO_RULE_REG_ADDRESS 0x0
+#if defined(HMSPPE)
+#define IPO_RULE_REG_NUM     128
+#else
 #define IPO_RULE_REG_NUM     512
+#endif
 #define IPO_RULE_REG_INC     0x10
 #define IPO_RULE_REG_TYPE    REG_TYPE_RW
 #define IPO_RULE_REG_DEFAULT 0x0
@@ -157,9 +159,7 @@ enum {
 /*[table] PRE_IPO_MASK_REG*/
 #define PRE_IPO_MASK_REG
 #define PRE_IPO_MASK_REG_ADDRESS 0x2000
-#if defined(MRPPE)
-#define PRE_IPO_MASK_REG_NUM     512
-#elif defined(MPPE)
+#if defined(HMSPPE)
 #define PRE_IPO_MASK_REG_NUM     128
 #else
 #define PRE_IPO_MASK_REG_NUM     512
@@ -171,9 +171,7 @@ enum {
 /*[table] PRE_IPO_RULE_REG*/
 #define PRE_IPO_RULE_REG
 #define PRE_IPO_RULE_REG_ADDRESS 0x0
-#if defined(MRPPE)
-#define PRE_IPO_RULE_REG_NUM     512
-#elif defined(MPPE)
+#if defined(HMSPPE)
 #define PRE_IPO_RULE_REG_NUM     128
 #else
 #define PRE_IPO_RULE_REG_NUM     512
