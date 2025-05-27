@@ -302,50 +302,6 @@ hppe_shared_group_cfg_set(
 }
 
 sw_error_t
-hppe_port_profile_cnt_en_get(
-		a_uint32_t dev_id,
-		union port_profile_cnt_en_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + PORT_PROFILE_CNT_EN_ADDRESS,
-				&value->val);
-}
-
-sw_error_t
-hppe_port_profile_cnt_en_set(
-		a_uint32_t dev_id,
-		union port_profile_cnt_en_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + PORT_PROFILE_CNT_EN_ADDRESS,
-				value->val);
-}
-
-sw_error_t
-hppe_grp_profile_cnt_en_get(
-		a_uint32_t dev_id,
-		union grp_profile_cnt_en_u *value)
-{
-	return hppe_reg_get(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + GRP_PROFILE_CNT_EN_ADDRESS,
-				&value->val);
-}
-
-sw_error_t
-hppe_grp_profile_cnt_en_set(
-		a_uint32_t dev_id,
-		union grp_profile_cnt_en_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_BM_CSR_BASE_ADDR + GRP_PROFILE_CNT_EN_ADDRESS,
-				value->val);
-}
-
-sw_error_t
 hppe_port_profile_th_cfg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

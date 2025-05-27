@@ -13,12 +13,12 @@
 #define TDM_DEPTH_CFG_NUM     1
 #define TDM_DEPTH_CFG_INC     0x4
 #define TDM_DEPTH_CFG_TYPE    REG_TYPE_RW
-#define TDM_DEPTH_CFG_DEFAULT 0x28
+#define TDM_DEPTH_CFG_DEFAULT 0x3b
 	/*[field] TDM_DEPTH*/
 	#define TDM_DEPTH_CFG_TDM_DEPTH
 	#define TDM_DEPTH_CFG_TDM_DEPTH_OFFSET  0
 	#define TDM_DEPTH_CFG_TDM_DEPTH_LEN     8
-	#define TDM_DEPTH_CFG_TDM_DEPTH_DEFAULT 0x28
+	#define TDM_DEPTH_CFG_TDM_DEPTH_DEFAULT 0x3b
 
 struct tdm_depth_cfg {
 	a_uint32_t  tdm_depth:8;
@@ -62,6 +62,26 @@ union tdm_depth_cfg_u {
 	#define L0_FLOW_MAP_TBL_E_DRR_WT_OFFSET  22
 	#define L0_FLOW_MAP_TBL_E_DRR_WT_LEN     10
 	#define L0_FLOW_MAP_TBL_E_DRR_WT_DEFAULT 0x0
+	/*[field] C_DRR_ID*/
+	#define L0_FLOW_MAP_TBL_C_DRR_ID
+	#define L0_FLOW_MAP_TBL_C_DRR_ID_OFFSET  32
+	#define L0_FLOW_MAP_TBL_C_DRR_ID_LEN     8
+	#define L0_FLOW_MAP_TBL_C_DRR_ID_DEFAULT 0x0
+	/*[field] E_DRR_ID*/
+	#define L0_FLOW_MAP_TBL_E_DRR_ID
+	#define L0_FLOW_MAP_TBL_E_DRR_ID_OFFSET  40
+	#define L0_FLOW_MAP_TBL_E_DRR_ID_LEN     8
+	#define L0_FLOW_MAP_TBL_E_DRR_ID_DEFAULT 0x0
+	/*[field] C_DRR_CREDIT_UNIT*/
+	#define L0_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT
+	#define L0_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_OFFSET  48
+	#define L0_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_LEN     1
+	#define L0_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_DEFAULT 0x0
+	/*[field] E_DRR_CREDIT_UNIT*/
+	#define L0_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT
+	#define L0_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_OFFSET  49
+	#define L0_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_LEN     1
+	#define L0_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_DEFAULT 0x0
 
 struct l0_flow_map_tbl {
 	a_uint32_t  sp_id:6;
@@ -69,69 +89,16 @@ struct l0_flow_map_tbl {
 	a_uint32_t  e_pri:3;
 	a_uint32_t  c_drr_wt:10;
 	a_uint32_t  e_drr_wt:10;
+	a_uint32_t  c_drr_id:8;
+	a_uint32_t  e_drr_id:8;
+	a_uint32_t  c_drr_credit_unit:1;
+	a_uint32_t  e_drr_credit_unit:1;
+	a_uint32_t  _reserved0:14;
 };
 
 union l0_flow_map_tbl_u {
-	a_uint32_t val;
+	a_uint32_t val[2];
 	struct l0_flow_map_tbl bf;
-};
-
-/*[table] L0_C_SP_CFG_TBL*/
-#define L0_C_SP_CFG_TBL
-#define L0_C_SP_CFG_TBL_ADDRESS 0x4000
-#define L0_C_SP_CFG_TBL_NUM     512
-#define L0_C_SP_CFG_TBL_INC     0x10
-#define L0_C_SP_CFG_TBL_TYPE    REG_TYPE_RW
-#define L0_C_SP_CFG_TBL_DEFAULT 0x0
-	/*[field] DRR_ID*/
-	#define L0_C_SP_CFG_TBL_DRR_ID
-	#define L0_C_SP_CFG_TBL_DRR_ID_OFFSET  0
-	#define L0_C_SP_CFG_TBL_DRR_ID_LEN     8
-	#define L0_C_SP_CFG_TBL_DRR_ID_DEFAULT 0x0
-	/*[field] DRR_CREDIT_UNIT*/
-	#define L0_C_SP_CFG_TBL_DRR_CREDIT_UNIT
-	#define L0_C_SP_CFG_TBL_DRR_CREDIT_UNIT_OFFSET  8
-	#define L0_C_SP_CFG_TBL_DRR_CREDIT_UNIT_LEN     1
-	#define L0_C_SP_CFG_TBL_DRR_CREDIT_UNIT_DEFAULT 0x0
-
-struct l0_c_sp_cfg_tbl {
-	a_uint32_t  drr_id:8;
-	a_uint32_t  drr_credit_unit:1;
-	a_uint32_t  _reserved0:23;
-};
-
-union l0_c_sp_cfg_tbl_u {
-	a_uint32_t val;
-	struct l0_c_sp_cfg_tbl bf;
-};
-
-/*[table] L0_E_SP_CFG_TBL*/
-#define L0_E_SP_CFG_TBL
-#define L0_E_SP_CFG_TBL_ADDRESS 0x6000
-#define L0_E_SP_CFG_TBL_NUM     512
-#define L0_E_SP_CFG_TBL_INC     0x10
-#define L0_E_SP_CFG_TBL_TYPE    REG_TYPE_RW
-#define L0_E_SP_CFG_TBL_DEFAULT 0x0
-	/*[field] DRR_ID*/
-	#define L0_E_SP_CFG_TBL_DRR_ID
-	#define L0_E_SP_CFG_TBL_DRR_ID_OFFSET  0
-	#define L0_E_SP_CFG_TBL_DRR_ID_LEN     8
-	#define L0_E_SP_CFG_TBL_DRR_ID_DEFAULT 0x0
-	/*[field] DRR_CREDIT_UNIT*/
-	#define L0_E_SP_CFG_TBL_DRR_CREDIT_UNIT
-	#define L0_E_SP_CFG_TBL_DRR_CREDIT_UNIT_OFFSET  8
-	#define L0_E_SP_CFG_TBL_DRR_CREDIT_UNIT_LEN     1
-	#define L0_E_SP_CFG_TBL_DRR_CREDIT_UNIT_DEFAULT 0x0
-
-struct l0_e_sp_cfg_tbl {
-	a_uint32_t  drr_id:8;
-	a_uint32_t  drr_credit_unit:1;
-	a_uint32_t  _reserved0:23;
-};
-
-union l0_e_sp_cfg_tbl_u {
-	a_uint32_t val;
-	struct l0_e_sp_cfg_tbl bf;
 };
 
 /*[table] L0_FLOW_PORT_MAP_TBL*/
@@ -160,7 +127,7 @@ union l0_flow_port_map_tbl_u {
 /*[table] L0_C_DRR_HEAD_TBL*/
 #define L0_C_DRR_HEAD_TBL
 #define L0_C_DRR_HEAD_TBL_ADDRESS 0xa000
-#define L0_C_DRR_HEAD_TBL_NUM     160
+#define L0_C_DRR_HEAD_TBL_NUM     256
 #define L0_C_DRR_HEAD_TBL_INC     0x10
 #define L0_C_DRR_HEAD_TBL_TYPE    REG_TYPE_RO
 #define L0_C_DRR_HEAD_TBL_DEFAULT 0x0
@@ -226,7 +193,7 @@ union l0_c_drr_head_tbl_u {
 /*[table] L0_E_DRR_HEAD_TBL*/
 #define L0_E_DRR_HEAD_TBL
 #define L0_E_DRR_HEAD_TBL_ADDRESS 0xc000
-#define L0_E_DRR_HEAD_TBL_NUM     160
+#define L0_E_DRR_HEAD_TBL_NUM     256
 #define L0_E_DRR_HEAD_TBL_INC     0x10
 #define L0_E_DRR_HEAD_TBL_TYPE    REG_TYPE_RO
 #define L0_E_DRR_HEAD_TBL_DEFAULT 0x0
@@ -427,17 +394,17 @@ union l0_e_drr_reverse_ll_tbl_u {
 #define L0_SP_ENTRY_TBL
 #define L0_SP_ENTRY_TBL_ADDRESS 0x18000
 #define L0_SP_ENTRY_TBL_NUM     64
-#define L0_SP_ENTRY_TBL_INC     0x20
+#define L0_SP_ENTRY_TBL_INC     0x40
 #define L0_SP_ENTRY_TBL_TYPE    REG_TYPE_RO
 #define L0_SP_ENTRY_TBL_DEFAULT 0x0
 	/*[field] ENTRY_PATH_ID*/
 	#define L0_SP_ENTRY_TBL_ENTRY_PATH_ID
 	#define L0_SP_ENTRY_TBL_ENTRY_PATH_ID_OFFSET  0
-	#define L0_SP_ENTRY_TBL_ENTRY_PATH_ID_LEN     144
+	#define L0_SP_ENTRY_TBL_ENTRY_PATH_ID_LEN     400
 	#define L0_SP_ENTRY_TBL_ENTRY_PATH_ID_DEFAULT 0x0
 	/*[field] ENTRY_VLD*/
 	#define L0_SP_ENTRY_TBL_ENTRY_VLD
-	#define L0_SP_ENTRY_TBL_ENTRY_VLD_OFFSET  144
+	#define L0_SP_ENTRY_TBL_ENTRY_VLD_OFFSET  400
 	#define L0_SP_ENTRY_TBL_ENTRY_VLD_LEN     16
 	#define L0_SP_ENTRY_TBL_ENTRY_VLD_DEFAULT 0x0
 
@@ -446,12 +413,20 @@ struct l0_sp_entry_tbl {
 	a_uint32_t  entry_path_id_1:32;
 	a_uint32_t  entry_path_id_2:32;
 	a_uint32_t  entry_path_id_3:32;
-	a_uint32_t  entry_path_id_4:16;
+	a_uint32_t  entry_path_id_4:32;
+	a_uint32_t  entry_path_id_5:32;
+	a_uint32_t  entry_path_id_6:32;
+	a_uint32_t  entry_path_id_7:32;
+	a_uint32_t  entry_path_id_8:32;
+	a_uint32_t  entry_path_id_9:32;
+	a_uint32_t  entry_path_id_10:32;
+	a_uint32_t  entry_path_id_11:32;
+	a_uint32_t  entry_path_id_12:16;
 	a_uint32_t  entry_vld:16;
 };
 
 union l0_sp_entry_tbl_u {
-	a_uint32_t val[5];
+	a_uint32_t val[13];
 	struct l0_sp_entry_tbl bf;
 };
 
@@ -481,7 +456,7 @@ union l0_ens_q_ll_tbl_u {
 /*[table] L0_ENS_Q_HEAD_TBL*/
 #define L0_ENS_Q_HEAD_TBL
 #define L0_ENS_Q_HEAD_TBL_ADDRESS 0x20000
-#define L0_ENS_Q_HEAD_TBL_NUM     8
+#define L0_ENS_Q_HEAD_TBL_NUM     9
 #define L0_ENS_Q_HEAD_TBL_INC     0x10
 #define L0_ENS_Q_HEAD_TBL_TYPE    REG_TYPE_RO
 #define L0_ENS_Q_HEAD_TBL_DEFAULT 0x0
@@ -583,38 +558,6 @@ union l0_flow_status_tbl_u {
 	struct l0_flow_status_tbl bf;
 };
 
-/*[table] RING_Q_MAP_TBL*/
-#define RING_Q_MAP_TBL
-#define RING_Q_MAP_TBL_ADDRESS 0x2a000
-#define RING_Q_MAP_TBL_NUM     24
-#define RING_Q_MAP_TBL_INC     0x40
-#define RING_Q_MAP_TBL_TYPE    REG_TYPE_RW
-#define RING_Q_MAP_TBL_DEFAULT 0x0
-	/*[field] QUEUE_BITMAP*/
-	#define RING_Q_MAP_TBL_QUEUE_BITMAP
-	#define RING_Q_MAP_TBL_QUEUE_BITMAP_OFFSET  0
-	#define RING_Q_MAP_TBL_QUEUE_BITMAP_LEN     300
-	#define RING_Q_MAP_TBL_QUEUE_BITMAP_DEFAULT 0x0
-
-struct ring_q_map_tbl {
-	a_uint32_t  queue_bitmap_0:32;
-	a_uint32_t  queue_bitmap_1:32;
-	a_uint32_t  queue_bitmap_2:32;
-	a_uint32_t  queue_bitmap_3:32;
-	a_uint32_t  queue_bitmap_4:32;
-	a_uint32_t  queue_bitmap_5:32;
-	a_uint32_t  queue_bitmap_6:32;
-	a_uint32_t  queue_bitmap_7:32;
-	a_uint32_t  queue_bitmap_8:32;
-	a_uint32_t  queue_bitmap_9:12;
-	a_uint32_t  _reserved0:20;
-};
-
-union ring_q_map_tbl_u {
-	a_uint32_t val[10];
-	struct ring_q_map_tbl bf;
-};
-
 /*[table] RFC_BLOCK_TBL*/
 #define RFC_BLOCK_TBL
 #define RFC_BLOCK_TBL_ADDRESS 0x2c000
@@ -684,6 +627,38 @@ union deq_dis_tbl_u {
 	struct deq_dis_tbl bf;
 };
 
+/*[table] RING_Q_MAP_TBL*/
+#define RING_Q_MAP_TBL
+#define RING_Q_MAP_TBL_ADDRESS 0x34000
+#define RING_Q_MAP_TBL_NUM     176
+#define RING_Q_MAP_TBL_INC     0x40
+#define RING_Q_MAP_TBL_TYPE    REG_TYPE_RW
+#define RING_Q_MAP_TBL_DEFAULT 0x0
+	/*[field] QUEUE_BITMAP*/
+	#define RING_Q_MAP_TBL_QUEUE_BITMAP
+	#define RING_Q_MAP_TBL_QUEUE_BITMAP_OFFSET  0
+	#define RING_Q_MAP_TBL_QUEUE_BITMAP_LEN     300
+	#define RING_Q_MAP_TBL_QUEUE_BITMAP_DEFAULT 0x0
+
+struct ring_q_map_tbl {
+	a_uint32_t  queue_bitmap_0:32;
+	a_uint32_t  queue_bitmap_1:32;
+	a_uint32_t  queue_bitmap_2:32;
+	a_uint32_t  queue_bitmap_3:32;
+	a_uint32_t  queue_bitmap_4:32;
+	a_uint32_t  queue_bitmap_5:32;
+	a_uint32_t  queue_bitmap_6:32;
+	a_uint32_t  queue_bitmap_7:32;
+	a_uint32_t  queue_bitmap_8:32;
+	a_uint32_t  queue_bitmap_9:12;
+	a_uint32_t  _reserved0:20;
+};
+
+union ring_q_map_tbl_u {
+	a_uint32_t val[10];
+	struct ring_q_map_tbl bf;
+};
+
 /*[table] L1_FLOW_MAP_TBL*/
 #define L1_FLOW_MAP_TBL
 #define L1_FLOW_MAP_TBL_ADDRESS 0x40000
@@ -694,99 +669,65 @@ union deq_dis_tbl_u {
 	/*[field] SP_ID*/
 	#define L1_FLOW_MAP_TBL_SP_ID
 	#define L1_FLOW_MAP_TBL_SP_ID_OFFSET  0
-	#define L1_FLOW_MAP_TBL_SP_ID_LEN     4
+	#define L1_FLOW_MAP_TBL_SP_ID_LEN     6
 	#define L1_FLOW_MAP_TBL_SP_ID_DEFAULT 0x0
 	/*[field] C_PRI*/
 	#define L1_FLOW_MAP_TBL_C_PRI
-	#define L1_FLOW_MAP_TBL_C_PRI_OFFSET  4
+	#define L1_FLOW_MAP_TBL_C_PRI_OFFSET  6
 	#define L1_FLOW_MAP_TBL_C_PRI_LEN     3
 	#define L1_FLOW_MAP_TBL_C_PRI_DEFAULT 0x0
 	/*[field] E_PRI*/
 	#define L1_FLOW_MAP_TBL_E_PRI
-	#define L1_FLOW_MAP_TBL_E_PRI_OFFSET  7
+	#define L1_FLOW_MAP_TBL_E_PRI_OFFSET  9
 	#define L1_FLOW_MAP_TBL_E_PRI_LEN     3
 	#define L1_FLOW_MAP_TBL_E_PRI_DEFAULT 0x0
 	/*[field] C_DRR_WT*/
 	#define L1_FLOW_MAP_TBL_C_DRR_WT
-	#define L1_FLOW_MAP_TBL_C_DRR_WT_OFFSET  10
+	#define L1_FLOW_MAP_TBL_C_DRR_WT_OFFSET  12
 	#define L1_FLOW_MAP_TBL_C_DRR_WT_LEN     10
 	#define L1_FLOW_MAP_TBL_C_DRR_WT_DEFAULT 0x0
 	/*[field] E_DRR_WT*/
 	#define L1_FLOW_MAP_TBL_E_DRR_WT
-	#define L1_FLOW_MAP_TBL_E_DRR_WT_OFFSET  20
+	#define L1_FLOW_MAP_TBL_E_DRR_WT_OFFSET  22
 	#define L1_FLOW_MAP_TBL_E_DRR_WT_LEN     10
 	#define L1_FLOW_MAP_TBL_E_DRR_WT_DEFAULT 0x0
+	/*[field] C_DRR_ID*/
+	#define L1_FLOW_MAP_TBL_C_DRR_ID
+	#define L1_FLOW_MAP_TBL_C_DRR_ID_OFFSET  32
+	#define L1_FLOW_MAP_TBL_C_DRR_ID_LEN     6
+	#define L1_FLOW_MAP_TBL_C_DRR_ID_DEFAULT 0x0
+	/*[field] E_DRR_ID*/
+	#define L1_FLOW_MAP_TBL_E_DRR_ID
+	#define L1_FLOW_MAP_TBL_E_DRR_ID_OFFSET  38
+	#define L1_FLOW_MAP_TBL_E_DRR_ID_LEN     6
+	#define L1_FLOW_MAP_TBL_E_DRR_ID_DEFAULT 0x0
+	/*[field] C_DRR_CREDIT_UNIT*/
+	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT
+	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_OFFSET  44
+	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_LEN     1
+	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_DEFAULT 0x0
+	/*[field] E_DRR_CREDIT_UNIT*/
+	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT
+	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_OFFSET  45
+	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_LEN     1
+	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_DEFAULT 0x0
 
 struct l1_flow_map_tbl {
-	a_uint32_t  sp_id:4;
+	a_uint32_t  sp_id:6;
 	a_uint32_t  c_pri:3;
 	a_uint32_t  e_pri:3;
 	a_uint32_t  c_drr_wt:10;
 	a_uint32_t  e_drr_wt:10;
-	a_uint32_t  _reserved0:2;
+	a_uint32_t  c_drr_id:6;
+	a_uint32_t  e_drr_id:6;
+	a_uint32_t  c_drr_credit_unit:1;
+	a_uint32_t  e_drr_credit_unit:1;
+	a_uint32_t  _reserved0:18;
 };
 
 union l1_flow_map_tbl_u {
-	a_uint32_t val;
+	a_uint32_t val[2];
 	struct l1_flow_map_tbl bf;
-};
-
-/*[table] L1_C_SP_CFG_TBL*/
-#define L1_C_SP_CFG_TBL
-#define L1_C_SP_CFG_TBL_ADDRESS 0x42000
-#define L1_C_SP_CFG_TBL_NUM     64
-#define L1_C_SP_CFG_TBL_INC     0x10
-#define L1_C_SP_CFG_TBL_TYPE    REG_TYPE_RW
-#define L1_C_SP_CFG_TBL_DEFAULT 0x0
-	/*[field] DRR_ID*/
-	#define L1_C_SP_CFG_TBL_DRR_ID
-	#define L1_C_SP_CFG_TBL_DRR_ID_OFFSET  0
-	#define L1_C_SP_CFG_TBL_DRR_ID_LEN     6
-	#define L1_C_SP_CFG_TBL_DRR_ID_DEFAULT 0x0
-	/*[field] DRR_CREDIT_UNIT*/
-	#define L1_C_SP_CFG_TBL_DRR_CREDIT_UNIT
-	#define L1_C_SP_CFG_TBL_DRR_CREDIT_UNIT_OFFSET  6
-	#define L1_C_SP_CFG_TBL_DRR_CREDIT_UNIT_LEN     1
-	#define L1_C_SP_CFG_TBL_DRR_CREDIT_UNIT_DEFAULT 0x0
-
-struct l1_c_sp_cfg_tbl {
-	a_uint32_t  drr_id:6;
-	a_uint32_t  drr_credit_unit:1;
-	a_uint32_t  _reserved0:25;
-};
-
-union l1_c_sp_cfg_tbl_u {
-	a_uint32_t val;
-	struct l1_c_sp_cfg_tbl bf;
-};
-
-/*[table] L1_E_SP_CFG_TBL*/
-#define L1_E_SP_CFG_TBL
-#define L1_E_SP_CFG_TBL_ADDRESS 0x44000
-#define L1_E_SP_CFG_TBL_NUM     64
-#define L1_E_SP_CFG_TBL_INC     0x10
-#define L1_E_SP_CFG_TBL_TYPE    REG_TYPE_RW
-#define L1_E_SP_CFG_TBL_DEFAULT 0x0
-	/*[field] DRR_ID*/
-	#define L1_E_SP_CFG_TBL_DRR_ID
-	#define L1_E_SP_CFG_TBL_DRR_ID_OFFSET  0
-	#define L1_E_SP_CFG_TBL_DRR_ID_LEN     6
-	#define L1_E_SP_CFG_TBL_DRR_ID_DEFAULT 0x0
-	/*[field] DRR_CREDIT_UNIT*/
-	#define L1_E_SP_CFG_TBL_DRR_CREDIT_UNIT
-	#define L1_E_SP_CFG_TBL_DRR_CREDIT_UNIT_OFFSET  6
-	#define L1_E_SP_CFG_TBL_DRR_CREDIT_UNIT_LEN     1
-	#define L1_E_SP_CFG_TBL_DRR_CREDIT_UNIT_DEFAULT 0x0
-
-struct l1_e_sp_cfg_tbl {
-	a_uint32_t  drr_id:6;
-	a_uint32_t  drr_credit_unit:1;
-	a_uint32_t  _reserved0:25;
-};
-
-union l1_e_sp_cfg_tbl_u {
-	a_uint32_t val;
-	struct l1_e_sp_cfg_tbl bf;
 };
 
 /*[table] L1_FLOW_PORT_MAP_TBL*/
@@ -815,7 +756,7 @@ union l1_flow_port_map_tbl_u {
 /*[table] L1_C_DRR_HEAD_TBL*/
 #define L1_C_DRR_HEAD_TBL
 #define L1_C_DRR_HEAD_TBL_ADDRESS 0x48000
-#define L1_C_DRR_HEAD_TBL_NUM     36
+#define L1_C_DRR_HEAD_TBL_NUM     64
 #define L1_C_DRR_HEAD_TBL_INC     0x10
 #define L1_C_DRR_HEAD_TBL_TYPE    REG_TYPE_RO
 #define L1_C_DRR_HEAD_TBL_DEFAULT 0x0
@@ -881,7 +822,7 @@ union l1_c_drr_head_tbl_u {
 /*[table] L1_E_DRR_HEAD_TBL*/
 #define L1_E_DRR_HEAD_TBL
 #define L1_E_DRR_HEAD_TBL_ADDRESS 0x4a000
-#define L1_E_DRR_HEAD_TBL_NUM     36
+#define L1_E_DRR_HEAD_TBL_NUM     64
 #define L1_E_DRR_HEAD_TBL_INC     0x10
 #define L1_E_DRR_HEAD_TBL_TYPE    REG_TYPE_RO
 #define L1_E_DRR_HEAD_TBL_DEFAULT 0x0
@@ -1078,67 +1019,21 @@ union l1_e_drr_reverse_ll_tbl_u {
 	struct l1_e_drr_reverse_ll_tbl bf;
 };
 
-/*[table] L1_A_FLOW_ENTRY_TBL*/
-#define L1_A_FLOW_ENTRY_TBL
-#define L1_A_FLOW_ENTRY_TBL_ADDRESS 0x56000
-#define L1_A_FLOW_ENTRY_TBL_NUM     64
-#define L1_A_FLOW_ENTRY_TBL_INC     0x10
-#define L1_A_FLOW_ENTRY_TBL_TYPE    REG_TYPE_RO
-#define L1_A_FLOW_ENTRY_TBL_DEFAULT 0x0
-	/*[field] ENTRY_PATH_ID*/
-	#define L1_A_FLOW_ENTRY_TBL_ENTRY_PATH_ID
-	#define L1_A_FLOW_ENTRY_TBL_ENTRY_PATH_ID_OFFSET  0
-	#define L1_A_FLOW_ENTRY_TBL_ENTRY_PATH_ID_LEN     10
-	#define L1_A_FLOW_ENTRY_TBL_ENTRY_PATH_ID_DEFAULT 0x0
-
-struct l1_a_flow_entry_tbl {
-	a_uint32_t  entry_path_id:10;
-	a_uint32_t  _reserved0:22;
-};
-
-union l1_a_flow_entry_tbl_u {
-	a_uint32_t val;
-	struct l1_a_flow_entry_tbl bf;
-};
-
-/*[table] L1_B_FLOW_ENTRY_TBL*/
-#define L1_B_FLOW_ENTRY_TBL
-#define L1_B_FLOW_ENTRY_TBL_ADDRESS 0x58000
-#define L1_B_FLOW_ENTRY_TBL_NUM     64
-#define L1_B_FLOW_ENTRY_TBL_INC     0x10
-#define L1_B_FLOW_ENTRY_TBL_TYPE    REG_TYPE_RO
-#define L1_B_FLOW_ENTRY_TBL_DEFAULT 0x0
-	/*[field] ENTRY_PATH_ID*/
-	#define L1_B_FLOW_ENTRY_TBL_ENTRY_PATH_ID
-	#define L1_B_FLOW_ENTRY_TBL_ENTRY_PATH_ID_OFFSET  0
-	#define L1_B_FLOW_ENTRY_TBL_ENTRY_PATH_ID_LEN     10
-	#define L1_B_FLOW_ENTRY_TBL_ENTRY_PATH_ID_DEFAULT 0x0
-
-struct l1_b_flow_entry_tbl {
-	a_uint32_t  entry_path_id:10;
-	a_uint32_t  _reserved0:22;
-};
-
-union l1_b_flow_entry_tbl_u {
-	a_uint32_t val;
-	struct l1_b_flow_entry_tbl bf;
-};
-
 /*[table] L1_SP_ENTRY_TBL*/
 #define L1_SP_ENTRY_TBL
 #define L1_SP_ENTRY_TBL_ADDRESS 0x5a000
-#define L1_SP_ENTRY_TBL_NUM     8
-#define L1_SP_ENTRY_TBL_INC     0x40
+#define L1_SP_ENTRY_TBL_NUM     41
+#define L1_SP_ENTRY_TBL_INC     0x80
 #define L1_SP_ENTRY_TBL_TYPE    REG_TYPE_RO
 #define L1_SP_ENTRY_TBL_DEFAULT 0x0
 	/*[field] ENTRY_PATH_ID*/
 	#define L1_SP_ENTRY_TBL_ENTRY_PATH_ID
 	#define L1_SP_ENTRY_TBL_ENTRY_PATH_ID_OFFSET  0
-	#define L1_SP_ENTRY_TBL_ENTRY_PATH_ID_LEN     256
+	#define L1_SP_ENTRY_TBL_ENTRY_PATH_ID_LEN     704
 	#define L1_SP_ENTRY_TBL_ENTRY_PATH_ID_DEFAULT 0x0
 	/*[field] ENTRY_VLD*/
 	#define L1_SP_ENTRY_TBL_ENTRY_VLD
-	#define L1_SP_ENTRY_TBL_ENTRY_VLD_OFFSET  256
+	#define L1_SP_ENTRY_TBL_ENTRY_VLD_OFFSET  704
 	#define L1_SP_ENTRY_TBL_ENTRY_VLD_LEN     16
 	#define L1_SP_ENTRY_TBL_ENTRY_VLD_DEFAULT 0x0
 
@@ -1151,12 +1046,26 @@ struct l1_sp_entry_tbl {
 	a_uint32_t  entry_path_id_5:32;
 	a_uint32_t  entry_path_id_6:32;
 	a_uint32_t  entry_path_id_7:32;
+	a_uint32_t  entry_path_id_8:32;
+	a_uint32_t  entry_path_id_9:32;
+	a_uint32_t  entry_path_id_10:32;
+	a_uint32_t  entry_path_id_11:32;
+	a_uint32_t  entry_path_id_12:32;
+	a_uint32_t  entry_path_id_13:32;
+	a_uint32_t  entry_path_id_14:32;
+	a_uint32_t  entry_path_id_15:32;
+	a_uint32_t  entry_path_id_16:32;
+	a_uint32_t  entry_path_id_17:32;
+	a_uint32_t  entry_path_id_18:32;
+	a_uint32_t  entry_path_id_19:32;
+	a_uint32_t  entry_path_id_20:32;
+	a_uint32_t  entry_path_id_21:32;
 	a_uint32_t  entry_vld:16;
 	a_uint32_t  _reserved0:16;
 };
 
 union l1_sp_entry_tbl_u {
-	a_uint32_t val[9];
+	a_uint32_t val[23];
 	struct l1_sp_entry_tbl bf;
 };
 
@@ -1186,7 +1095,7 @@ union l1_ens_q_ll_tbl_u {
 /*[table] L1_ENS_Q_HEAD_TBL*/
 #define L1_ENS_Q_HEAD_TBL
 #define L1_ENS_Q_HEAD_TBL_ADDRESS 0x62000
-#define L1_ENS_Q_HEAD_TBL_NUM     8
+#define L1_ENS_Q_HEAD_TBL_NUM     9
 #define L1_ENS_Q_HEAD_TBL_INC     0x10
 #define L1_ENS_Q_HEAD_TBL_TYPE    REG_TYPE_RO
 #define L1_ENS_Q_HEAD_TBL_DEFAULT 0x0
@@ -1308,26 +1217,26 @@ union l1_flow_status_tbl_u {
 	/*[field] ENS_PORT_BITMAP*/
 	#define PSCH_TDM_CFG_TBL_ENS_PORT_BITMAP
 	#define PSCH_TDM_CFG_TBL_ENS_PORT_BITMAP_OFFSET  8
-	#define PSCH_TDM_CFG_TBL_ENS_PORT_BITMAP_LEN     8
+	#define PSCH_TDM_CFG_TBL_ENS_PORT_BITMAP_LEN     9
 	#define PSCH_TDM_CFG_TBL_ENS_PORT_BITMAP_DEFAULT 0x0
 	/*[field] DES_SEC_PORT_EN*/
 	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_EN
-	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_EN_OFFSET  16
+	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_EN_OFFSET  17
 	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_EN_LEN     1
 	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_EN_DEFAULT 0x0
 	/*[field] DES_SEC_PORT*/
 	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT
-	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_OFFSET  17
+	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_OFFSET  18
 	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_LEN     4
 	#define PSCH_TDM_CFG_TBL_DES_SEC_PORT_DEFAULT 0x0
 
 struct psch_tdm_cfg_tbl {
 	a_uint32_t  des_port:4;
 	a_uint32_t  ens_port:4;
-	a_uint32_t  ens_port_bitmap:8;
+	a_uint32_t  ens_port_bitmap:9;
 	a_uint32_t  des_sec_port_en:1;
 	a_uint32_t  des_sec_port:4;
-	a_uint32_t  _reserved0:11;
+	a_uint32_t  _reserved0:10;
 };
 
 union psch_tdm_cfg_tbl_u {

@@ -201,7 +201,7 @@ enum {
 #define TDM_CFG
 #define TDM_CFG_ADDRESS 0x1000
 #define TDM_CFG_NUM     128
-#define TDM_CFG_INC     0x10
+#define TDM_CFG_INC     0x4
 #define TDM_CFG_TYPE    REG_TYPE_RW
 #define TDM_CFG_DEFAULT 0x0
 
@@ -217,7 +217,9 @@ enum {
 /*[table] DROP_STAT*/
 #define DROP_STAT
 #define DROP_STAT_ADDRESS 0x3000
-#if defined(MRPPE)
+#if defined(JHPPE)
+#define DROP_STAT_NUM     80
+#elif defined(MRPPE)
 #define DROP_STAT_NUM     38
 #else
 #define DROP_STAT_NUM     30
@@ -285,7 +287,9 @@ enum {
 /*[register] DROP_CNT*/
 #define DROP_CNT
 #define DROP_CNT_ADDRESS 0x24
-#if defined(MRPPE)
+#if defined(JHPPE)
+#define DROP_CNT_NUM     32
+#elif defined(MRPPE)
 #define DROP_CNT_NUM     16
 #else
 #define DROP_CNT_NUM     8
