@@ -688,169 +688,265 @@ jhppe_enq_ctrl_uc_enq_en_set(
 }
 
 sw_error_t
-jhppe_enq_ctrl_ext_get(
+jhppe_cm_ctrl_0_get(
 		a_uint32_t dev_id,
-		union enq_ctrl_ext_u *value)
+		union cm_ctrl_0_u *value)
 {
 	return hppe_reg_get(
 				dev_id,
-				QUEUE_MANAGER_BASE_ADDR + ENQ_CTRL_EXT_ADDRESS,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_0_ADDRESS,
 				&value->val);
 }
 
 sw_error_t
-jhppe_enq_ctrl_ext_set(
+jhppe_cm_ctrl_0_set(
 		a_uint32_t dev_id,
-		union enq_ctrl_ext_u *value)
+		union cm_ctrl_0_u *value)
 {
 	return hppe_reg_set(
 				dev_id,
-				QUEUE_MANAGER_BASE_ADDR + ENQ_CTRL_EXT_ADDRESS,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_0_ADDRESS,
 				value->val);
 }
 
 sw_error_t
-jhppe_enq_ctrl_ext_cpu_code_en_get(
+jhppe_cm_ctrl_1_get(
 		a_uint32_t dev_id,
+		union cm_ctrl_1_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_1_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_1_set(
+		a_uint32_t dev_id,
+		union cm_ctrl_1_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_1_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_2_get(
+		a_uint32_t dev_id,
+		union cm_ctrl_2_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_2_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_2_set(
+		a_uint32_t dev_id,
+		union cm_ctrl_2_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_2_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_3_get(
+		a_uint32_t dev_id,
+		union cm_ctrl_3_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_3_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_3_set(
+		a_uint32_t dev_id,
+		union cm_ctrl_3_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_3_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_4_get(
+		a_uint32_t dev_id,
+		union cm_ctrl_4_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_4_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_cm_ctrl_4_set(
+		a_uint32_t dev_id,
+		union cm_ctrl_4_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + CM_CTRL_4_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ddrq_ctrl_get(
+		a_uint32_t dev_id,
+		union ddrq_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_CTRL_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ddrq_ctrl_set(
+		a_uint32_t dev_id,
+		union ddrq_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_CTRL_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_sram_qcnt_ctrl_get(
+		a_uint32_t dev_id,
+		union sram_qcnt_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_QCNT_CTRL_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sram_qcnt_ctrl_set(
+		a_uint32_t dev_id,
+		union sram_qcnt_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_QCNT_CTRL_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_status_u *value)
+{
+	if (index >= SRAM_UNIQ_CNT_STATUS_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_STATUS_ADDRESS + \
+				index * SRAM_UNIQ_CNT_STATUS_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_status_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_status_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_STATUS_ADDRESS + \
+				index * SRAM_UNIQ_CNT_STATUS_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_sram_mulq_cnt_status_get(
+		a_uint32_t dev_id,
+		union sram_mulq_cnt_status_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_MULQ_CNT_STATUS_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sram_mulq_cnt_status_set(
+		a_uint32_t dev_id,
+		union sram_mulq_cnt_status_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_MULQ_CNT_STATUS_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_mcast_priority_map8_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mcast_priority_map8_u *value)
+{
+	if (index >= MCAST_PRIORITY_MAP8_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + MCAST_PRIORITY_MAP8_ADDRESS + \
+				index * MCAST_PRIORITY_MAP8_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_mcast_priority_map8_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mcast_priority_map8_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + MCAST_PRIORITY_MAP8_ADDRESS + \
+				index * MCAST_PRIORITY_MAP8_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_mcast_priority_map8_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
 		a_uint32_t *value)
 {
-	union enq_ctrl_ext_u reg_val;
+	union mcast_priority_map8_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	*value = reg_val.bf.cpu_code_en;
+	ret = jhppe_mcast_priority_map8_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.class;
 	return ret;
 }
 
 sw_error_t
-jhppe_enq_ctrl_ext_cpu_code_en_set(
+jhppe_mcast_priority_map8_class_set(
 		a_uint32_t dev_id,
+		a_uint32_t index,
 		a_uint32_t value)
 {
-	union enq_ctrl_ext_u reg_val;
+	union mcast_priority_map8_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
+	ret = jhppe_mcast_priority_map8_get(dev_id, index, &reg_val);
 	if (SW_OK != ret)
 		return ret;
-	reg_val.bf.cpu_code_en = value;
-	ret = jhppe_enq_ctrl_ext_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_drop_cpu_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	*value = reg_val.bf.drop_cpu_code;
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_drop_cpu_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.drop_cpu_code = value;
-	ret = jhppe_enq_ctrl_ext_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_mc_cpu_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	*value = reg_val.bf.mc_cpu_code;
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_mc_cpu_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.mc_cpu_code = value;
-	ret = jhppe_enq_ctrl_ext_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_rsv_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	*value = reg_val.bf.rsv;
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_rsv_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.rsv = value;
-	ret = jhppe_enq_ctrl_ext_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_trap_cpu_code_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	*value = reg_val.bf.trap_cpu_code;
-	return ret;
-}
-
-sw_error_t
-jhppe_enq_ctrl_ext_trap_cpu_code_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union enq_ctrl_ext_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = jhppe_enq_ctrl_ext_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.trap_cpu_code = value;
-	ret = jhppe_enq_ctrl_ext_set(dev_id, &reg_val);
+	reg_val.bf.class = value;
+	ret = jhppe_mcast_priority_map8_set(dev_id, index, &reg_val);
 	return ret;
 }
 
@@ -997,6 +1093,522 @@ jhppe_ucast_queue_ctrl_tbl_qid_mismatch_check_en_set(
 		return ret;
 	reg_val.bf.qid_mismatch_check_en = value;
 	ret = jhppe_ucast_queue_ctrl_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+jhppe_ddrq_ensch_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_ensch_tbl_u *value)
+{
+	if (index >= DDRQ_ENSCH_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_ENSCH_TBL_ADDRESS + \
+				index * DDRQ_ENSCH_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ddrq_ensch_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_ensch_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_ENSCH_TBL_ADDRESS + \
+				index * DDRQ_ENSCH_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_ddrq_pkt_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_pkt_cnt_tbl_u *value)
+{
+	if (index >= DDRQ_PKT_CNT_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_PKT_CNT_TBL_ADDRESS + \
+				index * DDRQ_PKT_CNT_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ddrq_pkt_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_pkt_cnt_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_PKT_CNT_TBL_ADDRESS + \
+				index * DDRQ_PKT_CNT_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_ddrq_byte_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_byte_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_BYTE_CNT_TBL_ADDRESS + \
+				index * DDRQ_BYTE_CNT_TBL_INC,
+				value->val,
+				sizeof(union ddrq_byte_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ddrq_byte_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_byte_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_BYTE_CNT_TBL_ADDRESS + \
+				index * DDRQ_BYTE_CNT_TBL_INC,
+				value->val,
+				sizeof(union ddrq_byte_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_qid_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_qid_map_u *value)
+{
+	if (index >= SRAM_UNIQ_CNT_QID_MAP_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_QID_MAP_ADDRESS + \
+				index * SRAM_UNIQ_CNT_QID_MAP_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_qid_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_qid_map_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_QID_MAP_ADDRESS + \
+				index * SRAM_UNIQ_CNT_QID_MAP_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_cfg_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_cfg_tbl_u *value)
+{
+	if (index >= SRAM_UNIQ_CNT_CFG_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_CFG_TBL_ADDRESS + \
+				index * SRAM_UNIQ_CNT_CFG_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_cfg_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_cfg_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_CFG_TBL_ADDRESS + \
+				index * SRAM_UNIQ_CNT_CFG_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_TBL_ADDRESS + \
+				index * SRAM_UNIQ_CNT_TBL_INC,
+				value->val,
+				sizeof(union sram_uniq_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_sram_uniq_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_uniq_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_UNIQ_CNT_TBL_ADDRESS + \
+				index * SRAM_UNIQ_CNT_TBL_INC,
+				value->val,
+				sizeof(union sram_uniq_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_sram_mulq_cnt_cfg_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_mulq_cnt_cfg_tbl_u *value)
+{
+	if (index >= SRAM_MULQ_CNT_CFG_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_MULQ_CNT_CFG_TBL_ADDRESS + \
+				index * SRAM_MULQ_CNT_CFG_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_sram_mulq_cnt_cfg_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_mulq_cnt_cfg_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_MULQ_CNT_CFG_TBL_ADDRESS + \
+				index * SRAM_MULQ_CNT_CFG_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_sram_mulq_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_mulq_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_MULQ_CNT_TBL_ADDRESS + \
+				index * SRAM_MULQ_CNT_TBL_INC,
+				value->val,
+				sizeof(union sram_mulq_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_sram_mulq_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union sram_mulq_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + SRAM_MULQ_CNT_TBL_ADDRESS + \
+				index * SRAM_MULQ_CNT_TBL_INC,
+				value->val,
+				sizeof(union sram_mulq_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_queue_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union queue_map_tbl_u *value)
+{
+	if (index >= QUEUE_MAP_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + QUEUE_MAP_TBL_ADDRESS + \
+				index * QUEUE_MAP_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_queue_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union queue_map_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + QUEUE_MAP_TBL_ADDRESS + \
+				index * QUEUE_MAP_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_tcont_byte_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tcont_byte_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + TCONT_BYTE_CNT_TBL_ADDRESS + \
+				index * TCONT_BYTE_CNT_TBL_INC,
+				value->val,
+				sizeof(union tcont_byte_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_tcont_byte_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tcont_byte_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + TCONT_BYTE_CNT_TBL_ADDRESS + \
+				index * TCONT_BYTE_CNT_TBL_INC,
+				value->val,
+				sizeof(union tcont_byte_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ddrq_debit_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_debit_tbl_u *value)
+{
+	if (index >= DDRQ_DEBIT_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_DEBIT_TBL_ADDRESS + \
+				index * DDRQ_DEBIT_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ddrq_debit_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_debit_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_DEBIT_TBL_ADDRESS + \
+				index * DDRQ_DEBIT_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_tcont_credit_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tcont_credit_tbl_u *value)
+{
+	if (index >= TCONT_CREDIT_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + TCONT_CREDIT_TBL_ADDRESS + \
+				index * TCONT_CREDIT_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_tcont_credit_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tcont_credit_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + TCONT_CREDIT_TBL_ADDRESS + \
+				index * TCONT_CREDIT_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_ddrq_comp_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_comp_tbl_u *value)
+{
+	if (index >= DDRQ_COMP_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_COMP_TBL_ADDRESS + \
+				index * DDRQ_COMP_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ddrq_comp_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ddrq_comp_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + DDRQ_COMP_TBL_ADDRESS + \
+				index * DDRQ_COMP_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union oq_ll_mul_p8_tbl_u *value)
+{
+	if (index >= OQ_LL_MUL_P8_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + OQ_LL_MUL_P8_TBL_ADDRESS + \
+				index * OQ_LL_MUL_P8_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union oq_ll_mul_p8_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + OQ_LL_MUL_P8_TBL_ADDRESS + \
+				index * OQ_LL_MUL_P8_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_egress_mirr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.egress_mirr;
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_egress_mirr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.egress_mirr = value;
+	ret = jhppe_oq_ll_mul_p8_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_ingress_mirr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.ingress_mirr;
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_ingress_mirr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ingress_mirr = value;
+	ret = jhppe_oq_ll_mul_p8_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_next_pointer_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.next_pointer;
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_next_pointer_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.next_pointer = value;
+	ret = jhppe_oq_ll_mul_p8_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_normal_fwd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.normal_fwd;
+	return ret;
+}
+
+sw_error_t
+jhppe_oq_ll_mul_p8_tbl_normal_fwd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union oq_ll_mul_p8_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_oq_ll_mul_p8_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.normal_fwd = value;
+	ret = jhppe_oq_ll_mul_p8_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
 
