@@ -604,6 +604,7 @@ hppe_pre_l2_cnt_tbl_rx_drop_pkt_cnt_set(
 	ret = hppe_pre_l2_cnt_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #ifdef JHPPE
 sw_error_t
 hppe_vsi_tbl_ipmc_en_get(
@@ -635,4 +636,5 @@ hppe_vsi_tbl_ipmc_en_set(
 	ret = hppe_vsi_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #endif

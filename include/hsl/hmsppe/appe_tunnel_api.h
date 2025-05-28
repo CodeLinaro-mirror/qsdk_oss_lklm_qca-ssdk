@@ -314,6 +314,16 @@ appe_ecn_map_mode0_0_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode0_0_u *value);
 
+sw_error_t
+appe_ecn_map_mode0_0_new_ecn_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_ecn_map_mode0_0_new_ecn_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_ecn_map_mode0_1_get(
@@ -324,6 +334,16 @@ sw_error_t
 appe_ecn_map_mode0_1_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode0_1_u *value);
+
+sw_error_t
+appe_ecn_map_mode0_1_exception_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_ecn_map_mode0_1_exception_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -336,6 +356,16 @@ appe_ecn_map_mode1_0_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode1_0_u *value);
 
+sw_error_t
+appe_ecn_map_mode1_0_new_ecn_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_ecn_map_mode1_0_new_ecn_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_ecn_map_mode1_1_get(
@@ -346,6 +376,16 @@ sw_error_t
 appe_ecn_map_mode1_1_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode1_1_u *value);
+
+sw_error_t
+appe_ecn_map_mode1_1_exception_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_ecn_map_mode1_1_exception_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -358,6 +398,16 @@ appe_ecn_map_mode2_0_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode2_0_u *value);
 
+sw_error_t
+appe_ecn_map_mode2_0_new_ecn_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_ecn_map_mode2_0_new_ecn_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_ecn_map_mode2_1_get(
@@ -368,6 +418,16 @@ sw_error_t
 appe_ecn_map_mode2_1_set(
 		a_uint32_t dev_id,
 		union ecn_map_mode2_1_u *value);
+
+sw_error_t
+appe_ecn_map_mode2_1_exception_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_ecn_map_mode2_1_exception_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -486,6 +546,18 @@ appe_eg_proto_mapping0_set(
 		a_uint32_t index,
 		union eg_proto_mapping0_u *value);
 
+sw_error_t
+appe_eg_proto_mapping0_protocol0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_eg_proto_mapping0_protocol0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define EG_PROTO_MAPPING1_MAX_ENTRY	2
 
 sw_error_t
@@ -500,6 +572,18 @@ appe_eg_proto_mapping1_set(
 		a_uint32_t index,
 		union eg_proto_mapping1_u *value);
 
+sw_error_t
+appe_eg_proto_mapping1_protocol1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_eg_proto_mapping1_protocol1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define EG_HEADER_DATA_MAX_ENTRY	128
 
 sw_error_t
@@ -513,6 +597,18 @@ appe_eg_header_data_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union eg_header_data_u *value);
+
+sw_error_t
+appe_eg_header_data_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+appe_eg_header_data_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
 
 #define EG_XLAT_TUN_CTRL_MAX_ENTRY	128
 
@@ -1296,6 +1392,16 @@ appe_tl_tbl_op_data0_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data0_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data0_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data0_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data1_get(
@@ -1306,6 +1412,16 @@ sw_error_t
 appe_tl_tbl_op_data1_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data1_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data1_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data1_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1318,6 +1434,16 @@ appe_tl_tbl_op_data2_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data2_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data2_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data2_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data3_get(
@@ -1328,6 +1454,16 @@ sw_error_t
 appe_tl_tbl_op_data3_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data3_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data3_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data3_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1340,6 +1476,16 @@ appe_tl_tbl_op_data4_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data4_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data4_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data4_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data5_get(
@@ -1350,6 +1496,16 @@ sw_error_t
 appe_tl_tbl_op_data5_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data5_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data5_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data5_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1362,6 +1518,16 @@ appe_tl_tbl_op_data6_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data6_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data6_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data6_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data7_get(
@@ -1372,6 +1538,16 @@ sw_error_t
 appe_tl_tbl_op_data7_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data7_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data7_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data7_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1384,6 +1560,16 @@ appe_tl_tbl_op_data8_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data8_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data8_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data8_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data9_get(
@@ -1394,6 +1580,16 @@ sw_error_t
 appe_tl_tbl_op_data9_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data9_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data9_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data9_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1406,6 +1602,16 @@ appe_tl_tbl_op_data10_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data10_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data10_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data10_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data11_get(
@@ -1416,6 +1622,16 @@ sw_error_t
 appe_tl_tbl_op_data11_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data11_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data11_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data11_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1428,6 +1644,16 @@ appe_tl_tbl_op_data12_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data12_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data12_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data12_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data13_get(
@@ -1438,6 +1664,16 @@ sw_error_t
 appe_tl_tbl_op_data13_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data13_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data13_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data13_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1450,6 +1686,16 @@ appe_tl_tbl_op_data14_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data14_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data14_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data14_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data15_get(
@@ -1461,6 +1707,16 @@ appe_tl_tbl_op_data15_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data15_u *value);
 
+sw_error_t
+appe_tl_tbl_op_data15_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data15_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_op_data16_get(
@@ -1471,6 +1727,16 @@ sw_error_t
 appe_tl_tbl_op_data16_set(
 		a_uint32_t dev_id,
 		union tl_tbl_op_data16_u *value);
+
+sw_error_t
+appe_tl_tbl_op_data16_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_op_data16_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1554,6 +1820,16 @@ appe_tl_tbl_rd_op_data0_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data0_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data0_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data0_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data1_get(
@@ -1564,6 +1840,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data1_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data1_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data1_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data1_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1576,6 +1862,16 @@ appe_tl_tbl_rd_op_data2_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data2_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data2_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data2_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data3_get(
@@ -1586,6 +1882,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data3_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data3_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data3_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data3_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1598,6 +1904,16 @@ appe_tl_tbl_rd_op_data4_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data4_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data4_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data4_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data5_get(
@@ -1608,6 +1924,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data5_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data5_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data5_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data5_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1620,6 +1946,16 @@ appe_tl_tbl_rd_op_data6_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data6_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data6_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data6_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data7_get(
@@ -1630,6 +1966,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data7_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data7_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data7_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data7_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1642,6 +1988,16 @@ appe_tl_tbl_rd_op_data8_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data8_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data8_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data8_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data9_get(
@@ -1652,6 +2008,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data9_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data9_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data9_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data9_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1664,6 +2030,16 @@ appe_tl_tbl_rd_op_data10_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data10_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data10_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data10_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data11_get(
@@ -1674,6 +2050,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data11_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data11_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data11_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data11_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1686,6 +2072,16 @@ appe_tl_tbl_rd_op_data12_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data12_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data12_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data12_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data13_get(
@@ -1696,6 +2092,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data13_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data13_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data13_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data13_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1708,6 +2114,16 @@ appe_tl_tbl_rd_op_data14_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data14_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data14_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data14_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_op_data15_get(
@@ -1718,6 +2134,16 @@ sw_error_t
 appe_tl_tbl_rd_op_data15_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data15_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data15_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data15_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1730,6 +2156,16 @@ appe_tl_tbl_rd_op_data16_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_op_data16_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_op_data16_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_op_data16_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data0_get(
@@ -1740,6 +2176,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data0_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data0_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data0_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data0_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1752,6 +2198,16 @@ appe_tl_tbl_rd_rslt_data1_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data1_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data1_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data1_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data2_get(
@@ -1762,6 +2218,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data2_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data2_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data2_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data2_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1774,6 +2240,16 @@ appe_tl_tbl_rd_rslt_data3_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data3_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data3_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data3_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data4_get(
@@ -1784,6 +2260,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data4_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data4_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data4_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data4_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1796,6 +2282,16 @@ appe_tl_tbl_rd_rslt_data5_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data5_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data5_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data5_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data6_get(
@@ -1806,6 +2302,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data6_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data6_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data6_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data6_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1818,6 +2324,16 @@ appe_tl_tbl_rd_rslt_data7_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data7_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data7_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data7_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data8_get(
@@ -1828,6 +2344,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data8_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data8_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data8_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data8_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1840,6 +2366,16 @@ appe_tl_tbl_rd_rslt_data9_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data9_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data9_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data9_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data10_get(
@@ -1850,6 +2386,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data10_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data10_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data10_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data10_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1862,6 +2408,16 @@ appe_tl_tbl_rd_rslt_data11_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data11_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data11_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data11_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data12_get(
@@ -1872,6 +2428,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data12_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data12_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data12_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data12_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1884,6 +2450,16 @@ appe_tl_tbl_rd_rslt_data13_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data13_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data13_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data13_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data14_get(
@@ -1894,6 +2470,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data14_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data14_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data14_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data14_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -1906,6 +2492,16 @@ appe_tl_tbl_rd_rslt_data15_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data15_u *value);
 
+sw_error_t
+appe_tl_tbl_rd_rslt_data15_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data15_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tl_tbl_rd_rslt_data16_get(
@@ -1916,6 +2512,16 @@ sw_error_t
 appe_tl_tbl_rd_rslt_data16_set(
 		a_uint32_t dev_id,
 		union tl_tbl_rd_rslt_data16_u *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data16_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tl_tbl_rd_rslt_data16_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t

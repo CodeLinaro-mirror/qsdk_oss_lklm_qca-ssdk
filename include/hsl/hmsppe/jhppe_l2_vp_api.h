@@ -20,6 +20,18 @@ jhppe_port_isol_action_set(
 		a_uint32_t index,
 		union port_isol_action_u *value);
 
+sw_error_t
+jhppe_port_isol_action_action_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_port_isol_action_action_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define L2_VP_PORT_POST_TBL_MAX_ENTRY	256
 
 sw_error_t
@@ -287,5 +299,17 @@ jhppe_vp_isol_action_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union vp_isol_action_tbl_u *value);
+
+sw_error_t
+jhppe_vp_isol_action_tbl_vp_profile_action_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+jhppe_vp_isol_action_tbl_vp_profile_action_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
 
 #endif

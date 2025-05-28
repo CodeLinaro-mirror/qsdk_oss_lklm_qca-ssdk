@@ -21,6 +21,18 @@ hppe_meter_cmpst_length_reg_set(
 		a_uint32_t index,
 		union meter_cmpst_length_reg_u *value);
 
+sw_error_t
+hppe_meter_cmpst_length_reg_cmpst_length_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_meter_cmpst_length_reg_cmpst_length_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 hppe_pc_drop_bypass_reg_get(
@@ -31,6 +43,16 @@ sw_error_t
 hppe_pc_drop_bypass_reg_set(
 		a_uint32_t dev_id,
 		union pc_drop_bypass_reg_u *value);
+
+sw_error_t
+hppe_pc_drop_bypass_reg_drop_bypass_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_pc_drop_bypass_reg_drop_bypass_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -43,6 +65,16 @@ hppe_pc_spare_reg_set(
 		a_uint32_t dev_id,
 		union pc_spare_reg_u *value);
 
+sw_error_t
+hppe_pc_spare_reg_spare_reg_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_pc_spare_reg_spare_reg_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_time_slot_reg_get(
@@ -53,6 +85,16 @@ sw_error_t
 hppe_time_slot_reg_set(
 		a_uint32_t dev_id,
 		union time_slot_reg_u *value);
+
+sw_error_t
+hppe_time_slot_reg_time_slot_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_time_slot_reg_time_slot_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -65,6 +107,16 @@ hppe_pc_dbg_addr_reg_set(
 		a_uint32_t dev_id,
 		union pc_dbg_addr_reg_u *value);
 
+sw_error_t
+hppe_pc_dbg_addr_reg_dbg_addr_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_pc_dbg_addr_reg_dbg_addr_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_pc_dbg_data_reg_get(
@@ -75,6 +127,16 @@ sw_error_t
 hppe_pc_dbg_data_reg_set(
 		a_uint32_t dev_id,
 		union pc_dbg_data_reg_u *value);
+
+sw_error_t
+hppe_pc_dbg_data_reg_dbg_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_pc_dbg_data_reg_dbg_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define IN_ACL_METER_CFG_TBL_MAX_ENTRY	128
 

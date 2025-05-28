@@ -321,6 +321,7 @@ appe_l2_vp_port_tbl_lrn_lmt_exceed_fwd_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #ifdef JHPPE
 sw_error_t
 appe_l2_vp_port_tbl_port_isolation_bitmap_get(
@@ -354,6 +355,7 @@ appe_l2_vp_port_tbl_port_isolation_bitmap_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #else
 sw_error_t
 appe_l2_vp_port_tbl_port_isolation_bitmap_get(
@@ -386,7 +388,6 @@ appe_l2_vp_port_tbl_port_isolation_bitmap_set(
 	return ret;
 }
 #endif
-
 sw_error_t
 appe_l2_vp_port_tbl_policer_en_get(
 		a_uint32_t dev_id,
@@ -699,4 +700,5 @@ appe_l2_vp_port_tbl_mirror_en_set(
 	ret = appe_l2_vp_port_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #endif

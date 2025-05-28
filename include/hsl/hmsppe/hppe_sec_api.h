@@ -294,6 +294,18 @@ hppe_l3_exp_l3_only_ctrl_set(
 		a_uint32_t index,
 		union l3_exp_l3_only_ctrl_u *value);
 
+sw_error_t
+hppe_l3_exp_l3_only_ctrl_excep_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l3_exp_l3_only_ctrl_excep_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define L3_EXP_L2_ONLY_CTRL_MAX_ENTRY	72
 
 sw_error_t
@@ -307,6 +319,18 @@ hppe_l3_exp_l2_only_ctrl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union l3_exp_l2_only_ctrl_u *value);
+
+sw_error_t
+hppe_l3_exp_l2_only_ctrl_excep_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l3_exp_l2_only_ctrl_excep_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define L3_EXP_L2_FLOW_CTRL_MAX_ENTRY	72
 
@@ -322,6 +346,18 @@ hppe_l3_exp_l2_flow_ctrl_set(
 		a_uint32_t index,
 		union l3_exp_l2_flow_ctrl_u *value);
 
+sw_error_t
+hppe_l3_exp_l2_flow_ctrl_excep_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l3_exp_l2_flow_ctrl_excep_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define L3_EXP_L3_FLOW_CTRL_MAX_ENTRY	72
 
 sw_error_t
@@ -336,6 +372,18 @@ hppe_l3_exp_l3_flow_ctrl_set(
 		a_uint32_t index,
 		union l3_exp_l3_flow_ctrl_u *value);
 
+sw_error_t
+hppe_l3_exp_l3_flow_ctrl_excep_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l3_exp_l3_flow_ctrl_excep_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define L3_EXP_MULTICAST_CTRL_MAX_ENTRY	72
 
 sw_error_t
@@ -349,5 +397,17 @@ hppe_l3_exp_multicast_ctrl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union l3_exp_multicast_ctrl_u *value);
+
+sw_error_t
+hppe_l3_exp_multicast_ctrl_excep_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_l3_exp_multicast_ctrl_excep_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #endif

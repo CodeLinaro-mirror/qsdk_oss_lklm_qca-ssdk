@@ -80,6 +80,16 @@ appe_tpr_vxlan_cfg_set(
 		a_uint32_t dev_id,
 		union tpr_vxlan_cfg_u *value);
 
+sw_error_t
+appe_tpr_vxlan_cfg_udp_port_map_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tpr_vxlan_cfg_udp_port_map_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 appe_tpr_vxlan_gpe_cfg_get(
@@ -90,6 +100,16 @@ sw_error_t
 appe_tpr_vxlan_gpe_cfg_set(
 		a_uint32_t dev_id,
 		union tpr_vxlan_gpe_cfg_u *value);
+
+sw_error_t
+appe_tpr_vxlan_gpe_cfg_udp_port_map_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+appe_tpr_vxlan_gpe_cfg_udp_port_map_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t

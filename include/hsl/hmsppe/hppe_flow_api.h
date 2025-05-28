@@ -604,6 +604,16 @@ hppe_flow_host_tbl_op_rslt_set(
 		a_uint32_t dev_id,
 		union flow_host_tbl_op_rslt_u *value);
 
+sw_error_t
+hppe_flow_host_tbl_op_rslt_host_entry_index_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_flow_host_tbl_op_rslt_host_entry_index_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_in_flow_tbl_rd_op_get(
@@ -777,6 +787,16 @@ sw_error_t
 hppe_flow_host_tbl_rd_op_rslt_set(
 		a_uint32_t dev_id,
 		union flow_host_tbl_rd_op_rslt_u *value);
+
+sw_error_t
+hppe_flow_host_tbl_rd_op_rslt_host_entry_index_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_flow_host_tbl_rd_op_rslt_host_entry_index_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define IN_FLOW_TBL_MAX_ENTRY	4096
 

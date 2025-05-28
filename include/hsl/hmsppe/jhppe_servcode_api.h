@@ -206,4 +206,16 @@ jhppe_tl_spec_service_tbl_set(
 		a_uint32_t index,
 		union tl_spec_service_tbl_u *value);
 
+sw_error_t
+jhppe_tl_spec_service_tbl_bypass_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_tl_spec_service_tbl_bypass_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #endif

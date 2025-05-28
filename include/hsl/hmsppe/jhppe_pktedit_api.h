@@ -99,4 +99,14 @@ jhppe_tl_pkt_len_ctrl_set(
 		a_uint32_t dev_id,
 		union tl_pkt_len_ctrl_u *value);
 
+sw_error_t
+jhppe_tl_pkt_len_ctrl_org_len_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_tl_pkt_len_ctrl_org_len_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #endif

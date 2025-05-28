@@ -18,6 +18,16 @@ hppe_ipg_pre_len_cfg_set(
 		a_uint32_t dev_id,
 		union ipg_pre_len_cfg_u *value);
 
+sw_error_t
+hppe_ipg_pre_len_cfg_ipg_pre_len_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_ipg_pre_len_cfg_ipg_pre_len_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_shp_slot_cfg_l0_get(
@@ -28,6 +38,16 @@ sw_error_t
 hppe_shp_slot_cfg_l0_set(
 		a_uint32_t dev_id,
 		union shp_slot_cfg_l0_u *value);
+
+sw_error_t
+hppe_shp_slot_cfg_l0_l0_shp_slot_time_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_shp_slot_cfg_l0_l0_shp_slot_time_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -40,6 +60,16 @@ hppe_shp_slot_cfg_l1_set(
 		a_uint32_t dev_id,
 		union shp_slot_cfg_l1_u *value);
 
+sw_error_t
+hppe_shp_slot_cfg_l1_l1_shp_slot_time_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_shp_slot_cfg_l1_l1_shp_slot_time_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_shp_slot_cfg_port_get(
@@ -50,6 +80,16 @@ sw_error_t
 hppe_shp_slot_cfg_port_set(
 		a_uint32_t dev_id,
 		union shp_slot_cfg_port_u *value);
+
+sw_error_t
+hppe_shp_slot_cfg_port_port_shp_slot_time_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_shp_slot_cfg_port_port_shp_slot_time_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define L0_SHP_CREDIT_TBL_MAX_ENTRY	300
 
@@ -945,6 +985,18 @@ hppe_psch_shp_sign_tbl_set(
 		a_uint32_t index,
 		union psch_shp_sign_tbl_u *value);
 
+sw_error_t
+hppe_psch_shp_sign_tbl_shaper_credit_neg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_psch_shp_sign_tbl_shaper_credit_neg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PSCH_SHP_CREDIT_TBL_MAX_ENTRY	41
 
 sw_error_t
@@ -958,6 +1010,18 @@ hppe_psch_shp_credit_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union psch_shp_credit_tbl_u *value);
+
+sw_error_t
+hppe_psch_shp_credit_tbl_shaper_credit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_psch_shp_credit_tbl_shaper_credit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define PSCH_SHP_CFG_TBL_MAX_ENTRY	41
 
@@ -1096,5 +1160,17 @@ hppe_psch_comp_cfg_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union psch_comp_cfg_tbl_u *value);
+
+sw_error_t
+hppe_psch_comp_cfg_tbl_shaper_meter_len_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_psch_comp_cfg_tbl_shaper_meter_len_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #endif

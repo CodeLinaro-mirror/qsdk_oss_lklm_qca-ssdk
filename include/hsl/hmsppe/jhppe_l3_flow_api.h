@@ -68,6 +68,16 @@ jhppe_nat_t_cfg_set(
 		a_uint32_t dev_id,
 		union nat_t_cfg_u *value);
 
+sw_error_t
+jhppe_nat_t_cfg_app_udp_port_map_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_nat_t_cfg_app_udp_port_map_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #define L3_FLOW_KEY_GEN_MAX_ENTRY	2
 
 sw_error_t

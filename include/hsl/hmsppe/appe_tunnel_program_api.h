@@ -59,6 +59,18 @@ appe_tpr_hdr_match_1_set(
 		a_uint32_t index,
 		union tpr_hdr_match_1_u *value);
 
+sw_error_t
+appe_tpr_hdr_match_1_protocol_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_tpr_hdr_match_1_protocol_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define TPR_HDR_MATCH_2_MAX_ENTRY	16
 
 sw_error_t
@@ -73,6 +85,18 @@ appe_tpr_hdr_match_2_set(
 		a_uint32_t index,
 		union tpr_hdr_match_2_u *value);
 
+sw_error_t
+appe_tpr_hdr_match_2_mask_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_tpr_hdr_match_2_mask_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define TPR_PROGRAM_HDR_MAX_ENTRY	16
 
 sw_error_t
@@ -86,6 +110,18 @@ appe_tpr_program_hdr_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union tpr_program_hdr_u *value);
+
+sw_error_t
+appe_tpr_program_hdr_hdr_type_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_tpr_program_hdr_hdr_type_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define TPR_PROGRAM_RESULT_MAX_ENTRY	16
 

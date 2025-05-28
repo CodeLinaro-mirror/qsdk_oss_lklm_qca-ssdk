@@ -157,6 +157,18 @@ appe_pppoe_session_ext1_set(
 		a_uint32_t index,
 		union pppoe_session_ext1_u *value);
 
+sw_error_t
+appe_pppoe_session_ext1_smac_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_pppoe_session_ext1_smac_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PPPOE_SESSION_EXT2_MAX_ENTRY	64
 
 sw_error_t

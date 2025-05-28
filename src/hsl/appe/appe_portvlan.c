@@ -1883,4 +1883,5 @@ appe_eg_vp_tbl_private_tag_tci_set(
 	ret = appe_egress_vp_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #endif

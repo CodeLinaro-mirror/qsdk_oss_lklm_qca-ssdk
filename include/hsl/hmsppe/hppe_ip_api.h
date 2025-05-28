@@ -619,6 +619,18 @@ hppe_in_pub_ip_addr_tbl_set(
 		a_uint32_t index,
 		union in_pub_ip_addr_tbl_u *value);
 
+sw_error_t
+hppe_in_pub_ip_addr_tbl_ip_addr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_in_pub_ip_addr_tbl_ip_addr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 hppe_host_tbl_op_get(

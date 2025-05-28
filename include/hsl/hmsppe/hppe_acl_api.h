@@ -737,4 +737,16 @@ hppe_rule_ext_4_reg_set(
 		a_uint32_t index,
 		union rule_ext_4_reg_u *value);
 
+sw_error_t
+hppe_rule_ext_4_reg_ext8_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_rule_ext_4_reg_ext8_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #endif

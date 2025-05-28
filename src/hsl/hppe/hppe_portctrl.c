@@ -1476,6 +1476,7 @@ hppe_vp_tx_counter_tbl_reg_tx_packets_set(
 	ret = hppe_vp_tx_counter_tbl_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #ifdef MRPPE
 sw_error_t
 mrppe_lpi_port_enable_get(
@@ -1580,6 +1581,7 @@ mrppe_lpi_1us_cnt_set(
 				index * LPI_1US_CNT_INC,
 				value->val);
 }
+
 #else
 sw_error_t
 hppe_lpi_enable_get(
@@ -1658,8 +1660,8 @@ hppe_lpi_cnt_set(
 				index * LPI_CNT_INC,
 				value->val);
 }
-#endif
 
+#endif
 sw_error_t
 hppe_drop_cnt_get(
 		a_uint32_t dev_id,
@@ -1896,6 +1898,7 @@ hppe_ipr_byte_high_reg_bytes_set(
 	ret = hppe_ipr_byte_high_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #else
 sw_error_t
 hppe_ipr_pkt_num_tbl_reg_packets_set(
@@ -1947,7 +1950,6 @@ hppe_ipr_byte_high_reg_bytes_set(
 	ret = hppe_ipr_byte_high_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
-
 #endif
 sw_error_t
 appe_link_oam_ctrl_get(
@@ -2007,6 +2009,7 @@ appe_link_oam_ctrl_loopback_state_set(
 	ret = appe_link_oam_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #ifdef JHPPE
 sw_error_t
 hppe_ipr_byte_high_reg_clear_get(
@@ -2474,8 +2477,8 @@ hppe_mru_mtu_ctrl_tbl_preheader_res_prec_set(
 	ret = hppe_mru_mtu_ctrl_tbl_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
 
+#endif
 sw_error_t
 hppe_mac_dbg_ctrl_high_ipg_get(
 		a_uint32_t dev_id,

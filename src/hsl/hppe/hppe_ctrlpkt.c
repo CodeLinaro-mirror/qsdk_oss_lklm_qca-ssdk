@@ -229,4 +229,5 @@ hppe_l2_cpu_code_ctrl_enqueue_disable_set(
 	ret = appe_l2_cpu_code_ctrl_set(dev_id, index, &reg_val);
 	return ret;
 }
+
 #endif

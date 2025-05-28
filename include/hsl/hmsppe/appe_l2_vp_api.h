@@ -21,6 +21,18 @@ appe_vp_lrn_limit_counter_set(
 		a_uint32_t index,
 		union vp_lrn_limit_counter_u *value);
 
+sw_error_t
+appe_vp_lrn_limit_counter_lrn_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_vp_lrn_limit_counter_lrn_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define L2_VP_PORT_TBL_MAX_ENTRY	256
 
 sw_error_t

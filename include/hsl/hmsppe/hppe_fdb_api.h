@@ -262,6 +262,16 @@ hppe_age_timer_set(
 		a_uint32_t dev_id,
 		union age_timer_u *value);
 
+sw_error_t
+hppe_age_timer_age_val_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_age_timer_age_val_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_l2_global_conf_get(
@@ -484,6 +494,16 @@ hppe_fdb_tbl_rd_op_rslt_data0_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_rd_op_rslt_data0_u *value);
 
+sw_error_t
+hppe_fdb_tbl_rd_op_rslt_data0_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_rslt_data0_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_fdb_tbl_rd_op_rslt_data1_get(
@@ -494,6 +514,16 @@ sw_error_t
 hppe_fdb_tbl_rd_op_rslt_data1_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_rd_op_rslt_data1_u *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_rslt_data1_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_rslt_data1_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -506,6 +536,16 @@ hppe_fdb_tbl_rd_op_rslt_data2_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_rd_op_rslt_data2_u *value);
 
+sw_error_t
+hppe_fdb_tbl_rd_op_rslt_data2_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_rslt_data2_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_fdb_tbl_op_data0_get(
@@ -516,6 +556,16 @@ sw_error_t
 hppe_fdb_tbl_op_data0_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_op_data0_u *value);
+
+sw_error_t
+hppe_fdb_tbl_op_data0_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_op_data0_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -528,6 +578,16 @@ hppe_fdb_tbl_op_data1_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_op_data1_u *value);
 
+sw_error_t
+hppe_fdb_tbl_op_data1_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_op_data1_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_fdb_tbl_op_data2_get(
@@ -538,6 +598,16 @@ sw_error_t
 hppe_fdb_tbl_op_data2_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_op_data2_u *value);
+
+sw_error_t
+hppe_fdb_tbl_op_data2_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_op_data2_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -550,6 +620,16 @@ hppe_fdb_tbl_rd_op_data0_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_rd_op_data0_u *value);
 
+sw_error_t
+hppe_fdb_tbl_rd_op_data0_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_data0_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_fdb_tbl_rd_op_data1_get(
@@ -561,6 +641,16 @@ hppe_fdb_tbl_rd_op_data1_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_rd_op_data1_u *value);
 
+sw_error_t
+hppe_fdb_tbl_rd_op_data1_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_data1_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_fdb_tbl_rd_op_data2_get(
@@ -571,6 +661,16 @@ sw_error_t
 hppe_fdb_tbl_rd_op_data2_set(
 		a_uint32_t dev_id,
 		union fdb_tbl_rd_op_data2_u *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_data2_data_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fdb_tbl_rd_op_data2_data_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define PORT_BRIDGE_CTRL_MAX_ENTRY	9
 
@@ -733,6 +833,18 @@ hppe_port_lrn_limit_counter_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union port_lrn_limit_counter_u *value);
+
+sw_error_t
+hppe_port_lrn_limit_counter_lrn_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_lrn_limit_counter_lrn_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define RFDB_TBL_MAX_ENTRY	32
 
