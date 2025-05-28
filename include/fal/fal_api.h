@@ -1732,7 +1732,11 @@ extern "C" {
     SW_API_DEF(SW_API_IP_INTF_MACADDR_GET_FIRST, fal_ip_intf_macaddr_get_first), \
     SW_API_DEF(SW_API_IP_INTF_MACADDR_GET_NEXT, fal_ip_intf_macaddr_get_next), \
     SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_SET, fal_ip_intf_dmac_check_set), \
-    SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_GET, fal_ip_intf_dmac_check_get),
+    SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_GET, fal_ip_intf_dmac_check_get), \
+    SW_API_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET, fal_ip_port_vlan_as_flow_key_get), \
+    SW_API_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET, fal_ip_port_vlan_as_flow_key_set), \
+    SW_API_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET, fal_ip_intf_vlan_as_flow_key_get), \
+    SW_API_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET, fal_ip_intf_vlan_as_flow_key_set),
 
 #define IP_API_PARAM \
     SW_API_DESC(SW_API_IP_HOST_ADD) \
@@ -1814,7 +1818,11 @@ extern "C" {
     SW_API_DESC(SW_API_IP_INTF_MACADDR_GET_FIRST) \
     SW_API_DESC(SW_API_IP_INTF_MACADDR_GET_NEXT) \
     SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_SET) \
-    SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_GET)
+    SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_GET) \
+    SW_API_DESC(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET) \
+    SW_API_DESC(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET) \
+    SW_API_DESC(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET) \
+    SW_API_DESC(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET)
 #else
 #define IP_API \
     SW_API_DEF(SW_API_IP_HOST_ADD, fal_ip_host_add), \
@@ -1856,7 +1864,11 @@ extern "C" {
     SW_API_DEF(SW_API_IP_INTF_MACADDR_GET_FIRST, fal_ip_intf_macaddr_get_first), \
     SW_API_DEF(SW_API_IP_INTF_MACADDR_GET_NEXT, fal_ip_intf_macaddr_get_next), \
     SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_SET, fal_ip_intf_dmac_check_set), \
-    SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_GET, fal_ip_intf_dmac_check_get),
+    SW_API_DEF(SW_API_IP_INTF_DMAC_CHECK_GET, fal_ip_intf_dmac_check_get), \
+    SW_API_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET, fal_ip_port_vlan_as_flow_key_get), \
+    SW_API_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET, fal_ip_port_vlan_as_flow_key_set), \
+    SW_API_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET, fal_ip_intf_vlan_as_flow_key_get), \
+    SW_API_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET, fal_ip_intf_vlan_as_flow_key_set),
 
 #define IP_API_PARAM \
     SW_API_DESC(SW_API_IP_HOST_ADD) \
@@ -1898,7 +1910,11 @@ extern "C" {
     SW_API_DESC(SW_API_IP_INTF_MACADDR_GET_FIRST) \
     SW_API_DESC(SW_API_IP_INTF_MACADDR_GET_NEXT) \
     SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_SET) \
-    SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_GET)
+    SW_API_DESC(SW_API_IP_INTF_DMAC_CHECK_GET) \
+    SW_API_DESC(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET) \
+    SW_API_DESC(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET) \
+    SW_API_DESC(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET) \
+    SW_API_DESC(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET)
 #endif
 #else
 #define IP_API

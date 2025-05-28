@@ -277,6 +277,22 @@ sw_error_t fal_ip_intf_dmac_check_set(a_uint32_t dev_id, a_uint32_t l3_if, a_boo
 sw_error_t fal_ip_intf_dmac_check_get(a_uint32_t dev_id, a_uint32_t l3_if, a_bool_t *enable)
     DEFINE_FAL_FUNC_ADPT_EXPORT(ip_intf_dmac_check_get, dev_id, l3_if, enable)
 
+sw_error_t fal_ip_port_vlan_as_flow_key_set(a_uint32_t dev_id, fal_port_t port_id,
+				 fal_ip_vlan_as_flow_key_t *vlan_key)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(ip_port_vlan_as_flow_key_set, dev_id, port_id, vlan_key)
+
+sw_error_t fal_ip_port_vlan_as_flow_key_get(a_uint32_t dev_id, fal_port_t port_id,
+				 fal_ip_vlan_as_flow_key_t *vlan_key)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(ip_port_vlan_as_flow_key_get, dev_id, port_id, vlan_key)
+
+sw_error_t fal_ip_intf_vlan_as_flow_key_set(a_uint32_t dev_id, a_uint32_t intf,
+				 fal_ip_vlan_as_flow_key_t *vlan_key)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(ip_intf_vlan_as_flow_key_set, dev_id, intf, vlan_key)
+
+sw_error_t fal_ip_intf_vlan_as_flow_key_get(a_uint32_t dev_id, a_uint32_t intf,
+				 fal_ip_vlan_as_flow_key_t *vlan_key)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(ip_intf_vlan_as_flow_key_get, dev_id, intf, vlan_key)
+
 #if !defined(IN_IP_MINI)
 sw_error_t fal_ip_network_route_add(a_uint32_t dev_id, a_uint32_t index, fal_network_route_entry_t *entry)
     DEFINE_FAL_FUNC_ADPT_EXPORT(ip_network_route_add, dev_id, index, entry)
