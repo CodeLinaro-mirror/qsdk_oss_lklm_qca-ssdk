@@ -37,6 +37,10 @@
 #include <linux/clkdev.h>
 #endif
 
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
+#include <linux/qcom-fpga-pci.h>
+#endif
+
 #if defined(SSDK_RAW_CLOCK)
 #include <dt-bindings/reset/qcom,ipq5424-nsscc.h>
 #include <dt-bindings/clock/qcom,ipq5424-nsscc.h>
@@ -2632,4 +2636,105 @@ void ssdk_gcc_clock_exit(void)
 #endif
 }
 
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
+void ssdk_pci_ppe_clock_init(a_uint32_t dev_id)
+{
+	struct device_node * switch_node = ssdk_dts_node_get(dev_id);
+	if (of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx")) {
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
+		/* Read NSS_NOC (Non-PPE) registers for validate PCI access */
+		uint32_t reg, val;
+		reg = 0x01D80000;
+		val = qcom_fpga_mem_read(reg);
+		SSDK_INFO("Read register [0x%x] = 0x%x\n", reg, val);
+		reg = 0x01D80004;
+		val = qcom_fpga_mem_read(reg);
+		SSDK_INFO("Read register [0x%x] = 0x%x\n", reg, val);
+
+		/* NSS_CC_NSS_CSR_CBCR */
+		qcom_fpga_mem_write(0x39B00714, 0x1);
+		/* NSS_CC_NSSNOC_NSS_CSR_CBCR */
+		qcom_fpga_mem_write(0x39B00718, 0x1);
+
+		/* NSS_CC_PPE_SWITCH_IPE_CBCR */
+		qcom_fpga_mem_write(0x39B00424, 0x221);
+		/* NSS_CC_PPE_SWITCH_BTQ_CBCR */
+		qcom_fpga_mem_write(0x39B0042C, 0x221);
+		/* NSS_CC_PPE_SWITCH_CBCR */
+		qcom_fpga_mem_write(0x39B00434, 0x221);
+		/* NSS_CC_PPE_SWITCH_CFG_CBCR */
+		qcom_fpga_mem_write(0x39B0043C, 0x1);
+		/* NSS_CC_PPE_EDMA_CBCR */
+		qcom_fpga_mem_write(0x39B00440, 0x221);
+		/* NSS_CC_PPE_EDMA_CFG_CBCR */
+		qcom_fpga_mem_write(0x39B00448, 0x1);
+
+		/* NSS_CC_NSSNOC_PPE_CBCR */
+		qcom_fpga_mem_write(0x39B004A4, 0x1);
+		/* NSS_CC_NSSNOC_PPE_CFG_CBCR */
+		qcom_fpga_mem_write(0x39B004A8, 0x1);
+
+		/* NSS_CC_PORT1_MAC_CBCR */
+		qcom_fpga_mem_write(0x39B0044C, 0x221);
+		/* NSS_CC_PORT2_MAC_CBCR */
+		qcom_fpga_mem_write(0x39B00454, 0x221);
+		/* NSS_CC_PORT3_MAC_CBCR */
+		qcom_fpga_mem_write(0x39B0045C, 0x221);
+		/* NSS_CC_PORT4_MAC_CBCR */
+		qcom_fpga_mem_write(0x39B00464, 0x221);
+		/* NSS_CC_PORT5_MAC_CBCR */
+		qcom_fpga_mem_write(0x39B0046C, 0x221);
+		/* NSS_CC_PORT6_MAC_CBCR */
+		qcom_fpga_mem_write(0x39B00474, 0x221);
+		/* NSS_CC_PON_CBCR */
+		qcom_fpga_mem_write(0x39B0047C, 0x221);
+
+		/* NSS_CC_PORT1_RX_CBCR */
+		qcom_fpga_mem_write(0x39B00548, 0x221);
+		/* NSS_CC_PORT1_TX_CBCR */
+		qcom_fpga_mem_write(0x39B00550, 0x221);
+		/* NSS_CC_PORT2_RX_CBCR */
+		qcom_fpga_mem_write(0x39B00558, 0x221);
+		/* NSS_CC_PORT2_TX_CBCR */
+		qcom_fpga_mem_write(0x39B00560, 0x221);
+		/* NSS_CC_PORT3_RX_CBCR */
+		qcom_fpga_mem_write(0x39B00568, 0x221);
+		/* NSS_CC_PORT3_TX_CBCR */
+		qcom_fpga_mem_write(0x39B00570, 0x221);
+		/* NSS_CC_PORT4_RX_CBCR */
+		qcom_fpga_mem_write(0x39B00578, 0x221);
+		/* NSS_CC_PORT4_TX_CBCR */
+		qcom_fpga_mem_write(0x39B00580, 0x221);
+		/* NSS_CC_PORT5_RX_CBCR */
+		qcom_fpga_mem_write(0x39B00588, 0x221);
+		/* NSS_CC_PORT5_TX_CBCR */
+		qcom_fpga_mem_write(0x39B00590, 0x221);
+		/* NSS_CC_PORT6_RX_CBCR */
+		qcom_fpga_mem_write(0x39B00598, 0x221);
+		/* NSS_CC_PORT6_TX_CBCR */
+		qcom_fpga_mem_write(0x39B005A0, 0x221);
+
+		/* NSS_CC_XGMAC0_PTP_REF_CBCR */
+		qcom_fpga_mem_write(0x39B00488, 0x221);
+		/* NSS_CC_XGMAC0_PTP_REF_CBCR */
+		qcom_fpga_mem_write(0x39B0048C, 0x221);
+		/* NSS_CC_XGMAC0_PTP_REF_CBCR */
+		qcom_fpga_mem_write(0x39B00490, 0x221);
+
+		/* NSS_CC_DEBUG_CBCR */
+		qcom_fpga_mem_write(0x39B00770, 0x1);
+
+		/* PPE reset */
+		qcom_fpga_mem_write(0x39b003E8,0x1);
+		msleep(10);
+		qcom_fpga_mem_write(0x39b003E8,0x0);
+
+		/* Check PPE register after clocks configured */
+		reg = 0x3A000000;
+		val = qcom_fpga_mem_read(reg);
+		SSDK_INFO("Read PPE register [0x%x] = 0x%x\n", reg, val);
+#endif
+	}
+}
+#endif
 #endif

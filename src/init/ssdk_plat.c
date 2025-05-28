@@ -49,6 +49,9 @@
 #include <linux/bitops.h>
 #include <linux/mdio-bitbang.h>
 #include <net/dsa.h>
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
+#include <linux/qcom-fpga-pci.h>
+#endif
 /*qca808x_start*/
 #include "ssdk_plat.h"
 #include "hsl_phy.h"
@@ -505,6 +508,7 @@ int qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_
 extern u32 ppe_mem_read(u32 reg);
 extern void ppe_mem_write(u32 reg, u32 val);
 #endif
+
 sw_error_t
 qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
 {
@@ -516,10 +520,14 @@ qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data
 	if ((reg_addr%4)!= 0)
 	return SW_BAD_PARAM;
 
-#if defined(SSDK_PCIE_BUS)
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
 	if (HSL_REG_PCIE_BUS == ssdk_switch_reg_access_mode_get(dev_id)) {
 		uint32_t pcie_base = ssdk_switch_pcie_base_get(dev_id);
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
+		reg_val = qcom_fpga_mem_read(pcie_base + reg_addr);
+#elif defined(SSDK_PCIE_BUS)
 		reg_val = ppe_mem_read(pcie_base + reg_addr);
+#endif
 	} else
 #endif
 		reg_val = readl(qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
@@ -540,10 +548,14 @@ qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_dat
 
 	aos_mem_copy(&reg_val, reg_data, sizeof (a_uint32_t));
 
-#if defined(SSDK_PCIE_BUS)
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
 	if (HSL_REG_PCIE_BUS == ssdk_switch_reg_access_mode_get(dev_id)) {
 		uint32_t pcie_base = ssdk_switch_pcie_base_get(dev_id);
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
+		qcom_fpga_mem_write(pcie_base + reg_addr, reg_val);
+#elif defined(SSDK_PCIE_BUS)
 		ppe_mem_write(pcie_base + reg_addr, reg_val);
+#endif
 	} else
 #endif
 		writel(reg_val, qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
@@ -1659,6 +1671,10 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 		cfg->reg_mode = HSL_HEADER;
 	} else if (reg_mode == HSL_REG_MDIO) {
 		cfg->reg_mode = HSL_MDIO;
+#if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
+	} else if (reg_mode == HSL_REG_PCIE_BUS) {
+		ssdk_pci_ppe_clock_init(dev_id);
+#endif
 	}
 
 #ifdef DESS
