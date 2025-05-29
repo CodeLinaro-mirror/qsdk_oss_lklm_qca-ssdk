@@ -7,7 +7,7 @@
 #ifndef _APPE_COUNTER_API_H_
 #define _APPE_COUNTER_API_H_
 
-#define PORT_VP_RX_CNT_MODE_MAX_ENTRY	8
+#define PORT_VP_RX_CNT_MODE_MAX_ENTRY	PORT_VP_RX_CNT_MODE_NUM
 
 sw_error_t
 appe_port_vp_rx_cnt_mode_tbl_get(
@@ -33,7 +33,7 @@ appe_port_vp_rx_cnt_mode_tbl_cnt_mode_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_RX_CNT_TBL_MAX_ENTRY	256
+#define PORT_RX_CNT_TBL_MAX_ENTRY	PORT_RX_CNT_TBL_NUM
 
 sw_error_t
 appe_port_rx_cnt_tbl_get(
@@ -95,7 +95,7 @@ appe_port_rx_cnt_tbl_rx_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PHY_PORT_RX_CNT_TBL_MAX_ENTRY	9
+#define PHY_PORT_RX_CNT_TBL_MAX_ENTRY	PHY_PORT_RX_CNT_TBL_NUM
 
 sw_error_t
 appe_phy_port_rx_cnt_tbl_get(

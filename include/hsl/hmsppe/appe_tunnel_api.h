@@ -7,7 +7,7 @@
 #ifndef _APPE_TUNNEL_API_H_
 #define _APPE_TUNNEL_API_H_
 
-#define TPR_UDF_CTRL_0_MAX_ENTRY	16
+#define TPR_UDF_CTRL_0_MAX_ENTRY	TPR_UDF_CTRL_0_NUM
 
 sw_error_t
 appe_tpr_udf_ctrl_0_get(
@@ -141,7 +141,7 @@ appe_tpr_udf_ctrl_0_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_UDF_PROFILE_BASE_MAX_ENTRY	8
+#define TPR_UDF_PROFILE_BASE_MAX_ENTRY	TPR_UDF_PROFILE_BASE_NUM
 
 sw_error_t
 appe_tpr_udf_profile_base_get(
@@ -203,7 +203,7 @@ appe_tpr_udf_profile_base_udf3_base_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_UDF_PROFILE_OFFSET_MAX_ENTRY	8
+#define TPR_UDF_PROFILE_OFFSET_MAX_ENTRY	TPR_UDF_PROFILE_OFFSET_NUM
 
 sw_error_t
 appe_tpr_udf_profile_offset_get(
@@ -265,7 +265,7 @@ appe_tpr_udf_profile_offset_udf3_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_CNT_TBL_MAX_ENTRY	128
+#define TL_CNT_TBL_MAX_ENTRY	TL_CNT_TBL_NUM
 
 sw_error_t
 appe_tl_cnt_tbl_get(
@@ -532,7 +532,7 @@ appe_ecn_profile_profile2_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define EG_PROTO_MAPPING0_MAX_ENTRY	2
+#define EG_PROTO_MAPPING0_MAX_ENTRY	EG_PROTO_MAPPING0_NUM
 
 sw_error_t
 appe_eg_proto_mapping0_get(
@@ -558,7 +558,7 @@ appe_eg_proto_mapping0_protocol0_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_PROTO_MAPPING1_MAX_ENTRY	2
+#define EG_PROTO_MAPPING1_MAX_ENTRY	EG_PROTO_MAPPING1_NUM
 
 sw_error_t
 appe_eg_proto_mapping1_get(
@@ -584,7 +584,7 @@ appe_eg_proto_mapping1_protocol1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_HEADER_DATA_MAX_ENTRY	128
+#define EG_HEADER_DATA_MAX_ENTRY	EG_HEADER_DATA_NUM
 
 sw_error_t
 appe_eg_header_data_get(
@@ -610,7 +610,7 @@ appe_eg_header_data_data_set(
 		a_uint32_t index,
 		a_uint64_t value);
 
-#define EG_XLAT_TUN_CTRL_MAX_ENTRY	128
+#define EG_XLAT_TUN_CTRL_MAX_ENTRY	EG_XLAT_TUN_CTRL_NUM
 
 sw_error_t
 appe_eg_xlat_tun_ctrl_get(
@@ -1068,7 +1068,7 @@ appe_eg_xlat_tun_ctrl_vni_mode_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_EDIT_RULE_MAX_ENTRY	16
+#define EG_EDIT_RULE_MAX_ENTRY	EG_EDIT_RULE_NUM
 
 sw_error_t
 appe_eg_edit_rule_get(
@@ -2694,7 +2694,7 @@ appe_tl_ctrl_udp_csum_zero_de_acce_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define TL_VLAN_TBL_MAX_ENTRY	32
+#define TL_VLAN_TBL_MAX_ENTRY	TL_VLAN_TBL_NUM
 
 sw_error_t
 appe_tl_vlan_tbl_get(
@@ -2876,7 +2876,7 @@ appe_tl_vlan_tbl_vp_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_PORT_VP_TBL_MAX_ENTRY	256
+#define TL_PORT_VP_TBL_MAX_ENTRY	TL_PORT_VP_TBL_NUM
 
 sw_error_t
 appe_tl_port_vp_tbl_get(
@@ -2986,7 +2986,7 @@ appe_tl_port_vp_tbl_vlan_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_L3_IF_TBL_MAX_ENTRY	128
+#define TL_L3_IF_TBL_MAX_ENTRY	TL_L3_IF_TBL_NUM
 
 sw_error_t
 appe_tl_l3_if_tbl_get(
@@ -3084,7 +3084,7 @@ appe_tl_l3_if_tbl_ttl_exceed_de_acce_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_KEY_GEN_MAX_ENTRY	32
+#define TL_KEY_GEN_MAX_ENTRY	TL_KEY_GEN_NUM
 
 sw_error_t
 appe_tl_key_gen_get(
@@ -3374,7 +3374,7 @@ appe_tl_key_gen_vni_udf_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_TBL_MAX_ENTRY	128
+#define TL_TBL_MAX_ENTRY	TL_TBL_NUM
 
 sw_error_t
 appe_tl_tbl_get(

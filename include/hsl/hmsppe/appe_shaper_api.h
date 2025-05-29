@@ -9,69 +9,6 @@
 
 
 sw_error_t
-appe_min_max_mode_cfg_get(
-		a_uint32_t dev_id,
-		union min_max_mode_cfg_u *value);
-
-sw_error_t
-appe_min_max_mode_cfg_set(
-		a_uint32_t dev_id,
-		union min_max_mode_cfg_u *value);
-
-sw_error_t
-appe_min_max_mode_cfg_min_max_mode_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-appe_min_max_mode_cfg_min_max_mode_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-
-sw_error_t
-appe_eco_reserve_0_get(
-		a_uint32_t dev_id,
-		union eco_reserve_0_u *value);
-
-sw_error_t
-appe_eco_reserve_0_set(
-		a_uint32_t dev_id,
-		union eco_reserve_0_u *value);
-
-sw_error_t
-appe_eco_reserve_0_eco_res_0_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-appe_eco_reserve_0_eco_res_0_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-
-sw_error_t
-appe_eco_reserve_1_get(
-		a_uint32_t dev_id,
-		union eco_reserve_1_u *value);
-
-sw_error_t
-appe_eco_reserve_1_set(
-		a_uint32_t dev_id,
-		union eco_reserve_1_u *value);
-
-sw_error_t
-appe_eco_reserve_1_eco_res_1_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-appe_eco_reserve_1_eco_res_1_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-
-sw_error_t
 appe_shp_cfg_l0_get(
 		a_uint32_t dev_id,
 		union shp_cfg_l0_u *value);

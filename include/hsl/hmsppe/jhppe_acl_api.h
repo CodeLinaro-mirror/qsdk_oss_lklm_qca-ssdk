@@ -6,7 +6,7 @@
 #ifndef _JHPPE_ACL_API_H_
 #define _JHPPE_ACL_API_H_
 
-#define L2_DSCP_PBIT_MAP_TBL_MAX_ENTRY	256
+#define L2_DSCP_PBIT_MAP_TBL_MAX_ENTRY	L2_DSCP_PBIT_MAP_TBL_NUM
 
 sw_error_t
 jhppe_l2_dscp_pbit_map_tbl_get(
@@ -44,7 +44,7 @@ jhppe_l2_dscp_pbit_map_tbl_pcp_1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_IPO_RULE_INNER_OUTER_MAX_ENTRY	16
+#define PRE_IPO_RULE_INNER_OUTER_MAX_ENTRY	PRE_IPO_RULE_INNER_OUTER_NUM
 
 sw_error_t
 jhppe_pre_ipo_rule_inner_outer_get(

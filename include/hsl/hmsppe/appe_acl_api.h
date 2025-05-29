@@ -7,7 +7,7 @@
 #ifndef _APPE_ACL_API_H_
 #define _APPE_ACL_API_H_
 
-#define IPR_UDF_CTRL_MAX_ENTRY	16
+#define IPR_UDF_CTRL_MAX_ENTRY	IPR_UDF_CTRL_NUM
 
 sw_error_t
 appe_ipr_udf_ctrl_get(
@@ -93,7 +93,7 @@ appe_ipr_udf_ctrl_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IPR_UDF_PROFILE_BASE_MAX_ENTRY	8
+#define IPR_UDF_PROFILE_BASE_MAX_ENTRY	IPR_UDF_PROFILE_BASE_NUM
 
 sw_error_t
 appe_ipr_udf_profile_base_get(
@@ -155,7 +155,7 @@ appe_ipr_udf_profile_base_udf3_base_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IPR_UDF_PROFILE_OFFSET_MAX_ENTRY	8
+#define IPR_UDF_PROFILE_OFFSET_MAX_ENTRY	IPR_UDF_PROFILE_OFFSET_NUM
 
 sw_error_t
 appe_ipr_udf_profile_offset_get(
@@ -217,7 +217,7 @@ appe_ipr_udf_profile_offset_udf3_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_IPO_CNT_TBL_MAX_ENTRY	128
+#define PRE_IPO_CNT_TBL_MAX_ENTRY	PRE_IPO_CNT_TBL_NUM
 
 sw_error_t
 appe_pre_ipo_cnt_tbl_get(
@@ -255,7 +255,7 @@ appe_pre_ipo_cnt_tbl_hit_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_IPO_RULE_EXT_1_MAX_ENTRY	16
+#define PRE_IPO_RULE_EXT_1_MAX_ENTRY	PRE_IPO_RULE_EXT_1_NUM
 
 sw_error_t
 appe_pre_ipo_rule_ext_1_get(
@@ -317,7 +317,7 @@ appe_pre_ipo_rule_ext_1_ext2_3_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_IPO_RULE_EXT_2_MAX_ENTRY	16
+#define PRE_IPO_RULE_EXT_2_MAX_ENTRY	PRE_IPO_RULE_EXT_2_NUM
 
 sw_error_t
 appe_pre_ipo_rule_ext_2_get(
@@ -355,7 +355,7 @@ appe_pre_ipo_rule_ext_2_ext4_1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_IPO_RULE_EXT_4_MAX_ENTRY	16
+#define PRE_IPO_RULE_EXT_4_MAX_ENTRY	PRE_IPO_RULE_EXT_4_NUM
 
 sw_error_t
 appe_pre_ipo_rule_ext_4_get(
@@ -381,7 +381,7 @@ appe_pre_ipo_rule_ext_4_ext8_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_IPO_ACTION_MAX_ENTRY	128
+#define PRE_IPO_ACTION_MAX_ENTRY	PRE_IPO_ACTION_NUM
 
 sw_error_t
 appe_pre_ipo_action_get(
@@ -1091,7 +1091,7 @@ appe_pre_ipo_action_vpn_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_IPO_EXT_TBL_MAX_ENTRY	256
+#define EG_IPO_EXT_TBL_MAX_ENTRY	EG_IPO_EXT_TBL_NUM
 
 sw_error_t
 appe_eg_ipo_ext_tbl_get(

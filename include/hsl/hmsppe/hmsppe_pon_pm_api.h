@@ -6,7 +6,7 @@
 #ifndef _HMSPPE_PON_PM_API_H_
 #define _HMSPPE_PON_PM_API_H_
 
-#define PRE_IPO_PM_COUNTER_GEN_MAX_ENTRY	32
+#define PRE_IPO_PM_COUNTER_GEN_MAX_ENTRY	PRE_IPO_PM_COUNTER_GEN_NUM
 
 sw_error_t
 hmsppe_pre_ipo_pm_counter_gen_get(

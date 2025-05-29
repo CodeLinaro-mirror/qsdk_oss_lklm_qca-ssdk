@@ -505,7 +505,7 @@ jhppe_sram_qcnt_ctrl_sramq_go_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define SRAM_UNIQ_CNT_STATUS_MAX_ENTRY	2
+#define SRAM_UNIQ_CNT_STATUS_MAX_ENTRY	SRAM_UNIQ_CNT_STATUS_NUM
 
 sw_error_t
 jhppe_sram_uniq_cnt_status_get(
@@ -552,7 +552,7 @@ jhppe_sram_mulq_cnt_status_status_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define MCAST_PRIORITY_MAP8_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP8_MAX_ENTRY	MCAST_PRIORITY_MAP8_NUM
 
 sw_error_t
 jhppe_mcast_priority_map8_get(
@@ -578,7 +578,7 @@ jhppe_mcast_priority_map8_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UCAST_QUEUE_MAP_RULE_TBL_MAX_ENTRY	64
+#define UCAST_QUEUE_MAP_RULE_TBL_MAX_ENTRY	UCAST_QUEUE_MAP_RULE_TBL_NUM
 
 sw_error_t
 jhppe_ucast_queue_map_rule_tbl_get(
@@ -760,7 +760,7 @@ jhppe_ucast_queue_map_rule_tbl_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UCAST_QUEUE_MAP_ACTION_TBL_MAX_ENTRY	64
+#define UCAST_QUEUE_MAP_ACTION_TBL_MAX_ENTRY	UCAST_QUEUE_MAP_ACTION_TBL_NUM
 
 sw_error_t
 jhppe_ucast_queue_map_action_tbl_get(
@@ -846,7 +846,7 @@ jhppe_ucast_queue_map_action_tbl_queueid_mode_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UCAST_QUEUE_CTRL_TBL_MAX_ENTRY	256
+#define UCAST_QUEUE_CTRL_TBL_MAX_ENTRY	UCAST_QUEUE_CTRL_TBL_NUM
 
 sw_error_t
 jhppe_ucast_queue_ctrl_tbl_get(
@@ -884,7 +884,7 @@ jhppe_ucast_queue_ctrl_tbl_qid_mismatch_check_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define DDRQ_ENSCH_TBL_MAX_ENTRY	160
+#define DDRQ_ENSCH_TBL_MAX_ENTRY	DDRQ_ENSCH_TBL_NUM
 
 sw_error_t
 jhppe_ddrq_ensch_tbl_get(
@@ -910,7 +910,7 @@ jhppe_ddrq_ensch_tbl_ddrq_id_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define DDRQ_PKT_CNT_TBL_MAX_ENTRY	160
+#define DDRQ_PKT_CNT_TBL_MAX_ENTRY	DDRQ_PKT_CNT_TBL_NUM
 
 sw_error_t
 jhppe_ddrq_pkt_cnt_tbl_get(
@@ -936,7 +936,7 @@ jhppe_ddrq_pkt_cnt_tbl_ddrq_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define DDRQ_BYTE_CNT_TBL_MAX_ENTRY	160
+#define DDRQ_BYTE_CNT_TBL_MAX_ENTRY	DDRQ_BYTE_CNT_TBL_NUM
 
 sw_error_t
 jhppe_ddrq_byte_cnt_tbl_get(
@@ -962,7 +962,7 @@ jhppe_ddrq_byte_cnt_tbl_ddrq_byte_cnt_set(
 		a_uint32_t index,
 		a_uint64_t value);
 
-#define SRAM_UNIQ_CNT_QID_MAP_MAX_ENTRY	256
+#define SRAM_UNIQ_CNT_QID_MAP_MAX_ENTRY	SRAM_UNIQ_CNT_QID_MAP_NUM
 
 sw_error_t
 jhppe_sram_uniq_cnt_qid_map_get(
@@ -1000,7 +1000,7 @@ jhppe_sram_uniq_cnt_qid_map_uniq_cnt_id_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SRAM_UNIQ_CNT_CFG_TBL_MAX_ENTRY	64
+#define SRAM_UNIQ_CNT_CFG_TBL_MAX_ENTRY	SRAM_UNIQ_CNT_CFG_TBL_NUM
 
 sw_error_t
 jhppe_sram_uniq_cnt_cfg_tbl_get(
@@ -1038,7 +1038,7 @@ jhppe_sram_uniq_cnt_cfg_tbl_uniq_hi_th_type_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SRAM_UNIQ_CNT_TBL_MAX_ENTRY	64
+#define SRAM_UNIQ_CNT_TBL_MAX_ENTRY	SRAM_UNIQ_CNT_TBL_NUM
 
 sw_error_t
 jhppe_sram_uniq_cnt_tbl_get(
@@ -1100,7 +1100,7 @@ jhppe_sram_uniq_cnt_tbl_uniq_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SRAM_MULQ_CNT_CFG_TBL_MAX_ENTRY	9
+#define SRAM_MULQ_CNT_CFG_TBL_MAX_ENTRY	SRAM_MULQ_CNT_CFG_TBL_NUM
 
 sw_error_t
 jhppe_sram_mulq_cnt_cfg_tbl_get(
@@ -1162,7 +1162,7 @@ jhppe_sram_mulq_cnt_cfg_tbl_mulq_qid_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SRAM_MULQ_CNT_TBL_MAX_ENTRY	9
+#define SRAM_MULQ_CNT_TBL_MAX_ENTRY	SRAM_MULQ_CNT_TBL_NUM
 
 sw_error_t
 jhppe_sram_mulq_cnt_tbl_get(
@@ -1224,7 +1224,7 @@ jhppe_sram_mulq_cnt_tbl_mulq_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define QUEUE_MAP_TBL_MAX_ENTRY	300
+#define QUEUE_MAP_TBL_MAX_ENTRY	QUEUE_MAP_TBL_NUM
 
 sw_error_t
 jhppe_queue_map_tbl_get(
@@ -1262,7 +1262,7 @@ jhppe_queue_map_tbl_tcont_id_vld_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TCONT_BYTE_CNT_TBL_MAX_ENTRY	32
+#define TCONT_BYTE_CNT_TBL_MAX_ENTRY	TCONT_BYTE_CNT_TBL_NUM
 
 sw_error_t
 jhppe_tcont_byte_cnt_tbl_get(
@@ -1288,7 +1288,7 @@ jhppe_tcont_byte_cnt_tbl_tcont_byte_cnt_set(
 		a_uint32_t index,
 		a_uint64_t value);
 
-#define DDRQ_DEBIT_TBL_MAX_ENTRY	160
+#define DDRQ_DEBIT_TBL_MAX_ENTRY	DDRQ_DEBIT_TBL_NUM
 
 sw_error_t
 jhppe_ddrq_debit_tbl_get(
@@ -1314,7 +1314,7 @@ jhppe_ddrq_debit_tbl_ddrq_debit_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TCONT_CREDIT_TBL_MAX_ENTRY	32
+#define TCONT_CREDIT_TBL_MAX_ENTRY	TCONT_CREDIT_TBL_NUM
 
 sw_error_t
 jhppe_tcont_credit_tbl_get(
@@ -1340,7 +1340,7 @@ jhppe_tcont_credit_tbl_tcont_credit_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define DDRQ_COMP_TBL_MAX_ENTRY	160
+#define DDRQ_COMP_TBL_MAX_ENTRY	DDRQ_COMP_TBL_NUM
 
 sw_error_t
 jhppe_ddrq_comp_tbl_get(
@@ -1366,7 +1366,7 @@ jhppe_ddrq_comp_tbl_comp_byte_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define OQ_LL_MUL_P8_TBL_MAX_ENTRY	3072
+#define OQ_LL_MUL_P8_TBL_MAX_ENTRY	OQ_LL_MUL_P8_TBL_NUM
 
 sw_error_t
 jhppe_oq_ll_mul_p8_tbl_get(
@@ -1428,7 +1428,7 @@ jhppe_oq_ll_mul_p8_tbl_normal_fwd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P8_DROP_CNT_TBL_MAX_ENTRY	6
+#define MUL_P8_DROP_CNT_TBL_MAX_ENTRY	MUL_P8_DROP_CNT_TBL_NUM
 
 sw_error_t
 jhppe_mul_p8_drop_cnt_tbl_get(

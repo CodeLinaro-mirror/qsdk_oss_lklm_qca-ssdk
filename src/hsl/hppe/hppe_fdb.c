@@ -424,35 +424,6 @@ hppe_fdb_tbl_set(
 }
 
 sw_error_t
-hppe_age_timer_age_val_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union age_timer_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_age_timer_get(dev_id, &reg_val);
-	*value = reg_val.bf.age_val;
-	return ret;
-}
-
-sw_error_t
-hppe_age_timer_age_val_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union age_timer_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_age_timer_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.age_val = value;
-	ret = hppe_age_timer_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_l2_global_conf_fdb_hash_full_fwd_cmd_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
@@ -710,20 +681,6 @@ hppe_l2_global_conf_service_code_loop_set(
 		return ret;
 	reg_val.bf.service_code_loop = value;
 	ret = hppe_l2_global_conf_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_port_lrn_limit_counter_lrn_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union port_lrn_limit_counter_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_port_lrn_limit_counter_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.lrn_cnt;
 	return ret;
 }
 

@@ -6,7 +6,7 @@
 #ifndef _JHPPE_CTRLPKT_API_H_
 #define _JHPPE_CTRLPKT_API_H_
 
-#define EG_CPU_CODE_TBL_MAX_ENTRY	256
+#define EG_CPU_CODE_TBL_MAX_ENTRY	EG_CPU_CODE_TBL_NUM
 
 sw_error_t
 jhppe_eg_cpu_code_tbl_get(

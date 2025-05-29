@@ -7,7 +7,7 @@
 #ifndef _APPE_PORTVLAN_API_H_
 #define _APPE_PORTVLAN_API_H_
 
-#define TPR_PORT_PARSING_MAX_ENTRY	9
+#define TPR_PORT_PARSING_MAX_ENTRY	TPR_PORT_PARSING_NUM
 
 sw_error_t
 appe_tpr_port_parsing_get(
@@ -76,7 +76,7 @@ appe_tpr_vlan_tpid_stag_tpid_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define TPR_VP_PARSING_MAX_ENTRY	192
+#define TPR_VP_PARSING_MAX_ENTRY	TPR_VP_PARSING_NUM
 
 sw_error_t
 appe_tpr_vp_parsing_get(
@@ -114,7 +114,7 @@ appe_tpr_vp_parsing_vlan_mode_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IPR_VP_PARSING_MAX_ENTRY	192
+#define IPR_VP_PARSING_MAX_ENTRY	IPR_VP_PARSING_NUM
 
 sw_error_t
 appe_ipr_vp_parsing_get(
@@ -164,7 +164,7 @@ appe_ipr_vp_parsing_vlan_mode_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VP_ISOL_TBL_MAX_ENTRY	64
+#define VP_ISOL_TBL_MAX_ENTRY	VP_ISOL_TBL_NUM
 
 sw_error_t
 appe_vp_isol_tbl_get(
@@ -190,7 +190,7 @@ appe_vp_isol_tbl_vp_profile_map_set(
 		a_uint32_t index,
 		a_uint64_t value);
 
-#define VLAN_PORT_VP_TBL_MAX_ENTRY	256
+#define VLAN_PORT_VP_TBL_MAX_ENTRY	VLAN_PORT_VP_TBL_NUM
 
 sw_error_t
 appe_vlan_port_vp_tbl_get(
@@ -432,7 +432,7 @@ appe_vlan_port_vp_tbl_vlan_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_VP_TBL_MAX_ENTRY	256
+#define EG_VP_TBL_MAX_ENTRY	EG_VP_TBL_NUM
 
 sw_error_t
 appe_egress_vp_tbl_get(
@@ -722,7 +722,7 @@ appe_eg_vp_tbl_xlat_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_VSI_VP_TAG_MAX_ENTRY	2048
+#define EG_VSI_VP_TAG_MAX_ENTRY	EG_VSI_VP_TAG_NUM
 
 sw_error_t
 appe_eg_vsi_vp_tag_get(

@@ -1252,9 +1252,6 @@ cppe_qos_mapping_tbl_set(
 		a_uint32_t index,
 		union qos_mapping_tbl_u *value);
 //hppe_rss.h
-#define TOEPLITZ_HASH_TYPE_SEL_0_MAX_ENTRY	12
-#define TOEPLITZ_HASH_TYPE_SEL_1_MAX_ENTRY	12
-#define TOEPLITZ_HASH_TYPE_TUPLE_MAX_ENTRY	12
 
 sw_error_t
 mrppe_toeplitz_secret_key_get(

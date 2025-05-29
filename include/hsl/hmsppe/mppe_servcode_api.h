@@ -6,7 +6,7 @@
 #ifndef _MPPE_SERVCODE_API_H_
 #define _MPPE_SERVCODE_API_H_
 
-#define TL_VP_SERVICE_CODE_GEN_MAX_ENTRY	256
+#define TL_VP_SERVICE_CODE_GEN_MAX_ENTRY	TL_VP_SERVICE_CODE_GEN_NUM
 
 sw_error_t
 mppe_tl_vp_service_code_gen_get(

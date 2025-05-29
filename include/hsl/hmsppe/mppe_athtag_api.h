@@ -6,7 +6,7 @@
 #ifndef _MPPE_ATHTAG_API_H_
 #define _MPPE_ATHTAG_API_H_
 
-#define EG_HDR_XMIT_PRI_MAPPING_MAX_ENTRY	16
+#define EG_HDR_XMIT_PRI_MAPPING_MAX_ENTRY	EG_HDR_XMIT_PRI_MAPPING_NUM
 
 sw_error_t
 mppe_eg_hdr_xmit_pri_mapping_get(
@@ -365,7 +365,7 @@ mppe_edma_vp_remap_1_remap_vp_9_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define PRX_PORT_TO_VP_MAPPING_MAX_ENTRY	8
+#define PRX_PORT_TO_VP_MAPPING_MAX_ENTRY	PRX_PORT_TO_VP_MAPPING_NUM
 
 sw_error_t
 mppe_prx_port_to_vp_mapping_get(
@@ -427,7 +427,7 @@ mppe_prx_port_to_vp_mapping_port_vp_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRX_HDR_RCV_PRI_MAPPING_MAX_ENTRY	16
+#define PRX_HDR_RCV_PRI_MAPPING_MAX_ENTRY	PRX_HDR_RCV_PRI_MAPPING_NUM
 
 sw_error_t
 mppe_prx_hdr_rcv_pri_mapping_get(

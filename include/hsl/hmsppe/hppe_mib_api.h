@@ -7,7 +7,7 @@
 #ifndef _HPPE_MIB_API_H_
 #define _HPPE_MIB_API_H_
 
-#define MAC_MIB_CTRL_MAX_ENTRY	6
+#define MAC_MIB_CTRL_MAX_ENTRY	MAC_MIB_CTRL_NUM
 
 sw_error_t
 hppe_mac_mib_ctrl_get(
@@ -57,7 +57,7 @@ hppe_mac_mib_ctrl_mib_reset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXBROAD_MAX_ENTRY	6
+#define RXBROAD_MAX_ENTRY	RXBROAD_NUM
 
 sw_error_t
 hppe_rxbroad_get(
@@ -83,7 +83,7 @@ hppe_rxbroad_rxbroad_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPAUSE_MAX_ENTRY	6
+#define RXPAUSE_MAX_ENTRY	RXPAUSE_NUM
 
 sw_error_t
 hppe_rxpause_get(
@@ -109,7 +109,7 @@ hppe_rxpause_rxpause_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXMULTI_MAX_ENTRY	6
+#define RXMULTI_MAX_ENTRY	RXMULTI_NUM
 
 sw_error_t
 hppe_rxmulti_get(
@@ -135,7 +135,7 @@ hppe_rxmulti_rxmulti_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXFCSERR_MAX_ENTRY	6
+#define RXFCSERR_MAX_ENTRY	RXFCSERR_NUM
 
 sw_error_t
 hppe_rxfcserr_get(
@@ -161,7 +161,7 @@ hppe_rxfcserr_rxfcserr_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXALIGNERR_MAX_ENTRY	6
+#define RXALIGNERR_MAX_ENTRY	RXALIGNERR_NUM
 
 sw_error_t
 hppe_rxalignerr_get(
@@ -187,7 +187,7 @@ hppe_rxalignerr_rxalignerr_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXRUNT_MAX_ENTRY	6
+#define RXRUNT_MAX_ENTRY	RXRUNT_NUM
 
 sw_error_t
 hppe_rxrunt_get(
@@ -213,7 +213,7 @@ hppe_rxrunt_rxrunt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXFRAG_MAX_ENTRY	6
+#define RXFRAG_MAX_ENTRY	RXFRAG_NUM
 
 sw_error_t
 hppe_rxfrag_get(
@@ -239,7 +239,7 @@ hppe_rxfrag_rxfrag_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXJUMBOFCSERR_MAX_ENTRY	6
+#define RXJUMBOFCSERR_MAX_ENTRY	RXJUMBOFCSERR_NUM
 
 sw_error_t
 hppe_rxjumbofcserr_get(
@@ -265,7 +265,7 @@ hppe_rxjumbofcserr_rxjumbofcserr_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXJUMBOALIGNERR_MAX_ENTRY	6
+#define RXJUMBOALIGNERR_MAX_ENTRY	RXJUMBOALIGNERR_NUM
 
 sw_error_t
 hppe_rxjumboalignerr_get(
@@ -291,7 +291,7 @@ hppe_rxjumboalignerr_rxjumboalignerr_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT64_MAX_ENTRY	6
+#define RXPKT64_MAX_ENTRY	RXPKT64_NUM
 
 sw_error_t
 hppe_rxpkt64_get(
@@ -317,7 +317,7 @@ hppe_rxpkt64_rxpkt64_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT65TO127_MAX_ENTRY	6
+#define RXPKT65TO127_MAX_ENTRY	RXPKT65TO127_NUM
 
 sw_error_t
 hppe_rxpkt65to127_get(
@@ -343,7 +343,7 @@ hppe_rxpkt65to127_rxpkt65to127_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT128TO255_MAX_ENTRY	6
+#define RXPKT128TO255_MAX_ENTRY	RXPKT128TO255_NUM
 
 sw_error_t
 hppe_rxpkt128to255_get(
@@ -369,7 +369,7 @@ hppe_rxpkt128to255_rxpkt128to255_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT256TO511_MAX_ENTRY	6
+#define RXPKT256TO511_MAX_ENTRY	RXPKT256TO511_NUM
 
 sw_error_t
 hppe_rxpkt256to511_get(
@@ -395,7 +395,7 @@ hppe_rxpkt256to511_rxpkt256to511_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT512TO1023_MAX_ENTRY	6
+#define RXPKT512TO1023_MAX_ENTRY	RXPKT512TO1023_NUM
 
 sw_error_t
 hppe_rxpkt512to1023_get(
@@ -421,7 +421,7 @@ hppe_rxpkt512to1023_rxpkt512to1023_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT1024TO1518_MAX_ENTRY	6
+#define RXPKT1024TO1518_MAX_ENTRY	RXPKT1024TO1518_NUM
 
 sw_error_t
 hppe_rxpkt1024to1518_get(
@@ -447,7 +447,7 @@ hppe_rxpkt1024to1518_rxpkt1024to1518_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXPKT1519TOX_MAX_ENTRY	6
+#define RXPKT1519TOX_MAX_ENTRY	RXPKT1519TOX_NUM
 
 sw_error_t
 hppe_rxpkt1519tox_get(
@@ -473,7 +473,7 @@ hppe_rxpkt1519tox_rxpkt1519tox_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXTOOLONG_MAX_ENTRY	6
+#define RXTOOLONG_MAX_ENTRY	RXTOOLONG_NUM
 
 sw_error_t
 hppe_rxtoolong_get(
@@ -499,7 +499,7 @@ hppe_rxtoolong_rxtoolong_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXGOODBYTE_L_MAX_ENTRY	6
+#define RXGOODBYTE_L_MAX_ENTRY	RXGOODBYTE_L_NUM
 
 sw_error_t
 hppe_rxgoodbyte_l_get(
@@ -525,7 +525,7 @@ hppe_rxgoodbyte_l_rxgoodbyte_l_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXGOODBYTE_H_MAX_ENTRY	6
+#define RXGOODBYTE_H_MAX_ENTRY	RXGOODBYTE_H_NUM
 
 sw_error_t
 hppe_rxgoodbyte_h_get(
@@ -551,7 +551,7 @@ hppe_rxgoodbyte_h_rxgoodbyte_h_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXBADBYTE_L_MAX_ENTRY	6
+#define RXBADBYTE_L_MAX_ENTRY	RXBADBYTE_L_NUM
 
 sw_error_t
 hppe_rxbadbyte_l_get(
@@ -577,7 +577,7 @@ hppe_rxbadbyte_l_rxbadbyte_l_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXBADBYTE_H_MAX_ENTRY	6
+#define RXBADBYTE_H_MAX_ENTRY	RXBADBYTE_H_NUM
 
 sw_error_t
 hppe_rxbadbyte_h_get(
@@ -603,7 +603,7 @@ hppe_rxbadbyte_h_rxbadbyte_h_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RXUNI_MAX_ENTRY	6
+#define RXUNI_MAX_ENTRY	RXUNI_NUM
 
 sw_error_t
 hppe_rxuni_get(
@@ -629,7 +629,7 @@ hppe_rxuni_rxuni_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXBROAD_MAX_ENTRY	6
+#define TXBROAD_MAX_ENTRY	TXBROAD_NUM
 
 sw_error_t
 hppe_txbroad_get(
@@ -655,7 +655,7 @@ hppe_txbroad_txbroad_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPAUSE_MAX_ENTRY	6
+#define TXPAUSE_MAX_ENTRY	TXPAUSE_NUM
 
 sw_error_t
 hppe_txpause_get(
@@ -681,7 +681,7 @@ hppe_txpause_txpause_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXMULTI_MAX_ENTRY	6
+#define TXMULTI_MAX_ENTRY	TXMULTI_NUM
 
 sw_error_t
 hppe_txmulti_get(
@@ -707,7 +707,7 @@ hppe_txmulti_txmulti_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXUNDERRUN_MAX_ENTRY	6
+#define TXUNDERRUN_MAX_ENTRY	TXUNDERRUN_NUM
 
 sw_error_t
 hppe_txunderrun_get(
@@ -733,7 +733,7 @@ hppe_txunderrun_txunderrun_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT64_MAX_ENTRY	6
+#define TXPKT64_MAX_ENTRY	TXPKT64_NUM
 
 sw_error_t
 hppe_txpkt64_get(
@@ -759,7 +759,7 @@ hppe_txpkt64_txpkt64_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT65TO127_MAX_ENTRY	6
+#define TXPKT65TO127_MAX_ENTRY	TXPKT65TO127_NUM
 
 sw_error_t
 hppe_txpkt65to127_get(
@@ -785,7 +785,7 @@ hppe_txpkt65to127_txpkt65to127_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT128TO255_MAX_ENTRY	6
+#define TXPKT128TO255_MAX_ENTRY	TXPKT128TO255_NUM
 
 sw_error_t
 hppe_txpkt128to255_get(
@@ -811,7 +811,7 @@ hppe_txpkt128to255_txpkt128to255_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT256TO511_MAX_ENTRY	6
+#define TXPKT256TO511_MAX_ENTRY	TXPKT256TO511_NUM
 
 sw_error_t
 hppe_txpkt256to511_get(
@@ -837,7 +837,7 @@ hppe_txpkt256to511_txpkt256to511_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT512TO1023_MAX_ENTRY	6
+#define TXPKT512TO1023_MAX_ENTRY	TXPKT512TO1023_NUM
 
 sw_error_t
 hppe_txpkt512to1023_get(
@@ -863,7 +863,7 @@ hppe_txpkt512to1023_txpkt512to1023_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT1024TO1518_MAX_ENTRY	6
+#define TXPKT1024TO1518_MAX_ENTRY	TXPKT1024TO1518_NUM
 
 sw_error_t
 hppe_txpkt1024to1518_get(
@@ -889,7 +889,7 @@ hppe_txpkt1024to1518_txpkt1024to1518_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXPKT1519TOX_MAX_ENTRY	6
+#define TXPKT1519TOX_MAX_ENTRY	TXPKT1519TOX_NUM
 
 sw_error_t
 hppe_txpkt1519tox_get(
@@ -915,7 +915,7 @@ hppe_txpkt1519tox_txpkt1519tox_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXBYTE_L_MAX_ENTRY	6
+#define TXBYTE_L_MAX_ENTRY	TXBYTE_L_NUM
 
 sw_error_t
 hppe_txbyte_l_get(
@@ -941,7 +941,7 @@ hppe_txbyte_l_txbyte_l_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXBYTE_H_MAX_ENTRY	6
+#define TXBYTE_H_MAX_ENTRY	TXBYTE_H_NUM
 
 sw_error_t
 hppe_txbyte_h_get(
@@ -967,7 +967,7 @@ hppe_txbyte_h_txbyte_h_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXCOLLISIONS_MAX_ENTRY	6
+#define TXCOLLISIONS_MAX_ENTRY	TXCOLLISIONS_NUM
 
 sw_error_t
 hppe_txcollisions_get(
@@ -993,7 +993,7 @@ hppe_txcollisions_txcollisions_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXABORTCOL_MAX_ENTRY	6
+#define TXABORTCOL_MAX_ENTRY	TXABORTCOL_NUM
 
 sw_error_t
 hppe_txabortcol_get(
@@ -1019,7 +1019,7 @@ hppe_txabortcol_txabortcol_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXMULTICOL_MAX_ENTRY	6
+#define TXMULTICOL_MAX_ENTRY	TXMULTICOL_NUM
 
 sw_error_t
 hppe_txmulticol_get(
@@ -1045,7 +1045,7 @@ hppe_txmulticol_txmulticol_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXSINGLECOL_MAX_ENTRY	6
+#define TXSINGLECOL_MAX_ENTRY	TXSINGLECOL_NUM
 
 sw_error_t
 hppe_txsinglecol_get(
@@ -1071,7 +1071,7 @@ hppe_txsinglecol_txsinglecol_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXEXCESSIVEDEFER_MAX_ENTRY	6
+#define TXEXCESSIVEDEFER_MAX_ENTRY	TXEXCESSIVEDEFER_NUM
 
 sw_error_t
 hppe_txexcessivedefer_get(
@@ -1097,7 +1097,7 @@ hppe_txexcessivedefer_txexcessivedefer_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXDEFER_MAX_ENTRY	6
+#define TXDEFER_MAX_ENTRY	TXDEFER_NUM
 
 sw_error_t
 hppe_txdefer_get(
@@ -1123,7 +1123,7 @@ hppe_txdefer_txdefer_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXLATECOL_MAX_ENTRY	6
+#define TXLATECOL_MAX_ENTRY	TXLATECOL_NUM
 
 sw_error_t
 hppe_txlatecol_get(
@@ -1149,7 +1149,7 @@ hppe_txlatecol_txlatecol_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TXUNI_MAX_ENTRY	6
+#define TXUNI_MAX_ENTRY	TXUNI_NUM
 
 sw_error_t
 hppe_txuni_get(

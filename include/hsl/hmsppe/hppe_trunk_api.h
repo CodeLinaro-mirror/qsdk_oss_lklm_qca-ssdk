@@ -128,7 +128,7 @@ hppe_trunk_hash_field_reg_udf3_incl_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define TRUNK_FILTER_MAX_ENTRY	2
+#define TRUNK_FILTER_MAX_ENTRY	TRUNK_FILTER_NUM
 
 sw_error_t
 hppe_trunk_filter_get(
@@ -154,7 +154,7 @@ hppe_trunk_filter_mem_bitmap_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TRUNK_MEMBER_MAX_ENTRY	2
+#define TRUNK_MEMBER_MAX_ENTRY	TRUNK_MEMBER_NUM
 
 sw_error_t
 hppe_trunk_member_get(
@@ -264,7 +264,7 @@ hppe_trunk_member_member_7_port_id_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_TRUNK_ID_MAX_ENTRY	9
+#define PORT_TRUNK_ID_MAX_ENTRY	PORT_TRUNK_ID_NUM
 
 sw_error_t
 hppe_port_trunk_id_get(

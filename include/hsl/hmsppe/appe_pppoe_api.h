@@ -7,7 +7,7 @@
 #ifndef _APPE_PPPOE_API_H_
 #define _APPE_PPPOE_API_H_
 
-#define PPPOE_SESSION_MAX_ENTRY	64
+#define PPPOE_SESSION_MAX_ENTRY	PPPOE_SESSION_NUM
 
 sw_error_t
 appe_pppoe_session_get(
@@ -81,7 +81,7 @@ appe_pppoe_session_vp_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PPPOE_SESSION_EXT_MAX_ENTRY	64
+#define PPPOE_SESSION_EXT_MAX_ENTRY	PPPOE_SESSION_EXT_NUM
 
 sw_error_t
 appe_pppoe_session_ext_get(
@@ -143,7 +143,7 @@ appe_pppoe_session_ext_uc_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PPPOE_SESSION_EXT1_MAX_ENTRY	64
+#define PPPOE_SESSION_EXT1_MAX_ENTRY	PPPOE_SESSION_EXT1_NUM
 
 sw_error_t
 appe_pppoe_session_ext1_get(
@@ -169,7 +169,7 @@ appe_pppoe_session_ext1_smac_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PPPOE_SESSION_EXT2_MAX_ENTRY	64
+#define PPPOE_SESSION_EXT2_MAX_ENTRY	PPPOE_SESSION_EXT2_NUM
 
 sw_error_t
 appe_pppoe_session_ext2_get(

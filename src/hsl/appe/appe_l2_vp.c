@@ -61,20 +61,6 @@ appe_l2_vp_port_tbl_set(
 }
 
 sw_error_t
-appe_vp_lrn_limit_counter_lrn_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union vp_lrn_limit_counter_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_vp_lrn_limit_counter_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.lrn_cnt;
-	return ret;
-}
-
-sw_error_t
 appe_l2_vp_port_tbl_station_move_lrn_en_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

@@ -6,7 +6,7 @@
 #ifndef _JHPPE_EPE_PM_API_H_
 #define _JHPPE_EPE_PM_API_H_
 
-#define EG_PM_COUNTER_GEN_MAX_ENTRY	32
+#define EG_PM_COUNTER_GEN_MAX_ENTRY	EG_PM_COUNTER_GEN_NUM
 
 sw_error_t
 jhppe_eg_pm_counter_gen_get(
@@ -116,7 +116,7 @@ jhppe_eg_pm_counter_gen_vid_incl_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_PM_COUNTER_TBL_MAX_ENTRY	32
+#define EG_PM_COUNTER_TBL_MAX_ENTRY	EG_PM_COUNTER_TBL_NUM
 
 sw_error_t
 jhppe_eg_pm_counter_tbl_get(

@@ -6,7 +6,7 @@
 #ifndef _JHPPE_SERVCODE_API_H_
 #define _JHPPE_SERVCODE_API_H_
 
-#define L2_SPEC_SERVICE_TBL_MAX_ENTRY	10
+#define L2_SPEC_SERVICE_TBL_MAX_ENTRY	L2_SPEC_SERVICE_TBL_NUM
 
 sw_error_t
 jhppe_l2_spec_service_tbl_get(
@@ -92,7 +92,7 @@ jhppe_l2_spec_service_tbl_tx_cnt_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_SPEC_SERVICE_TBL_MAX_ENTRY	10
+#define IN_SPEC_SERVICE_TBL_MAX_ENTRY	IN_SPEC_SERVICE_TBL_NUM
 
 sw_error_t
 jhppe_in_spec_service_tbl_get(
@@ -130,7 +130,7 @@ jhppe_in_spec_service_tbl_rx_counting_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_SPEC_SERVICE_TBL_MAX_ENTRY	10
+#define EG_SPEC_SERVICE_TBL_MAX_ENTRY	EG_SPEC_SERVICE_TBL_NUM
 
 sw_error_t
 jhppe_eg_spec_service_tbl_get(
@@ -192,7 +192,7 @@ jhppe_eg_spec_service_tbl_tx_counting_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_SPEC_SERVICE_TBL_MAX_ENTRY	10
+#define TL_SPEC_SERVICE_TBL_MAX_ENTRY	TL_SPEC_SERVICE_TBL_NUM
 
 sw_error_t
 jhppe_tl_spec_service_tbl_get(

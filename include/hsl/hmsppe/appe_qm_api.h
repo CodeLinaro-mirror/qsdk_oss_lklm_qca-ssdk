@@ -7,7 +7,7 @@
 #ifndef _APPE_QM_API_H_
 #define _APPE_QM_API_H_
 
-#define PORT_VSI_ENQUEUE_MAP_MAX_ENTRY	608
+#define PORT_VSI_ENQUEUE_MAP_MAX_ENTRY	PORT_VSI_ENQUEUE_MAP_NUM
 
 sw_error_t
 appe_port_vsi_enqueue_map_get(

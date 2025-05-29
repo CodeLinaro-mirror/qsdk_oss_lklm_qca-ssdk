@@ -38,7 +38,7 @@ appe_in_meter_head_reg_meter_ll_tail_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define DSCP_REMAP_TBL_MAX_ENTRY	128
+#define DSCP_REMAP_TBL_MAX_ENTRY	DSCP_REMAP_TBL_NUM
 
 sw_error_t
 appe_dscp_remap_tbl_get(

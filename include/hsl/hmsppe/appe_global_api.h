@@ -7,7 +7,7 @@
 #ifndef _APPE_GLOBAL_API_H_
 #define _APPE_GLOBAL_API_H_
 
-#define TX_BUFF_THRSH_MAX_ENTRY	9
+#define TX_BUFF_THRSH_MAX_ENTRY	TX_BUFF_THRSH_NUM
 
 sw_error_t
 appe_tx_buff_thrsh_get(

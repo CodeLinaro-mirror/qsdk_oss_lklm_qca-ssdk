@@ -6,7 +6,7 @@
 #ifndef _JHPPE_L2_VP_API_H_
 #define _JHPPE_L2_VP_API_H_
 
-#define PORT_ISOL_ACTION_MAX_ENTRY	9
+#define PORT_ISOL_ACTION_MAX_ENTRY	PORT_ISOL_ACTION_NUM
 
 sw_error_t
 jhppe_port_isol_action_get(
@@ -32,7 +32,7 @@ jhppe_port_isol_action_action_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L2_VP_PORT_POST_TBL_MAX_ENTRY	256
+#define L2_VP_PORT_POST_TBL_MAX_ENTRY	L2_VP_PORT_POST_TBL_NUM
 
 sw_error_t
 jhppe_l2_vp_port_post_tbl_get(
@@ -286,7 +286,7 @@ jhppe_l2_vp_port_post_tbl_vp_type_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VP_ISOL_ACTION_TBL_MAX_ENTRY	64
+#define VP_ISOL_ACTION_TBL_MAX_ENTRY	VP_ISOL_ACTION_TBL_NUM
 
 sw_error_t
 jhppe_vp_isol_action_tbl_get(

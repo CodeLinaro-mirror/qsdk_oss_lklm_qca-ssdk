@@ -7,7 +7,7 @@
 #ifndef _HPPE_FLOW_API_H_
 #define _HPPE_FLOW_API_H_
 
-#define IN_FLOW_CNT_TBL_MAX_ENTRY	4096
+#define IN_FLOW_CNT_TBL_MAX_ENTRY	IN_FLOW_CNT_TBL_NUM
 
 sw_error_t
 hppe_in_flow_cnt_tbl_get(
@@ -116,7 +116,7 @@ hppe_flow_ctrl0_flow_hash_mode_1_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define FLOW_CTRL1_MAX_ENTRY	3
+#define FLOW_CTRL1_MAX_ENTRY	FLOW_CTRL1_NUM
 
 sw_error_t
 hppe_flow_ctrl1_get(
@@ -798,7 +798,7 @@ hppe_flow_host_tbl_rd_op_rslt_host_entry_index_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define IN_FLOW_TBL_MAX_ENTRY	4096
+#define IN_FLOW_TBL_MAX_ENTRY	IN_FLOW_TBL_NUM
 
 sw_error_t
 hppe_in_flow_tbl_get(
@@ -812,7 +812,7 @@ hppe_in_flow_tbl_set(
 		a_uint32_t index,
 		union in_flow_tbl_u *value);
 
-#define IN_FLOW_3TUPLE_TBL_MAX_ENTRY	4096
+#define IN_FLOW_3TUPLE_TBL_MAX_ENTRY	IN_FLOW_3TUPLE_TBL_NUM
 
 sw_error_t
 hppe_in_flow_3tuple_tbl_get(
@@ -826,7 +826,7 @@ hppe_in_flow_3tuple_tbl_set(
 		a_uint32_t index,
 		union in_flow_3tuple_tbl_u *value);
 
-#define IN_FLOW_IPV6_5TUPLE_TBL_MAX_ENTRY	2048
+#define IN_FLOW_IPV6_5TUPLE_TBL_MAX_ENTRY	IN_FLOW_IPV6_5TUPLE_TBL_NUM
 
 sw_error_t
 hppe_in_flow_ipv6_5tuple_tbl_get(
@@ -840,7 +840,7 @@ hppe_in_flow_ipv6_5tuple_tbl_set(
 		a_uint32_t index,
 		union in_flow_ipv6_5tuple_tbl_u *value);
 
-#define IN_FLOW_IPV6_3TUPLE_TBL_MAX_ENTRY	2048
+#define IN_FLOW_IPV6_3TUPLE_TBL_MAX_ENTRY	IN_FLOW_IPV6_3TUPLE_TBL_NUM
 
 sw_error_t
 hppe_in_flow_ipv6_3tuple_tbl_get(
@@ -925,7 +925,7 @@ hppe_eg_global_ctrl_vsi_cnt_byp_xlt_drop_en_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define EG_IPV6_PREFIX_TBL_MAX_ENTRY	256
+#define EG_IPV6_PREFIX_TBL_MAX_ENTRY	EG_IPV6_PREFIX_TBL_NUM
 
 sw_error_t
 hppe_eg_ipv6_prefix_tbl_get(
@@ -963,7 +963,7 @@ hppe_eg_ipv6_prefix_tbl_prefix_set(
 		a_uint32_t index,
 		a_uint64_t value);
 
-#define EG_FLOW_IPV6_IID_TBL_MAX_ENTRY	2048
+#define EG_FLOW_IPV6_IID_TBL_MAX_ENTRY	EG_FLOW_IPV6_IID_TBL_NUM
 
 sw_error_t
 hppe_eg_flow_ipv6_iid_tbl_get(
@@ -1037,7 +1037,7 @@ hppe_eg_flow_ipv6_iid_tbl_src_dst_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_FLOW_TREE_MAP_TBL_MAX_ENTRY	4096
+#define EG_FLOW_TREE_MAP_TBL_MAX_ENTRY	EG_FLOW_TREE_MAP_TBL_NUM
 
 sw_error_t
 hppe_eg_flow_tree_map_tbl_get(

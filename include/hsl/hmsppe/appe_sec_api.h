@@ -242,7 +242,7 @@ appe_tpr_l4_exception_parsing_ctrl_3_tcp_flags7_mask_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define TPR_EXCEPTION_CTRL_0_MAX_ENTRY	16
+#define TPR_EXCEPTION_CTRL_0_MAX_ENTRY	TPR_EXCEPTION_CTRL_0_NUM
 
 sw_error_t
 appe_tpr_exception_ctrl_0_get(
@@ -280,7 +280,7 @@ appe_tpr_exception_ctrl_0_mask_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_EXCEPTION_CTRL_1_MAX_ENTRY	16
+#define TPR_EXCEPTION_CTRL_1_MAX_ENTRY	TPR_EXCEPTION_CTRL_1_NUM
 
 sw_error_t
 appe_tpr_exception_ctrl_1_get(
@@ -351,7 +351,7 @@ appe_l2_excep_ctrl_tunnel_excep_fwd_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define L2_FLOW_HIT_EXP_CTRL_MAX_ENTRY	72
+#define L2_FLOW_HIT_EXP_CTRL_MAX_ENTRY	L2_FLOW_HIT_EXP_CTRL_NUM
 
 sw_error_t
 appe_l2_flow_hit_exp_ctrl_get(
@@ -377,7 +377,7 @@ appe_l2_flow_hit_exp_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_FLOW_HIT_EXP_CTRL_MAX_ENTRY	72
+#define L3_FLOW_HIT_EXP_CTRL_MAX_ENTRY	L3_FLOW_HIT_EXP_CTRL_NUM
 
 sw_error_t
 appe_l3_flow_hit_exp_ctrl_get(
@@ -403,7 +403,7 @@ appe_l3_flow_hit_exp_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_FLOW_HIT_MISS_EXP_CTRL_MAX_ENTRY	72
+#define L3_FLOW_HIT_MISS_EXP_CTRL_MAX_ENTRY	L3_FLOW_HIT_MISS_EXP_CTRL_NUM
 
 sw_error_t
 appe_l3_flow_hit_miss_exp_ctrl_get(
@@ -429,7 +429,7 @@ appe_l3_flow_hit_miss_exp_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L2_FLOW_HIT_MISS_EXP_CTRL_MAX_ENTRY	72
+#define L2_FLOW_HIT_MISS_EXP_CTRL_MAX_ENTRY	L2_FLOW_HIT_MISS_EXP_CTRL_NUM
 
 sw_error_t
 appe_l2_flow_hit_miss_exp_ctrl_get(
@@ -455,7 +455,7 @@ appe_l2_flow_hit_miss_exp_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_EXCEPTION_CMD_MAX_ENTRY	104
+#define TL_EXCEPTION_CMD_MAX_ENTRY	TL_EXCEPTION_CMD_NUM
 
 sw_error_t
 appe_tl_exception_cmd_get(
@@ -493,7 +493,7 @@ appe_tl_exception_cmd_tl_excep_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_EXP_CTRL_PROFILE0_MAX_ENTRY	104
+#define TL_EXP_CTRL_PROFILE0_MAX_ENTRY	TL_EXP_CTRL_PROFILE0_NUM
 
 sw_error_t
 appe_tl_exp_ctrl_profile0_get(
@@ -519,7 +519,7 @@ appe_tl_exp_ctrl_profile0_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_EXP_CTRL_PROFILE1_MAX_ENTRY	104
+#define TL_EXP_CTRL_PROFILE1_MAX_ENTRY	TL_EXP_CTRL_PROFILE1_NUM
 
 sw_error_t
 appe_tl_exp_ctrl_profile1_get(
@@ -545,7 +545,7 @@ appe_tl_exp_ctrl_profile1_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_EXP_CTRL_PROFILE2_MAX_ENTRY	104
+#define TL_EXP_CTRL_PROFILE2_MAX_ENTRY	TL_EXP_CTRL_PROFILE2_NUM
 
 sw_error_t
 appe_tl_exp_ctrl_profile2_get(
@@ -571,7 +571,7 @@ appe_tl_exp_ctrl_profile2_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_EXP_CTRL_PROFILE3_MAX_ENTRY	104
+#define TL_EXP_CTRL_PROFILE3_MAX_ENTRY	TL_EXP_CTRL_PROFILE3_NUM
 
 sw_error_t
 appe_tl_exp_ctrl_profile3_get(

@@ -7,7 +7,7 @@
 #ifndef _HPPE_ACL_API_H_
 #define _HPPE_ACL_API_H_
 
-#define IPO_CNT_TBL_MAX_ENTRY	128
+#define IPO_CNT_TBL_MAX_ENTRY	IPO_CNT_TBL_NUM
 
 sw_error_t
 hppe_ipo_cnt_tbl_get(
@@ -45,7 +45,7 @@ hppe_ipo_cnt_tbl_hit_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IPO_ACTION_MAX_ENTRY	128
+#define IPO_ACTION_MAX_ENTRY	IPO_ACTION_NUM
 
 sw_error_t
 hppe_ipo_action_get(
@@ -623,7 +623,7 @@ hppe_ipo_action_tags_to_remove_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RULE_EXT_1_REG_MAX_ENTRY	16
+#define RULE_EXT_1_REG_MAX_ENTRY	RULE_EXT_1_REG_NUM
 
 sw_error_t
 hppe_rule_ext_1_reg_get(
@@ -685,7 +685,7 @@ hppe_rule_ext_1_reg_ext2_3_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RULE_EXT_2_REG_MAX_ENTRY	16
+#define RULE_EXT_2_REG_MAX_ENTRY	RULE_EXT_2_REG_NUM
 
 sw_error_t
 hppe_rule_ext_2_reg_get(
@@ -723,7 +723,7 @@ hppe_rule_ext_2_reg_ext4_1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RULE_EXT_4_REG_MAX_ENTRY	16
+#define RULE_EXT_4_REG_MAX_ENTRY	RULE_EXT_4_REG_NUM
 
 sw_error_t
 hppe_rule_ext_4_reg_get(

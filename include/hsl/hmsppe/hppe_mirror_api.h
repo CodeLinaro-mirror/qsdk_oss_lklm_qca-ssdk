@@ -38,7 +38,7 @@ hppe_mirror_analyzer_in_analyzer_port_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define PORT_MIRROR_MAX_ENTRY	9
+#define PORT_MIRROR_MAX_ENTRY	PORT_MIRROR_NUM
 
 sw_error_t
 hppe_port_mirror_get(

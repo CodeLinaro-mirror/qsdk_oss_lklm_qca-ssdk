@@ -7,7 +7,7 @@
 #ifndef _APPE_TUNNEL_PROGRAM_API_H_
 #define _APPE_TUNNEL_PROGRAM_API_H_
 
-#define TPR_HDR_MATCH_0_MAX_ENTRY	16
+#define TPR_HDR_MATCH_0_MAX_ENTRY	TPR_HDR_MATCH_0_NUM
 
 sw_error_t
 appe_tpr_hdr_match_0_get(
@@ -45,7 +45,7 @@ appe_tpr_hdr_match_0_ip_ver_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_HDR_MATCH_1_MAX_ENTRY	16
+#define TPR_HDR_MATCH_1_MAX_ENTRY	TPR_HDR_MATCH_1_NUM
 
 sw_error_t
 appe_tpr_hdr_match_1_get(
@@ -71,7 +71,7 @@ appe_tpr_hdr_match_1_protocol_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_HDR_MATCH_2_MAX_ENTRY	16
+#define TPR_HDR_MATCH_2_MAX_ENTRY	TPR_HDR_MATCH_2_NUM
 
 sw_error_t
 appe_tpr_hdr_match_2_get(
@@ -97,7 +97,7 @@ appe_tpr_hdr_match_2_mask_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_HDR_MAX_ENTRY	16
+#define TPR_PROGRAM_HDR_MAX_ENTRY	TPR_PROGRAM_HDR_NUM
 
 sw_error_t
 appe_tpr_program_hdr_get(
@@ -123,7 +123,7 @@ appe_tpr_program_hdr_hdr_type_map_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_RESULT_MAX_ENTRY	16
+#define TPR_PROGRAM_RESULT_MAX_ENTRY	TPR_PROGRAM_RESULT_NUM
 
 sw_error_t
 appe_tpr_program_result_get(
@@ -209,7 +209,7 @@ appe_tpr_program_result_next_hdr_type_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_UDF_CTRL_MAX_ENTRY	16
+#define TPR_PROGRAM_UDF_CTRL_MAX_ENTRY	TPR_PROGRAM_UDF_CTRL_NUM
 
 sw_error_t
 appe_tpr_program_udf_ctrl_get(
@@ -259,7 +259,7 @@ appe_tpr_program_udf_ctrl_udf2_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_UDF_DATA_0_MAX_ENTRY	32
+#define TPR_PROGRAM_UDF_DATA_0_MAX_ENTRY	TPR_PROGRAM_UDF_DATA_0_NUM
 
 sw_error_t
 appe_tpr_program_udf_data_0_get(
@@ -297,7 +297,7 @@ appe_tpr_program_udf_data_0_data1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_UDF_DATA_1_MAX_ENTRY	32
+#define TPR_PROGRAM_UDF_DATA_1_MAX_ENTRY	TPR_PROGRAM_UDF_DATA_1_NUM
 
 sw_error_t
 appe_tpr_program_udf_data_1_get(
@@ -383,7 +383,7 @@ appe_tpr_program_udf_data_1_udf2_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_UDF_MASK_0_MAX_ENTRY	32
+#define TPR_PROGRAM_UDF_MASK_0_MAX_ENTRY	TPR_PROGRAM_UDF_MASK_0_NUM
 
 sw_error_t
 appe_tpr_program_udf_mask_0_get(
@@ -421,7 +421,7 @@ appe_tpr_program_udf_mask_0_mask1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_UDF_MASK_1_MAX_ENTRY	32
+#define TPR_PROGRAM_UDF_MASK_1_MAX_ENTRY	TPR_PROGRAM_UDF_MASK_1_NUM
 
 sw_error_t
 appe_tpr_program_udf_mask_1_get(
@@ -483,7 +483,7 @@ appe_tpr_program_udf_mask_1_udf2_valid_mask_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_PROGRAM_UDF_ACTION_MAX_ENTRY	32
+#define TPR_PROGRAM_UDF_ACTION_MAX_ENTRY	TPR_PROGRAM_UDF_ACTION_NUM
 
 sw_error_t
 appe_tpr_program_udf_action_get(

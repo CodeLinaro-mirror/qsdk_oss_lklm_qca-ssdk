@@ -7,7 +7,7 @@
 #ifndef _HPPE_PORTCTRL_API_H_
 #define _HPPE_PORTCTRL_API_H_
 
-#define IPR_PKT_NUM_TBL_REG_MAX_ENTRY	9
+#define IPR_PKT_NUM_TBL_REG_MAX_ENTRY	IPR_PKT_NUM_TBL_REG_NUM
 
 sw_error_t
 hppe_ipr_pkt_num_tbl_reg_get(
@@ -33,7 +33,7 @@ hppe_ipr_pkt_num_tbl_reg_ipr_pkt_num_tbl_reg_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IPR_BYTE_LOW_REG_REG_MAX_ENTRY	9
+#define IPR_BYTE_LOW_REG_REG_MAX_ENTRY	IPR_BYTE_LOW_REG_REG_NUM
 
 sw_error_t
 hppe_ipr_byte_low_reg_reg_get(
@@ -59,7 +59,7 @@ hppe_ipr_byte_low_reg_reg_ipr_byte_low_reg_reg_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IPR_BYTE_HIGH_REG_MAX_ENTRY	9
+#define IPR_BYTE_HIGH_REG_MAX_ENTRY	IPR_BYTE_HIGH_REG_NUM
 
 sw_error_t
 hppe_ipr_byte_high_reg_get(
@@ -97,7 +97,7 @@ hppe_ipr_byte_high_reg_ipr_byte_high_reg_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_IN_FORWARD_MAX_ENTRY	9
+#define PORT_IN_FORWARD_MAX_ENTRY	PORT_IN_FORWARD_NUM
 
 sw_error_t
 hppe_port_in_forward_get(
@@ -123,7 +123,7 @@ hppe_port_in_forward_source_filtering_bypass_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MC_MTU_CTRL_TBL_MAX_ENTRY	9
+#define MC_MTU_CTRL_TBL_MAX_ENTRY	MC_MTU_CTRL_TBL_NUM
 
 sw_error_t
 hppe_mc_mtu_ctrl_tbl_get(
@@ -173,7 +173,7 @@ hppe_mc_mtu_ctrl_tbl_tx_cnt_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define LINK_OAM_CTRL_MAX_ENTRY	9
+#define LINK_OAM_CTRL_MAX_ENTRY	LINK_OAM_CTRL_NUM
 
 sw_error_t
 hppe_link_oam_ctrl_get(
@@ -199,7 +199,7 @@ hppe_link_oam_ctrl_loopback_state_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MRU_MTU_CTRL_TBL_MAX_ENTRY	256
+#define MRU_MTU_CTRL_TBL_MAX_ENTRY	MRU_MTU_CTRL_TBL_NUM
 
 sw_error_t
 hppe_mru_mtu_ctrl_tbl_get(
@@ -489,7 +489,7 @@ hppe_mru_mtu_ctrl_tbl_tx_cnt_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_TX_COUNTER_TBL_REG_MAX_ENTRY	9
+#define PORT_TX_COUNTER_TBL_REG_MAX_ENTRY	PORT_TX_COUNTER_TBL_REG_NUM
 
 sw_error_t
 hppe_port_tx_counter_tbl_reg_get(
@@ -527,7 +527,7 @@ hppe_port_tx_counter_tbl_reg_tx_packets_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VP_TX_COUNTER_TBL_REG_MAX_ENTRY	256
+#define VP_TX_COUNTER_TBL_REG_MAX_ENTRY	VP_TX_COUNTER_TBL_REG_NUM
 
 sw_error_t
 hppe_vp_tx_counter_tbl_reg_get(
@@ -565,7 +565,7 @@ hppe_vp_tx_counter_tbl_reg_tx_packets_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_ENABLE_MAX_ENTRY	6
+#define MAC_ENABLE_MAX_ENTRY	MAC_ENABLE_NUM
 
 sw_error_t
 hppe_mac_enable_get(
@@ -639,7 +639,7 @@ hppe_mac_enable_txmac_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_SPEED_MAX_ENTRY	6
+#define MAC_SPEED_MAX_ENTRY	MAC_SPEED_NUM
 
 sw_error_t
 hppe_mac_speed_get(
@@ -665,7 +665,7 @@ hppe_mac_speed_mac_speed_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_CTRL2_MAX_ENTRY	6
+#define MAC_CTRL2_MAX_ENTRY	MAC_CTRL2_NUM
 
 sw_error_t
 hppe_mac_ctrl2_get(
@@ -775,7 +775,7 @@ hppe_mac_ctrl2_test_pause_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_DBG_CTRL_MAX_ENTRY	6
+#define MAC_DBG_CTRL_MAX_ENTRY	MAC_DBG_CTRL_NUM
 
 sw_error_t
 hppe_mac_dbg_ctrl_get(
@@ -849,7 +849,7 @@ hppe_mac_dbg_ctrl_mac_len_ctrl_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_DBG_ADDR_MAX_ENTRY	6
+#define MAC_DBG_ADDR_MAX_ENTRY	MAC_DBG_ADDR_NUM
 
 sw_error_t
 hppe_mac_dbg_addr_get(
@@ -875,7 +875,7 @@ hppe_mac_dbg_addr_mac_debug_addr_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_DBG_DATA_MAX_ENTRY	6
+#define MAC_DBG_DATA_MAX_ENTRY	MAC_DBG_DATA_NUM
 
 sw_error_t
 hppe_mac_dbg_data_get(
@@ -901,7 +901,7 @@ hppe_mac_dbg_data_mac_debug_data_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MAC_JUMBO_SIZE_MAX_ENTRY	6
+#define MAC_JUMBO_SIZE_MAX_ENTRY	MAC_JUMBO_SIZE_NUM
 
 sw_error_t
 hppe_mac_jumbo_size_get(

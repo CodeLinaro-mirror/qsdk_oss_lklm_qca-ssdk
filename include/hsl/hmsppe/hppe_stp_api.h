@@ -7,7 +7,7 @@
 #ifndef _HPPE_STP_API_H_
 #define _HPPE_STP_API_H_
 
-#define CST_STATE_MAX_ENTRY	9
+#define CST_STATE_MAX_ENTRY	CST_STATE_NUM
 
 sw_error_t
 hppe_cst_state_get(

@@ -7,7 +7,7 @@
 #ifndef _APPE_TUNNEL_MAP_API_H_
 #define _APPE_TUNNEL_MAP_API_H_
 
-#define TL_MAP_LPM_COUNTER_MAX_ENTRY	8
+#define TL_MAP_LPM_COUNTER_MAX_ENTRY	TL_MAP_LPM_COUNTER_NUM
 
 sw_error_t
 appe_tl_map_lpm_counter_get(
@@ -45,7 +45,7 @@ appe_tl_map_lpm_counter_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_MAP_RULE_TBL_MAX_ENTRY	8
+#define TL_MAP_RULE_TBL_MAX_ENTRY	TL_MAP_RULE_TBL_NUM
 
 sw_error_t
 appe_tl_map_rule_tbl_get(
@@ -215,7 +215,7 @@ appe_tl_map_rule_tbl_width3_psid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_MAP_LPM_TBL_MAX_ENTRY	8
+#define TL_MAP_LPM_TBL_MAX_ENTRY	TL_MAP_LPM_TBL_NUM
 
 sw_error_t
 appe_tl_map_lpm_tbl_get(
@@ -265,7 +265,7 @@ appe_tl_map_lpm_tbl_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TL_MAP_LPM_ACT_MAX_ENTRY	8
+#define TL_MAP_LPM_ACT_MAX_ENTRY	TL_MAP_LPM_ACT_NUM
 
 sw_error_t
 appe_tl_map_lpm_act_get(
