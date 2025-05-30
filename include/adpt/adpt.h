@@ -2311,6 +2311,8 @@ a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id);
 #endif
 a_uint32_t
 adpt_ppe_uniphy_number_get(a_uint32_t dev_id);
+a_bool_t
+adpt_ppe_loopback_port_validate(a_uint32_t dev_id, fal_port_t port_id);
 
 /*Common Macro*/
 #define DEFINE_FAL_FUNC_ADPT(func, dev_id, ...) \

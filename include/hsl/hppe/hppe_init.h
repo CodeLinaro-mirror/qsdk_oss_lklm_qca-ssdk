@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2019-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -35,8 +24,14 @@ extern "C" {
 #define HPPE_TO_XGMAC_PORT_ID(port_id)                     (port_id - 5)
 #endif
 #define HPPE_TO_GMAC_PORT_ID(port_id)                      (port_id -1)
+#ifdef HMSPPE
+#define PHYSICAL_LPBK_PORT_ID                              7
+#define TO_LPBK_ID(port_id)                                (port_id -1)
+#else
+#define PHYSICAL_LPBK_PORT_ID                              8
+#define TO_LPBK_ID(port_id)                                (port_id -2)
+#endif
 #define HPPE_FCS_LEN                                       4
-
 #define HPPE_GCC_UNIPHY_PSGMII_SOFT_RESET                  0x3ff2
 #define HPPE_GCC_UNIPHY_USXGMII_SOFT_RESET                 0x36
 #define HPPE_MAX_PORT_NUM                                  6

@@ -1,20 +1,8 @@
 /*
  * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -25,11 +13,10 @@
 #include "adpt.h"
 #include "hppe_xgmacmib_reg.h"
 #include "hppe_xgmacmib.h"
-
 #include "hppe_init.h"
 #include "adpt_hppe.h"
-#ifdef CPPE
-#include "adpt_cppe_mib.h"
+#ifdef JHPPE
+#include "adpt_jhppe_mib.h"
 #endif
 
 sw_error_t
@@ -70,19 +57,13 @@ adpt_ppe_mib_cpukeep_set(a_uint32_t dev_id, a_bool_t enable)
 
 	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT6; port_id++)
 	{
-#ifdef CPPE
-		if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
-			port_id == SSDK_PHYSICAL_PORT6)
-		{
-			rv = adpt_cppe_lpbk_mib_cpukeep_set(dev_id, port_id, enable);
-			SW_RTN_ON_ERROR(rv);
-			continue;
-		}
-#endif
 		g_port_id = HPPE_TO_GMAC_PORT_ID(port_id);
 		hppe_mac_mib_ctrl_mib_rd_clr_set(dev_id, g_port_id, (a_uint32_t)(!enable));
 	}
-
+#ifdef JHPPE
+	rv = adpt_jhppe_lpbk_mib_cpukeep_set(dev_id, enable);
+	SW_RTN_ON_ERROR(rv);
+#endif
 	return rv;
 }
 
@@ -176,11 +157,10 @@ adpt_ppe_get_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mib_info);
-#ifdef CPPE
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
-		port_id == SSDK_PHYSICAL_PORT6)
+#ifdef JHPPE
+	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{
-		return adpt_cppe_lpbk_get_mib_info(dev_id, port_id, mib_info);
+		return adpt_jhppe_lpbk_get_mib_info(dev_id, port_id, mib_info);
 	}
 #endif
 	return adpt_hppe_get_mib_info(dev_id, port_id, mib_info);
@@ -244,13 +224,10 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 
 	memset(&mmc_control, 0, sizeof(mmc_control));
 	ADPT_DEV_ID_CHECK(dev_id);
-#ifdef CPPE
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE)
-	{
-		port_num = SSDK_PHYSICAL_PORT5;
-		rv = adpt_cppe_lpbk_mib_status_set(dev_id, SSDK_PHYSICAL_PORT6, enable);
-		SW_RTN_ON_ERROR(rv);
-	}
+
+#ifdef JHPPE
+	rv = adpt_jhppe_lpbk_mib_status_set(dev_id, enable);
+	SW_RTN_ON_ERROR(rv);
 #endif
 	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= port_num; port_id++) {
 		g_port_id = HPPE_TO_GMAC_PORT_ID(port_id);
@@ -307,11 +284,10 @@ adpt_hppe_mib_port_flush_counters(a_uint32_t dev_id, fal_port_t port_id)
 sw_error_t
 adpt_ppe_mib_port_flush_counters(a_uint32_t dev_id, fal_port_t port_id)
 {
-#ifdef CPPE
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
-		port_id == SSDK_PHYSICAL_PORT6)
+#ifdef JHPPE
+	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{
-		return adpt_cppe_lpbk_mib_flush_counters(dev_id, port_id);
+		return adpt_jhppe_lpbk_mib_flush_counters(dev_id, port_id);
 	}
 #endif
 	return adpt_hppe_mib_port_flush_counters(dev_id, port_id);
@@ -390,11 +366,11 @@ adpt_ppe_get_rx_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mib_info);
-#ifdef CPPE
-	if (adpt_ppe_type_get(dev_id) == CPPE_TYPE &&
-		port_id == SSDK_PHYSICAL_PORT6)
+
+#ifdef JHPPE
+	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{
-		return adpt_cppe_lpbk_get_mib_info(dev_id, port_id, mib_info);
+		return adpt_jhppe_lpbk_get_mib_info(dev_id, port_id, mib_info);
 	}
 #endif
 	return adpt_hppe_get_rx_mib_info(dev_id, port_id, mib_info);
