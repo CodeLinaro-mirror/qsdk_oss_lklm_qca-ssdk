@@ -368,7 +368,7 @@ void qca_fdb_sw_sync_work_stop(struct qca_phy_priv *priv, fal_pbmp_t port_map);
 void qca_phy_mib_work_pause(struct qca_phy_priv *priv);
 int qca_phy_mib_work_resume(struct qca_phy_priv *priv);
 sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id);
-
+void ssdk_port_eee_init(a_uint32_t dev_id, a_uint32_t port_id);
 /*qca808x_start*/
 #ifdef __cplusplus
 }
