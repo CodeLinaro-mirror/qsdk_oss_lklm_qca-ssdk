@@ -29,6 +29,7 @@ typedef enum {
 	FAL_TUNNEL_TYPE_VXLAN_OVER_IPV6,
 	FAL_TUNNEL_TYPE_VXLAN_GPE_OVER_IPV4,
 	FAL_TUNNEL_TYPE_VXLAN_GPE_OVER_IPV6,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL6 = 6,
 	FAL_TUNNEL_TYPE_IPV4_OVER_IPV6 = 7,
 	FAL_TUNNEL_TYPE_PROGRAM0,
 	FAL_TUNNEL_TYPE_PROGRAM1,
@@ -38,6 +39,22 @@ typedef enum {
 	FAL_TUNNEL_TYPE_PROGRAM5,
 	FAL_TUNNEL_TYPE_GENEVE_OVER_IPV4,
 	FAL_TUNNEL_TYPE_GENEVE_OVER_IPV6,
+	FAL_TUNNEL_TYPE_PROGRAM6,
+	FAL_TUNNEL_TYPE_PROGRAM7,
+	FAL_TUNNEL_TYPE_PROGRAM8,
+	FAL_TUNNEL_TYPE_PROGRAM9,
+	FAL_TUNNEL_TYPE_PROGRAM10,
+	FAL_TUNNEL_TYPE_PROGRAM11,
+	FAL_TUNNEL_TYPE_PROGRAM12,
+	FAL_TUNNEL_TYPE_PROGRAM13,
+	FAL_TUNNEL_TYPE_PROGRAM14,
+	FAL_TUNNEL_TYPE_PROGRAM15 = 25,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL26,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL27,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL28,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL29,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL30,
+	FAL_TUNNEL_TYPE_TUPLE_TUNNEL31,
 	FAL_TUNNEL_TYPE_INVALID_TUNNEL,
 } fal_tunnel_type_t;
 
@@ -70,6 +87,9 @@ enum {
 	FAL_TUNNEL_KEY_TLINFO_EN,
 	FAL_TUNNEL_KEY_UDF0_EN,
 	FAL_TUNNEL_KEY_UDF1_EN,
+	FAL_TUNNEL_KEY_TLINFO_UDF0_EN, /* Tunnel info(low 16bits) from UDF0 ID */
+	FAL_TUNNEL_KEY_TLINFO_UDF1_EN, /* Tunnel info(high 16bits) from UDF1 ID */
+	FAL_TUNNEL_KEY_SIP_LPM_PREFIX_EN, /* Source IP address from LPM prefix hit */
 	FAL_TUNNEL_KEY_MAX,
 };
 
@@ -92,6 +112,16 @@ typedef enum
 	FAL_TUNNEL_PROGRAM_TYPE_3,         /*program3 type*/
 	FAL_TUNNEL_PROGRAM_TYPE_4,         /*program4 type*/
 	FAL_TUNNEL_PROGRAM_TYPE_5,         /*program5 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_6,         /*program6 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_7,         /*program7 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_8,         /*program8 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_9,         /*program9 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_10,        /*program10 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_11,        /*program11 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_12,        /*program12 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_13,        /*program13 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_14,        /*program14 type*/
+	FAL_TUNNEL_PROGRAM_TYPE_15,        /*program15 type*/
 	FAL_TUNNEL_PROGRAM_TYPE_BUTT,
 } fal_tunnel_program_type_t;
 
@@ -168,6 +198,12 @@ typedef struct {
 	a_uint16_t udf0_mask; /*UDF0 mask for udf0 */
 	a_uint8_t udf1_idx; /*UDF1 id used to select one UDF from total four UDFs */
 	a_uint16_t udf1_mask; /*UDF1 mask for udf1 */
+	a_uint8_t tunnel_info_udf0_idx; /* UDF0 id used to select one UDF from total four UDFs,
+					 * this 16bits UDF value takes as low 16bits of tunnel info
+					 */
+	a_uint8_t tunnel_info_udf1_idx; /* UDF1 id used to select one UDF from total four UDFs,
+					 * This 16bit UDF value takes as high 16bits of tunnel info
+					 */
 } fal_tunnel_decap_key_t;
 
 enum {
@@ -258,6 +294,16 @@ typedef struct {
 	a_uint8_t src_info_type; /*0 = Virtual port; 1 = L3_IF for tunnel payload */
 	a_uint16_t src_info; /*Virtual port ID or L3_IF index as source info */
 	a_uint8_t exp_profile; /*Exception profile ID */
+	a_bool_t inner_type_en; /* enable inner type */
+	fal_hdr_type_t inner_type; /* inner type */
+	a_bool_t inner_offset_en; /* enable inner offset */
+	a_uint8_t inner_offset_mode; /* inner offset mode,
+				      * 0 update inner offset from l4 offset,
+				      * 1 update inner offset from original inner offset
+				      */
+	a_uint8_t inner_offset; /* inner offset, the final updated inner offset is
+				 * inner_offset + l4 offset or inner_offset + original inner offset
+				 */
 	a_uint32_t pkt_counter; /* hit packet counter */
 	a_uint64_t byte_counter; /* hit byte counter */
 } fal_tunnel_action_t;
@@ -578,6 +624,45 @@ typedef struct {
 	a_uint32_t proto_map_data[4]; /* used by edit_rule when proto_map used */
 } fal_tunnel_encap_header_ctrl_t;
 
+typedef enum {
+	FAL_TUNNEL_TUPLE_CONTEXT_TUNNEL_TYPE,
+	FAL_TUNNEL_TUPLE_CONTEXT_TUPLE_ID,
+} fal_tunnel_tuple_context_type_t;
+
+typedef struct {
+	a_uint8_t ip_ver;  /* 0 for ipv4 or 1 for ipv6 */
+	a_uint8_t key_bmp;  /* tunnel tuple key included bit map */
+	union {
+		fal_ip4_addr_t ip4_addr;
+		fal_ip6_addr_t ip6_addr;
+	} sip; /* matched src ip */
+	union {
+		fal_ip4_addr_t ip4_addr;
+		fal_ip6_addr_t ip6_addr;
+	} dip; /* matched dst ip */
+	a_uint8_t l4_proto; /* matched ip protocol */
+	a_uint16_t sport; /* matched l4 src port */
+	a_uint16_t dport; /* matched l4 dst port */
+
+	fal_tunnel_tuple_context_type_t context_type; /* context type, tunnel type or tuple id */
+	union {
+		fal_tunnel_type_t tunnel_type;
+		a_uint32_t tuple_id;
+	} context; /* context value, tunnel type value or tuple id value */
+
+	/* returned hw info */
+	a_uint32_t addr_map; /* address entry map */
+	a_uint32_t port_map; /* port entry map */
+	a_uint32_t index; /* match ctrl index */
+} fal_tunnel_tuple_entry_t;
+
+/* Tunnel decap action when tunnel decap entry missed or miss hit */
+typedef struct {
+	a_bool_t decap_en; /* decapsulation or not */
+	a_bool_t service_code_en; /* enable new service code or not */
+	a_uint8_t service_code; /* service code */
+} fal_tunnel_decap_miss_action_t;
+
 sw_error_t
 fal_tunnel_decap_key_set(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_key_t *key_gen);
@@ -733,6 +818,26 @@ fal_tunnel_exp_decap_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable
 
 sw_error_t
 fal_tunnel_exp_decap_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
+
+sw_error_t
+fal_tunnel_tuple_entry_add(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+
+sw_error_t
+fal_tunnel_tuple_entry_del(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+
+sw_error_t
+fal_tunnel_tuple_entry_getfirst(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+
+sw_error_t
+fal_tunnel_tuple_entry_getnext(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+
+sw_error_t
+fal_tunnel_decap_miss_action_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action);
+
+sw_error_t
+fal_tunnel_decap_miss_action_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
