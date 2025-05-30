@@ -10,7 +10,8 @@
 #if defined(HMSPPE)
 #include "hmsppe/hsl_hms_reg.h"
 #elif defined(JHPPE)
-#include "hmsppe/hsl_hms_reg.h" //to be fixed by Chao
+#include "hmsppe/hsl_hms_reg.h"
+#include "hmsppe/hsl_juhu_reg.h"
 #else
 #include "appe/hsl_appe_reg.h"
 #endif
