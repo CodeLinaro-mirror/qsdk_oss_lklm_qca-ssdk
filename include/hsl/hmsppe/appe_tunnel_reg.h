@@ -2259,7 +2259,7 @@ union tl_ctrl_u {
 	#define TL_VLAN_TBL_TYPE_F_OFFSET  1
 	#define TL_VLAN_TBL_TYPE_F_LEN     2
 	#define TL_VLAN_TBL_TYPE_F_DEFAULT 0x0
-	/*[field] PORT_BITMAP reuse TYPE[2]*/
+	/*[field] PORT_BITMAP reuse TYPE[0]*/
 	#define TL_VLAN_TBL_PORT_BITMAP
 	#define TL_VLAN_TBL_PORT_BITMAP_OFFSET  3
 	#define TL_VLAN_TBL_PORT_BITMAP_LEN     9
@@ -2269,7 +2269,7 @@ union tl_ctrl_u {
 	#define TL_VLAN_TBL_PORT_VP_ID_OFFSET  3
 	#define TL_VLAN_TBL_PORT_VP_ID_LEN     9
 	#define TL_VLAN_TBL_PORT_VP_ID_DEFAULT 0x0
-	/*[field] VP_PROFILE reuse TYPE[1]*/
+	/*[field] VP_PROFILE reuse TYPE[2]*/
 	#define TL_VLAN_TBL_VP_PROFILE
 	#define TL_VLAN_TBL_VP_PROFILE_OFFSET  3
 	#define TL_VLAN_TBL_VP_PROFILE_LEN     9
@@ -2689,7 +2689,7 @@ union tl_key_gen_u {
 	#define TL_TBL_IPV4_SRC_ADDR_OFFSET  15
 	#define TL_TBL_IPV4_SRC_ADDR_LEN     32
 	#define TL_TBL_IPV4_SRC_ADDR_DEFAULT 0x0
-	/*[field] IPV6_SRC_ADDR reuse ENTRY_TYPE[0]*/
+	/*[field] IPV6_SRC_ADDR reuse ENTRY_TYPE[1]*/
 	#define TL_TBL_IPV6_SRC_ADDR
 	#define TL_TBL_IPV6_SRC_ADDR_OFFSET  15
 	#define TL_TBL_IPV6_SRC_ADDR_LEN     128
@@ -2699,7 +2699,7 @@ union tl_key_gen_u {
 	#define TL_TBL_IPV4_DST_ADDR_OFFSET  47
 	#define TL_TBL_IPV4_DST_ADDR_LEN     32
 	#define TL_TBL_IPV4_DST_ADDR_DEFAULT 0x0
-	/*[field] IPV6_DST_ADDR reuse ENTRY_TYPE[0]*/
+	/*[field] IPV6_DST_ADDR reuse ENTRY_TYPE[1]*/
 	#define TL_TBL_IPV6_DST_ADDR
 	#define TL_TBL_IPV6_DST_ADDR_OFFSET  143
 	#define TL_TBL_IPV6_DST_ADDR_LEN     128

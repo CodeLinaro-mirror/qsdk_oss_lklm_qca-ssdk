@@ -628,7 +628,7 @@ union l1_comp_cfg_tbl_u {
 /*[table] PSCH_SHP_SIGN_TBL*/
 #define PSCH_SHP_SIGN_TBL
 #define PSCH_SHP_SIGN_TBL_ADDRESS 0x70000
-#define PSCH_SHP_SIGN_TBL_NUM     8
+#define PSCH_SHP_SIGN_TBL_NUM     41
 #define PSCH_SHP_SIGN_TBL_INC     0x10
 #define PSCH_SHP_SIGN_TBL_TYPE    REG_TYPE_RW
 #define PSCH_SHP_SIGN_TBL_DEFAULT 0x0
@@ -651,7 +651,7 @@ union psch_shp_sign_tbl_u {
 /*[table] PSCH_SHP_CREDIT_TBL*/
 #define PSCH_SHP_CREDIT_TBL
 #define PSCH_SHP_CREDIT_TBL_ADDRESS 0x72000
-#define PSCH_SHP_CREDIT_TBL_NUM     8
+#define PSCH_SHP_CREDIT_TBL_NUM     41
 #define PSCH_SHP_CREDIT_TBL_INC     0x10
 #define PSCH_SHP_CREDIT_TBL_TYPE    REG_TYPE_RW
 #define PSCH_SHP_CREDIT_TBL_DEFAULT 0x0
@@ -674,7 +674,7 @@ union psch_shp_credit_tbl_u {
 /*[table] PSCH_SHP_CFG_TBL*/
 #define PSCH_SHP_CFG_TBL
 #define PSCH_SHP_CFG_TBL_ADDRESS 0x74000
-#define PSCH_SHP_CFG_TBL_NUM     8
+#define PSCH_SHP_CFG_TBL_NUM     41
 #define PSCH_SHP_CFG_TBL_INC     0x10
 #define PSCH_SHP_CFG_TBL_TYPE    REG_TYPE_RW
 #define PSCH_SHP_CFG_TBL_DEFAULT 0x0
@@ -721,7 +721,7 @@ union psch_shp_cfg_tbl_u {
 /*[table] PSCH_COMP_TBL*/
 #define PSCH_COMP_TBL
 #define PSCH_COMP_TBL_ADDRESS 0x76000
-#define PSCH_COMP_TBL_NUM     8
+#define PSCH_COMP_TBL_NUM     41
 #define PSCH_COMP_TBL_INC     0x10
 #define PSCH_COMP_TBL_TYPE    REG_TYPE_RO
 #define PSCH_COMP_TBL_DEFAULT 0x0
@@ -756,7 +756,7 @@ union psch_comp_tbl_u {
 /*[table] PSCH_COMP_CFG_TBL*/
 #define PSCH_COMP_CFG_TBL
 #define PSCH_COMP_CFG_TBL_ADDRESS 0x78000
-#define PSCH_COMP_CFG_TBL_NUM     8
+#define PSCH_COMP_CFG_TBL_NUM     41
 #define PSCH_COMP_CFG_TBL_INC     0x10
 #define PSCH_COMP_CFG_TBL_TYPE    REG_TYPE_RW
 #define PSCH_COMP_CFG_TBL_DEFAULT 0x0
