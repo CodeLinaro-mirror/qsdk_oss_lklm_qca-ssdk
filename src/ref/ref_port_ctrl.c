@@ -487,17 +487,12 @@ qca_ar8327_sw_mac_polling_port_valid(struct qca_phy_priv *priv, a_uint32_t port_
 void
 qca_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t *speed_status, a_uint32_t *link_status, a_uint32_t *duplex_status)
 {
-	a_uint16_t port_phy_status;
-	a_uint32_t phy_addr;
+	struct port_phy_status phy_status = {0};
 
-	phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-	if (qca_ar8327_sw_rgmii_mode_valid(dev_id, port_id) == A_TRUE)
-		phy_addr = 4;
-
-	port_phy_status = hsl_phy_mii_reg_read(dev_id, phy_addr, 17);
-	*speed_status = (a_uint32_t)((port_phy_status >> 14) & 0x03);
-	*link_status = (a_uint32_t)((port_phy_status & BIT(10)) >> 10);
-	*duplex_status = (a_uint32_t)((port_phy_status & BIT(13)) >> 13);
+	hsl_port_phydev_get_status( dev_id,  port_id, &phy_status);
+	*link_status = phy_status.link_status;
+	*speed_status = phy_status.speed;
+	*duplex_status = phy_status.duplex;
 }
 
 /* Initialize notifier list for QCA SSDK */
