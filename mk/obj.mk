@@ -22,7 +22,7 @@ OBJ-ISISC  += src/hsl/isisc/isisc_acl.o src/hsl/isisc/isisc_acl_parse.o \
               src/hsl/isisc/isisc_multicast_acl.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_acl.o src/hsl/hppe/hppe_acl.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_acl.o src/hsl/appe/appe_acl.o
-OBJ-JHPPE  += src/hsl/jhppe/jhppe_acl.o
+OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_acl.o src/hsl/jhppe/jhppe_acl.o
 endif
 
 ###############################################################################
