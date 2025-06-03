@@ -398,6 +398,11 @@ sw_error_t
 fal_qm_counter_monitor_stats_get(a_uint32_t dev_id, fal_qm_queue_type_t type,
 		a_uint32_t cnt_id, fal_qm_monitor_stats_t *monitor_stats);
 
+sw_error_t
+fal_qm_cpucode_enqueue_get(a_uint32_t dev_id, a_uint32_t cpu_code, a_bool_t *enable);
+
+sw_error_t
+fal_qm_cpucode_enqueue_set(a_uint32_t dev_id, a_uint32_t cpu_code, a_bool_t enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
