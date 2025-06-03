@@ -7,7 +7,7 @@
 #ifndef _APPE_VSI_API_H_
 #define _APPE_VSI_API_H_
 
-#define VSI_REMAP_TBL_MAX_ENTRY	64
+#define VSI_REMAP_TBL_MAX_ENTRY	VSI_REMAP_TBL_NUM
 
 sw_error_t
 appe_vsi_remap_tbl_get(

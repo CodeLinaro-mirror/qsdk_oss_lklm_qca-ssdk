@@ -338,7 +338,7 @@ jhppe_sawf_flow_statis_ctrl10_sawf1_done_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define SAWF_FLOW_BLOCK_MAP_MAX_ENTRY	16
+#define SAWF_FLOW_BLOCK_MAP_MAX_ENTRY	SAWF_FLOW_BLOCK_MAP_NUM
 
 sw_error_t
 jhppe_sawf_flow_block_map_get(
@@ -364,7 +364,7 @@ jhppe_sawf_flow_block_map_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PM_COUNTER_TBL_MAX_ENTRY	32
+#define PM_COUNTER_TBL_MAX_ENTRY	PM_COUNTER_TBL_NUM
 
 sw_error_t
 jhppe_pm_counter_tbl_get(
@@ -522,7 +522,7 @@ jhppe_pm_counter_tbl_ucast_packet_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SAWF_FLOW_CNT_TBL_MAX_ENTRY	512
+#define SAWF_FLOW_CNT_TBL_MAX_ENTRY	SAWF_FLOW_CNT_TBL_NUM
 
 sw_error_t
 jhppe_sawf_flow_cnt_tbl_get(

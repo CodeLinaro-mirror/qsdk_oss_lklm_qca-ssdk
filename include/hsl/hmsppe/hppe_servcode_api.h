@@ -7,7 +7,7 @@
 #ifndef _HPPE_SERVCODE_API_H_
 #define _HPPE_SERVCODE_API_H_
 
-#define IN_L2_SERVICE_TBL_MAX_ENTRY	256
+#define IN_L2_SERVICE_TBL_MAX_ENTRY	IN_L2_SERVICE_TBL_NUM
 
 sw_error_t
 hppe_in_l2_service_tbl_get(
@@ -129,7 +129,7 @@ hppe_in_l2_service_tbl_tx_cnt_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SERVICE_TBL_MAX_ENTRY	256
+#define SERVICE_TBL_MAX_ENTRY	SERVICE_TBL_NUM
 
 sw_error_t
 hppe_service_tbl_get(
@@ -167,7 +167,7 @@ hppe_service_tbl_rx_counting_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_SERVICE_TBL_MAX_ENTRY	256
+#define EG_SERVICE_TBL_MAX_ENTRY	EG_SERVICE_TBL_NUM
 
 sw_error_t
 hppe_eg_service_tbl_get(

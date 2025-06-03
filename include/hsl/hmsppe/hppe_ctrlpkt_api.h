@@ -7,7 +7,7 @@
 #ifndef _HPPE_CTRLPKT_API_H_
 #define _HPPE_CTRLPKT_API_H_
 
-#define ETHERTYPE_CTRL_MAX_ENTRY	4
+#define ETHERTYPE_CTRL_MAX_ENTRY	ETHERTYPE_CTRL_NUM
 
 sw_error_t
 hppe_ethertype_ctrl_get(
@@ -45,7 +45,7 @@ hppe_ethertype_ctrl_ethertype_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L2_CPU_CODE_CTRL_MAX_ENTRY	256
+#define L2_CPU_CODE_CTRL_MAX_ENTRY	L2_CPU_CODE_CTRL_NUM
 
 sw_error_t
 hppe_l2_cpu_code_ctrl_get(
@@ -83,7 +83,7 @@ hppe_l2_cpu_code_ctrl_exception_fmt_ctrl_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define APP_CTRL_MAX_ENTRY	32
+#define APP_CTRL_MAX_ENTRY	APP_CTRL_NUM
 
 sw_error_t
 hppe_app_ctrl_get(

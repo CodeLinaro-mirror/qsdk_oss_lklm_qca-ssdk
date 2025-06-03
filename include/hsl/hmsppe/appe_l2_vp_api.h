@@ -7,7 +7,7 @@
 #ifndef _APPE_L2_VP_API_H_
 #define _APPE_L2_VP_API_H_
 
-#define VP_LRN_LIMIT_COUNTER_MAX_ENTRY	256
+#define VP_LRN_LIMIT_COUNTER_MAX_ENTRY	VP_LRN_LIMIT_COUNTER_NUM
 
 sw_error_t
 appe_vp_lrn_limit_counter_get(
@@ -33,7 +33,7 @@ appe_vp_lrn_limit_counter_lrn_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L2_VP_PORT_TBL_MAX_ENTRY	256
+#define L2_VP_PORT_TBL_MAX_ENTRY	L2_VP_PORT_TBL_NUM
 
 sw_error_t
 appe_l2_vp_port_tbl_get(

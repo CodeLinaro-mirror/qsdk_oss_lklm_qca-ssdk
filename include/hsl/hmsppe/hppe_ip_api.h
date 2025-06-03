@@ -7,7 +7,7 @@
 #ifndef _HPPE_IP_API_H_
 #define _HPPE_IP_API_H_
 
-#define RT_INTERFACE_CNT_TBL_MAX_ENTRY	512
+#define RT_INTERFACE_CNT_TBL_MAX_ENTRY	RT_INTERFACE_CNT_TBL_NUM
 
 sw_error_t
 hppe_rt_interface_cnt_tbl_get(
@@ -69,7 +69,7 @@ hppe_rt_interface_cnt_tbl_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MY_MAC_TBL_MAX_ENTRY	8
+#define MY_MAC_TBL_MAX_ENTRY	MY_MAC_TBL_NUM
 
 sw_error_t
 hppe_my_mac_tbl_get(
@@ -107,7 +107,7 @@ hppe_my_mac_tbl_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define NETWORK_ROUTE_IP_MAX_ENTRY	32
+#define NETWORK_ROUTE_IP_MAX_ENTRY	NETWORK_ROUTE_IP_NUM
 
 sw_error_t
 hppe_network_route_ip_get(
@@ -145,7 +145,7 @@ hppe_network_route_ip_ip_addr_mask_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define NETWORK_ROUTE_IP_EXT_MAX_ENTRY	32
+#define NETWORK_ROUTE_IP_EXT_MAX_ENTRY	NETWORK_ROUTE_IP_EXT_NUM
 
 sw_error_t
 hppe_network_route_ip_ext_get(
@@ -183,7 +183,7 @@ hppe_network_route_ip_ext_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define NETWORK_ROUTE_ACTION_MAX_ENTRY	32
+#define NETWORK_ROUTE_ACTION_MAX_ENTRY	NETWORK_ROUTE_ACTION_NUM
 
 sw_error_t
 hppe_network_route_action_get(
@@ -605,7 +605,7 @@ hppe_l3_route_ctrl_ext_routing_as_flow_key_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define IN_PUB_IP_ADDR_TBL_MAX_ENTRY	16
+#define IN_PUB_IP_ADDR_TBL_MAX_ENTRY	IN_PUB_IP_ADDR_TBL_NUM
 
 sw_error_t
 hppe_in_pub_ip_addr_tbl_get(
@@ -875,7 +875,7 @@ hppe_host_tbl_rd_op_rslt_valid_cnt_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define L3_VSI_MAX_ENTRY	64
+#define L3_VSI_MAX_ENTRY	L3_VSI_NUM
 
 sw_error_t
 hppe_l3_vsi_get(
@@ -1009,7 +1009,7 @@ hppe_l3_vsi_l3_if_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_VSI_EXT_MAX_ENTRY	64
+#define L3_VSI_EXT_MAX_ENTRY	L3_VSI_EXT_NUM
 
 sw_error_t
 hppe_l3_vsi_ext_get(
@@ -1311,7 +1311,7 @@ hppe_l3_vsi_ext_ipv6_src_unk_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_VP_PORT_TBL_MAX_ENTRY	256
+#define L3_VP_PORT_TBL_MAX_ENTRY	L3_VP_PORT_TBL_NUM
 
 sw_error_t
 hppe_l3_vp_port_tbl_get(
@@ -1769,7 +1769,7 @@ hppe_l3_vp_port_tbl_vsi_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_L3_IF_TBL_MAX_ENTRY	256
+#define IN_L3_IF_TBL_MAX_ENTRY	IN_L3_IF_TBL_NUM
 
 sw_error_t
 hppe_in_l3_if_tbl_get(
@@ -2107,7 +2107,7 @@ hppe_in_l3_if_tbl_vpn_id_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define HOST_TBL_MAX_ENTRY	768
+#define HOST_TBL_MAX_ENTRY	HOST_TBL_NUM
 
 sw_error_t
 hppe_host_tbl_get(
@@ -2121,7 +2121,7 @@ hppe_host_tbl_set(
 		a_uint32_t index,
 		union host_tbl_u *value);
 
-#define HOST_IPV6_TBL_MAX_ENTRY	384
+#define HOST_IPV6_TBL_MAX_ENTRY	HOST_IPV6_TBL_NUM
 
 sw_error_t
 hppe_host_ipv6_tbl_get(
@@ -2135,7 +2135,7 @@ hppe_host_ipv6_tbl_set(
 		a_uint32_t index,
 		union host_ipv6_tbl_u *value);
 
-#define HOST_IPV4_MCAST_TBL_MAX_ENTRY	384
+#define HOST_IPV4_MCAST_TBL_MAX_ENTRY	HOST_IPV4_MCAST_TBL_NUM
 
 sw_error_t
 hppe_host_ipv4_mcast_tbl_get(
@@ -2149,7 +2149,7 @@ hppe_host_ipv4_mcast_tbl_set(
 		a_uint32_t index,
 		union host_ipv4_mcast_tbl_u *value);
 
-#define HOST_IPV6_MCAST_TBL_MAX_ENTRY	192
+#define HOST_IPV6_MCAST_TBL_MAX_ENTRY	HOST_IPV6_MCAST_TBL_NUM
 
 sw_error_t
 hppe_host_ipv6_mcast_tbl_get(
@@ -2163,7 +2163,7 @@ hppe_host_ipv6_mcast_tbl_set(
 		a_uint32_t index,
 		union host_ipv6_mcast_tbl_u *value);
 
-#define IN_NEXTHOP_TBL_MAX_ENTRY	768
+#define IN_NEXTHOP_TBL_MAX_ENTRY	IN_NEXTHOP_TBL_NUM
 
 sw_error_t
 hppe_in_nexthop_tbl_get(
@@ -2321,7 +2321,7 @@ hppe_in_nexthop_tbl_vsi_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_L3_IF_TBL_MAX_ENTRY	256
+#define EG_L3_IF_TBL_MAX_ENTRY	EG_L3_IF_TBL_NUM
 
 sw_error_t
 hppe_eg_l3_if_tbl_get(

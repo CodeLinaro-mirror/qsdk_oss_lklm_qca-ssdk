@@ -78,7 +78,7 @@ jhppe_nat_t_cfg_app_udp_port_map_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define L3_FLOW_KEY_GEN_MAX_ENTRY	2
+#define L3_FLOW_KEY_GEN_MAX_ENTRY	L3_FLOW_KEY_GEN_NUM
 
 sw_error_t
 jhppe_l3_flow_key_gen_get(
@@ -176,7 +176,7 @@ jhppe_l3_flow_key_gen_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_FLOW_KEY_SEL_MAX_ENTRY	2
+#define L3_FLOW_KEY_SEL_MAX_ENTRY	L3_FLOW_KEY_SEL_NUM
 
 sw_error_t
 jhppe_l3_flow_key_sel_get(
@@ -322,7 +322,7 @@ jhppe_l3_flow_key_sel_udf1_mask_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_MY_MAC_TBL_MAX_ENTRY	32
+#define L3_MY_MAC_TBL_MAX_ENTRY	L3_MY_MAC_TBL_NUM
 
 sw_error_t
 jhppe_l3_my_mac_tbl_get(
@@ -396,7 +396,7 @@ jhppe_l3_my_mac_tbl_vsi_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_FLOW_6TUPLE_TBL_MAX_ENTRY	2048
+#define IN_FLOW_6TUPLE_TBL_MAX_ENTRY	IN_FLOW_6TUPLE_TBL_NUM
 
 sw_error_t
 jhppe_in_flow_6tuple_tbl_get(

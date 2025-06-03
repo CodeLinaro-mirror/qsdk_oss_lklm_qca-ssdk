@@ -6,7 +6,7 @@
 #ifndef _JHPPE_TUNNEL_PROGRAM_API_H_
 #define _JHPPE_TUNNEL_PROGRAM_API_H_
 
-#define TPR_HDR_MATCH_CTRL_MAX_ENTRY	16
+#define TPR_HDR_MATCH_CTRL_MAX_ENTRY	TPR_HDR_MATCH_CTRL_NUM
 
 sw_error_t
 jhppe_tpr_hdr_match_ctrl_get(
@@ -56,7 +56,7 @@ jhppe_tpr_hdr_match_ctrl_protocol_pos_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_HDR_TUPLE_MATCH_MAX_ENTRY	16
+#define TPR_HDR_TUPLE_MATCH_MAX_ENTRY	TPR_HDR_TUPLE_MATCH_NUM
 
 sw_error_t
 jhppe_tpr_hdr_tuple_match_get(

@@ -7,7 +7,7 @@
 #ifndef _HPPE_VSI_API_H_
 #define _HPPE_VSI_API_H_
 
-#define VLAN_CNT_TBL_MAX_ENTRY	64
+#define VLAN_CNT_TBL_MAX_ENTRY	VLAN_CNT_TBL_NUM
 
 sw_error_t
 hppe_vlan_cnt_tbl_get(
@@ -45,7 +45,7 @@ hppe_vlan_cnt_tbl_rx_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PRE_L2_CNT_TBL_MAX_ENTRY	64
+#define PRE_L2_CNT_TBL_MAX_ENTRY	PRE_L2_CNT_TBL_NUM
 
 sw_error_t
 hppe_pre_l2_cnt_tbl_get(
@@ -107,7 +107,7 @@ hppe_pre_l2_cnt_tbl_rx_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VSI_TBL_MAX_ENTRY	64
+#define VSI_TBL_MAX_ENTRY	VSI_TBL_NUM
 
 sw_error_t
 hppe_vsi_tbl_get(
@@ -229,7 +229,7 @@ hppe_vsi_tbl_uuc_bitmap_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_VSI_COUNTER_TBL_MAX_ENTRY	64
+#define EG_VSI_COUNTER_TBL_MAX_ENTRY	EG_VSI_COUNTER_TBL_NUM
 
 sw_error_t
 hppe_eg_vsi_counter_tbl_get(

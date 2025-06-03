@@ -6,7 +6,7 @@
 #ifndef _JHPPE_TUNNEL_API_H_
 #define _JHPPE_TUNNEL_API_H_
 
-#define TPR_TUPLE_IP_ADDR_0_MAX_ENTRY	16
+#define TPR_TUPLE_IP_ADDR_0_MAX_ENTRY	TPR_TUPLE_IP_ADDR_0_NUM
 
 sw_error_t
 jhppe_tpr_tuple_ip_addr_0_get(
@@ -32,7 +32,7 @@ jhppe_tpr_tuple_ip_addr_0_value_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_IP_ADDR_1_MAX_ENTRY	16
+#define TPR_TUPLE_IP_ADDR_1_MAX_ENTRY	TPR_TUPLE_IP_ADDR_1_NUM
 
 sw_error_t
 jhppe_tpr_tuple_ip_addr_1_get(
@@ -58,7 +58,7 @@ jhppe_tpr_tuple_ip_addr_1_value_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_IP_ADDR_2_MAX_ENTRY	16
+#define TPR_TUPLE_IP_ADDR_2_MAX_ENTRY	TPR_TUPLE_IP_ADDR_2_NUM
 
 sw_error_t
 jhppe_tpr_tuple_ip_addr_2_get(
@@ -84,7 +84,7 @@ jhppe_tpr_tuple_ip_addr_2_value_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_IP_ADDR_3_MAX_ENTRY	16
+#define TPR_TUPLE_IP_ADDR_3_MAX_ENTRY	TPR_TUPLE_IP_ADDR_3_NUM
 
 sw_error_t
 jhppe_tpr_tuple_ip_addr_3_get(
@@ -110,7 +110,7 @@ jhppe_tpr_tuple_ip_addr_3_value_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_IP_ADDR_CTRL_MAX_ENTRY	16
+#define TPR_TUPLE_IP_ADDR_CTRL_MAX_ENTRY	TPR_TUPLE_IP_ADDR_CTRL_NUM
 
 sw_error_t
 jhppe_tpr_tuple_ip_addr_ctrl_get(
@@ -148,7 +148,7 @@ jhppe_tpr_tuple_ip_addr_ctrl_ver_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_L4_PORT_MAX_ENTRY	32
+#define TPR_TUPLE_L4_PORT_MAX_ENTRY	TPR_TUPLE_L4_PORT_NUM
 
 sw_error_t
 jhppe_tpr_tuple_l4_port_get(
@@ -186,7 +186,7 @@ jhppe_tpr_tuple_l4_port_port_value_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_ADDR_MATCH_MAX_ENTRY	16
+#define TPR_TUPLE_ADDR_MATCH_MAX_ENTRY	TPR_TUPLE_ADDR_MATCH_NUM
 
 sw_error_t
 jhppe_tpr_tuple_addr_match_get(
@@ -212,7 +212,7 @@ jhppe_tpr_tuple_addr_match_addr_map_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_PORT_MATCH_MAX_ENTRY	16
+#define TPR_TUPLE_PORT_MATCH_MAX_ENTRY	TPR_TUPLE_PORT_MATCH_NUM
 
 sw_error_t
 jhppe_tpr_tuple_port_match_get(
@@ -238,7 +238,7 @@ jhppe_tpr_tuple_port_match_port_map_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TPR_TUPLE_MATCH_CTRL_MAX_ENTRY	16
+#define TPR_TUPLE_MATCH_CTRL_MAX_ENTRY	TPR_TUPLE_MATCH_CTRL_NUM
 
 sw_error_t
 jhppe_tpr_tuple_match_ctrl_get(
@@ -300,7 +300,7 @@ jhppe_tpr_tuple_match_ctrl_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TUNNEL_TYPE_MAPPING_MAX_ENTRY	32
+#define TUNNEL_TYPE_MAPPING_MAX_ENTRY	TUNNEL_TYPE_MAPPING_NUM
 
 sw_error_t
 jhppe_tunnel_type_mapping_get(

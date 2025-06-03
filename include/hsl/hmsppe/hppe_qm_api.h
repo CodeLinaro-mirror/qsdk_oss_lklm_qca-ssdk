@@ -7,7 +7,7 @@
 #ifndef _HPPE_QM_API_H_
 #define _HPPE_QM_API_H_
 
-#define QUEUE_TX_COUNTER_TBL_MAX_ENTRY	300
+#define QUEUE_TX_COUNTER_TBL_MAX_ENTRY	QUEUE_TX_COUNTER_TBL_NUM
 
 sw_error_t
 hppe_queue_tx_counter_tbl_get(
@@ -179,49 +179,7 @@ hppe_ucast_default_hash_hash_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-
-sw_error_t
-hppe_spare_reg0_get(
-		a_uint32_t dev_id,
-		union spare_reg0_u *value);
-
-sw_error_t
-hppe_spare_reg0_set(
-		a_uint32_t dev_id,
-		union spare_reg0_u *value);
-
-sw_error_t
-hppe_spare_reg0_spare_reg0_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_spare_reg0_spare_reg0_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-
-sw_error_t
-hppe_spare_reg1_get(
-		a_uint32_t dev_id,
-		union spare_reg1_u *value);
-
-sw_error_t
-hppe_spare_reg1_set(
-		a_uint32_t dev_id,
-		union spare_reg1_u *value);
-
-sw_error_t
-hppe_spare_reg1_spare_reg1_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_spare_reg1_spare_reg1_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-#define MCAST_PRIORITY_MAP0_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP0_MAX_ENTRY	MCAST_PRIORITY_MAP0_NUM
 
 sw_error_t
 hppe_mcast_priority_map0_get(
@@ -247,7 +205,7 @@ hppe_mcast_priority_map0_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP1_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP1_MAX_ENTRY	MCAST_PRIORITY_MAP1_NUM
 
 sw_error_t
 hppe_mcast_priority_map1_get(
@@ -273,7 +231,7 @@ hppe_mcast_priority_map1_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP2_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP2_MAX_ENTRY	MCAST_PRIORITY_MAP2_NUM
 
 sw_error_t
 hppe_mcast_priority_map2_get(
@@ -299,7 +257,7 @@ hppe_mcast_priority_map2_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP3_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP3_MAX_ENTRY	MCAST_PRIORITY_MAP3_NUM
 
 sw_error_t
 hppe_mcast_priority_map3_get(
@@ -325,7 +283,7 @@ hppe_mcast_priority_map3_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP4_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP4_MAX_ENTRY	MCAST_PRIORITY_MAP4_NUM
 
 sw_error_t
 hppe_mcast_priority_map4_get(
@@ -351,7 +309,7 @@ hppe_mcast_priority_map4_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP5_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP5_MAX_ENTRY	MCAST_PRIORITY_MAP5_NUM
 
 sw_error_t
 hppe_mcast_priority_map5_get(
@@ -377,7 +335,7 @@ hppe_mcast_priority_map5_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP6_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP6_MAX_ENTRY	MCAST_PRIORITY_MAP6_NUM
 
 sw_error_t
 hppe_mcast_priority_map6_get(
@@ -403,7 +361,7 @@ hppe_mcast_priority_map6_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_PRIORITY_MAP7_MAX_ENTRY	16
+#define MCAST_PRIORITY_MAP7_MAX_ENTRY	MCAST_PRIORITY_MAP7_NUM
 
 sw_error_t
 hppe_mcast_priority_map7_get(
@@ -429,7 +387,7 @@ hppe_mcast_priority_map7_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UCAST_QUEUE_MAP_TBL_MAX_ENTRY	4096
+#define UCAST_QUEUE_MAP_TBL_MAX_ENTRY	UCAST_QUEUE_MAP_TBL_NUM
 
 sw_error_t
 hppe_ucast_queue_map_tbl_get(
@@ -467,7 +425,7 @@ hppe_ucast_queue_map_tbl_queue_id_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UCAST_HASH_MAP_TBL_MAX_ENTRY	4096
+#define UCAST_HASH_MAP_TBL_MAX_ENTRY	UCAST_HASH_MAP_TBL_NUM
 
 sw_error_t
 hppe_ucast_hash_map_tbl_get(
@@ -493,7 +451,7 @@ hppe_ucast_hash_map_tbl_hash_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UCAST_PRIORITY_MAP_TBL_MAX_ENTRY	256
+#define UCAST_PRIORITY_MAP_TBL_MAX_ENTRY	UCAST_PRIORITY_MAP_TBL_NUM
 
 sw_error_t
 hppe_ucast_priority_map_tbl_get(
@@ -519,7 +477,7 @@ hppe_ucast_priority_map_tbl_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MCAST_QUEUE_MAP_TBL_MAX_ENTRY	256
+#define MCAST_QUEUE_MAP_TBL_MAX_ENTRY	MCAST_QUEUE_MAP_TBL_NUM
 
 sw_error_t
 hppe_mcast_queue_map_tbl_get(
@@ -545,7 +503,7 @@ hppe_mcast_queue_map_tbl_class_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_UNI_QUEUE_CFG_TBL_MAX_ENTRY	256
+#define AC_UNI_QUEUE_CFG_TBL_MAX_ENTRY	AC_UNI_QUEUE_CFG_TBL_NUM
 
 sw_error_t
 hppe_ac_uni_queue_cfg_tbl_get(
@@ -763,7 +721,7 @@ hppe_ac_uni_queue_cfg_tbl_ac_cfg_yel_resume_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_MUL_QUEUE_CFG_TBL_MAX_ENTRY	44
+#define AC_MUL_QUEUE_CFG_TBL_MAX_ENTRY	AC_MUL_QUEUE_CFG_TBL_NUM
 
 sw_error_t
 hppe_ac_mul_queue_cfg_tbl_get(
@@ -909,7 +867,7 @@ hppe_ac_mul_queue_cfg_tbl_ac_cfg_yel_resume_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_GRP_CFG_TBL_MAX_ENTRY	4
+#define AC_GRP_CFG_TBL_MAX_ENTRY	AC_GRP_CFG_TBL_NUM
 
 sw_error_t
 hppe_ac_grp_cfg_tbl_get(
@@ -1055,33 +1013,7 @@ hppe_ac_grp_cfg_tbl_ac_grp_yel_resume_offset_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_MSEQ_TBL_MAX_ENTRY	256
-
-sw_error_t
-hppe_ac_mseq_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ac_mseq_tbl_u *value);
-
-sw_error_t
-hppe_ac_mseq_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ac_mseq_tbl_u *value);
-
-sw_error_t
-hppe_ac_mseq_tbl_ac_mseq_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_mseq_tbl_ac_mseq_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-#define AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY	256
+#define AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY	AC_UNI_QUEUE_CNT_TBL_NUM
 
 sw_error_t
 hppe_ac_uni_queue_cnt_tbl_get(
@@ -1107,7 +1039,7 @@ hppe_ac_uni_queue_cnt_tbl_ac_uni_queue_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_MUL_QUEUE_CNT_TBL_MAX_ENTRY	44
+#define AC_MUL_QUEUE_CNT_TBL_MAX_ENTRY	AC_MUL_QUEUE_CNT_TBL_NUM
 
 sw_error_t
 hppe_ac_mul_queue_cnt_tbl_get(
@@ -1133,7 +1065,7 @@ hppe_ac_mul_queue_cnt_tbl_ac_mul_queue_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_UNI_QUEUE_DROP_STATE_TBL_MAX_ENTRY	256
+#define AC_UNI_QUEUE_DROP_STATE_TBL_MAX_ENTRY	AC_UNI_QUEUE_DROP_STATE_TBL_NUM
 
 sw_error_t
 hppe_ac_uni_queue_drop_state_tbl_get(
@@ -1219,7 +1151,7 @@ hppe_ac_uni_queue_drop_state_tbl_yel_resume_thrd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_MUL_QUEUE_DROP_STATE_TBL_MAX_ENTRY	44
+#define AC_MUL_QUEUE_DROP_STATE_TBL_MAX_ENTRY	AC_MUL_QUEUE_DROP_STATE_TBL_NUM
 
 sw_error_t
 hppe_ac_mul_queue_drop_state_tbl_get(
@@ -1305,93 +1237,7 @@ hppe_ac_mul_queue_drop_state_tbl_yel_resume_thrd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define AC_GRP_DROP_STATE_TBL_MAX_ENTRY	4
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ac_grp_drop_state_tbl_u *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ac_grp_drop_state_tbl_u *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_grn_drop_state_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_grn_drop_state_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_grn_resume_thrd_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_grn_resume_thrd_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_red_drop_state_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_red_drop_state_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_red_resume_thrd_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_red_resume_thrd_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_yel_drop_state_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_yel_drop_state_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_yel_resume_thrd_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_drop_state_tbl_yel_resume_thrd_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-#define OQ_ENQ_OPR_TBL_MAX_ENTRY	300
+#define OQ_ENQ_OPR_TBL_MAX_ENTRY	OQ_ENQ_OPR_TBL_NUM
 
 sw_error_t
 hppe_oq_enq_opr_tbl_get(
@@ -1417,7 +1263,7 @@ hppe_oq_enq_opr_tbl_enq_disable_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define UNI_DROP_CNT_TBL_MAX_ENTRY	1536
+#define UNI_DROP_CNT_TBL_MAX_ENTRY	UNI_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_uni_drop_cnt_tbl_get(
@@ -1455,7 +1301,7 @@ hppe_uni_drop_cnt_tbl_uni_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P0_DROP_CNT_TBL_MAX_ENTRY	48
+#define MUL_P0_DROP_CNT_TBL_MAX_ENTRY	MUL_P0_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p0_drop_cnt_tbl_get(
@@ -1493,7 +1339,7 @@ hppe_mul_p0_drop_cnt_tbl_mul_p0_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P1_DROP_CNT_TBL_MAX_ENTRY	12
+#define MUL_P1_DROP_CNT_TBL_MAX_ENTRY	MUL_P1_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p1_drop_cnt_tbl_get(
@@ -1531,7 +1377,7 @@ hppe_mul_p1_drop_cnt_tbl_mul_p1_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P2_DROP_CNT_TBL_MAX_ENTRY	12
+#define MUL_P2_DROP_CNT_TBL_MAX_ENTRY	MUL_P2_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p2_drop_cnt_tbl_get(
@@ -1569,7 +1415,7 @@ hppe_mul_p2_drop_cnt_tbl_mul_p2_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P3_DROP_CNT_TBL_MAX_ENTRY	12
+#define MUL_P3_DROP_CNT_TBL_MAX_ENTRY	MUL_P3_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p3_drop_cnt_tbl_get(
@@ -1607,7 +1453,7 @@ hppe_mul_p3_drop_cnt_tbl_mul_p3_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P4_DROP_CNT_TBL_MAX_ENTRY	12
+#define MUL_P4_DROP_CNT_TBL_MAX_ENTRY	MUL_P4_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p4_drop_cnt_tbl_get(
@@ -1645,7 +1491,7 @@ hppe_mul_p4_drop_cnt_tbl_mul_p4_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P5_DROP_CNT_TBL_MAX_ENTRY	12
+#define MUL_P5_DROP_CNT_TBL_MAX_ENTRY	MUL_P5_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p5_drop_cnt_tbl_get(
@@ -1683,7 +1529,7 @@ hppe_mul_p5_drop_cnt_tbl_mul_p5_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P6_DROP_CNT_TBL_MAX_ENTRY	12
+#define MUL_P6_DROP_CNT_TBL_MAX_ENTRY	MUL_P6_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p6_drop_cnt_tbl_get(
@@ -1721,7 +1567,7 @@ hppe_mul_p6_drop_cnt_tbl_mul_p6_drop_pkt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define MUL_P7_DROP_CNT_TBL_MAX_ENTRY	6
+#define MUL_P7_DROP_CNT_TBL_MAX_ENTRY	MUL_P7_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_mul_p7_drop_cnt_tbl_get(

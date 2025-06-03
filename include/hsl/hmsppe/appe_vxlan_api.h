@@ -7,7 +7,7 @@
 #ifndef _APPE_VXLAN_API_H_
 #define _APPE_VXLAN_API_H_
 
-#define UDP_PORT_CFG_MAX_ENTRY	6
+#define UDP_PORT_CFG_MAX_ENTRY	UDP_PORT_CFG_NUM
 
 sw_error_t
 appe_udp_port_cfg_get(

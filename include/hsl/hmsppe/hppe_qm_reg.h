@@ -160,50 +160,6 @@ union ucast_default_hash_u {
 	struct ucast_default_hash bf;
 };
 
-/*[register] SPARE_REG0*/
-#define SPARE_REG0
-#define SPARE_REG0_ADDRESS 0x70
-#define SPARE_REG0_NUM     1
-#define SPARE_REG0_INC     0x4
-#define SPARE_REG0_TYPE    REG_TYPE_RW
-#define SPARE_REG0_DEFAULT 0x0
-	/*[field] SPARE_REG0*/
-	#define SPARE_REG0_SPARE_REG0
-	#define SPARE_REG0_SPARE_REG0_OFFSET  0
-	#define SPARE_REG0_SPARE_REG0_LEN     32
-	#define SPARE_REG0_SPARE_REG0_DEFAULT 0x0
-
-struct spare_reg0 {
-	a_uint32_t  spare_reg0:32;
-};
-
-union spare_reg0_u {
-	a_uint32_t val;
-	struct spare_reg0 bf;
-};
-
-/*[register] SPARE_REG1*/
-#define SPARE_REG1
-#define SPARE_REG1_ADDRESS 0x74
-#define SPARE_REG1_NUM     1
-#define SPARE_REG1_INC     0x4
-#define SPARE_REG1_TYPE    REG_TYPE_RW
-#define SPARE_REG1_DEFAULT 0x0
-	/*[field] SPARE_REG1*/
-	#define SPARE_REG1_SPARE_REG1
-	#define SPARE_REG1_SPARE_REG1_OFFSET  0
-	#define SPARE_REG1_SPARE_REG1_LEN     32
-	#define SPARE_REG1_SPARE_REG1_DEFAULT 0x0
-
-struct spare_reg1 {
-	a_uint32_t  spare_reg1:32;
-};
-
-union spare_reg1_u {
-	a_uint32_t val;
-	struct spare_reg1 bf;
-};
-
 /*[register] MCAST_PRIORITY_MAP0*/
 #define MCAST_PRIORITY_MAP0
 #define MCAST_PRIORITY_MAP0_ADDRESS 0x100
@@ -780,29 +736,6 @@ union ac_grp_cfg_tbl_u {
 	struct ac_grp_cfg_tbl bf;
 };
 
-/*[table] AC_MSEQ_TBL*/
-#define AC_MSEQ_TBL
-#define AC_MSEQ_TBL_ADDRESS 0x52000
-#define AC_MSEQ_TBL_NUM     256
-#define AC_MSEQ_TBL_INC     0x10
-#define AC_MSEQ_TBL_TYPE    REG_TYPE_RW
-#define AC_MSEQ_TBL_DEFAULT 0x0
-	/*[field] AC_MSEQ*/
-	#define AC_MSEQ_TBL_AC_MSEQ
-	#define AC_MSEQ_TBL_AC_MSEQ_OFFSET  0
-	#define AC_MSEQ_TBL_AC_MSEQ_LEN     15
-	#define AC_MSEQ_TBL_AC_MSEQ_DEFAULT 0x0
-
-struct ac_mseq_tbl {
-	a_uint32_t  ac_mseq:15;
-	a_uint32_t  _reserved0:17;
-};
-
-union ac_mseq_tbl_u {
-	a_uint32_t val;
-	struct ac_mseq_tbl bf;
-};
-
 /*[table] AC_UNI_QUEUE_CNT_TBL*/
 #define AC_UNI_QUEUE_CNT_TBL
 #define AC_UNI_QUEUE_CNT_TBL_ADDRESS 0x53000
@@ -955,60 +888,6 @@ struct ac_mul_queue_drop_state_tbl {
 union ac_mul_queue_drop_state_tbl_u {
 	a_uint32_t val[2];
 	struct ac_mul_queue_drop_state_tbl bf;
-};
-
-/*[table] AC_GRP_DROP_STATE_TBL*/
-#define AC_GRP_DROP_STATE_TBL
-#define AC_GRP_DROP_STATE_TBL_ADDRESS 0x5a000
-#define AC_GRP_DROP_STATE_TBL_NUM     4
-#define AC_GRP_DROP_STATE_TBL_INC     0x10
-#define AC_GRP_DROP_STATE_TBL_TYPE    REG_TYPE_RW
-#define AC_GRP_DROP_STATE_TBL_DEFAULT 0x0
-	/*[field] RED_RESUME_THRD*/
-	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD
-	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD_OFFSET  0
-	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD_LEN     12
-	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD_DEFAULT 0x0
-	/*[field] YEL_RESUME_THRD*/
-	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD
-	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD_OFFSET  12
-	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD_LEN     12
-	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD_DEFAULT 0x0
-	/*[field] GRN_RESUME_THRD*/
-	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD
-	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET  24
-	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_LEN     12
-	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_DEFAULT 0x0
-	/*[field] RED_DROP_STATE*/
-	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE
-	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE_OFFSET  36
-	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE_LEN     1
-	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE_DEFAULT 0x0
-	/*[field] YEL_DROP_STATE*/
-	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE
-	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE_OFFSET  37
-	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE_LEN     1
-	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE_DEFAULT 0x0
-	/*[field] GRN_DROP_STATE*/
-	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE
-	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE_OFFSET  38
-	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE_LEN     1
-	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE_DEFAULT 0x0
-
-struct ac_grp_drop_state_tbl {
-	a_uint32_t  red_resume_thrd:12;
-	a_uint32_t  yel_resume_thrd:12;
-	a_uint32_t  grn_resume_thrd_0:8;
-	a_uint32_t  grn_resume_thrd_1:4;
-	a_uint32_t  red_drop_state:1;
-	a_uint32_t  yel_drop_state:1;
-	a_uint32_t  grn_drop_state:1;
-	a_uint32_t  _reserved0:25;
-};
-
-union ac_grp_drop_state_tbl_u {
-	a_uint32_t val[2];
-	struct ac_grp_drop_state_tbl bf;
 };
 
 /*[table] OQ_ENQ_OPR_TBL*/

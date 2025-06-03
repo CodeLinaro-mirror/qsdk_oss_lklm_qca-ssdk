@@ -672,7 +672,7 @@ hppe_fdb_tbl_rd_op_data2_data_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define PORT_BRIDGE_CTRL_MAX_ENTRY	9
+#define PORT_BRIDGE_CTRL_MAX_ENTRY	PORT_BRIDGE_CTRL_NUM
 
 sw_error_t
 hppe_port_bridge_ctrl_get(
@@ -770,7 +770,7 @@ hppe_port_bridge_ctrl_txmac_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_LRN_LIMIT_CTRL_MAX_ENTRY	9
+#define PORT_LRN_LIMIT_CTRL_MAX_ENTRY	PORT_LRN_LIMIT_CTRL_NUM
 
 sw_error_t
 hppe_port_lrn_limit_ctrl_get(
@@ -820,7 +820,7 @@ hppe_port_lrn_limit_ctrl_lrn_lmt_exceed_fwd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_LRN_LIMIT_COUNTER_MAX_ENTRY	9
+#define PORT_LRN_LIMIT_COUNTER_MAX_ENTRY	PORT_LRN_LIMIT_COUNTER_NUM
 
 sw_error_t
 hppe_port_lrn_limit_counter_get(
@@ -846,7 +846,7 @@ hppe_port_lrn_limit_counter_lrn_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RFDB_TBL_MAX_ENTRY	32
+#define RFDB_TBL_MAX_ENTRY	RFDB_TBL_NUM
 
 sw_error_t
 hppe_rfdb_tbl_get(
@@ -884,7 +884,7 @@ hppe_rfdb_tbl_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define FDB_TBL_MAX_ENTRY	2048
+#define FDB_TBL_MAX_ENTRY	FDB_TBL_NUM
 
 sw_error_t
 hppe_fdb_tbl_get(

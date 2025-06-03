@@ -6,7 +6,7 @@
 #ifndef _CPPE_QOS_API_H_
 #define _CPPE_QOS_API_H_
 
-#define QOS_MAPPING_TBL_MAX_ENTRY	4640
+#define QOS_MAPPING_TBL_MAX_ENTRY	QOS_MAPPING_TBL_NUM
 
 sw_error_t
 appe_qos_mapping_tbl_get(

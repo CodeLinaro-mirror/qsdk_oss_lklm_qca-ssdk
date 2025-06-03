@@ -242,7 +242,7 @@ hppe_l4_exception_parsing_ctrl_3_reg_tcp_flags7_mask_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define L3_EXCEPTION_CMD_MAX_ENTRY	72
+#define L3_EXCEPTION_CMD_MAX_ENTRY	L3_EXCEPTION_CMD_NUM
 
 sw_error_t
 hppe_l3_exception_cmd_get(
@@ -280,7 +280,7 @@ hppe_l3_exception_cmd_l3_excep_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_EXP_L3_ONLY_CTRL_MAX_ENTRY	72
+#define L3_EXP_L3_ONLY_CTRL_MAX_ENTRY	L3_EXP_L3_ONLY_CTRL_NUM
 
 sw_error_t
 hppe_l3_exp_l3_only_ctrl_get(
@@ -306,7 +306,7 @@ hppe_l3_exp_l3_only_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_EXP_L2_ONLY_CTRL_MAX_ENTRY	72
+#define L3_EXP_L2_ONLY_CTRL_MAX_ENTRY	L3_EXP_L2_ONLY_CTRL_NUM
 
 sw_error_t
 hppe_l3_exp_l2_only_ctrl_get(
@@ -332,7 +332,7 @@ hppe_l3_exp_l2_only_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_EXP_L2_FLOW_CTRL_MAX_ENTRY	72
+#define L3_EXP_L2_FLOW_CTRL_MAX_ENTRY	L3_EXP_L2_FLOW_CTRL_NUM
 
 sw_error_t
 hppe_l3_exp_l2_flow_ctrl_get(
@@ -358,7 +358,7 @@ hppe_l3_exp_l2_flow_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_EXP_L3_FLOW_CTRL_MAX_ENTRY	72
+#define L3_EXP_L3_FLOW_CTRL_MAX_ENTRY	L3_EXP_L3_FLOW_CTRL_NUM
 
 sw_error_t
 hppe_l3_exp_l3_flow_ctrl_get(
@@ -384,7 +384,7 @@ hppe_l3_exp_l3_flow_ctrl_excep_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define L3_EXP_MULTICAST_CTRL_MAX_ENTRY	72
+#define L3_EXP_MULTICAST_CTRL_MAX_ENTRY	L3_EXP_MULTICAST_CTRL_NUM
 
 sw_error_t
 hppe_l3_exp_multicast_ctrl_get(

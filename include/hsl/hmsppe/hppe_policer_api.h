@@ -7,7 +7,7 @@
 #ifndef _HPPE_POLICER_API_H_
 #define _HPPE_POLICER_API_H_
 
-#define METER_CMPST_LENGTH_REG_MAX_ENTRY	9
+#define METER_CMPST_LENGTH_REG_MAX_ENTRY	METER_CMPST_LENGTH_REG_NUM
 
 sw_error_t
 hppe_meter_cmpst_length_reg_get(
@@ -56,27 +56,6 @@ hppe_pc_drop_bypass_reg_drop_bypass_en_set(
 
 
 sw_error_t
-hppe_pc_spare_reg_get(
-		a_uint32_t dev_id,
-		union pc_spare_reg_u *value);
-
-sw_error_t
-hppe_pc_spare_reg_set(
-		a_uint32_t dev_id,
-		union pc_spare_reg_u *value);
-
-sw_error_t
-hppe_pc_spare_reg_spare_reg_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_pc_spare_reg_spare_reg_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-
-sw_error_t
 hppe_time_slot_reg_get(
 		a_uint32_t dev_id,
 		union time_slot_reg_u *value);
@@ -96,49 +75,7 @@ hppe_time_slot_reg_time_slot_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-
-sw_error_t
-hppe_pc_dbg_addr_reg_get(
-		a_uint32_t dev_id,
-		union pc_dbg_addr_reg_u *value);
-
-sw_error_t
-hppe_pc_dbg_addr_reg_set(
-		a_uint32_t dev_id,
-		union pc_dbg_addr_reg_u *value);
-
-sw_error_t
-hppe_pc_dbg_addr_reg_dbg_addr_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_pc_dbg_addr_reg_dbg_addr_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-
-sw_error_t
-hppe_pc_dbg_data_reg_get(
-		a_uint32_t dev_id,
-		union pc_dbg_data_reg_u *value);
-
-sw_error_t
-hppe_pc_dbg_data_reg_set(
-		a_uint32_t dev_id,
-		union pc_dbg_data_reg_u *value);
-
-sw_error_t
-hppe_pc_dbg_data_reg_dbg_data_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_pc_dbg_data_reg_dbg_data_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-#define IN_ACL_METER_CFG_TBL_MAX_ENTRY	128
+#define IN_ACL_METER_CFG_TBL_MAX_ENTRY	IN_ACL_METER_CFG_TBL_NUM
 
 sw_error_t
 hppe_in_acl_meter_cfg_tbl_get(
@@ -620,7 +557,7 @@ hppe_in_acl_meter_cfg_tbl_violate_remap_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_ACL_METER_CRDT_TBL_MAX_ENTRY	128
+#define IN_ACL_METER_CRDT_TBL_MAX_ENTRY	IN_ACL_METER_CRDT_TBL_NUM
 
 sw_error_t
 hppe_in_acl_meter_crdt_tbl_get(
@@ -658,7 +595,7 @@ hppe_in_acl_meter_crdt_tbl_e_crdt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_PORT_METER_CFG_TBL_MAX_ENTRY	9
+#define IN_PORT_METER_CFG_TBL_MAX_ENTRY	IN_PORT_METER_CFG_TBL_NUM
 
 sw_error_t
 hppe_in_port_meter_cfg_tbl_get(
@@ -1008,7 +945,7 @@ hppe_in_port_meter_cfg_tbl_violate_pri_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_PORT_METER_CRDT_TBL_MAX_ENTRY	9
+#define IN_PORT_METER_CRDT_TBL_MAX_ENTRY	IN_PORT_METER_CRDT_TBL_NUM
 
 sw_error_t
 hppe_in_port_meter_crdt_tbl_get(
@@ -1046,7 +983,7 @@ hppe_in_port_meter_crdt_tbl_e_crdt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_PORT_METER_CNT_TBL_MAX_ENTRY	27
+#define IN_PORT_METER_CNT_TBL_MAX_ENTRY	IN_PORT_METER_CNT_TBL_NUM
 
 sw_error_t
 hppe_in_port_meter_cnt_tbl_get(
@@ -1084,7 +1021,7 @@ hppe_in_port_meter_cnt_tbl_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define IN_ACL_METER_CNT_TBL_MAX_ENTRY	384
+#define IN_ACL_METER_CNT_TBL_MAX_ENTRY	IN_ACL_METER_CNT_TBL_NUM
 
 sw_error_t
 hppe_in_acl_meter_cnt_tbl_get(
@@ -1122,7 +1059,7 @@ hppe_in_acl_meter_cnt_tbl_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PC_GLOBAL_CNT_TBL_MAX_ENTRY	3
+#define PC_GLOBAL_CNT_TBL_MAX_ENTRY	PC_GLOBAL_CNT_TBL_NUM
 
 sw_error_t
 hppe_pc_global_cnt_tbl_get(
@@ -1160,7 +1097,7 @@ hppe_pc_global_cnt_tbl_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define DROP_CPU_CNT_TBL_MAX_ENTRY	1408
+#define DROP_CPU_CNT_TBL_MAX_ENTRY	DROP_CPU_CNT_TBL_NUM
 
 sw_error_t
 hppe_drop_cpu_cnt_tbl_get(
@@ -1198,7 +1135,7 @@ hppe_drop_cpu_cnt_tbl_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_TX_DROP_CNT_TBL_MAX_ENTRY	9
+#define PORT_TX_DROP_CNT_TBL_MAX_ENTRY	PORT_TX_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_port_tx_drop_cnt_tbl_get(
@@ -1236,7 +1173,7 @@ hppe_port_tx_drop_cnt_tbl_tx_drop_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VP_TX_DROP_CNT_TBL_MAX_ENTRY	256
+#define VP_TX_DROP_CNT_TBL_MAX_ENTRY	VP_TX_DROP_CNT_TBL_NUM
 
 sw_error_t
 hppe_vp_tx_drop_cnt_tbl_get(
@@ -1274,7 +1211,7 @@ hppe_vp_tx_drop_cnt_tbl_tx_drop_pkt_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VLAN_DEV_CNT_TBL_MAX_ENTRY	128
+#define VLAN_DEV_CNT_TBL_MAX_ENTRY	VLAN_DEV_CNT_TBL_NUM
 
 sw_error_t
 hppe_vlan_dev_cnt_tbl_get(

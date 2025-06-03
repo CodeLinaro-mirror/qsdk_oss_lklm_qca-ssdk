@@ -59,7 +59,7 @@ hppe_rss_hash_seed_reg_seed_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define RSS_HASH_MIX_REG_MAX_ENTRY	11
+#define RSS_HASH_MIX_REG_MAX_ENTRY	RSS_HASH_MIX_REG_NUM
 
 sw_error_t
 hppe_rss_hash_mix_reg_get(
@@ -85,7 +85,7 @@ hppe_rss_hash_mix_reg_hash_mix_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RSS_HASH_FIN_REG_MAX_ENTRY	5
+#define RSS_HASH_FIN_REG_MAX_ENTRY	RSS_HASH_FIN_REG_NUM
 
 sw_error_t
 hppe_rss_hash_fin_reg_get(
@@ -175,7 +175,7 @@ hppe_rss_hash_seed_ipv4_reg_seed_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define RSS_HASH_MIX_IPV4_REG_MAX_ENTRY	5
+#define RSS_HASH_MIX_IPV4_REG_MAX_ENTRY	RSS_HASH_MIX_IPV4_REG_NUM
 
 sw_error_t
 hppe_rss_hash_mix_ipv4_reg_get(
@@ -201,7 +201,7 @@ hppe_rss_hash_mix_ipv4_reg_hash_mix_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define RSS_HASH_FIN_IPV4_REG_MAX_ENTRY	5
+#define RSS_HASH_FIN_IPV4_REG_MAX_ENTRY	RSS_HASH_FIN_IPV4_REG_NUM
 
 sw_error_t
 hppe_rss_hash_fin_ipv4_reg_get(
@@ -270,7 +270,7 @@ hppe_rss_hash_type_sel_toeplitz_enable_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define TOEPLITZ_HASH_TYPE_SEL_0_MAX_ENTRY	12
+#define TOEPLITZ_HASH_TYPE_SEL_0_MAX_ENTRY	TOEPLITZ_HASH_TYPE_SEL_0_NUM
 
 sw_error_t
 hppe_toeplitz_hash_type_sel_0_get(
@@ -344,7 +344,7 @@ hppe_toeplitz_hash_type_sel_0_security_flag_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TOEPLITZ_HASH_TYPE_SEL_1_MAX_ENTRY	12
+#define TOEPLITZ_HASH_TYPE_SEL_1_MAX_ENTRY	TOEPLITZ_HASH_TYPE_SEL_1_NUM
 
 sw_error_t
 hppe_toeplitz_hash_type_sel_1_get(
@@ -406,7 +406,7 @@ hppe_toeplitz_hash_type_sel_1_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define TOEPLITZ_HASH_TYPE_TUPLE_MAX_ENTRY	12
+#define TOEPLITZ_HASH_TYPE_TUPLE_MAX_ENTRY	TOEPLITZ_HASH_TYPE_TUPLE_NUM
 
 sw_error_t
 hppe_toeplitz_hash_type_tuple_get(

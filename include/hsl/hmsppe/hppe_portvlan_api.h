@@ -7,7 +7,7 @@
 #ifndef _HPPE_PORTVLAN_API_H_
 #define _HPPE_PORTVLAN_API_H_
 
-#define PORT_PARSING_REG_MAX_ENTRY	9
+#define PORT_PARSING_REG_MAX_ENTRY	PORT_PARSING_REG_NUM
 
 sw_error_t
 hppe_port_parsing_reg_get(
@@ -109,7 +109,7 @@ hppe_bridge_config_bridge_type_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define PORT_DEF_VID_MAX_ENTRY	9
+#define PORT_DEF_VID_MAX_ENTRY	PORT_DEF_VID_NUM
 
 sw_error_t
 hppe_port_def_vid_get(
@@ -171,7 +171,7 @@ hppe_port_def_vid_port_def_svid_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_DEF_PCP_MAX_ENTRY	9
+#define PORT_DEF_PCP_MAX_ENTRY	PORT_DEF_PCP_NUM
 
 sw_error_t
 hppe_port_def_pcp_get(
@@ -233,7 +233,7 @@ hppe_port_def_pcp_port_def_spcp_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_VLAN_CONFIG_MAX_ENTRY	9
+#define PORT_VLAN_CONFIG_MAX_ENTRY	PORT_VLAN_CONFIG_NUM
 
 sw_error_t
 hppe_port_vlan_config_get(
@@ -331,7 +331,7 @@ hppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define XLT_RULE_TBL_MAX_ENTRY	256
+#define XLT_RULE_TBL_MAX_ENTRY	XLT_RULE_TBL_NUM
 
 sw_error_t
 hppe_xlt_rule_tbl_get(
@@ -741,7 +741,7 @@ hppe_xlt_rule_tbl_vp_profile_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define XLT_ACTION_TBL_MAX_ENTRY	256
+#define XLT_ACTION_TBL_MAX_ENTRY	XLT_ACTION_TBL_NUM
 
 sw_error_t
 hppe_xlt_action_tbl_get(
@@ -1163,7 +1163,7 @@ hppe_xlt_action_tbl_xlt_svid_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_EG_DEF_VID_MAX_ENTRY	9
+#define PORT_EG_DEF_VID_MAX_ENTRY	PORT_EG_DEF_VID_NUM
 
 sw_error_t
 hppe_port_eg_def_vid_get(
@@ -1225,7 +1225,7 @@ hppe_port_eg_def_vid_port_def_svid_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_EG_VLAN_MAX_ENTRY	9
+#define PORT_EG_VLAN_MAX_ENTRY	PORT_EG_VLAN_NUM
 
 sw_error_t
 hppe_port_eg_vlan_get(
@@ -1435,7 +1435,7 @@ hppe_eg_bridge_config_queue_cnt_en_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define EG_VSI_TAG_MAX_ENTRY	64
+#define EG_VSI_TAG_MAX_ENTRY	EG_VSI_TAG_NUM
 
 sw_error_t
 hppe_eg_vsi_tag_get(
@@ -1461,7 +1461,7 @@ hppe_eg_vsi_tag_tagged_mode_port_bitmap_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_VLAN_XLT_ACTION_MAX_ENTRY	128
+#define EG_VLAN_XLT_ACTION_MAX_ENTRY	EG_VLAN_XLT_ACTION_NUM
 
 sw_error_t
 hppe_eg_vlan_xlt_action_get(
@@ -1787,7 +1787,7 @@ hppe_eg_vlan_xlt_action_xlt_svid_cmd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_VLAN_XLT_RULE_MAX_ENTRY	128
+#define EG_VLAN_XLT_RULE_MAX_ENTRY	EG_VLAN_XLT_RULE_NUM
 
 sw_error_t
 hppe_eg_vlan_xlt_rule_get(
@@ -2137,7 +2137,7 @@ hppe_eg_vlan_xlt_rule_vsi_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VLAN_DEV_TX_COUNTER_TBL_MAX_ENTRY	128
+#define VLAN_DEV_TX_COUNTER_TBL_MAX_ENTRY	VLAN_DEV_TX_COUNTER_TBL_NUM
 
 sw_error_t
 hppe_vlan_dev_tx_counter_tbl_get(

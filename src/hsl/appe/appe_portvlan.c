@@ -428,37 +428,6 @@ appe_vp_isol_tbl_set(
 }
 
 sw_error_t
-appe_vport_parsing_port_role_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ipr_vp_parsing_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.port_role;
-	return ret;
-}
-
-sw_error_t
-appe_vport_parsing_port_role_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ipr_vp_parsing_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.port_role = value;
-	ret = appe_ipr_vp_parsing_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 appe_vlan_port_vp_tbl_port_cvlan_untag_fltr_cmd_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1329,64 +1298,6 @@ appe_eg_vp_tbl_port_def_cvid_set(
 }
 
 sw_error_t
-appe_tpr_vlan_tpid_stag_tpid_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union tpr_vlan_tpid_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_vlan_tpid_get(dev_id, &reg_val);
-	*value = reg_val.bf.stag_tpid;
-	return ret;
-}
-
-sw_error_t
-appe_tpr_vlan_tpid_stag_tpid_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union tpr_vlan_tpid_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_vlan_tpid_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.stag_tpid = value;
-	ret = appe_tpr_vlan_tpid_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_tpr_vlan_tpid_ctag_tpid_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value)
-{
-	union tpr_vlan_tpid_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_vlan_tpid_get(dev_id, &reg_val);
-	*value = reg_val.bf.ctag_tpid;
-	return ret;
-}
-
-sw_error_t
-appe_tpr_vlan_tpid_ctag_tpid_set(
-		a_uint32_t dev_id,
-		a_uint32_t value)
-{
-	union tpr_vlan_tpid_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_tpr_vlan_tpid_get(dev_id, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ctag_tpid = value;
-	ret = appe_tpr_vlan_tpid_set(dev_id, &reg_val);
-	return ret;
-}
-
-sw_error_t
 appe_vp_isol_tbl_vp_profile_map_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1538,68 +1449,6 @@ appe_tpr_vp_parsing_vlan_mode_set(
 		return ret;
 	reg_val.bf.vlan_mode = value;
 	ret = appe_tpr_vp_parsing_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_ipr_vp_parsing_src_port_sel_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ipr_vp_parsing_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.src_port_sel;
-	return ret;
-}
-
-sw_error_t
-appe_ipr_vp_parsing_src_port_sel_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ipr_vp_parsing_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.src_port_sel = value;
-	ret = appe_ipr_vp_parsing_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-appe_ipr_vp_parsing_vlan_mode_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ipr_vp_parsing_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.vlan_mode;
-	return ret;
-}
-
-sw_error_t
-appe_ipr_vp_parsing_vlan_mode_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ipr_vp_parsing_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_ipr_vp_parsing_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.vlan_mode = value;
-	ret = appe_ipr_vp_parsing_set(dev_id, index, &reg_val);
 	return ret;
 }
 

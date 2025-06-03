@@ -98,7 +98,7 @@ hmsppe_dot1p_mapper_default_vid_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define DOT1P_MAPPER_RULE_MAX_ENTRY	128
+#define DOT1P_MAPPER_RULE_MAX_ENTRY	DOT1P_MAPPER_RULE_NUM
 
 sw_error_t
 hmsppe_dot1p_mapper_rule_get(
@@ -304,7 +304,7 @@ hmsppe_dot1p_mapper_rule_vid_incl_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define DOT1P_MAPPER_ACTION_MAX_ENTRY	128
+#define DOT1P_MAPPER_ACTION_MAX_ENTRY	DOT1P_MAPPER_ACTION_NUM
 
 sw_error_t
 hmsppe_dot1p_mapper_action_get(
@@ -522,7 +522,7 @@ hmsppe_dot1p_mapper_action_service_code_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define GEM_PORT_MAPPING_CTRL_MAX_ENTRY	8
+#define GEM_PORT_MAPPING_CTRL_MAX_ENTRY	GEM_PORT_MAPPING_CTRL_NUM
 
 sw_error_t
 hmsppe_gem_port_mapping_ctrl_get(
@@ -548,7 +548,7 @@ hmsppe_gem_port_mapping_ctrl_mapping_en_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define SERVICE_CODE_MAPPING_MAX_ENTRY	16
+#define SERVICE_CODE_MAPPING_MAX_ENTRY	SERVICE_CODE_MAPPING_NUM
 
 sw_error_t
 hmsppe_service_code_mapping_get(
@@ -586,7 +586,7 @@ hmsppe_service_code_mapping_service_code_valid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define GEM_PORT_MAPPING_TBL_MAX_ENTRY	128
+#define GEM_PORT_MAPPING_TBL_MAX_ENTRY	GEM_PORT_MAPPING_TBL_NUM
 
 sw_error_t
 hmsppe_gem_port_mapping_tbl_get(
@@ -696,7 +696,7 @@ hmsppe_gem_port_mapping_tbl_service_code_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_MAPPING_TBL_MAX_ENTRY	32
+#define PORT_MAPPING_TBL_MAX_ENTRY	PORT_MAPPING_TBL_NUM
 
 sw_error_t
 hmsppe_port_mapping_tbl_get(

@@ -53,28 +53,6 @@ union pc_drop_bypass_reg_u {
 	struct pc_drop_bypass_reg bf;
 };
 
-/*[register] PC_SPARE_REG*/
-#define PC_SPARE_REG
-#define PC_SPARE_REG_ADDRESS 0x44
-#define PC_SPARE_REG_NUM     1
-#define PC_SPARE_REG_INC     0x4
-#define PC_SPARE_REG_TYPE    REG_TYPE_RW
-#define PC_SPARE_REG_DEFAULT 0x0
-	/*[field] SPARE_REG*/
-	#define PC_SPARE_REG_SPARE_REG
-	#define PC_SPARE_REG_SPARE_REG_OFFSET  0
-	#define PC_SPARE_REG_SPARE_REG_LEN     32
-	#define PC_SPARE_REG_SPARE_REG_DEFAULT 0x0
-
-struct pc_spare_reg {
-	a_uint32_t  spare_reg:32;
-};
-
-union pc_spare_reg_u {
-	a_uint32_t val;
-	struct pc_spare_reg bf;
-};
-
 /*[register] TIME_SLOT_REG*/
 #define TIME_SLOT_REG
 #define TIME_SLOT_REG_ADDRESS 0x48
@@ -96,50 +74,6 @@ struct time_slot_reg {
 union time_slot_reg_u {
 	a_uint32_t val;
 	struct time_slot_reg bf;
-};
-
-/*[register] PC_DBG_ADDR_REG*/
-#define PC_DBG_ADDR_REG
-#define PC_DBG_ADDR_REG_ADDRESS 0x80
-#define PC_DBG_ADDR_REG_NUM     1
-#define PC_DBG_ADDR_REG_INC     0x4
-#define PC_DBG_ADDR_REG_TYPE    REG_TYPE_RW
-#define PC_DBG_ADDR_REG_DEFAULT 0x0
-	/*[field] DBG_ADDR*/
-	#define PC_DBG_ADDR_REG_DBG_ADDR
-	#define PC_DBG_ADDR_REG_DBG_ADDR_OFFSET  24
-	#define PC_DBG_ADDR_REG_DBG_ADDR_LEN     8
-	#define PC_DBG_ADDR_REG_DBG_ADDR_DEFAULT 0x0
-
-struct pc_dbg_addr_reg {
-	a_uint32_t  dbg_addr:8;
-};
-
-union pc_dbg_addr_reg_u {
-	a_uint32_t val;
-	struct pc_dbg_addr_reg bf;
-};
-
-/*[register] PC_DBG_DATA_REG*/
-#define PC_DBG_DATA_REG
-#define PC_DBG_DATA_REG_ADDRESS 0x84
-#define PC_DBG_DATA_REG_NUM     1
-#define PC_DBG_DATA_REG_INC     0x4
-#define PC_DBG_DATA_REG_TYPE    REG_TYPE_RO
-#define PC_DBG_DATA_REG_DEFAULT 0x0
-	/*[field] DBG_DATA*/
-	#define PC_DBG_DATA_REG_DBG_DATA
-	#define PC_DBG_DATA_REG_DBG_DATA_OFFSET  0
-	#define PC_DBG_DATA_REG_DBG_DATA_LEN     32
-	#define PC_DBG_DATA_REG_DBG_DATA_DEFAULT 0x0
-
-struct pc_dbg_data_reg {
-	a_uint32_t  dbg_data:32;
-};
-
-union pc_dbg_data_reg_u {
-	a_uint32_t val;
-	struct pc_dbg_data_reg bf;
 };
 
 /*[table] IN_ACL_METER_CFG_TBL*/

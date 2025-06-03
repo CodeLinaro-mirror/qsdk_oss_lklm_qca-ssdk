@@ -21,7 +21,7 @@
  */
 #include "sw.h"
 #include "hsl_reg.h"
-#include "cppe_qos.h"
+//#include "cppe_qos.h"
 #include "fal_qos.h"
 #include "adpt.h"
 

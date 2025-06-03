@@ -7,7 +7,7 @@
 #ifndef _APPE_SERVCODE_API_H_
 #define _APPE_SERVCODE_API_H_
 
-#define TL_SERVICE_TBL_MAX_ENTRY	256
+#define TL_SERVICE_TBL_MAX_ENTRY	TL_SERVICE_TBL_NUM
 
 sw_error_t
 appe_tl_service_tbl_get(

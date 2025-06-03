@@ -130,7 +130,7 @@ jhppe_vlan_tpid_reg_ext1_stag_tpid_map_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define IN_VLAN_DSCP_PBIT_MAP_TBL_MAX_ENTRY	256
+#define IN_VLAN_DSCP_PBIT_MAP_TBL_MAX_ENTRY	IN_VLAN_DSCP_PBIT_MAP_TBL_NUM
 
 sw_error_t
 jhppe_in_vlan_dscp_pbit_map_tbl_get(
@@ -230,7 +230,7 @@ jhppe_eg_vlan_tpid_ext1_stag_tpid_map_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define DSCP_PBIT_MAP_TBL_MAX_ENTRY	256
+#define DSCP_PBIT_MAP_TBL_MAX_ENTRY	DSCP_PBIT_MAP_TBL_NUM
 
 sw_error_t
 jhppe_dscp_pbit_map_tbl_get(
@@ -268,7 +268,7 @@ jhppe_dscp_pbit_map_tbl_pcp_1_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VLAN_TO_PORT_MAPPING_CTRL_MAX_ENTRY	8
+#define VLAN_TO_PORT_MAPPING_CTRL_MAX_ENTRY	VLAN_TO_PORT_MAPPING_CTRL_NUM
 
 sw_error_t
 jhppe_vlan_to_port_mapping_ctrl_get(
@@ -306,7 +306,7 @@ jhppe_vlan_to_port_mapping_ctrl_tpid_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VLAN_TO_PORT_MAPPING_TBL_MAX_ENTRY	32
+#define VLAN_TO_PORT_MAPPING_TBL_MAX_ENTRY	VLAN_TO_PORT_MAPPING_TBL_NUM
 
 sw_error_t
 jhppe_vlan_to_port_mapping_tbl_get(
