@@ -21,6 +21,18 @@ appe_port_vp_rx_cnt_mode_tbl_set(
 		a_uint32_t index,
 		union port_vp_rx_cnt_mode_tbl_u *value);
 
+sw_error_t
+appe_port_vp_rx_cnt_mode_tbl_cnt_mode_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_port_vp_rx_cnt_mode_tbl_cnt_mode_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PORT_RX_CNT_TBL_MAX_ENTRY	256
 
 sw_error_t

@@ -127,6 +127,16 @@ hppe_in_mirror_priority_ctrl_set(
 		a_uint32_t dev_id,
 		union in_mirror_priority_ctrl_u *value);
 
+sw_error_t
+hppe_in_mirror_priority_ctrl_priority_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_in_mirror_priority_ctrl_priority_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_eg_mirror_priority_ctrl_get(
@@ -137,6 +147,16 @@ sw_error_t
 hppe_eg_mirror_priority_ctrl_set(
 		a_uint32_t dev_id,
 		union eg_mirror_priority_ctrl_u *value);
+
+sw_error_t
+hppe_eg_mirror_priority_ctrl_priority_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_eg_mirror_priority_ctrl_priority_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -149,6 +169,16 @@ hppe_ucast_default_hash_set(
 		a_uint32_t dev_id,
 		union ucast_default_hash_u *value);
 
+sw_error_t
+hppe_ucast_default_hash_hash_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_ucast_default_hash_hash_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_spare_reg0_get(
@@ -160,6 +190,16 @@ hppe_spare_reg0_set(
 		a_uint32_t dev_id,
 		union spare_reg0_u *value);
 
+sw_error_t
+hppe_spare_reg0_spare_reg0_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_spare_reg0_spare_reg0_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_spare_reg1_get(
@@ -170,6 +210,16 @@ sw_error_t
 hppe_spare_reg1_set(
 		a_uint32_t dev_id,
 		union spare_reg1_u *value);
+
+sw_error_t
+hppe_spare_reg1_spare_reg1_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_spare_reg1_spare_reg1_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define MCAST_PRIORITY_MAP0_MAX_ENTRY	16
 
@@ -185,6 +235,18 @@ hppe_mcast_priority_map0_set(
 		a_uint32_t index,
 		union mcast_priority_map0_u *value);
 
+sw_error_t
+hppe_mcast_priority_map0_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map0_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MCAST_PRIORITY_MAP1_MAX_ENTRY	16
 
 sw_error_t
@@ -198,6 +260,18 @@ hppe_mcast_priority_map1_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mcast_priority_map1_u *value);
+
+sw_error_t
+hppe_mcast_priority_map1_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map1_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define MCAST_PRIORITY_MAP2_MAX_ENTRY	16
 
@@ -213,6 +287,18 @@ hppe_mcast_priority_map2_set(
 		a_uint32_t index,
 		union mcast_priority_map2_u *value);
 
+sw_error_t
+hppe_mcast_priority_map2_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map2_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MCAST_PRIORITY_MAP3_MAX_ENTRY	16
 
 sw_error_t
@@ -226,6 +312,18 @@ hppe_mcast_priority_map3_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mcast_priority_map3_u *value);
+
+sw_error_t
+hppe_mcast_priority_map3_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map3_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define MCAST_PRIORITY_MAP4_MAX_ENTRY	16
 
@@ -241,6 +339,18 @@ hppe_mcast_priority_map4_set(
 		a_uint32_t index,
 		union mcast_priority_map4_u *value);
 
+sw_error_t
+hppe_mcast_priority_map4_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map4_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MCAST_PRIORITY_MAP5_MAX_ENTRY	16
 
 sw_error_t
@@ -254,6 +364,18 @@ hppe_mcast_priority_map5_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mcast_priority_map5_u *value);
+
+sw_error_t
+hppe_mcast_priority_map5_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map5_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define MCAST_PRIORITY_MAP6_MAX_ENTRY	16
 
@@ -269,6 +391,18 @@ hppe_mcast_priority_map6_set(
 		a_uint32_t index,
 		union mcast_priority_map6_u *value);
 
+sw_error_t
+hppe_mcast_priority_map6_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_priority_map6_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MCAST_PRIORITY_MAP7_MAX_ENTRY	16
 
 sw_error_t
@@ -283,108 +417,17 @@ hppe_mcast_priority_map7_set(
 		a_uint32_t index,
 		union mcast_priority_map7_u *value);
 
-
 sw_error_t
-hppe_agg_profile_cnt_en_get(
-		a_uint32_t dev_id,
-		union agg_profile_cnt_en_u *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_set(
-		a_uint32_t dev_id,
-		union agg_profile_cnt_en_u *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_global_en_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_global_en_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_0_en_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_0_en_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_1_en_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_1_en_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_2_en_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_2_en_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_3_en_get(
-		a_uint32_t dev_id,
-		unsigned int *value);
-
-sw_error_t
-hppe_agg_profile_cnt_en_grp_3_en_set(
-		a_uint32_t dev_id,
-		unsigned int value);
-
-#define GRP_AGG_PROFILE_CFG_MAX_ENTRY	4
-
-sw_error_t
-hppe_grp_agg_profile_cfg_get(
+hppe_mcast_priority_map7_class_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union grp_agg_profile_cfg_u *value);
+		a_uint32_t *value);
 
 sw_error_t
-hppe_grp_agg_profile_cfg_set(
+hppe_mcast_priority_map7_class_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union grp_agg_profile_cfg_u *value);
-
-#define GRP_AGG_IN_PROFILE_CNT_MAX_ENTRY	4
-
-sw_error_t
-hppe_grp_agg_in_profile_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union grp_agg_in_profile_cnt_u *value);
-
-sw_error_t
-hppe_grp_agg_in_profile_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union grp_agg_in_profile_cnt_u *value);
-
-#define GRP_AGG_OUT_PROFILE_CNT_MAX_ENTRY	4
-
-sw_error_t
-hppe_grp_agg_out_profile_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union grp_agg_out_profile_cnt_u *value);
-
-sw_error_t
-hppe_grp_agg_out_profile_cnt_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union grp_agg_out_profile_cnt_u *value);
+		a_uint32_t value);
 
 #define UCAST_QUEUE_MAP_TBL_MAX_ENTRY	4096
 
@@ -438,6 +481,18 @@ hppe_ucast_hash_map_tbl_set(
 		a_uint32_t index,
 		union ucast_hash_map_tbl_u *value);
 
+sw_error_t
+hppe_ucast_hash_map_tbl_hash_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ucast_hash_map_tbl_hash_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define UCAST_PRIORITY_MAP_TBL_MAX_ENTRY	256
 
 sw_error_t
@@ -452,6 +507,18 @@ hppe_ucast_priority_map_tbl_set(
 		a_uint32_t index,
 		union ucast_priority_map_tbl_u *value);
 
+sw_error_t
+hppe_ucast_priority_map_tbl_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ucast_priority_map_tbl_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MCAST_QUEUE_MAP_TBL_MAX_ENTRY	256
 
 sw_error_t
@@ -465,6 +532,18 @@ hppe_mcast_queue_map_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mcast_queue_map_tbl_u *value);
+
+sw_error_t
+hppe_mcast_queue_map_tbl_class_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mcast_queue_map_tbl_class_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define AC_UNI_QUEUE_CFG_TBL_MAX_ENTRY	256
 
@@ -990,6 +1069,18 @@ hppe_ac_mseq_tbl_set(
 		a_uint32_t index,
 		union ac_mseq_tbl_u *value);
 
+sw_error_t
+hppe_ac_mseq_tbl_ac_mseq_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_mseq_tbl_ac_mseq_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY	256
 
 sw_error_t
@@ -1003,6 +1094,18 @@ hppe_ac_uni_queue_cnt_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ac_uni_queue_cnt_tbl_u *value);
+
+sw_error_t
+hppe_ac_uni_queue_cnt_tbl_ac_uni_queue_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_uni_queue_cnt_tbl_ac_uni_queue_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define AC_MUL_QUEUE_CNT_TBL_MAX_ENTRY	44
 
@@ -1018,40 +1121,14 @@ hppe_ac_mul_queue_cnt_tbl_set(
 		a_uint32_t index,
 		union ac_mul_queue_cnt_tbl_u *value);
 
-#define AC_GRP_CNT_TBL_MAX_ENTRY	4
-
 sw_error_t
-hppe_ac_grp_cnt_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ac_grp_cnt_tbl_u *value);
-
-sw_error_t
-hppe_ac_grp_cnt_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union ac_grp_cnt_tbl_u *value);
-
-sw_error_t
-hppe_ac_grp_cnt_tbl_ac_grp_alloc_used_get(
+hppe_ac_mul_queue_cnt_tbl_ac_mul_queue_cnt_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hppe_ac_grp_cnt_tbl_ac_grp_alloc_used_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-hppe_ac_grp_cnt_tbl_ac_grp_cnt_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-hppe_ac_grp_cnt_tbl_ac_grp_cnt_set(
+hppe_ac_mul_queue_cnt_tbl_ac_mul_queue_cnt_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
@@ -1327,6 +1404,18 @@ hppe_oq_enq_opr_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union oq_enq_opr_tbl_u *value);
+
+sw_error_t
+hppe_oq_enq_opr_tbl_enq_disable_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_oq_enq_opr_tbl_enq_disable_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define UNI_DROP_CNT_TBL_MAX_ENTRY	1536
 

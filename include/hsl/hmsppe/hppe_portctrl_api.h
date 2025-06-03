@@ -21,6 +21,18 @@ hppe_ipr_pkt_num_tbl_reg_set(
 		a_uint32_t index,
 		union ipr_pkt_num_tbl_reg_u *value);
 
+sw_error_t
+hppe_ipr_pkt_num_tbl_reg_ipr_pkt_num_tbl_reg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ipr_pkt_num_tbl_reg_ipr_pkt_num_tbl_reg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define IPR_BYTE_LOW_REG_REG_MAX_ENTRY	9
 
 sw_error_t
@@ -34,6 +46,18 @@ hppe_ipr_byte_low_reg_reg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipr_byte_low_reg_reg_u *value);
+
+sw_error_t
+hppe_ipr_byte_low_reg_reg_ipr_byte_low_reg_reg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ipr_byte_low_reg_reg_ipr_byte_low_reg_reg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define IPR_BYTE_HIGH_REG_MAX_ENTRY	9
 
@@ -86,6 +110,18 @@ hppe_port_in_forward_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union port_in_forward_u *value);
+
+sw_error_t
+hppe_port_in_forward_source_filtering_bypass_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_in_forward_source_filtering_bypass_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define MC_MTU_CTRL_TBL_MAX_ENTRY	9
 
@@ -150,6 +186,18 @@ hppe_link_oam_ctrl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union link_oam_ctrl_u *value);
+
+sw_error_t
+hppe_link_oam_ctrl_loopback_state_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_link_oam_ctrl_loopback_state_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define MRU_MTU_CTRL_TBL_MAX_ENTRY	256
 
@@ -605,6 +653,18 @@ hppe_mac_speed_set(
 		a_uint32_t index,
 		union mac_speed_u *value);
 
+sw_error_t
+hppe_mac_speed_mac_speed_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mac_speed_mac_speed_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MAC_CTRL2_MAX_ENTRY	6
 
 sw_error_t
@@ -803,6 +863,18 @@ hppe_mac_dbg_addr_set(
 		a_uint32_t index,
 		union mac_dbg_addr_u *value);
 
+sw_error_t
+hppe_mac_dbg_addr_mac_debug_addr_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mac_dbg_addr_mac_debug_addr_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MAC_DBG_DATA_MAX_ENTRY	6
 
 sw_error_t
@@ -817,6 +889,18 @@ hppe_mac_dbg_data_set(
 		a_uint32_t index,
 		union mac_dbg_data_u *value);
 
+sw_error_t
+hppe_mac_dbg_data_mac_debug_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mac_dbg_data_mac_debug_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define MAC_JUMBO_SIZE_MAX_ENTRY	6
 
 sw_error_t
@@ -830,5 +914,17 @@ hppe_mac_jumbo_size_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mac_jumbo_size_u *value);
+
+sw_error_t
+hppe_mac_jumbo_size_mac_jumbo_size_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_mac_jumbo_size_mac_jumbo_size_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #endif

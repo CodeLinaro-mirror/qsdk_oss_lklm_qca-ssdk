@@ -142,6 +142,18 @@ hppe_trunk_filter_set(
 		a_uint32_t index,
 		union trunk_filter_u *value);
 
+sw_error_t
+hppe_trunk_filter_mem_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_trunk_filter_mem_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define TRUNK_MEMBER_MAX_ENTRY	2
 
 sw_error_t

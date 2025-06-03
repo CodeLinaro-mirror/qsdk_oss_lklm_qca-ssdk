@@ -99,6 +99,16 @@ hppe_bridge_config_set(
 		a_uint32_t dev_id,
 		union bridge_config_u *value);
 
+sw_error_t
+hppe_bridge_config_bridge_type_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_bridge_config_bridge_type_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #define PORT_DEF_VID_MAX_ENTRY	9
 
 sw_error_t
@@ -1438,6 +1448,18 @@ hppe_eg_vsi_tag_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union eg_vsi_tag_u *value);
+
+sw_error_t
+hppe_eg_vsi_tag_tagged_mode_port_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_vsi_tag_tagged_mode_port_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define EG_VLAN_XLT_ACTION_MAX_ENTRY	128
 

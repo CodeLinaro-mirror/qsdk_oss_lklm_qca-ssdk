@@ -18,6 +18,16 @@ hppe_fb_fifo_cfg_set(
 		a_uint32_t dev_id,
 		union fb_fifo_cfg_u *value);
 
+sw_error_t
+hppe_fb_fifo_cfg_fb_fifo_thres_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fb_fifo_cfg_fb_fifo_thres_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_fp_fifo_cfg_get(
@@ -28,6 +38,16 @@ sw_error_t
 hppe_fp_fifo_cfg_set(
 		a_uint32_t dev_id,
 		union fp_fifo_cfg_u *value);
+
+sw_error_t
+hppe_fp_fifo_cfg_fp_fifo_thres_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_fp_fifo_cfg_fp_fifo_thres_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define DEQ_FIFO_CFG_MAX_ENTRY	9
 
@@ -43,6 +63,18 @@ hppe_deq_fifo_cfg_set(
 		a_uint32_t index,
 		union deq_fifo_cfg_u *value);
 
+sw_error_t
+hppe_deq_fifo_cfg_deq_fifo_thres_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_deq_fifo_cfg_deq_fifo_thres_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 hppe_tick_dly_cfg_get(
@@ -53,6 +85,16 @@ sw_error_t
 hppe_tick_dly_cfg_set(
 		a_uint32_t dev_id,
 		union tick_dly_cfg_u *value);
+
+sw_error_t
+hppe_tick_dly_cfg_tick_dly_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_tick_dly_cfg_tick_dly_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -65,6 +107,16 @@ hppe_bm_rsv_0_set(
 		a_uint32_t dev_id,
 		union bm_rsv_0_u *value);
 
+sw_error_t
+hppe_bm_rsv_0_rsv_0_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_bm_rsv_0_rsv_0_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_bm_rsv_1_get(
@@ -75,6 +127,16 @@ sw_error_t
 hppe_bm_rsv_1_set(
 		a_uint32_t dev_id,
 		union bm_rsv_1_u *value);
+
+sw_error_t
+hppe_bm_rsv_1_rsv_1_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_bm_rsv_1_rsv_1_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define PORT_FC_MODE_MAX_ENTRY	40
 
@@ -89,6 +151,18 @@ hppe_port_fc_mode_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union port_fc_mode_u *value);
+
+sw_error_t
+hppe_port_fc_mode_fc_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_fc_mode_fc_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define PORT_FC_STATUS_MAX_ENTRY	40
 
@@ -142,6 +216,18 @@ hppe_port_group_id_set(
 		a_uint32_t index,
 		union port_group_id_u *value);
 
+sw_error_t
+hppe_port_group_id_port_shared_group_id_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_group_id_port_shared_group_id_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PORT_CNT_MAX_ENTRY	40
 
 sw_error_t
@@ -155,6 +241,18 @@ hppe_port_cnt_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union port_cnt_u *value);
+
+sw_error_t
+hppe_port_cnt_port_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_cnt_port_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define PORT_REACTED_CNT_MAX_ENTRY	40
 
@@ -170,6 +268,18 @@ hppe_port_reacted_cnt_set(
 		a_uint32_t index,
 		union port_reacted_cnt_u *value);
 
+sw_error_t
+hppe_port_reacted_cnt_port_reacted_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_reacted_cnt_port_reacted_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define SHARED_GROUP_CNT_MAX_ENTRY	4
 
 sw_error_t
@@ -183,6 +293,18 @@ hppe_shared_group_cnt_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union shared_group_cnt_u *value);
+
+sw_error_t
+hppe_shared_group_cnt_shared_group_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_shared_group_cnt_shared_group_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define SHARED_GROUP_CFG_MAX_ENTRY	4
 
@@ -198,6 +320,18 @@ hppe_shared_group_cfg_set(
 		a_uint32_t index,
 		union shared_group_cfg_u *value);
 
+sw_error_t
+hppe_shared_group_cfg_shared_group_limit_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_shared_group_cfg_shared_group_limit_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PORT_PROFILE_TH_CFG_MAX_ENTRY	40
 
 sw_error_t
@@ -211,6 +345,18 @@ hppe_port_profile_th_cfg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union port_profile_th_cfg_u *value);
+
+sw_error_t
+hppe_port_profile_th_cfg_port_profile_th_cfg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_profile_th_cfg_port_profile_th_cfg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define REACT_PROFILE_TH_CFG_MAX_ENTRY	40
 
@@ -226,6 +372,18 @@ hppe_react_profile_th_cfg_set(
 		a_uint32_t index,
 		union react_profile_th_cfg_u *value);
 
+sw_error_t
+hppe_react_profile_th_cfg_react_profile_th_cfg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_react_profile_th_cfg_react_profile_th_cfg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define GRP_PROFILE_TH_CFG_MAX_ENTRY	4
 
 sw_error_t
@@ -240,6 +398,18 @@ hppe_grp_profile_th_cfg_set(
 		a_uint32_t index,
 		union grp_profile_th_cfg_u *value);
 
+sw_error_t
+hppe_grp_profile_th_cfg_grp_profile_th_cfg_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_grp_profile_th_cfg_grp_profile_th_cfg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 hppe_tot_react_profile_th_cfg_get(
@@ -250,6 +420,16 @@ sw_error_t
 hppe_tot_react_profile_th_cfg_set(
 		a_uint32_t dev_id,
 		union tot_react_profile_th_cfg_u *value);
+
+sw_error_t
+hppe_tot_react_profile_th_cfg_tot_react_profile_th_cfg_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_tot_react_profile_th_cfg_tot_react_profile_th_cfg_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define PORT_OUT_PROFILE_CNT_MAX_ENTRY	40
 
@@ -265,6 +445,18 @@ hppe_port_out_profile_cnt_set(
 		a_uint32_t index,
 		union port_out_profile_cnt_u *value);
 
+sw_error_t
+hppe_port_out_profile_cnt_port_out_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_out_profile_cnt_port_out_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PORT_IN_PROFILE_CNT_MAX_ENTRY	40
 
 sw_error_t
@@ -278,6 +470,18 @@ hppe_port_in_profile_cnt_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union port_in_profile_cnt_u *value);
+
+sw_error_t
+hppe_port_in_profile_cnt_port_in_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_port_in_profile_cnt_port_in_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define REACT_OUT_PROFILE_CNT_MAX_ENTRY	40
 
@@ -293,6 +497,18 @@ hppe_react_out_profile_cnt_set(
 		a_uint32_t index,
 		union react_out_profile_cnt_u *value);
 
+sw_error_t
+hppe_react_out_profile_cnt_react_out_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_react_out_profile_cnt_react_out_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define REACT_IN_PROFILE_CNT_MAX_ENTRY	40
 
 sw_error_t
@@ -306,6 +522,18 @@ hppe_react_in_profile_cnt_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union react_in_profile_cnt_u *value);
+
+sw_error_t
+hppe_react_in_profile_cnt_react_in_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_react_in_profile_cnt_react_in_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define GRP_OUT_PROFILE_CNT_MAX_ENTRY	4
 
@@ -321,6 +549,18 @@ hppe_grp_out_profile_cnt_set(
 		a_uint32_t index,
 		union grp_out_profile_cnt_u *value);
 
+sw_error_t
+hppe_grp_out_profile_cnt_grp_out_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_grp_out_profile_cnt_grp_out_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define GRP_IN_PROFILE_CNT_MAX_ENTRY	4
 
 sw_error_t
@@ -335,6 +575,18 @@ hppe_grp_in_profile_cnt_set(
 		a_uint32_t index,
 		union grp_in_profile_cnt_u *value);
 
+sw_error_t
+hppe_grp_in_profile_cnt_grp_in_profile_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_grp_in_profile_cnt_grp_in_profile_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 hppe_tot_react_out_profile_cnt_get(
@@ -346,6 +598,16 @@ hppe_tot_react_out_profile_cnt_set(
 		a_uint32_t dev_id,
 		union tot_react_out_profile_cnt_u *value);
 
+sw_error_t
+hppe_tot_react_out_profile_cnt_tot_react_out_profile_cnt_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_tot_react_out_profile_cnt_tot_react_out_profile_cnt_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hppe_tot_react_in_profile_cnt_get(
@@ -356,6 +618,16 @@ sw_error_t
 hppe_tot_react_in_profile_cnt_set(
 		a_uint32_t dev_id,
 		union tot_react_in_profile_cnt_u *value);
+
+sw_error_t
+hppe_tot_react_in_profile_cnt_tot_react_in_profile_cnt_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_tot_react_in_profile_cnt_tot_react_in_profile_cnt_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define PORT_FC_CFG_MAX_ENTRY	40
 
@@ -507,6 +779,18 @@ hppe_rcm_set(
 		a_uint32_t index,
 		union rcm_u *value);
 
+sw_error_t
+hppe_rcm_ref_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_rcm_ref_cnt_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define DM_MAX_ENTRY	12288
 
 sw_error_t
@@ -520,5 +804,17 @@ hppe_dm_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union dm_u *value);
+
+sw_error_t
+hppe_dm_pkt_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+hppe_dm_pkt_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
 
 #endif

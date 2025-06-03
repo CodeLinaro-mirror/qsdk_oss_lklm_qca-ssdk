@@ -414,5 +414,5 @@ mrppe_rss_hash_type_sel_extract_bit_pos_set(
 	ret = mrppe_rss_hash_type_sel_set(dev_id, &reg_val);
 	return ret;
 }
-#endif
 
+#endif

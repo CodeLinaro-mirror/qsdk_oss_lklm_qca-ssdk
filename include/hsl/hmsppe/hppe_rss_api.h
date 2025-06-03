@@ -49,6 +49,16 @@ hppe_rss_hash_seed_reg_set(
 		a_uint32_t dev_id,
 		union rss_hash_seed_reg_u *value);
 
+sw_error_t
+hppe_rss_hash_seed_reg_seed_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_rss_hash_seed_reg_seed_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #define RSS_HASH_MIX_REG_MAX_ENTRY	11
 
 sw_error_t
@@ -62,6 +72,18 @@ hppe_rss_hash_mix_reg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union rss_hash_mix_reg_u *value);
+
+sw_error_t
+hppe_rss_hash_mix_reg_hash_mix_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_rss_hash_mix_reg_hash_mix_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define RSS_HASH_FIN_REG_MAX_ENTRY	5
 
@@ -143,6 +165,16 @@ hppe_rss_hash_seed_ipv4_reg_set(
 		a_uint32_t dev_id,
 		union rss_hash_seed_ipv4_reg_u *value);
 
+sw_error_t
+hppe_rss_hash_seed_ipv4_reg_seed_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hppe_rss_hash_seed_ipv4_reg_seed_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #define RSS_HASH_MIX_IPV4_REG_MAX_ENTRY	5
 
 sw_error_t
@@ -156,6 +188,18 @@ hppe_rss_hash_mix_ipv4_reg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union rss_hash_mix_ipv4_reg_u *value);
+
+sw_error_t
+hppe_rss_hash_mix_ipv4_reg_hash_mix_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_rss_hash_mix_ipv4_reg_hash_mix_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define RSS_HASH_FIN_IPV4_REG_MAX_ENTRY	5
 

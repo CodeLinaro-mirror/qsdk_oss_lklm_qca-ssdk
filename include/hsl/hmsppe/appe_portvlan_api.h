@@ -178,6 +178,18 @@ appe_vp_isol_tbl_set(
 		a_uint32_t index,
 		union vp_isol_tbl_u *value);
 
+sw_error_t
+appe_vp_isol_tbl_vp_profile_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+appe_vp_isol_tbl_vp_profile_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+
 #define VLAN_PORT_VP_TBL_MAX_ENTRY	256
 
 sw_error_t
@@ -723,5 +735,17 @@ appe_eg_vsi_vp_tag_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union eg_vsi_vp_tag_u *value);
+
+sw_error_t
+appe_eg_vsi_vp_tag_tagged_mode_vp_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+appe_eg_vsi_vp_tag_tagged_mode_vp_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #endif

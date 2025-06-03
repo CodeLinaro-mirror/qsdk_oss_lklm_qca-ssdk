@@ -48,6 +48,16 @@ jhppe_sawf_flow_statis_ctrl1_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl1_u *value);
 
+sw_error_t
+jhppe_sawf_flow_statis_ctrl1_current_time_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl1_current_time_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 jhppe_sawf_flow_statis_ctrl2_get(
@@ -58,6 +68,16 @@ sw_error_t
 jhppe_sawf_flow_statis_ctrl2_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl2_u *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl2_sawf0_done_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl2_sawf0_done_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -70,6 +90,16 @@ jhppe_sawf_flow_statis_ctrl3_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl3_u *value);
 
+sw_error_t
+jhppe_sawf_flow_statis_ctrl3_burst_threshold_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl3_burst_threshold_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 jhppe_sawf_flow_statis_ctrl4_get(
@@ -81,6 +111,16 @@ jhppe_sawf_flow_statis_ctrl4_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl4_u *value);
 
+sw_error_t
+jhppe_sawf_flow_statis_ctrl4_burst_short_intvl_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl4_burst_short_intvl_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 jhppe_sawf_flow_statis_ctrl5_get(
@@ -91,6 +131,16 @@ sw_error_t
 jhppe_sawf_flow_statis_ctrl5_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl5_u *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl5_burst_long_intvl_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl5_burst_long_intvl_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 
 sw_error_t
@@ -236,6 +286,16 @@ jhppe_sawf_flow_statis_ctrl8_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl8_u *value);
 
+sw_error_t
+jhppe_sawf_flow_statis_ctrl8_short_interval_time_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl8_short_interval_time_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 jhppe_sawf_flow_statis_ctrl9_get(
@@ -247,6 +307,16 @@ jhppe_sawf_flow_statis_ctrl9_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl9_u *value);
 
+sw_error_t
+jhppe_sawf_flow_statis_ctrl9_sawf_done_miss_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl9_sawf_done_miss_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 jhppe_sawf_flow_statis_ctrl10_get(
@@ -257,6 +327,16 @@ sw_error_t
 jhppe_sawf_flow_statis_ctrl10_set(
 		a_uint32_t dev_id,
 		union sawf_flow_statis_ctrl10_u *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl10_sawf1_done_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_sawf_flow_statis_ctrl10_sawf1_done_set(
+		a_uint32_t dev_id,
+		unsigned int value);
 
 #define SAWF_FLOW_BLOCK_MAP_MAX_ENTRY	16
 
@@ -273,46 +353,16 @@ jhppe_sawf_flow_block_map_set(
 		union sawf_flow_block_map_u *value);
 
 sw_error_t
-jhppe_sawf_flow_statis_ctrl2_sawf0_done_get(
+jhppe_sawf_flow_block_map_valid_get(
 		a_uint32_t dev_id,
+		a_uint32_t index,
 		a_uint32_t *value);
-
-sw_error_t
-jhppe_sawf_flow_statis_ctrl10_sawf1_done_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value);
-
-sw_error_t
-jhppe_sawf_flow_statis_ctrl2_sawf0_done_set(
-		a_uint32_t dev_id,
-		a_uint32_t value);
-
-sw_error_t
-jhppe_sawf_flow_statis_ctrl10_sawf1_done_set(
-		a_uint32_t dev_id,
-		a_uint32_t value);
-
-sw_error_t
-jhppe_sawf_flow_statis_ctrl9_sawf_done_miss_get(
-		a_uint32_t dev_id,
-		a_uint32_t *value);
-
-sw_error_t
-jhppe_sawf_flow_statis_ctrl9_sawf_done_miss_set(
-		a_uint32_t dev_id,
-		a_uint32_t value);
 
 sw_error_t
 jhppe_sawf_flow_block_map_valid_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
-
-sw_error_t
-jhppe_sawf_flow_block_map_valid_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
 
 #define PM_COUNTER_TBL_MAX_ENTRY	32
 

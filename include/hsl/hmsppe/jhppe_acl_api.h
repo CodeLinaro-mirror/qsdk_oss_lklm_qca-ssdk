@@ -58,4 +58,16 @@ jhppe_pre_ipo_rule_inner_outer_set(
 		a_uint32_t index,
 		union pre_ipo_rule_inner_outer_u *value);
 
+sw_error_t
+jhppe_pre_ipo_rule_inner_outer_inner_outer_sel_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_pre_ipo_rule_inner_outer_inner_outer_sel_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #endif

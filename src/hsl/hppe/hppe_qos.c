@@ -153,8 +153,8 @@ hppe_l0_e_sp_cfg_tbl_set(
 				index * L0_E_SP_CFG_TBL_INC,
 				value->val);
 }
-#endif
 
+#endif
 sw_error_t
 hppe_l0_flow_port_map_tbl_get(
 		a_uint32_t dev_id,
@@ -558,8 +558,8 @@ hppe_l1_e_sp_cfg_tbl_set(
 				index * L1_E_SP_CFG_TBL_INC,
 				value->val);
 }
-#endif
 
+#endif
 sw_error_t
 hppe_l1_flow_port_map_tbl_get(
 		a_uint32_t dev_id,

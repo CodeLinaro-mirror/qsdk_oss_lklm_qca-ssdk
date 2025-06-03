@@ -21,4 +21,16 @@ hppe_cst_state_set(
 		a_uint32_t index,
 		union cst_state_u *value);
 
+sw_error_t
+hppe_cst_state_port_state_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_cst_state_port_state_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #endif

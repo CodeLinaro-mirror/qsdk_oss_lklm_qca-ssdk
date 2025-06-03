@@ -20,6 +20,18 @@ mppe_eg_hdr_xmit_pri_mapping_set(
 		a_uint32_t index,
 		union eg_hdr_xmit_pri_mapping_u *value);
 
+sw_error_t
+mppe_eg_hdr_xmit_pri_mapping_pri_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+mppe_eg_hdr_xmit_pri_mapping_pri_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 mppe_eg_gen_ctrl_get(
@@ -428,5 +440,17 @@ mppe_prx_hdr_rcv_pri_mapping_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union prx_hdr_rcv_pri_mapping_u *value);
+
+sw_error_t
+mppe_prx_hdr_rcv_pri_mapping_int_pri_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+mppe_prx_hdr_rcv_pri_mapping_int_pri_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #endif

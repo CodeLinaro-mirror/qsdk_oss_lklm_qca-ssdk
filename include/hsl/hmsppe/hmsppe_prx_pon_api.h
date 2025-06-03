@@ -17,6 +17,16 @@ hmsppe_pass_through_ctrl_set(
 		a_uint32_t dev_id,
 		union pass_through_ctrl_u *value);
 
+sw_error_t
+hmsppe_pass_through_ctrl_copy_cpu_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+hmsppe_pass_through_ctrl_copy_cpu_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 
 sw_error_t
 hmsppe_dot1p_mapper_default_get(
@@ -525,6 +535,18 @@ hmsppe_gem_port_mapping_ctrl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union gem_port_mapping_ctrl_u *value);
+
+sw_error_t
+hmsppe_gem_port_mapping_ctrl_mapping_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hmsppe_gem_port_mapping_ctrl_mapping_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
 
 #define SERVICE_CODE_MAPPING_MAX_ENTRY	16
 
