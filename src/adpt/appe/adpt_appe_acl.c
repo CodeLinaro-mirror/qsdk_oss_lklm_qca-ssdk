@@ -1188,7 +1188,7 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 
 		rule->acl_pool = hw_reg.bf.res_chain;
 		rule->pri = hw_reg.bf.pri&0x7;
-		if(hw_reg.bf.inner_outer_sel == 0)
+		if(hw_reg.bf.inner_outer_sel == ADPT_ACL_OUTER_RULE)
 		{
 			/*get outer rule info from first 53bit hw rule reg fields*/
 			_adpt_hppe_acl_rule_hw_2_sw(dev_id, hw_reg.bf.rule_type,
@@ -1248,11 +1248,11 @@ _adpt_appe_pre_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_pri,
 	hw_reg.bf.res_chain = rule->acl_pool;
 	hw_reg.bf.pri = (list_pri<<3)|rule->pri;
 
-	for(inner_outer_sel = 0; inner_outer_sel < 2; inner_outer_sel++)
+	for(inner_outer_sel = ADPT_ACL_OUTER_RULE; inner_outer_sel <= ADPT_ACL_INNER_RULE; inner_outer_sel++)
 	{
 		/*set inner_outer_sel field of hw rule reg*/
 		hw_reg.bf.inner_outer_sel = inner_outer_sel;
-		if(inner_outer_sel == 0)
+		if(inner_outer_sel == ADPT_ACL_OUTER_RULE)
 		{ /*outer*/
 			aos_mem_copy(&tmp_rule_map,
 				rule_map, sizeof(ADPT_HPPE_ACL_RULE_MAP));
