@@ -87,6 +87,12 @@
 
 #define PHY_PORT_TO_BM_PORT(port)	(PPE_BM_PHY_PORT_OFFSET + port - 1)
 #define GMAC_IPG_CHECK          0xc
+/* the wakeup timer unit is us */
+#define PORT_LPI_WAKEUP_TIMER_10000M 8
+#define PORT_LPI_WAKEUP_TIMER_5000M 16
+#define PORT_LPI_WAKEUP_TIMER_2500M 32
+#define PORT_LPI_WAKEUP_TIMER_1000M 18
+#define PORT_LPI_WAKEUP_TIMER_100M 28
 
 /* This register is used to adjust the write timing for reserving
  * some bandwidth of the memory to read operation.
@@ -3232,14 +3238,11 @@ static a_uint32_t port_lpi_wakeup_timer[][SSDK_PHYSICAL_PORT6] = {
 #endif
 #ifdef MRPPE
 static sw_error_t
-_adpt_mrppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_mrppe_port_gmac_eee_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	sw_error_t rv = SW_OK;
 	union lpi_port_enable_u lpi_port_enable = {0};
-	union lpi_port_wakeup_timer_u lpi_port_wakeup_timer = {0};
-	union lpi_port_sleep_timer_u lpi_port_sleep_timer = {0};
-	union lpi_1us_cnt_u lpi_1us_cnt = {0};
 
 	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
 	/*enable lpi*/
@@ -3247,7 +3250,20 @@ _adpt_mrppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 	SW_RTN_ON_ERROR (rv);
 	lpi_port_enable.bf.lpi_port_en = port_eee_cfg->lpi_tx_enable;
 	rv = mrppe_lpi_port_enable_set(dev_id, port_id, &lpi_port_enable);
-	SW_RTN_ON_ERROR (rv);
+
+	return rv;
+}
+
+static sw_error_t
+_adpt_mrppe_port_gmac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = SW_OK;
+	union lpi_port_wakeup_timer_u lpi_port_wakeup_timer = {0};
+	union lpi_port_sleep_timer_u lpi_port_sleep_timer = {0};
+	union lpi_1us_cnt_u lpi_1us_cnt = {0};
+
+	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
 	/*configure 1us cnt*/
 	rv = mrppe_lpi_1us_cnt_get(dev_id, port_id, &lpi_1us_cnt);
 	SW_RTN_ON_ERROR (rv);
@@ -3274,7 +3290,7 @@ _adpt_mrppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 }
 
 static sw_error_t
-_adpt_mrppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_mrppe_port_gmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	sw_error_t rv = SW_OK;
@@ -3302,22 +3318,32 @@ _adpt_mrppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 }
 #else
 static sw_error_t
-_adpt_hppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_hppe_port_gmac_eee_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t enable = 0;
 	union lpi_enable_u lpi_enable = {0};
-	union lpi_port_timer_u lpi_port_timer = {0};
-	union lpi_cnt_u lpi_1us_cnt = {0};
 
 	/*enable lpi*/
-	hppe_lpi_enable_get(dev_id, port_id, &lpi_enable);
-
+	rv = hppe_lpi_enable_get(dev_id, port_id, &lpi_enable);
+	SW_RTN_ON_ERROR(rv);
 	enable = port_eee_cfg->lpi_tx_enable;
 	lpi_enable.val &= ~(0x1 << (port_id - 1));
 	lpi_enable.val |= (enable << (port_id - 1));
-	hppe_lpi_enable_set(dev_id, port_id, &lpi_enable);
+	rv = hppe_lpi_enable_set(dev_id, port_id, &lpi_enable);
+
+	return rv;
+}
+
+static sw_error_t
+_adpt_hppe_port_gmac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = SW_OK;
+	union lpi_port_timer_u lpi_port_timer = {0};
+	union lpi_cnt_u lpi_1us_cnt = {0};
+
 	/*configure the 1us cnt*/
 	rv = hppe_lpi_cnt_get(dev_id, 0, &lpi_1us_cnt);
 	SW_RTN_ON_ERROR (rv);
@@ -3332,13 +3358,12 @@ _adpt_hppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id
 	if(port_eee_cfg->lpi_sleep_timer != 0)
 		lpi_port_timer.bf.lpi_port_sleep_timer = port_eee_cfg->lpi_sleep_timer;
 	rv = hppe_lpi_timer_set(dev_id, port_id, &lpi_port_timer);
-	SW_RTN_ON_ERROR (rv);
 
-	return SW_OK;
+	return rv;
 }
 
 static sw_error_t
-_adpt_hppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_hppe_port_gmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	sw_error_t rv = SW_OK;
@@ -3363,120 +3388,57 @@ _adpt_hppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id
 }
 #endif
 static sw_error_t
-_adpt_ppe_gmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_ppe_port_gmac_eee_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
-	sw_error_t rv = SW_OK;
-	a_uint32_t adv = 0;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6)) {
-		return SW_BAD_PARAM;
-	}
-	if (port_eee_cfg->enable) {
-		adv = port_eee_cfg->advertisement;
-	} else {
-		adv = 0;
-	}
-	HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
-	SW_RTN_ON_ERROR (rv);
 #ifdef MRPPE
-	if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-		rv = _adpt_mrppe_gmac_port_interface_eee_cfg_set(dev_id,
-			port_id, port_eee_cfg);
-		SW_RTN_ON_ERROR (rv);
-	}
-#else
-	rv = _adpt_hppe_gmac_port_interface_eee_cfg_set(dev_id,
-			port_id, port_eee_cfg);
-	SW_RTN_ON_ERROR (rv);
-#endif
+	return _adpt_mrppe_port_gmac_eee_status_set(dev_id, port_id, port_eee_cfg);
 
-	return SW_OK;
+#else
+	return _adpt_hppe_port_gmac_eee_status_set(dev_id, port_id, port_eee_cfg);
+#endif
 }
 
 static sw_error_t
-_adpt_ppe_gmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_ppe_port_gmac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
-	sw_error_t rv = SW_OK;
-	a_uint32_t adv = 0, lp_adv = 0, cap = 0, status = 0;
+#ifdef MRPPE
+	return _adpt_mrppe_port_gmac_eee_timer_set(dev_id, port_id, port_eee_cfg);
+#else
+	return _adpt_hppe_port_gmac_eee_timer_set(dev_id, port_id, port_eee_cfg);
+#endif
+}
 
+static sw_error_t
+_adpt_ppe_port_gmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
 	memset(port_eee_cfg, 0, sizeof(*port_eee_cfg));
 
-	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6)) {
-		return SW_BAD_PARAM;
-	}
-	HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->advertisement = adv;
-	HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->link_partner_advertisement = lp_adv;
-	HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->capability = cap;
-	HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->eee_status = status;
-
-	if (port_eee_cfg->advertisement) {
-		port_eee_cfg->enable = A_TRUE;
-	} else {
-		port_eee_cfg->enable = A_FALSE;
-	}
 #ifdef MRPPE
-	if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
-		rv = _adpt_mrppe_gmac_port_interface_eee_cfg_get(dev_id,
-			port_id, port_eee_cfg);
-		SW_RTN_ON_ERROR (rv);
-	}
+	return _adpt_mrppe_port_gmac_eee_cfg_get(dev_id, port_id, port_eee_cfg);
 #else
-	rv = _adpt_hppe_gmac_port_interface_eee_cfg_get(dev_id,
-			port_id, port_eee_cfg);
-	SW_RTN_ON_ERROR (rv);
+	return _adpt_hppe_port_gmac_eee_cfg_get(dev_id, port_id, port_eee_cfg);
 #endif
-
-	return SW_OK;
 }
 
-#if defined(APPE)
 static sw_error_t
-_adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_hppe_port_xgmac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	sw_error_t rv = 0;
-	a_uint32_t adv, xgmac_id = 0;
-	union mac_lpi_control_status_u mac_lpi_control_status;
+	a_uint32_t xgmac_id = 0;
 	union mac_1us_tic_counter_u mac_1us_tic_counter;
 
 
-	memset(&mac_lpi_control_status, 0, sizeof(mac_lpi_control_status));
 	memset(&mac_1us_tic_counter, 0, sizeof(mac_1us_tic_counter));
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
 
-	if (port_eee_cfg->enable) {
-		adv = port_eee_cfg->advertisement;
-	} else {
-		adv = 0;
-	}
-
-	HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
-	SW_RTN_ON_ERROR (rv);
-
 	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
-	rv = hppe_mac_lpi_control_status_get(dev_id, xgmac_id, &mac_lpi_control_status);
-	SW_RTN_ON_ERROR (rv);
-	mac_lpi_control_status.bf.lpitxen = port_eee_cfg->lpi_tx_enable;
-	mac_lpi_control_status.bf.pls = 0x1;
-	mac_lpi_control_status.bf.lpitxa = 0x1;
-	mac_lpi_control_status.bf.lpite = 0x1;
-	rv = hppe_mac_lpi_control_status_set(dev_id, xgmac_id, &mac_lpi_control_status);
-	SW_RTN_ON_ERROR (rv);
 	rv = hppe_mac_1us_tic_counter_get(dev_id, xgmac_id, &mac_1us_tic_counter);
 	SW_RTN_ON_ERROR (rv);
 	mac_1us_tic_counter.bf.tic_1us_cntr = adpt_chip_freq_get(dev_id) - 1;
@@ -3504,7 +3466,7 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 
 		rv = hppe_mac_lpi_timers_control_get(dev_id, xgmac_id, &mac_lpi_timers_control);
 		SW_RTN_ON_ERROR (rv);
-		if (mac_lpi_timers_control.bf.twt != port_eee_cfg->lpi_wakeup_timer) {
+		if (port_eee_cfg->lpi_wakeup_timer != mac_lpi_timers_control.bf.twt) {
 			mac_lpi_timers_control.bf.twt = port_eee_cfg->lpi_wakeup_timer;
 			rv = hppe_mac_lpi_timers_control_set(dev_id, xgmac_id, &mac_lpi_timers_control);
 			SW_RTN_ON_ERROR (rv);
@@ -3515,7 +3477,32 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 }
 
 static sw_error_t
-_adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+_adpt_hppe_port_xgmac_eee_status_set(a_uint32_t dev_id,
+	fal_port_t port_id, fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = 0;
+	a_uint32_t xgmac_id = 0;
+	union mac_lpi_control_status_u mac_lpi_control_status;
+
+	memset(&mac_lpi_control_status, 0, sizeof(mac_lpi_control_status));
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(port_eee_cfg);
+
+	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	rv = hppe_mac_lpi_control_status_get(dev_id, xgmac_id, &mac_lpi_control_status);
+	SW_RTN_ON_ERROR (rv);
+	mac_lpi_control_status.bf.lpitxen = port_eee_cfg->lpi_tx_enable;
+	mac_lpi_control_status.bf.pls = 0x1;
+	mac_lpi_control_status.bf.lpitxa = 0x1;
+	mac_lpi_control_status.bf.lpite = 0x1;
+	rv = hppe_mac_lpi_control_status_set(dev_id, xgmac_id, &mac_lpi_control_status);
+
+	return SW_OK;
+}
+
+static sw_error_t
+_adpt_hppe_port_xgmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	sw_error_t rv = 0;
@@ -3523,31 +3510,12 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 	union mac_lpi_timers_control_u mac_lpi_timers_control;
 	union mac_lpi_auto_entry_timer_u mac_lpi_auto_entry_timer;
 	a_uint32_t xgmac_id = 0;
-	a_uint32_t adv = 0, lp_adv = 0, cap = 0, status = 0;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
 	memset(&mac_lpi_control_status, 0, sizeof(mac_lpi_control_status));
 	memset(&mac_lpi_timers_control, 0, sizeof(mac_lpi_timers_control));
 
-	HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->advertisement = adv;
-	HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->link_partner_advertisement = lp_adv;
-	HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->capability = cap;
-	HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
-	SW_RTN_ON_ERROR (rv);
-	port_eee_cfg->eee_status = status;
-
-	if (port_eee_cfg->advertisement) {
-		port_eee_cfg->enable = A_TRUE;
-	} else {
-		port_eee_cfg->enable = A_FALSE;
-	}
 	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
 	rv = hppe_mac_lpi_control_status_get(dev_id, xgmac_id, &mac_lpi_control_status);
 	SW_RTN_ON_ERROR (rv);
@@ -3561,57 +3529,96 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 
 	return rv;
 }
-#endif
+
+static sw_error_t
+adpt_ppe_port_mac_eee_status_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t port_mac_type = 0;
+
+	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
+	if (port_mac_type == PORT_XGMAC_TYPE)
+		rv = _adpt_hppe_port_xgmac_eee_status_set(dev_id, port_id, port_eee_cfg);
+	else if (port_mac_type == PORT_GMAC_TYPE)
+		rv = _adpt_ppe_port_gmac_eee_status_set( dev_id, port_id, port_eee_cfg);
+	else
+		return SW_BAD_VALUE;
+
+	return rv;
+}
+
+static sw_error_t
+adpt_ppe_port_mac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	a_uint32_t port_mac_type = 0;
+
+	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
+	if (port_mac_type == PORT_XGMAC_TYPE) {
+		return _adpt_hppe_port_xgmac_eee_timer_set(dev_id, port_id, port_eee_cfg);
+	} else if (port_mac_type == PORT_GMAC_TYPE) {
+		return _adpt_ppe_port_gmac_eee_timer_set( dev_id, port_id, port_eee_cfg);
+	} else {
+		return SW_BAD_VALUE;
+	}
+}
+
+static sw_error_t
+adpt_ppe_port_mac_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = SW_OK;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	SW_RTN_ON_NULL(priv);
+	rv = adpt_ppe_port_mac_eee_status_set(dev_id, port_id, port_eee_cfg);
+	SW_RTN_ON_ERROR(rv);
+	/* If lpi_wakeup_timer is non-zero, wakeup_timer_force will be enabled, */
+	/* indicating that the wakeup timer is set via a shell command. */
+	/* If lpi_wakeup_timer is zero, wakeup_timer_force will be disabled, */
+	/* and the wakeup timer will be automatically adjusted based on the link speed. */
+	if(port_eee_cfg->lpi_wakeup_timer)
+		priv->lpi_wakeup_timer_force[port_id] = A_TRUE;
+	else
+		priv->lpi_wakeup_timer_force[port_id] = A_FALSE;
+
+	return adpt_ppe_port_mac_eee_timer_set(dev_id, port_id, port_eee_cfg);
+}
+
+static sw_error_t
+adpt_ppe_port_mac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+
+	if (port_mac_type == PORT_XGMAC_TYPE)
+		return _adpt_hppe_port_xgmac_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+	else if (port_mac_type == PORT_GMAC_TYPE)
+		return _adpt_ppe_port_gmac_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+	else
+		return SW_BAD_VALUE;
+}
 
 static sw_error_t
 adpt_ppe_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
-	a_uint32_t port_mac_type;
-
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id)) {
-		return SW_NOT_SUPPORTED;
-	}
-
-	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
-	if (port_mac_type == PORT_XGMAC_TYPE) {
-#if defined(APPE)
-		_adpt_hppe_xgmac_port_interface_eee_cfg_set( dev_id, port_id, port_eee_cfg);
-#endif
-	} else if (port_mac_type == PORT_GMAC_TYPE) {
-		_adpt_ppe_gmac_port_interface_eee_cfg_set( dev_id, port_id, port_eee_cfg);
-	} else {
-		return SW_BAD_VALUE;
-	}
-
-	return SW_OK;
+	hsl_port_phy_eee_set(dev_id, port_id, port_eee_cfg);
+	return adpt_ppe_port_mac_eee_cfg_set(dev_id, port_id, port_eee_cfg);
 }
 
 static sw_error_t
 adpt_ppe_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
-	a_uint32_t port_mac_type;
-
 	ADPT_DEV_ID_CHECK(dev_id);
-	if (A_FALSE == hsl_port_phy_connected(dev_id, port_id)) {
-		return SW_NOT_SUPPORTED;
-	}
 
-	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
-	if (port_mac_type == PORT_XGMAC_TYPE) {
-#if defined(APPE)
-		_adpt_hppe_xgmac_port_interface_eee_cfg_get( dev_id, port_id, port_eee_cfg);
-#endif
-	} else if (port_mac_type == PORT_GMAC_TYPE) {
-		_adpt_ppe_gmac_port_interface_eee_cfg_get( dev_id, port_id, port_eee_cfg);
-	} else {
-		return SW_BAD_VALUE;
-	}
+	hsl_port_phy_eee_get(dev_id, port_id, port_eee_cfg);
 
-	return SW_OK;
+	return adpt_ppe_port_mac_eee_cfg_get(dev_id, port_id, port_eee_cfg);
 }
 
 static sw_error_t
@@ -4338,6 +4345,59 @@ adpt_hppe_port_mac_loopback_reset(a_uint32_t dev_id, a_uint32_t port_id)
 	return SW_OK;
 }
 
+static sw_error_t
+adpt_hppe_port_mac_eee_adjust(a_uint32_t dev_id, fal_port_t port_id,
+	a_uint32_t speed, struct qca_phy_priv *priv)
+{
+	fal_port_eee_cfg_t port_eee_cfg = {0};
+	sw_error_t rv = SW_OK;
+	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+
+	rv = adpt_ppe_port_interface_eee_cfg_get(dev_id, port_id, &port_eee_cfg);
+	SW_RTN_ON_ERROR(rv);
+
+	/* if lpi_wakeup_timer_force is 0, then wakeup timer is set here,*/
+	/* else the wakeup timer is set by shell commands */
+	if (priv->lpi_wakeup_timer_force[port_id] == 0) {
+		/* only need to adjust the wakeup timer for XGMAC */
+		if (port_mac_type == PORT_XGMAC_TYPE) {
+			switch (speed) {
+				case FAL_SPEED_10000:
+					if(port_eee_cfg.eee_status & EEE_10000BASE_T)
+						port_eee_cfg.lpi_wakeup_timer =
+							PORT_LPI_WAKEUP_TIMER_10000M;
+					break;
+				case FAL_SPEED_5000:
+					if(port_eee_cfg.eee_status & EEE_5000BASE_T)
+						port_eee_cfg.lpi_wakeup_timer =
+							PORT_LPI_WAKEUP_TIMER_5000M;
+					break;
+				case FAL_SPEED_2500:
+					if(port_eee_cfg.eee_status & EEE_2500BASE_T)
+						port_eee_cfg.lpi_wakeup_timer =
+							PORT_LPI_WAKEUP_TIMER_2500M;
+					break;
+				case FAL_SPEED_1000:
+					if(port_eee_cfg.eee_status & EEE_1000BASE_T)
+						port_eee_cfg.lpi_wakeup_timer =
+							PORT_LPI_WAKEUP_TIMER_1000M;
+					break;
+				case FAL_SPEED_100:
+					if(port_eee_cfg.eee_status & EEE_100BASE_T)
+						port_eee_cfg.lpi_wakeup_timer =
+							PORT_LPI_WAKEUP_TIMER_100M;
+					break;
+				default:
+					break;
+			}
+			rv = _adpt_hppe_port_xgmac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
+			SW_RTN_ON_ERROR(rv);
+		}
+	}
+
+	return SW_OK;
+}
+
 sw_error_t
 qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 {
@@ -4510,6 +4570,8 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 						port_id, A_TRUE);
 				adpt_hppe_uniphy_port_adapter_reset(priv->device_id, port_id);
 			}
+			adpt_hppe_port_mac_eee_adjust(priv->device_id, port_id,
+				phy_status.speed, priv);
 			/* enable mac and ppe txmac*/
 			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_TRUE);

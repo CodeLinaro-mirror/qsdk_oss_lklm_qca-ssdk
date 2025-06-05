@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2014-2015, 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -388,6 +377,7 @@ struct qca_phy_priv {
 	a_uint32_t sfp_mod_present_pin[SW_MAX_NR_PORT];
 	/*sfp_medium_pin, use to select sfp medium or not in combo mode*/
 	a_uint32_t sfp_medium_pin[SW_MAX_NR_PORT];
+	a_bool_t lpi_wakeup_timer_force[SW_MAX_NR_PORT];
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
 /*qca808x_start*/
 };

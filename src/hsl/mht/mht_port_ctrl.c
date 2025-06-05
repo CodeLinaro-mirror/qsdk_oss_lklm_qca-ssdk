@@ -1,17 +1,6 @@
 /*
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -1469,6 +1458,7 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 			SSDK_DEBUG("mht port %d link up update rxfc %d\n",
 			port_id, phy_status.rx_flowctrl);
 		}
+		mht_port_mac_eee_adjust(priv->device_id, port_id, phy_status.speed, priv);
 		if (port_id != SSDK_PHYSICAL_PORT5) {
 			/* enable eth phy clock */
 			rv = ssdk_mht_port_clk_en_set(priv->device_id, port_id,

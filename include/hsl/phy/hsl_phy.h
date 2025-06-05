@@ -1035,6 +1035,12 @@ hsl_port_phy_interface_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t *interface);
 
 #endif
+sw_error_t
+hsl_port_phy_eee_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg);
+sw_error_t
+hsl_port_phy_eee_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg);
 /*use the phy driver of nss ext or linux std for HSL APIs*/
 enum hsl_phy_api_id {
 	hibernation_set,

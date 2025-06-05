@@ -3755,3 +3755,59 @@ hsl_port_phyid_get(a_uint32_t dev_id, fal_port_t port_id)
 
 	return (org_id << 16 | rev_id);
 }
+
+sw_error_t
+hsl_port_phy_eee_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t adv = 0;
+	fal_port_eee_cfg_t port_eee_cfg_tmp = {0};
+
+	SW_RTN_ON_NULL(port_eee_cfg);
+	/* if EEE cfg is same as before, then no need to configure again */
+	rv = hsl_port_phy_eee_get(dev_id, port_id, &port_eee_cfg_tmp);
+	SW_RTN_ON_ERROR(rv);
+	if ((port_eee_cfg->enable == port_eee_cfg_tmp.enable) &&
+		(port_eee_cfg->advertisement == port_eee_cfg_tmp.advertisement))
+		return SW_OK;
+
+	if (port_eee_cfg->enable)
+		adv = port_eee_cfg->advertisement;
+	else
+		adv = 0;
+
+	HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
+
+	return rv;
+}
+
+sw_error_t
+hsl_port_phy_eee_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv = 0;
+	a_uint32_t adv = 0, lp_adv = 0, cap = 0, status = 0;
+
+	SW_RTN_ON_NULL(port_eee_cfg);
+
+	HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
+	SW_RTN_ON_ERROR (rv);
+	port_eee_cfg->advertisement = adv;
+	HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
+	SW_RTN_ON_ERROR (rv);
+	port_eee_cfg->link_partner_advertisement = lp_adv;
+	HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
+	SW_RTN_ON_ERROR (rv);
+	port_eee_cfg->capability = cap;
+	HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
+	SW_RTN_ON_ERROR (rv);
+	port_eee_cfg->eee_status = status;
+
+	if (port_eee_cfg->advertisement)
+		port_eee_cfg->enable = A_TRUE;
+	 else
+		port_eee_cfg->enable = A_FALSE;
+
+	return SW_OK;
+}
