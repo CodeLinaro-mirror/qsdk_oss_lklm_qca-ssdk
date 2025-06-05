@@ -1436,6 +1436,10 @@ struct sub_cmd_des_t g_athtag_des[] =
 struct sub_cmd_des_t g_pktedit_des[] =
 {
 	{"padding", "set", SW_API_PKTEDIT_PADDING_SET, NULL},
+#if defined(JHPPE)
+	{"en", "set", SW_API_PKTEDIT_EN_SET, NULL},
+	{"RxdescCpucodeEn", "set", SW_API_RXDESC_CPUCODE_EN_SET, NULL},
+#endif
 	{NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
