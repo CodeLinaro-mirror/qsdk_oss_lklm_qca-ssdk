@@ -107,6 +107,12 @@ sw_error_t fal_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t list_id, a_ui
 sw_error_t fal_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t *priority)
     DEFINE_FAL_FUNC_ADPT_EXPORT(acl_rule_priority_get, dev_id, list_id, rule_id, priority)
 
+sw_error_t fal_acl_dscp_pcp_mapping_set(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t dscp, a_uint8_t pcp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_dscp_pcp_mapping_set, dev_id, group_id, dscp, pcp)
+
+sw_error_t fal_acl_dscp_pcp_mapping_get(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(acl_dscp_pcp_mapping_get, dev_id, group_id, dscp, pcp)
+
 sw_error_t fal_acl_list_dump(a_uint32_t dev_id)
 	DEFINE_FAL_FUNC_HSL_EXPORT(acl_list_dump, dev_id)
 
