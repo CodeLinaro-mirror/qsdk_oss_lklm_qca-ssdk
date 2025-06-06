@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2012, 2014-2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -1968,15 +1956,6 @@ static int __init regi_init(void)
 				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
 #endif
 				break;
-			case CHIP_HPPE:
-#if defined(HPPE)
-				qca_hppe_hw_init(dev_id);
-				rv = ssdk_switch_register(dev_id, cfg.chip_type);
-				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
-#endif
-				break;
-
 			case CHIP_UNSPECIFIED:
 				break;
 			case CHIP_SCOMPHY:
