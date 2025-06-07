@@ -2271,7 +2271,16 @@ extern "C" {
     SW_API_DEF(SW_API_QM_SOURCE_PROFILE_SET, fal_qm_port_source_profile_set), \
     SW_API_DEF(SW_API_QM_SOURCE_PROFILE_GET, fal_qm_port_source_profile_get), \
     SW_API_DEF(SW_API_QM_ENQUEUE_CFG_GET, fal_qm_enqueue_config_get), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_SET, fal_qm_enqueue_config_set),
+    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_SET, fal_qm_enqueue_config_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_EN_SET, fal_qm_counter_monitor_en_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_EN_GET, fal_qm_counter_monitor_en_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP, fal_qm_counter_monitor_stats_cleanup), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_STATUS_GET, fal_qm_counter_monitor_status_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_MAP_SET, fal_qm_counter_monitor_map_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_MAP_GET, fal_qm_counter_monitor_map_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_CTRL_SET, fal_qm_counter_monitor_ctrl_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_CTRL_GET, fal_qm_counter_monitor_ctrl_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_STATS_GET, fal_qm_counter_monitor_stats_get),
 
 #define QM_API_PARAM \
     SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_SET) \
@@ -2308,7 +2317,16 @@ extern "C" {
     SW_API_DESC(SW_API_QM_SOURCE_PROFILE_SET) \
     SW_API_DESC(SW_API_QM_SOURCE_PROFILE_GET) \
     SW_API_DESC(SW_API_QM_ENQUEUE_CFG_GET) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_SET)
+    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_EN_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_EN_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_STATUS_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_MAP_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_MAP_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_CTRL_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_CTRL_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_STATS_GET)
 #else
 #define QM_API \
     SW_API_DEF(SW_API_UCAST_QUEUE_BASE_PROFILE_SET, fal_ucast_queue_base_profile_set), \
@@ -2339,8 +2357,16 @@ extern "C" {
     SW_API_DEF(SW_API_QM_SOURCE_PROFILE_SET, fal_qm_port_source_profile_set), \
     SW_API_DEF(SW_API_QM_SOURCE_PROFILE_GET, fal_qm_port_source_profile_get), \
     SW_API_DEF(SW_API_QM_ENQUEUE_CFG_GET, fal_qm_enqueue_config_get), \
-    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_SET, fal_qm_enqueue_config_set),
-
+    SW_API_DEF(SW_API_QM_ENQUEUE_CFG_SET, fal_qm_enqueue_config_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_EN_SET, fal_qm_counter_monitor_en_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_EN_GET, fal_qm_counter_monitor_en_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP, fal_qm_counter_monitor_stats_cleanup), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_STATUS_GET, fal_qm_counter_monitor_status_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_MAP_SET, fal_qm_counter_monitor_map_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_MAP_GET, fal_qm_counter_monitor_map_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_CTRL_SET, fal_qm_counter_monitor_ctrl_set), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_CTRL_GET, fal_qm_counter_monitor_ctrl_get), \
+    SW_API_DEF(SW_API_QM_COUNTER_MONITOR_STATS_GET, fal_qm_counter_monitor_stats_get),
 #define QM_API_PARAM \
     SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_SET) \
     SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_GET) \
@@ -2370,7 +2396,16 @@ extern "C" {
     SW_API_DESC(SW_API_QM_SOURCE_PROFILE_SET) \
     SW_API_DESC(SW_API_QM_SOURCE_PROFILE_GET) \
     SW_API_DESC(SW_API_QM_ENQUEUE_CFG_GET) \
-    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_SET)
+    SW_API_DESC(SW_API_QM_ENQUEUE_CFG_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_EN_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_EN_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_STATUS_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_MAP_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_MAP_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_CTRL_SET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_CTRL_GET) \
+    SW_API_DESC(SW_API_QM_COUNTER_MONITOR_STATS_GET)
 #endif
 #else
 #define QM_API
