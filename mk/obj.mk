@@ -241,7 +241,6 @@ ifeq (TRUE, $(IN_QM))
 OBJ-COMMON  += src/fal/fal_qm.o
 OBJ-HPPE    += src/hsl/hppe/hppe_qm.o src/adpt/hppe/adpt_hppe_qm.o
 OBJ-APPE    += src/hsl/appe/appe_qm.o src/adpt/appe/adpt_appe_qm.o
-OBJ-CPPE    += src/adpt/cppe/adpt_cppe_qm.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_qm.o
 endif
 
