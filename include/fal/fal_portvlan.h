@@ -735,6 +735,12 @@ sw_error_t
 fal_port_ingress_vlan_filter_get(a_uint32_t dev_id, fal_port_t port_id,
 		fal_ingress_vlan_filter_t *filter);
 
+sw_error_t
+fal_vlan_trans_dscp_pcp_mapping_set(a_uint32_t dev_id, fal_port_vlan_direction_t direction,
+		a_uint8_t group_id, a_uint8_t dscp, a_uint8_t pcp);
+sw_error_t
+fal_vlan_trans_dscp_pcp_mapping_get(a_uint32_t dev_id, fal_port_vlan_direction_t direction,
+		a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

@@ -823,6 +823,12 @@ typedef sw_error_t (*adpt_port_egress_vlan_filter_set_func)(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
 typedef sw_error_t (*adpt_port_egress_vlan_filter_get_func)(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
+typedef sw_error_t (*adpt_vlan_trans_dscp_pcp_mapping_set_func)(a_uint32_t dev_id,
+		fal_port_vlan_direction_t direction,
+		a_uint8_t group_id, a_uint8_t dscp, a_uint8_t pcp);
+typedef sw_error_t (*adpt_vlan_trans_dscp_pcp_mapping_get_func)(a_uint32_t dev_id,
+		fal_port_vlan_direction_t direction,
+		a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp);
 /*portvlan module end*/
 
 /*ctrlpkt module end*/
@@ -1847,6 +1853,8 @@ typedef struct
 	adpt_portvlan_isol_group_get_func adpt_portvlan_isol_group_get;
 	adpt_port_egress_vlan_filter_set_func adpt_port_egress_vlan_filter_set;
 	adpt_port_egress_vlan_filter_get_func adpt_port_egress_vlan_filter_get;
+	adpt_vlan_trans_dscp_pcp_mapping_set_func adpt_vlan_trans_dscp_pcp_mapping_set;
+	adpt_vlan_trans_dscp_pcp_mapping_get_func adpt_vlan_trans_dscp_pcp_mapping_get;
 	/*portvlan module end*/
 
 	/*ctrlpkt module begin*/

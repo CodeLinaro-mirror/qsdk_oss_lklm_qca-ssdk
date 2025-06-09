@@ -219,6 +219,11 @@ sw_error_t fal_portvlan_member_add(a_uint32_t dev_id, fal_port_t port_id, a_uint
 sw_error_t fal_portvlan_member_del(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mem_port_id)
     DEFINE_FAL_FUNC_EXPORT(portvlan_member_del, dev_id, port_id, mem_port_id)
 
+sw_error_t fal_vlan_trans_dscp_pcp_mapping_set(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint8_t group_id, a_uint8_t dscp, a_uint8_t pcp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(vlan_trans_dscp_pcp_mapping_set, dev_id, direction, group_id, dscp, pcp)
+sw_error_t fal_vlan_trans_dscp_pcp_mapping_get(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(vlan_trans_dscp_pcp_mapping_get, dev_id, direction, group_id, dscp, pcp)
+
 #ifndef IN_PORTVLAN_MINI
 sw_error_t fal_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_trans_entry_t *entry)
     DEFINE_FAL_FUNC_EXPORT(port_vlan_trans_add, dev_id, port_id, entry)
