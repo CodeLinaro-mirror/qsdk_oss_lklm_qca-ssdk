@@ -53,6 +53,11 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
 	eg_service_tbl.bf.field_update_action &= ATHTAG_UPDATE;
 	eg_service_tbl.bf.field_update_action |= entry->field_update_bitmap;
+#if defined(JHPPE)
+	/* extend field update action */
+	eg_service_tbl.bf.field_update_action_ext_0 = (entry->field_update_bitmap >> 32) & 0x3;
+	eg_service_tbl.bf.field_update_action_ext_1 = (entry->field_update_bitmap >> 34) & 0x3fffff;
+#endif
 #else
 	eg_service_tbl.bf.field_update_action = entry->field_update_bitmap;
 #endif
@@ -98,6 +103,10 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 
 	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
 	entry->field_update_bitmap = eg_service_tbl.bf.field_update_action;
+#if defined(JHPPE)
+	entry->field_update_bitmap |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext_0 |
+				(eg_service_tbl.bf.field_update_action_ext_1 << 2)) << 32;
+#endif
 	entry->next_service_code = eg_service_tbl.bf.next_service_code;
 	entry->hw_services = eg_service_tbl.bf.hw_services;
 	entry->offset_sel = eg_service_tbl.bf.offset_sel;
