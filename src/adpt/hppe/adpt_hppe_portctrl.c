@@ -722,39 +722,6 @@ adpt_hppe_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-adpt_ppe_port_tdm_resource_set(a_uint32_t dev_id, a_bool_t enable)
-{
-	a_uint32_t port_id = 0;
-	a_bool_t link_status = A_FALSE;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if(adpt_chip_type_get(dev_id) == CHIP_HPPE) {
-		/* control port tdm resouce*/
-		if (enable == A_FALSE) {
-			for (port_id = 1; port_id < 7; port_id++) {
-				adpt_hppe_port_link_status_get(dev_id, port_id, &link_status);
-				if (link_status == A_TRUE) {
-					/* contorl port mac */
-					adpt_hppe_port_rxmac_status_set(dev_id, port_id, enable);
-				}
-			}
-			qca_hppe_tdm_hw_init(dev_id, enable);
-		} else {
-			qca_hppe_tdm_hw_init(dev_id, enable);
-			for (port_id = 1; port_id < 7; port_id++) {
-				adpt_hppe_port_link_status_get(dev_id, port_id, &link_status);
-				if (link_status == A_TRUE) {
-					/* contorl port mac */
-					adpt_hppe_port_rxmac_status_set(dev_id, port_id, enable);
-				}
-			}
-		}
-	}
-	return SW_OK;
-}
-
-sw_error_t
 adpt_hppe_port_mru_set(a_uint32_t dev_id, fal_port_t port_id,
 		fal_mru_ctrl_t *ctrl)
 {
@@ -778,11 +745,9 @@ adpt_ppe_port_mru_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(ctrl);
 	if(ctrl->mru_size > SSDK_MAX_FRAME_SIZE)
 		return SW_OUT_OF_RANGE;
-	SW_RTN_ON_ERROR(adpt_ppe_port_tdm_resource_set(dev_id, A_FALSE));
 	port_value = FAL_PORT_ID_VALUE(port_id);
 	ADPT_PPE_PORT_ID_CHECK(port_value);
 	rv = adpt_hppe_port_mru_set(dev_id, port_value, ctrl);
-	SW_RTN_ON_ERROR(adpt_ppe_port_tdm_resource_set(dev_id, A_TRUE));
 
 	return rv;
 }
@@ -817,11 +782,9 @@ adpt_ppe_port_mtu_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(ctrl);
 	if(ctrl->mtu_size > SSDK_MAX_MTU)
 		return SW_OUT_OF_RANGE;
-	SW_RTN_ON_ERROR(adpt_ppe_port_tdm_resource_set(dev_id, A_FALSE));
 	port_value = FAL_PORT_ID_VALUE(port_id);
 	ADPT_PPE_PORT_ID_CHECK(port_value);
 	rv = adpt_hppe_port_mtu_set(dev_id, port_value, ctrl);
-	SW_RTN_ON_ERROR(adpt_ppe_port_tdm_resource_set(dev_id, A_TRUE));
 
 	return rv;
 }
