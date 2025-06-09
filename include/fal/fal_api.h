@@ -3335,7 +3335,7 @@ extern "C" {
 	SW_API_DEF(SW_API_SAMPL_CTRL_GET, fal_sampling_ctrl_get), \
 	SW_API_DEF(SW_API_SAMPL_WINDOW_EN_SET, fal_sampling_window_en_set), \
 	SW_API_DEF(SW_API_SAMPL_WINDOW_EN_GET, fal_sampling_window_en_get), \
-	SW_API_DEF(SW_API_SAMPL_COUNTER_GET, fal_sampling_counter_get)
+	SW_API_DEF(SW_API_SAMPL_COUNTER_GET, fal_sampling_counter_get),
 #define SAMPL_API_PARAM \
 	SW_API_DESC(SW_API_SAMPL_TIME_SET) \
 	SW_API_DESC(SW_API_SAMPL_TIME_GET) \
@@ -3408,6 +3408,7 @@ extern "C" {
     MAPT_API \
     ATHTAG_API \
     PKTEDIT_API \
+    SAMPL_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3468,6 +3469,7 @@ extern "C" {
     MAPT_API_PARAM \
     ATHTAG_API_PARAM \
     PKTEDIT_API_PARAM \
+    SAMPL_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),
