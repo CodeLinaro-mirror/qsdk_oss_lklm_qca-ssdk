@@ -10847,6 +10847,125 @@ parse_qm_srcprofile(struct switch_val *val)
 	return rv;
 }
 
+#if defined(JHPPE)
+static int
+parse_qm_cntmonitoren(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "cntmonitor_en")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_cntmonitorstatscleanup(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while(switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if(!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_cntmonitormap(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "queue_type")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "map_id")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		}  else if (!strcmp(ext_value_p->option_name, "cnt_en")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		}  else if (!strcmp(ext_value_p->option_name, "cnt_id")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		}  else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_cntmonitorctrl(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "queue_type")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "cnt_id")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		}  else if (!strcmp(ext_value_p->option_name, "cnt_threshold_mode")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		}  else if (!strcmp(ext_value_p->option_name, "cnt_threshold")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		}  else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+#endif
 #endif
 
 #ifdef IN_SERVCODE
@@ -13042,6 +13161,16 @@ parse_qm(const char *command_name, struct switch_val *val)
 		rv = parse_qm_enqueue(val);
 	} else if (!strcmp(command_name, "Srcprofile")) {
 		rv = parse_qm_srcprofile(val);
+#if defined(JHPPE)
+	} else if (!strcmp(command_name, "Cntmonitoren")) {
+		rv = parse_qm_cntmonitoren(val);
+	} else if (!strcmp(command_name, "Cntmonitorstatscleanup")) {
+		rv = parse_qm_cntmonitorstatscleanup(val);
+	} else if (!strcmp(command_name, "Cntmonitormap")) {
+		rv = parse_qm_cntmonitormap(val);
+	} else if (!strcmp(command_name, "Cntmonitorctrl")) {
+		rv = parse_qm_cntmonitorctrl(val);
+#endif
 	}
 #if defined(APPE)
 #if !defined(IN_QM_MINI)

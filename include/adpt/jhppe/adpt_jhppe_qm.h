@@ -33,6 +33,39 @@ sw_error_t
 adpt_jhppe_qm_cpucode_enqueue_set(a_uint32_t dev_id,
 				  a_uint32_t cpu_code,
 				  a_bool_t enable);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_en_set(a_uint32_t dev_id, a_bool_t enable);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_en_get(a_uint32_t dev_id, a_bool_t *enable);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_stats_cleanup(a_uint32_t dev_id);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_status_get(a_uint32_t dev_id, fal_qm_queue_type_t type,
+		a_uint32_t cnt_id, a_bool_t *status);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_map_set(a_uint32_t dev_id, fal_qm_queue_type_t type,
+		a_uint32_t map_id, fal_qm_monitor_map_t *monitor_map);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_map_get(a_uint32_t dev_id, fal_qm_queue_type_t type,
+		a_uint32_t map_id, fal_qm_monitor_map_t *monitor_map);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_ctrl_set(a_uint32_t dev_id, fal_qm_queue_type_t type,
+		a_uint32_t cnt_id, fal_qm_monitor_ctrl_t *monitor_ctrl);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_ctrl_get(a_uint32_t dev_id, fal_qm_queue_type_t type,
+		a_uint32_t cnt_id, fal_qm_monitor_ctrl_t *monitor_ctrl);
+
+sw_error_t
+adpt_jhppe_qm_counter_monitor_stats_get(a_uint32_t dev_id, fal_qm_queue_type_t type,
+		a_uint32_t cnt_id, fal_qm_monitor_stats_t *monitor_stats);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
