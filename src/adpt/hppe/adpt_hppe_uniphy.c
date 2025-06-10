@@ -35,31 +35,31 @@ adpt_hppe_port_get_by_uniphy(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_uint32_t ssdk_port = 0;
 
 	if (uniphy_index == SSDK_UNIPHY_INSTANCE0) {
-#ifdef MPPE
-		ssdk_port = SSDK_PHYSICAL_PORT1;
-#else
-		if (channel == SSDK_UNIPHY_CHANNEL0) {
+		if (adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
+			adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
 			ssdk_port = SSDK_PHYSICAL_PORT1;
-		} else if (channel == SSDK_UNIPHY_CHANNEL1) {
-			ssdk_port = SSDK_PHYSICAL_PORT2;
-		} else if (channel == SSDK_UNIPHY_CHANNEL4) {
-			ssdk_port = SSDK_PHYSICAL_PORT5;
-		} else if (channel == SSDK_UNIPHY_CHANNEL3) {
-			ssdk_port = SSDK_PHYSICAL_PORT4;
+		else {
+			if (channel == SSDK_UNIPHY_CHANNEL0) {
+				ssdk_port = SSDK_PHYSICAL_PORT1;
+			} else if (channel == SSDK_UNIPHY_CHANNEL1) {
+				ssdk_port = SSDK_PHYSICAL_PORT2;
+			} else if (channel == SSDK_UNIPHY_CHANNEL4) {
+				ssdk_port = SSDK_PHYSICAL_PORT5;
+			} else if (channel == SSDK_UNIPHY_CHANNEL3) {
+				ssdk_port = SSDK_PHYSICAL_PORT4;
+			}
 		}
-#endif
 	} else if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
-#ifdef MPPE
-		ssdk_port = SSDK_PHYSICAL_PORT2;
-#else
-		ssdk_port = SSDK_PHYSICAL_PORT5;
-#endif
+		if (adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
+			adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
+			ssdk_port = SSDK_PHYSICAL_PORT2;
+		else
+			ssdk_port = SSDK_PHYSICAL_PORT5;
 	} else if (uniphy_index == SSDK_UNIPHY_INSTANCE2) {
-#ifdef MRPPE
-		ssdk_port = SSDK_PHYSICAL_PORT3;
-#else
-		ssdk_port = SSDK_PHYSICAL_PORT6;
-#endif
+		if (adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
+			ssdk_port = SSDK_PHYSICAL_PORT3;
+		else
+			ssdk_port = SSDK_PHYSICAL_PORT6;
 	}
 
 	return ssdk_port;
@@ -1361,14 +1361,12 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 		return SW_OK;
 	}
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0))
-	if ((ssdk_uniphy_valid_check(dev_id, index, mode)) == A_FALSE &&
-		(ssdk_is_emulation(dev_id) == A_FALSE)) {
+	if (ssdk_uniphy_valid_check(dev_id, index, mode) == A_FALSE) {
 		SSDK_INFO("ssdk doesn't support mode:%d in uniphy:%d on platform!\n",
 			mode, index);
 		return SW_OK;
 	}
-#endif
+
 	switch(mode) {
 		case PORT_WRAPPER_PSGMII:
 		case PORT_WRAPPER_PSGMII_FIBER:

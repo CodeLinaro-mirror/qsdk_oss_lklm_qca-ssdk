@@ -73,9 +73,6 @@ a_uint32_t hsl_phyid_get(a_uint32_t dev_id, a_uint32_t port_id)
 	a_uint32_t reg_pad = 0, phy_id = 0;
 
 /*qca808x_end*/
-	if(ssdk_is_emulation(dev_id) && ssdk_emu_chip_ver_get(dev_id) == MP_GEPHY){
-		return MP_GEPHY;
-	}
 	if (hsl_port_is_sfp(dev_id, port_id)){
 		return SFP_PHY;
 	}
@@ -929,6 +926,7 @@ a_uint32_t hsl_port_to_uniphy(a_uint32_t dev_id, a_uint32_t port_id)
 	if(port_id <= SSDK_PHYSICAL_PORT4)
 	{
 		uniphy_index = SSDK_UNIPHY_INSTANCE0;
+#ifndef JHPPE
 #ifdef MPPE
 		if(port_id == SSDK_PHYSICAL_PORT2)
 			uniphy_index = SSDK_UNIPHY_INSTANCE1;
@@ -936,6 +934,7 @@ a_uint32_t hsl_port_to_uniphy(a_uint32_t dev_id, a_uint32_t port_id)
 #ifdef MRPPE
 		if(port_id == SSDK_PHYSICAL_PORT3)
 			uniphy_index = SSDK_UNIPHY_INSTANCE2;
+#endif
 #endif
 	}
 	else if(port_id == SSDK_PHYSICAL_PORT5)

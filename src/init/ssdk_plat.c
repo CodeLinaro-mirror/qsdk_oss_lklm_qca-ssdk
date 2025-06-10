@@ -613,13 +613,12 @@ qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	void __iomem *hppe_uniphy_base = NULL;
 	a_uint32_t reg_addr1, reg_addr2;
 
-	if(ssdk_is_emulation(dev_id)){
-		return SW_OK;
-	}
-
 	SSDK_DEBUG("qca_uniphy_reg_read function reg:0x%x\n and value:0x%x", reg_addr, *reg_data);
 	if (len != sizeof (a_uint32_t))
-        return SW_BAD_LEN;
+		return SW_BAD_LEN;
+
+	if (qca_phy_priv_global[dev_id]->uniphy_hw_addr == NULL)
+		return SW_NO_SUCH;
 
 	if (SSDK_UNIPHY_INSTANCE0 == uniphy_index)
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr;
@@ -661,13 +660,12 @@ qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_uint32_t reg_addr1, reg_addr2;
 	uint32_t reg_val = 0;
 
-	if(ssdk_is_emulation(dev_id)){
-		return SW_OK;
-	}
-
 	SSDK_DEBUG("qca_uniphy_reg_write function reg:0x%x\n and value:0x%x", reg_addr, *reg_data);
 	if (len != sizeof (a_uint32_t))
-        return SW_BAD_LEN;
+	        return SW_BAD_LEN;
+
+	if (qca_phy_priv_global[dev_id]->uniphy_hw_addr == NULL)
+		return SW_NO_SUCH;
 
 	if (SSDK_UNIPHY_INSTANCE0 == uniphy_index)
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr;
@@ -1125,6 +1123,8 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 			printk("        switch_access_mode = <local bus>\n");
 		else if (mode == HSL_REG_MDIO)
 			printk("        switch_access_mode = <mdio bus>\n");
+		else if (mode == HSL_REG_PCIE_BUS)
+			printk("        switch_access_mode = <pcie bus>\n");
 		else
 			printk("        switch_access_mode = <(null)>\n");
 		printk("        switch_cpu_bmp = <0x%x>\n", ssdk_cpu_bmp_get(dev_id));
@@ -1839,9 +1839,6 @@ int ssdk_uniphy_check_by_socid(a_uint32_t dev_id,
 int ssdk_uniphy_valid_check(a_uint32_t dev_id,
 		a_uint32_t index, a_uint32_t mode)
 {
-	if (ssdk_is_emulation(dev_id))
-		return A_TRUE;
-
 	if (index > SSDK_UNIPHY_INSTANCE2)
 		return A_FALSE;
 

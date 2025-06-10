@@ -710,7 +710,7 @@ static struct device_node *ssdk_dt_get_mdio_node(a_uint32_t dev_id)
 	struct device_node *mdio_node = NULL;
 	hsl_reg_mode reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
-	if (reg_mode == HSL_REG_LOCAL_BUS) {
+	if (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS) {
 		mdio_node = of_find_compatible_node(NULL, NULL, "qcom,ipq40xx-mdio");
 		if (!mdio_node)
 			mdio_node = of_find_compatible_node(NULL, NULL, "qcom,qca-mdio");
@@ -758,6 +758,30 @@ static struct mii_bus *ssdk_mdio_i2c_bus_register(a_uint32_t dev_id,
 }
 #endif
 
+static struct device_node *
+ssdk_dt_parse_mdio_node(struct device_node *switch_node,
+			struct device_node *port_node, a_uint32_t dev_id)
+{
+	struct device_node *mdio_node = NULL;
+
+	/* port mdio phandle reference parse first */
+	if (port_node) {
+		mdio_node = of_parse_phandle(port_node, "mdiobus", 0);
+		if (mdio_node)
+			return mdio_node;
+	}
+
+	/* switch mdio phandle refrence parse then */
+	if (switch_node) {
+		mdio_node = of_parse_phandle(switch_node, "mdio-bus", 0);
+		if (mdio_node)
+			return mdio_node;
+	}
+
+	/* parse mdio dts node directly */
+	return ssdk_dt_get_mdio_node(dev_id);
+}
+
 static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint32_t dev_id,
 		ssdk_init_cfg *cfg)
 {
@@ -801,11 +825,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		}
 
 		/* initialize phy_addr in case of undefined dts field */
-		mdio_node = of_parse_phandle(port_node, "mdiobus", 0);
-		if (!mdio_node)
-			mdio_node = ssdk_dt_get_mdio_node(dev_id);
-
-		if (mdio_node)
+		mdio_node = ssdk_dt_parse_mdio_node(switch_node, port_node, dev_id);
+		if (of_device_is_available(mdio_node))
 		{
 			ssdk_miibus_add(dev_id, of_mdio_find_bus(mdio_node), &miibus_index);
 			phy_reset_gpio = of_get_named_gpio(mdio_node, "phy-reset-gpio",
@@ -976,53 +997,16 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	return rv;
 }
 
-static sw_error_t
+static void
 ssdk_dt_parse_default_mdio_bus(struct device_node *switch_node, a_uint32_t dev_id)
 {
 	struct device_node *mdio_node = NULL;
-	struct platform_device *mdio_plat = NULL;
-	hsl_reg_mode reg_mode = HSL_REG_LOCAL_BUS;
 	a_uint32_t miibus_index = 0;
-	sw_error_t rv = SW_OK;
 
-	if (switch_node) {
-		mdio_node = of_parse_phandle(switch_node, "mdio-bus", 0);
-		if (mdio_node) {
-			return ssdk_miibus_add(dev_id, of_mdio_find_bus(mdio_node),
-				&miibus_index);
-		}
-	}
+	mdio_node = ssdk_dt_parse_mdio_node(switch_node, NULL, dev_id);
 
-	mdio_node = ssdk_dt_get_mdio_node(dev_id);
-	if (!mdio_node) {
-		SSDK_ERROR("can't find mdio node\n");
-		return SW_NOT_FOUND;
-	}
-
-	mdio_plat = of_find_device_by_node(mdio_node);
-	if (!mdio_plat) {
-		SSDK_ERROR("cannot find platform device from mdio node\n");
-		return SW_NOT_FOUND;
-	}
-
-	if(reg_mode == HSL_REG_LOCAL_BUS) {
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,1,0))
-		rv = ssdk_miibus_add(dev_id, dev_get_drvdata(&mdio_plat->dev), &miibus_index);
-#else
-		struct qca_mdio_data *mdio_data = NULL;
-		mdio_data = dev_get_drvdata(&mdio_plat->dev);
-		if (!mdio_data) {
-			SSDK_ERROR("cannot get mdio_data reference from device data\n");
-			return SW_NOT_FOUND;
-		}
-		rv = ssdk_miibus_add(dev_id, mdio_data->mii_bus, &miibus_index);
-#endif
-	}
-	else
-		rv = ssdk_miibus_add(dev_id, dev_get_drvdata(&mdio_plat->dev),
-			&miibus_index);
-
-	return rv;
+	if (of_device_is_available(mdio_node))
+		ssdk_miibus_add(dev_id, of_mdio_find_bus(mdio_node), &miibus_index);
 }
 
 static sw_error_t ssdk_dt_parse_clkdev(a_uint32_t dev_id, struct device_node *switch_node)
@@ -1061,13 +1045,8 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 	phy_features_t phy_features = 0;
 	sw_error_t ret;
 
-	/*parse the mdio bus*/
-	if(!ssdk_is_emulation(dev_id)) {
-		if (SW_OK != ssdk_dt_parse_default_mdio_bus(switch_node, dev_id)) {
-			SSDK_ERROR("mdio bus parse failed!\n");
-			return;
-		}
-	}
+	/*parse default mdio bus*/
+	ssdk_dt_parse_default_mdio_bus(switch_node, dev_id);
 
 	ret = ssdk_dt_parse_clkdev(dev_id, switch_node);
 	/* Clock MDIO device is not specified in DTS, then try to manually
@@ -1577,10 +1556,11 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 	ssdk_dt_priv->ess_clk= ERR_PTR(-ENOENT);
 	ssdk_dt_priv->cmnblk_clk = ERR_PTR(-ENOENT);
 
-	if(of_property_read_bool(switch_node,"qcom,emulation")){
+	if (of_property_read_bool(switch_node, "qcom,emulation")) {
 		ssdk_dt_priv->is_emulation = A_TRUE;
 		SSDK_INFO("RUMI emulation\n");
 	}
+
 	/* parse common dts info */
 	rv = ssdk_dt_parse_access_mode(switch_node, ssdk_dt_priv);
 	SW_RTN_ON_ERROR(rv);
