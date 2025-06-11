@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -36,6 +24,26 @@ struct ppe_ip_mac {
 };
 
 static struct ppe_ip_mac ppe_l3_mac_g[SW_MAX_NR_DEV] = {0};
+
+static void adpt_ip_macaddr_convert(fal_mac_addr_t *mac_addr,
+		a_uint32_t *mac_0, a_uint16_t *mac_1, a_bool_t to_hsl)
+{
+	if (to_hsl) {
+		*mac_0 = mac_addr->uc[5] | \
+			 mac_addr->uc[4] << 8 | \
+			 mac_addr->uc[3] << 16 | \
+			 mac_addr->uc[2] << 24;
+		*mac_1 = mac_addr->uc[1] | \
+			 mac_addr->uc[0] << 8;
+	} else {
+		mac_addr->uc[5] = *mac_0;
+		mac_addr->uc[4] = *mac_0 >> 8;
+		mac_addr->uc[3] = *mac_0 >> 16;
+		mac_addr->uc[2] = *mac_0 >> 24;
+		mac_addr->uc[1] = *mac_1;
+		mac_addr->uc[0] = *mac_1 >> 8;
+	}
+}
 
 a_uint8_t adpt_ppe_l3_mac_bitmap_alloc(a_uint32_t dev_id, fal_mac_addr_t mac_addr)
 {
@@ -63,6 +71,7 @@ a_uint8_t adpt_ppe_l3_mac_bitmap_alloc(a_uint32_t dev_id, fal_mac_addr_t mac_add
 		mac_ints->refcount = 1;
 		ether_addr_copy(mac_ints->mac.mac_addr.uc, mac_addr.uc);
 	}
+
 	spin_unlock_bh(&ip_mac_p->lock);
 
 	return mac_index;
@@ -130,7 +139,7 @@ a_uint8_t adpt_ppe_l3_mac_addr_check(a_uint32_t dev_id, fal_mac_addr_t mac_addr)
 	return mac_index;
 }
 
-void adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_mac_addr_t *mac_addr)
+a_bool_t adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_mac_addr_t *mac_addr)
 {
 	a_uint8_t mac_index = 0;
 	struct ppe_ip_intf_mac *mac_ints = NULL;
@@ -139,7 +148,7 @@ void adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_mac_a
 
 	if (!mac_bitmap) {
 		eth_zero_addr(mac_addr->uc);
-		return;
+		return A_FALSE;
 	}
 
 	/* the parameter mac_addr is not 0, for get next mac from the input mac_addr */
@@ -153,7 +162,7 @@ void adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_mac_a
 			if (get_next == A_FALSE) {
 				ether_addr_copy(mac_addr->uc, mac_ints->mac.mac_addr.uc);
 				spin_unlock_bh(&ip_mac_p->lock);
-				return;
+				return A_TRUE;
 			}
 
 			if (ether_addr_equal(mac_addr->uc, mac_ints->mac.mac_addr.uc) &&
@@ -168,8 +177,94 @@ void adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_mac_a
 	/* mac_bitmap is not found */
 	eth_zero_addr(mac_addr->uc);
 
-	return;
+	return A_FALSE;
 }
+
+#if defined(JHPPE)
+a_bool_t adpt_jhppe_l3_mac_entry_equal(fal_intf_macaddr_t vsi_mac_entry,
+				       a_uint32_t l3_if,
+				       union l3_my_mac_tbl_u l3_mymac)
+{
+	fal_mac_addr_t hsl_mac_addr;
+	a_uint32_t mac_0;
+	a_uint16_t mac_1;
+	a_bool_t ret = A_FALSE;
+
+	mac_0 = l3_mymac.bf.mac_0;
+	mac_1 = l3_mymac.bf.mac_1;
+	adpt_ip_macaddr_convert(&hsl_mac_addr, &mac_0, &mac_1, A_FALSE);
+
+	if (l3_mymac.bf.valid == 1 &&
+	    l3_mymac.bf.l3_if_index == l3_if &&
+	    l3_mymac.bf.vsi_valid == vsi_mac_entry.vsi_valid &&
+	    l3_mymac.bf.vsi == vsi_mac_entry.vsi &&
+	    ether_addr_equal(vsi_mac_entry.mac_addr.uc, hsl_mac_addr.uc))
+		ret = A_TRUE;
+
+	return ret;
+}
+
+a_uint8_t adpt_jhppe_l3_mac_addr_check(a_uint32_t dev_id, a_uint32_t l3_if,
+		fal_intf_macaddr_t vsi_mac_entry, a_uint8_t *l3_my_mac_index)
+{
+	union l3_my_mac_tbl_u l3_mymac;
+	int i, update_index = L3_MY_MAC_TBL_NUM;
+
+	for (i = 0; i < L3_MY_MAC_TBL_NUM; i++) {
+		jhppe_l3_my_mac_tbl_get(dev_id, i, &l3_mymac);
+
+		if (!l3_mymac.bf.valid && update_index == L3_MY_MAC_TBL_NUM)
+			update_index = i;
+
+		if (adpt_jhppe_l3_mac_entry_equal(vsi_mac_entry, l3_if, l3_mymac))
+			break;
+	}
+
+	if (l3_my_mac_index != NULL)
+		*l3_my_mac_index = update_index;
+
+	return i;
+}
+
+void adpt_jhppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint32_t l3_if,
+		fal_intf_macaddr_t *vsi_mac_entry)
+{
+	union l3_my_mac_tbl_u l3_mymac;
+	a_bool_t get_next = A_FALSE;
+	int i;
+
+	/* the parameter mac_addr is not 0, for get next mac from the input mac_addr */
+	if (!is_zero_ether_addr(vsi_mac_entry->mac_addr.uc))
+		get_next = A_TRUE;
+
+	for (i = 0; i < L3_MY_MAC_TBL_NUM; i++) {
+		jhppe_l3_my_mac_tbl_get(dev_id, i, &l3_mymac);
+
+		if (l3_mymac.bf.valid == 1 && l3_mymac.bf.l3_if_index == l3_if) {
+			if (get_next == A_FALSE) {
+				fal_mac_addr_t hsl_mac_addr;
+				a_uint32_t mac_0;
+				a_uint16_t mac_1;
+				mac_0 = l3_mymac.bf.mac_0;
+				mac_1 = l3_mymac.bf.mac_1;
+
+				adpt_ip_macaddr_convert(&hsl_mac_addr, &mac_0, &mac_1, A_FALSE);
+				ether_addr_copy(vsi_mac_entry->mac_addr.uc, hsl_mac_addr.uc);
+				vsi_mac_entry->vsi_valid = l3_mymac.bf.vsi_valid;
+				vsi_mac_entry->vsi = l3_mymac.bf.vsi;
+				return;
+			}
+		}
+
+		if (adpt_jhppe_l3_mac_entry_equal(*vsi_mac_entry, l3_if, l3_mymac) && get_next == A_TRUE)
+			get_next = A_FALSE;
+	}
+
+	/* mac entry is not found */
+	eth_zero_addr(vsi_mac_entry->mac_addr.uc);
+}
+
+#endif
 
 sw_error_t
 adpt_hppe_ip_host_add(a_uint32_t dev_id, fal_host_entry_t * host_entry)
@@ -1619,30 +1714,6 @@ adpt_hppe_ip_intf_dmac_check_get(a_uint32_t dev_id, a_uint32_t l3_if, a_bool_t *
 }
 #endif
 
-sw_error_t adpt_ip_macaddr_convert(fal_mac_addr_t *mac_addr,
-		a_uint32_t *mac_0, a_uint16_t *mac_1, a_bool_t to_hsl)
-{
-	sw_error_t rv = SW_OK;
-
-	if (to_hsl) {
-		*mac_0 = mac_addr->uc[5] | \
-			 mac_addr->uc[4] << 8 | \
-			 mac_addr->uc[3] << 16 | \
-			 mac_addr->uc[2] << 24;
-		*mac_1 = mac_addr->uc[1] | \
-			 mac_addr->uc[0] << 8;
-	} else {
-		mac_addr->uc[5] = *mac_0;
-		mac_addr->uc[4] = *mac_0 >> 8;
-		mac_addr->uc[3] = *mac_0 >> 16;
-		mac_addr->uc[2] = *mac_0 >> 24;
-		mac_addr->uc[1] = *mac_1;
-		mac_addr->uc[0] = *mac_1 >> 8;
-	}
-
-	return rv;
-}
-
 sw_error_t
 adpt_hppe_ip_intf_macaddr_add(a_uint32_t dev_id, a_uint32_t l3_if, fal_intf_macaddr_t *mac_entry)
 {
@@ -1674,7 +1745,7 @@ adpt_hppe_ip_intf_macaddr_add(a_uint32_t dev_id, a_uint32_t l3_if, fal_intf_maca
 		/* L3 interface MAC is programed firstly, only when the L3 interface
 		 * MAC is already programed, then the MY MAC table will be used.
 		 */
-		if(!in_l3_if_tbl.bf.mac_valid) {
+		if(!in_l3_if_tbl.bf.mac_valid && !mac_entry->vsi_valid) {
 			in_l3_if_tbl.bf.mac_valid = 1;
 			in_l3_if_tbl.bf.mac_da_0 = mac_entry->mac_addr.uc[5] | \
 						   mac_entry->mac_addr.uc[4] << 8;
@@ -1685,27 +1756,58 @@ adpt_hppe_ip_intf_macaddr_add(a_uint32_t dev_id, a_uint32_t l3_if, fal_intf_maca
 		} else
 #endif
 		{
-			a_uint8_t mac_index;
-			mac_index = adpt_ppe_l3_mac_addr_check(dev_id, mac_entry->mac_addr);
+#if defined(JHPPE)
+			a_uint8_t l3_my_mac_index_update = L3_MY_MAC_TBL_NUM;
+			a_uint8_t l3_mac_index = L3_MY_MAC_TBL_NUM;
+#endif
+			a_uint8_t mac_index = MY_MAC_TBL_NUM;
+			a_bool_t mac_entry_full = A_TRUE;
 
-			/* Adding the same mac on the same L3 interface */
-			if (mac_index < MY_MAC_TBL_NUM && (in_l3_if_tbl.bf.mac_bitmap & BIT(mac_index)))
+#if defined(JHPPE)
+			l3_mac_index = adpt_jhppe_l3_mac_addr_check(dev_id, l3_if, *mac_entry, &l3_my_mac_index_update);
+			if (l3_mac_index < L3_MY_MAC_TBL_NUM)
 				return SW_ALREADY_EXIST;
+#endif
 
-			mac_index = adpt_ppe_l3_mac_bitmap_alloc(dev_id, mac_entry->mac_addr);
-			if (mac_index < MY_MAC_TBL_NUM) {
-				/* update the my_mac_tbl for the valid mac_index */
-				union my_mac_tbl_u mymac;
-				mymac.bf.valid = 1;
-				mymac.bf.mac_da_0 = mac_0;
-				mymac.bf.mac_da_1 = mac_1;
-				hppe_my_mac_tbl_set(dev_id, mac_index, &mymac);
-			} else {
-				return SW_FULL;
+			/* Only when VSI is invalid, the MY_MAC table can be used. */
+			if (!mac_entry->vsi_valid) {
+				mac_index = adpt_ppe_l3_mac_addr_check(dev_id, mac_entry->mac_addr);
+
+				/* Adding the same mac on the same L3 interface */
+				if (mac_index < MY_MAC_TBL_NUM && (in_l3_if_tbl.bf.mac_bitmap & BIT(mac_index)))
+					return SW_ALREADY_EXIST;
+
+				mac_index = adpt_ppe_l3_mac_bitmap_alloc(dev_id, mac_entry->mac_addr);
+				if (mac_index < MY_MAC_TBL_NUM) {
+					/* update the my_mac_tbl for the valid mac_index */
+					union my_mac_tbl_u mymac;
+					mymac.bf.valid = 1;
+					mymac.bf.mac_da_0 = mac_0;
+					mymac.bf.mac_da_1 = mac_1;
+					hppe_my_mac_tbl_set(dev_id, mac_index, &mymac);
+					/* update the mac_bitmap of L3 intf */
+					in_l3_if_tbl.bf.mac_bitmap |= BIT(mac_index);
+					mac_entry_full = A_FALSE;
+				}
 			}
+#if defined(JHPPE)
+			/* MY_MAC table is full, and L3_MY_MAC table entry is available. */
+			if (mac_index == MY_MAC_TBL_NUM && l3_my_mac_index_update != L3_MY_MAC_TBL_NUM) {
+				union l3_my_mac_tbl_u l3_mymac = {0};
 
-			/* update the mac_bitmap of L3 intf */
-			in_l3_if_tbl.bf.mac_bitmap |= BIT(mac_index);
+				/* Add the MAC with the valid L3_MY_MAC entry. */
+				l3_mymac.bf.valid = 1;
+				l3_mymac.bf.vsi_valid = mac_entry->vsi_valid;
+				l3_mymac.bf.vsi = mac_entry->vsi;
+				l3_mymac.bf.mac_0 = mac_0;
+				l3_mymac.bf.mac_1 = mac_1;
+				l3_mymac.bf.l3_if_index = l3_if;
+				jhppe_l3_my_mac_tbl_set(dev_id, l3_my_mac_index_update, &l3_mymac);
+				mac_entry_full = A_FALSE;
+			}
+#endif
+			if (mac_entry_full)
+				return SW_FULL;
 		}
 	}
 
@@ -1744,51 +1846,65 @@ adpt_hppe_ip_intf_macaddr_del(a_uint32_t dev_id, a_uint32_t l3_if, fal_intf_maca
 	SW_RTN_ON_ERROR(rv);
 
 	if (mac_entry->direction == FAL_IP_INGRESS || mac_entry->direction == FAL_IP_BOTH) {
-		a_uint32_t mac_bitmap_del = 0, l3_mac_bitmap_del = 0;
-		mac_bitmap_del = adpt_ppe_l3_mac_bitmap_free(dev_id,
-				in_l3_if_tbl.bf.mac_bitmap, mac_entry->mac_addr,
-				&l3_mac_bitmap_del, false);
+#if defined(JHPPE)
+		a_uint32_t l3_mac_index;
+#endif
+		if (!mac_entry->vsi_valid) {
+			a_uint32_t mac_bitmap_del = 0, l3_mac_bitmap_del = 0;
+			mac_bitmap_del = adpt_ppe_l3_mac_bitmap_free(dev_id,
+					in_l3_if_tbl.bf.mac_bitmap, mac_entry->mac_addr,
+					&l3_mac_bitmap_del, false);
 
-		/* only delete the valid mac bit map */
-		mac_bitmap_del &= in_l3_if_tbl.bf.mac_bitmap;
-		l3_mac_bitmap_del &= in_l3_if_tbl.bf.mac_bitmap;
+			/* only delete the valid mac bit map */
+			mac_bitmap_del &= in_l3_if_tbl.bf.mac_bitmap;
+			l3_mac_bitmap_del &= in_l3_if_tbl.bf.mac_bitmap;
 
-		/* update the mac bit map of L3 intf table */
-		if (l3_mac_bitmap_del)
-			in_l3_if_tbl.bf.mac_bitmap &= ~l3_mac_bitmap_del;
+			/* update the mac bit map of L3 intf table */
+			if (l3_mac_bitmap_del)
+				in_l3_if_tbl.bf.mac_bitmap &= ~l3_mac_bitmap_del;
 
-		if (mac_bitmap_del) {
-			union my_mac_tbl_u mymac;
-			a_uint8_t mac_index;
-			aos_mem_zero(&mymac, sizeof(mymac));
+			if (mac_bitmap_del) {
+				union my_mac_tbl_u mymac;
+				a_uint8_t mac_index;
+				aos_mem_zero(&mymac, sizeof(mymac));
 
-			mac_index = 0;
-			while (mac_bitmap_del) {
-				if (mac_bitmap_del & 1)
-					hppe_my_mac_tbl_set(dev_id, mac_index, &mymac);
+				mac_index = 0;
+				while (mac_bitmap_del) {
+					if (mac_bitmap_del & 1)
+						hppe_my_mac_tbl_set(dev_id, mac_index, &mymac);
 
-				mac_bitmap_del >>= 1;
-				mac_index++;
+					mac_bitmap_del >>= 1;
+					mac_index++;
+				}
 			}
-		}
 
 #if defined(MRPPE)
-		/* Delete the L3 interface MAC if matched. */
-		if (in_l3_if_tbl.bf.mac_valid == 1) {
-			fal_mac_addr_t intf_mac;
+			/* Delete the L3 interface MAC if matched. */
+			if (in_l3_if_tbl.bf.mac_valid == 1) {
+				fal_mac_addr_t intf_mac;
 
-			intf_mac.uc[5] = in_l3_if_tbl.bf.mac_da_0;
-			intf_mac.uc[4] = in_l3_if_tbl.bf.mac_da_0 >> 8;
-			intf_mac.uc[3] = in_l3_if_tbl.bf.mac_da_1;
-			intf_mac.uc[2] = in_l3_if_tbl.bf.mac_da_1 >> 8;
-			intf_mac.uc[1] = in_l3_if_tbl.bf.mac_da_1 >> 16;
-			intf_mac.uc[0] = in_l3_if_tbl.bf.mac_da_1 >> 24;
+				intf_mac.uc[5] = in_l3_if_tbl.bf.mac_da_0;
+				intf_mac.uc[4] = in_l3_if_tbl.bf.mac_da_0 >> 8;
+				intf_mac.uc[3] = in_l3_if_tbl.bf.mac_da_1;
+				intf_mac.uc[2] = in_l3_if_tbl.bf.mac_da_1 >> 8;
+				intf_mac.uc[1] = in_l3_if_tbl.bf.mac_da_1 >> 16;
+				intf_mac.uc[0] = in_l3_if_tbl.bf.mac_da_1 >> 24;
 
-			if (ether_addr_equal(intf_mac.uc, mac_entry->mac_addr.uc)) {
-				in_l3_if_tbl.bf.mac_valid = 0;
-				in_l3_if_tbl.bf.mac_da_0 = 0;
-				in_l3_if_tbl.bf.mac_da_1 = 0;
+				if (ether_addr_equal(intf_mac.uc, mac_entry->mac_addr.uc)) {
+					in_l3_if_tbl.bf.mac_valid = 0;
+					in_l3_if_tbl.bf.mac_da_0 = 0;
+					in_l3_if_tbl.bf.mac_da_1 = 0;
+				}
 			}
+#endif
+		}
+
+#if defined(JHPPE)
+		/* Delete the L3_MY_MAC if matched. */
+		l3_mac_index = adpt_jhppe_l3_mac_addr_check(dev_id, l3_if, *mac_entry, NULL);
+		if (l3_mac_index < L3_MY_MAC_TBL_NUM) {
+			union l3_my_mac_tbl_u l3_mymac = {0};
+			jhppe_l3_my_mac_tbl_set(dev_id, l3_mac_index, &l3_mymac);
 		}
 #endif
 	}
@@ -1824,9 +1940,8 @@ adpt_hppe_ip_intf_macaddr_get(a_uint32_t dev_id, a_uint32_t l3_if,
 		fal_intf_macaddr_t *mac_entry)
 {
 
-	union in_l3_if_tbl_u in_l3_if_tbl;
-	a_uint8_t my_mac_bitmap = 0;
 	sw_error_t rv = SW_OK;
+	a_bool_t my_mac_entry_found = A_FALSE;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mac_entry);
@@ -1834,13 +1949,25 @@ adpt_hppe_ip_intf_macaddr_get(a_uint32_t dev_id, a_uint32_t l3_if,
 	if (l3_if >= IN_L3_IF_TBL_NUM)
 		return SW_OUT_OF_RANGE;
 
-	memset(&in_l3_if_tbl, 0, sizeof(in_l3_if_tbl));
+	if (!mac_entry->vsi_valid) {
+		union in_l3_if_tbl_u in_l3_if_tbl;
+		a_uint8_t my_mac_bitmap = 0;
 
-	rv = hppe_in_l3_if_tbl_get(dev_id, l3_if, &in_l3_if_tbl);
-	SW_RTN_ON_ERROR(rv);
+		memset(&in_l3_if_tbl, 0, sizeof(in_l3_if_tbl));
 
-	my_mac_bitmap = in_l3_if_tbl.bf.mac_bitmap;
-	adpt_ppe_l3_mac_addr_get(dev_id, my_mac_bitmap, &mac_entry->mac_addr);
+		rv = hppe_in_l3_if_tbl_get(dev_id, l3_if, &in_l3_if_tbl);
+		SW_RTN_ON_ERROR(rv);
+
+		my_mac_bitmap = in_l3_if_tbl.bf.mac_bitmap;
+		my_mac_entry_found = adpt_ppe_l3_mac_addr_get(dev_id, my_mac_bitmap,
+				&mac_entry->mac_addr);
+	}
+
+#if defined(JHPPE)
+	/* Try to get the mac address from L3_MY_MAC if no MAC entry found in MY_MAC. */
+	if (!my_mac_entry_found)
+		adpt_jhppe_l3_mac_addr_get(dev_id, l3_if, mac_entry);
+#endif
 
 	/* intf_mac get function is always for ingress */
 	mac_entry->direction = FAL_IP_INGRESS;
