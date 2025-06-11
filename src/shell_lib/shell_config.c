@@ -748,6 +748,9 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"ptvrfid", "set",   SW_API_PT_VRF_ID_SET, NULL},
 #endif
 #endif
+#ifdef JHPPE
+	{"TransDscpPcpMapping", "set", SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, NULL},
+#endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
