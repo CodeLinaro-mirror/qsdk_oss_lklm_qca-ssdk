@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -30,6 +18,9 @@
 #endif
 #include "hppe_global_reg.h"
 #include "hppe_global.h"
+#if defined(JHPPE)
+#include "adpt_jhppe_qm.h"
+#endif
 
 #define SERVICE_CODE_QUEUE_OFFSET   2048
 #define CPU_CODE_QUEUE_OFFSET         1024
@@ -1412,6 +1403,10 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 #if defined(APPE)
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
+#endif
+#if defined(JHPPE)
+	p_adpt_api->adpt_qm_tcont_get = adpt_jhppe_qm_tcont_get;
+	p_adpt_api->adpt_qm_tcont_set = adpt_jhppe_qm_tcont_set;
 #endif
 
 	return SW_OK;
