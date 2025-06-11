@@ -396,7 +396,7 @@ endif
 ifeq (TRUE, $(IN_PKTEDIT))
 OBJ-COMMON  += src/fal/fal_pktedit.o src/ref/ref_pktedit.o
 OBJ-MRPPE   += src/hsl/mrppe/mrppe_pktedit.o src/adpt/mrppe/adpt_mrppe_pktedit.o
-OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_pktedit.o
+OBJ-JHPPE   += src/hsl/jhppe/jhppe_pktedit.o src/adpt/jhppe/adpt_jhppe_pktedit.o
 endif
 
 ###############################################################################
