@@ -632,6 +632,12 @@ typedef sw_error_t (*adpt_flow_gro_en_get_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_flow_gro_en_set_func)(a_uint32_t dev_id,
 		a_uint32_t flow_index, a_bool_t enable);
 
+typedef sw_error_t (*adpt_flow_eip_lookup_mode_set_func)(a_uint32_t dev_id,
+		fal_flow_eip_lookup_mode_t mode);
+
+typedef sw_error_t (*adpt_flow_eip_lookup_mode_get_func)(a_uint32_t dev_id,
+		fal_flow_eip_lookup_mode_t *mode);
+
 typedef sw_error_t (*adpt_ucast_hash_map_set_func)(
 		a_uint32_t dev_id,
 		a_uint8_t profile,
@@ -1810,6 +1816,8 @@ typedef struct
 	adpt_flow_sampling_id_set_func adpt_flow_sampling_id_set;
 	adpt_flow_gro_en_get_func adpt_flow_gro_en_get;
 	adpt_flow_gro_en_set_func adpt_flow_gro_en_set;
+	adpt_flow_eip_lookup_mode_get_func adpt_flow_eip_lookup_mode_get;
+	adpt_flow_eip_lookup_mode_set_func adpt_flow_eip_lookup_mode_set;
 
 	/* qm */
 	adpt_ucast_hash_map_set_func adpt_ucast_hash_map_set;

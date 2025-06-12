@@ -258,6 +258,11 @@ typedef struct {
 	a_uint16_t udf1_mask;
 } fal_flow_key_t;
 
+typedef enum {
+	FAL_FLOW_EIP_LOOKUP_MODE_TRANSFORM = 0,
+	FAL_FLOW_EIP_LOOKUP_MODE_FLOW,
+} fal_flow_eip_lookup_mode_t;
+
 sw_error_t fal_flow_key_set(a_uint32_t dev_id, fal_flow_protocol_type_t key_type,
 		fal_flow_key_t *flow_key);
 
@@ -393,6 +398,11 @@ fal_flow_npt66_status_get(a_uint32_t dev_id, a_bool_t *enable);
 sw_error_t
 fal_flow_npt66_status_set(a_uint32_t dev_id, a_bool_t enable);
 
+sw_error_t
+fal_flow_eip_lookup_mode_set(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t mode);
+
+sw_error_t
+fal_flow_eip_lookup_mode_get(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t *mode);
 
 #ifdef __cplusplus
 }

@@ -2536,6 +2536,54 @@ adpt_hppe_flow_npt66_status_get(a_uint32_t dev_id, a_bool_t *enable)
 	return SW_OK;
 }
 
+sw_error_t
+adpt_ppe_flow_eip_lookup_mode_set(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t mode)
+{
+	sw_error_t rv;
+	union eg_bridge_config_u bridge_config;
+	int eip_mode = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	aos_mem_zero(&bridge_config, sizeof(union eg_bridge_config_u));
+
+	rv = hppe_eg_bridge_config_get(dev_id, &bridge_config);
+	SW_RTN_ON_ERROR(rv);
+
+	switch (mode) {
+	case FAL_FLOW_EIP_LOOKUP_MODE_FLOW:
+		eip_mode = BIT(1);
+		break;
+	case FAL_FLOW_EIP_LOOKUP_MODE_TRANSFORM:
+	default:
+		eip_mode = 0;
+		break;
+	}
+
+	bridge_config.bf.ppe_eip_rsv_w4_3130 = eip_mode;
+
+	return hppe_eg_bridge_config_set(dev_id, &bridge_config);
+}
+
+sw_error_t
+adpt_ppe_flow_eip_lookup_mode_get(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t *mode)
+{
+	sw_error_t rv;
+	union eg_bridge_config_u bridge_config;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	aos_mem_zero(&bridge_config, sizeof(union eg_bridge_config_u));
+
+	rv = hppe_eg_bridge_config_get(dev_id, &bridge_config);
+	SW_RTN_ON_ERROR(rv);
+
+	if (bridge_config.bf.ppe_eip_rsv_w4_3130 & BIT(1))
+		*mode = FAL_FLOW_EIP_LOOKUP_MODE_FLOW;
+	else
+		*mode = FAL_FLOW_EIP_LOOKUP_MODE_TRANSFORM;
+
+	return SW_OK;
+}
+
 sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
@@ -2577,6 +2625,8 @@ sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_flow_npt66_iid_del = adpt_hppe_flow_npt66_iid_del;
 	p_adpt_api->adpt_flow_npt66_status_set = adpt_hppe_flow_npt66_status_set;
 	p_adpt_api->adpt_flow_npt66_status_get = adpt_hppe_flow_npt66_status_get;
+	p_adpt_api->adpt_flow_eip_lookup_mode_set = adpt_ppe_flow_eip_lookup_mode_set;
+	p_adpt_api->adpt_flow_eip_lookup_mode_get = adpt_ppe_flow_eip_lookup_mode_get;
 #if defined(JHPPE)
 	p_adpt_api->adpt_flow_key_get = adpt_jhppe_flow_key_get;
 	p_adpt_api->adpt_flow_key_set = adpt_jhppe_flow_key_set;

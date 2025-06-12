@@ -118,6 +118,12 @@ sw_error_t fal_flow_gro_en_get(a_uint32_t dev_id, a_uint32_t flow_index, a_bool_
 sw_error_t fal_flow_gro_en_set(a_uint32_t dev_id, a_uint32_t flow_index, a_bool_t enable)
     DEFINE_FAL_FUNC_ADPT_EXPORT(flow_gro_en_set, dev_id, flow_index, enable)
 
+sw_error_t fal_flow_eip_lookup_mode_set(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t mode)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_eip_lookup_mode_set, dev_id, mode)
+
+sw_error_t fal_flow_eip_lookup_mode_get(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t *mode)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_eip_lookup_mode_get, dev_id, mode)
+
 #if !defined(IN_FLOW_MINI)
 sw_error_t fal_flow_age_timer_set(a_uint32_t dev_id, fal_flow_age_timer_t *age_timer)
     DEFINE_FAL_FUNC_ADPT_EXPORT(flow_age_timer_set, dev_id, age_timer)

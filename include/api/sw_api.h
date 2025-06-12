@@ -322,6 +322,7 @@ typedef enum
 	SW_PT_VLAN_TRANS_ADV_RULE_WITH_PORT,
 	SW_FLOW_KEY,
 	SW_VLAN_KEY,
+	SW_EIP_LOOKUP_MODE,
 /* auto_insert_flag */
 } sw_data_type_e;
 

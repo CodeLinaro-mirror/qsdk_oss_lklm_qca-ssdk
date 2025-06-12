@@ -4202,6 +4202,18 @@ extern "C" {
     SW_PARAM_DEF(SW_API_FLOW_GRO_EN_SET, SW_ENABLE, \
 		    sizeof(a_bool_t), SW_PARAM_IN, "Flow GRO enable"),
 
+#define SW_API_FLOW_EIP_LOOKUP_MODE_GET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_GET, SW_EIP_LOOKUP_MODE, \
+		    sizeof(fal_flow_eip_lookup_mode_t), SW_PARAM_PTR|SW_PARAM_OUT, "EIP lookup mode"),
+
+#define SW_API_FLOW_EIP_LOOKUP_MODE_SET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, SW_EIP_LOOKUP_MODE, \
+		    sizeof(fal_flow_eip_lookup_mode_t), SW_PARAM_IN, "EIP lookup mode"),
+
 #define SW_API_NAT_ADD_DESC \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),   \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_NATENTRY, \
