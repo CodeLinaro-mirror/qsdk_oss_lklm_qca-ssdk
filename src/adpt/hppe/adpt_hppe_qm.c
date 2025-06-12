@@ -1407,6 +1407,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 #if defined(JHPPE)
 	p_adpt_api->adpt_qm_tcont_get = adpt_jhppe_qm_tcont_get;
 	p_adpt_api->adpt_qm_tcont_set = adpt_jhppe_qm_tcont_set;
+	p_adpt_api->adpt_qm_cpucode_enqueue_get = adpt_jhppe_qm_cpucode_enqueue_get;
+	p_adpt_api->adpt_qm_cpucode_enqueue_set = adpt_jhppe_qm_cpucode_enqueue_set;
 #endif
 
 	return SW_OK;

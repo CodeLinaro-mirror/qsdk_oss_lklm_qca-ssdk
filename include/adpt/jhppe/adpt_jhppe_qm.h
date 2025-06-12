@@ -24,6 +24,15 @@ adpt_jhppe_qm_tcont_set(a_uint32_t dev_id,
 			a_uint32_t queue_id,
 			fal_queue_tcont_cfg_t *cfg);
 
+sw_error_t
+adpt_jhppe_qm_cpucode_enqueue_get(a_uint32_t dev_id,
+				  a_uint32_t cpu_code,
+				  a_bool_t *enable);
+
+sw_error_t
+adpt_jhppe_qm_cpucode_enqueue_set(a_uint32_t dev_id,
+				  a_uint32_t cpu_code,
+				  a_bool_t enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
