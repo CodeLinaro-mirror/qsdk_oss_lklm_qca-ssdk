@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2013, 2015-2017, 2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #ifndef _SHELL_IO_H
@@ -650,6 +639,11 @@ cmd_data_check_athtag_tx_cfg(char * cmd_str, void * val, a_uint32_t size);
 #ifdef IN_PKTEDIT
 sw_error_t
 cmd_data_check_pktedit_padding(char *cmd_str, void *val, a_uint32_t size);
+#endif
+
+#ifdef IN_PON_PM
+sw_error_t
+cmd_data_check_pon_pm_counter_entry(char *cmd_str, void *val, a_uint32_t size);
 #endif
 #endif
 

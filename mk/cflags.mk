@@ -297,6 +297,10 @@ ifeq (TRUE, $(IN_PON))
   MODULE_CFLAG += -DIN_PON
 endif
 
+ifeq (TRUE, $(IN_PON_PM))
+  MODULE_CFLAG += -DIN_PON_PM
+endif
+
 ifneq (TRUE, $(FAL))
   MODULE_CFLAG += -DHSL_STANDALONG
 endif

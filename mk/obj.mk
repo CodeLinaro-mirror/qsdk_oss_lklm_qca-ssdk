@@ -485,8 +485,8 @@ endif
 #                             IN_PON_PM
 ################################################################################
 ifeq (TRUE, $(IN_PON_PM))
-OBJ-COMMON  += src/fal/fal_pon_pm.o
-OBJ-JHPPE += src/hsl/jhppe/jhppe_pm.o
+OBJ-COMMON  += src/fal/fal_pon_pm.o src/ref/ref_pon_pm.o
+OBJ-JHPPE += src/hsl/jhppe/jhppe_pm.o src/adpt/jhppe/adpt_jhppe_pon_pm.o
 endif
 
 ###############################################################################

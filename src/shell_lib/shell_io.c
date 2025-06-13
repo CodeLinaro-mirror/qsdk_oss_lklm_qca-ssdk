@@ -961,6 +961,9 @@ static sw_data_type_t sw_data_type[] =
 #ifdef IN_PKTEDIT
     SW_TYPE_DEF(SW_PKTEDIT_PADDING, (param_check_t)cmd_data_check_pktedit_padding, NULL),
 #endif
+#ifdef IN_PON_PM
+    SW_TYPE_DEF(SW_PON_PM_COUNTER_ENTRY, (param_check_t)cmd_data_check_pon_pm_counter_entry, NULL),
+#endif
 };
 
 sw_error_t
@@ -13994,6 +13997,75 @@ cmd_data_check_pktedit_padding(char *cmd_str, void *val, a_uint32_t size)
 		(cmd, A_FALSE, &entry.tunnel_ip_len_gap_exp_en, sizeof (a_bool_t)));
 
 	*(fal_pktedit_padding_t *) val = entry;
+	return SW_OK;
+}
+#endif
+#ifdef IN_PON_PM
+sw_error_t
+cmd_data_check_pon_pm_counter_entry(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd, *cmd_find;
+	a_uint32_t tmpdata = 0;
+	sw_error_t rv;
+	fal_pon_pm_counter_entry_t entry;
+
+	memset(&entry, 0, sizeof (fal_pon_pm_counter_entry_t));
+
+	do
+	{
+		cmd = get_sub_cmd("port", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		cmd_find = strstr(cmd, ",");
+		if (cmd_find == NULL)
+		{
+			rv = cmd_data_check_uint32(cmd, &entry.port_id, sizeof (fal_pbmp_t));
+			if(entry.port_id <= SW_MAX_NR_PORT)
+			{
+				entry.port_id = 1<<(entry.port_id);
+			}
+		}
+		else
+		{
+			rv = cmd_data_check_portmap(cmd, &entry.port_id, sizeof (fal_pbmp_t));
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	cmd_data_check_element("vlan_tag_fmt", NULL,
+			       "usage: the format is 0x0-0x7\n",
+			       cmd_data_check_integer, (cmd, &tmpdata, 0x7, 0x0));
+	entry.vlan_tag_fmt = tmpdata & 0x7;
+
+	cmd_data_check_element("vlan_id_valid", "no",
+			       "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			       (cmd, A_FALSE, &entry.vlan_id_valid, sizeof (a_bool_t)));
+
+	cmd_data_check_element("vlan_id", "0",
+			       "usage: the format is 0x0-0xfff or 0-4095\n",
+			       cmd_data_check_integer, (cmd, &tmpdata,
+                                           0xfff, 0x0));
+	entry.vlan_id = tmpdata & 0xfff;
+
+	cmd_data_check_element("vlan_pcp_valid", "no",
+			       "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			       (cmd, A_FALSE, &entry.vlan_pcp_valid, sizeof (a_bool_t)));
+
+	cmd_data_check_element("vlan_pcp", "0",
+			       "usage: the format is 0x0-0x7 or 0-7\n",
+			       cmd_data_check_integer, (cmd, &tmpdata, 0x7, 0x0));
+	entry.vlan_pcp = tmpdata & 0x7;
+
+	cmd_data_check_element("ipmc_type", "0",
+			       "usage: the format is 0x0-0x7\n",
+			       cmd_data_check_integer, (cmd, &tmpdata, 0x7, 0x0));
+	entry.ipmc_type = tmpdata & 0x7;
+
+	cmd_data_check_element("counter_id", "0",
+			       "usage: the format is 0x0-0x1f or 0-31\n",
+			       cmd_data_check_integer, (cmd, &tmpdata, 0x1f, 0x0));
+	entry.counter_id = tmpdata & 0x1f;
+
+	*(fal_pon_pm_counter_entry_t *) val = entry;
 	return SW_OK;
 }
 #endif

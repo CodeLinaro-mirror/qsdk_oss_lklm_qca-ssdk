@@ -1442,6 +1442,14 @@ struct sub_cmd_des_t g_pktedit_des[] =
 #endif
 	{NULL, NULL, 0, NULL},/*end of desc*/
 };
+
+#ifdef IN_PON_PM
+struct sub_cmd_des_t g_ponpm_des[] =
+{
+	{"CounterEntry", "set", SW_API_PON_PM_COUNTER_ENTRY_SET, NULL},
+	{NULL, NULL, 0, NULL},/*end of desc*/
+};
+#endif
 #endif
 
 struct cmd_des_t gcmd_des[] =
@@ -1680,6 +1688,11 @@ struct cmd_des_t gcmd_des[] =
 #ifdef IN_PKTEDIT
     {
 	    "pktedit", g_pktedit_des,
+    },
+#endif
+#ifdef IN_PON_PM
+    {
+	    "ponpm", g_ponpm_des,
     },
 #endif
     {NULL, NULL} /*end of desc*/
