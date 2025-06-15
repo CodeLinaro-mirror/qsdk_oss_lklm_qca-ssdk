@@ -158,7 +158,7 @@ qca_ar8327_sw_reset_switch(struct switch_dev *dev)
 	mutex_lock(&priv->reg_mutex);
 
 #if IS_ENABLED(CONFIG_NET_DSA)
-	if (ssdk_switch_enable_8021q_dsa(priv->device_id) == A_FALSE)
+	if (ssdk_switch_enable_dsa(priv->device_id) == A_FALSE)
 		fal_vlan_flush(priv->device_id);
 #else
 	/* flush all vlan translation unit entries */
