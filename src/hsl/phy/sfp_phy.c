@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2018, 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #include "sw.h"
@@ -305,14 +294,7 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 		return 0;
 	}
 	/*create phy device*/
-#if defined(IN_PHY_I2C_MODE)
-	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
-		addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port);
-	} else
-#endif
-	{
-		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
-	}
+	addr = qca_ssdk_port_to_phy_addr(dev_id, port);
 	bus = ssdk_phy_miibus_get(dev_id, addr);
 	if(!bus)
 		return SW_NOT_FOUND;
@@ -342,12 +324,7 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 			nss_phy_drv->probe(phydev);
 		}
 	}
-#if defined(IN_PHY_I2C_MODE)
-	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
-		if(phydev->drv)
-			phy_driver_unregister(phydev->drv);
-	}
-#endif
+
 	return 0;
 }
 
@@ -365,15 +342,8 @@ void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 	bus = ssdk_port_miibus_get(dev_id, port);
 	if(!bus)
 		return;
-#if defined(IN_PHY_I2C_MODE)
-	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
-		addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port);
-	} else
-#endif
-	{
-		addr = TO_PHY_ADDR(qca_ssdk_port_to_phy_addr(dev_id, port));
-	}
 
+	addr = TO_PHY_ADDR(qca_ssdk_port_to_phy_addr(dev_id, port));
 	if (addr < PHY_MAX_ADDR)
 	if (bus->mdio_map[addr])
 		phydev = to_phy_device(&bus->mdio_map[addr]->dev);

@@ -196,12 +196,9 @@ endif
 ifeq (TRUE, $(IN_QCA808X_PHY))
   MODULE_CFLAG += -DIN_QCA808X_PHY
 endif
+
 ifeq (TRUE, $(IN_SFP_PHY))
   MODULE_CFLAG += -DIN_SFP_PHY
-endif
-
-ifeq (TRUE, $(IN_PHY_I2C_MODE))
-  MODULE_CFLAG += -DIN_PHY_I2C_MODE
 endif
 
 ifeq (TRUE, $(IN_VSI))
