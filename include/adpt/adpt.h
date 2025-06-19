@@ -2252,6 +2252,9 @@ static inline a_uint32_t adpt_port_type_convert(a_bool_t to_hsl, a_uint32_t port
 			case FAL_PORT_TYPE_VP_GROUP:
 				ptype = 2;
 				break;
+			case FAL_PORT_TYPE_GEM_PORT:
+				ptype = 3;
+				break;
 			default:
 				ptype = 0;
 				break;
@@ -2266,6 +2269,9 @@ static inline a_uint32_t adpt_port_type_convert(a_bool_t to_hsl, a_uint32_t port
 				break;
 			case 2:
 				ptype = FAL_PORT_TYPE_VP_GROUP;
+				break;
+			case 3:
+				ptype = FAL_PORT_TYPE_GEM_PORT;
 				break;
 			default:
 				ptype = FAL_PORT_TYPE_PPORT;
@@ -2298,6 +2304,7 @@ static inline a_uint32_t adpt_port_id_compare(fal_pbmp_t port_bmap, fal_port_t p
 			break;
 		case FAL_PORT_TYPE_VPORT:
 		case FAL_PORT_TYPE_VP_GROUP:
+		case FAL_PORT_TYPE_GEM_PORT:
 			if (port_bmap == port_id) {
 				result = ADPT_PORT_ID_EQUAL;
 			}
