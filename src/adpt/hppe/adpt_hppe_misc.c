@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2017, 2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -1019,7 +1009,7 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 		{
 			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d", value, (i - 256) % 8, dropcode[(i - 256) / 8], (i-256)/8);
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d", value, (i - 256) % SSDK_MAX_PORT_NUM, dropcode[(i - 256) / SSDK_MAX_PORT_NUM], (i-256) / SSDK_MAX_PORT_NUM);
 		}
 	}
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
