@@ -37,18 +37,12 @@ typedef enum
 } phy_type_t;
 
 typedef struct {
-	a_uint8_t mdac;
-	a_uint8_t edac;
-} phy_dac_t;
-
-typedef struct {
 	a_uint32_t phy_address[SW_MAX_NR_PORT];
 	a_uint8_t port_force_duplex[SW_MAX_NR_PORT];
 	a_uint32_t port_force_speed[SW_MAX_NR_PORT];
 	phy_features_t phy_features[SW_MAX_NR_PORT];
 	a_uint32_t phy_type[SW_MAX_NR_PORT];
 	a_uint32_t phy_reset_gpio[SW_MAX_NR_PORT];
-	phy_dac_t phy_dac[SW_MAX_NR_PORT];
 	a_bool_t port_link_status[SW_MAX_NR_PORT];
 	a_uint32_t port_mode[SW_MAX_NR_PORT];
 	a_uint32_t combo_phy_type[SW_MAX_NR_PORT];
@@ -157,14 +151,6 @@ void hsl_port_phy_reset_gpio_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t phy_reset_gpio);
 
 void hsl_port_phy_gpio_reset(a_uint32_t dev_id, a_uint32_t port_id);
-
-void
-hsl_port_phy_dac_get(a_uint32_t dev_id, a_uint32_t port_id,
-	phy_dac_t *phy_dac);
-
-void
-hsl_port_phy_dac_set(a_uint32_t dev_id, a_uint32_t port_id,
-	phy_dac_t phy_dac);
 
 a_bool_t hsl_port_is_sfp(a_uint32_t dev_id, a_uint32_t port_id);
 

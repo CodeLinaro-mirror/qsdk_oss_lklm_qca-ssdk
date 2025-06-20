@@ -775,9 +775,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 {
 	struct device_node *phy_info_node = NULL, *port_node = NULL;
 	a_uint32_t port_id = 0, phy_addr = 0, forced_speed = 0,
-		forced_duplex = 0, len = 0, miibus_index = 0,  device_id = 0,
+		forced_duplex = 0, miibus_index = 0,  device_id = 0,
 		switch_cpu_port = 0, index = 0;
-	const __be32 *paddr = NULL;
 	a_bool_t phy_c45 = A_FALSE, phy_combo = A_FALSE;
 	const char *mac_type = NULL, *media_type = NULL;
 	sw_error_t rv = SW_OK;
@@ -785,7 +784,6 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		*netdev_switch_node = NULL;
 	int phy_reset_gpio = 0, sfp_rx_los_pin = 0, sfp_tx_dis_pin = 0,
 		sfp_mod_present_pin = 0, sfp_medium_pin = 0;
-	phy_dac_t phy_dac = {0};
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	phy_features_t phy_features = 0;
 	ssdk_netdev_switch_t *netdev_switch = NULL;
@@ -846,14 +844,6 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 			 */
 			hsl_phy_address_init(dev_id, port_id,
 				TO_PHY_ADDR_E(phy_addr, miibus_index));
-		}
-
-		paddr = of_get_property(port_node, "phy_dac", &len);
-		if(paddr)
-		{
-			phy_dac.mdac = be32_to_cpup(paddr);
-			phy_dac.edac = be32_to_cpup(paddr+1);
-			hsl_port_phy_dac_set(dev_id, port_id, phy_dac);
 		}
 
 		phy_c45 = of_property_read_bool(port_node, "ethernet-phy-ieee802.3-c45");
