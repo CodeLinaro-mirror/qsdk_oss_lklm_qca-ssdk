@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #include <linux/kconfig.h>
@@ -791,10 +779,6 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		switch_cpu_port = 0, index = 0;
 	const __be32 *paddr = NULL;
 	a_bool_t phy_c45 = A_FALSE, phy_combo = A_FALSE;
-#if defined(IN_PHY_I2C_MODE)
-	a_uint32_t phy_i2c_addr = 0;
-	a_bool_t phy_i2c = A_FALSE;
-#endif
 	const char *mac_type = NULL, *media_type = NULL;
 	sw_error_t rv = SW_OK;
 	struct device_node *mdio_node = NULL, *switch_external_node = NULL,
@@ -851,27 +835,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		phy_addr = 0xff;
 		phy_features = 0;
 		of_property_read_u32(port_node, "phy_address", &phy_addr);
-#if defined(IN_PHY_I2C_MODE)
-		phy_i2c = of_property_read_bool(port_node, "phy-i2c-mode");
-		if (phy_i2c) {
-			hsl_port_phy_access_type_set(dev_id, port_id, PHY_I2C_ACCESS);
-			if (of_property_read_u32(port_node, "phy_i2c_address",
-						&phy_i2c_addr)) {
-				return SW_BAD_VALUE;
-			}
-			/* phy_i2c_address is the i2c slave addr */
-			hsl_phy_address_init(dev_id, port_id,
-				TO_PHY_I2C_ADDR(phy_i2c_addr));
-			/* phy_address is the mdio addr,
-			 * which is a fake mdio addr in i2c mode */
-			qca_ssdk_phy_mdio_fake_address_set(dev_id, port_id, phy_addr);
-		} else
-#endif
-		{
-			hsl_phy_address_init(dev_id, port_id,
-				TO_PHY_ADDR_E(phy_addr, miibus_index));
-		}
-
+		hsl_phy_address_init(dev_id, port_id, TO_PHY_ADDR_E(phy_addr, miibus_index));
 		if (!of_property_read_u32(port_node, "forced-speed", &forced_speed) &&
 			!of_property_read_u32(port_node, "forced-duplex", &forced_duplex)) {
 			hsl_port_force_speed_set(dev_id, port_id, forced_speed);

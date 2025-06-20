@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2015, 2017-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -87,12 +76,6 @@ a_uint32_t hsl_phyid_get(a_uint32_t dev_id, a_uint32_t port_id)
 		phy_info[dev_id]->phy_address[port_id], reg_pad | 3);
 
 	phy_id = (org_id<<16) | rev_id;
-#if defined(IN_PHY_I2C_MODE)
-	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS) {
-		if(phy_id == INVALID_PHY_ID)
-			phy_id = QCA8081_PHY;
-	}
-#endif
 
 	return phy_id;
 }
@@ -270,21 +253,6 @@ qca_ssdk_phy_address_set(a_uint32_t dev_id, a_uint32_t port_id,
 	 return;
 }
 
-#if defined(IN_PHY_I2C_MODE)
-a_uint32_t
-qca_ssdk_port_to_phy_mdio_fake_addr(a_uint32_t dev_id, a_uint32_t port_id)
-{
-	return phy_info[dev_id]->phy_mdio_fake_address[port_id];
-}
-
-void qca_ssdk_phy_mdio_fake_address_set(a_uint32_t dev_id, a_uint32_t i,
-			a_uint32_t value)
-{
-	phy_info[dev_id]->phy_mdio_fake_address[i] = value;
-
-	return;
-}
-#endif
 /*qca808x_start*/
 a_uint32_t
 qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id)
@@ -304,14 +272,6 @@ qca_ssdk_phy_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr)
 
 		if (phy_info[dev_id]->phy_address[i] == phy_addr)
 			return i;
-#if defined(IN_PHY_I2C_MODE)
-		/*for the case that IN_PHY_I2C_MODE was enabled,
-		if port id was not found, the mdio fake address can be used*/
-		if (hsl_port_phy_access_type_get(dev_id, i) == PHY_I2C_ACCESS) {
-			if (phy_info[dev_id]->phy_mdio_fake_address[i] == TO_PHY_ADDR(phy_addr))
-				return i;
-		}
-#endif
 	}
 	SSDK_DEBUG("doesn't match port_id to specified phy_addr !\n");
 	return 0;
@@ -542,17 +502,7 @@ hsl_port_phydev_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t phy_addr;
 	SW_RTN_ON_NULL(phydev);
 
-#if defined(IN_PHY_I2C_MODE)
-	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS)
-	{
-		phy_addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port_id);
-	}
-	else
-#endif
-	{
-		phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-	}
-
+	phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
 	rv = hsl_phy_phydev_get(dev_id, phy_addr, phydev);
 	SW_RTN_ON_ERROR(rv);
 
@@ -636,11 +586,6 @@ hsl_phy_phydev_autoneg_update(a_uint32_t dev_id, a_uint32_t phy_addr,
 	struct phy_device *phydev;
 	a_uint32_t port_id = qca_ssdk_phy_addr_to_port(dev_id, phy_addr);
 
-#if defined(IN_PHY_I2C_MODE)
-	/*if phy is accessed by I2C, so the phydev address is mdio fake address*/
-	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS)
-		phy_addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port_id);
-#endif
 	rv = hsl_phy_phydev_get(dev_id, phy_addr, &phydev);
 	SW_RTN_ON_ERROR(rv);
 	if(autoneg_en)
@@ -1360,26 +1305,13 @@ void hsl_phy_mii_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 static sw_error_t
 hsl_phy_lock(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
 {
-#if defined(IN_PHY_I2C_MODE)
-	if(IS_I2C_PHY_ADDR(phy_addr))
-	{
-		struct i2c_adapter *adapt = i2c_get_adapter(I2C_ADAPTER_DEFAULT_ID);
-		SW_RTN_ON_NULL(adapt);
-		if(enable)
-			i2c_lock_bus(adapt, I2C_LOCK_SEGMENT);
-		else
-			i2c_unlock_bus(adapt, I2C_LOCK_SEGMENT);
-	}
+
+	struct mii_bus *miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
+	SW_RTN_ON_NULL(miibus);
+	if(enable)
+		mutex_lock(&miibus->mdio_lock);
 	else
-#endif
-	{
-		struct mii_bus *miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
-		SW_RTN_ON_NULL(miibus);
-		if(enable)
-			mutex_lock(&miibus->mdio_lock);
-		else
-			mutex_unlock(&miibus->mdio_lock);
-	}
+		mutex_unlock(&miibus->mdio_lock);
 
 	return SW_OK;
 }
@@ -1394,30 +1326,19 @@ a_uint16_t
 __hsl_phy_mii_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg)
 {
 	a_uint16_t phy_data = 0;
+	struct mii_bus *miibus = NULL;
 
-#if defined(IN_PHY_I2C_MODE)
-	if(IS_I2C_PHY_ADDR(phy_addr))
-	{
-		if(__qca_phy_i2c_read(dev_id, phy_addr, mii_reg, &phy_data))
-			return PHY_INVALID_DATA;
-	}
+	miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
+	if(!miibus)
+		return PHY_INVALID_DATA;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
+	if (mii_reg & SSDK_ADDR_C45)
+		phy_data = __mdiobus_c45_read(miibus, TO_PHY_ADDR(phy_addr),
+				FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
+				FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg));
 	else
 #endif
-	{
-		struct mii_bus *miibus = NULL;
-
-		miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
-		if(!miibus)
-			return PHY_INVALID_DATA;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
-		if (mii_reg & SSDK_ADDR_C45)
-			phy_data = __mdiobus_c45_read(miibus, TO_PHY_ADDR(phy_addr),
-					FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
-					FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg));
-		else
-#endif
-			phy_data = __mdiobus_read(miibus, TO_PHY_ADDR(phy_addr), mii_reg);
-	}
+		phy_data = __mdiobus_read(miibus, TO_PHY_ADDR(phy_addr), mii_reg);
 
 	return phy_data;
 }
@@ -1436,30 +1357,21 @@ __hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_r
 	struct mii_bus *miibus = NULL;
 	int ret;
 
-#if defined(IN_PHY_I2C_MODE)
-	if(IS_I2C_PHY_ADDR(phy_addr))
-	{
-		if(__qca_phy_i2c_write(dev_id, phy_addr, mii_reg, reg_val))
-			return SW_WRITE_ERROR;
-	}
+
+	miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
+	SW_RTN_ON_NULL(miibus);
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
+	if (mii_reg & SSDK_ADDR_C45)
+		ret = __mdiobus_c45_write(miibus, TO_PHY_ADDR(phy_addr),
+				FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
+				FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg),
+				reg_val);
 	else
 #endif
-	{
-		miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
-		SW_RTN_ON_NULL(miibus);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
-		if (mii_reg & SSDK_ADDR_C45)
-			ret = __mdiobus_c45_write(miibus, TO_PHY_ADDR(phy_addr),
-					FIELD_GET(SSDK_DEVADDR_C45_MASK, mii_reg),
-					FIELD_GET(SSDK_REGADDR_C45_MASK, mii_reg),
-					reg_val);
-		else
-#endif
-			ret = __mdiobus_write(miibus, TO_PHY_ADDR(phy_addr), mii_reg, reg_val);
+		ret = __mdiobus_write(miibus, TO_PHY_ADDR(phy_addr), mii_reg, reg_val);
 
-		if (ret)
-			return ret;
-	}
+	if (ret)
+		return ret;
 
 	return SW_OK;
 }

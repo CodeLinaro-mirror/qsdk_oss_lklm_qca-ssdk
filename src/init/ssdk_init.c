@@ -62,11 +62,6 @@
 #include "ref_uci.h"
 #include "ref_vsi.h"
 #include "shell.h"
-/*qca808x_start*/
-#if defined(IN_PHY_I2C_MODE)
-#include "ssdk_phy_i2c.h"
-#endif
-/*qca808x_end*/
 #include "adpt.h"
 #ifdef HPPE
 #include "ssdk_hppe.h"
