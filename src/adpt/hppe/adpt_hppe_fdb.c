@@ -1,24 +1,9 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
-/**
- * @defgroup
- * @{
- */
 #include "sw.h"
 #include "hsl_reg.h"
 #include "adpt.h"
@@ -358,15 +343,29 @@ _get_fdb_table_entryindex_by_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 
 	mb();
 
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
-
+#ifdef JHPPE
 	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
 	if (rv != SW_OK)
 	{
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
+	if (rv != SW_OK)
+	{
+		aos_unlock_bh(&hppe_fdb_lock);
+		return rv;
+	}
 
+#else
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
+	if (rv != SW_OK)
+	{
+		aos_unlock_bh(&hppe_fdb_lock);
+		return rv;
+	}
+#endif
 	aos_unlock_bh(&hppe_fdb_lock);
 
 	if (*entry_index == 0)
@@ -407,7 +406,22 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 	}
 
 	mb();
-
+#ifdef JHPPE
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
+	if (rv != SW_OK)
+	{
+		aos_unlock_bh(&hppe_fdb_lock);
+		return rv;
+	}
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
+	if (rv != SW_OK && rv != SW_NOT_FOUND)
+	{
+		aos_unlock_bh(&hppe_fdb_lock);
+		return rv;
+	}
+	else
+		rv1 = rv;
+#else
 	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
 	if (rv != SW_OK && rv != SW_NOT_FOUND)
 	{
@@ -423,7 +437,7 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
+#endif
 	aos_unlock_bh(&hppe_fdb_lock);
 
 	return rv1;
@@ -450,16 +464,28 @@ _modify_fdb_table_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry, a_uint32_t o
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
-
+#ifdef JHPPE
 	rv = _adpt_hppe_fdb_tbl_op_rslt_reg_get(dev_id, cmd_id);
 	if (rv != SW_OK)
 	{
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
+	if (rv != SW_OK)
+	{
+		aos_unlock_bh(&hppe_fdb_lock);
+		return rv;
+	}
+#else
+	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
+	rv = _adpt_hppe_fdb_tbl_op_rslt_reg_get(dev_id, cmd_id);
+	if (rv != SW_OK)
+	{
+		aos_unlock_bh(&hppe_fdb_lock);
+		return rv;
+	}
+#endif
 	aos_unlock_bh(&hppe_fdb_lock);
 
 	return SW_OK;
