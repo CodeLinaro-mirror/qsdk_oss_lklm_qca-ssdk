@@ -1409,6 +1409,15 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_tcont_set = adpt_jhppe_qm_tcont_set;
 	p_adpt_api->adpt_qm_cpucode_enqueue_get = adpt_jhppe_qm_cpucode_enqueue_get;
 	p_adpt_api->adpt_qm_cpucode_enqueue_set = adpt_jhppe_qm_cpucode_enqueue_set;
+	p_adpt_api->adpt_qm_counter_monitor_en_set = adpt_jhppe_qm_counter_monitor_en_set;
+	p_adpt_api->adpt_qm_counter_monitor_en_get = adpt_jhppe_qm_counter_monitor_en_get;
+	p_adpt_api->adpt_qm_counter_monitor_stats_cleanup = adpt_jhppe_qm_counter_monitor_stats_cleanup;
+	p_adpt_api->adpt_qm_counter_monitor_status_get = adpt_jhppe_qm_counter_monitor_status_get;
+	p_adpt_api->adpt_qm_counter_monitor_map_set = adpt_jhppe_qm_counter_monitor_map_set;
+	p_adpt_api->adpt_qm_counter_monitor_map_get = adpt_jhppe_qm_counter_monitor_map_get;
+	p_adpt_api->adpt_qm_counter_monitor_ctrl_set = adpt_jhppe_qm_counter_monitor_ctrl_set;
+	p_adpt_api->adpt_qm_counter_monitor_ctrl_get = adpt_jhppe_qm_counter_monitor_ctrl_get;
+	p_adpt_api->adpt_qm_counter_monitor_stats_get = adpt_jhppe_qm_counter_monitor_stats_get;
 #endif
 
 	return SW_OK;
