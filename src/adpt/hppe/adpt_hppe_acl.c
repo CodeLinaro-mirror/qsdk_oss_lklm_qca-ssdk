@@ -766,6 +766,10 @@ enum{
 	APPE_ACL_TYPE_VP_GROUP,
 	APPE_ACL_TYPE_SERVICE_PORTBITMAP,
 #endif
+#if defined(JHPPE)
+	JHPPE_ACL_TYPE_L3_DST_PORT,
+	JHPPE_ACL_TYPE_DST_PORT,
+#endif
 	HPPE_ACL_TYPE_INVALID,
 };
 
@@ -793,6 +797,14 @@ static a_uint32_t _adpt_hppe_acl_srctype_to_hw(fal_acl_bind_obj_t obj_t)
 			break;
 		case FAL_ACL_BIND_SERVICE_PORTBITMAP:
 			src_type = APPE_ACL_TYPE_SERVICE_PORTBITMAP;
+			break;
+#endif
+#if defined(JHPPE)
+		case FAL_ACL_BIND_L3_DST_PORT:
+			src_type = JHPPE_ACL_TYPE_L3_DST_PORT;
+			break;
+		case FAL_ACL_BIND_DST_PORT:
+			src_type = JHPPE_ACL_TYPE_DST_PORT;
 			break;
 #endif
 		default:
