@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -545,7 +534,8 @@ typedef enum {
 	FAL_TUNNEL_RULE_SRC2_TUNNEL_VNI = 3,
 	FAL_TUNNEL_RULE_SRC2_PROTO_MAP0 = 4,
 	FAL_TUNNEL_RULE_SRC2_PROTO_MAP1 = 5,
-	FAL_TUNNEL_RULE_SRC2_DATA_INVALID = 6,
+	FAL_TUNNEL_RULE_SRC2_FLOW_COOKIE = 6,
+	FAL_TUNNEL_RULE_SRC2_DATA_INVALID = 7,
 } fal_tunnel_encap_rule_src2_t;
 
 typedef enum {
@@ -556,7 +546,8 @@ typedef enum {
 	FAL_TUNNEL_RULE_SRC3_HASH_VALUE = 4,
 	FAL_TUNNEL_RULE_SRC3_PROTO_MAP0 = 5,
 	FAL_TUNNEL_RULE_SRC3_PROTO_MAP1 = 6,
-	FAL_TUNNEL_RULE_SRC3_DATA_INVALID = 7,
+	FAL_TUNNEL_RULE_SRC3_FLOW_COOKIE = 7,
+	FAL_TUNNEL_RULE_SRC3_DATA_INVALID = 8,
 } fal_tunnel_encap_rule_src3_t;
 
 typedef struct {

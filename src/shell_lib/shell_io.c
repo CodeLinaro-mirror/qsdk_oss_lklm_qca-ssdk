@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2013, 2015-2017, 2019, 2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 //#include <stdio.h>
@@ -325,6 +313,7 @@ const struct attr_des_t g_attr_des[] =
 			{"tunnel_vni", FAL_TUNNEL_RULE_SRC2_TUNNEL_VNI},
 			{"proto_map0", FAL_TUNNEL_RULE_SRC2_PROTO_MAP0},
 			{"proto_map1", FAL_TUNNEL_RULE_SRC2_PROTO_MAP1},
+			{"flow_cookie", FAL_TUNNEL_RULE_SRC2_FLOW_COOKIE},
 			{NULL, FAL_TUNNEL_RULE_SRC2_DATA_INVALID}
 		}
 	},
@@ -338,6 +327,7 @@ const struct attr_des_t g_attr_des[] =
 			{"hash_value", FAL_TUNNEL_RULE_SRC3_HASH_VALUE},
 			{"proto_map0", FAL_TUNNEL_RULE_SRC3_PROTO_MAP0},
 			{"proto_map1", FAL_TUNNEL_RULE_SRC3_PROTO_MAP1},
+			{"flow_cookie", FAL_TUNNEL_RULE_SRC3_FLOW_COOKIE},
 			{NULL, FAL_TUNNEL_RULE_SRC3_DATA_INVALID}
 		}
 	},
@@ -12225,7 +12215,7 @@ cmd_data_check_tunnel_encap_rule_entry(char *cmd_str,
 
 	cmd_data_check_element("src2_sel", "napt_addr",
 			"usage: src2 data: zero_data, pkt_data, napt_addr, "
-			"tunnel_vni, proto_map0, proto_map1\n",
+			"tunnel_vni, proto_map0, proto_map1, flow_cookie\n",
 			cmd_data_check_attr, ("src2_sel", cmd, &(entry.src2_sel),
 				sizeof(entry.src2_sel)));
 
@@ -12274,7 +12264,7 @@ cmd_data_check_tunnel_encap_rule_entry(char *cmd_str,
 
 	cmd_data_check_element("src3_sel", "napt_port",
 			"usage: src3 data: zero_data, pkt_data, napt_port, policy_id, "
-			"hash_value, proto_map0, proto_map1\n",
+			"hash_value, proto_map0, proto_map1, flow_cookie\n",
 			cmd_data_check_attr, ("src3_sel", cmd, &(entry.src3_sel),
 				sizeof(entry.src3_sel)));
 
