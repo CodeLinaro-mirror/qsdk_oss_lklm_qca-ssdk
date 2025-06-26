@@ -199,6 +199,8 @@ typedef struct
 	a_bool_t ip_nd_sg_svlan_en; /* source svlan based nd source guard enable */
 	a_bool_t ip_nd_sg_cvlan_en; /* source cvlan based nd source guard enable */
 	fal_fwd_cmd_t ip_nd_src_unk_action; /* unknown action for nd source guard */
+	fal_fwd_cmd_t ipv4_arp_sg_pass_action; /* action for ipv4 ARP source guard passed */
+	fal_fwd_cmd_t ip_nd_sg_pass_action; /* action for ipv6 ND source guard passed */
 } fal_arp_sg_cfg_t;
 
 typedef enum
@@ -239,6 +241,18 @@ typedef enum {
 	FAL_UDP_ZERO_CSUM_BUTT          /* invalid action */
 } fal_udp_zero_csum_cmd_t;
 
+typedef enum {
+	FAL_IP_VLAN_AS_FLOW_KEY_FROM_OUTER = 0,
+	FAL_IP_VLAN_AS_FLOW_KEY_FROM_CTAG,
+	FAL_IP_VLAN_AS_FLOW_KEY_FROM_STAG,
+	FAL_IP_VLAN_AS_FLOW_KEY_DISABLED,
+} fal_ip_vlan_as_key_mode_t;
+
+typedef struct {
+	a_bool_t valid;
+	fal_ip_vlan_as_key_mode_t mode;
+} fal_ip_vlan_as_flow_key_t;
+
 typedef struct {
 	a_uint16_t mru; /* Maximum Receive Unit*/
 	a_uint16_t mtu; /* Maximum Transmission Unit*/
@@ -259,6 +273,14 @@ typedef struct {
 	a_uint16_t vpn_id; /* vpn id, added for ipq95xx */
 	fal_mac_addr_t in_mac_addr; /* MAC address for routing decision, added for ipq54xx */
 	a_bool_t in_mac_valid; /* MAC address valid or not, added for ipq54xx */
+	a_bool_t vlan_key_from_port; /* Use the VLAN mode from source port to
+					 generate VPN ID (0x1000 | VLAN_ID) or
+					 4095 if mismatched. */
+	fal_ip_vlan_as_flow_key_t vlan_key; /* 0=outer VLAN, 1=CVLAN, 2=SVLAN. */
+	a_bool_t l3_dst_valid; /* L3 destination valid or not. */
+	a_uint8_t l3_dst_port; /* L3 destination port. */
+	fal_fwd_cmd_t l3_dst_action; /* L3 action for destination when L2 forwarding fail. */
+	fal_mc_mode_cfg_t mc_mode_cfg; /* IPv4 and IPv6 MC mode. */
 } fal_intf_entry_t;
 
 typedef enum
@@ -297,6 +319,8 @@ typedef struct
 	a_bool_t ipv6_sg_svlan_en; /* source svlan based ipv6 source guard enable */
 	a_bool_t ipv6_sg_cvlan_en; /* source cvlan based ipv6 source guard enable */
 	fal_fwd_cmd_t ipv6_src_unk_action; /* unknown action for ipv6 source guard */
+	fal_fwd_cmd_t ipv4_sg_pass_action; /* action for ipv4 source guard passed */
+	fal_fwd_cmd_t ipv6_sg_pass_action; /* action for ipv6 source guard passed */
 } fal_sg_cfg_t;
 
 typedef struct
@@ -642,6 +666,18 @@ fal_ip_global_ctrl_get(a_uint32_t dev_id, fal_ip_global_cfg_t *cfg);
 sw_error_t
 fal_ip_global_ctrl_set(a_uint32_t dev_id, fal_ip_global_cfg_t *cfg);
 
+sw_error_t
+fal_ip_port_vlan_as_flow_key_set(a_uint32_t dev_id, fal_port_t port_id,
+				 fal_ip_vlan_as_flow_key_t *vlan_key);
+sw_error_t
+fal_ip_port_vlan_as_flow_key_get(a_uint32_t dev_id, fal_port_t port_id,
+				 fal_ip_vlan_as_flow_key_t *vlan_key);
+sw_error_t
+fal_ip_intf_vlan_as_flow_key_set(a_uint32_t dev_id, a_uint32_t intf,
+				 fal_ip_vlan_as_flow_key_t *vlan_key);
+sw_error_t
+fal_ip_intf_vlan_as_flow_key_get(a_uint32_t dev_id, a_uint32_t intf,
+				 fal_ip_vlan_as_flow_key_t *vlan_key);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

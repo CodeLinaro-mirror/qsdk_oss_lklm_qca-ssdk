@@ -13,6 +13,10 @@
 #include "adpt.h"
 #include <linux/etherdevice.h>
 
+#if defined(JHPPE)
+#include "adpt_jhppe_ip.h"
+#endif
+
 struct ppe_ip_intf_mac {
 	a_uint32_t refcount;
 	fal_macaddr_entry_t mac;
@@ -357,6 +361,7 @@ adpt_hppe_ip_host_add(a_uint32_t dev_id, fal_host_entry_t * host_entry)
 	}
 	return rv;
 }
+
 sw_error_t
 adpt_hppe_ip_vsi_sg_cfg_get(a_uint32_t dev_id, a_uint32_t vsi,
     			fal_sg_cfg_t *sg_cfg)
@@ -385,7 +390,11 @@ adpt_hppe_ip_vsi_sg_cfg_get(a_uint32_t dev_id, a_uint32_t vsi,
 	sg_cfg->ipv6_sg_cvlan_en = l3_vsi_ext.bf.ipv6_sg_cvlan_en;
 	sg_cfg->ipv6_src_unk_action = l3_vsi_ext.bf.ipv6_src_unk_cmd;
 
-	return SW_OK;
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_vsi_sg_cfg_get(dev_id, vsi, sg_cfg);
+#endif
+
+	return rv;
 }
 
 sw_error_t
@@ -393,11 +402,18 @@ adpt_hppe_ip_port_sg_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
     			fal_sg_cfg_t *sg_cfg)
 {
 	union l3_vp_port_tbl_u l3_vp_port_tbl;
+	sw_error_t rv = SW_OK;
 
 	memset(&l3_vp_port_tbl, 0, sizeof(l3_vp_port_tbl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	hppe_l3_vp_port_tbl_get(dev_id, port_id, &l3_vp_port_tbl);
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_port_sg_cfg_set(dev_id, port_id, sg_cfg);
+	SW_RTN_ON_ERROR(rv);
+#endif
+
+	rv = hppe_l3_vp_port_tbl_get(dev_id, port_id, &l3_vp_port_tbl);
+	SW_RTN_ON_ERROR(rv);
 
 	l3_vp_port_tbl.bf.ipv4_sg_en = sg_cfg->ipv4_sg_en;
 	l3_vp_port_tbl.bf.ipv4_sg_vio_cmd = sg_cfg->ipv4_sg_vio_action;
@@ -439,11 +455,18 @@ adpt_hppe_ip_vsi_arp_sg_cfg_set(a_uint32_t dev_id, a_uint32_t vsi,
     			fal_arp_sg_cfg_t *arp_sg_cfg)
 {
 	union l3_vsi_ext_u l3_vsi_ext;
+	sw_error_t rv = SW_OK;
 
 	memset(&l3_vsi_ext, 0, sizeof(l3_vsi_ext));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	hppe_l3_vsi_ext_get(dev_id, vsi, &l3_vsi_ext);
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_vsi_arp_sg_cfg_set(dev_id, vsi, arp_sg_cfg);
+	SW_RTN_ON_ERROR(rv);
+#endif
+
+	rv = hppe_l3_vsi_ext_get(dev_id, vsi, &l3_vsi_ext);
+	SW_RTN_ON_ERROR(rv);
 
 	l3_vsi_ext.bf.ip_arp_sg_en = arp_sg_cfg->ipv4_arp_sg_en;
 	l3_vsi_ext.bf.ip_arp_sg_vio_cmd = arp_sg_cfg->ipv4_arp_sg_vio_action;
@@ -500,11 +523,18 @@ adpt_hppe_ip_vsi_sg_cfg_set(a_uint32_t dev_id, a_uint32_t vsi,
     			fal_sg_cfg_t *sg_cfg)
 {
 	union l3_vsi_ext_u l3_vsi_ext;
+	sw_error_t rv = SW_OK;
 
 	memset(&l3_vsi_ext, 0, sizeof(l3_vsi_ext));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	hppe_l3_vsi_ext_get(dev_id, vsi, &l3_vsi_ext);
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_vsi_sg_cfg_set(dev_id, vsi, sg_cfg);
+	SW_RTN_ON_ERROR(rv);
+#endif
+
+	rv = hppe_l3_vsi_ext_get(dev_id, vsi, &l3_vsi_ext);
+	SW_RTN_ON_ERROR(rv);
 
 	l3_vsi_ext.bf.ipv4_sg_en = sg_cfg->ipv4_sg_en;
 	l3_vsi_ext.bf.ipv4_sg_vio_cmd = sg_cfg->ipv4_sg_vio_action;
@@ -766,7 +796,11 @@ adpt_hppe_ip_port_sg_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	sg_cfg->ipv6_sg_cvlan_en = l3_vp_port_tbl.bf.ipv6_sg_cvlan_en;
 	sg_cfg->ipv6_src_unk_action = l3_vp_port_tbl.bf.ipv6_src_unk_cmd;
 
-	return SW_OK;
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_port_sg_cfg_get(dev_id, port_id, sg_cfg);
+#endif
+
+	return rv;
 }
 
 sw_error_t
@@ -824,6 +858,19 @@ adpt_hppe_ip_intf_get(
 	entry->mac_addr.uc[2] = eg_l3_if_tbl.bf.mac_addr_0 >> 24;
 	entry->mac_addr.uc[1] = eg_l3_if_tbl.bf.mac_addr_1;
 	entry->mac_addr.uc[0] = eg_l3_if_tbl.bf.mac_addr_1 >> 8;
+
+#if defined(JHPPE)
+	entry->vlan_key_from_port = in_l3_if_tbl.bf.vlan_as_flow_key_port;
+	entry->vlan_key.valid = in_l3_if_tbl.bf.vlan_as_flow_key_l3if;
+	entry->vlan_key.mode = in_l3_if_tbl.bf.vlan_as_flow_key_mode;
+	entry->l3_dst_valid = in_l3_if_tbl.bf.l3_dst_valid;
+	entry->l3_dst_port = in_l3_if_tbl.bf.l3_dst_port;
+	entry->l3_dst_action = in_l3_if_tbl.bf.l3_dst_cmd;
+	entry->mc_mode_cfg.l2_ipv4_mc_en = in_l3_if_tbl.bf.ipv4_mc_route_en;
+	entry->mc_mode_cfg.l2_ipv4_mc_mode = in_l3_if_tbl.bf.l3_ipv4_mc_mode;
+	entry->mc_mode_cfg.l2_ipv6_mc_en = in_l3_if_tbl.bf.ipv6_mc_route_en;
+	entry->mc_mode_cfg.l2_ipv6_mc_mode = in_l3_if_tbl.bf.l3_ipv6_mc_mode;
+#endif
 
 	if (rv == SW_OK) {
 		union rt_interface_cnt_tbl_u cnt_ingress, cnt_egress;
@@ -1008,6 +1055,10 @@ adpt_hppe_ip_vsi_arp_sg_cfg_get(a_uint32_t dev_id, a_uint32_t vsi,
 	arp_sg_cfg->ip_nd_sg_cvlan_en = l3_vsi_ext.bf.ip_nd_sg_cvlan_en;
 	arp_sg_cfg->ip_nd_src_unk_action = l3_vsi_ext.bf.ip_nd_src_unk_cmd;
 
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_vsi_arp_sg_cfg_get(dev_id, vsi, arp_sg_cfg);
+#endif
+
 	return rv;
 }
 
@@ -1016,11 +1067,18 @@ adpt_hppe_ip_port_arp_sg_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
     			fal_arp_sg_cfg_t *arp_sg_cfg)
 {
 	union l3_vp_port_tbl_u l3_vp_port_tbl;
+	sw_error_t rv = SW_OK;
 
 	memset(&l3_vp_port_tbl, 0, sizeof(l3_vp_port_tbl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	hppe_l3_vp_port_tbl_get(dev_id, port_id, &l3_vp_port_tbl);
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_port_arp_sg_cfg_set(dev_id, port_id, arp_sg_cfg);
+	SW_RTN_ON_ERROR(rv);
+#endif
+
+	rv = hppe_l3_vp_port_tbl_get(dev_id, port_id, &l3_vp_port_tbl);
+	SW_RTN_ON_ERROR(rv);
 
 	l3_vp_port_tbl.bf.ip_arp_sg_en = arp_sg_cfg->ipv4_arp_sg_en;
 	l3_vp_port_tbl.bf.ip_arp_sg_vio_cmd = arp_sg_cfg->ipv4_arp_sg_vio_action;
@@ -1344,6 +1402,20 @@ adpt_hppe_ip_intf_set(
 	}
 #endif
 
+#if defined(JHPPE)
+	in_l3_if_tbl.bf.vlan_as_flow_key_port = entry->vlan_key_from_port;
+	in_l3_if_tbl.bf.vlan_as_flow_key_l3if = entry->vlan_key.valid;
+	in_l3_if_tbl.bf.vlan_as_flow_key_mode = entry->vlan_key.mode;
+	in_l3_if_tbl.bf.l3_dst_valid = entry->l3_dst_valid;
+	in_l3_if_tbl.bf.l3_dst_port = entry->l3_dst_port;
+	in_l3_if_tbl.bf.l3_dst_cmd = entry->l3_dst_action;
+
+	in_l3_if_tbl.bf.ipv4_mc_route_en = entry->mc_mode_cfg.l2_ipv4_mc_en;
+	in_l3_if_tbl.bf.l3_ipv4_mc_mode = entry->mc_mode_cfg.l2_ipv4_mc_mode;
+	in_l3_if_tbl.bf.ipv6_mc_route_en = entry->mc_mode_cfg.l2_ipv6_mc_en;
+	in_l3_if_tbl.bf.l3_ipv6_mc_mode = entry->mc_mode_cfg.l2_ipv6_mc_mode;
+#endif
+
 	eg_l3_if_tbl.bf.mac_addr_0 = entry->mac_addr.uc[5] | \
 							entry->mac_addr.uc[4] << 8 | \
 							entry->mac_addr.uc[3] << 16 | \
@@ -1459,7 +1531,11 @@ adpt_hppe_ip_port_arp_sg_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	arp_sg_cfg->ip_nd_sg_cvlan_en = l3_vp_port_tbl.bf.ip_nd_sg_cvlan_en;
 	arp_sg_cfg->ip_nd_src_unk_action = l3_vp_port_tbl.bf.ip_nd_src_unk_cmd;
 
-	return SW_OK;
+#if defined(JHPPE)
+	rv = adpt_jhppe_ip_port_arp_sg_cfg_get(dev_id, port_id, arp_sg_cfg);
+#endif
+
+	return rv;
 }
 
 sw_error_t
@@ -2031,6 +2107,12 @@ sw_error_t adpt_hppe_ip_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_ip_intf_macaddr_del = adpt_hppe_ip_intf_macaddr_del;
 		p_adpt_api->adpt_ip_intf_macaddr_get_first = adpt_hppe_ip_intf_macaddr_get;
 		p_adpt_api->adpt_ip_intf_macaddr_get_next = adpt_hppe_ip_intf_macaddr_get;
+#if defined(JHPPE)
+		p_adpt_api->adpt_ip_port_vlan_as_flow_key_get = adpt_jhppe_ip_port_vlan_as_flow_key_get;
+		p_adpt_api->adpt_ip_port_vlan_as_flow_key_set = adpt_jhppe_ip_port_vlan_as_flow_key_set;
+		p_adpt_api->adpt_ip_intf_vlan_as_flow_key_get = adpt_jhppe_ip_intf_vlan_as_flow_key_get;
+		p_adpt_api->adpt_ip_intf_vlan_as_flow_key_set = adpt_jhppe_ip_intf_vlan_as_flow_key_set;
+#endif
 
 	spin_lock_init(&ppe_l3_mac_g[dev_id].lock);
 

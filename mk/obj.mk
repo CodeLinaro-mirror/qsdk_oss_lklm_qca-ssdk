@@ -167,6 +167,7 @@ OBJ-COMMON  += src/fal/fal_ip.o
 OBJ-ISISC   += src/hsl/isisc/isisc_ip.o
 OBJ-MHT     += src/hsl/mht/mht_ip.o
 OBJ-HPPE    += src/hsl/hppe/hppe_ip.o src/adpt/hppe/adpt_hppe_ip.o
+OBJ-JHPPE   += src/adpt/jhppe/adpt_jhppe_ip.o
 endif
 
 ###############################################################################

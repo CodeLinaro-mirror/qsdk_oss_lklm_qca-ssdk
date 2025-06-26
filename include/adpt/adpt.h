@@ -477,6 +477,22 @@ typedef sw_error_t (*adpt_ip_global_ctrl_get_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_ip_global_ctrl_set_func)(a_uint32_t dev_id,
 			fal_ip_global_cfg_t *cfg);
 
+typedef sw_error_t (*adpt_ip_port_vlan_as_flow_key_get_func)(a_uint32_t dev_id,
+		fal_port_t port_id,
+		fal_ip_vlan_as_flow_key_t *vlan_key);
+
+typedef sw_error_t (*adpt_ip_port_vlan_as_flow_key_set_func)(a_uint32_t dev_id,
+		fal_port_t port_id,
+		fal_ip_vlan_as_flow_key_t *vlan_key);
+
+typedef sw_error_t (*adpt_ip_intf_vlan_as_flow_key_get_func)(a_uint32_t dev_id,
+		a_uint32_t intf,
+		fal_ip_vlan_as_flow_key_t *vlan_key);
+
+typedef sw_error_t (*adpt_ip_intf_vlan_as_flow_key_set_func)(a_uint32_t dev_id,
+		a_uint32_t intf,
+		fal_ip_vlan_as_flow_key_t *vlan_key);
+
 typedef sw_error_t (*adpt_ip_intf_mtu_mru_set_func)
 	(a_uint32_t dev_id, a_uint32_t l3_if, a_uint32_t mtu, a_uint32_t mru);
 typedef sw_error_t (*adpt_ip_intf_mtu_mru_get_func)
@@ -1752,6 +1768,10 @@ typedef struct
 	adpt_ip_intf_macaddr_get_next_func adpt_ip_intf_macaddr_get_next;
 	adpt_ip_intf_dmac_check_set_func adpt_ip_intf_dmac_check_set;
 	adpt_ip_intf_dmac_check_get_func adpt_ip_intf_dmac_check_get;
+	adpt_ip_port_vlan_as_flow_key_get_func adpt_ip_port_vlan_as_flow_key_get;
+	adpt_ip_port_vlan_as_flow_key_set_func adpt_ip_port_vlan_as_flow_key_set;
+	adpt_ip_intf_vlan_as_flow_key_get_func adpt_ip_intf_vlan_as_flow_key_get;
+	adpt_ip_intf_vlan_as_flow_key_set_func adpt_ip_intf_vlan_as_flow_key_set;
 
 	/* flow */
 	adpt_flow_host_add_func adpt_flow_host_add;

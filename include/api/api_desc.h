@@ -3923,6 +3923,38 @@ extern "C" {
     SW_PARAM_DEF(SW_API_IP_INTF_DMAC_CHECK_GET, SW_ENABLE, \
 		    sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "enable DMAC check"),
 
+#define SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET_DESC \
+    SW_PARAM_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "L3 intf id"), \
+    SW_PARAM_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_GET, SW_VLAN_KEY, \
+		    sizeof(fal_ip_vlan_as_flow_key_t), SW_PARAM_PTR|SW_PARAM_OUT, "vlan as flow key mode"),
+
+#define SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET_DESC \
+    SW_PARAM_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "L3 intf id"), \
+    SW_PARAM_DEF(SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET, SW_VLAN_KEY, \
+		    sizeof(fal_ip_vlan_as_flow_key_t), SW_PARAM_PTR|SW_PARAM_IN, "vlan as flow key mode"),
+
+#define SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET_DESC \
+    SW_PARAM_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_GET, SW_VLAN_KEY, \
+		    sizeof(fal_ip_vlan_as_flow_key_t), SW_PARAM_PTR|SW_PARAM_OUT, "vlan as flow key mode"),
+
+#define SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET_DESC \
+    SW_PARAM_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET, SW_VLAN_KEY, \
+		    sizeof(fal_ip_vlan_as_flow_key_t), SW_PARAM_PTR|SW_PARAM_IN, "vlan as flow key mode"),
+
 #define SW_API_FLOW_STATUS_SET_DESC \
     SW_PARAM_DEF(SW_API_FLOW_STATUS_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),  \
     SW_PARAM_DEF(SW_API_FLOW_STATUS_SET, SW_UINT32, 4, SW_PARAM_IN, "status"),
