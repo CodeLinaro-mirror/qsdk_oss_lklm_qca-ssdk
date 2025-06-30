@@ -8,7 +8,7 @@
 
 /*[table] L2_SPEC_SERVICE_TBL*/
 #define L2_SPEC_SERVICE_TBL
-#define L2_SPEC_SERVICE_TBL_ADDRESS 0x1884
+#define L2_SPEC_SERVICE_TBL_ADDRESS 0x1900
 #define L2_SPEC_SERVICE_TBL_NUM     10
 #define L2_SPEC_SERVICE_TBL_INC     0x8
 #define L2_SPEC_SERVICE_TBL_TYPE    REG_TYPE_RW
@@ -92,8 +92,8 @@ union in_spec_service_tbl_u {
 /*[register] EG_SPEC_SERVICE_TBL*/
 #define EG_SPEC_SERVICE_TBL
 #define EG_SPEC_SERVICE_TBL_ADDRESS 0x138
-#define EG_SPEC_SERVICE_TBL_NUM     10
-#define EG_SPEC_SERVICE_TBL_INC     0x8
+#define EG_SPEC_SERVICE_TBL_NUM     12
+#define EG_SPEC_SERVICE_TBL_INC     0x10
 #define EG_SPEC_SERVICE_TBL_TYPE    REG_TYPE_RW
 #define EG_SPEC_SERVICE_TBL_DEFAULT 0x0
 	/*[field] FIELD_UPDATE_ACTION*/
@@ -116,6 +116,11 @@ union in_spec_service_tbl_u {
 	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_OFFSET  34
 	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_LEN     24
 	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_DEFAULT 0x0
+	/*[field] FIELD_UPDATE_ACTION_EXT1*/
+	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1
+	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_OFFSET  64
+	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_LEN     16
+	#define EG_SPEC_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_DEFAULT 0x0
 
 struct eg_spec_service_tbl {
 	a_uint32_t  field_update_action:32;
@@ -123,10 +128,12 @@ struct eg_spec_service_tbl {
 	a_uint32_t  ip_length_update:1;
 	a_uint32_t  field_update_action_ext:24;
 	a_uint32_t  _reserved0:6;
+	a_uint32_t  field_update_action_ext1:16;
+	a_uint32_t  _reserved1:16;
 };
 
 union eg_spec_service_tbl_u {
-	a_uint32_t val[2];
+	a_uint32_t val[3];
 	struct eg_spec_service_tbl bf;
 };
 

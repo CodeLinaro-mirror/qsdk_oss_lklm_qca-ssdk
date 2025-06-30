@@ -402,6 +402,37 @@ jhppe_eg_spec_service_tbl_field_update_action_ext_set(
 }
 
 sw_error_t
+jhppe_eg_spec_service_tbl_field_update_action_ext1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union eg_spec_service_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_eg_spec_service_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.field_update_action_ext1;
+	return ret;
+}
+
+sw_error_t
+jhppe_eg_spec_service_tbl_field_update_action_ext1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union eg_spec_service_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_eg_spec_service_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.field_update_action_ext1 = value;
+	ret = jhppe_eg_spec_service_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
 jhppe_eg_spec_service_tbl_ip_length_update_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
