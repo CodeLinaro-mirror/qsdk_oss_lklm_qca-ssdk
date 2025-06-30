@@ -2448,11 +2448,26 @@ static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t 
 
 sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t *hw_list_index,
 		a_uint32_t rule_id, a_uint32_t rule_nr, fal_acl_rule_t * rule,
-		fal_acl_rule_t *inner_rule, a_uint32_t rule_type_count, a_uint32_t *index)
+		fal_acl_rule_t *inner_rule, a_uint32_t outer_rule_type_count,
+		a_uint32_t inner_rule_type_count, a_uint32_t *index)
 {
 	a_uint8_t free_hw_entry_bitmap = 0, free_hw_entry_count = 0, i = 0;
 	a_uint32_t j = 0, start = 0, end = ADPT_ACL_HW_LIST_NUM;
 	a_uint8_t map_info_count = sizeof(s_acl_entries)/sizeof(ADPT_HPPE_ACL_ENTRY_EXTEND_INFO);
+	a_uint32_t rule_type_count = outer_rule_type_count + inner_rule_type_count;
+
+	if (rule_type_count == 0)
+		return SW_BAD_PARAM;
+
+	if (rule_type_count > ADPT_ACL_ENTRY_NUM_PER_LIST)
+		return SW_NOT_SUPPORTED;
+
+#if defined(JHPPE)
+	if (outer_rule_type_count && inner_rule_type_count) {
+		SSDK_ERROR("JHSPPE does not support outer and inner rule in one hw list!\n");
+		return SW_NOT_SUPPORTED;
+	}
+#endif
 
 #if defined(APPE)
 	if(rule->rule_type == FAL_ACL_RULE_TUNNEL_MAC ||
@@ -2469,6 +2484,7 @@ sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t *hw_list_i
 	{
 		free_hw_entry_bitmap = g_acl_hw_list[dev_id][j].free_hw_entry_bitmap;
 		free_hw_entry_count = g_acl_hw_list[dev_id][j].free_hw_entry_count;
+
 		/* msg for debug */
 		SSDK_DEBUG("_adpt_hppe_acl_alloc_entries():hw_list_index=%d, hw_list_id=%d, "
 			"free_hw_entry_bitmap=0x%x, free_hw_entry_count=%d\n", j,
@@ -2478,6 +2494,26 @@ sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t *hw_list_i
 		{
 			continue;
 		}
+#if defined(JHPPE)
+		if (g_acl_hw_list[dev_id][j].hw_list_id > ADPT_ACL_HW_LIST_NUM) {
+			a_uint32_t outer_inner_sel, hw_outer_inner_sel;
+			outer_inner_sel = outer_rule_type_count ? ADPT_ACL_OUTER_RULE : ADPT_ACL_INNER_RULE;
+			/* If one Pre-ACL hw list has been used for outer(inner),
+			 * then this hw list can't be used for inner(outer).
+			 */
+			if (free_hw_entry_count != ADPT_PRE_ACL_ENTRY_NUM_PER_LIST) {
+				jhppe_pre_ipo_rule_inner_outer_inner_outer_sel_get(dev_id,
+					g_acl_hw_list[dev_id][j].hw_list_id - ADPT_ACL_HW_LIST_NUM,
+					&hw_outer_inner_sel);
+				if (outer_inner_sel != hw_outer_inner_sel)
+					continue;
+			} else {
+				jhppe_pre_ipo_rule_inner_outer_inner_outer_sel_set(dev_id,
+					g_acl_hw_list[dev_id][j].hw_list_id - ADPT_ACL_HW_LIST_NUM,
+					outer_inner_sel);
+			}
+		}
+#endif
 		for(i = 0; i < map_info_count; i++)
 		{
 			if((rule_type_count == s_acl_entries[i].num) &&
@@ -4676,29 +4712,21 @@ void acl_rule_field_convert(fal_acl_rule_t * rule,
     return;
 }
 
-static a_uint32_t _adpt_hppe_rule_type_count(ADPT_HPPE_ACL_RULE_MAP *rule_map,
-			ADPT_HPPE_ACL_RULE_MAP *inner_rule_map)
+static a_uint32_t _adpt_hppe_rule_type_count(ADPT_HPPE_ACL_RULE_MAP *rule_map)
 {
 	a_uint32_t rule_type_count = 0;
 	a_int32_t i = 0;
 
 	rule_type_count = _acl_bits_count(rule_map->rule_type_map,
 			ADPT_ACL_HPPE_RULE_TYPE_NUM, 0);
-	rule_type_count += _acl_bits_count(inner_rule_map->rule_type_map,
-			ADPT_ACL_HPPE_RULE_TYPE_NUM, 0);
 	for (i = 0; i < ADPT_ACL_HPPE_RULE_TYPE_NUM; i++) {
-		SSDK_DEBUG("rule_type %d inverse_rule_type_count 0x%x-0x%x\n",
-				i,
-				rule_map->inverse_rule_type_count[i],
-				inner_rule_map->inverse_rule_type_count[i]);
+		SSDK_DEBUG("rule_type %d inverse_rule_type_count 0x%x\n",
+				i, rule_map->inverse_rule_type_count[i]);
 		rule_type_count += rule_map->inverse_rule_type_count[i];
-		rule_type_count += inner_rule_map->inverse_rule_type_count[i];
 	}
 
-	SSDK_DEBUG("rule_type_map 0x%x-0x%x rule_type_count 0x%x\n",
-			rule_map->rule_type_map,
-			inner_rule_map->rule_type_map,
-			rule_type_count);
+	SSDK_DEBUG("rule_type_map 0x%x rule_type_count 0x%x\n",
+			rule_map->rule_type_map, rule_type_count);
 
 	return rule_type_count;
 }
@@ -4786,15 +4814,25 @@ _adpt_hppe_acl_rule_type_map(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t r
 	}
 
 #if defined(APPE)
-	if(tunnel_rule_type_map != 0)
-		rule_map->rule_type_map |= tunnel_rule_type_map;
-	if(tunnel_inverse_rule_type_count)
-		rule_map->inverse_rule_type_count[ADPT_ACL_APPE_TUNNEL_RULE] +=
-			tunnel_inverse_rule_type_count;
+	if(tunnel_rule_type_map != 0) {
+		if (_adpt_hppe_rule_type_count(inner_rule_map))
+			inner_rule_map->rule_type_map |= tunnel_rule_type_map;
+		else
+			rule_map->rule_type_map |= tunnel_rule_type_map;
+	}
+	if(tunnel_inverse_rule_type_count) {
+		if (_adpt_hppe_rule_type_count(inner_rule_map))
+			inner_rule_map->inverse_rule_type_count[ADPT_ACL_APPE_TUNNEL_RULE] +=
+				tunnel_inverse_rule_type_count;
+		else
+			rule_map->inverse_rule_type_count[ADPT_ACL_APPE_TUNNEL_RULE] +=
+				tunnel_inverse_rule_type_count;
+	}
 #endif
 
 	/* select one rule type to match all if none is slected */
-	if (_adpt_hppe_rule_type_count(rule_map, inner_rule_map) == 0)
+	if (_adpt_hppe_rule_type_count(rule_map) == 0 &&
+			_adpt_hppe_rule_type_count(inner_rule_map) == 0)
 		rule_map->rule_type_map |= (1<<ADPT_ACL_HPPE_MAC_DA_RULE);
 
 	return SW_OK;
@@ -4804,7 +4842,7 @@ sw_error_t
 adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 		a_uint32_t rule_id, a_uint32_t rule_nr, fal_acl_rule_t * rule)
 {
-	a_uint32_t rule_type_count = 0;
+	a_uint32_t outer_rule_type_count = 0, inner_rule_type_count;
 	a_uint32_t index = 0, hw_list_index = 0, hw_list_id = 0;
 	sw_error_t rv = SW_OK;
 	struct list_head *rule_pos = NULL;
@@ -4867,22 +4905,15 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 					&rule_map, &inner_rule_map);
 
 	/*caculate rule map counts */
-	rule_type_count = _adpt_hppe_rule_type_count(&rule_map, &inner_rule_map);
-
-	if(rule_type_count == 0 || rule_type_count > ADPT_ACL_ENTRY_NUM_PER_LIST)
-	{
-		SSDK_ERROR("rule_type_count = %d\n", rule_type_count);
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
-		rv = SW_NOT_SUPPORTED;
-		goto free_rule;
-	}
+	outer_rule_type_count = _adpt_hppe_rule_type_count(&rule_map);
+	inner_rule_type_count = _adpt_hppe_rule_type_count(&inner_rule_map);
 
 	/*allocate hw entries */
 	rv = _adpt_hppe_acl_alloc_entries(dev_id, &hw_list_index, rule_id, rule_nr,
-			rule, inner_rule, rule_type_count, &index);
+			rule, inner_rule, outer_rule_type_count, inner_rule_type_count, &index);
 	if(rv != SW_OK)
 	{
-		SSDK_ERROR("Alloc hw entries fail for rule %d\n", rule_id);
+		SSDK_ERROR("Alloc hw entries fail (err: %d) for rule %d\n", rv, rule_id);
 		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		goto free_rule;
 	}
