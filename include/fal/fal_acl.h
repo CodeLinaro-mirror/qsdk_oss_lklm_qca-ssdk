@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2014, 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -186,7 +175,14 @@ typedef enum {
 /*new add for IPQ95xx*/
 #define    FAL_ACL_FIELD_UDFPROFILE      57
 
-#define    FAL_ACL_FIELD_NUM             58
+/* New add for IPQ96xx */
+#define    FAL_ACL_FIELD_STAG_TPID_INDEX	58
+#define    FAL_ACL_FIELD_CTAG_TPID_INDEX	59
+#define    FAL_ACL_FIELD_L2_PROTO		60
+#define    FAL_ACL_FIELD_DHCP_TYPE		61
+#define    FAL_ACL_FIELD_MC_TYPE		62
+
+#define    FAL_ACL_FIELD_NUM             63
 
 
 #define    FAL_ACL_ACTION_PERMIT        0
@@ -225,6 +221,11 @@ typedef enum {
 #define    FAL_ACL_ACTION_CASCADE   0
 #define    FAL_ACL_ACTION_VPN       1
 #define    FAL_ACL_ACTION_LEARN_DIS 2
+#define    FAL_ACL_ACTION_REMOVE_TAGS 3
+#define    FAL_ACL_ACTION_REMARK_STAG_TPID 4
+#define    FAL_ACL_ACTION_REMARK_CTAG_TPID 5
+#define    FAL_ACL_ACTION_COUNTER 6
+#define    FAL_ACL_ACTION_SRC_INFO 7
 
 enum{
 	FAL_ACL_BYPASS_IN_VLAN_MISS = 0,
@@ -258,6 +259,22 @@ enum{
 	FAL_ACL_BYPASS_TUNL_CONTEXT,
 	/*new add for IPQ53xx*/
 	FAL_ACL_BYPASS_FLOW_POLICER,
+};
+
+/* ACL bypass bitmap1 at IN VLAN for pre-ipo */
+enum {
+	/* New add bypass bitmap for IPQ96xx */
+	FAL_ACL_IN_VLAN_XLT_BYP = 0,
+	FAL_ACL_DEFAULT_VLAN_BYP,
+	FAL_ACL_DEFAULT_PCP_BYP,
+	FAL_ACL_IN_VLAN_VID_BYP,
+	FAL_ACL_IN_VLAN_PCP_BYP,
+	FAL_ACL_IN_VLAN_DEI_BYP,
+	FAL_ACL_IN_VLAN_COUNTER_BYP,
+	FAL_ACL_IN_VLAN_VSI_BYP,
+	FAL_ACL_IN_VLAN_SRC_INFO_BYP,
+	FAL_ACL_IN_VLAN_DST_INFO_BYP,
+	FAL_ACL_IN_VLAN_SERVICE_CODE_BYP,
 };
 
 
@@ -433,6 +450,18 @@ typedef struct
 	a_uint16_t udf3_mask;
 	a_uint8_t udfprofile_val;
 	a_uint8_t udfprofile_mask;
+
+	/* New add ext vlan rule for IPQ96xx */
+	a_uint8_t stag_tpid_index_val;
+	a_uint8_t stag_tpid_index_mask;
+	a_uint8_t ctag_tpid_index_val;
+	a_uint8_t ctag_tpid_index_mask;
+	a_uint8_t l2_proto_type; /* 0x1 IPV4, 0x2 PPPoE, 0x4 ARP, 0x8 IPV6, 0x10 EAPOL */
+	a_uint8_t l2_proto_type_mask;
+	a_uint8_t dhcp_type; /* 0x1 Non-DHCP, 0x2 IPV4 DHCP, 0x4 IPV6 DHCP */
+	a_uint8_t dhcp_type_mask;
+	a_uint8_t mc_type; /* 0x1 Non-MC, 0x2 IP MC, 0x4 Non-IP MC */
+	a_uint8_t mc_type_mask;
 } fal_acl_rule_field_t;
 
 
@@ -708,10 +737,20 @@ typedef struct
 	a_uint16_t udf3_mask;
 
 	/*new add acl action for hawkeye*/
-	a_uint32_t bypass_bitmap;/*bypass bitmap*/
+	a_uint32_t bypass_bitmap[2];/*bypass bitmap*/
 	a_uint8_t enqueue_pri;/*enqueue priority*/
-	a_uint8_t stag_fmt;/*stag format*/
-	a_uint8_t ctag_fmt;/*ctag format*/
+	a_uint8_t stag_fmt; /* stag format,
+			     * 0 - delete
+			     * 1 - add or replace
+			     * 2 copy from original SVID
+			     * 3 copy from original CVID
+			     */
+	a_uint8_t ctag_fmt; /* ctag format,
+			     * 0 - delete
+			     * 1 add or replace
+			     * 2 copy from original SVID
+			     * 3 copy from original CVID
+			     */
 	a_uint8_t int_dp;/*internal dp*/
 	a_uint8_t service_code;/*service code*/
 	a_uint8_t cpu_code;/*cpu code*/
@@ -734,6 +773,18 @@ typedef struct
 	a_uint16_t napt_l4_port; /*l4 port for NAPT*/
 	a_uint16_t policy_id; /*policy id used for tunnel encapsulation*/
 
+	/* New add ext vlan rule for IPQ96xx */
+	a_uint8_t stag_tpid_index_val;
+	a_uint8_t stag_tpid_index_mask;
+	a_uint8_t ctag_tpid_index_val;
+	a_uint8_t ctag_tpid_index_mask;
+	a_uint8_t l2_proto_type; /* 0x1 IPV4, 0x2 PPPoE, 0x4 ARP, 0x8 IPV6, 0x10 EAPOL */
+	a_uint8_t l2_proto_type_mask;
+	a_uint8_t dhcp_type; /* 0x1 Non-DHCP, 0x2 IPV4 DHCP, 0x4 IPV6 DHCP */
+	a_uint8_t dhcp_type_mask;
+	a_uint8_t mc_type; /* 0x1 Non-MC, 0x2 IP MC, 0x4 Non-IP MC */
+	a_uint8_t mc_type_mask;
+
 	/*new add acl rule fields for IPQ95xx*/
 	fal_acl_tunnel_info_t  tunnel_info; /*tunnel info fields*/
 	fal_acl_rule_field_t   inner_rule_field; /*tunnel inner packet rule fileds*/
@@ -746,6 +797,56 @@ typedef struct
 	/*new add for IPQ54xx*/
 	a_bool_t wifi_qos_en;
 	a_uint8_t wifi_qos_val;
+
+	/* New add action for IPQ96xx */
+	a_uint8_t stag_pri_change_cmd; /* 0 - unchanged
+					* 1 - replace
+					* 2 - copy from original spcp
+					* 3 - copy from original cpcp
+					* 4 - deprive from dscp to pcp mapping
+					* 5 - add tag and replace pcp
+					* 6 - add tag and copy from origiinal spcp
+					* 7 - add tag and copy from original cpcp
+					* 8 - add tag and derive form dscp to pcp mapping
+					*/
+	a_uint8_t stag_dei_change_cmd; /* 0 - unchanged
+					* 1 - replace
+					* 2 - copy from original sdei
+					* 3 - copy from original cdei
+					*/
+	a_uint8_t ctag_pri_change_cmd; /* 0 - unchanged
+					* 1 - replace
+					* 2 - copy from original spcp
+					* 3 - copy from original cpcp
+					* 4 - deprive from dscp to pcp mapping
+					* 5 - add tag and replace pcp
+					* 6 - add tag and copy from origiinal spcp
+					* 7 - add tag and copy from original cpcp
+					* 8 - add tag and derive form dscp to pcp mapping
+					*/
+	a_uint8_t ctag_cfi_change_cmd; /* 0 - unchanged
+					* 1 - replace
+					* 2 - copy from original sdei
+					* 3 - copy from original cdei
+					*/
+	a_uint8_t tags_to_remove; /* tag numbers to be removed, val is 0, 1 or 2 */
+	a_uint8_t stag_tpid_cmd; /* 0 - unchanged
+				  * 1 - replace
+				  * 2 - copy from original stpid index
+				  * 3 - copy from original ctpid index
+				  */
+	a_uint8_t stag_tpid_index; /* remark stpid index */
+	a_uint8_t ctag_tpid_cmd; /* 0 - unchanged
+				  * 1 - replace
+				  * 2 - copy from original stpid index
+				  * 3 - copy from original ctpid index
+				  */
+	a_uint8_t ctag_tpid_index; /* remark ctpid index */
+	a_uint8_t dscp_pcp_mapping_index; /* dscp to pcp mapping index */
+	a_uint8_t counter_mode; /* 0 VLAN device, 1 PON PM */
+	a_uint8_t counter_id;
+	a_uint8_t src_info_type; /* 0 Virtual port, 1 L3_IF */
+	a_uint16_t src_info; /* Virtual port ID or L3_IF index as source info */
 
 	/*returned info*/
 	fal_acl_rule_hw_info_t hw_info;

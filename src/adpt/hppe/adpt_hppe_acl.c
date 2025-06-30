@@ -1856,7 +1856,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 	if(hw_act->bf.bypass_bitmap_0 != 0 ||
 		hw_act->bf.bypass_bitmap_1 != 0)
 	{
-		rule->bypass_bitmap = (hw_act->bf.bypass_bitmap_1<<14)|hw_act->bf.bypass_bitmap_0;
+		rule->bypass_bitmap[0] = (hw_act->bf.bypass_bitmap_1<<14)|hw_act->bf.bypass_bitmap_0;
 	}
 	if(hw_act->bf.svid_change_en == 1)
 	{
@@ -3916,8 +3916,8 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 	{
 		hw_act->bf.mirror_en= 1;
 	}
-	hw_act->bf.bypass_bitmap_0 = rule->bypass_bitmap & 0x3fff;
-	hw_act->bf.bypass_bitmap_1 = (rule->bypass_bitmap>>14) & 0x3ffff;
+	hw_act->bf.bypass_bitmap_0 = rule->bypass_bitmap[0] & 0x3fff;
+	hw_act->bf.bypass_bitmap_1 = (rule->bypass_bitmap[0]>>14) & 0x3ffff;
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_VID))
 	{
 		hw_act->bf.svid_change_en = 1;

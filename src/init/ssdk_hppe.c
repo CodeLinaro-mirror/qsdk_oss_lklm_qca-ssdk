@@ -705,7 +705,7 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 sw_error_t qca_hppe_acl_byp_intf_mac_learn(a_uint32_t dev_id)
 {
 	a_uint32_t index = 0, num;
-	fal_acl_rule_t rule = { 0 };
+	fal_acl_rule_t *rule = NULL;
 	a_uint8_t* mac;
 	a_uint32_t port_bmp = qca_ssdk_port_bmp_get(dev_id);
 
@@ -715,11 +715,14 @@ sw_error_t qca_hppe_acl_byp_intf_mac_learn(a_uint32_t dev_id)
 	}
 
 	/*Bypass fdb learn*/
-	rule.rule_type = FAL_ACL_RULE_MAC;
-	rule.bypass_bitmap |= (1<<FAL_ACL_BYPASS_FDB_LEARNING);
-	rule.bypass_bitmap |= (1<<FAL_ACL_BYPASS_FDB_REFRESH);
+	rule = (fal_acl_rule_t *)kzalloc(sizeof(fal_acl_rule_t), GFP_ATOMIC);
+	if (!rule)
+		return SW_FAIL;
+	rule->rule_type = FAL_ACL_RULE_MAC;
+	rule->bypass_bitmap[0] |= (1<<FAL_ACL_BYPASS_FDB_LEARNING);
+	rule->bypass_bitmap[0] |= (1<<FAL_ACL_BYPASS_FDB_REFRESH);
 
-	FAL_FIELD_FLG_SET(rule.field_flg, FAL_ACL_FIELD_MAC_SA);
+	FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_MAC_SA);
 
 	fal_acl_list_creat(dev_id, LIST_ID_BYP_FDB_LRN, LIST_PRI_BYP_FDB_LRN);
 
@@ -727,13 +730,16 @@ sw_error_t qca_hppe_acl_byp_intf_mac_learn(a_uint32_t dev_id)
 		if(index >= num)
 			break;
 		mac = ssdk_intf_macaddr_get(index);
-		memcpy(rule.src_mac_val.uc, mac, 6);
-		memset(rule.src_mac_mask.uc, 0xff, 6);
-		SSDK_DEBUG("%02x:%02x:%02x:%02x:%02x:%02x\n", rule.src_mac_val.uc[0],
-			rule.src_mac_val.uc[1], rule.src_mac_val.uc[2], rule.src_mac_val.uc[3],
-			rule.src_mac_val.uc[4], rule.src_mac_val.uc[5]);
-		fal_acl_rule_add(dev_id, LIST_ID_BYP_FDB_LRN, index, 1, &rule);
+		memcpy(rule->src_mac_val.uc, mac, 6);
+		memset(rule->src_mac_mask.uc, 0xff, 6);
+		SSDK_DEBUG("%02x:%02x:%02x:%02x:%02x:%02x\n", rule->src_mac_val.uc[0],
+			rule->src_mac_val.uc[1], rule->src_mac_val.uc[2], rule->src_mac_val.uc[3],
+			rule->src_mac_val.uc[4], rule->src_mac_val.uc[5]);
+		fal_acl_rule_add(dev_id, LIST_ID_BYP_FDB_LRN, index, 1, rule);
 	}
+
+	aos_mem_free(rule);
+	rule = NULL;
 	fal_acl_list_bind(dev_id, LIST_ID_BYP_FDB_LRN, FAL_ACL_DIREC_IN,
 				FAL_ACL_BIND_PORTBITMAP, port_bmp);
 
@@ -752,7 +758,7 @@ sw_error_t qca_hppe_acl_remark_ptp_servcode(a_uint32_t dev_id) {
 
 	sw_error_t ret;
 	fal_servcode_config_t servcode_conf;
-	fal_acl_rule_t entry = {0};
+	fal_acl_rule_t *entry = NULL;
 	a_uint32_t index = 0, msg_type = 0;
 	a_uint32_t ptp_port_bmp = 0;
 
@@ -774,35 +780,38 @@ sw_error_t qca_hppe_acl_remark_ptp_servcode(a_uint32_t dev_id) {
 	SW_RTN_ON_ERROR(ret);
 
 	/* Tag service code for PTP packet */
-	entry.service_code = PTP_EVENT_PKT_SERVICE_CODE;
-	entry.pri = LIST_PRI_TAG_SERVICE_CODE_PTP;
-	FAL_ACTION_FLG_SET(entry.action_flg, FAL_ACL_ACTION_SERVICE_CODE);
-	FAL_ACTION_FLG_SET(entry.action_flg, FAL_ACL_ACTION_PERMIT);
+	entry = (fal_acl_rule_t *)kzalloc(sizeof(fal_acl_rule_t), GFP_ATOMIC);
+	if (!entry)
+		return SW_FAIL;
+	entry->service_code = PTP_EVENT_PKT_SERVICE_CODE;
+	entry->pri = LIST_PRI_TAG_SERVICE_CODE_PTP;
+	FAL_ACTION_FLG_SET(entry->action_flg, FAL_ACL_ACTION_SERVICE_CODE);
+	FAL_ACTION_FLG_SET(entry->action_flg, FAL_ACL_ACTION_PERMIT);
 
 	/* L2 PTP packet */
-	entry.rule_type = FAL_ACL_RULE_MAC;
+	entry->rule_type = FAL_ACL_RULE_MAC;
 
 	/* L2 PTP ethernet type 0x88f7 */
-	entry.ethtype_val = ETH_P_1588;
-	entry.ethtype_mask = 0xffff;
-	FAL_FIELD_FLG_SET(entry.field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
+	entry->ethtype_val = ETH_P_1588;
+	entry->ethtype_mask = 0xffff;
+	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
 
 	for (msg_type = PTP_MSG_SYNC; msg_type <= PTP_MSG_PRESP; msg_type++) {
 		/* L2 UDF2 for msg type */
-		entry.udf2_val = (msg_type << 0x8);
-		entry.udf2_mask = 0x0f00;
-		FAL_FIELD_FLG_SET(entry.field_flg, FAL_ACL_FIELD_UDF2);
+		entry->udf2_val = (msg_type << 0x8);
+		entry->udf2_mask = 0x0f00;
+		FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_UDF2);
 
 		/* Add PTP L2 rule to ACL list */
 		ret = fal_acl_rule_add(dev_id, LIST_ID_L2_TAG_SERVICE_CODE_PTP,
-				index++, 1, &entry);
+				index++, 1, entry);
 		SW_RTN_ON_ERROR(ret);
 	}
 
 	/* Unset L2 PTP ethernet type 0x88f7 */
 	index = 0;
-	FAL_FIELD_FLG_CLR(entry.field_flg, FAL_ACL_FIELD_UDF2);
-	FAL_FIELD_FLG_CLR(entry.field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
+	FAL_FIELD_FLG_CLR(entry->field_flg, FAL_ACL_FIELD_UDF2);
+	FAL_FIELD_FLG_CLR(entry->field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
 
 	/* Create PTP ACL L4 list */
 	ret = fal_acl_list_creat(dev_id, LIST_ID_L4_TAG_SERVICE_CODE_PTP,
@@ -810,36 +819,38 @@ sw_error_t qca_hppe_acl_remark_ptp_servcode(a_uint32_t dev_id) {
 	SW_RTN_ON_ERROR(ret);
 
 	/* IPv4 PTP packet */
-	entry.rule_type = FAL_ACL_RULE_IP4;
-	entry.is_ip_mask = 1;
-	entry.is_ip_val = A_TRUE;
-	FAL_FIELD_FLG_SET(entry.field_flg, FAL_ACL_FIELD_IP);
-	entry.is_ipv6_mask = 1;
-	entry.is_ipv6_val = A_FALSE;
-	FAL_FIELD_FLG_SET(entry.field_flg, FAL_ACL_FIELD_IPV6);
+	entry->rule_type = FAL_ACL_RULE_IP4;
+	entry->is_ip_mask = 1;
+	entry->is_ip_val = A_TRUE;
+	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IP);
+	entry->is_ipv6_mask = 1;
+	entry->is_ipv6_val = A_FALSE;
+	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IPV6);
 
 	/* PTP over UDP protocol */
-	entry.ip_proto_val = IPPROTO_UDP;
-	entry.ip_proto_mask = 0xff;
-	FAL_FIELD_FLG_SET(entry.field_flg, FAL_ACL_FIELD_IP_PROTO);
+	entry->ip_proto_val = IPPROTO_UDP;
+	entry->ip_proto_mask = 0xff;
+	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IP_PROTO);
 
 	/* PTP UDP dest port 319 */
-	entry.dest_l4port_op = FAL_ACL_FIELD_MASK;
-	entry.dest_l4port_val = PTP_EV_PORT;
-	entry.dest_l4port_mask = 0xffff;
-	FAL_FIELD_FLG_SET(entry.field_flg, FAL_ACL_FIELD_L4_DPORT);
+	entry->dest_l4port_op = FAL_ACL_FIELD_MASK;
+	entry->dest_l4port_val = PTP_EV_PORT;
+	entry->dest_l4port_mask = 0xffff;
+	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_L4_DPORT);
 
 	/* Add PTP IPv4 rule to ACL list */
-	ret = fal_acl_rule_add(dev_id, LIST_ID_L4_TAG_SERVICE_CODE_PTP, index++, 1, &entry);
+	ret = fal_acl_rule_add(dev_id, LIST_ID_L4_TAG_SERVICE_CODE_PTP, index++, 1, entry);
 	SW_RTN_ON_ERROR(ret);
 
 	/* IPv6 PTP packet */
-	entry.rule_type = FAL_ACL_RULE_IP6;
-	entry.is_ipv6_val = A_TRUE;
+	entry->rule_type = FAL_ACL_RULE_IP6;
+	entry->is_ipv6_val = A_TRUE;
 
 	/* Add PTP IPv6 rule to ACL list */
-	ret = fal_acl_rule_add(dev_id, LIST_ID_L4_TAG_SERVICE_CODE_PTP, index++, 1, &entry);
+	ret = fal_acl_rule_add(dev_id, LIST_ID_L4_TAG_SERVICE_CODE_PTP, index++, 1, entry);
 	SW_RTN_ON_ERROR(ret);
+	aos_mem_free(entry);
+	entry = NULL;
 
 	/* Bind PTP ACL list to port bmp */
 	ret = fal_acl_list_bind(dev_id, LIST_ID_L2_TAG_SERVICE_CODE_PTP,

@@ -8734,7 +8734,7 @@ parse_acl_action_field(struct switch_ext *ext_value_p, fal_acl_rule_t *rule)
 		}
 	} else if(!strcmp(ext_value_p->option_name, "bypass_bitmap")) {
 		cmd_data_check_uint32((char*)ext_value_p->option_value,
-			&(rule->bypass_bitmap), sizeof(rule->bypass_bitmap));
+			&(rule->bypass_bitmap[0]), sizeof(rule->bypass_bitmap[0]));
 	} else if(!strcmp(ext_value_p->option_name, "enqueue_priority")) {
 		cmd_data_check_uint8((char*)ext_value_p->option_value,
 			&tmpdata, sizeof(tmpdata));
