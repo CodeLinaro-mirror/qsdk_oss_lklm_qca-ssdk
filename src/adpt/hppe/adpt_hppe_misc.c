@@ -571,7 +571,7 @@ adpt_hppe_debug_prx_drop_cnt_get(a_uint32_t dev_id, char **buf, ssize_t *count)
 
 	sign = tags = 0;
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_CNT RX:");
-	for (i = 0; i < PPE_BM_PHY_PORT_OFFSET; i++)
+	for (i = 0; i < DROP_CNT_NUM; i++)
 	{
 		hppe_drop_cnt_drop_cnt_get(dev_id, i, &value);
 		if (value > 0)
