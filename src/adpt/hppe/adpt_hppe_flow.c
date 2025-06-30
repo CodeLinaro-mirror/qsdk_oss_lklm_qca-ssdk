@@ -1260,7 +1260,7 @@ adpt_hppe_flow_entry_host_op_add(
 		adpt_ppe_flow_ipv6_3tuple_convert(flow_entry, &entry, A_TRUE);
 
 		rv = hppe_flow_entry_host_op_ipv6_3tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
-	} 
+	}
 #if defined(JHPPE)
 	else if ((type & FAL_FLOW_IP4_6TUPLE_ADDR) || (type & FAL_FLOW_IP6_6TUPLE_ADDR)) {
 		/* entry_type is not checked by hardware, which means IPv6 and IPv4 supported. */
@@ -1270,7 +1270,7 @@ adpt_hppe_flow_entry_host_op_add(
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
 		adpt_ppe_flow_ip_6tuple_convert(flow_entry, &entry, A_TRUE);
 
-		rv = hppe_flow_entry_host_op_ip_6tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
+		rv = jhppe_flow_entry_host_op_ip_6tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
 	}
 #endif
 	else
@@ -1354,7 +1354,7 @@ adpt_hppe_flow_entry_host_op_get(
 		aos_mem_zero(&entry, sizeof(entry));
 
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
-		rv = hppe_flow_entry_host_op_ip_6tuple_get(dev_id, get_mode, &entry_id, &entry);
+		rv = jhppe_flow_entry_host_op_ip_6tuple_get(dev_id, get_mode, &entry_id, &entry);
 		flow_entry->entry_id = entry_id;
 		adpt_ppe_flow_ip_6tuple_convert(flow_entry, &entry, A_FALSE);
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_FALSE);
@@ -1436,7 +1436,7 @@ adpt_hppe_flow_entry_host_op_del(
 
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
 
-		rv = hppe_flow_entry_host_op_ip_6tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
+		rv = jhppe_flow_entry_host_op_ip_6tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	}
 #endif
 	else
@@ -1584,7 +1584,7 @@ adpt_hppe_flow_entry_get(
 		aos_mem_zero(&entry, sizeof(entry));
 
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
-		rv = hppe_flow_ip_6tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
+		rv = jhppe_flow_ip_6tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
 		adpt_ppe_flow_ip_6tuple_convert(flow_entry, &entry, A_FALSE);
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_FALSE);
 	}
@@ -1705,7 +1705,7 @@ adpt_hppe_flow_entry_del(
 
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
 
-		rv = hppe_flow_ip_6tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
+		rv = jhppe_flow_ip_6tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	}
 #endif
 	else
@@ -1955,7 +1955,7 @@ adpt_hppe_flow_entry_add(
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
 		adpt_ppe_flow_ip_6tuple_convert(flow_entry, &entry, A_TRUE);
 
-		rv = hppe_flow_ip_6tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
+		rv = jhppe_flow_ip_6tuple_add(dev_id, (a_uint32_t)add_mode, &flow_entry->entry_id, &entry);
 	}
 #endif
 	else

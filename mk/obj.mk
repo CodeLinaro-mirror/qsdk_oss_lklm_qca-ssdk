@@ -179,6 +179,7 @@ OBJ-HPPE    += src/hsl/hppe/hppe_flow.o src/adpt/hppe/adpt_hppe_flow.o
 OBJ-CPPE    += src/adpt/cppe/adpt_cppe_flow.o
 OBJ-APPE    += src/adpt/cppe/adpt_cppe_flow.o #to be fixed
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_l3_flow.o src/adpt/jhppe/adpt_jhppe_flow.o
+OBJ-JHPPE   += src/hsl/jhppe/jhppe_flow_misc.o
 endif
 
 ###############################################################################
