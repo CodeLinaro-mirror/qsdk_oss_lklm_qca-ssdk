@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -417,7 +406,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 		hw_act->bf.svid_change_en = 1;
 		hw_act->bf.stag_fmt = rule->stag_fmt;
 #ifdef JHPPE
-		hw_act->bf.svid_0 = rule->stag_vid & 0x7f;
+		hw_act->bf.svid_0 = (rule->stag_vid) & 0x7FF;
 		hw_act->bf.svid_1 = (rule->stag_vid >> 11) & 0x1;
 #else
 		hw_act->bf.svid = rule->stag_vid;
@@ -425,12 +414,20 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_PRI))
 	{
+#if defined(JHPPE)
+		hw_act->bf.stag_pcp_change_en = rule->stag_pri_change_cmd;
+#else
 		hw_act->bf.stag_pcp_change_en = 1;
+#endif
 		hw_act->bf.stag_pcp = rule->stag_pri;
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_DEI))
 	{
+#if defined(JHPPE)
+		hw_act->bf.stag_dei_change_en = rule->stag_dei_change_cmd;
+#else
 		hw_act->bf.stag_dei_change_en = 1;
+#endif
 		hw_act->bf.stag_dei = rule->stag_dei;
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_VID))
@@ -441,19 +438,56 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI))
 	{
-		hw_act->bf.ctag_pcp_change_en = 1;
-#ifdef JHPPE
-		hw_act->bf.ctag_pcp = rule->ctag_pri&0x7;
+#if defined(JHPPE)
+		hw_act->bf.ctag_pcp_change_en = rule->ctag_pri_change_cmd;
+		hw_act->bf.ctag_pcp = rule->ctag_pri & 0x7;
 #else
+		hw_act->bf.ctag_pcp_change_en = 1;
 		hw_act->bf.ctag_pcp_0 = rule->ctag_pri&0x3;
 		hw_act->bf.ctag_pcp_1 = (rule->ctag_pri>>2)&0x1;
 #endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_CFI))
 	{
+#if defined(JHPPE)
+		hw_act->bf.ctag_dei_change_en = rule->ctag_cfi_change_cmd;
+#else
 		hw_act->bf.ctag_dei_change_en = 1;
+#endif
 		hw_act->bf.ctag_dei = rule->ctag_cfi;
 	}
+
+#if defined(JHPPE)
+	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_REMOVE_TAGS))
+	{
+		hw_act->bf.tags_to_remove = rule->tags_to_remove;
+	}
+	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_STAG_TPID))
+	{
+		hw_act->bf.stpid_cmd = rule->stag_tpid_cmd;
+		hw_act->bf.stpid_index = rule->stag_tpid_index;
+	}
+	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_CTAG_TPID))
+	{
+		hw_act->bf.ctpid_cmd = rule->ctag_tpid_cmd;
+		hw_act->bf.ctpid_index = rule->ctag_tpid_index;
+	}
+	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_COUNTER))
+	{
+		hw_act->bf.counter_en = 1;
+		hw_act->bf.counter_id = rule->counter_id;
+		hw_act->bf.counter_mode = rule->counter_mode;
+	}
+	hw_act->bf.bypass_bitmap = rule->bypass_bitmap[1];
+	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_SRC_INFO))
+	{
+		hw_act->bf.src_info_valid = 1;
+		hw_act->bf.src_info = rule->src_info;
+		hw_act->bf.src_info_type = rule->src_info_type;
+	}
+	hw_act->bf.dscp_pbit_mapping_index = rule->dscp_pcp_mapping_index;
+#endif
+
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_DSCP))
 	{
 		hw_act->bf.dscp_tc_change_en = 1;
@@ -842,37 +876,85 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 		rule->stag_vid = hw_act->bf.svid;
 #endif
 	}
-	if(hw_act->bf.stag_pcp_change_en == 1)
+	if(hw_act->bf.stag_pcp_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_PRI);
 		rule->stag_pri = hw_act->bf.stag_pcp;
+#if defined(JHPPE)
+		rule->stag_pri_change_cmd = hw_act->bf.stag_pcp_change_en; /* stag pcp change cmd */
+#endif
 	}
-	if(hw_act->bf.stag_dei_change_en == 1)
+	if(hw_act->bf.stag_dei_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_DEI);
 		rule->stag_dei = hw_act->bf.stag_dei;
+#if defined(JHPPE)
+		rule->stag_dei_change_cmd = hw_act->bf.stag_dei_change_en; /* stag dei change cmd */
+#endif
 	}
-	if(hw_act->bf.cvid_change_en == 1)
+	if(hw_act->bf.cvid_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_VID);
 		rule->ctag_fmt = hw_act->bf.ctag_fmt;
 		rule->ctag_vid = hw_act->bf.cvid;
 	}
-	if(hw_act->bf.ctag_pcp_change_en == 1)
+	if(hw_act->bf.ctag_pcp_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI);
 
 #ifdef JHPPE
+		rule->ctag_pri_change_cmd = hw_act->bf.ctag_pcp_change_en; /* ctag pcp change cmd */
 		rule->ctag_pri = hw_act->bf.ctag_pcp & 0x7;
 #else
 		rule->ctag_pri = (hw_act->bf.ctag_pcp_1<<2)|hw_act->bf.ctag_pcp_0;
 #endif
 	}
-	if(hw_act->bf.ctag_dei_change_en == 1)
+	if(hw_act->bf.ctag_dei_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_CFI);
 		rule->ctag_cfi = hw_act->bf.ctag_dei;
+#if defined(JHPPE)
+		rule->ctag_cfi_change_cmd = hw_act->bf.ctag_dei_change_en; /* ctag dei change cmd */
+#endif
 	}
+
+#if defined(JHPPE)
+	if(hw_act->bf.tags_to_remove)
+	{
+		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_REMOVE_TAGS);
+		rule->tags_to_remove = hw_act->bf.tags_to_remove;
+	}
+	if(hw_act->bf.stpid_cmd)
+	{
+		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_STAG_TPID);
+		rule->stag_tpid_cmd = hw_act->bf.stpid_cmd;
+		rule->stag_tpid_index = hw_act->bf.stpid_index;
+	}
+	if(hw_act->bf.ctpid_cmd)
+	{
+		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_CTAG_TPID);
+		rule->ctag_tpid_cmd = hw_act->bf.ctpid_cmd;
+		rule->ctag_tpid_index = hw_act->bf.ctpid_index;
+	}
+	if (hw_act->bf.counter_en)
+	{
+		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_COUNTER);
+		rule->counter_id = hw_act->bf.counter_id;
+		rule->counter_mode = hw_act->bf.counter_mode;
+	}
+	if (hw_act->bf.bypass_bitmap)
+	{
+		rule->bypass_bitmap[1] = hw_act->bf.bypass_bitmap;
+	}
+	if (hw_act->bf.src_info_valid)
+	{
+		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_SRC_INFO);
+		rule->src_info = hw_act->bf.src_info;
+		rule->src_info_type = hw_act->bf.src_info_type;
+	}
+	rule->dscp_pcp_mapping_index = hw_act->bf.dscp_pbit_mapping_index;
+#endif
+
 	if(hw_act->bf.dscp_tc_change_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_DSCP);
@@ -960,7 +1042,6 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 		nat_action = hw_act->bf.nat_action;
 
 #endif
-
 
 		if(nat_action == APPE_ACL_POLICY_ROUTE)
 		{
