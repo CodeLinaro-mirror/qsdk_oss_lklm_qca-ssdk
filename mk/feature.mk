@@ -268,4 +268,8 @@ endif
 ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
 	IN_SAMPL=TRUE
 endif
+
+ifneq (, $(filter HMSPPE, $(CHIP_TYPE)))
+	IN_PON=TRUE
+endif
 #auto_insert_flag

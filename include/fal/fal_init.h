@@ -54,6 +54,7 @@ enum{
 	FAL_MODULE_ATHTAG,
 	FAL_MODULE_PKTEDIT,
 	FAL_MODULE_SAMPL,
+	FAL_MODULE_PON,
 /* auto_insert_flag */
 	FAL_MODULE_MAX,
 };

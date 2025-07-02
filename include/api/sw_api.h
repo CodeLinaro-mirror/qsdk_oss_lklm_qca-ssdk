@@ -323,6 +323,12 @@ typedef enum
 	SW_FLOW_KEY,
 	SW_VLAN_KEY,
 	SW_EIP_LOOKUP_MODE,
+	SW_GEMPORT_GLB_CFG,
+	SW_GEMPORT_GEN_DFT,
+	SW_GEMPORT_GEN,
+	SW_GEMPORT_MAP,
+	SW_GEMPORT_CFG,
+	SW_GEMPORT_PLC,
 /* auto_insert_flag */
 } sw_data_type_e;
 

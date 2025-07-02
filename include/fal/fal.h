@@ -60,6 +60,7 @@ extern "C" {
 #include "fal_athtag.h"
 #include "fal_pktedit.h"
 #include "fal_sampling.h"
+#include "fal_pon.h"
 /* auto_insert_flag */
 
 /*qca808x_start*/
