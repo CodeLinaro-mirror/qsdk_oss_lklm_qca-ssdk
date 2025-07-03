@@ -1223,7 +1223,9 @@ union lpi_cnt_u {
 #define DROP_CNT
 #define DROP_CNT_ADDRESS 0x24
 #if defined(MRPPE)
-#define DROP_CNT_NUM     16
+#define DROP_CNT_NUM     4
+#elif defined(MPPE)
+#define DROP_CNT_NUM     3
 #else
 #define DROP_CNT_NUM     8
 #endif
