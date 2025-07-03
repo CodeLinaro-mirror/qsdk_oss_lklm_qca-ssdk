@@ -320,6 +320,23 @@ struct ssdk_ppe_tunnel_priv {
 #endif
 };
 
+typedef enum {
+	SSDK_DTS_PARSE_FAILURE = 0,
+	SSDK_INIT_START = 1,
+	SSDK_PLAT_INIT_FAILURE = 2,
+	SSDK_CHIP_VER_GET_FAILURE = 3,
+	SSDK_HW_INIT_FAILURE = 4,
+	SSDK_SWITCH_REGISTER_FAILURE = 5,
+	SSDK_INIT_SUCCESS = 6,
+	SSDK_INVALID_INIT_STATUS = 0xff,
+} ssdk_init_state_t;
+
+struct ssdk_module_cnt_priv {
+	ssdk_init_state_t ssdk_init_state;
+	a_uint32_t polling_start_cnt;
+	a_uint32_t polling_stop_cnt;
+};
+
 struct qca_phy_priv {
 	struct phy_device *phy;
 #if defined(IN_SWCONFIG)
@@ -396,8 +413,8 @@ struct qca_phy_priv {
 	u8 __iomem *hw_addr;
 	u8 __iomem *uniphy_hw_addr;
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
-
 	struct ssdk_ppe_tunnel_priv tnl_priv;
+	struct ssdk_module_cnt_priv ssdk_module_cnt;
 /*qca808x_start*/
 };
 

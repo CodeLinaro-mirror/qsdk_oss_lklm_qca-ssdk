@@ -1443,6 +1443,51 @@ static ssize_t ssdk_mac_polling_set(struct device *dev,
 	return count;
 }
 
+static ssize_t ssdk_module_debug_stats_get(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	a_uint32_t len = 0;
+	a_uint32_t dev_id, dev_num;
+
+	dev_num = ssdk_switch_device_num_get();
+	for (dev_id = 0; dev_id < dev_num; dev_id ++) {
+		struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+		if (!priv)
+			return 0;
+
+		len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"Device Id                        : %d\n",priv->device_id);
+		if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_INIT_START)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK INIT START              : Success\n");
+		if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_DTS_PARSE_FAILURE)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK DTS PARSE               : Failure\n");
+		else if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_PLAT_INIT_FAILURE)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK PLAT INIT               : Failure\n");
+		else if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_CHIP_VER_GET_FAILURE)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK CHIP VER GET            : Failure\n");
+		else if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_HW_INIT_FAILURE)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK HW INIT                 : Failure\n");
+		else if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_SWITCH_REGISTER_FAILURE)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK SWITCH REGISTER         : Failure\n");
+		if (priv->ssdk_module_cnt.ssdk_init_state == SSDK_INIT_SUCCESS)
+			len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK INIT                    : Success\n");
+		len += snprintf(buf + len, (ssize_t)(PAGE_SIZE - len),
+				"    SSDK MAC Polling Start Count : %d\n" \
+				"    SSDK MAC Polling Stop Count  : %d\n",
+				priv->ssdk_module_cnt.polling_start_cnt,
+				priv->ssdk_module_cnt.polling_stop_cnt);
+	}
+
+	return len;
+}
+
 static const struct device_attribute ssdk_dev_id_attr =
 	__ATTR(dev_id, 0660, ssdk_dev_id_get, ssdk_dev_id_set);
 static const struct device_attribute ssdk_log_level_attr =
@@ -1461,6 +1506,8 @@ static const struct device_attribute ssdk_eth_switch_attr =
 	__ATTR(eth_switch, 0660, ssdk_eth_switch_get, NULL);
 static const struct device_attribute ssdk_mac_polling_attr =
 	__ATTR(mac_polling, 0660, NULL, ssdk_mac_polling_set);
+static const struct device_attribute ssdk_module_debug_stats_attr =
+	__ATTR(module_state, 0660, ssdk_module_debug_stats_get, NULL);
 
 struct kobject *ssdk_sys = NULL;
 
@@ -1538,8 +1585,17 @@ int ssdk_sysfs_init (void)
 		goto CLEANUP_9;
 	}
 
+	/* create /sys/ssdk/ssdk_module_cnt_stats */
+	ret = sysfs_create_file(ssdk_sys, &ssdk_module_debug_stats_attr.attr);
+	if (ret) {
+		printk("Failed to register SSDK module debug SysFS file\n");
+		goto CLEANUP_10;
+	}
+
 	return 0;
 
+CLEANUP_10:
+	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 CLEANUP_9:
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 CLEANUP_8:
@@ -1572,6 +1628,8 @@ void ssdk_sysfs_exit (void)
 	sysfs_remove_file(ssdk_sys, &ssdk_log_level_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dev_id_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
+	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
+	sysfs_remove_file(ssdk_sys, &ssdk_module_debug_stats_attr.attr);
 	kobject_put(ssdk_sys);
 }
 
