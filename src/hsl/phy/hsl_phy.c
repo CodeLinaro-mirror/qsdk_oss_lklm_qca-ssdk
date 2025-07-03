@@ -23,8 +23,6 @@
 #include "ssdk_plat.h"
 #include "hsl_port_prop.h"
 #include <linux/netdevice.h>
-#include <linux/i2c.h>
-#include "ssdk_phy_i2c.h"
 
 phy_info_t *phy_info[SW_MAX_NR_DEV] = {0};
 a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
@@ -59,7 +57,7 @@ a_bool_t hsl_port_phy_connected(a_uint32_t dev_id, fal_port_t port_id)
 a_uint32_t hsl_phyid_get(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	a_uint16_t org_id = 0, rev_id = 0;
-	a_uint32_t reg_pad = 0, phy_id = 0;
+	a_uint32_t reg_pad = 0;
 
 /*qca808x_end*/
 	if (hsl_port_is_sfp(dev_id, port_id)){
@@ -75,9 +73,7 @@ a_uint32_t hsl_phyid_get(a_uint32_t dev_id, a_uint32_t port_id)
 	rev_id = hsl_phy_mii_reg_read(dev_id,
 		phy_info[dev_id]->phy_address[port_id], reg_pad | 3);
 
-	phy_id = (org_id<<16) | rev_id;
-
-	return phy_id;
+	return ((org_id<<16) | rev_id);
 }
 
 phy_type_t hsl_phytype_get_by_phyid(a_uint32_t dev_id, a_uint32_t phy_id)
@@ -435,26 +431,6 @@ void hsl_port_phy_gpio_reset(a_uint32_t dev_id, a_uint32_t port_id)
 	SSDK_INFO("GPIO%d reset Port %d done\n", gpio_num, port_id);
 
 	gpio_free(gpio_num);
-
-	return;
-}
-
-void
-hsl_port_phy_dac_get(a_uint32_t dev_id, a_uint32_t port_id,
-	phy_dac_t *phy_dac)
-{
-	phy_dac->mdac = phy_info[dev_id]->phy_dac[port_id].mdac;
-	phy_dac->edac = phy_info[dev_id]->phy_dac[port_id].edac;
-
-	return;
-}
-
-void
-hsl_port_phy_dac_set(a_uint32_t dev_id, a_uint32_t port_id,
-	phy_dac_t phy_dac)
-{
-	phy_info[dev_id]->phy_dac[port_id].mdac = phy_dac.mdac;
-	phy_info[dev_id]->phy_dac[port_id].edac = phy_dac.edac;
 
 	return;
 }
@@ -1305,7 +1281,6 @@ void hsl_phy_mii_soc_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 static sw_error_t
 hsl_phy_lock(a_uint32_t dev_id, a_uint32_t phy_addr, a_bool_t enable)
 {
-
 	struct mii_bus *miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
 	SW_RTN_ON_NULL(miibus);
 	if(enable)
@@ -1357,7 +1332,6 @@ __hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_r
 	struct mii_bus *miibus = NULL;
 	int ret;
 
-
 	miibus = ssdk_phy_miibus_get(dev_id, phy_addr);
 	SW_RTN_ON_NULL(miibus);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,6,0))
@@ -1370,31 +1344,9 @@ __hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_r
 #endif
 		ret = __mdiobus_write(miibus, TO_PHY_ADDR(phy_addr), mii_reg, reg_val);
 
-	if (ret)
-		return ret;
-
-	return SW_OK;
+	return ret;
 }
-/*
- * @brief modify mii register without lock
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @param[in] mii_reg mii register id
- * @param[in] mask mask of bits to clear
- * @param[in] value new value of bits
- * @return SW_OK or error code
- */
-sw_error_t
-__hsl_phy_modify_mii(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
-	a_uint16_t mask, a_uint16_t value)
-{
-	a_uint16_t phy_data = 0, new_phy_data = 0;
 
-	phy_data = __hsl_phy_mii_reg_read(dev_id, phy_addr, mii_reg);
-	PHY_RTN_ON_READ_ERROR(phy_data);
-	new_phy_data = (phy_data & ~mask) | value;
-	return __hsl_phy_mii_reg_write(dev_id, phy_addr, mii_reg, new_phy_data);
-}
 /*
  * @brief read mii register with lock
  * @param[in] dev_id device id
@@ -1429,27 +1381,6 @@ hsl_phy_mii_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
 	rv = __hsl_phy_mii_reg_write(dev_id, phy_addr, mii_reg, reg_val);
-	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
-
-	return rv;
-}
-/*
- * @brief modify mii register with lock
- * @param[in] dev_id device id
- * @param[in] phy_addr phy address
- * @param[in] mii_reg mii register id
- * @param[in] mask mask of bits to clear
- * @param[in] value new value of bits
- * @return SW_OK or error code
- */
-sw_error_t
-hsl_phy_modify_mii(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t mii_reg,
-	a_uint16_t mask, a_uint16_t value)
-{
-	sw_error_t rv = SW_OK;
-
-	hsl_phy_lock(dev_id, phy_addr, A_TRUE);
-	rv = __hsl_phy_modify_mii(dev_id, phy_addr, mii_reg, mask, value);
 	hsl_phy_lock(dev_id, phy_addr, A_FALSE);
 
 	return rv;
