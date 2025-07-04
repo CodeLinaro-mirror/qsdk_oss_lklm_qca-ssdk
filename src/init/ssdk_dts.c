@@ -204,14 +204,6 @@ hsl_reg_mode ssdk_uniphy_reg_access_mode_get(a_uint32_t dev_id)
 	return cfg->uniphy_reg_access_mode;
 }
 #endif
-#ifdef DESS
-hsl_reg_mode ssdk_psgmii_reg_access_mode_get(a_uint32_t dev_id)
-{
-	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
-
-	return cfg->psgmii_reg_access_mode;
-}
-#endif
 void ssdk_switch_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
@@ -225,15 +217,6 @@ a_uint32_t ssdk_switch_pcie_base_get(a_uint32_t dev_id)
 
 	return cfg->pcie_hw_base;
 }
-#ifdef DESS
-void ssdk_psgmii_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info)
-{
-	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
-
-	info->base_addr = cfg->psgmiireg_base_addr;
-	info->size = cfg->psgmiireg_size;
-}
-#endif
 #ifdef IN_UNIPHY
 void ssdk_uniphy_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info)
 {

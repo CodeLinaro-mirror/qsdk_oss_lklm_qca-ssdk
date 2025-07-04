@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2014-2015, 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -392,7 +381,6 @@ struct qca_phy_priv {
 	a_uint16_t pvid[SSDK_MAX_PORT_NUM];
 	a_uint32_t ports_num;
 	u8 __iomem *hw_addr;
-	u8 __iomem *psgmii_hw_addr;
 	u8 __iomem *uniphy_hw_addr;
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
 /*qca808x_start*/
@@ -482,14 +470,6 @@ qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 
 sw_error_t
 qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr,
-			a_uint8_t * reg_data, a_uint32_t len);
-
-sw_error_t
-qca_psgmii_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
-			a_uint8_t * reg_data, a_uint32_t len);
-
-sw_error_t
-qca_psgmii_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr,
 			a_uint8_t * reg_data, a_uint32_t len);
 
 sw_error_t

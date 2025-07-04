@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
  #ifndef _SSDK_DTS_H_
@@ -164,10 +153,6 @@ a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id);
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id);
 void ssdk_switch_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info);
 a_uint32_t ssdk_switch_pcie_base_get(a_uint32_t dev_id);
-#ifdef DESS
-hsl_reg_mode ssdk_psgmii_reg_access_mode_get(a_uint32_t dev_id);
-void ssdk_psgmii_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info);
-#endif
 #ifdef IN_UNIPHY
 hsl_reg_mode ssdk_uniphy_reg_access_mode_get(a_uint32_t dev_id);
 void ssdk_uniphy_reg_map_info_get(a_uint32_t dev_id, ssdk_reg_map_info *info);

@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2017-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -31,8 +20,6 @@ i2c_reg_get ssdk_i2c_get    = NULL;
 /*qca808x_end*/
 hdr_reg_set  ssdk_hdr_reg_set = NULL;
 hdr_reg_get  ssdk_hdr_reg_get = NULL;
-psgmii_reg_set  ssdk_psgmii_reg_set = NULL;
-psgmii_reg_get  ssdk_psgmii_reg_get = NULL;
 uniphy_reg_set  ssdk_uniphy_reg_set = NULL;
 uniphy_reg_get  ssdk_uniphy_reg_get = NULL;
 mii_reg_set	ssdk_mii_reg_set = NULL;
@@ -216,40 +203,6 @@ sd_reg_hdr_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_u
 }
 
 sw_error_t
-sd_reg_psgmii_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
-{
-    sw_error_t rv;
-
-    if (NULL != ssdk_psgmii_reg_set)
-    {
-        rv = ssdk_psgmii_reg_set(dev_id, reg_addr, reg_data, len);
-    }
-    else
-    {
-        return SW_NOT_SUPPORTED;
-    }
-
-    return rv;
-}
-
-sw_error_t
-sd_reg_psgmii_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
-{
-    sw_error_t rv;
-
-    if (NULL != ssdk_psgmii_reg_get)
-    {
-        rv = ssdk_psgmii_reg_get(dev_id, reg_addr, reg_data, len);
-    }
-    else
-    {
-        return SW_NOT_SUPPORTED;
-    }
-
-    return rv;
-}
-
-sw_error_t
 sd_reg_uniphy_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr,
 		a_uint8_t * reg_data, a_uint32_t len)
 {
@@ -369,16 +322,6 @@ sd_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
     if (NULL != cfg->reg_func.header_reg_get)
     {
         ssdk_hdr_reg_get = cfg->reg_func.header_reg_get;
-    }
-
-    if (NULL != cfg->reg_func.psgmii_reg_set)
-    {
-        ssdk_psgmii_reg_set = cfg->reg_func.psgmii_reg_set;
-    }
-
-    if (NULL != cfg->reg_func.psgmii_reg_get)
-    {
-        ssdk_psgmii_reg_get = cfg->reg_func.psgmii_reg_get;
     }
     if (NULL != cfg->reg_func.uniphy_reg_set)
     {

@@ -111,12 +111,6 @@ extern "C" {
     typedef sw_error_t
     (*hdr_reg_get) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
 
-    typedef sw_error_t
-    (*psgmii_reg_set) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
-
-    typedef sw_error_t
-    (*psgmii_reg_get) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
-
 	typedef sw_error_t
 	(*uniphy_reg_set) (a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
 
@@ -163,8 +157,6 @@ enum ssdk_port_wrapper_cfg {
 /*qca808x_end*/
         hdr_reg_set     header_reg_set;
         hdr_reg_get     header_reg_get;
-        psgmii_reg_set     psgmii_reg_set;
-        psgmii_reg_get     psgmii_reg_get;
         uniphy_reg_set     uniphy_reg_set;
         uniphy_reg_get     uniphy_reg_get;
 	mii_reg_set	mii_reg_set;

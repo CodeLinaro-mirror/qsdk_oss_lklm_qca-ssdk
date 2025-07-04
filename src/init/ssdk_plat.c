@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -1142,18 +1131,6 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 		printk("        tm_tick_mode = <0x%x>\n", ssdk_tm_tick_mode_get(dev_id));
 #endif
 #endif
-#ifdef DESS
-		printk("ess-psgmii\n");
-		ssdk_psgmii_reg_map_info_get(dev_id, &map);
-		mode = ssdk_psgmii_reg_access_mode_get(dev_id);
-		printk("        reg = <0x%x 0x%x>\n", map.base_addr, map.size);
-		if (mode == HSL_REG_LOCAL_BUS)
-			printk("        psgmii_access_mode = <local bus>\n");
-		else if (mode == HSL_REG_MDIO)
-			printk("        psgmii_access_mode = <mdio bus>\n");
-		else
-			printk("        psgmii_access_mode = <(null)>\n");
-#endif
 #ifdef IN_UNIPHY
 		printk("ess-uniphy\n");
 		ssdk_uniphy_reg_map_info_get(dev_id, &map);
@@ -1676,32 +1653,7 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 		ssdk_pci_ppe_clock_init(dev_id);
 #endif
 	}
-
-#ifdef DESS
-	reg_mode = ssdk_psgmii_reg_access_mode_get(dev_id);
-	if(reg_mode == HSL_REG_LOCAL_BUS) {
-		ssdk_psgmii_reg_map_info_get(dev_id, &map);
-		if (!request_mem_region(map.base_addr,
-					map.size, "psgmii_mem")) {
-			SSDK_ERROR("%s Unable to request psgmii resource.", __func__);
-			return -1;
-		}
-
-		qca_phy_priv_global[dev_id]->psgmii_hw_addr = ioremap(map.base_addr,
-								map.size);
-		if (!qca_phy_priv_global[dev_id]->psgmii_hw_addr) {
-			SSDK_ERROR("%s ioremap fail.", __func__);
-			cfg->reg_func.psgmii_reg_set = NULL;
-			cfg->reg_func.psgmii_reg_get = NULL;
-			return -1;
-		}
-
-		cfg->reg_func.psgmii_reg_set = qca_psgmii_reg_write;
-		cfg->reg_func.psgmii_reg_get = qca_psgmii_reg_read;
-	}
-#endif
 /*qca808x_start*/
-
 	return 0;
 }
 
@@ -1729,15 +1681,6 @@ ssdk_plat_exit(a_uint32_t dev_id)
 		}
 	}
 
-#ifdef DESS
-	reg_mode = ssdk_psgmii_reg_access_mode_get(dev_id);
-	if (reg_mode == HSL_REG_LOCAL_BUS) {
-		ssdk_psgmii_reg_map_info_get(dev_id, &map);
-		iounmap(qca_phy_priv_global[dev_id]->psgmii_hw_addr);
-		release_mem_region(map.base_addr,
-                                        map.size);
-	}
-#endif
 #ifdef IN_UNIPHY
 	reg_mode = ssdk_uniphy_reg_access_mode_get(dev_id);
 	if (reg_mode == HSL_REG_LOCAL_BUS) {
