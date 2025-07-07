@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -1192,7 +1180,7 @@ _adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
 	phy_info_t * phy_info = hsl_phy_info_get(dev_id);
 	SW_RTN_ON_NULL(phy_info);
 
-	if (phy_info->phy_type[port_id] == SFP_PHY_CHIP)
+	if (hsl_port_is_sfp(dev_id, port_id))
 	{
 		*medium = PHY_MEDIUM_FIBER;
 	}
@@ -1209,7 +1197,7 @@ adpt_hppe_port_combo_prefer_medium_get(a_uint32_t dev_id,
 						     fal_port_medium_t *
 						     medium)
 {
-	sw_error_t rv = 0;
+	sw_error_t rv = SW_FAIL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(medium);
@@ -1510,8 +1498,8 @@ _adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
 		return SW_BAD_PARAM;
 	}
 
-	if ((hsl_phy_type_get(dev_id, port_id) == SFP_PHY_CHIP && medium == PHY_MEDIUM_FIBER) ||
-		(hsl_phy_type_get(dev_id, port_id) != SFP_PHY_CHIP && medium == PHY_MEDIUM_COPPER))
+	if ((hsl_port_is_sfp(dev_id, port_id) && medium == PHY_MEDIUM_FIBER) ||
+		(!hsl_port_is_sfp(dev_id, port_id) && medium == PHY_MEDIUM_COPPER))
 	{
 		return SW_OK;
 	}
@@ -1544,7 +1532,7 @@ adpt_hppe_port_combo_prefer_medium_set(a_uint32_t dev_id,
 					     a_uint32_t port_id,
 					     fal_port_medium_t medium)
 {
-	sw_error_t rv = 0;
+	sw_error_t rv = SW_FAIL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
