@@ -27,6 +27,7 @@ extern "C" {
 typedef enum {
 	FAL_SAMPL_CNT_ETHERNET_PKT = 0, /* packet length with ethernet header */
 	FAL_SAMPL_CNT_IP_PKT,	/* IP header onwards (without L2 header) */
+	FAL_SAMPL_CNT_TUNNEL_IP_PKT, /* Tunnel IP packet (without L2 outer header) */
 } fal_sampling_counter_mode_t;
 
 typedef struct {

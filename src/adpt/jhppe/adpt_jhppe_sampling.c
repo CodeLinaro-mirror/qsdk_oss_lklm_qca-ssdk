@@ -14,9 +14,6 @@
 #include "adpt.h"
 
 
-#define ADPT_JHPPE_SAMPL_WINDOW_MAX_INDEX  15
-#define ADPT_JHPPE_SAMPL_COUNTER_MAX_INDEX 255
-
 sw_error_t
 adpt_jhppe_sampling_time_set(a_uint32_t dev_id,
 			a_uint32_t buff_index, a_uint32_t time_value)
@@ -187,7 +184,7 @@ adpt_jhppe_sampling_window_en_set(a_uint32_t dev_id,
 				a_uint32_t window_index, a_bool_t enable)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
-	if (window_index > ADPT_JHPPE_SAMPL_WINDOW_MAX_INDEX)
+	if (window_index >= SAWF_FLOW_BLOCK_MAP_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
 
 	return jhppe_sawf_flow_block_map_valid_set(dev_id,
@@ -203,7 +200,7 @@ adpt_jhppe_sampling_window_en_get(a_uint32_t dev_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	if (window_index > ADPT_JHPPE_SAMPL_WINDOW_MAX_INDEX)
+	if (window_index >= SAWF_FLOW_BLOCK_MAP_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
 
 	SW_RTN_ON_ERROR(
@@ -227,7 +224,7 @@ adpt_jhppe_sampling_counter_get(a_uint32_t dev_id, a_uint32_t buff_index,
 		(buff_index != FAL_SAMPL_BUFF1))
 		return SW_BAD_PARAM;
 
-	if (counter_id > ADPT_JHPPE_SAMPL_COUNTER_MAX_INDEX)
+	if (counter_id >= (SAWF_FLOW_CNT_TBL_MAX_ENTRY/2))
 		return SW_OUT_OF_RANGE;
 
 	index = (buff_index << 8) | (counter_id & 0xff);
