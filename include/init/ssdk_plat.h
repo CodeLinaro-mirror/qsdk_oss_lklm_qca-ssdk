@@ -481,6 +481,7 @@ qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len);
 /*qca808x_start*/
 struct mii_bus *ssdk_miibus_get(a_uint32_t dev_id, a_uint32_t index);
+a_bool_t ssdk_miibus_is_i2c(a_uint32_t dev_id, a_uint32_t index);
 struct mii_bus *ssdk_port_miibus_get(a_uint32_t dev_id, a_uint32_t port_id);
 struct mii_bus *ssdk_phy_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr);
 sw_error_t ssdk_miibus_add(a_uint32_t dev_id, struct mii_bus *miibus, a_uint32_t *index);

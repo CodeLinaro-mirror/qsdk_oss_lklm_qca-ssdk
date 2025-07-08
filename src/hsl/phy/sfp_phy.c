@@ -412,7 +412,7 @@ int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t bus_index)
 	SSDK_INFO("qca probe sfp phy driver succeeded on port%d\n",port_id);
 
 	phy_id = SFP_PHY;
-	if (bus_index != SSDK_MII_DEFAULT_BUS_ID) {
+	if (ssdk_miibus_is_i2c(dev_id, bus_index)) {
 		hsl_phy_address_init(dev_id, port_id,
 			TO_PHY_ADDR_E(FAL_SFP_PHY_ADDR, bus_index));
 		if(sfp_phy_id_get(dev_id, port_id) == QCA8111_PHY)
