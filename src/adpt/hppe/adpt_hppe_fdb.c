@@ -448,7 +448,6 @@ _modify_fdb_table_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry, a_uint32_t o
 	a_uint32_t cmd_id)
 {
 	sw_error_t rv = SW_OK;
-	fal_fdb_entry_t temp_entry;
 
 	aos_lock_bh(&hppe_fdb_lock);
 	rv = _adpt_hppe_fdb_tbl_op_data_reg_set(dev_id, entry);
@@ -464,28 +463,12 @@ _modify_fdb_table_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry, a_uint32_t o
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-#ifdef JHPPE
 	rv = _adpt_hppe_fdb_tbl_op_rslt_reg_get(dev_id, cmd_id);
 	if (rv != SW_OK)
 	{
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
-	if (rv != SW_OK)
-	{
-		aos_unlock_bh(&hppe_fdb_lock);
-		return rv;
-	}
-#else
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
-	rv = _adpt_hppe_fdb_tbl_op_rslt_reg_get(dev_id, cmd_id);
-	if (rv != SW_OK)
-	{
-		aos_unlock_bh(&hppe_fdb_lock);
-		return rv;
-	}
-#endif
 	aos_unlock_bh(&hppe_fdb_lock);
 
 	return SW_OK;
