@@ -691,6 +691,15 @@ struct mii_bus *ssdk_miibus_get(a_uint32_t dev_id, a_uint32_t index)
 	return qca_phy_priv_global[dev_id]->miibus[index];
 }
 
+a_bool_t ssdk_miibus_is_i2c(a_uint32_t dev_id, a_uint32_t index)
+{
+	struct mii_bus *mdio_i2c = ssdk_miibus_get(dev_id, index);
+	if (mdio_i2c && strcmp(mdio_i2c->name, SFP_I2C_BUS) == 0)
+		return A_TRUE;
+	else
+		return A_FALSE;
+}
+
 struct mii_bus *ssdk_phy_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr_e)
 {
 	a_uint32_t index = 0;
