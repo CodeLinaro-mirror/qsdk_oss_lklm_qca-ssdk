@@ -241,7 +241,11 @@ union hmsppe_pon_mode_u {
 #define TDM_CFG
 #define TDM_CFG_ADDRESS 0x1000
 #define TDM_CFG_NUM     128
+#if defined(HMSPPE)
 #define TDM_CFG_INC     0x4
+#else
+#define TDM_CFG_INC     0x10
+#endif
 #define TDM_CFG_TYPE    REG_TYPE_RW
 #define TDM_CFG_DEFAULT 0x0
 

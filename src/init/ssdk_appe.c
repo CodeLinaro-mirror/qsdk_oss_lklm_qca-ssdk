@@ -31,8 +31,7 @@
 #endif
 
 #if defined(IN_BM) && defined(IN_QOS)
-/* TODO: update JHPPE/HMSPPE tdm configurations */
-#if defined(HMSPPE)
+#if defined(HMSPPE) || defined(JHPPE)
 fal_port_tdm_tick_cfg_t ppe_port_tdm0_tbl[] = {
 	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
 	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
@@ -643,6 +642,11 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 		num = ARRAY_SIZE(ppe_port_scheduler0_tbl);
 		scheduler_cfg = ppe_port_scheduler0_tbl;
 	}
+#elif defined(JHPPE)
+	if (chip_type == JHPPE_TYPE) {
+		num = ARRAY_SIZE(ppe_port_scheduler0_tbl);
+		scheduler_cfg = ppe_port_scheduler0_tbl;
+	}
 #elif defined(MRPPE)
 	if (chip_type == MRPPE_TYPE) {
 		if (tm_tick_mode == 1) {
@@ -696,9 +700,14 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 
 	SW_RTN_ON_NULL(p_api->adpt_port_tdm_tick_cfg_set);
 	SW_RTN_ON_NULL(p_api->adpt_port_tdm_ctrl_set);
-	
+
 #if defined(HMSPPE)
 	if (chip_type == HMSPPE_TYPE) {
+		num = ARRAY_SIZE(ppe_port_tdm0_tbl);
+		bm_cfg = ppe_port_tdm0_tbl;
+	}
+#elif defined(JHPPE)
+	if (chip_type == JHPPE_TYPE) {
 		num = ARRAY_SIZE(ppe_port_tdm0_tbl);
 		bm_cfg = ppe_port_tdm0_tbl;
 	}
@@ -706,7 +715,7 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 	if (chip_type == MRPPE_TYPE) {
 		num = ARRAY_SIZE(ppe_port_tdm0_tbl);
 		bm_cfg = ppe_port_tdm0_tbl;
-	}	
+	}
 #elif defined(MPPE)
 	if (chip_type == MPPE_TYPE) {
 		if (bm_tick_mode == 0) {
