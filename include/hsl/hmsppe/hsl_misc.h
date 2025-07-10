@@ -1355,34 +1355,47 @@ mrppe_rss_hash_type_sel_extract_bit_pos_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
+sw_error_t
+hppe_flow_entry_get(
+		a_uint32_t dev_id, a_uint32_t op_mode,
+		a_uint32_t *index, a_uint32_t *entry,
+		a_uint32_t entry_size, a_bool_t flow_host);
+
+sw_error_t
+hppe_flow_entry_op(
+		a_uint32_t dev_id,
+		a_uint32_t op_type, a_uint32_t op_mode,
+		a_uint32_t *index, a_uint32_t *entry,
+		a_uint32_t entry_size, a_bool_t flow_host);
+
 #if defined(JHPPE)
 sw_error_t
-hppe_flow_entry_host_op_ip_6tuple_add(
+jhppe_flow_entry_host_op_ip_6tuple_add(
 		a_uint32_t dev_id, a_uint32_t op_mode,
 		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
 
 sw_error_t
-hppe_flow_entry_host_op_ip_6tuple_del(
+jhppe_flow_entry_host_op_ip_6tuple_del(
 		a_uint32_t dev_id, a_uint32_t op_mode,
 		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
 
 sw_error_t
-hppe_flow_entry_host_op_ip_6tuple_get(
+jhppe_flow_entry_host_op_ip_6tuple_get(
 		a_uint32_t dev_id, a_uint32_t op_mode,
 		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
 
 sw_error_t
-hppe_flow_ip_6tuple_add(
+jhppe_flow_ip_6tuple_add(
 		a_uint32_t dev_id, a_uint32_t op_mode,
 		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
 
 sw_error_t
-hppe_flow_ip_6tuple_del(
+jhppe_flow_ip_6tuple_del(
 		a_uint32_t dev_id, a_uint32_t op_mode,
 		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
 
 sw_error_t
-hppe_flow_ip_6tuple_get(
+jhppe_flow_ip_6tuple_get(
 		a_uint32_t dev_id, a_uint32_t op_mode,
 		a_uint32_t *index, union in_flow_6tuple_tbl_u *entry);
 #endif
