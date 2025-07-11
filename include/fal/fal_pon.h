@@ -19,6 +19,12 @@ extern "C" {
 
 #define PON_PORT_ID 6
 
+#define OMCI_CTRL_PKT_GEN_RULE_IDX_RSV 0x0
+#define OMCI_CTRL_PKT_GEMPORT 0x0
+#define OMCI_CTRL_PKT_VID 0x888
+#define OMCI_CTRL_PKT_PCP 7
+#define OMCI_CTRL_PKT_ENQ_VP 128
+
 /* US mapping gemport global config */
 typedef struct {
 	/* when gemport_gen rule mismatch,
