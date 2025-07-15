@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -30,7 +19,7 @@ extern "C" {
     typedef a_uint32_t fal_port_t;
 
 /*fal_port_t definition,
-	bit31-bit24: port_type, 0-physical port, 1-trunk port, 2-virtual port, 3-virtual port group
+	bit31-bit24: port_type, 0-physical port, 1-trunk port, 2-virtual port, 3-virtual port group, 4-Gem port
 	bit23-bit0: physical port id or trunk id or virtual port id*/
 #define FAL_PORT_TYPE_PPORT 0
 #define FAL_PORT_TYPE_TRUNK 1
@@ -55,7 +44,7 @@ extern "C" {
 #define FAL_CHG_SRC_L3_IF_TUNNEL       0x1
 
 /* fal_pbmp_t definition,
- * bit31-bit24: port_type, 0-physical port bitmap, 1-trunk port, 2-virtual port, 3-vport group
+ * bit31-bit24: port_type, 0-physical port bitmap, 1-trunk port, 2-virtual port, 3-vport group, 4-Gem port
  * bit23-bit0: physical port bitmap or trunk id or virtual port id or vp group id
  */
 #if (SW_MAX_NR_PORT <= 32)

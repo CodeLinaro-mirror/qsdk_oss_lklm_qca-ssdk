@@ -61,6 +61,7 @@ extern "C" {
 #include "fal_pktedit.h"
 #include "fal_sampling.h"
 #include "fal_pon.h"
+#include "fal_pon_pm.h"
 /* auto_insert_flag */
 
 /*qca808x_start*/

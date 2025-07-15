@@ -52,6 +52,7 @@ extern "C" {
 #include "fal_pktedit.h"
 #include "fal_sampling.h"
 #include "fal_pon.h"
+#include "fal_pon_pm.h"
 #include "ssdk_plat.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
@@ -1571,6 +1572,15 @@ typedef sw_error_t (*adpt_pon_gemport_policer_set_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_pon_gemport_policer_get_func)(a_uint32_t dev_id,
 		a_uint32_t gemport, fal_gemport_policer_t *policer_cfg);
 
+/* PON PM */
+typedef sw_error_t (*adpt_pon_pm_counter_entry_set_func)(a_uint32_t dev_id, a_uint32_t entry_index,
+		                fal_direction_t direction, fal_pon_pm_counter_entry_t *entry);
+typedef sw_error_t (*adpt_pon_pm_counter_entry_get_func)(a_uint32_t dev_id, a_uint32_t entry_index,
+		                fal_direction_t direction, fal_pon_pm_counter_entry_t *entry);
+typedef sw_error_t (*adpt_pon_pm_counter_get_func)(a_uint32_t dev_id, a_uint32_t counter_id,
+		                fal_direction_t direction, fal_pon_pm_counter_t *pm_counter);
+typedef sw_error_t (*adpt_pon_pm_counter_flush_func)(a_uint32_t dev_id, a_uint32_t counter_id,
+				fal_direction_t direction);
 /* auto_insert_flag */
 typedef struct
 {
@@ -2313,6 +2323,11 @@ typedef struct
 	adpt_pon_gemport_cfg_get_func adpt_pon_gemport_cfg_get;
 	adpt_pon_gemport_policer_set_func adpt_pon_gemport_policer_set;
 	adpt_pon_gemport_policer_get_func adpt_pon_gemport_policer_get;
+	/* PON PM */
+	adpt_pon_pm_counter_entry_set_func adpt_pon_pm_counter_entry_set;
+	adpt_pon_pm_counter_entry_get_func adpt_pon_pm_counter_entry_get;
+	adpt_pon_pm_counter_get_func adpt_pon_pm_counter_get;
+	adpt_pon_pm_counter_flush_func adpt_pon_pm_counter_flush;
 /* auto_insert_flag_1 */
 }adpt_api_t;
 

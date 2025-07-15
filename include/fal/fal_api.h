@@ -3485,6 +3485,22 @@ extern "C" {
 #define PON_API_PARAM
 #endif
 
+#ifdef IN_PON_PM
+#define PON_PM_API \
+	SW_API_DEF(SW_API_PON_PM_COUNTER_ENTRY_SET, fal_pon_pm_counter_entry_set), \
+	SW_API_DEF(SW_API_PON_PM_COUNTER_ENTRY_GET, fal_pon_pm_counter_entry_get), \
+	SW_API_DEF(SW_API_PON_PM_COUNTER_GET, fal_pon_pm_counter_get), \
+	SW_API_DEF(SW_API_PON_PM_COUNTER_FLUSH, fal_pon_pm_counter_flush),
+#define PON_PM_API_PARAM \
+	SW_API_DESC(SW_API_PON_PM_COUNTER_ENTRY_SET) \
+	SW_API_DESC(SW_API_PON_PM_COUNTER_ENTRY_GET) \
+	SW_API_DESC(SW_API_PON_PM_COUNTER_GET) \
+	SW_API_DESC(SW_API_PON_PM_COUNTER_FLUSH)
+#else
+#define PON_PM_API
+#define PON_PM_API_PARAM
+#endif
+
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3540,6 +3556,7 @@ extern "C" {
     PKTEDIT_API \
     SAMPL_API \
     PON_API \
+    PON_PM_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3602,6 +3619,7 @@ extern "C" {
     PKTEDIT_API_PARAM \
     SAMPL_API_PARAM \
     PON_API_PARAM \
+    PON_PM_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),
