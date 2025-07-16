@@ -533,7 +533,7 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		eg_vlan_xlt_action.bf.ctpid_cmd = action->ctpid_idx_xlt_cmd;
 		eg_vlan_xlt_action.bf.ctpid_index = action->ctpid_idx_xlt;
 		eg_vlan_xlt_action.bf.dscp_pbit_mapping_index = action->dscp_map_idx;
-		if (action->fwd_cmd != FAL_MAC_FRWRD || action->fwd_cmd != FAL_MAC_DROP) {
+		if (action->fwd_cmd != FAL_MAC_FRWRD && action->fwd_cmd != FAL_MAC_DROP) {
 			SSDK_ERROR("egress xlt cmd: %#x is not supported\n", action->fwd_cmd);
 			return SW_NOT_SUPPORTED;
 		}
