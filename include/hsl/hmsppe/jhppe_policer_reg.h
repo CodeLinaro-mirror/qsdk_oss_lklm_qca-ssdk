@@ -180,7 +180,7 @@ union sawf_flow_statis_ctrl6_u {
 #define SAWF_FLOW_STATIS_CTRL7_NUM     1
 #define SAWF_FLOW_STATIS_CTRL7_INC     0x4
 #define SAWF_FLOW_STATIS_CTRL7_TYPE    REG_TYPE_RW
-#define SAWF_FLOW_STATIS_CTRL7_DEFAULT 0x880
+#define SAWF_FLOW_STATIS_CTRL7_DEFAULT 0x1100
 	/*[field] CLEAR_MODE*/
 	#define SAWF_FLOW_STATIS_CTRL7_CLEAR_MODE
 	#define SAWF_FLOW_STATIS_CTRL7_CLEAR_MODE_OFFSET  0
@@ -189,31 +189,31 @@ union sawf_flow_statis_ctrl6_u {
 	/*[field] CNT_MODE*/
 	#define SAWF_FLOW_STATIS_CTRL7_CNT_MODE
 	#define SAWF_FLOW_STATIS_CTRL7_CNT_MODE_OFFSET  1
-	#define SAWF_FLOW_STATIS_CTRL7_CNT_MODE_LEN     1
+	#define SAWF_FLOW_STATIS_CTRL7_CNT_MODE_LEN     2
 	#define SAWF_FLOW_STATIS_CTRL7_CNT_MODE_DEFAULT 0x0
 	/*[field] COMP_LEN*/
 	#define SAWF_FLOW_STATIS_CTRL7_COMP_LEN
-	#define SAWF_FLOW_STATIS_CTRL7_COMP_LEN_OFFSET  2
+	#define SAWF_FLOW_STATIS_CTRL7_COMP_LEN_OFFSET  3
 	#define SAWF_FLOW_STATIS_CTRL7_COMP_LEN_LEN     5
 	#define SAWF_FLOW_STATIS_CTRL7_COMP_LEN_DEFAULT 0x0
 	/*[field] IAT_SHIFT_BIT*/
 	#define SAWF_FLOW_STATIS_CTRL7_IAT_SHIFT_BIT
-	#define SAWF_FLOW_STATIS_CTRL7_IAT_SHIFT_BIT_OFFSET  7
+	#define SAWF_FLOW_STATIS_CTRL7_IAT_SHIFT_BIT_OFFSET  8
 	#define SAWF_FLOW_STATIS_CTRL7_IAT_SHIFT_BIT_LEN     5
 	#define SAWF_FLOW_STATIS_CTRL7_IAT_SHIFT_BIT_DEFAULT 0x11
 	/*[field] OVERFLOW_CTRL*/
 	#define SAWF_FLOW_STATIS_CTRL7_OVERFLOW_CTRL
-	#define SAWF_FLOW_STATIS_CTRL7_OVERFLOW_CTRL_OFFSET  12
+	#define SAWF_FLOW_STATIS_CTRL7_OVERFLOW_CTRL_OFFSET  13
 	#define SAWF_FLOW_STATIS_CTRL7_OVERFLOW_CTRL_LEN     1
 	#define SAWF_FLOW_STATIS_CTRL7_OVERFLOW_CTRL_DEFAULT 0x0
 
 struct sawf_flow_statis_ctrl7 {
 	a_uint32_t  clear_mode:1;
-	a_uint32_t  cnt_mode:1;
+	a_uint32_t  cnt_mode:2;
 	a_uint32_t  comp_len:5;
 	a_uint32_t  iat_shift_bit:5;
 	a_uint32_t  overflow_ctrl:1;
-	a_uint32_t  _reserved0:19;
+	a_uint32_t  _reserved0:18;
 };
 
 union sawf_flow_statis_ctrl7_u {
@@ -345,107 +345,6 @@ struct sawf_flow_block_map {
 union sawf_flow_block_map_u {
 	a_uint32_t val;
 	struct sawf_flow_block_map bf;
-};
-
-/*[table] PM_COUNTER_TBL*/
-#define PM_COUNTER_TBL
-#define PM_COUNTER_TBL_ADDRESS 0xb000
-#define PM_COUNTER_TBL_NUM     32
-#define PM_COUNTER_TBL_INC     0x40
-#define PM_COUNTER_TBL_TYPE    REG_TYPE_RW
-#define PM_COUNTER_TBL_DEFAULT 0x0
-	/*[field] OCTETS*/
-	#define PM_COUNTER_TBL_OCTETS
-	#define PM_COUNTER_TBL_OCTETS_OFFSET  0
-	#define PM_COUNTER_TBL_OCTETS_LEN     40
-	#define PM_COUNTER_TBL_OCTETS_DEFAULT 0x0
-	/*[field] UCAST_PACKET*/
-	#define PM_COUNTER_TBL_UCAST_PACKET
-	#define PM_COUNTER_TBL_UCAST_PACKET_OFFSET  40
-	#define PM_COUNTER_TBL_UCAST_PACKET_LEN     32
-	#define PM_COUNTER_TBL_UCAST_PACKET_DEFAULT 0x0
-	/*[field] BCAST_PACKET*/
-	#define PM_COUNTER_TBL_BCAST_PACKET
-	#define PM_COUNTER_TBL_BCAST_PACKET_OFFSET  72
-	#define PM_COUNTER_TBL_BCAST_PACKET_LEN     32
-	#define PM_COUNTER_TBL_BCAST_PACKET_DEFAULT 0x0
-	/*[field] MCAST_PACKET*/
-	#define PM_COUNTER_TBL_MCAST_PACKET
-	#define PM_COUNTER_TBL_MCAST_PACKET_OFFSET  104
-	#define PM_COUNTER_TBL_MCAST_PACKET_LEN     32
-	#define PM_COUNTER_TBL_MCAST_PACKET_DEFAULT 0x0
-	/*[field] CRC_ERROR*/
-	#define PM_COUNTER_TBL_CRC_ERROR
-	#define PM_COUNTER_TBL_CRC_ERROR_OFFSET  136
-	#define PM_COUNTER_TBL_CRC_ERROR_LEN     32
-	#define PM_COUNTER_TBL_CRC_ERROR_DEFAULT 0x0
-	/*[field] OVERSIZE*/
-	#define PM_COUNTER_TBL_OVERSIZE
-	#define PM_COUNTER_TBL_OVERSIZE_OFFSET  168
-	#define PM_COUNTER_TBL_OVERSIZE_LEN     32
-	#define PM_COUNTER_TBL_OVERSIZE_DEFAULT 0x0
-	/*[field] FRAME_64*/
-	#define PM_COUNTER_TBL_FRAME_64
-	#define PM_COUNTER_TBL_FRAME_64_OFFSET  200
-	#define PM_COUNTER_TBL_FRAME_64_LEN     32
-	#define PM_COUNTER_TBL_FRAME_64_DEFAULT 0x0
-	/*[field] FRAME_65_127*/
-	#define PM_COUNTER_TBL_FRAME_65_127
-	#define PM_COUNTER_TBL_FRAME_65_127_OFFSET  232
-	#define PM_COUNTER_TBL_FRAME_65_127_LEN     32
-	#define PM_COUNTER_TBL_FRAME_65_127_DEFAULT 0x0
-	/*[field] FRAME_128_255*/
-	#define PM_COUNTER_TBL_FRAME_128_255
-	#define PM_COUNTER_TBL_FRAME_128_255_OFFSET  264
-	#define PM_COUNTER_TBL_FRAME_128_255_LEN     32
-	#define PM_COUNTER_TBL_FRAME_128_255_DEFAULT 0x0
-	/*[field] FRAME_256_511*/
-	#define PM_COUNTER_TBL_FRAME_256_511
-	#define PM_COUNTER_TBL_FRAME_256_511_OFFSET  296
-	#define PM_COUNTER_TBL_FRAME_256_511_LEN     32
-	#define PM_COUNTER_TBL_FRAME_256_511_DEFAULT 0x0
-	/*[field] FRAME_512_1023*/
-	#define PM_COUNTER_TBL_FRAME_512_1023
-	#define PM_COUNTER_TBL_FRAME_512_1023_OFFSET  328
-	#define PM_COUNTER_TBL_FRAME_512_1023_LEN     32
-	#define PM_COUNTER_TBL_FRAME_512_1023_DEFAULT 0x0
-	/*[field] FRAME_1024_1518*/
-	#define PM_COUNTER_TBL_FRAME_1024_1518
-	#define PM_COUNTER_TBL_FRAME_1024_1518_OFFSET  360
-	#define PM_COUNTER_TBL_FRAME_1024_1518_LEN     32
-	#define PM_COUNTER_TBL_FRAME_1024_1518_DEFAULT 0x0
-
-struct pm_counter_tbl {
-	a_uint32_t  octets_0:32;
-	a_uint32_t  octets_1:8;
-	a_uint32_t  ucast_packet_0:24;
-	a_uint32_t  ucast_packet_1:8;
-	a_uint32_t  bcast_packet_0:24;
-	a_uint32_t  bcast_packet_1:8;
-	a_uint32_t  mcast_packet_0:24;
-	a_uint32_t  mcast_packet_1:8;
-	a_uint32_t  crc_error_0:24;
-	a_uint32_t  crc_error_1:8;
-	a_uint32_t  oversize_0:24;
-	a_uint32_t  oversize_1:8;
-	a_uint32_t  frame_64_0:24;
-	a_uint32_t  frame_64_1:8;
-	a_uint32_t  frame_65_127_0:24;
-	a_uint32_t  frame_65_127_1:8;
-	a_uint32_t  frame_128_255_0:24;
-	a_uint32_t  frame_128_255_1:8;
-	a_uint32_t  frame_256_511_0:24;
-	a_uint32_t  frame_256_511_1:8;
-	a_uint32_t  frame_512_1023_0:24;
-	a_uint32_t  frame_512_1023_1:8;
-	a_uint32_t  frame_1024_1518_0:24;
-	a_uint32_t  frame_1024_1518_1:8;
-	a_uint32_t  _reserved0:24;
-};
-
-union pm_counter_tbl_u {
-	a_uint32_t val[13];
-	struct pm_counter_tbl bf;
 };
 
 /*[table] SAWF_FLOW_CNT_TBL*/

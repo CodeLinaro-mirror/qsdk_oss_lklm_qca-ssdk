@@ -59,10 +59,8 @@
 #include "hmsppe/jhppe_pktedit_reg.h"
 #include "hmsppe/jhppe_acl_reg.h"
 #include "hmsppe/jhppe_loopback_reg.h"
-#include "hmsppe/hmsppe_pon_pm_reg.h"
 #include "hmsppe/hmsppe_prx_pon_reg.h"
 
-#include "hmsppe/hmsppe_pon_pm_api.h"
 #include "hmsppe/hmsppe_prx_pon_api.h"
 #include "hmsppe/appe_acl_api.h"
 #include "hmsppe/appe_counter_api.h"
