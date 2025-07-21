@@ -333,6 +333,7 @@ typedef enum
 	SW_PON_PM_COUNTER,
 	SW_TUNNEL_TUPLE_ENTRY,
 	SW_TUNNEL_DECAP_MISS_ACTION,
+	SW_TCONT_STAT,
 /* auto_insert_flag */
 } sw_data_type_e;
 

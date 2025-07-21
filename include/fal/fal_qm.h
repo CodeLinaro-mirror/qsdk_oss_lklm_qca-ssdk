@@ -152,6 +152,11 @@ typedef struct {
 	a_uint32_t tcont_id;
 } fal_queue_tcont_cfg_t;
 
+typedef struct {
+	a_uint64_t bytes;
+	a_uint32_t credit;
+} fal_queue_tcont_stat_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -161,6 +166,11 @@ sw_error_t
 fal_qm_tcont_get(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
 		 fal_queue_tcont_cfg_t *cfg);
+
+sw_error_t
+fal_qm_tcont_stat_get(a_uint32_t dev_id,
+		      a_uint32_t tcont_id,
+		      fal_queue_tcont_stat_t *stat);
 
 sw_error_t
 fal_ac_ctrl_set(
