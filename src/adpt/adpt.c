@@ -204,6 +204,12 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 			rv = adpt_hmsppe_pon_init(dev_id);
 			break;
 #endif
+#if defined(IN_PON_PM)
+		case FAL_MODULE_PON_PM:
+			rv = adpt_jhppe_pon_pm_init(dev_id);
+			break;
+#endif
+
 		default:
 			break;
 	}
@@ -421,6 +427,8 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 #endif
 #if defined(JHPPE)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_SAMPL);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON_PM);
 			SW_RTN_ON_ERROR(rv);
 #endif
 #if defined(HMSPPE)

@@ -14306,6 +14306,10 @@ qca_ar8327_sw_switch_ext(struct switch_dev *dev,
 #ifdef IN_PKTEDIT
 		rv = parse_pktedit(command_name, val);
 #endif
+	} else if(!strcmp(module_name, "Ponpm")) {
+#ifdef IN_PON_PM
+		rv = parse_ponpm(command_name, val);
+#endif
 	}
 
 	if(!rv) {
