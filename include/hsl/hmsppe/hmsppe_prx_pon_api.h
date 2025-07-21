@@ -696,64 +696,102 @@ hmsppe_gem_port_mapping_tbl_service_code_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define PORT_MAPPING_TBL_MAX_ENTRY	PORT_MAPPING_TBL_NUM
+#define SRC_PORT_MAPPING_TBL_MAX_ENTRY	SRC_PORT_MAPPING_TBL_NUM
 
 sw_error_t
-hmsppe_port_mapping_tbl_get(
+hmsppe_src_port_mapping_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union port_mapping_tbl_u *value);
+		union src_port_mapping_tbl_u *value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_set(
+hmsppe_src_port_mapping_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union port_mapping_tbl_u *value);
+		union src_port_mapping_tbl_u *value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_dst_info_get(
+hmsppe_src_port_mapping_tbl_dst_info_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_dst_info_set(
+hmsppe_src_port_mapping_tbl_dst_info_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_dst_info_valid_get(
+hmsppe_src_port_mapping_tbl_dst_info_valid_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_dst_info_valid_set(
+hmsppe_src_port_mapping_tbl_dst_info_valid_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_port_valid_get(
+hmsppe_src_port_mapping_tbl_port_valid_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_port_valid_set(
+hmsppe_src_port_mapping_tbl_port_valid_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_port_vp_get(
+hmsppe_src_port_mapping_tbl_port_vp_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-hmsppe_port_mapping_tbl_port_vp_set(
+hmsppe_src_port_mapping_tbl_port_vp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+#define DST_PORT_MAPPING_TBL_MAX_ENTRY	DST_PORT_MAPPING_TBL_NUM
+
+sw_error_t
+hmsppe_dst_port_mapping_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union dst_port_mapping_tbl_u *value);
+
+sw_error_t
+hmsppe_dst_port_mapping_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union dst_port_mapping_tbl_u *value);
+
+sw_error_t
+hmsppe_dst_port_mapping_tbl_dst_info_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hmsppe_dst_port_mapping_tbl_dst_info_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hmsppe_dst_port_mapping_tbl_dst_info_valid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hmsppe_dst_port_mapping_tbl_dst_info_valid_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);

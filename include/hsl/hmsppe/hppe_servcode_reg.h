@@ -173,6 +173,11 @@ union service_tbl_u {
 	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_OFFSET  62
 	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_LEN     24
 	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_DEFAULT 0x0
+	/*[field] FIELD_UPDATE_ACTION_EXT1*/
+	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1
+	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_OFFSET  86
+	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_LEN     16
+	#define EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_DEFAULT 0x0
 
 struct eg_service_tbl {
 	a_uint32_t  field_update_action:32;
@@ -188,11 +193,13 @@ struct eg_service_tbl {
 	a_uint32_t  ath_port_bitmap:7;
 	a_uint32_t  field_update_action_ext_0:2;
 	a_uint32_t  field_update_action_ext_1:22;
-	a_uint32_t  _reserved0:10;
+	a_uint32_t  field_update_action_ext1_0:10;
+	a_uint32_t  field_update_action_ext1_1:6;
+	a_uint32_t  _reserved0:26;
 };
 
 union eg_service_tbl_u {
-	a_uint32_t val[3];
+	a_uint32_t val[4];
 	struct eg_service_tbl bf;
 };
 

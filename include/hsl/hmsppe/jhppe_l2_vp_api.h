@@ -6,6 +6,32 @@
 #ifndef _JHPPE_L2_VP_API_H_
 #define _JHPPE_L2_VP_API_H_
 
+#define EG_SRC_PORT_REMAP_MAX_ENTRY	EG_SRC_PORT_REMAP_NUM
+
+sw_error_t
+jhppe_eg_src_port_remap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union eg_src_port_remap_u *value);
+
+sw_error_t
+jhppe_eg_src_port_remap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union eg_src_port_remap_u *value);
+
+sw_error_t
+jhppe_eg_src_port_remap_src_port_num_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_eg_src_port_remap_src_port_num_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define PORT_ISOL_ACTION_MAX_ENTRY	PORT_ISOL_ACTION_NUM
 
 sw_error_t

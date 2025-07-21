@@ -266,6 +266,18 @@ hppe_eg_service_tbl_field_update_action_ext_set(
 		a_uint32_t value);
 
 sw_error_t
+hppe_eg_service_tbl_field_update_action_ext1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_eg_service_tbl_field_update_action_ext1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
 hppe_eg_service_tbl_hw_services_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

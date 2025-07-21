@@ -6,6 +6,34 @@
 #include "hsl_reg.h"
 
 sw_error_t
+jhppe_eg_src_port_remap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union eg_src_port_remap_u *value)
+{
+	if (index >= EG_SRC_PORT_REMAP_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + EG_SRC_PORT_REMAP_ADDRESS + \
+				index * EG_SRC_PORT_REMAP_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_eg_src_port_remap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union eg_src_port_remap_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + EG_SRC_PORT_REMAP_ADDRESS + \
+				index * EG_SRC_PORT_REMAP_INC,
+				value->val);
+}
+
+sw_error_t
 jhppe_port_isol_action_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

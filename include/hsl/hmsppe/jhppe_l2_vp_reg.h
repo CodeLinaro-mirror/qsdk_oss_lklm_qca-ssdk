@@ -6,6 +6,29 @@
 #ifndef _JHPPE_L2_VP_REG_H_
 #define _JHPPE_L2_VP_REG_H_
 
+/*[register] EG_SRC_PORT_REMAP*/
+#define EG_SRC_PORT_REMAP
+#define EG_SRC_PORT_REMAP_ADDRESS 0x240
+#define EG_SRC_PORT_REMAP_NUM     9
+#define EG_SRC_PORT_REMAP_INC     0x4
+#define EG_SRC_PORT_REMAP_TYPE    REG_TYPE_RW
+#define EG_SRC_PORT_REMAP_DEFAULT 0x0
+	/*[field] SRC_PORT_NUM*/
+	#define EG_SRC_PORT_REMAP_SRC_PORT_NUM
+	#define EG_SRC_PORT_REMAP_SRC_PORT_NUM_OFFSET  0
+	#define EG_SRC_PORT_REMAP_SRC_PORT_NUM_LEN     8
+	#define EG_SRC_PORT_REMAP_SRC_PORT_NUM_DEFAULT 0x0
+
+struct eg_src_port_remap {
+	a_uint32_t  src_port_num:8;
+	a_uint32_t  _reserved0:24;
+};
+
+union eg_src_port_remap_u {
+	a_uint32_t val;
+	struct eg_src_port_remap bf;
+};
+
 /*[register] PORT_ISOL_ACTION*/
 #define PORT_ISOL_ACTION
 #define PORT_ISOL_ACTION_ADDRESS 0x1840

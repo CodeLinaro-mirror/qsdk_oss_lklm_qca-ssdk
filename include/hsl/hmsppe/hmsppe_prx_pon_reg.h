@@ -389,7 +389,7 @@ union service_code_mapping_u {
 #define GEM_PORT_MAPPING_TBL
 #define GEM_PORT_MAPPING_TBL_ADDRESS 0x1800
 #define GEM_PORT_MAPPING_TBL_NUM     128
-#define GEM_PORT_MAPPING_TBL_INC     0x10
+#define GEM_PORT_MAPPING_TBL_INC     0x8
 #define GEM_PORT_MAPPING_TBL_TYPE    REG_TYPE_RW
 #define GEM_PORT_MAPPING_TBL_DEFAULT 0x0
 	/*[field] PORT_VP*/
@@ -451,45 +451,74 @@ union gem_port_mapping_tbl_u {
 	struct gem_port_mapping_tbl bf;
 };
 
-/*[register] PORT_MAPPING_TBL*/
-#define PORT_MAPPING_TBL
-#define PORT_MAPPING_TBL_ADDRESS 0x2000
-#define PORT_MAPPING_TBL_NUM     32
-#define PORT_MAPPING_TBL_INC     0x10
-#define PORT_MAPPING_TBL_TYPE    REG_TYPE_RW
-#define PORT_MAPPING_TBL_DEFAULT 0x0
+/*[register] SRC_PORT_MAPPING_TBL*/
+#define SRC_PORT_MAPPING_TBL
+#define SRC_PORT_MAPPING_TBL_ADDRESS 0x2000
+#define SRC_PORT_MAPPING_TBL_NUM     256
+#define SRC_PORT_MAPPING_TBL_INC     0x10
+#define SRC_PORT_MAPPING_TBL_TYPE    REG_TYPE_RW
+#define SRC_PORT_MAPPING_TBL_DEFAULT 0x0
 	/*[field] PORT_VP*/
-	#define PORT_MAPPING_TBL_PORT_VP
-	#define PORT_MAPPING_TBL_PORT_VP_OFFSET  0
-	#define PORT_MAPPING_TBL_PORT_VP_LEN     8
-	#define PORT_MAPPING_TBL_PORT_VP_DEFAULT 0x0
+	#define SRC_PORT_MAPPING_TBL_PORT_VP
+	#define SRC_PORT_MAPPING_TBL_PORT_VP_OFFSET  0
+	#define SRC_PORT_MAPPING_TBL_PORT_VP_LEN     8
+	#define SRC_PORT_MAPPING_TBL_PORT_VP_DEFAULT 0x0
 	/*[field] PORT_VALID*/
-	#define PORT_MAPPING_TBL_PORT_VALID
-	#define PORT_MAPPING_TBL_PORT_VALID_OFFSET  8
-	#define PORT_MAPPING_TBL_PORT_VALID_LEN     1
-	#define PORT_MAPPING_TBL_PORT_VALID_DEFAULT 0x0
+	#define SRC_PORT_MAPPING_TBL_PORT_VALID
+	#define SRC_PORT_MAPPING_TBL_PORT_VALID_OFFSET  8
+	#define SRC_PORT_MAPPING_TBL_PORT_VALID_LEN     1
+	#define SRC_PORT_MAPPING_TBL_PORT_VALID_DEFAULT 0x0
 	/*[field] DST_INFO*/
-	#define PORT_MAPPING_TBL_DST_INFO
-	#define PORT_MAPPING_TBL_DST_INFO_OFFSET  9
-	#define PORT_MAPPING_TBL_DST_INFO_LEN     14
-	#define PORT_MAPPING_TBL_DST_INFO_DEFAULT 0x0
+	#define SRC_PORT_MAPPING_TBL_DST_INFO
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_OFFSET  9
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_LEN     14
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_DEFAULT 0x0
 	/*[field] DST_INFO_VALID*/
-	#define PORT_MAPPING_TBL_DST_INFO_VALID
-	#define PORT_MAPPING_TBL_DST_INFO_VALID_OFFSET  23
-	#define PORT_MAPPING_TBL_DST_INFO_VALID_LEN     1
-	#define PORT_MAPPING_TBL_DST_INFO_VALID_DEFAULT 0x0
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_VALID
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_VALID_OFFSET  23
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_VALID_LEN     1
+	#define SRC_PORT_MAPPING_TBL_DST_INFO_VALID_DEFAULT 0x0
 
-struct port_mapping_tbl {
+struct src_port_mapping_tbl {
 	a_uint32_t  port_vp:8;
 	a_uint32_t  port_valid:1;
 	a_uint32_t  dst_info:14;
 	a_uint32_t  dst_info_valid:1;
-	a_uint32_t  _reserved0:7;
+	a_uint32_t  _reserved0:8;
 };
 
-union port_mapping_tbl_u {
+union src_port_mapping_tbl_u {
 	a_uint32_t val;
-	struct port_mapping_tbl bf;
+	struct src_port_mapping_tbl bf;
+};
+
+/*[register] DST_PORT_MAPPING_TBL*/
+#define DST_PORT_MAPPING_TBL
+#define DST_PORT_MAPPING_TBL_ADDRESS 0x3000
+#define DST_PORT_MAPPING_TBL_NUM     256
+#define DST_PORT_MAPPING_TBL_INC     0x10
+#define DST_PORT_MAPPING_TBL_TYPE    REG_TYPE_RW
+#define DST_PORT_MAPPING_TBL_DEFAULT 0x0
+	/*[field] DST_INFO*/
+	#define DST_PORT_MAPPING_TBL_DST_INFO
+	#define DST_PORT_MAPPING_TBL_DST_INFO_OFFSET  0
+	#define DST_PORT_MAPPING_TBL_DST_INFO_LEN     14
+	#define DST_PORT_MAPPING_TBL_DST_INFO_DEFAULT 0x0
+	/*[field] DST_INFO_VALID*/
+	#define DST_PORT_MAPPING_TBL_DST_INFO_VALID
+	#define DST_PORT_MAPPING_TBL_DST_INFO_VALID_OFFSET  14
+	#define DST_PORT_MAPPING_TBL_DST_INFO_VALID_LEN     1
+	#define DST_PORT_MAPPING_TBL_DST_INFO_VALID_DEFAULT 0x0
+
+struct dst_port_mapping_tbl {
+	a_uint32_t  dst_info:14;
+	a_uint32_t  dst_info_valid:1;
+	a_uint32_t  _reserved0:17;
+};
+
+union dst_port_mapping_tbl_u {
+	a_uint32_t val;
+	struct dst_port_mapping_tbl bf;
 };
 
 #endif
