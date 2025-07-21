@@ -49,6 +49,7 @@ typedef struct {
 	a_uint8_t cdrr_id;
 	a_uint8_t epri;
 	a_uint8_t edrr_id;
+	a_uint8_t sp_id;
 } ssdk_dt_l1scheduler_cfg;
 
 typedef struct {

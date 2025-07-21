@@ -430,9 +430,11 @@ static void ssdk_dt_parse_l1_scheduler_cfg(
 	struct device_node *scheduler_node;
 	struct device_node *child;
 	ssdk_dt_scheduler_cfg *cfg = &(ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->scheduler_cfg);
-	a_uint32_t tmp_cfg[4];
+	a_uint32_t tmp_cfg[5] = {0};
 	const __be32 *paddr;
-	a_uint32_t len, i, sp_id, pri_loop = 0;
+	a_uint32_t len, i, j, l0_sp_id, pri_loop = 0;
+	a_uint32_t max_pri = SSDK_SP_MAX_PRIORITY;
+	int cfg_cnt = 0;
 
 	scheduler_node = of_find_node_by_name(port_node, "l1scheduler");
 	if (!scheduler_node) {
@@ -447,25 +449,45 @@ static void ssdk_dt_parse_l1_scheduler_cfg(
 			SSDK_ERROR("error reading sp property\n");
 			return;
 		}
+
+		cfg_cnt = of_property_count_elems_of_size(child, "cfg", sizeof(u32));
+		if (cfg_cnt <= 0 || (cfg_cnt != 4 && cfg_cnt !=5)) {
+			SSDK_ERROR("wrong number %d of cfg!\n", cfg_cnt);
+			return;
+		}
+
 		if (of_property_read_u32_array(child,
-				"cfg", tmp_cfg, 4)) {
+				"cfg", tmp_cfg, cfg_cnt)) {
 			SSDK_ERROR("error reading cfg property!\n");
 			return;
 		}
 
+		/* update the max_pri if the property sp_max_pri exist */
+		if (!of_property_read_u32(child, "sp_max_pri", &max_pri)) {
+			SSDK_DEBUG("Configure Max priority per L1 SP: %d\n", max_pri);
+		}
+
+
 		if (of_property_read_u32(child, "sp_loop_pri", &pri_loop)) {
 			for (i = 0; i < len; i++) {
-				sp_id = be32_to_cpup(paddr+i);
-				if (sp_id >= SSDK_L1SCHEDULER_CFG_MAX) {
-					SSDK_ERROR("Invalid parameter for sp(%d)\n", sp_id);
+				l0_sp_id = be32_to_cpup(paddr+i);
+				if (l0_sp_id >= SSDK_L1SCHEDULER_CFG_MAX) {
+					SSDK_ERROR("Invalid parameter for sp(%d)\n", l0_sp_id);
 					return;
 				}
-				cfg->l1cfg[sp_id].valid = 1;
-				cfg->l1cfg[sp_id].port_id = port_id;
-				cfg->l1cfg[sp_id].cpri = tmp_cfg[0];
-				cfg->l1cfg[sp_id].cdrr_id = tmp_cfg[1];
-				cfg->l1cfg[sp_id].epri = tmp_cfg[2];
-				cfg->l1cfg[sp_id].edrr_id = tmp_cfg[3];
+				cfg->l1cfg[l0_sp_id].valid = 1;
+				cfg->l1cfg[l0_sp_id].port_id = port_id;
+				j = 0;
+
+				if (cfg_cnt == 5)
+					cfg->l1cfg[l0_sp_id].sp_id = tmp_cfg[j++];
+				else
+					cfg->l1cfg[l0_sp_id].sp_id = port_id;
+
+				cfg->l1cfg[l0_sp_id].cpri = tmp_cfg[j++];
+				cfg->l1cfg[l0_sp_id].cdrr_id = tmp_cfg[j++];
+				cfg->l1cfg[l0_sp_id].epri = tmp_cfg[j++];
+				cfg->l1cfg[l0_sp_id].edrr_id = tmp_cfg[j++];
 			}
 		} else {
 			/* should one SP for priority loop */
@@ -474,18 +496,25 @@ static void ssdk_dt_parse_l1_scheduler_cfg(
 				return;
 			}
 
-			sp_id = be32_to_cpup(paddr);
-			if (sp_id >= SSDK_L1SCHEDULER_CFG_MAX) {
-				SSDK_ERROR("Invalid parameter for sp(%d)\n", sp_id);
+			l0_sp_id = be32_to_cpup(paddr);
+			if (l0_sp_id >= SSDK_L1SCHEDULER_CFG_MAX) {
+				SSDK_ERROR("Invalid parameter for sp(%d)\n", l0_sp_id);
 				return;
 			}
 			for (i = 0; i < pri_loop; i++) {
-				cfg->l1cfg[sp_id + i].valid = 1;
-				cfg->l1cfg[sp_id + i].port_id = port_id;
-				cfg->l1cfg[sp_id + i].cpri = tmp_cfg[0] + i%SSDK_SP_MAX_PRIORITY;
-				cfg->l1cfg[sp_id + i].cdrr_id = tmp_cfg[1] + i;
-				cfg->l1cfg[sp_id + i].epri = tmp_cfg[2] + i%SSDK_SP_MAX_PRIORITY;
-				cfg->l1cfg[sp_id + i].edrr_id = tmp_cfg[3] + i;
+				cfg->l1cfg[l0_sp_id + i].valid = 1;
+				cfg->l1cfg[l0_sp_id + i].port_id = port_id;
+				j = 0;
+
+				if (cfg_cnt == 5)
+					cfg->l1cfg[l0_sp_id + i].sp_id = tmp_cfg[j++] + i/max_pri;
+				else
+					cfg->l1cfg[l0_sp_id + i].sp_id = port_id;
+
+				cfg->l1cfg[l0_sp_id + i].cpri = tmp_cfg[j++] + i%max_pri;
+				cfg->l1cfg[l0_sp_id + i].cdrr_id = tmp_cfg[j++] + i;
+				cfg->l1cfg[l0_sp_id + i].epri = tmp_cfg[j++] + i%max_pri;
+				cfg->l1cfg[l0_sp_id + i].edrr_id = tmp_cfg[j++] + i;
 			}
 		}
 	}
