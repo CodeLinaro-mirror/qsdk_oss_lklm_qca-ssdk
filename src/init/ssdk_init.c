@@ -898,13 +898,15 @@ qm_err_check_work_task_polling(struct work_struct *work)
                                             qm_dwork_polling.work);
 	qca_link_change_task(priv);
 
+	if (priv->polling_once == A_FALSE) {
 #ifndef SSDK_QM_CHANGE_WQ
-	schedule_delayed_work(&priv->qm_dwork,
-							msecs_to_jiffies(QCA_QM_WORK_DELAY));
+		schedule_delayed_work(&priv->qm_dwork,
+								msecs_to_jiffies(QCA_QM_WORK_DELAY));
 #else
-	queue_delayed_work_on(0, system_long_wq, &priv->qm_dwork_polling,
-							msecs_to_jiffies(QCA_QM_WORK_DELAY));
+		queue_delayed_work_on(0, system_long_wq, &priv->qm_dwork_polling,
+								msecs_to_jiffies(QCA_QM_WORK_DELAY));
 #endif
+	}
 }
 
 static sw_error_t
@@ -940,6 +942,7 @@ void qm_err_check_work_start(struct qca_phy_priv *priv)
 	if (_qm_err_work_chip_check(priv) != SW_OK)
 		return;
 
+	priv->polling_once = A_FALSE;
 #ifndef SSDK_MIB_CHANGE_WQ
 	schedule_delayed_work(&priv->qm_dwork_polling,
 							msecs_to_jiffies(QCA_QM_WORK_DELAY));
@@ -1266,7 +1269,8 @@ static int ssdk_dsa_event_link_change(struct net_device *dev, bool link)
 	if (!priv)
 		return NOTIFY_DONE;
 
-	qca_link_change_task(priv);
+	priv->polling_once = A_TRUE;
+	mod_delayed_work(system_wq, &priv->qm_dwork_polling, 0);
 
 	return NOTIFY_OK;
 }
@@ -1331,10 +1335,9 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 			SSDK_ERROR("qca_phy_mib_work_start failed for chip 0x%02x%02x\n", priv->version, priv->revision);
 			return ret;
 	}
-
+	qm_err_check_work_init(priv);
 	if(priv->link_polling_required)
 	{
-		qm_err_check_work_init(priv);
 		qm_err_check_work_start(priv);
 
 #ifdef HPPE
