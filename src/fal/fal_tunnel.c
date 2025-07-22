@@ -1,17 +1,8 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -161,5 +152,17 @@ sw_error_t fal_tunnel_encap_ecn_mode_set(a_uint32_t dev_id, fal_tunnel_encap_ecn
 
 sw_error_t fal_tunnel_encap_ecn_mode_get(a_uint32_t dev_id, fal_tunnel_encap_ecn_t *ecn_rule, fal_tunnel_ecn_val_t *ecn_value)
     DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_encap_ecn_mode_get, dev_id, ecn_rule, ecn_value)
+sw_error_t fal_tunnel_tuple_entry_add(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_tuple_entry_add, dev_id, entry)
+sw_error_t fal_tunnel_tuple_entry_del(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_tuple_entry_del, dev_id, entry)
+sw_error_t fal_tunnel_tuple_entry_getfirst(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_tuple_entry_getfirst, dev_id, entry)
+sw_error_t fal_tunnel_tuple_entry_getnext(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_tuple_entry_getnext, dev_id, entry)
+sw_error_t fal_tunnel_decap_miss_action_set(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_decap_miss_action_set, dev_id, tunnel_type, miss_action)
+sw_error_t fal_tunnel_decap_miss_action_get(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_decap_miss_action_get, dev_id, tunnel_type, miss_action)
 #endif
 

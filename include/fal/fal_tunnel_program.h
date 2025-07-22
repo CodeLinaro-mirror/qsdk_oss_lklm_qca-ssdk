@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -34,11 +24,22 @@ extern "C" {
 #define FAL_TUNNEL_PROGRAM_IPV6			2
 #define FAL_TUNNEL_PROGRAM_IPV4_IPV6		3
 #define FAL_TUNNEL_PROGRAM_GRE_PROTOCOL_MASK	0x2000ffff
+
+typedef enum {
+	FAL_TUNNEL_PROGRAM_POS_MODE_END = 0, /* position from end of outer header */
+	FAL_TUNNEL_PROGRAM_POS_MODE_START, /* position from start of outer header */
+} fal_tunnel_program_pos_mode_t;
+
 typedef struct {
-	a_uint8_t ip_ver;  /*ip version of outer packet, 1 ipv4, 2 ipv6, 3 ipv4 or ipv6 */
+	a_uint8_t ip_ver; /*ip version of outer packet, 1 ipv4, 2 ipv6, 3 ipv4 or ipv6*/
 	fal_hdr_type_t outer_hdr_type; /*current(outer) hdr type*/
-	a_uint32_t protocol; /*protocol value depends on the outer type*/
+	a_bool_t protocol_pos_valid; /*protocol position valid*/
+	fal_tunnel_program_pos_mode_t protocol_pos_mode; /*protocol position mode*/
+	a_uint8_t protocol_pos_offset; /*protocol position offset*/
+	a_uint32_t protocol; /*protocol value*/
 	a_uint32_t protocol_mask; /*protocol value mask*/
+	a_bool_t tuple_id_valid; /*tuple id valid*/
+	a_uint32_t tuple_id; /*tuple id value from the tunnel tuple entry*/
 } fal_tunnel_program_entry_t;
 
 #define TUNNEL_PROGRAM_UDF_NUM 3

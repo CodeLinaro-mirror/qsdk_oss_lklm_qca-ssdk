@@ -331,6 +331,8 @@ typedef enum
 	SW_GEMPORT_PLC,
 	SW_PON_PM_COUNTER_ENTRY,
 	SW_PON_PM_COUNTER,
+	SW_TUNNEL_TUPLE_ENTRY,
+	SW_TUNNEL_DECAP_MISS_ACTION,
 /* auto_insert_flag */
 } sw_data_type_e;
 

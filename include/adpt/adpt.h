@@ -1414,6 +1414,20 @@ typedef sw_error_t
 typedef sw_error_t
 (*adpt_tunnel_decap_counter_get_func)(a_uint32_t dev_id,
 		a_uint32_t tunnel_index, fal_entry_counter_t *decap_counter);
+typedef sw_error_t
+(*adpt_tunnel_tuple_entry_add_func)(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+typedef sw_error_t
+(*adpt_tunnel_tuple_entry_del_func)(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+typedef sw_error_t
+(*adpt_tunnel_tuple_entry_getfirst_func)(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+typedef sw_error_t
+(*adpt_tunnel_tuple_entry_getnext_func)(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+typedef sw_error_t
+(*adpt_tunnel_decap_miss_action_set_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		fal_tunnel_decap_miss_action_t *miss_action);
+typedef sw_error_t
+(*adpt_tunnel_decap_miss_action_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		fal_tunnel_decap_miss_action_t *miss_action);
 
 /*tunnel program*/
 typedef sw_error_t (*adpt_tunnel_program_entry_add_func)(a_uint32_t dev_id,
@@ -2229,6 +2243,12 @@ typedef struct
 	adpt_tunnel_decap_en_get_func adpt_tunnel_decap_en_get;
 	adpt_tunnel_decap_action_update_func adpt_tunnel_decap_action_update;
 	adpt_tunnel_decap_counter_get_func adpt_tunnel_decap_counter_get;
+	adpt_tunnel_tuple_entry_add_func adpt_tunnel_tuple_entry_add;
+	adpt_tunnel_tuple_entry_del_func adpt_tunnel_tuple_entry_del;
+	adpt_tunnel_tuple_entry_getfirst_func adpt_tunnel_tuple_entry_getfirst;
+	adpt_tunnel_tuple_entry_getnext_func adpt_tunnel_tuple_entry_getnext;
+	adpt_tunnel_decap_miss_action_set_func adpt_tunnel_decap_miss_action_set;
+	adpt_tunnel_decap_miss_action_get_func adpt_tunnel_decap_miss_action_get;
 
 	/*vxlan*/
 	adpt_vxlan_entry_add_func adpt_vxlan_entry_add;
