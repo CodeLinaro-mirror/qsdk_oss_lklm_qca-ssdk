@@ -76,7 +76,6 @@
 
 #define PHY_PORT_TO_BM_PORT(port)	(PPE_BM_PHY_PORT_OFFSET + port - 1)
 #define GMAC_IPG_CHECK          0xc
-#define XGMAC_LPI_ENTRY_TIMER   0x2c
 
 /* This register is used to adjust the write timing for reserving
  * some bandwidth of the memory to read operation.
@@ -3273,13 +3272,10 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 	a_uint32_t adv, xgmac_id = 0;
 	union mac_lpi_control_status_u mac_lpi_control_status;
 	union mac_1us_tic_counter_u mac_1us_tic_counter;
-	union mac_lpi_auto_entry_timer_u mac_lpi_auto_entry_timer;
-	union mac_lpi_timers_control_u mac_lpi_timers_control;
+
 
 	memset(&mac_lpi_control_status, 0, sizeof(mac_lpi_control_status));
 	memset(&mac_1us_tic_counter, 0, sizeof(mac_1us_tic_counter));
-	memset(&mac_lpi_auto_entry_timer, 0, sizeof(mac_lpi_auto_entry_timer));
-	memset(&mac_lpi_timers_control, 0, sizeof(mac_lpi_timers_control));
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
 
@@ -3295,7 +3291,7 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
 	rv = hppe_mac_lpi_control_status_get(dev_id, xgmac_id, &mac_lpi_control_status);
 	SW_RTN_ON_ERROR (rv);
-	mac_lpi_control_status.bf.lpitxen = port_eee_cfg->lpi_tx_enable;;
+	mac_lpi_control_status.bf.lpitxen = port_eee_cfg->lpi_tx_enable;
 	mac_lpi_control_status.bf.pls = 0x1;
 	mac_lpi_control_status.bf.lpitxa = 0x1;
 	mac_lpi_control_status.bf.lpite = 0x1;
@@ -3306,23 +3302,36 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_i
 	mac_1us_tic_counter.bf.tic_1us_cntr = adpt_chip_freq_get(dev_id) - 1;
 	rv = hppe_mac_1us_tic_counter_set(dev_id, xgmac_id, &mac_1us_tic_counter);
 	SW_RTN_ON_ERROR (rv);
-	rv = hppe_mac_lpi_auto_entry_timer_get(dev_id, xgmac_id, &mac_lpi_auto_entry_timer);
-	SW_RTN_ON_ERROR (rv);
-	mac_lpi_auto_entry_timer.bf.lpiet = XGMAC_LPI_ENTRY_TIMER;
-	rv = hppe_mac_lpi_auto_entry_timer_set(dev_id, xgmac_id, &mac_lpi_auto_entry_timer);
-	SW_RTN_ON_ERROR (rv);
-	rv = hppe_mac_lpi_timers_control_get(dev_id, xgmac_id, &mac_lpi_timers_control);
-	SW_RTN_ON_ERROR (rv);
-	/*sleep timer as 100us*/
-	if(port_eee_cfg->lpi_sleep_timer)
-		mac_lpi_timers_control.bf.lst = port_eee_cfg->lpi_sleep_timer;
-	/*wake up timer, 2.5G:40us, 1G:22us, 100M:28us*/
-	if(port_eee_cfg->lpi_wakeup_timer != 0)
-		mac_lpi_timers_control.bf.twt = port_eee_cfg->lpi_wakeup_timer;
-	rv = hppe_mac_lpi_timers_control_set(dev_id, xgmac_id, &mac_lpi_timers_control);
-	SW_RTN_ON_ERROR (rv);
+	/* configure sleep timer */
+	if(port_eee_cfg->lpi_sleep_timer) {
+		union mac_lpi_auto_entry_timer_u mac_lpi_auto_entry_timer = {0};
+		a_uint32_t sleep_timer_tmp = 0;
+		/* This field is programmed with a value in units of 8 micro-seconds */
+		if (port_eee_cfg->lpi_sleep_timer % 8 == 0)
+			sleep_timer_tmp = port_eee_cfg->lpi_sleep_timer/8;
+		else
+			sleep_timer_tmp = port_eee_cfg->lpi_sleep_timer/8 + 1;
+		rv = hppe_mac_lpi_auto_entry_timer_get(dev_id, xgmac_id, &mac_lpi_auto_entry_timer);
+		SW_RTN_ON_ERROR (rv);
+		if (mac_lpi_auto_entry_timer.bf.lpiet != sleep_timer_tmp) {
+			mac_lpi_auto_entry_timer.bf.lpiet = sleep_timer_tmp;
+			rv = hppe_mac_lpi_auto_entry_timer_set(dev_id, xgmac_id, &mac_lpi_auto_entry_timer);
+			SW_RTN_ON_ERROR (rv);
+		}
+	}
+	if(port_eee_cfg->lpi_wakeup_timer) {
+		union mac_lpi_timers_control_u mac_lpi_timers_control = {0};
 
-	return rv;
+		rv = hppe_mac_lpi_timers_control_get(dev_id, xgmac_id, &mac_lpi_timers_control);
+		SW_RTN_ON_ERROR (rv);
+		if (mac_lpi_timers_control.bf.twt != port_eee_cfg->lpi_wakeup_timer) {
+			mac_lpi_timers_control.bf.twt = port_eee_cfg->lpi_wakeup_timer;
+			rv = hppe_mac_lpi_timers_control_set(dev_id, xgmac_id, &mac_lpi_timers_control);
+			SW_RTN_ON_ERROR (rv);
+		}
+	}
+
+	return SW_OK;
 }
 
 static sw_error_t
@@ -3332,6 +3341,7 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 	sw_error_t rv = 0;
 	union mac_lpi_control_status_u mac_lpi_control_status;
 	union mac_lpi_timers_control_u mac_lpi_timers_control;
+	union mac_lpi_auto_entry_timer_u mac_lpi_auto_entry_timer;
 	a_uint32_t xgmac_id = 0;
 	a_uint32_t adv = 0, lp_adv = 0, cap = 0, status = 0;
 
@@ -3365,7 +3375,9 @@ _adpt_hppe_xgmac_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_i
 	rv = hppe_mac_lpi_timers_control_get(dev_id, xgmac_id, &mac_lpi_timers_control);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->lpi_wakeup_timer =  mac_lpi_timers_control.bf.twt;
-	port_eee_cfg->lpi_sleep_timer = mac_lpi_timers_control.bf.lst;
+	rv = hppe_mac_lpi_auto_entry_timer_get(dev_id, xgmac_id, &mac_lpi_auto_entry_timer);
+	SW_RTN_ON_ERROR (rv);
+	port_eee_cfg->lpi_sleep_timer = mac_lpi_auto_entry_timer.bf.lpiet * 8;
 
 	return rv;
 }
