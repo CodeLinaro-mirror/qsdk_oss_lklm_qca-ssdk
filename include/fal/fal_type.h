@@ -201,6 +201,18 @@ typedef enum {
 	FAL_DIR_EGRESS = 2,
 } fal_direction_t;
 
+typedef enum
+{
+	FAL_VLAN_MATCH_VID = 0,
+	FAL_VLAN_MATCH_VSI = 1,
+} fal_vlan_match_mode_t;
+
+typedef enum
+{
+	FAL_PCP_MATCH_PCP_DEI = 0,
+	FAL_PCP_MATCH_INT_PRI = 1,
+} fal_pcp_match_mode_t;
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

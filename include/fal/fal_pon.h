@@ -21,9 +21,16 @@ extern "C" {
 
 /* US mapping gemport global config */
 typedef struct {
-	fal_fwd_cmd_t gen_miss_cmd; /* action command for no gemport_gen rule match */
-	a_uint8_t vlan_mode;
-	a_uint8_t pcp_mode;
+	/* when gemport_gen rule mismatch,
+	 * but dest match this port then will fellow gen_miss_cmd */
+	a_uint8_t gen_miss_pon_port;
+	/* when gemport_gen rule mismatch,
+	 * but dest match genmschk_pon_port or bypasbit DOT1P_DST_LKUP_BYPASS set,
+	 * applied flowarding actions. */
+	fal_fwd_cmd_t gen_miss_cmd;
+
+	fal_vlan_match_mode_t vlan_mode; /* 0: use VLAN, 1: use VSI, to match gemport_gen vlan field */
+	fal_pcp_match_mode_t pcp_mode; /*  0: use pcp and dei, 1: use int_pri, to match gemport_gen pcp and dei field */
 } fal_gemport_global_cfg_t;
 
 /* US mapping gemport default properties */

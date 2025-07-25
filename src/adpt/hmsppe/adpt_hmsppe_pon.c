@@ -29,6 +29,9 @@ adpt_hmsppe_pon_gemport_global_set(a_uint32_t dev_id, fal_gemport_global_cfg_t *
 	ret = hmsppe_dot1p_mapper_default_miss_action_set(dev_id, cfg->gen_miss_cmd);
 	SW_RTN_ON_ERROR(ret);
 
+	ret = jhppe_mc_enq_ctrl_dot1p_pon_vp_set(dev_id, cfg->gen_miss_pon_port);
+	SW_RTN_ON_ERROR(ret);
+
 	return SW_OK;
 }
 
@@ -37,6 +40,7 @@ adpt_hmsppe_pon_gemport_global_get(a_uint32_t dev_id, fal_gemport_global_cfg_t *
 {
 	sw_error_t ret = SW_OK;
 	union l2_global_conf_u reg_val;
+	a_uint32_t tmp = 0;
 
 	ret = hppe_l2_global_conf_get(dev_id, &reg_val);
 	SW_RTN_ON_ERROR(ret);
@@ -46,6 +50,10 @@ adpt_hmsppe_pon_gemport_global_get(a_uint32_t dev_id, fal_gemport_global_cfg_t *
 
 	ret = hmsppe_dot1p_mapper_default_miss_action_get(dev_id, &cfg->gen_miss_cmd);
 	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_mc_enq_ctrl_dot1p_pon_vp_get(dev_id, &tmp);
+	SW_RTN_ON_ERROR(ret);
+	cfg->gen_miss_pon_port = tmp;
 
 	return SW_OK;
 }
@@ -125,12 +133,15 @@ adpt_hmsppe_pon_gemport_gen_entry_set(a_uint32_t dev_id, a_uint32_t index, fal_g
 		(((a_uint32_t)1 << SW_FIELD_OFFSET_IN_WORD(DOT1P_MAPPER_RULE_VID_OFFSET)) - 1);
 	reg_val.bf.vid_1 = gen_entry->vlan_id >> SW_FIELD_OFFSET_IN_WORD(DOT1P_MAPPER_RULE_VID_OFFSET);
 	reg_val.bf.priority_type = gen_entry->pri_type;
-	reg_val.bf.pcp_incl = gen_entry->pcp_valid;
-	reg_val.bf.pcp = gen_entry->pcp;
-	reg_val.bf.dei_incl = gen_entry->dei_valid;
-	reg_val.bf.dei = gen_entry->dei;
-	reg_val.bf1.dscp_incl = gen_entry->dscp_valid;
-	reg_val.bf1.dscp = gen_entry->dscp;
+	if (gen_entry->pri_type == 0) {
+		reg_val.bf.pcp_incl = gen_entry->pcp_valid;
+		reg_val.bf.pcp = gen_entry->pcp;
+		reg_val.bf.dei_incl = gen_entry->dei_valid;
+		reg_val.bf.dei = gen_entry->dei;
+	} else {
+		reg_val.bf1.dscp_incl = gen_entry->dscp_valid;
+		reg_val.bf1.dscp = gen_entry->dscp;
+	}
 	reg_val.bf.gem_port = gen_entry->gemport;
 
 	ret = hmsppe_dot1p_mapper_rule_set(dev_id, index, &reg_val);
@@ -160,12 +171,15 @@ adpt_hmsppe_pon_gemport_gen_entry_get(a_uint32_t dev_id, a_uint32_t index, fal_g
 	gen_entry->vlan_id_valid = reg_val.bf.vid_incl;
 	gen_entry->vlan_id = (reg_val.bf.vid_1 << SW_FIELD_OFFSET_IN_WORD(DOT1P_MAPPER_RULE_VID_OFFSET)) | reg_val.bf.vid_0;
 	gen_entry->pri_type = reg_val.bf.priority_type;
-	gen_entry->pcp_valid = reg_val.bf.pcp_incl;
-	gen_entry->pcp = reg_val.bf.pcp;
-	gen_entry->dei_valid = reg_val.bf.dei_incl;
-	gen_entry->dei = reg_val.bf.dei;
-	gen_entry->dscp_valid = reg_val.bf1.dscp_incl;
-	gen_entry->dscp = reg_val.bf1.dscp;
+	if (reg_val.bf.priority_type == 0) {
+		gen_entry->pcp_valid = reg_val.bf.pcp_incl;
+		gen_entry->pcp = reg_val.bf.pcp;
+		gen_entry->dei_valid = reg_val.bf.dei_incl;
+		gen_entry->dei = reg_val.bf.dei;
+	} else {
+		gen_entry->dscp_valid = reg_val.bf1.dscp_incl;
+		gen_entry->dscp = reg_val.bf1.dscp;
+	}
 	gen_entry->gemport = reg_val.bf.gem_port;
 
 	return SW_OK;
@@ -264,7 +278,7 @@ adpt_hmsppe_pon_gemport_cfg_set(a_uint32_t dev_id, a_uint32_t gemport,
 	ret = hmsppe_dot1p_mapper_action_get(dev_id, gemport, &reg_val);
 	SW_RTN_ON_ERROR(ret);
 
-	reg_val.bf.service_code = cfg->service_code_en;
+	reg_val.bf.service_code_en = cfg->service_code_en;
 	reg_val.bf.service_code = cfg->service_code;
 	reg_val.bf.int_pri_en = cfg->int_pri_en;
 	reg_val.bf.int_pri = cfg->int_pri;
@@ -296,7 +310,7 @@ adpt_hmsppe_pon_gemport_cfg_get(a_uint32_t dev_id, a_uint32_t gemport,
 	ret = hmsppe_dot1p_mapper_action_get(dev_id, gemport, &reg_val);
 	SW_RTN_ON_ERROR(ret);
 
-	cfg->service_code_en = reg_val.bf.service_code;
+	cfg->service_code_en = reg_val.bf.service_code_en;
 	cfg->service_code = reg_val.bf.service_code;
 	cfg->int_pri_en = reg_val.bf.int_pri_en;
 	cfg->int_pri = reg_val.bf.int_pri;
