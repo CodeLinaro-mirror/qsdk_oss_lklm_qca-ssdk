@@ -808,8 +808,12 @@ adpt_hppe_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 	sw_error_t rtn = SW_OK;
 	union edma_vlan_tpid_reg_u edma_tpid;
 	union vlan_tpid_reg_u ppe_tpid;
-#if defined(APPE)
 	union tpr_vlan_tpid_u tunnel_tpid;
+#if defined(JHPPE)
+	union vlan_tpid_reg_ext0_u ppe_tpid0;
+	union vlan_tpid_reg_ext1_u ppe_tpid1;
+	union tpr_vlan_tpid_ext0_u tunnel_tpid0;
+	union tpr_vlan_tpid_ext1_u tunnel_tpid1;
 #endif
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -831,7 +835,6 @@ adpt_hppe_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 		ppe_tpid.bf.stag_tpid = tpid->stpid;
 	}
 
-#if defined(APPE)
 	/* edma tpid is configured as same as tunnel tpid for appe
 	 * for hppe, edma tpid is configured as ipr tpid
 	 */
@@ -848,9 +851,66 @@ adpt_hppe_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 		tunnel_tpid.bf.stag_tpid = tpid->tunnel_stpid;
 	}
 
-	rtn = appe_tpr_vlan_tpid_set(dev_id, &tunnel_tpid);
+#if defined(JHPPE)
+	rtn = jhppe_vlan_tpid_reg_ext0_get(dev_id, &ppe_tpid0);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_vlan_tpid_reg_ext1_get(dev_id, &ppe_tpid1);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_tpr_vlan_tpid_ext0_get(dev_id, &tunnel_tpid0);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_tpr_vlan_tpid_ext1_get(dev_id, &tunnel_tpid1);
+	SW_RTN_ON_ERROR(rtn);
+
+	if (FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_CTAG_EN)) {
+		ppe_tpid0.bf.ctag_tpid = tpid->ext_ctpid;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_STAG_EN)) {
+		ppe_tpid0.bf.stag_tpid = tpid->ext_stpid;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_CTAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_CTAG_EN)) {
+		ppe_tpid1.bf.ctag_tpid_map = tpid->ctpid_map;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_STAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_STAG_EN)) {
+		ppe_tpid1.bf.stag_tpid_map = tpid->stpid_map;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_EXT_TUNNEL_TPID_CTAG_EN)) {
+		tunnel_tpid0.bf.ctag_tpid = tpid->ext_tunnel_ctpid;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_EXT_TUNNEL_TPID_STAG_EN)) {
+		tunnel_tpid0.bf.stag_tpid = tpid->ext_tunnel_stpid;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_TUNNEL_TPID_CTAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TUNNEL_TPID_CTAG_EN)) {
+		tunnel_tpid1.bf.ctag_tpid_map = tpid->tunnel_ctpid_map;
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_TUNNEL_TPID_STAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TUNNEL_TPID_STAG_EN)) {
+		tunnel_tpid1.bf.stag_tpid_map = tpid->tunnel_stpid_map;
+	}
+
+	rtn = jhppe_vlan_tpid_reg_ext0_set(dev_id, &ppe_tpid0);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_vlan_tpid_reg_ext1_set(dev_id, &ppe_tpid1);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_tpr_vlan_tpid_ext0_set(dev_id, &tunnel_tpid0);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_tpr_vlan_tpid_ext1_set(dev_id, &tunnel_tpid1);
 	SW_RTN_ON_ERROR(rtn);
 #endif
+
+	rtn = appe_tpr_vlan_tpid_set(dev_id, &tunnel_tpid);
+	SW_RTN_ON_ERROR(rtn);
 
 	rtn = hppe_edma_vlan_tpid_reg_set(dev_id, &edma_tpid);
 	SW_RTN_ON_ERROR(rtn);
@@ -865,8 +925,12 @@ adpt_hppe_tpid_get(a_uint32_t dev_id, fal_tpid_t *tpid)
 {
 	sw_error_t rtn = SW_OK;
 	union vlan_tpid_reg_u ppe_tpid;
-#if defined(APPE)
 	union tpr_vlan_tpid_u tunnel_tpid;
+#if defined(JHPPE)
+	union vlan_tpid_reg_ext0_u ppe_tpid0;
+	union vlan_tpid_reg_ext1_u ppe_tpid1;
+	union tpr_vlan_tpid_ext0_u tunnel_tpid0;
+	union tpr_vlan_tpid_ext1_u tunnel_tpid1;
 #endif
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -875,16 +939,38 @@ adpt_hppe_tpid_get(a_uint32_t dev_id, fal_tpid_t *tpid)
 	rtn = hppe_vlan_tpid_reg_get(dev_id, &ppe_tpid);
 	SW_RTN_ON_ERROR(rtn);
 
-#if defined(APPE)
 	/* edma tpid is configured as same as tunnel tpid for appe
 	 * for hppe, edma tpid is configured as ipr tpid
 	 */
 	rtn = appe_tpr_vlan_tpid_get(dev_id, &tunnel_tpid);
 	SW_RTN_ON_ERROR(rtn);
 
+#if defined(JHPPE)
+	rtn = jhppe_vlan_tpid_reg_ext0_get(dev_id, &ppe_tpid0);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_vlan_tpid_reg_ext1_get(dev_id, &ppe_tpid1);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_tpr_vlan_tpid_ext0_get(dev_id, &tunnel_tpid0);
+	SW_RTN_ON_ERROR(rtn);
+
+	rtn = jhppe_tpr_vlan_tpid_ext1_get(dev_id, &tunnel_tpid1);
+	SW_RTN_ON_ERROR(rtn);
+
+	tpid->ext_ctpid = ppe_tpid0.bf.ctag_tpid;
+	tpid->ext_stpid = ppe_tpid0.bf.stag_tpid;
+	tpid->ctpid_map = ppe_tpid1.bf.ctag_tpid_map;
+	tpid->stpid_map = ppe_tpid1.bf.stag_tpid_map;
+
+	tpid->ext_tunnel_ctpid = tunnel_tpid0.bf.ctag_tpid;
+	tpid->ext_tunnel_stpid = tunnel_tpid0.bf.stag_tpid;
+	tpid->tunnel_ctpid_map = tunnel_tpid1.bf.ctag_tpid_map;
+	tpid->tunnel_stpid_map = tunnel_tpid1.bf.stag_tpid_map;
+#endif
+
 	tpid->tunnel_ctpid = tunnel_tpid.bf.ctag_tpid;
 	tpid->tunnel_stpid = tunnel_tpid.bf.stag_tpid;
-#endif
 
 	tpid->ctpid = ppe_tpid.bf.ctag_tpid;
 	tpid->stpid = ppe_tpid.bf.stag_tpid;
@@ -911,6 +997,31 @@ adpt_hppe_egress_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 		SW_RTN_ON_ERROR(rtn);
 	}
 
+#if defined(JHPPE)
+	if (FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_CTAG_EN)) {
+		rtn = jhppe_eg_vlan_tpid_ext0_ctpid_set(dev_id,
+				(a_uint32_t)tpid->ext_ctpid);
+		SW_RTN_ON_ERROR(rtn);
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_STAG_EN)) {
+		rtn = jhppe_eg_vlan_tpid_ext0_stpid_set(dev_id,
+				(a_uint32_t)tpid->ext_stpid);
+		SW_RTN_ON_ERROR(rtn);
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_CTAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_CTAG_EN)) {
+		rtn = jhppe_eg_vlan_tpid_ext1_ctag_tpid_map_set(dev_id,
+				(a_uint32_t)tpid->ctpid_map);
+		SW_RTN_ON_ERROR(rtn);
+	}
+
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_STAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_STAG_EN)) {
+		rtn = jhppe_eg_vlan_tpid_ext1_stag_tpid_map_set(dev_id,
+				(a_uint32_t)tpid->stpid_map);
+		SW_RTN_ON_ERROR(rtn);
+	}
+#endif
 	return rtn;
 }
 
@@ -930,6 +1041,24 @@ adpt_hppe_egress_tpid_get(a_uint32_t dev_id, fal_tpid_t *tpid)
 	rtn = hppe_eg_vlan_tpid_stpid_get(dev_id, &tmp);
 	SW_RTN_ON_ERROR(rtn);
 	tpid->stpid = tmp;
+
+#if defined(JHPPE)
+	rtn = jhppe_eg_vlan_tpid_ext0_ctpid_get(dev_id, &tmp);
+	SW_RTN_ON_ERROR(rtn);
+	tpid->ext_ctpid = tmp;
+
+	rtn = jhppe_eg_vlan_tpid_ext0_stpid_get(dev_id, &tmp);
+	SW_RTN_ON_ERROR(rtn);
+	tpid->ext_stpid = tmp;
+
+	rtn = jhppe_eg_vlan_tpid_ext1_ctag_tpid_map_get(dev_id, &tmp);
+	SW_RTN_ON_ERROR(rtn);
+	tpid->ctpid_map = tmp;
+
+	rtn = jhppe_eg_vlan_tpid_ext1_stag_tpid_map_get(dev_id, &tmp);
+	SW_RTN_ON_ERROR(rtn);
+	tpid->stpid_map = tmp;
+#endif
 
 	return rtn;
 }
