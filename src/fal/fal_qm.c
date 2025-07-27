@@ -152,6 +152,9 @@ sw_error_t fal_qm_cpucode_enqueue_get(a_uint32_t dev_id, a_uint32_t cpu_code, a_
 sw_error_t fal_qm_cpucode_enqueue_set(a_uint32_t dev_id, a_uint32_t cpu_code, a_bool_t enable)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qm_cpucode_enqueue_set, dev_id, cpu_code, enable)
 
+sw_error_t fal_qm_tcont_stat_get(a_uint32_t dev_id, a_uint32_t tcont_id, fal_queue_tcont_stat_t *stat)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_tcont_stat_get, dev_id, tcont_id, stat)
+
 #if !defined(IN_QM_MINI)
 sw_error_t fal_ucast_default_hash_get( a_uint32_t dev_id, a_uint8_t *hash_value)
     DEFINE_FAL_FUNC_ADPT_EXPORT(ucast_default_hash_get, dev_id, hash_value)
