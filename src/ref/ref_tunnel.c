@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -127,6 +116,13 @@ static const char *tunnel_decapentry[] = {
 	"ttl_mode",
 	"dscp_mode",
 	"ecn_mode",
+#if defined(JHPPE)
+	"inner_type_en",
+	"inner_type",
+	"inner_offset_en",
+	"inner_offset_mode",
+	"innter_offset",
+#endif
 };
 
 static const char *tunnel_encapentry[] = {
@@ -239,7 +235,39 @@ static const char *tunnel_decapkey[] = {
 	"key_udf1_en",
 	"udf1_idx",
 	"udf1_mask",
+#if defined(JHPPE)
+	"key_tlinfo_udf0_en",
+	"key_tlinfo_udf1_en",
+	"key_sip_lpm_prefix_en",
+	"tunnel_info_udf0_idx",
+	"tunnel_info_udf1_idx",
+#endif
 };
+
+#if defined(JHPPE)
+static const char *tunnel_tupleentry[] = {
+	"ip_ver",
+	"sip_en",
+	"sip_addr",
+	"dip_en",
+	"dip_addr",
+	"l4_proto_en",
+	"l4_proto",
+	"sport_en",
+	"sport",
+	"dport_en",
+	"dport",
+	"tuple_context_type",
+	"tuple_contex",
+};
+
+static const char *tunnel_decapmissaction[] = {
+	"tunnel_type",
+	"decap_en",
+	"service_code_en",
+	"service_code",
+};
+#endif
 
 int parse_tunnel(a_uint32_t dev_id, const char *command_name, struct switch_val *val)
 {
@@ -295,8 +323,15 @@ int parse_tunnel(a_uint32_t dev_id, const char *command_name, struct switch_val 
 	} else if (!strcmp(command_name, "Decapkey")) {
 		rv = parse_uci_option(val, tunnel_decapkey,
 				ARRAY_SIZE(tunnel_decapkey));
+#if defined(JHPPE)
+	} else if (!strcmp(command_name, "TupleEntry")) {
+		rv = parse_uci_option(val, tunnel_tupleentry,
+				ARRAY_SIZE(tunnel_tupleentry));
+	} else if (!strcmp(command_name, "DecapMissAction")) {
+		rv = parse_uci_option(val, tunnel_decapmissaction,
+				ARRAY_SIZE(tunnel_decapmissaction));
+#endif
 	}
-
 	return rv;
 }
 
