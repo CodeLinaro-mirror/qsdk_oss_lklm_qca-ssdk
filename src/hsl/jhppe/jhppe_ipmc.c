@@ -6,6 +6,677 @@
 #include "hsl_reg.h"
 
 sw_error_t
+jhppe_ipmc_tbl_op_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data0_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data0_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA0_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data0_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data0_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA0_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data1_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data1_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA1_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data1_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data1_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA1_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data2_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data2_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA2_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data2_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data2_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA2_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data3_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data3_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA3_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data3_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data3_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA3_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data4_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data4_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA4_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data4_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data4_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA4_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data5_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data5_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA5_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data5_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data5_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA5_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data6_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data6_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA6_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data6_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data6_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA6_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data7_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data7_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA7_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data7_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data7_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA7_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data8_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data8_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA8_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data8_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data8_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA8_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data9_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data9_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA9_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data9_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data9_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA9_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data10_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data10_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA10_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_data10_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_data10_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA10_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_op_rslt_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_op_rslt_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_OP_RSLT_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data0_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data0_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA0_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data0_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data0_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA0_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data1_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data1_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA1_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data1_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data1_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA1_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data2_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data2_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA2_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data2_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data2_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA2_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data3_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data3_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA3_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data3_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data3_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA3_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data4_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data4_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA4_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data4_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data4_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA4_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data5_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data5_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA5_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data5_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data5_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA5_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data6_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data6_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA6_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data6_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data6_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA6_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data7_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data7_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA7_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data7_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data7_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA7_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data8_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data8_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA8_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data8_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data8_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA8_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data9_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data9_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA9_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data9_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data9_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA9_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data10_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data10_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA10_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_data10_set(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_data10_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA10_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_op_rslt_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_op_rslt_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_RSLT_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data0_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data0_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA0_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data1_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data1_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA1_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data2_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data2_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA2_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data3_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data3_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA3_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data4_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data4_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA4_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data5_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data5_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA5_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data6_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data6_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA6_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data7_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data7_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA7_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data8_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data8_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA8_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data9_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data9_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA9_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data10_get(
+		a_uint32_t dev_id,
+		union ipmc_tbl_rd_rslt_data10_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA10_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
 jhppe_ipmc_convert_uc_ctrl_get(
 		a_uint32_t dev_id,
 		union ipmc_convert_uc_ctrl_u *value)
@@ -141,5 +812,117 @@ jhppe_ipmc_convert_uc_ctrl_service_code_set(
 	reg_val.bf.service_code = value;
 	ret = jhppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
 	return ret;
+}
+
+sw_error_t
+jhppe_ipmc_gipv4_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_gipv4_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_GIPV4_TBL_ADDRESS + \
+				index * IPMC_GIPV4_TBL_INC,
+				value->val,
+				sizeof(union ipmc_gipv4_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_gipv4_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_gipv4_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_GIPV4_TBL_ADDRESS + \
+				index * IPMC_GIPV4_TBL_INC,
+				value->val,
+				sizeof(union ipmc_gipv4_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_gipv6_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_gipv6_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_GIPV6_TBL_ADDRESS + \
+				index * IPMC_GIPV6_TBL_INC,
+				value->val,
+				sizeof(union ipmc_gipv6_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_gipv6_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_gipv6_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_GIPV6_TBL_ADDRESS + \
+				index * IPMC_GIPV6_TBL_INC,
+				value->val,
+				sizeof(union ipmc_gipv6_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_sipv4_gipv4_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_sipv4_gipv4_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_SIPV4_GIPV4_TBL_ADDRESS + \
+				index * IPMC_SIPV4_GIPV4_TBL_INC,
+				value->val,
+				sizeof(union ipmc_sipv4_gipv4_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_sipv4_gipv4_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_sipv4_gipv4_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_SIPV4_GIPV4_TBL_ADDRESS + \
+				index * IPMC_SIPV4_GIPV4_TBL_INC,
+				value->val,
+				sizeof(union ipmc_sipv4_gipv4_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_sipv6_gipv6_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_sipv6_gipv6_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_SIPV6_GIPV6_TBL_ADDRESS + \
+				index * IPMC_SIPV6_GIPV6_TBL_INC,
+				value->val,
+				sizeof(union ipmc_sipv6_gipv6_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_ipmc_sipv6_gipv6_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipmc_sipv6_gipv6_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + IPMC_SIPV6_GIPV6_TBL_ADDRESS + \
+				index * IPMC_SIPV6_GIPV6_TBL_INC,
+				value->val,
+				sizeof(union ipmc_sipv6_gipv6_tbl_u)/sizeof(a_uint32_t));
 }
 
