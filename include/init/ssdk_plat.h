@@ -336,6 +336,8 @@ struct qca_phy_priv {
 	a_bool_t port_tx_flowctrl_forcemode[SW_MAX_NR_PORT];
 	a_bool_t port_rx_flowctrl_forcemode[SW_MAX_NR_PORT];
 	struct delayed_work qm_dwork_polling;
+	/* When set to TRUE, polling will execute only once and not reschedule itself */
+	a_bool_t polling_once;
 	struct work_struct	 intr_workqueue;
 	/*qm_err_check end*/
 /*qca808x_start*/
