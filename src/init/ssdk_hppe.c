@@ -620,15 +620,12 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	}
 
 	switch (chip_type) {
-		case HPPE_TYPE:
 		case MRPPE_TYPE:
 		case JHPPE_TYPE:
 		case HMSPPE_TYPE:
 		case APPE_TYPE:
+		case HTTPPE_TYPE:
 			total_buf = 2000;
-			break;
-		case CPPE_TYPE:
-			total_buf = 1506;
 			break;
 		case MPPE_TYPE:
 			total_buf = 500;

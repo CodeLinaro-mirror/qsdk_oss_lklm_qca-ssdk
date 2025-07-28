@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #include "ssdk_init.h"
@@ -613,7 +602,7 @@ fal_port_tdm_tick_cfg_t ppe_port_tdm0_tbl[] = {
 };
 #endif
 
-static sw_error_t
+sw_error_t
 qca_appe_tdm_hw_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_api;
@@ -761,7 +750,7 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 #endif
 
 #if (defined(IN_PORTCONTROL) || defined(IN_LED))
-static sw_error_t
+sw_error_t
 qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 {
 	a_uint32_t i = 0, mac_type_org = 0, mac_type = 0;
@@ -835,7 +824,7 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 #endif
 
 #if defined(IN_SHAPER)
-static sw_error_t
+sw_error_t
 qca_appe_shaper_hw_init(a_uint32_t dev_id)
 {
 	fal_shaper_token_number_t port_token_number, queue_token_number;
@@ -902,7 +891,7 @@ qca_appe_shaper_hw_init(a_uint32_t dev_id)
 #endif
 
 #if defined(IN_POLICER)
-static sw_error_t
+sw_error_t
 qca_appe_policer_hw_init(a_uint32_t dev_id)
 {
 	a_uint32_t i = 0;
@@ -978,7 +967,7 @@ qca_appe_policer_hw_init(a_uint32_t dev_id)
 #define RSS_HASH_DIPV6_MIX_2 0x13
 #define RSS_HASH_DIPV6_MIX_3 0xb
 
-static sw_error_t
+sw_error_t
 qca_appe_rss_hash_hw_init(a_uint32_t dev_id)
 {
 	sw_error_t rv = SW_OK;

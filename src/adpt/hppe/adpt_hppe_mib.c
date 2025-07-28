@@ -57,12 +57,15 @@ adpt_ppe_mib_cpukeep_set(a_uint32_t dev_id, a_bool_t enable)
 
 	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT6; port_id++)
 	{
-		g_port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+		g_port_id = ppe_port_to_gmac_id(dev_id, port_id);
 		hppe_mac_mib_ctrl_mib_rd_clr_set(dev_id, g_port_id, (a_uint32_t)(!enable));
 	}
 #ifdef JHPPE
-	rv = adpt_jhppe_lpbk_mib_cpukeep_set(dev_id, enable);
-	SW_RTN_ON_ERROR(rv);
+	if ((adpt_ppe_type_get(dev_id) == JHPPE_TYPE) ||
+		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)) {
+		rv = adpt_jhppe_lpbk_mib_cpukeep_set(dev_id, enable);
+		SW_RTN_ON_ERROR(rv);
+	}
 #endif
 	return rv;
 }
@@ -75,7 +78,7 @@ adpt_hppe_get_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(mib_info);
 	memset(mib_info, 0, sizeof(fal_mib_info_t));
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	hppe_rxbroad_get(dev_id, (a_uint32_t)port_id, (union rxbroad_u *)&mib_info->RxBroad);
 	hppe_rxpause_get(dev_id, (a_uint32_t)port_id, (union rxpause_u *)&mib_info->RxPause);
 	hppe_rxmulti_get(dev_id, (a_uint32_t)port_id, (union rxmulti_u *)&mib_info->RxMulti);
@@ -174,7 +177,7 @@ adpt_hppe_get_tx_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(mib_info);
 	memset(mib_info, 0, sizeof(fal_mib_info_t));
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	hppe_txbroad_get(dev_id, (a_uint32_t)port_id, (union txbroad_u *)&mib_info->TxBroad);
 	hppe_txpause_get(dev_id, (a_uint32_t)port_id, (union txpause_u *)&mib_info->TxPause);
 	hppe_txmulti_get(dev_id, (a_uint32_t)port_id, (union txmulti_u *)&mib_info->TxMulti);
@@ -226,17 +229,20 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 	ADPT_DEV_ID_CHECK(dev_id);
 
 #ifdef JHPPE
-	rv = adpt_jhppe_lpbk_mib_status_set(dev_id, enable);
-	SW_RTN_ON_ERROR(rv);
+	if ((adpt_ppe_type_get(dev_id) == JHPPE_TYPE) ||
+		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)) {
+		rv = adpt_jhppe_lpbk_mib_status_set(dev_id, enable);
+		SW_RTN_ON_ERROR(rv);
+	}
 #endif
 	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= port_num; port_id++) {
-		g_port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+		g_port_id = ppe_port_to_gmac_id(dev_id, port_id);
 		hppe_mac_mib_ctrl_mib_en_set(dev_id, g_port_id, (a_uint32_t)enable);
 	}
 
 	xg_port_index = SSDK_PHYSICAL_PORT1;
 	for (port_id = xg_port_index; port_id <= port_num; port_id++) {
-		xg_port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+		xg_port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 		hppe_mmc_control_get(dev_id, xg_port_id, &mmc_control);
 
 		if(A_TRUE == enable)
@@ -263,14 +269,14 @@ adpt_hppe_mib_port_flush_counters(a_uint32_t dev_id, fal_port_t port_id)
 	/*GMAC*/
 	if(!hppe_xgmac_port_check(dev_id, port_id))
 	{
-		port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+		port_id = ppe_port_to_gmac_id(dev_id, port_id);
 		hppe_mac_mib_ctrl_mib_reset_set(dev_id, port_id, A_TRUE);
 		hppe_mac_mib_ctrl_mib_reset_set(dev_id, port_id, A_FALSE);
 	}
 	/*XGMAC*/
 	else
 	{
-		port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+		port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 		hppe_mmc_control_get(dev_id, port_id, &mmc_control);
 		mmc_control.bf.cntrst = 1;
 		hppe_mmc_control_set(dev_id, port_id, &mmc_control);
@@ -317,7 +323,7 @@ adpt_hppe_get_rx_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(mib_info);
 	memset(mib_info, 0, sizeof(fal_mib_info_t));
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	hppe_rxbroad_get(dev_id, (a_uint32_t)port_id, (union rxbroad_u *)&mib_info->RxBroad);
 	hppe_rxpause_get(dev_id, (a_uint32_t)port_id, (union rxpause_u *)&mib_info->RxPause);
 	hppe_rxmulti_get(dev_id, (a_uint32_t)port_id, (union rxmulti_u *)&mib_info->RxMulti);
@@ -389,7 +395,7 @@ adpt_hppe_get_xgmib_info(a_uint32_t dev_id, fal_port_t port_id,
 		SSDK_DEBUG("port %d is not xg port!\n", port_id);
 		return SW_FAIL;
 	}
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	/*get tx xgmib information*/
 	data_low = 0; data_high = 0;
@@ -638,7 +644,7 @@ adpt_hppe_get_tx_xgmib_info(a_uint32_t dev_id, fal_port_t port_id,
 		SSDK_ERROR("port %d is not xg port!\n", port_id);
 		return SW_FAIL;
 	}
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	/*get tx xgmib information*/
 	data_low = 0; data_high = 0;
@@ -757,7 +763,7 @@ adpt_hppe_get_rx_xgmib_info(a_uint32_t dev_id, fal_port_t port_id,
 		SSDK_ERROR("port %id is not xg port!\n", port_id);
 		return SW_FAIL;
 	}
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	/*get tx xgmib information*/
 	data_low = 0; data_high = 0;

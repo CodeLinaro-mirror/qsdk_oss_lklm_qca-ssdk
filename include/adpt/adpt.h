@@ -2364,6 +2364,7 @@ typedef enum {
 	MRPPE_TYPE,
 	JHPPE_TYPE,
 	HMSPPE_TYPE,
+	HTTPPE_TYPE,
 	MAX_PPE_TYPE,
 } adpt_ppe_type_t;
 
@@ -2549,6 +2550,7 @@ adpt_forward_action_convert(fal_fwd_cmd_t *fwd_cmd, a_uint32_t *value, a_bool_t 
 #define ADPT_MRPPE_FREQUENCY     375  /*MHZ*/
 #define ADPT_JHPPE_FREQUENCY     462  /*MHZ*/
 #define ADPT_HMSPPE_FREQUENCY    428  /*MHZ*/
+#define ADPT_HTTPPE_FREQUENCY    250  /*MHZ*/
 
 adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id);
 sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
@@ -2556,6 +2558,9 @@ a_uint32_t adpt_chip_type_get(a_uint32_t dev_id);
 a_uint32_t adpt_chip_revision_get(a_uint32_t dev_id);
 a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id);
 sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capacity);
+a_uint32_t ppe_port_to_gmac_id(a_uint32_t dev_id, fal_port_t port_id);
+a_uint32_t ppe_port_to_xgmac_id(a_uint32_t dev_id, fal_port_t port_id);
+
 #ifdef SCOMPHY
 a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id);
 #endif

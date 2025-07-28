@@ -34,6 +34,9 @@
 #include "sfp_phy.h"
 #include "adpt_appe_portctrl.h"
 #include "ref_port_ctrl.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_portctrl.h"
+#endif
 
 #define PORT4_PCS_SEL_GMII_FROM_PCS0 1
 #define PORT4_PCS_SEL_RGMII 0
@@ -187,7 +190,7 @@ _adpt_hppe_port_xgmac_loopback_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_rx_configuration_lm_get(dev_id, port_id, (a_uint32_t*)enable);
 
 	return rv;
@@ -199,7 +202,7 @@ _adpt_hppe_port_gmac_loopback_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_ctrl2_mac_loop_back_get(dev_id, port_id, (a_uint32_t*)enable);
 
 	return rv;
@@ -211,7 +214,7 @@ _adpt_hppe_port_xgmac_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_rx_configuration_lm_set(dev_id, port_id, (a_uint32_t)enable);
 
 	return rv;
@@ -223,7 +226,7 @@ _adpt_hppe_port_gmac_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_ctrl2_mac_loop_back_set(dev_id, port_id, (a_uint32_t)enable);
 
 	return rv;
@@ -235,7 +238,7 @@ _adpt_hppe_port_jumbo_size_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_jumbo_size_mac_jumbo_size_set(dev_id, port_id, jumbo_size);
 
 	return rv;
@@ -247,7 +250,7 @@ _adpt_xgmac_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_rx_configuration_gpsl_get(dev_id,port_id, max_frame);
 
 	return rv;
@@ -259,7 +262,7 @@ _adpt_gmac_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_jumbo_size_mac_jumbo_size_get(dev_id, port_id, max_frame);
 
 	return rv;
@@ -271,7 +274,7 @@ adpt_hppe_port_xgmac_promiscuous_mode_set(a_uint32_t dev_id,
 {
 	sw_error_t rv = 0;
 
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	rv = hppe_mac_packet_filter_pr_set(dev_id, port_id, PROMISCUOUS_MODE);
 
@@ -291,7 +294,7 @@ _adpt_xgmac_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t max_frame)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t index = HPPE_TO_XGMAC_PORT_ID(port_id);
+	a_uint32_t index = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	rv |= hppe_mac_tx_configuration_jd_set(dev_id, index, (a_uint32_t)A_TRUE);
 	rv |= hppe_mac_rx_configuration_gpsl_set(dev_id, index, max_frame);
@@ -310,7 +313,7 @@ _adpt_gmac_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv |= hppe_mac_ctrl2_maxfr_set(dev_id, port_id, max_frame);
 	rv |= hppe_mac_ctrl2_crs_sel_set(dev_id, port_id, CARRIER_SENSE_SIGNAL_FROM_MAC);
 	rv |= hppe_mac_dbg_ctrl_high_ipg_set(dev_id, port_id, GMAC_IPG_CHECK);
@@ -326,7 +329,7 @@ _adpt_xgmac_port_rx_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t
 	union mac_rx_configuration_u xgmac_rx_enable;
 
 	memset(&xgmac_rx_enable, 0, sizeof(xgmac_rx_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_rx_configuration_get(dev_id, port_id,  &xgmac_rx_enable);
 	if( rv != SW_OK )
 		return rv;
@@ -341,7 +344,7 @@ _adpt_gmac_port_rx_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t*
 	union mac_enable_u gmac_rx_enable;
 
 	memset(&gmac_rx_enable, 0, sizeof(gmac_rx_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_enable_get(dev_id, port_id, &gmac_rx_enable);
 	if( rv != SW_OK )
 		return rv;
@@ -357,7 +360,7 @@ _adpt_xgmac_port_rx_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t e
 	union mac_rx_configuration_u xgmac_rx_enable;
 
 	memset(&xgmac_rx_enable, 0, sizeof(xgmac_rx_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv |=  hppe_mac_rx_configuration_get(dev_id, port_id,  &xgmac_rx_enable);
 
 	xgmac_rx_enable.bf.acs = 1;
@@ -381,7 +384,7 @@ _adpt_gmac_port_rx_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t en
 	union mac_enable_u gmac_rx_enable;
 
 	memset(&gmac_rx_enable, 0, sizeof(gmac_rx_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv |= hppe_mac_enable_get(dev_id, port_id, &gmac_rx_enable);
 	if (A_TRUE == enable)
 		gmac_rx_enable.bf.rxmac_en = 1;
@@ -399,7 +402,7 @@ _adpt_xgmac_port_tx_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t
 	union mac_tx_configuration_u xgmac_tx_enable;
 
 	memset(&xgmac_tx_enable, 0, sizeof(xgmac_tx_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_tx_configuration_get(dev_id, port_id,  &xgmac_tx_enable);
 	if( rv != SW_OK )
 		return  rv;
@@ -415,7 +418,7 @@ _adpt_gmac_port_tx_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t 
 	union mac_enable_u gmac_tx_enable;
 
 	memset(&gmac_tx_enable, 0, sizeof(gmac_tx_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_enable_get(dev_id, port_id, &gmac_tx_enable);
 	if( rv != SW_OK )
 		return  rv;
@@ -431,7 +434,7 @@ _adpt_xgmac_port_tx_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 	union mac_tx_configuration_u xgmac_tx_enable;
 
 	memset(&xgmac_tx_enable, 0, sizeof(xgmac_tx_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	 rv |=hppe_mac_tx_configuration_get(dev_id, port_id,  &xgmac_tx_enable);
 	 if (A_TRUE == enable)
 		 xgmac_tx_enable.bf.te = 1;
@@ -449,7 +452,7 @@ _adpt_gmac_port_tx_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t e
 	union mac_enable_u gmac_tx_enable;
 
 	memset(&gmac_tx_enable, 0, sizeof(gmac_tx_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv |= hppe_mac_enable_get(dev_id, port_id, &gmac_tx_enable);
 	if (A_TRUE == enable)
 		gmac_tx_enable.bf.txmac_en = 1;
@@ -467,7 +470,7 @@ _adpt_xgmac_port_txfc_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32
 	union mac_q0_tx_flow_ctrl_u xgmac_txfc_enable;
 
 	memset(&xgmac_txfc_enable, 0, sizeof(xgmac_txfc_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_q0_tx_flow_ctrl_get(dev_id, port_id, &xgmac_txfc_enable);
 	if( rv != SW_OK )
 		return rv;
@@ -483,7 +486,7 @@ _adpt_gmac_port_txfc_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_
 	union mac_enable_u gmac_txfc_enable;
 
 	memset(&gmac_txfc_enable, 0, sizeof(gmac_txfc_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_enable_get(dev_id, port_id, &gmac_txfc_enable);
 	if( rv != SW_OK )
 		return rv;
@@ -499,7 +502,7 @@ _adpt_xgmac_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,  a_bool_
 	union mac_q0_tx_flow_ctrl_u xgmac_txfc_enable;
 
 	memset(&xgmac_txfc_enable, 0, sizeof(xgmac_txfc_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv |= hppe_mac_q0_tx_flow_ctrl_get(dev_id, port_id,  &xgmac_txfc_enable);
 	if (A_TRUE == enable)
 	{
@@ -520,7 +523,7 @@ _adpt_gmac_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,  a_bool_t
 	union mac_enable_u gmac_txfc_enable;
 
 	memset(&gmac_txfc_enable, 0, sizeof(gmac_txfc_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv |= hppe_mac_enable_get(dev_id, port_id, &gmac_txfc_enable);
 	if (A_TRUE == enable)
 		gmac_txfc_enable.bf.tx_flow_en = 1;
@@ -538,7 +541,7 @@ _adpt_xgmac_port_rxfc_status_get(a_uint32_t dev_id, fal_port_t port_id,  a_uint3
 	union mac_rx_flow_ctrl_u xgmac_rxfc_enable;
 
 	memset(&xgmac_rxfc_enable, 0, sizeof(xgmac_rxfc_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_rx_flow_ctrl_get(dev_id, port_id, &xgmac_rxfc_enable);
 	if(rv != SW_OK)
 		return rv;
@@ -554,7 +557,7 @@ _adpt_gmac_port_rxfc_status_get(a_uint32_t dev_id, fal_port_t port_id, a_uint32_
 	union mac_enable_u gmac_rxfc_enable;
 
 	memset(&gmac_rxfc_enable, 0, sizeof(gmac_rxfc_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = hppe_mac_enable_get(dev_id, port_id, &gmac_rxfc_enable);
 	if( rv != SW_OK)
 		return rv;
@@ -570,7 +573,7 @@ _adpt_xgmac_port_rxfc_status_set(a_uint32_t dev_id,fal_port_t port_id, a_bool_t 
 	union mac_rx_flow_ctrl_u xgmac_rxfc_enable;
 
 	memset(&xgmac_rxfc_enable, 0, sizeof(xgmac_rxfc_enable));
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv |= hppe_mac_rx_flow_ctrl_get(dev_id, port_id, &xgmac_rxfc_enable);
 	if (A_TRUE == enable)
 		xgmac_rxfc_enable.bf.rfe= 1;
@@ -588,7 +591,7 @@ _adpt_gmac_port_rxfc_status_set(a_uint32_t dev_id,fal_port_t port_id, a_bool_t e
 	union mac_enable_u gmac_rxfc_enable;
 
 	memset(&gmac_rxfc_enable, 0, sizeof(gmac_rxfc_enable));
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv |= hppe_mac_enable_get(dev_id, port_id, &gmac_rxfc_enable);
 	if (A_TRUE == enable)
 		gmac_rxfc_enable.bf.rx_flow_en = 1;
@@ -604,7 +607,7 @@ adpt_hppe_port_xgmac_reconfig(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t rxfc_status = 0, txfc_status = 0;
-	a_uint32_t index = HPPE_TO_XGMAC_PORT_ID(port_id);
+	a_uint32_t index = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id, port_id);
 	SW_RTN_ON_ERROR(rv);
@@ -1046,9 +1049,11 @@ adpt_hppe_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
 
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
-	{
-		return SW_BAD_PARAM;
+	if (adpt_ppe_type_get(dev_id) != HTTPPE_TYPE) {
+		if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+		{
+			return SW_BAD_PARAM;
+		}
 	}
 	*mode = phy_info->port_mode[port_id];
 
@@ -1490,7 +1495,7 @@ adpt_hppe_port_flowctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{
 		return adpt_jhppe_switch_port_loopback_flowctrl_get(dev_id,
-				port_id, enable);
+			port_id, enable);
 	}
 #endif
 	rv = adpt_hppe_port_txfc_status_get(dev_id, port_id,  &txfc_enable);
@@ -1510,12 +1515,14 @@ _adpt_hppe_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU) &&
-		mode != PORT_INTERFACE_MODE_MAX)
-	{
-		return SW_BAD_PARAM;
-	}
 
+	if (adpt_ppe_type_get(dev_id) != HTTPPE_TYPE) {
+		if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU) &&
+			mode != PORT_INTERFACE_MODE_MAX)
+		{
+			return SW_BAD_PARAM;
+		}
+	}
 	phy_info->port_mode[port_id] = mode;
 
 	return rv;
@@ -1555,7 +1562,7 @@ _adpt_hppe_gmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed_
 	memset(&mac_speed, 0, sizeof(mac_speed));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	hppe_mac_speed_get(dev_id, port_id, &mac_speed);
 
 	if(FAL_SPEED_10 == speed)
@@ -1584,7 +1591,7 @@ _adpt_hppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 	SW_RTN_ON_ERROR (rv);
 	SSDK_DEBUG ("port %d interface mode is 0x%x\n", port_id, mode);
 
-	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	hppe_mac_tx_configuration_get(dev_id, port_id, &mac_tx_configuration);
 
 	if(FAL_SPEED_1000 == speed)
@@ -1648,7 +1655,7 @@ _adpt_hppe_gmac_duplex_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_duple
 	memset(&mac_enable, 0, sizeof(mac_enable));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	hppe_mac_enable_get(dev_id, port_id, &mac_enable);
 
 	if (FAL_FULL_DUPLEX == duplex)
@@ -1988,6 +1995,61 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	return rv;
 }
+
+#if defined(HTTPPE)
+sw_error_t
+adpt_httppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
+	a_uint32_t mode0, a_uint32_t mode1, a_uint32_t mode2)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t mode_tmp = PORT_WRAPPER_MAX;
+
+	rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_INTERFACE_MODE_MAX);
+	SW_RTN_ON_ERROR(rv);
+
+	if (port_id == SSDK_PHYSICAL_PORT0)
+		mode_tmp = mode0;
+	else if (port_id == SSDK_PHYSICAL_PORT5)
+		mode_tmp = mode1;
+	else {
+		rv = qca_hppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
+		SW_RTN_ON_ERROR(rv);
+		rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_SGMII_PLUS);
+		SW_RTN_ON_ERROR(rv);
+		rv = _adpt_hppe_gmac_speed_set(dev_id, port_id, FAL_SPEED_1000);
+		SW_RTN_ON_ERROR(rv);
+		rv = _adpt_hppe_gmac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
+		SW_RTN_ON_ERROR(rv);
+		return SW_OK;
+	}
+	switch (mode_tmp) {
+		case PORT_WRAPPER_SGMII_PLUS:
+			rv = qca_hppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_SGMII_PLUS);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_hppe_gmac_speed_set(dev_id, port_id, FAL_SPEED_1000);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_hppe_gmac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
+			SW_RTN_ON_ERROR(rv);
+			break;
+		case PORT_WRAPPER_USXGMII:
+			rv = qca_hppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_USXGMII);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_hppe_xgmac_speed_set(dev_id, port_id, FAL_SPEED_10000);
+			SW_RTN_ON_ERROR(rv);
+			break;
+		default:
+			break;
+	}
+
+	rv = adpt_httppe_port_mux_mac_set(dev_id, port_id);
+
+	return rv;
+}
+#endif
 
 static sw_error_t
 _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t max_port_id,
@@ -2595,10 +2657,10 @@ adpt_hppe_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
 		return SW_BAD_VALUE;
 #ifdef JHPPE
-	 if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
+	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{
 		return adpt_jhppe_switch_port_loopback_flowctrl_set(dev_id,
-				port_id, enable);
+			port_id, enable);
 	}
 #endif
 	rv = adpt_hppe_port_txfc_status_set(dev_id, port_id, enable);
@@ -2931,7 +2993,7 @@ _adpt_mrppe_port_gmac_eee_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv = SW_OK;
 	union lpi_port_enable_u lpi_port_enable = {0};
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	/*enable lpi*/
 	rv = mrppe_lpi_port_enable_get(dev_id, port_id, &lpi_port_enable);
 	SW_RTN_ON_ERROR (rv);
@@ -2950,7 +3012,7 @@ _adpt_mrppe_port_gmac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
 	union lpi_port_sleep_timer_u lpi_port_sleep_timer = {0};
 	union lpi_1us_cnt_u lpi_1us_cnt = {0};
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	/*configure 1us cnt*/
 	rv = mrppe_lpi_1us_cnt_get(dev_id, port_id, &lpi_1us_cnt);
 	SW_RTN_ON_ERROR (rv);
@@ -2985,7 +3047,7 @@ _adpt_mrppe_port_gmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	union lpi_port_wakeup_timer_u lpi_port_wakeup_timer = {0};
 	union lpi_port_sleep_timer_u lpi_port_sleep_timer = {0};
 
-	port_id = HPPE_TO_GMAC_PORT_ID(port_id);
+	port_id = ppe_port_to_gmac_id(dev_id, port_id);
 	rv = mrppe_lpi_port_enable_get(dev_id, port_id, &lpi_port_enable);
 	SW_RTN_ON_ERROR (rv);
 	if(lpi_port_enable.bf.lpi_port_en)
@@ -3124,7 +3186,7 @@ _adpt_hppe_port_xgmac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
 
-	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	xgmac_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_1us_tic_counter_get(dev_id, xgmac_id, &mac_1us_tic_counter);
 	SW_RTN_ON_ERROR (rv);
 	mac_1us_tic_counter.bf.tic_1us_cntr = adpt_chip_freq_get(dev_id) - 1;
@@ -3175,7 +3237,7 @@ _adpt_hppe_port_xgmac_eee_status_set(a_uint32_t dev_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
 
-	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	xgmac_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_lpi_control_status_get(dev_id, xgmac_id, &mac_lpi_control_status);
 	SW_RTN_ON_ERROR (rv);
 	mac_lpi_control_status.bf.lpitxen = port_eee_cfg->lpi_tx_enable;
@@ -3202,7 +3264,7 @@ _adpt_hppe_port_xgmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	memset(&mac_lpi_control_status, 0, sizeof(mac_lpi_control_status));
 	memset(&mac_lpi_timers_control, 0, sizeof(mac_lpi_timers_control));
 
-	xgmac_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+	xgmac_id = ppe_port_to_xgmac_id(dev_id, port_id);
 	rv = hppe_mac_lpi_control_status_get(dev_id, xgmac_id, &mac_lpi_control_status);
 	SW_RTN_ON_ERROR (rv);
 	port_eee_cfg->lpi_tx_enable = mac_lpi_control_status.bf.lpitxen;
@@ -4707,7 +4769,13 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 		adpt_hppe_port_flowctrl_forcemode_get;
 	p_adpt_api->adpt_port_source_filter_config_get = adpt_ppe_port_source_filter_config_get;
 	p_adpt_api->adpt_port_source_filter_config_set = adpt_ppe_port_source_filter_config_set;
-	p_adpt_api->adpt_port_mux_mac_type_set = adpt_hppe_port_mux_mac_type_set;
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+#if defined(HTTPPE)
+		p_adpt_api->adpt_port_mux_mac_type_set = adpt_httppe_port_mux_mac_type_set;
+#endif
+	} else {
+		p_adpt_api->adpt_port_mux_mac_type_set = adpt_hppe_port_mux_mac_type_set;
+	}
 	p_adpt_api->adpt_port_mac_speed_set = adpt_hppe_port_mac_speed_set;
 	p_adpt_api->adpt_port_mac_duplex_set = adpt_hppe_port_mac_duplex_set;
 	p_adpt_api->adpt_port_polling_sw_sync_set = qca_hppe_mac_sw_sync_task;

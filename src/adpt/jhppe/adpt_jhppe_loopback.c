@@ -33,7 +33,6 @@ adpt_jhppe_switch_loopback_port_get(a_uint32_t dev_id, fal_port_t *port_id)
 			*port_id = PHYSICAL_LPBK_PORT_ID;
 			break;
 		default:
-			SSDK_ERROR("Unsupported loopback port chip type: %d\n", chip_type);
 			return SW_NOT_SUPPORTED;
 	}
 	return SW_OK;

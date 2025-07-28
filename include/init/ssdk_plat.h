@@ -193,6 +193,7 @@ enum {
 	QCA_VER_MRPPE = 0x21,
 	QCA_VER_JHPPE = 0x30,
 	QCA_VER_HMSPPE = 0x40,
+	QCA_VER_HTTPPE = 0x50,
 	QCA_VER_SCOMPHY = 0xEE
 };
 /*qca808x_end*/

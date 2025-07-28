@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
 #include "adpt.h"
 #include "ssdk_init.h"
 #include "hsl_reg.h"
@@ -62,6 +61,9 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 		case CHIP_HMSPPE:
 			ppe_type = HMSPPE_TYPE;
 			break;
+		case CHIP_HTTPPE:
+			ppe_type = HTTPPE_TYPE;
+			break;
 		default:
 			break;
 	}
@@ -73,6 +75,9 @@ a_uint32_t
 adpt_ppe_uniphy_number_get(a_uint32_t dev_id)
 {
 	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
+		return (SSDK_UNIPHY_INSTANCE1+1);
+
+	if(adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
 		return (SSDK_UNIPHY_INSTANCE1+1);
 
 	return (SSDK_UNIPHY_INSTANCE2+1);
@@ -113,12 +118,49 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 		case HMSPPE_TYPE:
 			ppe_freq = ADPT_HMSPPE_FREQUENCY;
 			break;
+		case HTTPPE_TYPE:
+			ppe_freq = ADPT_HTTPPE_FREQUENCY;
+			break;
 		default:
 			SSDK_ERROR("Unknown chip type: %d\n", ppe_type);
 			break;
 	}
 
 	return ppe_freq;
+}
+
+a_uint32_t ppe_port_to_gmac_id(a_uint32_t dev_id, fal_port_t port_id)
+{
+	a_uint32_t gmac_id = 0;
+
+	if ((adpt_ppe_type_get(dev_id) != HTTPPE_TYPE) && (port_id > SSDK_PHYSICAL_PORT0))
+		gmac_id = port_id -1;
+	else
+		gmac_id = port_id;
+
+	return gmac_id;
+}
+
+a_uint32_t ppe_port_to_xgmac_id(a_uint32_t dev_id, fal_port_t port_id)
+{
+	a_uint32_t xgmac_id = 0;
+
+	if ((adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) && (port_id > SSDK_PHYSICAL_PORT0)) {
+		if (port_id > SSDK_PHYSICAL_PORT4)
+			xgmac_id = port_id -4;
+		else
+			xgmac_id = port_id -1;
+	} else if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		if (port_id == SSDK_PHYSICAL_PORT5)
+			xgmac_id = port_id - 4;
+		else
+			xgmac_id = port_id;
+	} else {
+		if (port_id > SSDK_PHYSICAL_PORT0)
+			xgmac_id = port_id -1;
+	}
+
+	return xgmac_id;
 }
 
 static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t module)
@@ -357,14 +399,12 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
 	if (g_adpt_api[dev_id] == NULL) {
 		g_adpt_api[dev_id] = aos_mem_alloc(sizeof(adpt_api_t));
-	
 		if(g_adpt_api[dev_id] == NULL)
 		{
 			SSDK_ERROR("%s, %d:malloc fail for adpt api\n",
 					__FUNCTION__, __LINE__);
 			return SW_FAIL;
 		}
-	
 		aos_mem_zero(g_adpt_api[dev_id], sizeof(adpt_api_t));
 	}
 	g_chip_ver[dev_id].chip_type = cfg->chip_type;
@@ -387,109 +427,80 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 #endif
 			fallthrough;
 		case CHIP_MRPPE:
-#if defined(MRPPE)
+		case CHIP_APPE:
+			/* APPE specific module initialization */
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_TUNNEL);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_VXLAN);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_GENEVE);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_TUNNEL_PROGRAM);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_MAPT);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_IP);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_FLOW);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_RSS_HASH);
+			SW_RTN_ON_ERROR(rv);
+			fallthrough;
+		case CHIP_HTTPPE:
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_VPORT);
+			SW_RTN_ON_ERROR(rv);
+#if defined(MRPPE) || defined(HTTPPE)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PKTEDIT);
 			SW_RTN_ON_ERROR(rv);
 #endif
-			fallthrough;
-		case CHIP_APPE:
-			/* APPE specific module initialization */
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_VPORT);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_TUNNEL);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_VXLAN);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_GENEVE);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_TUNNEL_PROGRAM);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_MAPT);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_LED);
-			SW_RTN_ON_ERROR(rv);
-
-#if defined(MPPE)
+#if defined(MPPE) || defined(HTTPPE)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_ATHTAG);
 			SW_RTN_ON_ERROR(rv);
 #endif
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MIRROR);
 			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_FDB);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_STP);
-			SW_RTN_ON_ERROR(rv);
-
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_TRUNK);
 			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PORTVLAN);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_FDB);
 			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_CTRLPKT);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_LED);
 			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SEC);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_ACL);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_VSI);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_IP);
-			SW_RTN_ON_ERROR(rv);
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_FLOW);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_QM);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_QOS);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_BM);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SERVCODE);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_RSS_HASH);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PPPOE);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PORTCTRL);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SHAPER);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MIB);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_POLICER);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MISC);
-			SW_RTN_ON_ERROR(rv);
-
-			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PTP);
-			SW_RTN_ON_ERROR(rv);
-
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SFP);
 			SW_RTN_ON_ERROR(rv);
-
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_STP);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PORTVLAN);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_CTRLPKT);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SEC);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_ACL);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_VSI);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_QM);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_QOS);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_BM);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SERVCODE);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PPPOE);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PORTCTRL);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_SHAPER);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MIB);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_POLICER);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MISC);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PTP);
+			SW_RTN_ON_ERROR(rv);
 			/* uniphy */
 			rv = adpt_hppe_uniphy_init(dev_id);
 			SW_RTN_ON_ERROR(rv);
