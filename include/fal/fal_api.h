@@ -3537,6 +3537,35 @@ extern "C" {
 #define PON_PM_API_PARAM
 #endif
 
+#ifdef IN_IPMC
+#define IPMC_API \
+	SW_API_DEF(SW_API_IPMC_STATUS_SET, fal_ipmc_status_set), \
+	SW_API_DEF(SW_API_IPMC_STATUS_GET, fal_ipmc_status_get), \
+	SW_API_DEF(SW_API_IPMC_GLOBAL_CFG_SET, fal_ipmc_global_cfg_set), \
+	SW_API_DEF(SW_API_IPMC_GLOBAL_CFG_GET, fal_ipmc_global_cfg_get), \
+	SW_API_DEF(SW_API_IPMC_ENTRY_ADD, fal_ipmc_entry_add), \
+	SW_API_DEF(SW_API_IPMC_ENTRY_DEL, fal_ipmc_entry_del), \
+	SW_API_DEF(SW_API_IPMC_ENTRY_GET, fal_ipmc_entry_get), \
+	SW_API_DEF(SW_API_IPMC_ENTRY_GETNEXT, fal_ipmc_entry_getnext), \
+	SW_API_DEF(SW_API_IPMC_ENTRY_FLUSH, fal_ipmc_entry_flush), \
+	SW_API_DEF(SW_API_IPMC_UCAST_FWD_SET, fal_ipmc_ucast_fwd_set), \
+	SW_API_DEF(SW_API_IPMC_UCAST_FWD_GET, fal_ipmc_ucast_fwd_get),
+#define IPMC_API_PARAM \
+	SW_API_DESC(SW_API_IPMC_STATUS_SET) \
+	SW_API_DESC(SW_API_IPMC_STATUS_GET) \
+	SW_API_DESC(SW_API_IPMC_GLOBAL_CFG_SET) \
+	SW_API_DESC(SW_API_IPMC_GLOBAL_CFG_GET) \
+	SW_API_DESC(SW_API_IPMC_ENTRY_ADD) \
+	SW_API_DESC(SW_API_IPMC_ENTRY_DEL) \
+	SW_API_DESC(SW_API_IPMC_ENTRY_GET) \
+	SW_API_DESC(SW_API_IPMC_ENTRY_GETNEXT) \
+	SW_API_DESC(SW_API_IPMC_ENTRY_FLUSH) \
+	SW_API_DESC(SW_API_IPMC_UCAST_FWD_SET) \
+	SW_API_DESC(SW_API_IPMC_UCAST_FWD_GET)
+#else
+#define IPMC_API
+#define IPMC_API_PARAM
+#endif
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3593,6 +3622,7 @@ extern "C" {
     SAMPL_API \
     PON_API \
     PON_PM_API \
+    IPMC_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3656,6 +3686,7 @@ extern "C" {
     SAMPL_API_PARAM \
     PON_API_PARAM \
     PON_PM_API_PARAM \
+    IPMC_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

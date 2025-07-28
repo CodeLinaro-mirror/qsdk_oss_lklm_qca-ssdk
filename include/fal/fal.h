@@ -39,7 +39,6 @@ extern "C" {
 #include "fal_sec.h"
 #include "fal_trunk.h"
 #include "fal_interface_ctrl.h"
-#include "fal_fdb.h"
 #include "fal_multi.h"
 #include "fal_ctrlpkt.h"
 #include "fal_servcode.h"
@@ -62,6 +61,7 @@ extern "C" {
 #include "fal_sampling.h"
 #include "fal_pon.h"
 #include "fal_pon_pm.h"
+#include "fal_ipmc.h"
 /* auto_insert_flag */
 
 /*qca808x_start*/

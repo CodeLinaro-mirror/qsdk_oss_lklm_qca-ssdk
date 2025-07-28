@@ -6836,7 +6836,7 @@ extern "C" {
         SW_PARAM_DEF(SW_API_PON_PM_COUNTER_GET, SW_DIRECTION, \
                         sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
         SW_PARAM_DEF(SW_API_PON_PM_COUNTER_GET, SW_PON_PM_COUNTER, \
-                        sizeof(fal_pon_pm_counter_t), SW_PARAM_PTR|SW_PARAM_OUT, "Counter"), \
+                        sizeof(fal_pon_pm_counter_t), SW_PARAM_PTR|SW_PARAM_OUT, "Counter"),
 
 #define SW_API_PON_PM_COUNTER_FLUSH_DESC \
 	SW_PARAM_DEF(SW_API_PON_PM_COUNTER_FLUSH, SW_UINT32, \
@@ -6844,7 +6844,79 @@ extern "C" {
 	SW_PARAM_DEF(SW_API_PON_PM_COUNTER_FLUSH, SW_UINT32, \
 			sizeof(a_uint32_t), SW_PARAM_IN, "Counter ID"), \
 	SW_PARAM_DEF(SW_API_PON_PM_COUNTER_FLUSH, SW_DIRECTION, \
-			sizeof(fal_direction_t), SW_PARAM_IN, "direction"), \
+			sizeof(fal_direction_t), SW_PARAM_IN, "direction"),
+
+#define SW_API_IPMC_STATUS_SET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_STATUS_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),  \
+	SW_PARAM_DEF(SW_API_IPMC_STATUS_SET, SW_ENABLE, 4, SW_PARAM_IN, "status"),
+
+#define SW_API_IPMC_STATUS_GET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_STATUS_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),  \
+	SW_PARAM_DEF(SW_API_IPMC_STATUS_GET, SW_ENABLE, 4, SW_PARAM_PTR|SW_PARAM_OUT, "status"),
+
+#define SW_API_IPMC_GLOBAL_CFG_SET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_GLOBAL_CFG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_GLOBAL_CFG_SET, SW_IPMC_GLOBAL_CFG, \
+			sizeof(fal_ipmc_global_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, "Global Cfg"),
+
+#define SW_API_IPMC_GLOBAL_CFG_GET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_GLOBAL_CFG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_GLOBAL_CFG_GET, SW_IPMC_GLOBAL_CFG, \
+			sizeof(fal_ipmc_global_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, "Global Cfg"),
+
+#define SW_API_IPMC_ENTRY_ADD_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_ADD, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_ADD, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Add Mode "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_ADD, SW_IPMC_ENTRY, \
+			sizeof(fal_ipmc_entry_t), SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, \
+			"IPMC Entry"),
+
+#define SW_API_IPMC_ENTRY_DEL_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_DEL, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_DEL, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Del Mode "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_DEL, SW_IPMC_ENTRY, \
+			sizeof(fal_ipmc_entry_t), SW_PARAM_PTR|SW_PARAM_IN, "IPMC Entry"),
+
+#define SW_API_IPMC_ENTRY_GET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Get Mode "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_GET, SW_IPMC_ENTRY, \
+			sizeof(fal_ipmc_entry_t), SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, \
+			"IPMC Entry"),
+
+#define SW_API_IPMC_ENTRY_GETNEXT_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_GETNEXT, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_GETNEXT, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Next Mode "),\
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_GETNEXT, SW_IPMC_ENTRY, \
+			sizeof(fal_ipmc_entry_t), SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, \
+			"IPMC Entry"),
+
+#define SW_API_IPMC_ENTRY_FLUSH_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_ENTRY_FLUSH, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),
+
+#define SW_API_IPMC_UCAST_FWD_SET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_UCAST_FWD_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_UCAST_FWD_SET, SW_IPMC_UCAST_FWD, \
+			sizeof(fal_ipmc_ucast_fwd_t), SW_PARAM_PTR|SW_PARAM_IN, "IPMC ucast fwd"),
+
+#define SW_API_IPMC_UCAST_FWD_GET_DESC \
+	SW_PARAM_DEF(SW_API_IPMC_UCAST_FWD_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev Id "),\
+	SW_PARAM_DEF(SW_API_IPMC_UCAST_FWD_GET, SW_IPMC_UCAST_FWD, \
+			sizeof(fal_ipmc_ucast_fwd_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+			"IPMC ucast fwd"),
 /* auto_insert_flag */
 /*qca808x_start*/
 
