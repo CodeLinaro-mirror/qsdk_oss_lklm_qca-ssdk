@@ -14084,6 +14084,10 @@ qca_ar8327_sw_switch_ext(struct switch_dev *dev,
 #ifdef IN_PON_PM
 		rv = parse_ponpm(command_name, val);
 #endif
+	} else if(!strcmp(module_name, "Ipmc")) {
+#ifdef IN_IPMC
+		rv = parse_ipmc(command_name, val);
+#endif
 	}
 
 	if(!rv) {

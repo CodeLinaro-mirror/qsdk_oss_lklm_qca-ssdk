@@ -503,6 +503,16 @@ const struct attr_des_t g_attr_des[] =
 		}
 	},
 #endif
+#if defined(IN_PON) || defined(IN_IPMC)
+	{
+		"vlan_mode",
+		(struct sub_attr_des_t[]){
+			{"vid_match", FAL_VLAN_MATCH_VID},
+			{"vsi_match", FAL_VLAN_MATCH_VSI},
+			{NULL, INVALID_ARRT_VALUE}
+		}
+	},
+#endif
 	{NULL, (struct sub_attr_des_t[]){{NULL, INVALID_ARRT_VALUE}}}
 };
 
@@ -987,6 +997,11 @@ static sw_data_type_t sw_data_type[] =
 #endif
 #ifdef IN_PON_PM
     SW_TYPE_DEF(SW_PON_PM_COUNTER_ENTRY, (param_check_t)cmd_data_check_pon_pm_counter_entry, NULL),
+#endif
+#ifdef IN_IPMC
+    SW_TYPE_DEF(SW_IPMC_GLOBAL_CFG, (param_check_t)cmd_data_check_ipmc_global_cfg, NULL),
+    SW_TYPE_DEF(SW_IPMC_ENTRY, (param_check_t)cmd_data_check_ipmc_entry, NULL),
+    SW_TYPE_DEF(SW_IPMC_UCAST_FWD, (param_check_t)cmd_data_check_ipmc_ucast_fwd, NULL),
 #endif
 };
 
@@ -14169,4 +14184,186 @@ cmd_data_check_pon_pm_counter_entry(char *cmd_str, void *val, a_uint32_t size)
 	return SW_OK;
 }
 #endif
+#ifdef IN_IPMC
+sw_error_t cmd_data_check_ipmc_global_cfg(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ipmc_global_cfg_t entry;
+	a_uint32_t tmp = 0;
 
+	aos_mem_zero(&entry, sizeof(fal_ipmc_global_cfg_t));
+
+	rv = __cmd_data_check_boolean("mc_dmac_check_en", "no",
+			"usage: <yes/no/y/n>\n",
+			cmd_data_check_confirm, A_FALSE, &(entry.mc_dmac_check_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("vlan_mode", "vid_match",
+			"usage:  vid_match/vsi_match.\n",
+			cmd_data_check_attr, ("vlan_mode", cmd, &tmp, sizeof(tmp)));
+	entry.vlan_mode = tmp;
+
+	rv = __cmd_data_check_complex("mismatch_action", "drop",
+			"usage: <forward/drop/cpycpu/rdtcpu>\n",
+			(param_check_t)cmd_data_check_maccmd, &entry.mismatch_action,
+			sizeof (fal_fwd_cmd_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("hash_mode0", "0",
+			"usage:  0 crc10, 1 xor, 2 crc16\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.hash_mode[0] = tmp;
+
+	cmd_data_check_element("hash_mode1", "0",
+			"usage:  0 crc10, 1 xor, 2 crc16\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.hash_mode[1] = tmp;
+
+	*(fal_ipmc_global_cfg_t *)val = entry;
+	return SW_OK;
+}
+
+sw_error_t cmd_data_check_ipmc_entry(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ipmc_entry_t entry;
+	a_uint32_t tmp = 0;
+
+	aos_mem_zero(&entry, sizeof(fal_ipmc_entry_t));
+
+	cmd_data_check_element("entry_id", "0",
+			"usage: entry index\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.entry_id = tmp;
+
+	cmd_data_check_element("key_type", "0",
+			"usage: 0 for GIP only, 1 for GIP and SIP, "
+			"2 for GIPv6 only, 3 for GIPv6 and SIPv6\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.key_type = tmp;
+
+	rv = __cmd_data_check_boolean("vlan_valid", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &(entry.vlan_valid),
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("vlan_mode", "vid_match",
+			"usage:  vid_match/vsi_match\n",
+			cmd_data_check_attr, ("vlan_mode", cmd, &tmp, sizeof(tmp)));
+	entry.vlan_mode = tmp;
+
+	cmd_data_check_element("vlan_id", "0",
+			"usage: vlan id\n",
+			cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.vlan_id = tmp;
+
+	if (entry.key_type == FAL_IPMC_KEY_TYPE_SIP_GIP ||
+		entry.key_type == FAL_IPMC_KEY_TYPE_GIP) {
+		cmd_data_check_element("sip4_addr", "0.0.0.0",
+				"usage: the format is xx.xx.xx.xx \n",
+				cmd_data_check_ip4addr, (cmd, &(entry.sip.ip4_addr), 4));
+
+		cmd_data_check_element("gip4_addr", "0.0.0.0",
+				"usage: the format is xx.xx.xx.xx \n",
+				cmd_data_check_ip4addr, (cmd, &(entry.gip.ip4_addr), 4));
+	} else {
+		cmd_data_check_element("sip6_addr", "0::0",
+				"usage: the format is xxxx::xxxx \n",
+				cmd_data_check_ip6addr, (cmd, &(entry.sip.ip6_addr), 16));
+
+		cmd_data_check_element("gip6_addr", "0::0",
+				"usage: the format is xxxx::xxxx \n",
+				cmd_data_check_ip6addr, (cmd, &(entry.gip.ip6_addr), 16));
+	}
+
+	rv = __cmd_data_check_boolean("src_port_check_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &(entry.src_port_check_en),
+			sizeof(a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("src_port", "0",
+			"usage: port or vp port(highest 8bits as 0x2) or "
+			"Gem port(highest 8bits as 0x4)\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.src_port = tmp;
+
+	rv = __cmd_data_check_boolean("vlan_fmt_check_en", "no",
+                        "usage: <yes/no/y/n>\n",
+                        cmd_data_check_confirm, A_FALSE, &(entry.vlan_fmt_check_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("vlan_fmt", "untag",
+			"usage: tag or untag\n",
+			cmd_data_check_tag_format, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.vlan_fmt = tmp;
+
+	rv = __cmd_data_check_complex("fwd_cmd", "drop",
+			"usage: <forward/drop/cpycpu/rdtcpu>\n",
+			(param_check_t)cmd_data_check_maccmd, &entry.fwd_cmd,
+			sizeof (fal_fwd_cmd_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("dest_info_type", "port_id",
+			"usage:dest_info_type:port_id\n",
+			cmd_data_check_attr, ("dest_info_type", cmd,
+				&(entry.dst_info.dest_info_type),
+				sizeof(entry.dst_info.dest_info_type)));
+
+	cmd_data_check_element("dest_info_value", "0",
+			"usage:dest_info_value:port_id\n",
+			cmd_data_check_uint32, (cmd, &(entry.dst_info.dest_info_value),
+				sizeof (entry.dst_info.dest_info_value)));
+
+	cmd_data_check_element("syn_toggle", "0",
+			"usage: syn_toggle\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.syn_toggle = tmp;
+
+	rv = __cmd_data_check_boolean("ucast_fwd_en", "no",
+			"usage: <yes/no/y/n>\n",
+			cmd_data_check_confirm, A_FALSE, &(entry.ucast_fwd_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	*(fal_ipmc_entry_t *)val = entry;
+	return SW_OK;
+}
+
+sw_error_t cmd_data_check_ipmc_ucast_fwd(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_ipmc_ucast_fwd_t entry;
+	a_uint32_t tmp = 0;
+
+	aos_mem_zero(&entry, sizeof(fal_ipmc_ucast_fwd_t));
+
+	cmd_data_check_element("ucast_fwd_en_port", "0",
+			"usage:  port id to enable unicast forward\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.ucast_fwd_en_port = tmp;
+
+	cmd_data_check_element("dest_vp", "0",
+			"usage:  port/vp port and enqueue vp\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.dest_vp = tmp;
+
+	cmd_data_check_element("service_code", "0",
+			"usage: updated service code\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.service_code = tmp;
+
+	cmd_data_check_element("bypass_bitmap", "0",
+			"usage: l2 post bypass bitmap\n",
+			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+	entry.bypass_bitmap = tmp;
+
+	*(fal_ipmc_ucast_fwd_t *)val = entry;
+	return SW_OK;
+}
+#endif

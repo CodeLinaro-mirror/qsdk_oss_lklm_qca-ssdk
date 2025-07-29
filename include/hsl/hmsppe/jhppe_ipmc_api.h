@@ -79,6 +79,12 @@ jhppe_ipmc_tbl_op_op_type_set(
 
 
 sw_error_t
+jhppe_ipmc_tbl_op_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
 jhppe_ipmc_tbl_op_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data0_u *value);
@@ -432,6 +438,12 @@ jhppe_ipmc_tbl_rd_op_op_type_set(
 
 
 sw_error_t
+jhppe_ipmc_tbl_rd_op_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
 jhppe_ipmc_tbl_rd_op_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data0_u *value);
@@ -713,6 +725,11 @@ jhppe_ipmc_tbl_rd_op_rslt_valid_cnt_set(
 		unsigned int value);
 
 
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
 sw_error_t
 jhppe_ipmc_tbl_rd_rslt_data0_get(
 		a_uint32_t dev_id,

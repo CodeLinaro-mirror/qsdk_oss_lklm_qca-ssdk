@@ -1440,6 +1440,17 @@ struct sub_cmd_des_t g_ponpm_des[] =
 	{NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
+
+#ifdef IN_IPMC
+struct sub_cmd_des_t g_ipmc_des[] =
+{
+	{"Status", "set", SW_API_IPMC_STATUS_SET, NULL},
+	{"Globalcfg", "set", SW_API_IPMC_GLOBAL_CFG_SET, NULL},
+	{"Entry", "set", SW_API_IPMC_ENTRY_ADD, NULL},
+	{"Ucastfwd", "set", SW_API_IPMC_UCAST_FWD_SET, NULL},
+	{NULL, NULL, 0, NULL},/*end of desc*/
+};
+#endif
 #endif
 
 struct cmd_des_t gcmd_des[] =
@@ -1684,6 +1695,11 @@ struct cmd_des_t gcmd_des[] =
     {
 	    "ponpm", g_ponpm_des,
     },
+#endif
+#ifdef IN_IPMC
+   {
+	   "ipmc", g_ipmc_des,
+   },
 #endif
     {NULL, NULL} /*end of desc*/
 };

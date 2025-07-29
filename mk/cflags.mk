@@ -301,6 +301,10 @@ ifeq (TRUE, $(IN_PON_PM))
   MODULE_CFLAG += -DIN_PON_PM
 endif
 
+ifeq (TRUE, $(IN_IPMC))
+  MODULE_CFLAG += -DIN_IPMC
+endif
+
 ifneq (TRUE, $(FAL))
   MODULE_CFLAG += -DHSL_STANDALONG
 endif

@@ -635,5 +635,14 @@ cmd_data_check_pktedit_padding(char *cmd_str, void *val, a_uint32_t size);
 sw_error_t
 cmd_data_check_pon_pm_counter_entry(char *cmd_str, void *val, a_uint32_t size);
 #endif
+
+#ifdef IN_IPMC
+sw_error_t
+cmd_data_check_ipmc_global_cfg(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_ipmc_entry(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_ipmc_ucast_fwd(char *cmd_str, void *val, a_uint32_t size);
+#endif
 #endif
 
