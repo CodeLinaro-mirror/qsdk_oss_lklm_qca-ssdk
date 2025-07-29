@@ -108,6 +108,10 @@ typedef struct {
 	struct servcode_dest_t {
 		a_uint32_t service_code; /* enqueue service code when enqueu type: service code */
 		a_uint32_t phy_port; /* destination phy port when enqueue type: service code */
+		a_bool_t queue_select_en;
+		/* queue selection based on service code enabled or not,
+		 * which is newly added for HMSPPE and JHPPE.
+		 */
 	} enqueue_servcode;
 } fal_enqueue_index_t;
 

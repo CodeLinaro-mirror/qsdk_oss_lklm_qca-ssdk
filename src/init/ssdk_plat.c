@@ -1043,15 +1043,16 @@ void ssdk_dts_l1scheduler_dump(a_uint32_t dev_id)
 
 	cfg = ssdk_bootup_shceduler_cfg_get(dev_id);
 
-	printk("=====================l1scheduler_cfg=====================\n");
-	printk("flow     portid     cpri     cdrr_id     epri     edrr_id\n");
+	printk("=====================l1scheduler_cfg===============================\n");
+	printk("flow     portid     cpri     cdrr_id     epri     edrr_id     sp_id\n");
 	for (i = 0; i < SSDK_L1SCHEDULER_CFG_MAX; i++)
 	{
 		scheduler_cfg = &cfg->l1cfg[i];
 		if (scheduler_cfg->valid == 1)
-			printk("%4d%11d%9d%12d%9d%12d\n", i, scheduler_cfg->port_id,
+			printk("%4d%11d%9d%12d%9d%12d%10d\n", i, scheduler_cfg->port_id,
 				scheduler_cfg->cpri, scheduler_cfg->cdrr_id,
-				scheduler_cfg->epri, scheduler_cfg->edrr_id);
+				scheduler_cfg->epri, scheduler_cfg->edrr_id,
+				scheduler_cfg->sp_id);
 	}
 }
 #endif

@@ -418,6 +418,81 @@ adpt_jhppe_qm_counter_monitor_stats_get(a_uint32_t dev_id, fal_qm_queue_type_t t
 	return SW_OK;
 }
 
+sw_error_t
+adpt_jhppe_qm_enqueue_servcode_config_set(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cfg)
+{
+	union l2_vp_port_post_tbl_u l2_vp_tbl;
+	sw_error_t rv = SW_OK;
+	a_uint32_t index = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(enqueue_cfg);
+
+	if (enqueue_cfg->rule_entry.enqueue_type != FAL_ENQUEUE_SERVCODE)
+		return SW_BAD_PARAM;
+
+	aos_mem_zero(&l2_vp_tbl, sizeof(union l2_vp_port_post_tbl_u));
+
+	index = enqueue_cfg->rule_entry.dst_port;
+
+	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, index, &l2_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
+
+	l2_vp_tbl.bf.enq_service_code_0 =
+		enqueue_cfg->index_entry.enqueue_servcode.service_code;
+	l2_vp_tbl.bf.enq_service_code_1 =
+		enqueue_cfg->index_entry.enqueue_servcode.service_code >>
+		SW_FIELD_OFFSET_IN_WORD(L2_VP_PORT_POST_TBL_ENQ_SERVICE_CODE_OFFSET);
+
+	l2_vp_tbl.bf.enq_service_code_en = enqueue_cfg->index_entry.enqueue_en;
+
+	l2_vp_tbl.bf.enq_phy_port =
+		enqueue_cfg->index_entry.enqueue_servcode.phy_port;
+
+	l2_vp_tbl.bf.enq_service_code_queue_dis =
+		!enqueue_cfg->index_entry.enqueue_servcode.queue_select_en;
+
+	return jhppe_l2_vp_port_post_tbl_set(dev_id, index, &l2_vp_tbl);
+}
+
+sw_error_t
+adpt_jhppe_qm_enqueue_servcode_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cfg)
+{
+	union l2_vp_port_post_tbl_u l2_vp_tbl;
+	sw_error_t rv = SW_OK;
+	a_uint32_t index = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(enqueue_cfg);
+
+	if (enqueue_cfg->rule_entry.enqueue_type != FAL_ENQUEUE_SERVCODE)
+		return SW_BAD_PARAM;
+
+	aos_mem_zero(&l2_vp_tbl, sizeof(union l2_vp_port_post_tbl_u));
+
+	index = enqueue_cfg->rule_entry.dst_port;
+
+	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, index, &l2_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
+
+	enqueue_cfg->index_entry.enqueue_en =
+		l2_vp_tbl.bf.enq_service_code_en;
+
+	enqueue_cfg->index_entry.enqueue_servcode.phy_port =
+		l2_vp_tbl.bf.enq_phy_port;
+
+	enqueue_cfg->index_entry.enqueue_servcode.queue_select_en =
+		!l2_vp_tbl.bf.enq_service_code_queue_dis;
+
+	enqueue_cfg->index_entry.enqueue_servcode.service_code =
+		l2_vp_tbl.bf.enq_service_code_0;
+	enqueue_cfg->index_entry.enqueue_servcode.service_code |=
+		l2_vp_tbl.bf.enq_service_code_1 <<
+		SW_FIELD_OFFSET_IN_WORD(L2_VP_PORT_POST_TBL_ENQ_SERVICE_CODE_OFFSET);
+
+	return rv;
+}
+
 /**
  * @}
  */
