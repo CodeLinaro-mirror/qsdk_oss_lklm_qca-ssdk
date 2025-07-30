@@ -1,20 +1,8 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2021, 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -23,9 +11,7 @@
 #include "sw.h"
 #include "hsl_reg.h"
 #include "adpt.h"
-#if defined(APPE)
 #include "adpt_appe_pppoe.h"
-#endif
 
 #define MAX_SESSION_ID 0xffff
 
@@ -122,17 +108,13 @@ sw_error_t adpt_hppe_pppoe_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
-#if defined(APPE)
 	p_adpt_api->adpt_pppoe_session_table_add = adpt_appe_pppoe_session_table_add;
 	p_adpt_api->adpt_pppoe_session_table_del = adpt_appe_pppoe_session_table_del;
 	p_adpt_api->adpt_pppoe_session_table_get = adpt_appe_pppoe_session_table_get;
-#endif
 	p_adpt_api->adpt_pppoe_en_set = adpt_hppe_pppoe_en_set;
 	p_adpt_api->adpt_pppoe_en_get = adpt_hppe_pppoe_en_get;
-#if defined(APPE)
 	p_adpt_api->adpt_pppoe_l3_intf_set = adpt_appe_pppoe_l3_intf_set;
 	p_adpt_api->adpt_pppoe_l3_intf_get = adpt_appe_pppoe_l3_intf_get;
-#endif
 	p_adpt_api->adpt_pppoe_global_ctrl_set = adpt_hppe_pppoe_global_ctrl_set;
 	p_adpt_api->adpt_pppoe_global_ctrl_get = adpt_hppe_pppoe_global_ctrl_get;
 

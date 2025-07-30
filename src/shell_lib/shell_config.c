@@ -664,12 +664,10 @@ struct sub_cmd_des_t g_port_des[] =
 	{"srcfiltercfg", "set",   SW_API_PT_SOURCE_FILTER_CONFIG_SET, NULL},
 	{"switchportloopback", "set", SW_API_PT_SWITCH_PORT_LOOPBACK_SET, NULL},
 #endif
-#if defined (APPE)
 #ifndef IN_PORTCONTROL_MINI
 	{"port8023ah", "set", SW_API_PT_8023AH_SET, NULL},
 #endif
 	{"mtucfg", "set", SW_API_PT_MTU_CFG_SET, NULL},
-#endif
 	{"mrumtu", "set", SW_API_PT_MRU_MTU_SET, NULL},
 	{"Cntcfg", "set", SW_API_PT_CNT_CFG_SET, NULL},
 	{NULL, NULL,  0, NULL},/*end of desc*/
@@ -711,7 +709,6 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"invlan", "set",   SW_API_PT_IN_VLAN_MODE_SET, NULL},
 	{"globalQinQMode", "set", SW_API_GLOBAL_QINQ_MODE_SET, NULL},
 	{"ptQinQMode", "set", SW_API_PORT_QINQ_MODE_SET, NULL},
-#ifdef HPPE
 	{"inTpid", "set", SW_API_TPID_SET, NULL},
 	{"egTpid", "set", SW_API_EGRESS_TPID_SET, NULL},
 	{"ingressFilter", "set", SW_API_PT_INGRESS_VLAN_FILTER_SET, NULL},
@@ -723,11 +720,8 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"vsiEgModeEn", "set", SW_API_PT_VLANTAG_VSI_EGMODE_EN_SET, NULL},
 	{"counter", "set", SW_API_PT_VLAN_COUNTER_CLEANUP, NULL},
 	{"translationAdv", "set", SW_API_PT_VLAN_TRANS_ADV_ADD, NULL},
-#endif
-#ifdef APPE
 	{"Isol", "set", SW_API_PT_VLAN_ISOL_SET, NULL},
 	{"IsolGroup", "set", SW_API_PT_VLAN_ISOL_GROUP_SET, NULL},
-#endif
 #ifndef IN_PORTVLAN_MINI
 	{"tlsMode", "set",   SW_API_PT_TLS_SET, NULL},
 	{"priPropagation", "set",   SW_API_PT_PRI_PROPAGATION_SET, NULL},
@@ -744,9 +738,6 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"macvlanxlt", "set",   SW_API_PT_MAC_VLAN_XLT_SET, NULL},
 	{"netiso", "set",   SW_API_NETISOLATE_SET, NULL},
 	{"egbypass", "set",   SW_API_EG_FLTR_BYPASS_EN_SET, NULL},
-#ifdef DESS
-	{"ptvrfid", "set",   SW_API_PT_VRF_ID_SET, NULL},
-#endif
 #endif
 #ifdef JHPPE
 	{"TransDscpPcpMapping", "set", SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, NULL},
@@ -796,11 +787,9 @@ struct sub_cmd_des_t g_acl_des[] =
 	{"status", "set",   SW_API_ACL_STATUS_SET, NULL},
 	{"udfprofile", "set",   SW_API_ACL_PT_UDF_PROFILE_SET, NULL},
 	{"udf", "set", SW_API_ACL_UDF_SET, NULL},
-#ifdef APPE
 	{"udfprofileEntry", "set", SW_API_ACL_UDF_PROFILE_ENTRY_ADD, NULL},
 	{"udfprofilecfg", "set", SW_API_ACL_UDF_PROFILE_CFG_SET, NULL},
 	{"vpgroup", "set", SW_API_ACL_VPGROUP_SET, NULL},
-#endif
 #ifdef JHPPE
 	{"DscpPcpMapping", "set", SW_API_ACL_DSCP_PCP_MAPPING_SET, NULL},
 #endif
@@ -1208,10 +1197,8 @@ struct sub_cmd_des_t g_vsi_des[] =
 	{"stationmove", "set", SW_API_VSI_STAMOVE_SET, NULL},
 	{"member", "set", SW_API_VSI_MEMBER_SET, NULL},
 	{"counter", "cleanup", SW_API_VSI_COUNTER_CLEANUP, NULL},
-#if defined (APPE)
 	{"bridgevsi", "set", SW_API_VSI_BRIDGE_VSI_SET, NULL},
 	{"invalidvsi_ctrl", "set", SW_API_VSI_INVALIDVSI_CTRL_SET, NULL},
-#endif
 	{NULL, NULL, 0, NULL}/*end of desc*/
 };
 #endif
@@ -1333,10 +1320,8 @@ struct sub_cmd_des_t g_ctrlpkt_des[] =
     {"ethernetType", "set", SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, NULL},
     {"rfdb", "set", SW_API_MGMTCTRL_RFDB_PROFILE_SET, NULL},
     {"appProfile", "set", SW_API_MGMTCTRL_CTRLPKT_PROFILE_ADD, NULL},
-#if defined (APPE)
     {"vpgroup", "set", SW_API_MGMTCTRL_VPGROUP_SET, NULL},
     {"tunneldecap", "set", SW_API_MGMTCTRL_TUNNEL_DECAP_SET, NULL},
-#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif

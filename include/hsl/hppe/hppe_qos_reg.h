@@ -1,19 +1,7 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #if defined(CONFIG_CPU_BIG_ENDIAN)
@@ -609,10 +597,8 @@ union l0_flow_status_tbl_u {
 #define RING_Q_MAP_TBL_ADDRESS 0x2a000
 #if defined(MPPE)
 #define RING_Q_MAP_TBL_NUM     16
-#elif defined(APPE)
-#define RING_Q_MAP_TBL_NUM     24
 #else
-#define RING_Q_MAP_TBL_NUM     16
+#define RING_Q_MAP_TBL_NUM     24
 #endif
 #define RING_Q_MAP_TBL_INC     0x40
 #define RING_Q_MAP_TBL_TYPE    REG_TYPE_RW
@@ -1343,13 +1329,9 @@ struct psch_tdm_cfg_tbl {
 	a_uint32_t  des_port:4;
 	a_uint32_t  ens_port:4;
 	a_uint32_t  ens_port_bitmap:8;
-#if defined(APPE)
 	a_uint32_t  des_sec_port_en:1;
 	a_uint32_t  des_sec_port:4;
 	a_uint32_t  _reserved0:11;
-#else
-	a_uint32_t  _reserved0:16;
-#endif
 };
 
 union psch_tdm_cfg_tbl_u {

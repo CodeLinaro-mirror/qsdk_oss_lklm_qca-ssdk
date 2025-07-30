@@ -58,12 +58,8 @@ extern "C" {
 #define PPE_STR "MRPPE"
 #elif defined(MPPE)
 #define PPE_STR "MPPE"
-#elif defined(APPE)
+#else
 #define PPE_STR "APPE"
-#elif defined(CPPE)
-#define PPE_STR "CPPE"
-#elif defined(HPPE)
-#define PPE_STR "HPPE"
 #endif
 
 #define SFP_I2C_BUS                   "SFP I2C Bus"

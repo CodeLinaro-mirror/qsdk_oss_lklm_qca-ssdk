@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -21,7 +10,6 @@
  */
 #include "sw.h"
 #include "hsl_reg.h"
-//#include "cppe_qos.h"
 #include "fal_qos.h"
 #include "adpt.h"
 
@@ -108,12 +96,10 @@ adpt_cppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
 	mru_mtu_ctrl.bf.post_acl_res_prec = pri->post_acl_pri;
 	mru_mtu_ctrl.bf.pcp_res_prec_force = pri->pcp_pri_force;
 	mru_mtu_ctrl.bf.dscp_res_prec_force = pri->dscp_pri_force;
-#if defined(APPE)
 	mru_mtu_ctrl.bf.pre_ipo_outer_res_prec = pri->pre_acl_outer_pri;
 	mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_1 = pri->pre_acl_inner_pri >>
 		SW_FIELD_OFFSET_IN_WORD(MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_OFFSET);
 	mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_0 = pri->pre_acl_inner_pri;
-#endif
 
 	return hppe_mru_mtu_ctrl_tbl_set(dev_id, port_id, &mru_mtu_ctrl);
 }
@@ -141,12 +127,10 @@ adpt_cppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 	pri->post_acl_pri = mru_mtu_ctrl.bf.post_acl_res_prec;
 	pri->pcp_pri_force = mru_mtu_ctrl.bf.pcp_res_prec_force;
 	pri->dscp_pri_force = mru_mtu_ctrl.bf.dscp_res_prec_force;
-#if defined(APPE)
 	pri->pre_acl_outer_pri = mru_mtu_ctrl.bf.pre_ipo_outer_res_prec;
 	pri->pre_acl_inner_pri = mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_1 <<
 		SW_FIELD_OFFSET_IN_WORD(MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_OFFSET) |
 		mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_0;
-#endif
 
 	return SW_OK;
 }

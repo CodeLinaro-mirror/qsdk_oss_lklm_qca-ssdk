@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -46,9 +35,7 @@
 #define IPR_BYTE_HIGH_REG_MAX_ENTRY	8
 
 #define PPE_CAPACITY_PORT_NUM	256
-#ifdef APPE
 #define LINK_OAM_CTRL_MAX_ENTRY	8
-#endif
 
 sw_error_t
 hppe_mac_enable_get(
@@ -464,7 +451,6 @@ hppe_ipr_byte_high_reg_bytes_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#if (defined(APPE) || defined(CPPE))
 sw_error_t
 ppe_mru_mtu_ctrl_tbl_source_filtering_mode_get(
 		a_uint32_t dev_id,
@@ -489,8 +475,6 @@ ppe_mru_mtu_ctrl_tbl_source_filtering_bypass_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
-#endif
-#ifdef APPE
 sw_error_t
 appe_link_oam_ctrl_get(
 		a_uint32_t dev_id,
@@ -514,6 +498,5 @@ appe_link_oam_ctrl_loopback_state_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
-#endif
 #endif
 

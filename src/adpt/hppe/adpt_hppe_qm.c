@@ -13,9 +13,7 @@
 #include "fal_qm.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
-#if defined(APPE)
 #include "adpt_appe_qm.h"
-#endif
 #include "hppe_global_reg.h"
 #include "hppe_global.h"
 #if defined(JHPPE)
@@ -1400,10 +1398,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
 	p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
 	p_adpt_api->adpt_qm_threshold_reset = adpt_ppe_qm_threshold_reset;
-#if defined(APPE)
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
-#endif
 #if defined(JHPPE)
 	p_adpt_api->adpt_qm_tcont_get = adpt_jhppe_qm_tcont_get;
 	p_adpt_api->adpt_qm_tcont_set = adpt_jhppe_qm_tcont_set;

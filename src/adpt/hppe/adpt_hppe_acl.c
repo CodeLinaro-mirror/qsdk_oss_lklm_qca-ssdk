@@ -14,9 +14,7 @@
 #include "adpt.h"
 #include <linux/list.h>
 #include "adpt_hppe_acl.h"
-#if defined(APPE)
 #include "adpt_appe_acl.h"
-#endif
 #if defined(JHPPE)
 #include "adpt_jhppe_acl.h"
 #endif
@@ -52,10 +50,8 @@
 #define ADPT_ACL_SW_LIST_NUM 1024
 #elif defined(MPPE)
 #define ADPT_ACL_SW_LIST_NUM 256
-#elif defined(APPE)
-#define ADPT_ACL_SW_LIST_NUM 1024
 #else
-#define ADPT_ACL_SW_LIST_NUM 512
+#define ADPT_ACL_SW_LIST_NUM 1024
 #endif
 #define ADPT_ACL_RULE_NUM_PER_LIST 8 /* can change this MACRO to support more rules per ACL list */
 
@@ -88,10 +84,8 @@ typedef struct{
 	a_uint8_t free_hw_entry_count;
 }ADPT_HPPE_ACL_HW_LIST;
 
-#if defined(APPE)
 #define VLAN_RULE_SPCP_0_LEN 1
 #define VLAN_RULE_SPCP_MASK_0_LEN 1
-#endif
 
 #if defined(CONFIG_CPU_BIG_ENDIAN)
 typedef struct{
@@ -118,17 +112,11 @@ typedef struct{
 }ADPT_HPPE_ACL_MAC_RULE_MASK;
 
 typedef struct{
-#if defined(APPE)
 	a_uint32_t spcp_0:1;
-#endif
 	a_uint32_t svid:12;
 	a_uint32_t cdei:1;
 	a_uint32_t cpcp:3;
-#if defined(APPE)
 	a_uint32_t reserved:3;
-#else
-	a_uint32_t reserved:4;
-#endif
 	a_uint32_t cvid:12;/*it is min cvid when range is enable*/
 
 	a_uint32_t _reserved0:11;
@@ -138,35 +126,20 @@ typedef struct{
 	a_uint32_t is_ipv6:1;
 	a_uint32_t is_ip:1;
 	a_uint32_t vsi_valid:1;
-#if defined(APPE)
 	a_uint32_t vsi:6;
-#else
-	a_uint32_t vsi:5;
-#endif
 	a_uint32_t stag_fmt:3;
 	a_uint32_t ctag_fmt:3;
 	a_uint32_t sdei:1;
-#if defined(APPE)
 	a_uint32_t spcp_1:2;
-#else
-	a_uint32_t spcp:3;
-#endif
 }ADPT_HPPE_ACL_VLAN_RULE;
 
 typedef struct{
-#if defined(APPE)
 	a_uint32_t spcp_mask_0:1;
-#endif
 	a_uint32_t svid_mask:12;
 	a_uint32_t cdei_mask:1;
 	a_uint32_t cpcp_mask:3;
-#if defined(APPE)
 	a_uint32_t reserved:3;
-#else
-	a_uint32_t reserved:4;
-#endif
 	a_uint32_t cvid_mask:12;/*it is max cvid when range is enable*/
-
 	a_uint32_t _reserved0:11;
 	a_uint32_t is_fake_mac_header_mask:1;
 	a_uint32_t is_snap_mask:1;
@@ -174,19 +147,11 @@ typedef struct{
 	a_uint32_t is_ipv6_mask:1;
 	a_uint32_t is_ip_mask:1;
 	a_uint32_t vsi_valid_mask:1;
-#if defined(APPE)
 	a_uint32_t vsi_mask:6;
-#else
-	a_uint32_t vsi_mask:5;
-#endif
 	a_uint32_t stag_fmt_mask:3;
 	a_uint32_t ctag_fmt_mask:3;
 	a_uint32_t sdei_mask:1;
-#if defined(APPE)
 	a_uint32_t spcp_mask_1:2;
-#else
-	a_uint32_t spcp_mask:3;
-#endif
 }ADPT_HPPE_ACL_VLAN_RULE_MASK;
 
 typedef struct{
@@ -346,28 +311,16 @@ typedef struct{
 
 typedef struct{
 	a_uint32_t cvid:12;/*it is min cvid when range is enable*/
-#if defined(APPE)
 	a_uint32_t reserved:3;
-#else
-	a_uint32_t reserved:4;
-#endif
 	a_uint32_t cpcp:3;
 	a_uint32_t cdei:1;
 	a_uint32_t svid:12;
-#if defined(APPE)
 	a_uint32_t spcp_0:1;
 	a_uint32_t spcp_1:2;
-#else
-	a_uint32_t spcp:3;
-#endif
 	a_uint32_t sdei:1;
 	a_uint32_t ctag_fmt:3;
 	a_uint32_t stag_fmt:3;
-#if defined(APPE)
 	a_uint32_t vsi:6;
-#else
-	a_uint32_t vsi:5;
-#endif
 	a_uint32_t vsi_valid:1;
 	a_uint32_t is_ip:1;
 	a_uint32_t is_ipv6:1;
@@ -379,28 +332,16 @@ typedef struct{
 
 typedef struct{
 	a_uint32_t cvid_mask:12;/*it is max cvid when range is enable*/
-#if defined(APPE)
 	a_uint32_t reserved:3;
-#else
-	a_uint32_t reserved:4;
-#endif
 	a_uint32_t cpcp_mask:3;
 	a_uint32_t cdei_mask:1;
 	a_uint32_t svid_mask:12;
-#if defined(APPE)
 	a_uint32_t spcp_mask_0:1;
 	a_uint32_t spcp_mask_1:2;
-#else
-	a_uint32_t spcp_mask:3;
-#endif
 	a_uint32_t sdei_mask:1;
 	a_uint32_t ctag_fmt_mask:3;
 	a_uint32_t stag_fmt_mask:3;
-#if defined(APPE)
 	a_uint32_t vsi_mask:6;
-#else
-	a_uint32_t vsi_mask:5;
-#endif
 	a_uint32_t vsi_valid_mask:1;
 	a_uint32_t is_ip_mask:1;
 	a_uint32_t is_ipv6_mask:1;
@@ -534,11 +475,7 @@ typedef struct{
 #endif
 
 static ADPT_HPPE_ACL_SW_LIST_HEAD g_acl_sw_list[SW_MAX_NR_DEV];
-#if defined(APPE)
 static ADPT_HPPE_ACL_HW_LIST g_acl_hw_list[SW_MAX_NR_DEV][ADPT_ACL_HW_LIST_NUM+ADPT_PRE_ACL_HW_LIST_NUM];
-#else
-static ADPT_HPPE_ACL_HW_LIST g_acl_hw_list[SW_MAX_NR_DEV][ADPT_ACL_HW_LIST_NUM];
-#endif
 static aos_lock_t hppe_acl_lock[SW_MAX_NR_DEV];
 
 const a_uint8_t s_acl_ext2[7][2] = {
@@ -762,10 +699,8 @@ enum{
 	HPPE_ACL_TYPE_PORT,
 	HPPE_ACL_TYPE_SERVICE_CODE,
 	HPPE_ACL_TYPE_L3_IF,
-#if defined(APPE)
 	APPE_ACL_TYPE_VP_GROUP,
 	APPE_ACL_TYPE_SERVICE_PORTBITMAP,
-#endif
 #if defined(JHPPE)
 	JHPPE_ACL_TYPE_L3_DST_PORT,
 	JHPPE_ACL_TYPE_DST_PORT,
@@ -791,14 +726,12 @@ static a_uint32_t _adpt_hppe_acl_srctype_to_hw(fal_acl_bind_obj_t obj_t)
 		case FAL_ACL_BIND_L3_IF:
 			src_type = HPPE_ACL_TYPE_L3_IF;
 			break;
-#if defined(APPE)
 		case FAL_ACL_BIND_VP_GROUP:
 			src_type = APPE_ACL_TYPE_VP_GROUP;
 			break;
 		case FAL_ACL_BIND_SERVICE_PORTBITMAP:
 			src_type = APPE_ACL_TYPE_SERVICE_PORTBITMAP;
 			break;
-#endif
 #if defined(JHPPE)
 		case FAL_ACL_BIND_L3_DST_PORT:
 			src_type = JHPPE_ACL_TYPE_L3_DST_PORT;
@@ -852,7 +785,6 @@ _adpt_hppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t hw_list_id, a_uint32_t hw
 			hw_reg.bf.src_1 |= obj_idx>>
 				SW_FIELD_OFFSET_IN_WORD(IPO_RULE_REG_SRC_OFFSET);
 		}
-#if defined(APPE)
 		else if(hw_srctype == APPE_ACL_TYPE_SERVICE_PORTBITMAP &&
 			hw_reg.bf.src_type == APPE_ACL_TYPE_SERVICE_PORTBITMAP)
 		{
@@ -860,7 +792,6 @@ _adpt_hppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t hw_list_id, a_uint32_t hw
 			hw_reg.bf.src_1 |= obj_idx>>
 				SW_FIELD_OFFSET_IN_WORD(IPO_RULE_REG_SRC_OFFSET);
 		}
-#endif
 		else
 		{
 			hw_reg.bf.src_0 = obj_idx;
@@ -921,13 +852,11 @@ _adpt_ppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_
 		return _adpt_hppe_acl_rule_bind(dev_id, hw_list_id,
 				hw_entries, direc, obj_t, obj_idx);
 	}
-#if defined(APPE)
 	else if (hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		return _adpt_appe_pre_acl_rule_bind(dev_id, hw_list_id - ADPT_ACL_HW_LIST_NUM ,
 				hw_entries, direc, obj_t, obj_idx);
 	}
-#endif
 	return SW_OK;
 }
 
@@ -1125,7 +1054,6 @@ sw_error_t _adpt_hppe_acl_vlan_rule_hw_2_sw(ADPT_HPPE_ACL_VLAN_RULE * vlanrule,
 		rule->stag_vid_val = vlanrule->svid;
 		rule->stag_vid_mask = vlanrule_mask->svid_mask;
 	}
-#if defined(APPE)
 	if(vlanrule_mask->spcp_mask_0 || vlanrule_mask->spcp_mask_1)
 	{
 		FAL_FIELD_FLG_SET(field_flg, FAL_ACL_FIELD_MAC_STAG_PRI);
@@ -1134,14 +1062,6 @@ sw_error_t _adpt_hppe_acl_vlan_rule_hw_2_sw(ADPT_HPPE_ACL_VLAN_RULE * vlanrule,
 		rule->stag_pri_mask = (vlanrule_mask->spcp_mask_1<<VLAN_RULE_SPCP_MASK_0_LEN)
 						|vlanrule_mask->spcp_mask_0;
 	}
-#else
-	if(vlanrule_mask->spcp_mask)
-	{
-		FAL_FIELD_FLG_SET(field_flg, FAL_ACL_FIELD_MAC_STAG_PRI);
-		rule->stag_pri_val = vlanrule->spcp;
-		rule->stag_pri_mask = vlanrule_mask->spcp_mask;
-	}
-#endif
 	if(vlanrule_mask->sdei_mask)
 	{
 		FAL_FIELD_FLG_SET(field_flg, FAL_ACL_FIELD_MAC_STAG_DEI);
@@ -1941,9 +1861,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_DSCP);
 		rule->dscp = hw_act->bf.dscp_tc;
-#if defined(CPPE) || defined(APPE)
 		rule->dscp_mask = hw_act->bf.dscp_tc_mask;
-#endif
 	}
 	if(hw_act->bf.int_dp_change_en == 1)
 	{
@@ -1993,9 +1911,7 @@ _adpt_hppe_acl_action_hw_2_sw(a_uint32_t dev_id,union ipo_action_u *hw_act, fal_
 #endif
 #endif
 	}
-#if defined(CPPE) || defined(APPE)
 	rule->qos_res_prec = hw_act->bf.qos_res_prec;
-#endif
 	return SW_OK;
 }
 
@@ -2079,7 +1995,6 @@ _adpt_hppe_acl_rule_hw_2_sw(a_uint32_t dev_id, a_uint32_t rule_type,
 		_adpt_hppe_acl_udf_rule_hw_2_sw(1, (ADPT_HPPE_ACL_UDF_RULE *)hw_rule,
 		(ADPT_HPPE_ACL_UDF_RULE_MASK *)hw_rule_mask, range_en, inverse_en, rule);
 	}
-#if defined(APPE)
 	if(rule_type == ADPT_ACL_APPE_EXT_UDF0_RULE)
 	{
 		_adpt_appe_acl_ext_udf_rule_hw_2_sw(0,
@@ -2097,7 +2012,6 @@ _adpt_hppe_acl_rule_hw_2_sw(a_uint32_t dev_id, a_uint32_t rule_type,
 		_adpt_appe_pre_acl_tunnel_rule_hw_2_sw((ADPT_APPE_ACL_TUNNEL_RULE *)hw_rule,
 		(ADPT_APPE_ACL_TUNNEL_RULE_MASK *)hw_rule_mask, inverse_en, &rule->tunnel_info);
 	}
-#endif
 #if defined(JHPPE)
 	if(rule_type == ADPT_ACL_JHPPE_EXT_VLAN_RULE)
 	{
@@ -2165,7 +2079,6 @@ _adpt_ppe_acl_rule_sw_query(a_uint32_t dev_id,
 				hw_entries, rule);
 		SW_RTN_ON_ERROR(rv);
 	}
-#if defined(APPE)
 	else if (hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		rv = _adpt_appe_pre_acl_rule_sw_query(dev_id,
@@ -2173,7 +2086,7 @@ _adpt_ppe_acl_rule_sw_query(a_uint32_t dev_id,
 		SW_RTN_ON_ERROR(rv);
 	}
 	rv = _adpt_appe_acl_ext_get(dev_id, hw_list_id, hw_entries, rule);
-#endif
+
 	return rv;
 }
 
@@ -2288,14 +2201,12 @@ _adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t hw_list_id, a_uint32_t 
 			hw_reg.bf.src_1 &= ~(obj_idx>>
 				SW_FIELD_OFFSET_IN_WORD(IPO_RULE_REG_SRC_OFFSET));
 		}
-#if defined(APPE)
 		else if(hw_reg.bf.src_type == APPE_ACL_TYPE_SERVICE_PORTBITMAP)
 		{
 			hw_reg.bf.src_0 &= ~obj_idx;
 			hw_reg.bf.src_1 &= ~(obj_idx>>
 				SW_FIELD_OFFSET_IN_WORD(IPO_RULE_REG_SRC_OFFSET));
 		}
-#endif
 		else
 		{
 			hw_reg.bf.src_type = HPPE_ACL_TYPE_PORTBITMAP;
@@ -2330,13 +2241,11 @@ _adpt_ppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_S
 		return _adpt_hppe_acl_rule_unbind(dev_id, hw_list_id,
 				hw_entries, direc, obj_t, obj_idx);
 	}
-#if defined(APPE)
 	else if (hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		return _adpt_appe_pre_acl_rule_unbind(dev_id, hw_list_id - ADPT_ACL_HW_LIST_NUM ,
 				hw_entries, direc, obj_t, obj_idx);
 	}
-#endif
 	return SW_OK;
 }
 
@@ -2455,7 +2364,6 @@ _adpt_hppe_acl_rule_range_count(a_uint32_t dev_id,
 			rangecount++;
 		}
 	}
-#if defined(APPE)
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_UDF2) ||
 		FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_UDF2))
 	{
@@ -2464,7 +2372,7 @@ _adpt_hppe_acl_rule_range_count(a_uint32_t dev_id,
 			rangecount++;
 		}
 	}
-#endif
+
 	return rangecount;
 }
 
@@ -2475,13 +2383,11 @@ static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t 
 	a_uint8_t rangecount = 0, even_entry_count = 0;
 
 	rangecount = _adpt_hppe_acl_rule_range_count(dev_id, rule_id, rule_nr, rule);
-#if defined(APPE)
 	if(hw_list_index >= ADPT_ACL_HW_LIST_NUM)
 	{
 		rangecount += _adpt_hppe_acl_rule_range_count(dev_id,
 					rule_id, rule_nr, inner_rule);
 	}
-#endif
 	even_entry_count = _acl_bits_count(entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 2);
 
 	if(rangecount <= even_entry_count)
@@ -2513,8 +2419,6 @@ sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t *hw_list_i
 		return SW_NOT_SUPPORTED;
 	}
 #endif
-
-#if defined(APPE)
 	if(rule->rule_type == FAL_ACL_RULE_TUNNEL_MAC ||
 		rule->rule_type == FAL_ACL_RULE_TUNNEL_IP4 ||
 		rule->rule_type == FAL_ACL_RULE_TUNNEL_IP6 ||
@@ -2524,7 +2428,6 @@ sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t *hw_list_i
 		start = ADPT_ACL_HW_LIST_NUM;
 		end = ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM;
 	}
-#endif
 	for(j = start ; j < end; j++)
 	{
 		free_hw_entry_bitmap = g_acl_hw_list[dev_id][j].free_hw_entry_bitmap;
@@ -3070,15 +2973,10 @@ sw_error_t _adpt_hppe_acl_vlan_rule_sw_2_hw(fal_acl_rule_t *rule,
 	}
 	if(FAL_FIELD_FLG_TST(field_flg, FAL_ACL_FIELD_MAC_STAG_PRI))
 	{
-#if defined(APPE)
 		vlanrule->spcp_0 = rule->stag_pri_val;
 		vlanrule->spcp_1 = rule->stag_pri_val>>VLAN_RULE_SPCP_0_LEN;
 		vlanrule_mask->spcp_mask_0 = rule->stag_pri_mask;
 		vlanrule_mask->spcp_mask_1 = rule->stag_pri_mask>>VLAN_RULE_SPCP_MASK_0_LEN;
-#else
-		vlanrule->spcp = rule->stag_pri_val;
-		vlanrule_mask->spcp_mask = rule->stag_pri_mask;
-#endif
 		if (inverse_en) {
 			FAL_FIELD_FLG_CLR(rule->inverse_field_flg, FAL_ACL_FIELD_MAC_STAG_PRI);
 			return SW_OK;
@@ -4039,9 +3937,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 	{
 		hw_act->bf.dscp_tc_change_en = 1;
 		hw_act->bf.dscp_tc = rule->dscp;
-#if defined(CPPE) || defined(APPE)
 		hw_act->bf.dscp_tc_mask = rule->dscp_mask;
-#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_INT_DP))
 	{
@@ -4091,9 +3987,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 #endif
 #endif
 	}
-#if defined(CPPE) || defined(APPE)
 	hw_act->bf.qos_res_prec = rule->qos_res_prec;
-#endif
 	return SW_OK;
 }
 
@@ -4190,7 +4084,6 @@ _adpt_hppe_acl_rule_sw_2_hw(a_uint32_t dev_id, fal_acl_rule_t * rule, a_uint32_t
 		(ADPT_HPPE_ACL_UDF_RULE *)hw_rule,
 		(ADPT_HPPE_ACL_UDF_RULE_MASK *)hw_rule_mask, range_en, inverse_en);
 	}
-#if defined(APPE)
 	else if(rule_type == ADPT_ACL_APPE_EXT_UDF0_RULE)
 	{
 		_adpt_appe_acl_ext_udf_rule_sw_2_hw(rule, 0,
@@ -4209,7 +4102,6 @@ _adpt_hppe_acl_rule_sw_2_hw(a_uint32_t dev_id, fal_acl_rule_t * rule, a_uint32_t
 		(ADPT_APPE_ACL_TUNNEL_RULE *)hw_rule,
 		(ADPT_APPE_ACL_TUNNEL_RULE_MASK *)hw_rule_mask, inverse_en);
 	}
-#endif
 #if defined(JHPPE)
 	else if(rule_type == ADPT_ACL_JHPPE_EXT_VLAN_RULE)
 	{
@@ -4349,7 +4241,6 @@ _adpt_ppe_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_pri,
 			rule_id, rule_nr, rule, rule_map, allocated_entries);
 		SW_RTN_ON_ERROR(rv);
 	}
-#if defined(APPE)
 	else if (hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		rv = _adpt_appe_pre_acl_rule_hw_add(dev_id, list_pri,
@@ -4358,7 +4249,6 @@ _adpt_ppe_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_pri,
 		SW_RTN_ON_ERROR(rv);
 	}
 	rv = _adpt_appe_acl_ext_set(dev_id, rule, hw_list_id, allocated_entries);
-#endif
 	return rv;
 }
 
@@ -4367,13 +4257,12 @@ _adpt_hppe_acl_hw_list_resort(a_uint32_t dev_id, a_uint32_t hw_list_index, a_boo
 {
 	a_uint32_t i = 0, start = 0, end = ADPT_ACL_HW_LIST_NUM;
 	ADPT_HPPE_ACL_HW_LIST temp = {0};
-#if defined(APPE)
+
 	if(hw_list_index >= ADPT_ACL_HW_LIST_NUM)
 	{
 		start = ADPT_ACL_HW_LIST_NUM;
 		end += ADPT_PRE_ACL_HW_LIST_NUM;
 	}
-#endif
 	if(hw_list_index >= end)
 	{
 		return SW_OUT_OF_RANGE;
@@ -4512,13 +4401,12 @@ _adpt_ppe_acl_rule_ext_set(a_uint32_t dev_id, a_uint32_t hw_list_id,
 	{
 		return _adpt_hppe_acl_rule_ext_set(dev_id, hw_list_id, ext_1, ext_2, ext_4);
 	}
-#if defined(APPE)
 	else if(hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		return _adpt_appe_pre_acl_rule_ext_set(dev_id, hw_list_id - ADPT_ACL_HW_LIST_NUM,
 				ext_1, ext_2, ext_4);
 	}
-#endif
+
 	return SW_OK;
 }
 
@@ -4530,13 +4418,12 @@ _adpt_ppe_acl_rule_ext_clear(a_uint32_t dev_id, a_uint32_t hw_list_id,
 	{
 		return _adpt_hppe_acl_rule_ext_clear(dev_id, hw_list_id, ext_1, ext_2, ext_4);
 	}
-#if defined(APPE)
 	else if(hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		return _adpt_appe_pre_acl_rule_ext_clear(dev_id, hw_list_id - ADPT_ACL_HW_LIST_NUM,
 				ext_1, ext_2, ext_4);
 	}
-#endif
+
 	return SW_OK;
 }
 
@@ -4842,9 +4729,8 @@ _adpt_hppe_acl_rule_type_map(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t r
 		ADPT_HPPE_ACL_RULE_MAP *rule_map,
 		ADPT_HPPE_ACL_RULE_MAP *inner_rule_map)
 {
-#if defined(APPE)
 	a_uint32_t tunnel_rule_type_map = 0, tunnel_inverse_rule_type_count = 0;
-#endif
+
 	SSDK_DEBUG("fields 0x%x:0x%x-0x%x:0x%x, inverse_fileds 0x%x:0x%x-0x%x:0x%x\n",
 		   rule->field_flg[0], rule->field_flg[1],
 		   inner_rule->field_flg[0], inner_rule->field_flg[1],
@@ -4907,8 +4793,6 @@ _adpt_hppe_acl_rule_type_map(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t r
 			rule_map->rule_type_map |= (1<<ADPT_ACL_HPPE_MAC_DA_RULE);
 		}
 	}
-
-#if defined(APPE)
 	if(tunnel_rule_type_map != 0) {
 		if (_adpt_hppe_rule_type_count(inner_rule_map))
 			inner_rule_map->rule_type_map |= tunnel_rule_type_map;
@@ -4923,7 +4807,6 @@ _adpt_hppe_acl_rule_type_map(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t r
 			rule_map->inverse_rule_type_count[ADPT_ACL_APPE_TUNNEL_RULE] +=
 				tunnel_inverse_rule_type_count;
 	}
-#endif
 
 	/* select one rule type to match all if none is slected */
 	if (_adpt_hppe_rule_type_count(rule_map) == 0 &&
@@ -5136,7 +5019,6 @@ _adpt_ppe_acl_rule_hw_delete(a_uint32_t dev_id,
 					hw_entries, rule_nr);
 		SW_RTN_ON_ERROR(rv);
 	}
-#if defined(APPE)
 	else if (hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		rv = _adpt_appe_pre_acl_rule_hw_delete(dev_id, hw_list_id - ADPT_ACL_HW_LIST_NUM,
@@ -5144,7 +5026,7 @@ _adpt_ppe_acl_rule_hw_delete(a_uint32_t dev_id,
 		SW_RTN_ON_ERROR(rv);
 	}
 	rv = _adpt_appe_acl_ext_clear(dev_id, hw_list_id, hw_entries);
-#endif
+
 	return rv;
 }
 
@@ -5172,9 +5054,7 @@ _adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id,
 			rule_entry->ext1_val, rule_entry->ext2_val, rule_entry->ext4_val);
 
 	/*find hw_list_index*/
-#if defined(APPE)
 	end += ADPT_PRE_ACL_HW_LIST_NUM;
-#endif
 	for(i = 0; i < end; i++)
 	{
 		if(g_acl_hw_list[dev_id][i].hw_list_id == hw_list_id)
@@ -5289,13 +5169,12 @@ _adpt_ppe_acl_rule_dump(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_
 	{
 		return _adpt_hppe_acl_rule_dump(dev_id, hw_list_id, hw_entries);
 	}
-#if defined(APPE)
 	else if (hw_list_id < ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM)
 	{
 		return _adpt_appe_pre_acl_rule_dump(dev_id,
 				hw_list_id - ADPT_ACL_HW_LIST_NUM , hw_entries);
 	}
-#endif
+
 	return SW_OK;
 }
 
@@ -5308,9 +5187,8 @@ adpt_hppe_acl_rule_dump(a_uint32_t dev_id)
 	ADPT_HPPE_ACL_SW_RULE *rule_dump_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
-#if defined(APPE)
+
 	end += ADPT_PRE_ACL_HW_LIST_NUM;
-#endif
 	/*dump the hw list status for debug*/
 	for(hw_list_index = 0; hw_list_index < end; hw_list_index++)
 	{
@@ -5427,14 +5305,12 @@ adpt_hppe_acl_counter_get(a_uint32_t dev_id,
 			(a_uint64_t)ipo_cnt.bf.hit_byte_cnt_1 << SW_FIELD_OFFSET_IN_WORD(
 				IPO_CNT_TBL_HIT_BYTE_CNT_OFFSET);
 	}
-#if defined(APPE)
 	else if (entry_index < (ADPT_ACL_HW_LIST_NUM*ADPT_ACL_ENTRY_NUM_PER_LIST + \
 			ADPT_PRE_ACL_HW_LIST_NUM*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST))
 	{
 		rv = _adpt_appe_pre_acl_counter_get(dev_id,
 			entry_index - ADPT_ACL_HW_LIST_NUM*ADPT_ACL_ENTRY_NUM_PER_LIST, acl_counter);
 	}
-#endif
 	else
 	{
 		return SW_OUT_OF_RANGE;
@@ -5592,10 +5468,8 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 	ADPT_NULL_POINT_CHECK(p_adpt_api);
 
 	_adpt_hppe_acl_hw_list_init(dev_id, 0, ADPT_ACL_HW_LIST_NUM);
-#if defined(APPE)
 	_adpt_hppe_acl_hw_list_init(dev_id, ADPT_ACL_HW_LIST_NUM,
 			ADPT_ACL_HW_LIST_NUM + ADPT_PRE_ACL_HW_LIST_NUM);
-#endif
 	p_adpt_api->adpt_acl_list_bind = adpt_hppe_acl_list_bind;
 	p_adpt_api->adpt_acl_list_dump = adpt_hppe_acl_list_dump;
 	p_adpt_api->adpt_acl_rule_query = adpt_hppe_acl_rule_query;
@@ -5607,7 +5481,6 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_acl_list_destroy = adpt_hppe_acl_list_destroy;
 	p_adpt_api->adpt_acl_rule_priority_set = adpt_hppe_acl_rule_priority_set;
 	p_adpt_api->adpt_acl_rule_priority_get = adpt_hppe_acl_rule_priority_get;
-#if defined(APPE)
 	p_adpt_api->adpt_acl_udf_profile_set = adpt_appe_acl_udf_profile_set;
 	p_adpt_api->adpt_acl_udf_profile_get = adpt_appe_acl_udf_profile_get;
 	p_adpt_api->adpt_acl_udf_profile_entry_add =
@@ -5626,7 +5499,6 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 				adpt_appe_acl_vpgroup_set;
 	p_adpt_api->adpt_acl_vpgroup_get =
 				adpt_appe_acl_vpgroup_get;
-#endif
 	p_adpt_api->adpt_acl_counter_get = adpt_hppe_acl_counter_get;
 
 #if defined(JHPPE)

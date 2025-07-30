@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -22,9 +11,7 @@
 #include "sw.h"
 #include "hsl_reg.h"
 #include "adpt.h"
-#ifdef APPE
 #include "adpt_appe_ctrlpkt.h"
-#endif
 
 a_uint32_t
 _get_mgmtctrl_ctrlpkt_profile_by_index(a_uint32_t dev_id, a_uint32_t index, fal_ctrlpkt_profile_t *ctrlpkt)
@@ -40,12 +27,8 @@ _get_mgmtctrl_ctrlpkt_profile_by_index(a_uint32_t dev_id, a_uint32_t index, fal_
 	ctrlpkt->action.in_vlan_fltr_bypass = entry.bf.in_vlan_fltr_byp;
 
 	if (entry.bf.portbitmap_include) {
-#ifdef APPE
 		ctrlpkt->port_map = FAL_PORT_ID(adpt_port_type_convert(A_FALSE,
 			entry.bf.port_type), entry.bf.portbitmap);
-#else
-		ctrlpkt->port_map = entry.bf.portbitmap;
-#endif
 	}
 	if (entry.bf.ethertype_include)
 		ctrlpkt->ethtype_profile_bitmap = entry.bf.ethertype_index_bitmap_0 | (entry.bf.ethertype_index_bitmap_1 << 2);
@@ -64,10 +47,8 @@ _get_mgmtctrl_ctrlpkt_profile_by_index(a_uint32_t dev_id, a_uint32_t index, fal_
 		ctrlpkt->protocol_types.mgt_ns = (entry.bf.protocol_bitmap & (0x1 << 7))?1:0;
 		ctrlpkt->protocol_types.mgt_na = (entry.bf.protocol_bitmap & (0x1 << 8))?1:0;
 		ctrlpkt->protocol_types.mgt_dhcp6 = (entry.bf.protocol_bitmap & (0x1 << 9))?1:0;
-#if defined(APPE)
 		ctrlpkt->protocol_types.mgt_8023ah_oam =
 			(entry.bf.protocol_bitmap & (0x1 << 10))?1:0;
-#endif
 	}
 
 	return entry.bf.valid;
@@ -232,10 +213,8 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 		entry.bf.protocol_bitmap |= (0x1 << 8);
 	if (ctrlpkt->protocol_types.mgt_dhcp6)
 		entry.bf.protocol_bitmap |= (0x1 << 9);
-#if defined(APPE)
 	if (ctrlpkt->protocol_types.mgt_8023ah_oam)
 		entry.bf.protocol_bitmap |= (0x1 << 10);
-#endif
 	entry.bf.protocol_include = entry.bf.protocol_bitmap?1:0;
 
 	entry.bf.ethertype_include = ctrlpkt->ethtype_profile_bitmap?1:0;
@@ -243,13 +222,9 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 	entry.bf.ethertype_index_bitmap_1 = (ctrlpkt->ethtype_profile_bitmap >> 2);
 
 	entry.bf.portbitmap_include = ctrlpkt->port_map?1:0;
-#ifdef APPE
 	entry.bf.port_type = adpt_port_type_convert(A_TRUE,
 		FAL_PORT_ID_TYPE(ctrlpkt->port_map));
 	entry.bf.portbitmap = FAL_PORT_ID_VALUE (ctrlpkt->port_map);
-#else
-	entry.bf.portbitmap = ctrlpkt->port_map;
-#endif
 	entry.bf.in_vlan_fltr_byp = ctrlpkt->action.in_vlan_fltr_bypass?1:0;
 	entry.bf.in_stg_byp = ctrlpkt->action.in_stp_bypass?1:0;
 	entry.bf.l2_sec_byp = ctrlpkt->action.l2_filter_bypass?1:0;
@@ -347,12 +322,10 @@ sw_error_t adpt_hppe_ctrlpkt_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_del = adpt_hppe_mgmtctrl_ctrlpkt_profile_del;
 	p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getfirst = adpt_hppe_mgmtctrl_ctrlpkt_profile_getfirst;
 	p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getnext = adpt_hppe_mgmtctrl_ctrlpkt_profile_getnext;
-#if defined(APPE)
 	p_adpt_api->adpt_mgmtctrl_vpgroup_set = adpt_appe_mgmtctrl_vpgroup_set;
 	p_adpt_api->adpt_mgmtctrl_vpgroup_get = adpt_appe_mgmtctrl_vpgroup_get;
 	p_adpt_api->adpt_mgmtctrl_tunnel_decap_set = adpt_appe_mgmtctrl_tunnel_decap_set;
 	p_adpt_api->adpt_mgmtctrl_tunnel_decap_get = adpt_appe_mgmtctrl_tunnel_decap_get;
-#endif
 	return SW_OK;
 }
 

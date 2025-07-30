@@ -38,7 +38,6 @@
 #endif
 
 static ssdk_dt_global_t ssdk_dt_global = {0};
-#ifdef HPPE
 #ifdef IN_QOS
 a_uint8_t ssdk_tm_tick_mode_get(a_uint32_t dev_id)
 {
@@ -53,7 +52,6 @@ ssdk_dt_scheduler_cfg* ssdk_bootup_shceduler_cfg_get(a_uint32_t dev_id)
 
 	return &cfg->scheduler_cfg;
 }
-#endif
 #endif
 #ifdef IN_BM
 a_uint8_t ssdk_bm_tick_mode_get(a_uint32_t dev_id)
@@ -421,7 +419,6 @@ static void ssdk_dt_parse_uniphy(a_uint32_t dev_id)
 	return;
 }
 #endif
-#ifdef HPPE
 #ifdef IN_QOS
 static void ssdk_dt_parse_l1_scheduler_cfg(
 	struct device_node *port_node,
@@ -702,7 +699,6 @@ static void ssdk_dt_parse_scheduler_cfg(a_uint32_t dev_id, struct device_node *s
 		ssdk_dt_parse_l0_scheduler_cfg(child, port_id, dev_id);
 	}
 }
-#endif
 #endif
 
 static struct device_node *ssdk_dt_get_mdio_node(a_uint32_t dev_id)
@@ -1124,81 +1120,6 @@ ssdk_dt_parse_interrupt(a_uint32_t dev_id, struct device_node *switch_node)
 	return SW_OK;
 }
 
-#if 0
-#if defined(MHT)
-void ssdk_clk_mode_set(a_uint32_t dev_id, mht_work_mode_t clk_mode)
-{
-	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
-
-	cfg->clk_mode = clk_mode;
-}
-
-mht_work_mode_t ssdk_clk_mode_get(a_uint32_t dev_id)
-{
-	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
-
-	return cfg->clk_mode;
-}
-
-static void
-ssdk_switch_clk_mode_parse(a_uint32_t dev_id, mht_work_mode_t *clk_mode)
-{
-	a_uint32_t mac_mode0, mac_mode1;
-
-	mac_mode0 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
-	mac_mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
-
-	switch (mac_mode0) {
-		case PORT_WRAPPER_SGMII_PLUS:
-		case PORT_WRAPPER_SGMII_CHANNEL0:
-			break;
-		default:
-			SSDK_ERROR("Unsupported mac_mode0 %d\n", mac_mode0);
-			return;
-	}
-
-	switch (mac_mode1) {
-		case PORT_WRAPPER_SGMII_PLUS:
-		case PORT_WRAPPER_SGMII_CHANNEL0:
-			*clk_mode = MHT_SWITCH_MODE;
-			break;
-		case PORT_WRAPPER_MAX:
-			*clk_mode = MHT_PHY_SGMII_UQXGMII_MODE;
-			break;
-		default:
-			SSDK_ERROR("Unsupported mac_mode1 %d\n", mac_mode1);
-			return;
-	}
-}
-
-static void ssdk_dt_parse_clk(a_uint32_t dev_id, struct device_node *switch_node)
-{
-	const char *clk_mode;
-	mht_work_mode_t clk_val = MHT_WORK_MODE_MAX;
-
-	clk_mode = of_get_property(switch_node, "qca8084_clk", NULL);
-	if (!clk_mode) {
-		if (of_device_is_compatible(switch_node, "qcom,ess-switch-qca8386"))
-			ssdk_switch_clk_mode_parse(dev_id, &clk_val);
-
-		ssdk_clk_mode_set(dev_id, clk_val);
-		return;
-	}
-
-	if (!strncmp(clk_mode, "phy0_mode", strlen(clk_mode)))
-		clk_val = MHT_PHY_UQXGMII_MODE;
-	else if (!strncmp(clk_mode, "phy1_mode", strlen(clk_mode)))
-		clk_val = MHT_PHY_SGMII_UQXGMII_MODE;
-	else if (!strncmp(clk_mode, "switch_bypass_mode", strlen(clk_mode)))
-		clk_val = MHT_SWITCH_BYPASS_PORT5_MODE;
-	else
-		SSDK_ERROR("Unsupported qca8084_clk: %s\n", clk_mode);
-
-	ssdk_clk_mode_set(dev_id, clk_val);
-	return;
-}
-#endif
-#endif
 static void ssdk_dt_parse_port_bmp(a_uint32_t dev_id,
 		struct device_node *switch_node, ssdk_init_cfg *cfg)
 {
@@ -1227,7 +1148,7 @@ static void ssdk_dt_parse_port_bmp(a_uint32_t dev_id,
 
 	return;
 }
-#ifdef HPPE
+
 static void ssdk_dt_parse_intf_mac(void)
 {
 	struct device_node *dp_node = NULL;
@@ -1261,43 +1182,7 @@ static void ssdk_dt_parse_intf_mac(void)
 	}
 	return;
 }
-#endif
-#ifdef DESS
-static void ssdk_dt_parse_psgmii(ssdk_dt_cfg *ssdk_dt_priv)
-{
 
-	struct device_node *psgmii_node = NULL;
-	const __be32 *reg_cfg;
-	a_uint32_t len = 0;
-
-	psgmii_node = of_find_node_by_name(NULL, "ess-psgmii");
-	if (!psgmii_node) {
-		SSDK_ERROR("cannot find ess-psgmii node\n");
-		return;
-	}
-
-	SSDK_INFO("ess-psgmii DT exist!\n");
-	reg_cfg = of_get_property(psgmii_node, "reg", &len);
-	if(!reg_cfg) {
-		SSDK_ERROR("%s: error reading device node properties for reg\n",
-			        psgmii_node->name);
-		return;
-	}
-
-	ssdk_dt_priv->psgmiireg_base_addr = be32_to_cpup(reg_cfg);
-	ssdk_dt_priv->psgmiireg_size = be32_to_cpup(reg_cfg + 1);
-	if (of_property_read_string(psgmii_node, "psgmii_access_mode",
-			(const char **)&ssdk_dt_priv->psgmii_reg_access_str)) {
-		SSDK_ERROR("%s: error reading properties for psmgii_access_mode\n",
-			         psgmii_node->name);
-		return;
-	}
-	if(!strcmp(ssdk_dt_priv->psgmii_reg_access_str, "local bus"))
-		ssdk_dt_priv->psgmii_reg_access_mode = HSL_REG_LOCAL_BUS;
-
-	return;
-}
-#endif
 static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 		ssdk_dt_cfg *ssdk_dt_priv)
 {
@@ -1340,7 +1225,7 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 	return SW_OK;
 
 }
-#if (defined(HPPE) || defined(MP) || defined(MHT))
+#if (defined(APPE) || defined(MHT))
 #ifdef IN_LED
 sw_error_t ssdk_dt_port_source_pattern_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t source_id, led_ctrl_pattern_t *pattern)
@@ -1534,33 +1419,17 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 	ssdk_dt_parse_mdio(*dev_id, switch_node, cfg);
 	ssdk_dt_parse_port_bmp(*dev_id, switch_node, cfg);
 	ssdk_dt_parse_interrupt(*dev_id, switch_node);
-#if 0
-#if defined(MHT)
-	ssdk_dt_parse_clk(*dev_id, switch_node);
-#endif
-#endif
 #ifdef IN_LED
 	ssdk_dt_parse_led(*dev_id, switch_node);
 #endif
-	if (of_device_is_compatible(switch_node, "qcom,ess-switch")) {
-		/* DESS chip */
-#ifdef DESS
-		ssdk_dt_parse_psgmii(ssdk_dt_priv);
-
-		ssdk_dt_priv->ess_clk = of_clk_get_by_name(switch_node, "ess_clk");
-		if (IS_ERR(ssdk_dt_priv->ess_clk))
-			SSDK_INFO("ess_clk doesn't exist!\n");
-#endif
-	}
-	else if (of_device_is_compatible(switch_node, "qcom,ess-switch-ipq807x") ||
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq95xx") ||
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq60xx") ||
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq53xx") ||
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq54xx") ||
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq96xx") ||
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx")) {
+	if (of_device_is_compatible(switch_node, "qcom,ess-switch-ipq807x") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq95xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq60xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq53xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq54xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq96xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx")) {
 		/* HPPE chip */
-#ifdef HPPE
 		a_uint32_t mode = 0;
 #ifdef IN_UNIPHY
 		ssdk_dt_parse_uniphy(*dev_id);
@@ -1576,16 +1445,6 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 
 		if (!of_property_read_u32(switch_node, "bm_tick_mode", &mode))
 			ssdk_dt_priv->bm_tick_mode = mode;
-#endif
-	}
-	else if (of_device_is_compatible(switch_node, "qcom,ess-switch-ipq50xx")) {
-#ifdef MP
-		ssdk_dt_priv->emu_chip_ver = MP_GEPHY;
-#ifdef IN_UNIPHY
-		ssdk_dt_parse_uniphy(*dev_id);
-#endif
-		ssdk_dt_priv->cmnblk_clk = of_clk_get_by_name(switch_node, "cmn_ahb_clk");
-#endif
 	}
 	else if (of_device_is_compatible(switch_node, "qcom,ess-switch-qca83xx")) {
 		/* s17/s17c chip */

@@ -1,20 +1,8 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -24,9 +12,7 @@
 #include "hsl_reg.h"
 #include "fal_sec.h"
 #include "adpt.h"
-#if defined(APPE)
 #include "adpt_appe_sec.h"
-#endif
 
 #ifndef IN_SEC_MINI
 sw_error_t
@@ -145,12 +131,10 @@ adpt_hppe_sec_l3_excep_ctrl_set(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 	union l3_exp_l2_flow_ctrl_u l2_flow_ctrl;
 	union l3_exp_l3_flow_ctrl_u l3_flow_ctrl;
 	union l3_exp_multicast_ctrl_u multicast_ctrl;
-#if defined(APPE)
 	union l2_flow_hit_exp_ctrl_u  l2_flow_hit_ctrl;
 	union l3_flow_hit_exp_ctrl_u  l3_flow_hit_ctrl;
 	union l2_flow_hit_miss_exp_ctrl_u l2_flow_miss_ctrl;
 	union l3_flow_hit_miss_exp_ctrl_u l3_flow_miss_ctrl;
-#endif
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(ctrl);
@@ -163,7 +147,6 @@ adpt_hppe_sec_l3_excep_ctrl_set(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 	l2_only_ctrl.bf.excep_en = ctrl->l2fwd_only_en;
 	multicast_ctrl.bf.excep_en = ctrl->multicast_en;
 
-#if defined(APPE)
 	if(ctrl->l3flow_en) {
 		if (FAL_FLOW_HIT == ctrl->l3flow_type){
 			l3_flow_hit_ctrl.bf.excep_en = 1;
@@ -209,10 +192,6 @@ adpt_hppe_sec_l3_excep_ctrl_set(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 		l2_flow_hit_ctrl.bf.excep_en = 0;
 		l2_flow_miss_ctrl.bf.excep_en = 0;
 	}
-#else
-	l3_flow_ctrl.bf.excep_en = ctrl->l3flow_en;
-	l2_flow_ctrl.bf.excep_en = ctrl->l2flow_en;
-#endif
 
 	hppe_l3_exception_cmd_set(dev_id, excep_type, &l3_exception_cmd);
 	hppe_l3_exp_l3_only_ctrl_set(dev_id, excep_type, &l3_only_ctrl);
@@ -220,12 +199,11 @@ adpt_hppe_sec_l3_excep_ctrl_set(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 	hppe_l3_exp_l3_flow_ctrl_set(dev_id, excep_type, &l3_flow_ctrl);
 	hppe_l3_exp_l2_flow_ctrl_set(dev_id, excep_type, &l2_flow_ctrl);
 	hppe_l3_exp_multicast_ctrl_set(dev_id, excep_type, &multicast_ctrl);
-#if defined(APPE)
 	appe_l3_flow_hit_exp_ctrl_set(dev_id, excep_type, &l3_flow_hit_ctrl);
 	appe_l3_flow_hit_miss_exp_ctrl_set(dev_id, excep_type, &l3_flow_miss_ctrl);
 	appe_l2_flow_hit_exp_ctrl_set(dev_id, excep_type, &l2_flow_hit_ctrl);
 	appe_l2_flow_hit_miss_exp_ctrl_set(dev_id, excep_type, &l2_flow_miss_ctrl);
-#endif
+
 	return SW_OK;
 }
 
@@ -238,12 +216,10 @@ adpt_hppe_sec_l3_excep_ctrl_get(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 	union l3_exp_l2_flow_ctrl_u l2_flow_ctrl;
 	union l3_exp_l3_flow_ctrl_u l3_flow_ctrl;
 	union l3_exp_multicast_ctrl_u multicast_ctrl;
-#if defined(APPE)
 	union l2_flow_hit_exp_ctrl_u  l2_flow_hit_ctrl;
 	union l3_flow_hit_exp_ctrl_u  l3_flow_hit_ctrl;
 	union l2_flow_hit_miss_exp_ctrl_u l2_flow_miss_ctrl;
 	union l3_flow_hit_miss_exp_ctrl_u l3_flow_miss_ctrl;
-#endif
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(ctrl);
@@ -256,7 +232,6 @@ adpt_hppe_sec_l3_excep_ctrl_get(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 	hppe_l3_exp_l3_flow_ctrl_get(dev_id, excep_type, &l3_flow_ctrl);
 	hppe_l3_exp_l2_flow_ctrl_get(dev_id, excep_type, &l2_flow_ctrl);
 	hppe_l3_exp_multicast_ctrl_get(dev_id, excep_type, &multicast_ctrl);
-#if defined(APPE)
 	appe_l3_flow_hit_exp_ctrl_get(dev_id, excep_type, &l3_flow_hit_ctrl);
 	appe_l3_flow_hit_miss_exp_ctrl_get(dev_id, excep_type, &l3_flow_miss_ctrl);
 	appe_l2_flow_hit_exp_ctrl_get(dev_id, excep_type, &l2_flow_hit_ctrl);
@@ -299,10 +274,7 @@ adpt_hppe_sec_l3_excep_ctrl_get(a_uint32_t dev_id, a_uint32_t excep_type, fal_l3
 			ctrl->l2flow_type = FAL_FLOW_AWARE;
 		}
 	}
-#else
-	ctrl->l3flow_en = l3_flow_ctrl.bf.excep_en;
-	ctrl->l2flow_en = l2_flow_ctrl.bf.excep_en;
-#endif
+
 	ctrl->cmd = l3_exception_cmd.bf.l3_excep_cmd;
 	ctrl->deacclr_en = l3_exception_cmd.bf.de_acce;
 	ctrl->l3route_only_en = l3_only_ctrl.bf.excep_en;
@@ -328,7 +300,6 @@ sw_error_t adpt_hppe_sec_init(a_uint32_t dev_id)
 #ifndef IN_SEC_MINI
 	p_adpt_api->adpt_sec_l3_excep_parser_ctrl_set = adpt_hppe_sec_l3_excep_parser_ctrl_set;
 	p_adpt_api->adpt_sec_l3_excep_parser_ctrl_get = adpt_hppe_sec_l3_excep_parser_ctrl_get;
-#if defined(APPE)
 	p_adpt_api->adpt_sec_l2_excep_ctrl_set = adpt_appe_sec_l2_excep_ctrl_set;
 	p_adpt_api->adpt_sec_l2_excep_ctrl_get = adpt_appe_sec_l2_excep_ctrl_get;
 	p_adpt_api->adpt_sec_tunnel_excep_ctrl_set = adpt_appe_sec_tunnel_excep_ctrl_set;
@@ -339,7 +310,6 @@ sw_error_t adpt_hppe_sec_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_sec_tunnel_l4_excep_parser_ctrl_get = adpt_appe_sec_tunnel_l4_excep_parser_ctrl_get;
 	p_adpt_api->adpt_sec_tunnel_flags_excep_parser_ctrl_set = adpt_appe_sec_tunnel_flags_excep_parser_ctrl_set;
 	p_adpt_api->adpt_sec_tunnel_flags_excep_parser_ctrl_get = adpt_appe_sec_tunnel_flags_excep_parser_ctrl_get;
-#endif
 #endif
 
 	return SW_OK;

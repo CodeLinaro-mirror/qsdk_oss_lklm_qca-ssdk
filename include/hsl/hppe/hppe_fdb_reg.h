@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2016-2017, 2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 #if defined(CONFIG_CPU_BIG_ENDIAN)
 #include "hppe_fdb_reg_be.h"
@@ -743,11 +732,7 @@ union port_lrn_limit_counter_u {
 
 /*[table] RFDB_TBL*/
 #define RFDB_TBL
-#ifdef APPE
 #define RFDB_TBL_ADDRESS 0x3000
-#else
-#define RFDB_TBL_ADDRESS 0x1000
-#endif
 #define RFDB_TBL_NUM     32
 #define RFDB_TBL_INC     0x8
 #define RFDB_TBL_TYPE    REG_TYPE_RW
@@ -797,7 +782,6 @@ union rfdb_tbl_u {
 	#define FDB_TBL_LOOKUP_VALID_OFFSET  49
 	#define FDB_TBL_LOOKUP_VALID_LEN     1
 	#define FDB_TBL_LOOKUP_VALID_DEFAULT 0x0
-#ifdef APPE
 	/*[field] VSI*/
 	#define FDB_TBL_VSI
 	#define FDB_TBL_VSI_OFFSET  50
@@ -837,47 +821,6 @@ struct fdb_tbl {
 	a_uint32_t  hit_age:2;
 	a_uint32_t  _reserved0:20;
 };
-#else
-	/*[field] VSI*/
-	#define FDB_TBL_VSI
-	#define FDB_TBL_VSI_OFFSET  50
-	#define FDB_TBL_VSI_LEN     5
-	#define FDB_TBL_VSI_DEFAULT 0x0
-	/*[field] DST_INFO*/
-	#define FDB_TBL_DST_INFO
-	#define FDB_TBL_DST_INFO_OFFSET  55
-	#define FDB_TBL_DST_INFO_LEN     14
-	#define FDB_TBL_DST_INFO_DEFAULT 0x0
-	/*[field] SA_CMD*/
-	#define FDB_TBL_SA_CMD
-	#define FDB_TBL_SA_CMD_OFFSET  69
-	#define FDB_TBL_SA_CMD_LEN     2
-	#define FDB_TBL_SA_CMD_DEFAULT 0x0
-	/*[field] DA_CMD*/
-	#define FDB_TBL_DA_CMD
-	#define FDB_TBL_DA_CMD_OFFSET  71
-	#define FDB_TBL_DA_CMD_LEN     2
-	#define FDB_TBL_DA_CMD_DEFAULT 0x0
-	/*[field] HIT_AGE*/
-	#define FDB_TBL_HIT_AGE
-	#define FDB_TBL_HIT_AGE_OFFSET  73
-	#define FDB_TBL_HIT_AGE_LEN     2
-	#define FDB_TBL_HIT_AGE_DEFAULT 0x0
-
-struct fdb_tbl {
-	a_uint32_t  mac_addr_0:32;
-	a_uint32_t  mac_addr_1:16;
-	a_uint32_t  entry_valid:1;
-	a_uint32_t  lookup_valid:1;
-	a_uint32_t  vsi:5;
-	a_uint32_t  dst_info_0:9;
-	a_uint32_t  dst_info_1:5;
-	a_uint32_t  sa_cmd:2;
-	a_uint32_t  da_cmd:2;
-	a_uint32_t  hit_age:2;
-	a_uint32_t  _reserved0:21;
-};
-#endif
 union fdb_tbl_u {
 	a_uint32_t val[3];
 	struct fdb_tbl bf;

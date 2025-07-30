@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -107,11 +96,7 @@ union pc_spare_reg_u {
 	#define TIME_SLOT_REG_TIME_SLOT_DEFAULT 0x0
 
 struct time_slot_reg {
-#ifdef APPE
 	a_uint32_t  time_slot:12;
-#else
-	a_uint32_t  time_slot:10;
-#endif
 	a_uint32_t  _reserved0:22;
 };
 
@@ -174,11 +159,7 @@ union pc_dbg_data_reg_u {
 #else
 #define IN_ACL_METER_CFG_TBL_NUM     512
 #endif
-#ifdef APPE
 #define IN_ACL_METER_CFG_TBL_INC     0x20
-#else
-#define IN_ACL_METER_CFG_TBL_INC     0x10
-#endif
 #define IN_ACL_METER_CFG_TBL_TYPE    REG_TYPE_RW
 #define IN_ACL_METER_CFG_TBL_DEFAULT 0x0
 	/*[field] METER_EN*/
@@ -316,7 +297,6 @@ union pc_dbg_data_reg_u {
 	#define IN_ACL_METER_CFG_TBL_VIOLATE_DEI_OFFSET  104
 	#define IN_ACL_METER_CFG_TBL_VIOLATE_DEI_LEN     1
 	#define IN_ACL_METER_CFG_TBL_VIOLATE_DEI_DEFAULT 0x0
-#ifdef APPE
 	/*[field] EXCEED_CHG_DSCP_CMD*/
 	#define IN_ACL_METER_CFG_TBL_EXCEED_CHG_DSCP_CMD
 	#define IN_ACL_METER_CFG_TBL_EXCEED_CHG_DSCP_CMD_OFFSET  105
@@ -372,7 +352,6 @@ union pc_dbg_data_reg_u {
 	#define IN_ACL_METER_CFG_TBL_NXT_PTR_OFFSET  159
 	#define IN_ACL_METER_CFG_TBL_NXT_PTR_LEN     9
 	#define IN_ACL_METER_CFG_TBL_NXT_PTR_DEFAULT 0x0
-#endif
 
 struct in_acl_meter_cfg_tbl {
 	a_uint32_t  meter_en:1;
@@ -405,7 +384,6 @@ struct in_acl_meter_cfg_tbl {
 	a_uint32_t  violate_dp:2;
 	a_uint32_t  violate_pcp:3;
 	a_uint32_t  violate_dei:1;
-#ifdef APPE
 	a_uint32_t  exceed_chg_dscp_cmd:1;
 	a_uint32_t  exceed_dscp:6;
 	a_uint32_t  violate_chg_dscp_cmd:1;
@@ -420,17 +398,10 @@ struct in_acl_meter_cfg_tbl {
 	a_uint32_t  nxt_ptr_0:1;
 	a_uint32_t  nxt_ptr_1:8;
 	a_uint32_t  _reserved0:24;
-#else
-	a_uint32_t  _reserved0:23;
-#endif
 };
 
 union in_acl_meter_cfg_tbl_u {
-#ifdef APPE
 	a_uint32_t val[6];
-#else
-	a_uint32_t val[4];
-#endif
 	struct in_acl_meter_cfg_tbl bf;
 };
 
@@ -860,11 +831,7 @@ union vp_tx_drop_cnt_tbl_u {
 /*[table] VLAN_DEV_CNT_TBL*/
 #define VLAN_DEV_CNT_TBL
 #define VLAN_DEV_CNT_TBL_ADDRESS 0x7f000
-#if defined(APPE)
 #define VLAN_DEV_CNT_TBL_NUM     128
-#else
-#define VLAN_DEV_CNT_TBL_NUM     64
-#endif
 #define VLAN_DEV_CNT_TBL_INC     0x10
 #define VLAN_DEV_CNT_TBL_TYPE    REG_TYPE_RW
 #define VLAN_DEV_CNT_TBL_DEFAULT 0x0

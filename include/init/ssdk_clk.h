@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2017, 2019-2020, The Linux Foundation. All rights reserved.
  * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
  #ifndef _SSDK_CLK_H_
@@ -352,7 +342,6 @@ void ssdk_port_reset(
 	a_uint32_t port_id,
 	a_uint32_t action);
 
-#if defined(HPPE) || defined(MP)
 void
 qca_gcc_mac_port_clock_set(a_uint32_t dev_id, a_uint32_t port_id,
                                 a_bool_t enable);
@@ -375,9 +364,7 @@ ssdk_port_speed_clock_set(
 void ssdk_port_mac_clock_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id);
-#endif
 
-#if defined(HPPE)
 void ssdk_ppe_reset_init(a_uint32_t dev_id);
 void ssdk_uniphy_raw_clock_reset(a_uint8_t uniphy_index);
 void ssdk_uniphy_raw_clock_set(
@@ -387,24 +374,11 @@ void ssdk_uniphy_raw_clock_set(
 void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_bool_t enable);
 void ssdk_uniphy_port5_clock_source_set(void);
-#endif
 
-#if defined(MP)
-void ssdk_mp_raw_clock_set(
-	a_uint8_t uniphy_index,
-	a_uint8_t direction,
-	a_uint32_t clock);
-void ssdk_mp_gephy_icc_efuse_load_enable(
-	a_bool_t enable);
-
-#endif
-
-#if defined(APPE)
 void ssdk_appe_port_speed_clock_set(
 	a_uint32_t dev_id,
 	a_uint32_t port_id,
 	a_uint32_t *clk);
-#endif
 
 #ifdef __cplusplus
 }

@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
-
 /**
  * @defgroup
  * @{
@@ -46,13 +44,8 @@ union my_mac_tbl_u {
 
 /*[register] L3_VSI*/
 #define L3_VSI
-#if defined(APPE)
 #define L3_VSI_ADDRESS 0x1148
 #define L3_VSI_NUM     64
-#else
-#define L3_VSI_ADDRESS 0x40
-#define L3_VSI_NUM     32
-#endif
 #define L3_VSI_INC     0x4
 #define L3_VSI_TYPE    REG_TYPE_RW
 #define L3_VSI_DEFAULT 0x0
@@ -104,13 +97,8 @@ union l3_vsi_u {
 
 /*[register] L3_VSI_EXT*/
 #define L3_VSI_EXT
-#if defined(APPE)
 #define L3_VSI_EXT_ADDRESS 0x1348
 #define L3_VSI_EXT_NUM     64
-#else
-#define L3_VSI_EXT_ADDRESS 0xc0
-#define L3_VSI_EXT_NUM     32
-#endif
 #define L3_VSI_EXT_INC     0x4
 #define L3_VSI_EXT_TYPE    REG_TYPE_RW
 #define L3_VSI_EXT_DEFAULT 0x0
@@ -269,11 +257,7 @@ union l3_vsi_ext_u {
 
 /*[register] NETWORK_ROUTE_IP*/
 #define NETWORK_ROUTE_IP
-#if defined (APPE)
 #define NETWORK_ROUTE_IP_ADDRESS 0x80
-#else
-#define NETWORK_ROUTE_IP_ADDRESS 0x140
-#endif
 #define NETWORK_ROUTE_IP_NUM     32
 #define NETWORK_ROUTE_IP_INC     0x8
 #define NETWORK_ROUTE_IP_TYPE    REG_TYPE_RW
@@ -301,11 +285,7 @@ union network_route_ip_u {
 
 /*[register] NETWORK_ROUTE_IP_EXT*/
 #define NETWORK_ROUTE_IP_EXT
-#if defined (APPE)
 #define NETWORK_ROUTE_IP_EXT_ADDRESS 0x280
-#else
-#define NETWORK_ROUTE_IP_EXT_ADDRESS 0x240
-#endif
 #define NETWORK_ROUTE_IP_EXT_NUM     32
 #define NETWORK_ROUTE_IP_EXT_INC     0x4
 #define NETWORK_ROUTE_IP_EXT_TYPE    REG_TYPE_RW
@@ -334,11 +314,7 @@ union network_route_ip_ext_u {
 
 /*[register] NETWORK_ROUTE_ACTION*/
 #define NETWORK_ROUTE_ACTION
-#if defined (APPE)
 #define NETWORK_ROUTE_ACTION_ADDRESS 0x380
-#else
-#define NETWORK_ROUTE_ACTION_ADDRESS 0x2c0
-#endif
 #define NETWORK_ROUTE_ACTION_NUM     32
 #define NETWORK_ROUTE_ACTION_INC     0x4
 #define NETWORK_ROUTE_ACTION_TYPE    REG_TYPE_RW
@@ -373,11 +349,7 @@ union network_route_action_u {
 
 /*[register] L3_ROUTE_CTRL*/
 #define L3_ROUTE_CTRL
-#if defined (APPE)
 #define L3_ROUTE_CTRL_ADDRESS 0x480
-#else
-#define L3_ROUTE_CTRL_ADDRESS 0x340
-#endif
 #define L3_ROUTE_CTRL_NUM     1
 #define L3_ROUTE_CTRL_INC     0x4
 #define L3_ROUTE_CTRL_TYPE    REG_TYPE_RW
@@ -508,11 +480,7 @@ union l3_route_ctrl_u {
 
 /*[register] L3_ROUTE_CTRL_EXT*/
 #define L3_ROUTE_CTRL_EXT
-#if defined (APPE)
 #define L3_ROUTE_CTRL_EXT_ADDRESS 0x494
-#else
-#define L3_ROUTE_CTRL_EXT_ADDRESS 0x344
-#endif
 #define L3_ROUTE_CTRL_EXT_NUM     1
 #define L3_ROUTE_CTRL_EXT_INC     0x4
 #define L3_ROUTE_CTRL_EXT_TYPE    REG_TYPE_RW
@@ -542,7 +510,6 @@ union l3_route_ctrl_u {
        #define L3_ROUTE_CTRL_EXT_FLOW_CPY_ESCAPE_OFFSET  7
        #define L3_ROUTE_CTRL_EXT_FLOW_CPY_ESCAPE_LEN     1
        #define L3_ROUTE_CTRL_EXT_FLOW_CPY_ESCAPE_DEFAULT 0x0
-#if defined (APPE)
        /*[field] FLOW_PMTU_FAIL*/
        #define L3_ROUTE_CTRL_EXT_FLOW_PMTU_FAIL
        #define L3_ROUTE_CTRL_EXT_FLOW_PMTU_FAIL_OFFSET  8
@@ -578,11 +545,8 @@ union l3_route_ctrl_u {
        #define L3_ROUTE_CTRL_EXT_IP_ROUTE_FAIL_NO_ETH_OFFSET  16
        #define L3_ROUTE_CTRL_EXT_IP_ROUTE_FAIL_NO_ETH_LEN     2
        #define L3_ROUTE_CTRL_EXT_IP_ROUTE_FAIL_NO_ETH_DEFAULT 0x3
-#endif
-
 
 struct l3_route_ctrl_ext {
-#if defined (APPE)
 	a_uint32_t  _reserved0:14;
 	a_uint32_t  ip_route_fail_no_eth:2;
 	a_uint32_t  l3_vpn_en:1;
@@ -591,10 +555,6 @@ struct l3_route_ctrl_ext {
 	a_uint32_t  flow_pmtu_df_fail:2;
 	a_uint32_t  flow_pmtu_fail_de_acce:1;
 	a_uint32_t  flow_pmtu_fail:2;
-#else
-	a_uint32_t  _reserved0:24;
-#endif
-
 	a_uint32_t  flow_cpy_escape:1;
 	a_uint32_t  host_hash_mode_1:2;
 	a_uint32_t  host_hash_mode_0:2;
@@ -609,11 +569,7 @@ union l3_route_ctrl_ext_u {
 
 /*[register] HOST_TBL_OP*/
 #define HOST_TBL_OP
-#if defined(APPE)
 #define HOST_TBL_OP_ADDRESS 0x724
-#else
-#define HOST_TBL_OP_ADDRESS 0x4bc
-#endif
 #define HOST_TBL_OP_NUM     1
 #define HOST_TBL_OP_INC     0x4
 #define HOST_TBL_OP_TYPE    REG_TYPE_RW
@@ -678,11 +634,7 @@ union host_tbl_op_u {
 
 /*[register] HOST_TBL_OP_DATA0*/
 #define HOST_TBL_OP_DATA
-#if defined(APPE)
 #define HOST_TBL_OP_DATA_ADDRESS 0x738
-#else
-#define HOST_TBL_OP_DATA_ADDRESS 0x4c0
-#endif
 #define HOST_TBL_OP_DATA_NUM     10
 #define HOST_TBL_OP_DATA_INC     0x4
 #define HOST_TBL_OP_DATA_TYPE    REG_TYPE_RW
@@ -704,11 +656,7 @@ union host_tbl_op_data_u {
 
 /*[register] HOST_TBL_OP_RSLT*/
 #define HOST_TBL_OP_RSLT
-#if defined(APPE)
 #define HOST_TBL_OP_RSLT_ADDRESS 0x770
-#else
-#define HOST_TBL_OP_RSLT_ADDRESS 0x4e8
-#endif
 #define HOST_TBL_OP_RSLT_NUM     1
 #define HOST_TBL_OP_RSLT_INC     0x4
 #define HOST_TBL_OP_RSLT_TYPE    REG_TYPE_RO
@@ -749,11 +697,7 @@ union host_tbl_op_rslt_u {
 
 /*[register] HOST_TBL_RD_OP*/
 #define HOST_TBL_RD_OP
-#if defined(APPE)
 #define HOST_TBL_RD_OP_ADDRESS 0x784
-#else
-#define HOST_TBL_RD_OP_ADDRESS 0x4ec
-#endif
 #define HOST_TBL_RD_OP_NUM     1
 #define HOST_TBL_RD_OP_INC     0x4
 #define HOST_TBL_RD_OP_TYPE    REG_TYPE_RW
@@ -818,11 +762,7 @@ union host_tbl_rd_op_u {
 
 /*[register] HOST_TBL_RD_OP_DATA*/
 #define HOST_TBL_RD_OP_DATA
-#if defined(APPE)
 #define HOST_TBL_RD_OP_DATA_ADDRESS 0x798
-#else
-#define HOST_TBL_RD_OP_DATA_ADDRESS 0x4f0
-#endif
 #define HOST_TBL_RD_OP_DATA_NUM     10
 #define HOST_TBL_RD_OP_DATA_INC     0x4
 #define HOST_TBL_RD_OP_DATA_TYPE    REG_TYPE_RW
@@ -844,11 +784,7 @@ union host_tbl_rd_op_data_u {
 
 /*[register] HOST_TBL_RD_OP_RSLT*/
 #define HOST_TBL_RD_OP_RSLT
-#if defined(APPE)
 #define HOST_TBL_RD_OP_RSLT_ADDRESS 0x7d0
-#else
-#define HOST_TBL_RD_OP_RSLT_ADDRESS 0x518
-#endif
 #define HOST_TBL_RD_OP_RSLT_NUM     1
 #define HOST_TBL_RD_OP_RSLT_INC     0x4
 #define HOST_TBL_RD_OP_RSLT_TYPE    REG_TYPE_RO
@@ -889,11 +825,7 @@ union host_tbl_rd_op_rslt_u {
 
 /*[register] HOST_TBL_RD_RSLT_DATA0*/
 #define HOST_TBL_RD_RSLT_DATA
-#if defined(APPE)
 #define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x7e4
-#else
-#define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x51c
-#endif
 #define HOST_TBL_RD_RSLT_DATA_NUM     10
 #define HOST_TBL_RD_RSLT_DATA_INC     0x4
 #define HOST_TBL_RD_RSLT_DATA_TYPE    REG_TYPE_RO
@@ -915,11 +847,7 @@ union host_tbl_rd_rslt_data_u {
 
 /*[register] L3_DBG_CMD*/
 #define L3_DBG_CMD
-#if defined(APPE)
 #define L3_DBG_CMD_ADDRESS 0xf3c
-#else
-#define L3_DBG_CMD_ADDRESS 0xc04
-#endif
 #define L3_DBG_CMD_NUM     1
 #define L3_DBG_CMD_INC     0x4
 #define L3_DBG_CMD_TYPE    REG_TYPE_RW
@@ -929,7 +857,6 @@ union host_tbl_rd_rslt_data_u {
 	#define L3_DBG_CMD_ADDR_OFFSET  0
 	#define L3_DBG_CMD_ADDR_LEN     8
 	#define L3_DBG_CMD_ADDR_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] DBG_BUS_BIT_SELECT*/
 	#define L3_DBG_CMD_DBG_BUS_BIT_SELECT
 	#define L3_DBG_CMD_DBG_BUS_BIT_SELECT_OFFSET  8
@@ -940,23 +867,11 @@ union host_tbl_rd_rslt_data_u {
 	#define L3_DBG_CMD_TYPE_F_OFFSET  16
 	#define L3_DBG_CMD_TYPE_F_LEN     2
 	#define L3_DBG_CMD_TYPE_F_DEFAULT 0x0
-#else
-	/*[field] TYPE*/
-	#define L3_DBG_CMD_TYPE_F
-	#define L3_DBG_CMD_TYPE_F_OFFSET  8
-	#define L3_DBG_CMD_TYPE_F_LEN     2
-	#define L3_DBG_CMD_TYPE_F_DEFAULT 0x0
-#endif
 
 struct l3_dbg_cmd {
-#if defined(APPE)
 	a_uint32_t  _reserved0:14;
 	a_uint32_t  type:2;
 	a_uint32_t  dbg_bus_bit_select:8;
-#else
-	a_uint32_t  _reserved0:22;
-	a_uint32_t  type:2;
-#endif
 	a_uint32_t  addr:8;
 };
 
@@ -967,11 +882,7 @@ union l3_dbg_cmd_u {
 
 /*[register] L3_DBG_WR_DATA*/
 #define L3_DBG_WR_DATA
-#if defined(APPE)
 #define L3_DBG_WR_DATA_ADDRESS 0xf50
-#else
-#define L3_DBG_WR_DATA_ADDRESS 0xc08
-#endif
 #define L3_DBG_WR_DATA_NUM     1
 #define L3_DBG_WR_DATA_INC     0x4
 #define L3_DBG_WR_DATA_TYPE    REG_TYPE_RW
@@ -993,11 +904,7 @@ union l3_dbg_wr_data_u {
 
 /*[register] L3_DBG_RD_DATA*/
 #define L3_DBG_RD_DATA
-#if defined(APPE)
 #define L3_DBG_RD_DATA_ADDRESS 0xf64
-#else
-#define L3_DBG_RD_DATA_ADDRESS 0xc0c
-#endif
 #define L3_DBG_RD_DATA_NUM     1
 #define L3_DBG_RD_DATA_INC     0x4
 #define L3_DBG_RD_DATA_TYPE    REG_TYPE_RO
@@ -1019,11 +926,7 @@ union l3_dbg_rd_data_u {
 
 /*[register] IN_PUB_IP_ADDR_TBL*/
 #define IN_PUB_IP_ADDR_TBL
-#if defined(APPE)
 #define IN_PUB_IP_ADDR_TBL_ADDRESS 0x4d8
-#else
-#define IN_PUB_IP_ADDR_TBL_ADDRESS 0x378
-#endif
 #define IN_PUB_IP_ADDR_TBL_NUM     16
 #define IN_PUB_IP_ADDR_TBL_INC     0x4
 #define IN_PUB_IP_ADDR_TBL_TYPE    REG_TYPE_RW
@@ -1043,7 +946,6 @@ union in_pub_ip_addr_tbl_u {
 	struct in_pub_ip_addr_tbl bf;
 };
 
-#if defined(APPE)
 /*[register] L3_DBG_LOCK0*/
 #define L3_DBG_LOCK0
 #define L3_DBG_LOCK0_ADDRESS 0xf78
@@ -1205,15 +1107,10 @@ union l3_tbl_op_fifo_cnt_u {
 	a_uint32_t val;
 	struct l3_tbl_op_fifo_cnt bf;
 };
-#endif
 
 /*[table] L3_VP_PORT_TBL*/
 #define L3_VP_PORT_TBL
-#if defined (APPE)
 #define L3_VP_PORT_TBL_ADDRESS 0x4000
-#else
-#define L3_VP_PORT_TBL_ADDRESS 0x1000
-#endif
 #define L3_VP_PORT_TBL_NUM     256
 #define L3_VP_PORT_TBL_INC     0x10
 #define L3_VP_PORT_TBL_TYPE    REG_TYPE_RW
@@ -1356,37 +1253,23 @@ union l3_tbl_op_fifo_cnt_u {
 	/*[field] VSI*/
 	#define L3_VP_PORT_TBL_VSI
 	#define L3_VP_PORT_TBL_VSI_OFFSET  42
-#if defined(APPE)
 	#define L3_VP_PORT_TBL_VSI_LEN     6
-#else
-	#define L3_VP_PORT_TBL_VSI_LEN     5
-#endif
 	#define L3_VP_PORT_TBL_VSI_DEFAULT 0x0
 	/*[field] MAC_VALID*/
 	#define L3_VP_PORT_TBL_MAC_VALID
-#if defined(APPE)
 	#define L3_VP_PORT_TBL_MAC_VALID_OFFSET  48
-#else
-	#define L3_VP_PORT_TBL_MAC_VALID_OFFSET  47
-#endif
 	#define L3_VP_PORT_TBL_MAC_VALID_LEN     1
 	#define L3_VP_PORT_TBL_MAC_VALID_DEFAULT 0x0
 	/*[field] MAC_DA*/
 	#define L3_VP_PORT_TBL_MAC_DA
-#if defined(APPE)
 	#define L3_VP_PORT_TBL_MAC_DA_OFFSET  49
-#else
-	#define L3_VP_PORT_TBL_MAC_DA_OFFSET  48
-#endif
 	#define L3_VP_PORT_TBL_MAC_DA_LEN     48
 	#define L3_VP_PORT_TBL_MAC_DA_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] IPO_VP_PROFILE*/
 	#define L3_VP_PORT_TBL_IPO_VP_PROFILE
 	#define L3_VP_PORT_TBL_IPO_VP_PROFILE_OFFSET  97
 	#define L3_VP_PORT_TBL_IPO_VP_PROFILE_LEN     8
 	#define L3_VP_PORT_TBL_IPO_VP_PROFILE_DEFAULT 0x0
-#endif
 
 struct l3_vp_port_tbl {
 	a_uint32_t  ip_arp_src_unk_cmd:2;
@@ -1408,8 +1291,6 @@ struct l3_vp_port_tbl {
 	a_uint32_t  ipv4_sg_en:1;
 	a_uint32_t  l3_if_index:8;
 	a_uint32_t  l3_if_valid:1;
-
-#if defined(APPE)
 	a_uint32_t  mac_da_0:15;
 	a_uint32_t  mac_valid:1;
 	a_uint32_t  vsi:6;
@@ -1428,30 +1309,11 @@ struct l3_vp_port_tbl {
 	a_uint32_t  _reserved0:23;
 	a_uint32_t  ipo_vp_profile:8;
 	a_uint32_t  mac_da_2:1;
-#else
-	a_uint32_t  mac_da_0:16;
-	a_uint32_t  mac_valid:1;
-	a_uint32_t  vsi:5;
-	a_uint32_t  vsi_valid:1;
-	a_uint32_t  ip_nd_src_unk_cmd:2;
-	a_uint32_t  ip_nd_sg_cvlan_en:1;
-	a_uint32_t  ip_nd_sg_svlan_en:1;
-	a_uint32_t  ip_nd_sg_port_en:1;
-	a_uint32_t  ip_nd_sg_vio_cmd:2;
-	a_uint32_t  ip_nd_sg_en:1;
-	a_uint32_t  ip_arp_sg_cvlan_en:1;
-
-	a_uint32_t  mac_da_1:32;
-#endif
 };
 
 
 union l3_vp_port_tbl_u {
-#if defined(APPE)
 	a_uint32_t val[4];
-#else
-	a_uint32_t val[3];
-#endif
 	struct l3_vp_port_tbl bf;
 };
 
@@ -1460,12 +1322,9 @@ union l3_vp_port_tbl_u {
 #if defined(MRPPE)
 #define IN_L3_IF_TBL_ADDRESS 0x6000
 #define IN_L3_IF_TBL_INC     0x20
-#elif defined(APPE)
+#else
 #define IN_L3_IF_TBL_ADDRESS 0x6000
 #define IN_L3_IF_TBL_INC     0x10
-#else
-#define IN_L3_IF_TBL_ADDRESS 0x2000
-#define IN_L3_IF_TBL_INC     0x8
 #endif
 #define IN_L3_IF_TBL_NUM     256
 #define IN_L3_IF_TBL_TYPE    REG_TYPE_RW
@@ -1520,7 +1379,6 @@ union l3_vp_port_tbl_u {
 	#define IN_L3_IF_TBL_PPPOE_EN_OFFSET  43
 	#define IN_L3_IF_TBL_PPPOE_EN_LEN     1
 	#define IN_L3_IF_TBL_PPPOE_EN_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] DMAC_CHECK_DIS*/
 	#define IN_L3_IF_TBL_DMAC_CHECK_DIS
 	#define IN_L3_IF_TBL_DMAC_CHECK_DIS_OFFSET  44
@@ -1546,7 +1404,6 @@ union l3_vp_port_tbl_u {
 	#define IN_L3_IF_TBL_UDP_CSM0_CMD_OFFSET  78
 	#define IN_L3_IF_TBL_UDP_CSM0_CMD_LEN     2
 	#define IN_L3_IF_TBL_UDP_CSM0_CMD_DEFAULT 0x0
-#endif
 #if defined(MRPPE)
 	/*[field] MAC_DA*/
 	#define IN_L3_IF_TBL_MAC_DA
@@ -1585,7 +1442,7 @@ struct in_l3_if_tbl {
 
 	a_uint32_t	_reserved0:31;
 	a_uint32_t	mac_valid:1;
-#elif defined(APPE)
+#else
 	a_uint32_t  icmp_trigger_en:1;
 	a_uint32_t  ipv6_uc_route_en:1;
 	a_uint32_t  ipv4_uc_route_en:1;
@@ -1604,29 +1461,14 @@ struct in_l3_if_tbl {
 	a_uint32_t  _reserved0:16;
 	a_uint32_t  udp_csm0_cmd:2;
 	a_uint32_t  mtu_ipv6:14;
-#else
-	a_uint32_t  icmp_trigger_en:1;
-	a_uint32_t  ipv6_uc_route_en:1;
-	a_uint32_t  ipv4_uc_route_en:1;
-	a_uint32_t  ttl_dec_bypass:1;
-	a_uint32_t  mtu:14;
-	a_uint32_t  mru:14;
-
-	a_uint32_t  _reserved0:20;
-	a_uint32_t  pppoe_en:1;
-	a_uint32_t  mac_bitmap:8;
-	a_uint32_t  ttl_exceed_de_acce:1;
-	a_uint32_t  ttl_exceed_cmd:2;
 #endif
 };
 
 union in_l3_if_tbl_u {
 #if defined(MRPPE)
 	a_uint32_t val[5];
-#elif defined(APPE)
-	a_uint32_t val[3];
 #else
-	a_uint32_t val[2];
+	a_uint32_t val[3];
 #endif
 	struct in_l3_if_tbl bf;
 };
@@ -1671,11 +1513,7 @@ union in_l3_if_tbl_u {
 	/*[field] VSI*/
 	#define HOST_IPV6_MCAST_TBL_VSI
 	#define HOST_IPV6_MCAST_TBL_VSI_OFFSET  21
-#if defined(APPE)
 	#define HOST_IPV6_MCAST_TBL_VSI_LEN     6
-#else
-	#define HOST_IPV6_MCAST_TBL_VSI_LEN     5
-#endif
 	#define HOST_IPV6_MCAST_TBL_VSI_DEFAULT 0x0
 	/*[field] SIPV6_ADDR*/
 	#define HOST_IPV6_MCAST_TBL_SIPV6_ADDR
@@ -1689,13 +1527,8 @@ union in_l3_if_tbl_u {
 	#define HOST_IPV6_MCAST_TBL_GIPV6_ADDR_DEFAULT 0x0
 
 struct host_ipv6_mcast_tbl {
-#if defined(APPE)
 	a_uint32_t  _reserved0_0:5;
 	a_uint32_t  vsi:6;
-#else
-	a_uint32_t  _reserved0_0:6;
-	a_uint32_t  vsi:5;
-#endif
 	a_uint32_t  lan_wan:1;
 	a_uint32_t  dst_info:14;
 	a_uint32_t  syn_toggle:1;
@@ -1766,33 +1599,20 @@ union host_ipv6_mcast_tbl_u {
 	/*[field] VSI*/
 	#define HOST_IPV4_MCAST_TBL_VSI
 	#define HOST_IPV4_MCAST_TBL_VSI_OFFSET  21
-#if defined(APPE)
 	#define HOST_IPV4_MCAST_TBL_VSI_LEN     6
-#else
-	#define HOST_IPV4_MCAST_TBL_VSI_LEN     5
-#endif
 	#define HOST_IPV4_MCAST_TBL_VSI_DEFAULT 0x0
 	/*[field] SIP_ADDR*/
 	#define HOST_IPV4_MCAST_TBL_SIP_ADDR
-#if defined(APPE)
 	#define HOST_IPV4_MCAST_TBL_SIP_ADDR_OFFSET  86
-#else
-	#define HOST_IPV4_MCAST_TBL_SIP_ADDR_OFFSET  85
-#endif
 	#define HOST_IPV4_MCAST_TBL_SIP_ADDR_LEN     32
 	#define HOST_IPV4_MCAST_TBL_SIP_ADDR_DEFAULT 0x0
 	/*[field] GIP_ADDR*/
 	#define HOST_IPV4_MCAST_TBL_GIP_ADDR
-#if defined(APPE)
 	#define HOST_IPV4_MCAST_TBL_GIP_ADDR_OFFSET  118
-#else
-	#define HOST_IPV4_MCAST_TBL_GIP_ADDR_OFFSET  117
-#endif
 	#define HOST_IPV4_MCAST_TBL_GIP_ADDR_LEN     32
 	#define HOST_IPV4_MCAST_TBL_GIP_ADDR_DEFAULT 0x0
 
 struct host_ipv4_mcast_tbl {
-#if defined(APPE)
 	a_uint32_t  _reserved0_0:5;
 	a_uint32_t  vsi:6;
 	a_uint32_t  lan_wan:1;
@@ -1812,27 +1632,6 @@ struct host_ipv4_mcast_tbl {
 
 	a_uint32_t  _reserved1:10;
 	a_uint32_t  gip_addr_1:22;
-#else
-	a_uint32_t  _reserved0_0:6;
-	a_uint32_t  vsi:5;
-	a_uint32_t  lan_wan:1;
-	a_uint32_t  dst_info:14;
-	a_uint32_t  syn_toggle:1;
-	a_uint32_t  fwd_cmd:2;
-	a_uint32_t  key_type:2;
-	a_uint32_t  valid:1;
-
-	a_uint32_t  _reserved0_1:32;
-
-	a_uint32_t  sip_addr_0:11;
-	a_uint32_t  _reserved0_2:21;
-
-	a_uint32_t  gip_addr_0:11;
-	a_uint32_t  sip_addr_1:21;
-
-	a_uint32_t  _reserved1:11;
-	a_uint32_t  gip_addr_1:21;
-#endif
 };
 
 union host_ipv4_mcast_tbl_u {
@@ -1983,11 +1782,7 @@ union host_ipv6_tbl_u {
 #else
 #define IN_NEXTHOP_TBL_NUM     2560
 #endif
-#if defined(APPE)
 #define IN_NEXTHOP_TBL_INC     0x20
-#else
-#define IN_NEXTHOP_TBL_INC     0x10
-#endif
 #define IN_NEXTHOP_TBL_TYPE    REG_TYPE_RW
 #define IN_NEXTHOP_TBL_DEFAULT 0x0
 	/*[field] TYPE*/
@@ -2003,11 +1798,7 @@ union host_ipv6_tbl_u {
 	/*[field] VSI reuse TYPE[1]*/
 	#define IN_NEXTHOP_TBL_VSI
 	#define IN_NEXTHOP_TBL_VSI_OFFSET  1
-#if defined(APPE)
 	#define IN_NEXTHOP_TBL_VSI_LEN     6
-#else
-	#define IN_NEXTHOP_TBL_VSI_LEN     5
-#endif
 	#define IN_NEXTHOP_TBL_VSI_DEFAULT 0x0
 	/*[field] POST_L3_IF*/
 	#define IN_NEXTHOP_TBL_POST_L3_IF
@@ -2056,7 +1847,6 @@ union host_ipv6_tbl_u {
 	#define IN_NEXTHOP_TBL_IP_ADDR_DNAT_DEFAULT 0x0
 
 struct in_nexthop_tbl_0 {
-#if defined(APPE)
 	a_uint32_t  ctag_fmt:1;
 	a_uint32_t  svid:12;
 	a_uint32_t  stag_fmt:1;
@@ -2065,17 +1855,6 @@ struct in_nexthop_tbl_0 {
 	a_uint32_t  _reserved0:2;
 	a_uint32_t  vsi:6;
 	a_uint32_t  type:1;
-#else
-	a_uint32_t  ctag_fmt:1;
-	a_uint32_t  svid:12;
-	a_uint32_t  stag_fmt:1;
-	a_uint32_t  ip_to_me:1;
-	a_uint32_t  post_l3_if:8;
-	a_uint32_t  _reserved0:3;
-	a_uint32_t  vsi:5;
-	a_uint32_t  type:1;
-#endif
-
 	a_uint32_t  mac_addr_0:16;
 	a_uint32_t  ip_pub_addr_index:4;
 	a_uint32_t  cvid:12;
@@ -2109,11 +1888,7 @@ union in_nexthop_tbl_u {
 
 /*[table] EG_L3_IF_TBL*/
 #define EG_L3_IF_TBL
-#if defined(APPE)
 #define EG_L3_IF_TBL_ADDRESS 0x3000
-#else
-#define EG_L3_IF_TBL_ADDRESS 0xe000
-#endif
 #define EG_L3_IF_TBL_NUM     256
 #define EG_L3_IF_TBL_INC     0x10
 #define EG_L3_IF_TBL_TYPE    REG_TYPE_RW
@@ -2149,16 +1924,10 @@ struct eg_l3_if_tbl {
 
 	a_uint32_t  session_id:16;
 	a_uint32_t  mac_addr_1:16;
-
-#if defined(APPE)
 	a_uint32_t  _reserved0:23;
 	a_uint32_t  tunnel_id:7;
 	a_uint32_t  tunnel_valid:1;
 	a_uint32_t  pppoe_en:1;
-#else
-	a_uint32_t  _reserved0:31;
-	a_uint32_t  pppoe_en:1;
-#endif
 };
 
 union eg_l3_if_tbl_u {

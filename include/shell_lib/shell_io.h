@@ -54,10 +54,8 @@ sw_error_t cmd_data_check_duplex(char *cmd_str, a_uint32_t * arg_val,
 sw_error_t cmd_data_check_speed(char *cmd_str, a_uint32_t * arg_val,
                                 a_uint32_t size);
 #ifndef IN_PORTCONTROL_MINI
-#if defined (APPE)
 sw_error_t cmd_data_check_port_8023ah_ctrl(char *cmd_str, void * val,
 	a_uint32_t size);
-#endif
 #endif
 sw_error_t
 cmd_data_check_port_eee_config(char *cmd_str, void * val, a_uint32_t size);
@@ -74,7 +72,6 @@ sw_error_t cmd_data_check_1qmode(char *cmd_str, a_uint32_t * arg_val,
                                  a_uint32_t size);
 sw_error_t cmd_data_check_egmode(char *cmd_str, a_uint32_t * arg_val,
                                  a_uint32_t size);
-#ifdef HPPE
 sw_error_t
 cmd_data_check_global_qinqmode(char *info, void *val, a_uint32_t size);
 sw_error_t
@@ -99,11 +96,8 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, void *val,
 sw_error_t
 cmd_data_check_port_vlan_translation_adv_action(char *info, void *val,
 				a_uint32_t size);
-#endif
-#ifdef APPE
 sw_error_t
 cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
-#endif
 #endif
 #ifdef IN_PORTCONTROL
 sw_error_t cmd_data_check_capable(char *cmd_str, a_uint32_t * arg_val,
@@ -283,7 +277,6 @@ cmd_data_check_sec_icmp4(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_sec_icmp6(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
-#ifdef HPPE
 #ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_l3_parser(char *cmd_str, void * val, a_uint32_t size);
@@ -294,7 +287,6 @@ cmd_data_check_l4_parser(char *cmd_str, void * val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size);
-#endif
 
 #ifndef IN_SEC_MINI
 sw_error_t
@@ -374,10 +366,9 @@ cmd_data_check_mtu_entry(char *cmd_str, void * val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_mru_entry(char *cmd_str, void * val, a_uint32_t size);
-#ifdef APPE
+
 sw_error_t
 cmd_data_check_mtu_cfg(char *cmd_str, void * val, a_uint32_t size);
-#endif
 #endif
 #endif
 #ifdef IN_INTERFACECONTROL
@@ -393,13 +384,12 @@ cmd_data_check_stamove(char *cmd_str, void * val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_vsi_member(char *cmd_str, void * val, a_uint32_t size);
-#if defined (APPE)
+
 sw_error_t
 cmd_data_check_vsi_bridge_vsi(char *cmd_str, void * arg_val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_vsi_invalidvsi_ctrl(char *cmd_str, void * arg_val, a_uint32_t size);
-#endif
 #endif
 #ifdef IN_BM
 sw_error_t
@@ -461,7 +451,6 @@ cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size);
 
-#if defined(APPE)
 #ifndef IN_POLICER_MINI
 sw_error_t
 cmd_data_check_policer_remap(char *cmd_str, void * val, a_uint32_t size);
@@ -472,7 +461,6 @@ cmd_data_check_policer_priority(char *cmd_str, void * val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_policer_ctrl(char *cmd_str, void * val, a_uint32_t size);
-#endif
 #endif
 
 #ifdef IN_SHAPER
@@ -488,13 +476,11 @@ cmd_data_check_port_shaper_config(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_shaper_config(char *cmd_str, void * val, a_uint32_t size);
 
-#if defined(APPE)
 sw_error_t
 cmd_data_check_queue_shaper_ctrl(char *cmd_str, void * val, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_flow_shaper_ctrl(char *cmd_str, void * val, a_uint32_t size);
-#endif
 #endif
 
 #ifdef IN_SERVCODE
@@ -540,10 +526,8 @@ sw_error_t
 cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len);
 sw_error_t
 cmd_data_check_fieldop(char *cmdstr, fal_acl_field_op_t def, fal_acl_field_op_t * val);
-#ifdef APPE
 sw_error_t
 cmd_data_check_vport_type(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
-#endif
 #endif
 #ifdef IN_TUNNEL
 sw_error_t

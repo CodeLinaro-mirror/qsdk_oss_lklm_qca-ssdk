@@ -71,16 +71,6 @@ sw_error_t adpt_hppe_uniphy_init(a_uint32_t dev_id);
 
 sw_error_t adpt_hppe_ptp_init(a_uint32_t dev_id);
 
-/*shaper*/
-#define HPPE_MAX_C_TOKEN_NUM 0x3fffffff
-#define HPPE_MAX_E_TOKEN_NUM 0x3fffffff
-
-#define HPPE_POLICER_TIMESLOT_DFT 600
-#define HPPE_PORT_SHAPER_TIMESLOT_DFT 8
-#define HPPE_FLOW_SHAPER_TIMESLOT_DFT 64
-#define HPPE_QUEUE_SHAPER_TIMESLOT_DFT 300
-#define HPPE_SHAPER_IPG_PREAMBLE_LEN_DFT 20
-
 /*BM*/
 #if defined(JHPPE)
 #define PPE_BM_PORT_NUM		40
@@ -101,9 +91,6 @@ sw_error_t adpt_hppe_ptp_init(a_uint32_t dev_id);
 #endif
 
 #define PPE_BM_PORT_MIN         0
-
-#define HPPE_REVISION              0x0
-#define CPPE_REVISION              0x1
 #define APPE_REVISION              0x0
 #define MPPE_REVISION              0x1
 #define UNKNOWN_REVISION           0xff

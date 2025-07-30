@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -184,7 +174,6 @@ union l0_shp_credit_tbl_u {
 	#define L0_SHP_CFG_TBL_CF_OFFSET  70
 	#define L0_SHP_CFG_TBL_CF_LEN     1
 	#define L0_SHP_CFG_TBL_CF_DEFAULT 0x0
-#ifdef APPE
 	/*[field] GRP_CF*/
 	#define L0_SHP_CFG_TBL_GRP_CF
 	#define L0_SHP_CFG_TBL_GRP_CF_OFFSET  71
@@ -210,16 +199,12 @@ union l0_shp_credit_tbl_u {
 	#define L0_SHP_CFG_TBL_EIR_MAX_OFFSET  100
 	#define L0_SHP_CFG_TBL_EIR_MAX_LEN     18
 	#define L0_SHP_CFG_TBL_EIR_MAX_DEFAULT 0x0
-#endif
 
 struct l0_shp_cfg_tbl {
 	a_uint32_t  cbs:14;
 	a_uint32_t  cir:18;
-
 	a_uint32_t  ebs:14;
 	a_uint32_t  eir:18;
-
-#ifdef APPE
 	a_uint32_t	cir_max_0:14;
 	a_uint32_t	shp_refresh_nxt_ptr:9;
 	a_uint32_t	grp_end:1;
@@ -229,26 +214,13 @@ struct l0_shp_cfg_tbl {
 	a_uint32_t  c_shaper_enable:1;
 	a_uint32_t  meter_unit:1;
 	a_uint32_t  token_unit:3;
-
 	a_uint32_t	_reserved0:10;
 	a_uint32_t	eir_max:18;
 	a_uint32_t	cir_max_1:4;
-#else
-	a_uint32_t  _reserved0:25;
-	a_uint32_t  cf:1;
-	a_uint32_t  e_shaper_enable:1;
-	a_uint32_t  c_shaper_enable:1;
-	a_uint32_t  meter_unit:1;
-	a_uint32_t  token_unit:3;
-#endif
 };
 
 union l0_shp_cfg_tbl_u {
-#ifdef APPE
 	a_uint32_t val[4];
-#else
-	a_uint32_t val[3];
-#endif
 	struct l0_shp_cfg_tbl bf;
 };
 
@@ -465,7 +437,6 @@ union l1_shp_credit_tbl_u {
 	#define L1_SHP_CFG_TBL_CF_OFFSET  70
 	#define L1_SHP_CFG_TBL_CF_LEN     1
 	#define L1_SHP_CFG_TBL_CF_DEFAULT 0x0
-#ifdef APPE
 	/*[field] GRP_CF*/
 	#define L1_SHP_CFG_TBL_GRP_CF
 	#define L1_SHP_CFG_TBL_GRP_CF_OFFSET  71
@@ -491,16 +462,12 @@ union l1_shp_credit_tbl_u {
 	#define L1_SHP_CFG_TBL_EIR_MAX_OFFSET  97
 	#define L1_SHP_CFG_TBL_EIR_MAX_LEN     18
 	#define L1_SHP_CFG_TBL_EIR_MAX_DEFAULT 0x0
-#endif
 
 struct l1_shp_cfg_tbl {
 	a_uint32_t  cbs:14;
 	a_uint32_t  cir:18;
-
 	a_uint32_t  ebs:14;
 	a_uint32_t  eir:18;
-
-#ifdef APPE
 	a_uint32_t	cir_max_0:17;
 	a_uint32_t	shp_refresh_nxt_ptr:6;
 	a_uint32_t	grp_end:1;
@@ -514,22 +481,10 @@ struct l1_shp_cfg_tbl {
 	a_uint32_t	_reserved0:13;
 	a_uint32_t	eir_max:18;
 	a_uint32_t	cir_max_1:1;
-#else
-	a_uint32_t	_reserved0:25;
-	a_uint32_t  cf:1;
-	a_uint32_t  e_shaper_enable:1;
-	a_uint32_t  c_shaper_enable:1;
-	a_uint32_t  meter_unit:1;
-	a_uint32_t  token_unit:3;
-#endif
 };
 
 union l1_shp_cfg_tbl_u {
-#ifdef APPE
 	a_uint32_t val[4];
-#else
-	a_uint32_t val[3];
-#endif
 	struct l1_shp_cfg_tbl bf;
 };
 

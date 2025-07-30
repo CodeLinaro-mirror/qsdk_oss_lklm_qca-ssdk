@@ -83,7 +83,6 @@ adpt_hppe_uniphy_usxgmii_status_get(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_sr_mii_ctrl_get(dev_id, uniphy_index, sr_mii_ctrl);
 	}
-#if defined(APPE)
 	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
 		a_uint32_t mode;
 		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
@@ -97,7 +96,6 @@ adpt_hppe_uniphy_usxgmii_status_get(a_uint32_t dev_id, a_uint32_t uniphy_index,
 			}
 		}
 	}
-#endif
 
 	return SW_OK;
 }
@@ -112,7 +110,6 @@ adpt_hppe_uniphy_usxgmii_status_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_sr_mii_ctrl_set(dev_id, uniphy_index, sr_mii_ctrl);
 	}
-#if defined(APPE)
 	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
 		a_uint32_t mode;
 		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
@@ -127,7 +124,6 @@ adpt_hppe_uniphy_usxgmii_status_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 			SSDK_DEBUG("uqxgmii uniphy %d port %d status set!\n", uniphy_index, port_id);
 		}
 	}
-#endif
 
 	return SW_OK;
 }
@@ -142,7 +138,6 @@ adpt_hppe_uniphy_usxgmii_autoneg_status_get(a_uint32_t dev_id, a_uint32_t uniphy
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_vr_mii_an_intr_sts_get(dev_id, uniphy_index, vr_mii_an_intr_sts);
 	}
-#if defined(APPE)
 	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
 		a_uint32_t mode;
 		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
@@ -160,7 +155,6 @@ adpt_hppe_uniphy_usxgmii_autoneg_status_get(a_uint32_t dev_id, a_uint32_t uniphy
 			SSDK_DEBUG("uqxgmii uniphy port %d autoneg check\n", port_id);
 		}
 	}
-#endif
 
 	return SW_OK;
 }
@@ -175,7 +169,6 @@ adpt_hppe_uniphy_usxgmii_autoneg_status_set(a_uint32_t dev_id, a_uint32_t uniphy
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_vr_mii_an_intr_sts_set(dev_id, uniphy_index, vr_mii_an_intr_sts);
 	}
-#if defined(APPE)
 	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
 		a_uint32_t mode;
 		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
@@ -193,7 +186,6 @@ adpt_hppe_uniphy_usxgmii_autoneg_status_set(a_uint32_t dev_id, a_uint32_t uniphy
 			SSDK_DEBUG("uqxgmii uniphy port %d autoneg clear\n", port_id);
 		}
 	}
-#endif
 
 	return SW_OK;
 }
@@ -297,7 +289,6 @@ __adpt_hppe_gcc_uniphy_software_reset(a_uint32_t dev_id, a_uint32_t uniphy_index
 	return;
 }
 
-#if defined(APPE)
 void
 __adpt_appe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 		a_uint32_t uniphy_index)
@@ -323,7 +314,6 @@ __adpt_appe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 
 	return;
 }
-#endif
 
 #if defined(MPPE)
 void
@@ -377,11 +367,9 @@ __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	case HPPE_TYPE:
 		__adpt_hppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
 		break;
-#if defined(APPE)
 	case APPE_TYPE:
 		__adpt_appe_gcc_uniphy_software_reset(dev_id, uniphy_index);
 		break;
-#endif
 #if defined(MPPE)
 	case MPPE_TYPE:
 	case MRPPE_TYPE:
@@ -688,7 +676,6 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	sr_mii_ctrl.bf.duplex_mode = 1;
 	hppe_sr_mii_ctrl_set(dev_id, uniphy_index, &sr_mii_ctrl);
 
-#ifdef APPE
 	if(adpt_ppe_type_get(dev_id) == APPE_TYPE &&
 		uniphy_index == SSDK_UNIPHY_INSTANCE0) {
 		union qp_usxg_opiton1_u qp_usxg_opiton1 = {0};
@@ -700,7 +687,7 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	}
 	/* enable uniphy eee transparent mode*/
 	__adpt_hppe_uniphy_xpcs_eee_set(dev_id, uniphy_index);
-#endif
+
 	return rv;
 }
 
