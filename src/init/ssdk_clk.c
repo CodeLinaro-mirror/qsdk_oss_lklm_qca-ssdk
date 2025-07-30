@@ -114,6 +114,7 @@ struct rst_data_t {
 #define GCC_BASE_ADDR	0x1800000
 #define GCC_SIZE	0x80000
 #define NSSCC_BASE_ADDR	0x39b00000
+#define JHPPE_NSSCC_BASE_ADDR	0x29b00000
 #define NSSCC_SIZE	0x80000
 #define GCC_NODE_NAME	"clock-controller@1800000"
 #define NSSCC_NODE_NAME	"nsscc@39b00000"
@@ -1537,9 +1538,13 @@ void ssdk_gcc_appe_clock_init(adpt_ppe_type_t chip_type)
 	if (!gcc_clk_base_g)
 		SSDK_ERROR("ioremap error on base 0x%x\n", GCC_BASE_ADDR);
 
-	nsscc_clk_base_g = ioremap(NSSCC_BASE_ADDR, NSSCC_SIZE);
+	if (chip_type == JHPPE_TYPE)
+		nsscc_clk_base_g = ioremap(JHPPE_NSSCC_BASE_ADDR, NSSCC_SIZE);
+	else
+		nsscc_clk_base_g = ioremap(NSSCC_BASE_ADDR, NSSCC_SIZE);
+
 	if (!nsscc_clk_base_g)
-		SSDK_ERROR("ioremap error on base 0x%x\n", NSSCC_BASE_ADDR);
+		SSDK_ERROR("NSSCC ioremap error with the chip type %d\n", chip_type);
 #endif
 	ssdk_appe_fixed_clock_init(chip_type);
 	ssdk_ppe_uniphy_clock_init(chip_type);
