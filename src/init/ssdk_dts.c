@@ -26,10 +26,6 @@
 #include <linux/of.h>
 #include <linux/of_mdio.h>
 #include <linux/of_platform.h>
-#if IS_ENABLED(CONFIG_MDIO_I2C)
-#include <linux/mdio/mdio-i2c.h>
-#include <linux/i2c.h>
-#endif
 #if defined(IN_SFP_PHY)
 #include "sfp_phy.h"
 #endif
@@ -736,44 +732,6 @@ static struct device_node *ssdk_dt_get_mdio_node(a_uint32_t dev_id)
 	return mdio_node;
 }
 
-#if IS_ENABLED(CONFIG_MDIO_I2C)
-static struct mii_bus *ssdk_mdio_i2c_bus_register(a_uint32_t dev_id,
-	struct device_node *port_node)
-{
-	int ret;
-	struct i2c_adapter *i2c_adpt;
-	struct mii_bus *mdio_i2c;
-	struct device_node *i2c_node;
-
-	i2c_node = of_parse_phandle(port_node, "i2c-bus", 0);
-	if(!i2c_node) {
-		SSDK_ERROR("i2c device node was not found\n");
-		return NULL;
-	}
-
-	i2c_adpt = of_find_i2c_adapter_by_node(i2c_node);
-	of_node_put(i2c_node);
-	if(!i2c_adpt) {
-		SSDK_ERROR("i2c adpt was not found\n");
-		return NULL;
-	}
-	mdio_i2c = mdio_i2c_alloc(&(i2c_adpt->dev), i2c_adpt, MIDO_I2C_QCOM);
-	if (!mdio_i2c) {
-		SSDK_ERROR("mdio_i2c bus alloc failed\n");
-		return NULL;
-	}
-	mdio_i2c->name = SFP_I2C_BUS;
-	ret = of_mdiobus_register(mdio_i2c, i2c_node);
-	if (ret < 0) {
-		SSDK_ERROR("mdio_i2c bus register failed\n");
-		mdiobus_free(mdio_i2c);
-		return NULL;
-	}
-
-	return mdio_i2c;
-}
-#endif
-
 static struct device_node *
 ssdk_dt_parse_mdio_node(struct device_node *switch_node,
 			struct device_node *port_node, a_uint32_t dev_id)
@@ -854,7 +812,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 #if IS_ENABLED(CONFIG_MDIO_I2C)
 		i2c_node = of_parse_phandle(port_node, "i2c-bus", 0);
 		if(i2c_node) {
-			mdio_i2c = ssdk_mdio_i2c_bus_register(dev_id, port_node);
+			mdio_i2c = of_mdio_find_bus(i2c_node);
 			ssdk_miibus_add(dev_id, mdio_i2c, &miibus_index);
 		}
 #endif

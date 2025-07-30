@@ -396,9 +396,6 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 	struct phy_device *phydev;
 	a_uint32_t addr = 0;
 	struct mii_bus *bus;
-	a_bool_t is_c45;
-	struct device_driver *dev_drv;
-	struct phy_driver *nss_phy_drv;
 
 	if (A_TRUE == hsl_port_phy_combo_capability_get(dev_id, port))
 	{
@@ -410,12 +407,7 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 	if(!bus)
 		return SW_NOT_FOUND;
 	addr = TO_PHY_ADDR(addr);
-	if (phy_id != SFP_PHY) {
-		is_c45 = hsl_port_feature_get(dev_id, port, PHY_F_CLAUSE45);
-		phydev = get_phy_device(bus, addr, is_c45);
-	} else {
-		phydev = phy_device_create(bus, addr, phy_id, false, NULL);
-	}
+	phydev = phy_device_create(bus, addr, phy_id, false, NULL);
 	if (IS_ERR(phydev) || phydev == NULL) {
 		SSDK_ERROR("Failed to create phy device!\n");
 		return SW_NOT_SUPPORTED;
@@ -423,18 +415,6 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 	phydev->priv = priv;
 	/*register phy device*/
 	phy_device_register(phydev);
-	if (phy_id != SFP_PHY) {
-		/* for QCOM PHY module such as laguna, there is no phy device when */
-		/* qca-nss-phy is registered, so nss ext ops is not hooked to phy */
-		/* driver data, here when phy device is registered, the related phy driver */
-		/* is probed based on the phy device, so need to probe nss phy driver manually */
-		/* to hook nss ext ops */
-		dev_drv = driver_find("nss phy driver", &mdio_bus_type);
-		if (dev_drv) {
-			nss_phy_drv = to_phy_driver(dev_drv);
-			nss_phy_drv->probe(phydev);
-		}
-	}
 
 	return 0;
 }
@@ -482,59 +462,36 @@ void sfp_phy_driver_unregister(void)
 	}
 }
 
-static a_uint32_t
-sfp_phy_id_get(a_uint32_t dev_id, a_uint32_t port_id)
-{
-	a_uint16_t org_id, rev_id, reg_data;
-	a_uint32_t phy_id;
-	struct mii_bus *mdio_i2c = ssdk_port_miibus_get(dev_id, port_id);
-
-	if (!mdio_i2c)
-		return INVALID_PHY_ID;
-
-	/* if e2prom speed value is valid, then the module is SFP. */
-	/* if the value is 0xffff, may be qcom phy module or no module */
-	/* in SFP cage, need to check PHY id */
-	reg_data = mdio_i2c->read(mdio_i2c, TO_MDIO_I2C_ADDR(SFP_E2PROM_ADDR),
-		SFP_SPEED_ADDR);
-	SSDK_INFO("e2prom speed value:0x%x\n", reg_data);
-	if (reg_data != 0xffff)
-		return INVALID_PHY_ID;
-
-	org_id = mdio_i2c->read_c45(mdio_i2c, FAL_SFP_PHY_ADDR,
-		MDIO_MMD_AN, MDIO_DEVID1);
-	rev_id = mdio_i2c->read_c45(mdio_i2c, FAL_SFP_PHY_ADDR,
-		MDIO_MMD_AN, MDIO_DEVID2);
-	phy_id = ((org_id << 16) | rev_id);
-	if (phy_id != INVALID_PHY_ID && phy_id != 0) {
-		hsl_port_feature_clear(dev_id, port_id, PHY_F_SFP);
-		hsl_port_feature_set(dev_id, port_id, PHY_F_CLAUSE45);
-		return phy_id;
-	}
-
-	return INVALID_PHY_ID;
-}
-
 int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t bus_index)
 {
-	a_uint32_t phy_id;
+	struct phy_device *phydev = NULL;
+	struct mii_bus *bus = NULL;
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	int ret;
 
-	SSDK_INFO("qca probe sfp phy driver succeeded on port%d\n",port_id);
+	bus = ssdk_miibus_get(dev_id, bus_index);
 
-	phy_id = SFP_PHY;
-	if (ssdk_miibus_is_i2c(dev_id, bus_index)) {
+	if (bus && strstr(bus->id, "i2c")) {
 		hsl_phy_address_init(dev_id, port_id,
 			TO_PHY_ADDR_E(FAL_SFP_PHY_ADDR, bus_index));
-		if(sfp_phy_id_get(dev_id, port_id) == QCA8111_PHY)
-			phy_id = QCA8111_PHY;
+		/* if phydev existed, means the SFP is QCOM SFP module and */
+		/* the phy device and driver are supported in qca-nss-phy */
+		phydev = mdiobus_get_phy(bus, FAL_SFP_PHY_ADDR);
+		if (phydev) {
+			hsl_port_feature_clear(dev_id, port_id, PHY_F_SFP);
+			if (phydev->is_c45)
+				hsl_port_feature_set(dev_id, port_id, PHY_F_CLAUSE45);
+			return 0;
+		}
 	}
 
-	SSDK_INFO("SFP phy id is 0x%x\n", phy_id);
-	sfp_phy_device_setup(dev_id, port_id, phy_id, priv);
-
-	if (phy_id == SFP_PHY)
-		sfp_phy_driver_register();
+	ret = sfp_phy_device_setup(dev_id, port_id, SFP_PHY, priv);
+	if (ret < 0)
+		return ret;
+	ret = sfp_phy_driver_register();
+	if (ret < 0)
+		return ret;
+	SSDK_INFO("SFP port %d init successfully\n", port_id);
 
 	return 0;
 }
@@ -542,20 +499,17 @@ int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t bus_index)
 void sfp_phy_exit(a_uint32_t dev_id)
 {
 	a_uint32_t port_id = 0;
-	struct mii_bus *miibus = NULL;
-
-	sfp_phy_driver_unregister();
+	struct phy_device *phydev = NULL;
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++) {
 		if (!hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
 			continue;
 
 		if (hsl_port_is_sfp(dev_id, port_id)) {
+			hsl_port_phydev_get(dev_id, port_id, &phydev);
+			if (phydev && (phydev->phy_id == SFP_PHY)) {
+				sfp_phy_driver_unregister();
 				sfp_phy_device_remove(dev_id, port_id);
-				miibus = ssdk_port_miibus_get(dev_id, port_id);
-			if (miibus &&
-				!strncmp(miibus->name, SFP_I2C_BUS, strlen(miibus->name))) {
-				mdiobus_unregister(miibus);
 			}
 		}
 	}
