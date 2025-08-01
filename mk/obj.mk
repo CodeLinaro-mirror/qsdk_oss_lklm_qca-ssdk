@@ -466,7 +466,7 @@ OBJ-COMMON  += src/fal/fal_init.o src/fal/fal_reg_access.o src/adpt/adpt.o \
 OBJ-ISISC   += src/hsl/isisc/isisc_reg_access.o
 OBJ-HPPE    += src/hsl/hppe/hppe_global.o src/hsl/hppe/hppe_reg_access.o
 OBJ-APPE    += src/hsl/appe/appe_counter.o src/hsl/appe/appe_global.o \
-               src/hsl/appe/appe_l2_vp.o
+               src/hsl/appe/appe_l2_vp.o src/hsl/appe/appe_misc.o
 OBJ-CPPE    += src/hsl/cppe/cppe_loopback.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_counter.o src/hsl/jhppe/jhppe_l2_vp.o
 OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_misc.o

@@ -460,8 +460,8 @@ adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type, cha
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_PKT_STAT RX:");
-	for (i = 0; i < DROP_STAT_NUM; i++)
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_PKT_STAT OVERFLOW DROP:");
+	for (i = 0; i < DROP_STAT_NUM / 2; i++)
 	{
 		if (show_type == A_FALSE)
 		{
@@ -482,6 +482,33 @@ adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type, cha
 				sign = 1;
 		}
 	}
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+
+	sign = tags = 0;
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_PKT_STAT FC DROP:");
+	for (i = DROP_STAT_NUM / 2; i < DROP_STAT_NUM; i++)
+	{
+		if (show_type == A_FALSE)
+		{
+			hppe_drop_stat_pkts_get(dev_id, i, &value32);
+			value = (a_uint64_t)value32;
+		}
+		else
+			hppe_drop_stat_bytes_get(dev_id, i, &value);
+
+		if (value > 0)
+		{
+			if (sign) {
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+			}
+			sign = 0;
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i - (DROP_STAT_NUM / 2));
+			if (++tags % 3 == 0)
+				sign = 1;
+		}
+	}
+
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 

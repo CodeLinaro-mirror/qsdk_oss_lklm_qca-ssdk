@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -315,33 +304,44 @@ adpt_hppe_bm_port_counter_get(a_uint32_t dev_id, fal_port_t port,
 	union port_cnt_u port_cnt;
 	union port_reacted_cnt_u reacted_cnt;
 	union drop_stat_u drop_stat;
+	union port_fc_status_u port_fc_status;
 	a_uint32_t index = FAL_PORT_ID_VALUE(port);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(counter);
+
 	memset(&port_cnt, 0, sizeof(port_cnt));
 	memset(&reacted_cnt, 0, sizeof(reacted_cnt));
+	memset(&drop_stat, 0, sizeof(drop_stat));
+	memset(&port_fc_status, 0, sizeof(port_fc_status));
 
 	rv = hppe_port_cnt_get(dev_id, index, &port_cnt);
-	if( rv != SW_OK )
-		return rv;
+	SW_RTN_ON_ERROR(rv);
+
 	counter->used_counter = port_cnt.bf.port_cnt;
 
 	rv = hppe_port_reacted_cnt_get(dev_id, index, &reacted_cnt);
-	if( rv != SW_OK )
-		return rv;
+	SW_RTN_ON_ERROR(rv);
+
 	counter->react_counter = reacted_cnt.bf.port_reacted_cnt;
 
 	rv = hppe_drop_stat_get(dev_id, index, &drop_stat);
-	if( rv != SW_OK )
-		return rv;
+	SW_RTN_ON_ERROR(rv);
+
 	counter->drop_byte_counter = drop_stat.bf.bytes_0 | ((a_uint64_t)drop_stat.bf.bytes_1 << 32);
 	counter->drop_packet_counter = drop_stat.bf.pkts;
+
 	rv = hppe_drop_stat_get(dev_id, index + PPE_BM_PORT_NUM, &drop_stat);
-	if( rv != SW_OK )
-		return rv;
+	SW_RTN_ON_ERROR(rv);
+
 	counter->fc_drop_byte_counter = drop_stat.bf.bytes_0 | ((a_uint64_t)drop_stat.bf.bytes_1 << 32);
 	counter->fc_drop_packet_counter = drop_stat.bf.pkts;
+
+	rv = hppe_port_fc_status_get(dev_id, index, &port_fc_status);
+	SW_RTN_ON_ERROR(rv);
+
+	counter->on_thresh = port_fc_status.bf.port_xon_th;
+	counter->fc_status = port_fc_status.bf.port_fc_status;
 
 	return SW_OK;
 }

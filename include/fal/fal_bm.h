@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -50,6 +39,7 @@ typedef struct
 	a_uint32_t depth;
 } fal_port_tdm_ctrl_t;
 
+
 typedef struct
 {
 	a_uint64_t drop_byte_counter; /*drop byte due to overload*/
@@ -58,6 +48,8 @@ typedef struct
 	a_uint32_t fc_drop_packet_counter; /*drop packet due to fc*/
 	a_uint32_t used_counter; /*total used buffer counter for the port*/
 	a_uint32_t react_counter; /*react used buffer counter for the port*/
+	a_uint32_t on_thresh; /* threshold for release backpressure. */
+	a_uint8_t fc_status; /* BM flow control status, */
 } fal_bm_port_counter_t;
 
 #define FAL_PORT_TDB_DIR_INGRESS	0

@@ -211,6 +211,36 @@ union hmsppe_pon_mode_u {
 #define DROP_STAT_TYPE    REG_TYPE_RW
 #define DROP_STAT_DEFAULT 0x0
 
+/*[register] PORT_FC_STATUS*/
+#define PORT_FC_STATUS
+#define PORT_FC_STATUS_ADDRESS 0x1a0
+#define PORT_FC_STATUS_NUM     40
+#define PORT_FC_STATUS_INC     0x4
+#define PORT_FC_STATUS_TYPE    REG_TYPE_RO
+#define PORT_FC_STATUS_DEFAULT 0x0
+	/*[field] PORT_XON_TH*/
+	#define PORT_FC_STATUS_PORT_XON_TH
+	#define PORT_FC_STATUS_PORT_XON_TH_OFFSET  0
+	#define PORT_FC_STATUS_PORT_XON_TH_LEN     12
+	#define PORT_FC_STATUS_PORT_XON_TH_DEFAULT 0x0
+	/*[field] PORT_FC_STATUS*/
+	#define PORT_FC_STATUS_PORT_FC_STATUS
+	#define PORT_FC_STATUS_PORT_FC_STATUS_OFFSET  17
+	#define PORT_FC_STATUS_PORT_FC_STATUS_LEN     2
+	#define PORT_FC_STATUS_PORT_FC_STATUS_DEFAULT 0x0
+
+struct port_fc_status {
+	a_uint32_t  port_xon_th:12;
+	a_uint32_t  _reserved0:5;
+	a_uint32_t  port_fc_status:2;
+	a_uint32_t  _reserved1:13;
+};
+
+union port_fc_status_u {
+	a_uint32_t val;
+	struct port_fc_status bf;
+};
+
 /*[register] LPI_ENABLE*/
 #define LPI_PORT_ENABLE
 #define LPI_PORT_ENABLE_ADDRESS 0xf4
@@ -1061,6 +1091,18 @@ hppe_tdm_cfg_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union tdm_cfg_u *value);
+sw_error_t
+hppe_port_fc_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_fc_status_u *value);
+
+sw_error_t
+hppe_port_fc_status_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_fc_status_u *value);
+
 sw_error_t
 hppe_drop_stat_get(
 		a_uint32_t dev_id,
