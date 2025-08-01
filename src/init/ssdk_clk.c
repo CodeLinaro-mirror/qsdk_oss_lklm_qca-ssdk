@@ -961,25 +961,29 @@ void ssdk_uniphy_clock_rate_set(
 	struct clk *uniphy_clk;
 
 #if defined(MRPPE)
-	if ((clock_type == NSS_PORT1_RX_CLK_E) ||
-		(clock_type == NSS_PORT1_TX_CLK_E)) {
-		if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE0,
-			PORT_WRAPPER_MAX) == A_FALSE) {
-			return;
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+
+	if (ppe_type == MRPPE_TYPE) {
+		if ((clock_type == NSS_PORT1_RX_CLK_E) ||
+				(clock_type == NSS_PORT1_TX_CLK_E)) {
+			if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE0,
+						PORT_WRAPPER_MAX) == A_FALSE) {
+				return;
+			}
 		}
-	}
-	if ((clock_type == NSS_PORT2_RX_CLK_E) ||
-		(clock_type == NSS_PORT2_TX_CLK_E)) {
-		if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE1,
-			PORT_WRAPPER_MAX) == A_FALSE) {
-			return;
+		if ((clock_type == NSS_PORT2_RX_CLK_E) ||
+				(clock_type == NSS_PORT2_TX_CLK_E)) {
+			if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE1,
+						PORT_WRAPPER_MAX) == A_FALSE) {
+				return;
+			}
 		}
-	}
-	if ((clock_type == NSS_PORT3_RX_CLK_E) ||
-		(clock_type == NSS_PORT3_TX_CLK_E)) {
-		if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE2,
-			PORT_WRAPPER_MAX) == A_FALSE) {
-			return;
+		if ((clock_type == NSS_PORT3_RX_CLK_E) ||
+				(clock_type == NSS_PORT3_TX_CLK_E)) {
+			if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE2,
+						PORT_WRAPPER_MAX) == A_FALSE) {
+				return;
+			}
 		}
 	}
 #else
