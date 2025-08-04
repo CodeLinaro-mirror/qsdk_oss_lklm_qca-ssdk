@@ -18,9 +18,6 @@
 #endif
 #include "hppe_global_reg.h"
 #include "hppe_global.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_qm.h"
-#endif
 
 #define SERVICE_CODE_QUEUE_OFFSET   2048
 #define CPU_CODE_QUEUE_OFFSET         1024
@@ -89,15 +86,8 @@ adpt_hppe_ac_dynamic_threshold_get(
 	cfg->yel_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset;
 	cfg->red_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_0 | \
 					ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_RED_RESUME_OFFSET_OFFSET);
-#if defined(JHPPE)
-	cfg->ceiling = ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_0 |
-		ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_SHARED_CEILING_OFFSET);
-	cfg->green_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_0 |
-		ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_GRN_RESUME_OFFSET_OFFSET);
-#else
 	cfg->ceiling = ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling;
 	cfg->green_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset;
-#endif
 	cfg->status = ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_dynamic;
 
 	return SW_OK;
@@ -220,22 +210,12 @@ adpt_hppe_ac_dynamic_threshold_set(
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_gap_grn_yel_min_1 = cfg->yel_min_off >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_GAP_GRN_YEL_MIN_OFFSET);
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_gap_grn_red_max = cfg->red_max_off;
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_gap_grn_red_min = cfg->red_min_off;
-#if defined(JHPPE)
-	ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_0 = cfg->green_resume_off;
-	ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_1 = cfg->green_resume_off >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_GRN_RESUME_OFFSET_OFFSET);
-#else
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset = cfg->green_resume_off;
-#endif
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset = cfg->yel_resume_off;
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_0 = cfg->red_resume_off;
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_1 = cfg->red_resume_off >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_RED_RESUME_OFFSET_OFFSET);
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_weight = cfg->shared_weight;
-#if defined(JHPPE)
-	ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_0 = cfg->ceiling;
-	ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_1 = cfg->ceiling >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_SHARED_CEILING_OFFSET);
-#else
 	ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling = cfg->ceiling;
-#endif
 
 	return hppe_ac_uni_queue_cfg_tbl_set(dev_id, queue_id, &ac_uni_queue_cfg_tbl);
 }
@@ -254,12 +234,7 @@ adpt_hppe_ac_prealloc_buffer_set(
 		memset(&ac_grp_cfg_tbl, 0, sizeof(ac_grp_cfg_tbl));
 		hppe_ac_grp_cfg_tbl_get(dev_id, obj->obj_id, &ac_grp_cfg_tbl);
 
-#if defined(JHPPE)
-		ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_0 = num;
-		ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_1 = num >> SW_FIELD_OFFSET_IN_WORD(AC_GRP_CFG_TBL_AC_GRP_PALLOC_LIMIT_OFFSET);
-#else
 		ac_grp_cfg_tbl.bf.ac_grp_palloc_limit = num;
-#endif
 
 		return hppe_ac_grp_cfg_tbl_set(dev_id, obj->obj_id, &ac_grp_cfg_tbl);
 
@@ -413,12 +388,7 @@ adpt_hppe_ac_prealloc_buffer_get(
 
 		rv = hppe_ac_grp_cfg_tbl_get(dev_id, obj->obj_id, &ac_grp_cfg_tbl);
 
-#if defined(JHPPE)
-		*num = ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_0 |
-			ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_1 << SW_FIELD_OFFSET_IN_WORD(AC_GRP_CFG_TBL_AC_GRP_PALLOC_LIMIT_OFFSET);
-#else
 		*num = ac_grp_cfg_tbl.bf.ac_grp_palloc_limit;
-#endif
 
 		return rv;
 
@@ -553,15 +523,8 @@ adpt_hppe_ac_static_threshold_set(
 			ac_uni_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset = cfg->yel_resume_off;
 			ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_0 = cfg->red_resume_off;
 			ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_1 = cfg->red_resume_off >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_RED_RESUME_OFFSET_OFFSET);
-#if defined(JHPPE)
-			ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_0 = cfg->green_resume_off;
-			ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_1 = cfg->green_resume_off >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_GRN_RESUME_OFFSET_OFFSET);
-			ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_0 = cfg->green_max;
-			ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_1 = cfg->green_max >> SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_SHARED_CEILING_OFFSET);
-#else
 			ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling = cfg->green_max;
 			ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset = cfg->green_resume_off;
-#endif
 			return hppe_ac_uni_queue_cfg_tbl_set(dev_id,
 					obj->obj_id,
 					&ac_uni_queue_cfg_tbl);;
@@ -573,15 +536,9 @@ adpt_hppe_ac_static_threshold_set(
 					&ac_mul_queue_cfg_tbl);
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_color_aware = cfg->color_enable;
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset = cfg->green_resume_off;
-#if defined(JHPPE)
-			ac_mul_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset = cfg->yel_resume_off;
-			ac_mul_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_0 = cfg->red_resume_off;
-			ac_mul_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_1 = cfg->red_resume_off >> SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_CFG_TBL_AC_CFG_RED_RESUME_OFFSET_OFFSET);
-#else
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset_0 = cfg->yel_resume_off;
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset_1 = cfg->yel_resume_off >> SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_CFG_TBL_AC_CFG_YEL_RESUME_OFFSET_OFFSET);
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_red_resume_offset = cfg->red_resume_off;
-#endif
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_gap_grn_red = cfg->red_max_off;
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_gap_grn_yel_0 = cfg->yel_max_off;
 			ac_mul_queue_cfg_tbl.bf.ac_cfg_gap_grn_yel_1 = cfg->yel_max_off >> SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_CFG_TBL_AC_CFG_GAP_GRN_YEL_OFFSET);
@@ -646,12 +603,7 @@ adpt_hppe_ac_group_buffer_get(
 	if( rv != SW_OK )
 		return rv;
 
-#if defined(JHPPE)
-	cfg->prealloc_buffer = ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_0 |
-		ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_1 << SW_FIELD_OFFSET_IN_WORD(AC_GRP_CFG_TBL_AC_GRP_PALLOC_LIMIT_OFFSET);
-#else
 	cfg->prealloc_buffer = ac_grp_cfg_tbl.bf.ac_grp_palloc_limit;
-#endif
 	cfg->total_buffer = ac_grp_cfg_tbl.bf.ac_grp_limit;
 
 	return SW_OK;
@@ -978,21 +930,11 @@ adpt_hppe_ac_static_threshold_get(
 					ac_uni_queue_cfg_tbl.bf.ac_cfg_gap_grn_yel_min_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_GAP_GRN_YEL_MIN_OFFSET);
 			cfg->red_max_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_gap_grn_red_max;
 			cfg->red_min_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_gap_grn_red_min;
-#if defined(JHPPE)
-			cfg->green_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_0 |
-				ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_GRN_RESUME_OFFSET_OFFSET);
-#else
 			cfg->green_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset;
-#endif
 			cfg->yel_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset;
 			cfg->red_resume_off = ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_0 |
 					ac_uni_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_RED_RESUME_OFFSET_OFFSET);
-#if defined(JHPPE)
-			cfg->green_max = ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_0 |
-				ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling_1 << SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_CFG_TBL_AC_CFG_SHARED_CEILING_OFFSET);
-#else
 			cfg->green_max = ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_ceiling;
-#endif
 			cfg->status = !ac_uni_queue_cfg_tbl.bf.ac_cfg_shared_dynamic;
 			return rv;
 
@@ -1007,15 +949,9 @@ adpt_hppe_ac_static_threshold_get(
 			cfg->yel_max_off= ac_mul_queue_cfg_tbl.bf.ac_cfg_gap_grn_yel_0 |
 						ac_mul_queue_cfg_tbl.bf.ac_cfg_gap_grn_yel_1 << SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_CFG_TBL_AC_CFG_GAP_GRN_YEL_OFFSET);
 			cfg->green_resume_off = ac_mul_queue_cfg_tbl.bf.ac_cfg_grn_resume_offset;
-#if defined(JHPPE)
-			cfg->yel_resume_off = ac_mul_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset;
-			cfg->red_resume_off = ac_mul_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_0 |
-				ac_mul_queue_cfg_tbl.bf.ac_cfg_red_resume_offset_1 << SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_CFG_TBL_AC_CFG_RED_RESUME_OFFSET_OFFSET);
-#else
 			cfg->yel_resume_off = ac_mul_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset_0 |
 					ac_mul_queue_cfg_tbl.bf.ac_cfg_yel_resume_offset_1 << SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_CFG_TBL_AC_CFG_YEL_RESUME_OFFSET_OFFSET);
 			cfg->red_resume_off = ac_mul_queue_cfg_tbl.bf.ac_cfg_red_resume_offset;
-#endif
 
 			return rv;
 		}
@@ -1076,12 +1012,7 @@ adpt_hppe_ac_group_buffer_set(
 	if( rv != SW_OK )
 		return rv;
 
-#if defined(JHPPE)
-	ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_0 = cfg->prealloc_buffer;
-	ac_grp_cfg_tbl.bf.ac_grp_palloc_limit_1 = cfg->prealloc_buffer >> SW_FIELD_OFFSET_IN_WORD(AC_GRP_CFG_TBL_AC_GRP_PALLOC_LIMIT_OFFSET);
-#else
 	ac_grp_cfg_tbl.bf.ac_grp_palloc_limit = cfg->prealloc_buffer;
-#endif
 	ac_grp_cfg_tbl.bf.ac_grp_limit = cfg->total_buffer;
 
 	return hppe_ac_grp_cfg_tbl_set(dev_id, group_id, &ac_grp_cfg_tbl);;
@@ -1403,22 +1334,6 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 #if defined(APPE)
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
-#endif
-#if defined(JHPPE)
-	p_adpt_api->adpt_qm_tcont_get = adpt_jhppe_qm_tcont_get;
-	p_adpt_api->adpt_qm_tcont_set = adpt_jhppe_qm_tcont_set;
-	p_adpt_api->adpt_qm_tcont_stat_get = adpt_jhppe_qm_tcont_stat_get;
-	p_adpt_api->adpt_qm_cpucode_enqueue_get = adpt_jhppe_qm_cpucode_enqueue_get;
-	p_adpt_api->adpt_qm_cpucode_enqueue_set = adpt_jhppe_qm_cpucode_enqueue_set;
-	p_adpt_api->adpt_qm_counter_monitor_en_set = adpt_jhppe_qm_counter_monitor_en_set;
-	p_adpt_api->adpt_qm_counter_monitor_en_get = adpt_jhppe_qm_counter_monitor_en_get;
-	p_adpt_api->adpt_qm_counter_monitor_stats_cleanup = adpt_jhppe_qm_counter_monitor_stats_cleanup;
-	p_adpt_api->adpt_qm_counter_monitor_status_get = adpt_jhppe_qm_counter_monitor_status_get;
-	p_adpt_api->adpt_qm_counter_monitor_map_set = adpt_jhppe_qm_counter_monitor_map_set;
-	p_adpt_api->adpt_qm_counter_monitor_map_get = adpt_jhppe_qm_counter_monitor_map_get;
-	p_adpt_api->adpt_qm_counter_monitor_ctrl_set = adpt_jhppe_qm_counter_monitor_ctrl_set;
-	p_adpt_api->adpt_qm_counter_monitor_ctrl_get = adpt_jhppe_qm_counter_monitor_ctrl_get;
-	p_adpt_api->adpt_qm_counter_monitor_stats_get = adpt_jhppe_qm_counter_monitor_stats_get;
 #endif
 
 	return SW_OK;

@@ -1466,12 +1466,8 @@ adpt_appe_tunnel_vlan_entry_compare(fal_tunnel_vlan_intf_t vlan_cfg,
 			tl_vlan_tbl.bf1.skey_vid != vlan_cfg.svlan_id)
 		return A_FALSE;
 	if (vlan_cfg.key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN &&
-#ifdef JHPPE
-			(tl_vlan_tbl.bf1.ckey_vid)
-#else
 			(tl_vlan_tbl.bf1.ckey_vid_0 | (tl_vlan_tbl.bf1.ckey_vid_1 <<
 					SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET)))
-#endif
 			!= vlan_cfg.cvlan_id)
 		return A_FALSE;
 
@@ -1499,13 +1495,9 @@ adpt_appe_tunnel_vlan_entry_convert(fal_tunnel_vlan_intf_t *vlan_cfg,
 		tl_vlan_tbl->bf1.ckey_fmt = vlan_cfg->cvlan_fmt;
 		tl_vlan_tbl->bf1.ckey_vid_incl = (vlan_cfg->key_bmp & FAL_TUNNEL_CVLAN_CHECK_EN) ?
 			A_TRUE : A_FALSE;
-#ifdef JHPPE
-		tl_vlan_tbl->bf1.ckey_vid = vlan_cfg->cvlan_id;
-#else
 		tl_vlan_tbl->bf1.ckey_vid_0 = vlan_cfg->cvlan_id;
 		tl_vlan_tbl->bf1.ckey_vid_1 = vlan_cfg->cvlan_id >>
 			SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET);
-#endif
 		tl_vlan_tbl->bf1.tl_l3_if_valid = vlan_cfg->l3_if.l3_if_valid;
 		tl_vlan_tbl->bf1.tl_l3_if_index = vlan_cfg->l3_if.l3_if_index;
 		tl_vlan_tbl->bf1.pppoe_en = vlan_cfg->pppoe_en;
@@ -1516,12 +1508,8 @@ adpt_appe_tunnel_vlan_entry_convert(fal_tunnel_vlan_intf_t *vlan_cfg,
 		vlan_cfg->svlan_fmt = tl_vlan_tbl->bf1.skey_fmt;
 		vlan_cfg->svlan_id = tl_vlan_tbl->bf1.skey_vid;
 		vlan_cfg->cvlan_fmt = tl_vlan_tbl->bf1.ckey_fmt;
-#ifdef JHPPE
-		vlan_cfg->cvlan_id = tl_vlan_tbl->bf1.ckey_vid;
-#else
 		vlan_cfg->cvlan_id = tl_vlan_tbl->bf1.ckey_vid_0 | (tl_vlan_tbl->bf1.ckey_vid_1 <<
 				SW_FIELD_OFFSET_IN_WORD(TL_VLAN_TBL_CKEY_VID_OFFSET));
-#endif
 		if (tl_vlan_tbl->bf1.skey_vid_incl)
 			vlan_cfg->key_bmp |= FAL_TUNNEL_SVLAN_CHECK_EN;
 		else

@@ -857,11 +857,6 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_QM_CLASS, (param_check_t)cmd_data_check_queue_class, NULL),
     SW_TYPE_DEF(SW_QM_QBASE, (param_check_t)cmd_data_check_queue_base, NULL),
     SW_TYPE_DEF(SW_QM_HASH, (param_check_t)cmd_data_check_queue_hash, NULL),
-#ifdef JHPPE
-    SW_TYPE_DEF(SW_MONITOR_MAP, (param_check_t)cmd_data_check_monitor_map, NULL),
-    SW_TYPE_DEF(SW_MONITOR_CTRL, (param_check_t)cmd_data_check_monitor_ctrl, NULL),
-    SW_TYPE_DEF(SW_MONITOR_STATS, NULL, NULL),
-#endif
 #endif
 #ifdef IN_BM
     SW_TYPE_DEF(SW_BMSTHRESH, (param_check_t)cmd_data_check_bm_static_thresh, NULL),
@@ -9968,70 +9963,6 @@ cmd_data_check_queue_config(char *cmd_str, char *config_name, a_uint32_t *arg_va
 	return rv;
 }
 
-#ifdef JHPPE
-sw_error_t
-cmd_data_check_monitor_map(char *cmd_str, void * val, a_uint32_t size)
-{
-    char *cmd;
-    sw_error_t rv;
-    fal_qm_monitor_map_t entry;
-
-    aos_mem_zero(&entry, sizeof (fal_qm_monitor_map_t));
-    do
-    {
-        cmd = get_sub_cmd("cnt_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.cnt_en),
-                                    sizeof (a_bool_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("cnt_id", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_uint32(cmd, &(entry.cnt_id), sizeof (a_uint32_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    *(fal_qm_monitor_map_t *)val = entry;
-
-    return SW_OK;
-}
-
-sw_error_t
-cmd_data_check_monitor_ctrl(char *cmd_str, void * val, a_uint32_t size)
-{
-    char *cmd;
-    sw_error_t rv;
-    fal_qm_monitor_ctrl_t entry;
-
-    aos_mem_zero(&entry, sizeof (fal_qm_monitor_ctrl_t));
-    do
-    {
-        cmd = get_sub_cmd("cnt_threshold_mode", "0-1");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_uint32(cmd, &(entry.cnt_threshold_mode), sizeof (a_uint32_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("cnt_threshold", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_uint32(cmd, &(entry.cnt_threshold), sizeof (a_uint32_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    *(fal_qm_monitor_ctrl_t *)val = entry;
-
-    return SW_OK;
-}
-#endif
 
 sw_error_t
 cmd_data_check_queue_profile(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)

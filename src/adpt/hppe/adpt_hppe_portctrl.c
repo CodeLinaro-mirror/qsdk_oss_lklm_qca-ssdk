@@ -28,9 +28,6 @@
 #include "ssdk_hppe.h"
 #include "adpt_hppe.h"
 #include "adpt_hppe_uniphy.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_loopback.h"
-#endif
 #include "sfp_phy.h"
 #if defined(APPE)
 #include "adpt_appe_portctrl.h"
@@ -827,12 +824,6 @@ sw_error_t
 adpt_ppe_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t max_frame)
 {
-#ifdef JHPPE
-	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_lpbk_max_frame_size_set(dev_id, port_id, max_frame);
-	}
-#endif
 	return adpt_hppe_port_max_frame_size_set(dev_id, port_id, max_frame);
 }
 
@@ -1173,12 +1164,6 @@ sw_error_t
 adpt_ppe_port_max_frame_size_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t *max_frame)
 {
-#ifdef JHPPE
-	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_lpbk_max_frame_size_get(dev_id, port_id, max_frame);
-	}
-#endif
 	return adpt_hppe_port_max_frame_size_get(dev_id, port_id, max_frame);
 
 }
@@ -1483,13 +1468,6 @@ adpt_hppe_port_flowctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv = SW_OK;
 	a_bool_t txfc_enable, rxfc_enable;
 
-#ifdef JHPPE
-	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_switch_port_loopback_flowctrl_get(dev_id,
-				port_id, enable);
-	}
-#endif
 	rv = adpt_hppe_port_txfc_status_get(dev_id, port_id,  &txfc_enable);
 	rv |= adpt_hppe_port_rxfc_status_get(dev_id, port_id,  &rxfc_enable);
 	if(rv != SW_OK)
@@ -2674,13 +2652,6 @@ adpt_hppe_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
 		return SW_BAD_VALUE;
-#ifdef JHPPE
-	 if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_switch_port_loopback_flowctrl_set(dev_id,
-				port_id, enable);
-	}
-#endif
 	rv = adpt_hppe_port_txfc_status_set(dev_id, port_id, enable);
 	rv |= adpt_hppe_port_rxfc_status_set(dev_id, port_id, enable);
 

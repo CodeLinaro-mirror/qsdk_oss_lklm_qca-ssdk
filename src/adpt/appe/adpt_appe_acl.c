@@ -457,36 +457,6 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 		hw_act->bf.ctag_dei = rule->ctag_cfi;
 	}
 
-#if defined(JHPPE)
-	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_REMOVE_TAGS))
-	{
-		hw_act->bf.tags_to_remove = rule->tags_to_remove;
-	}
-	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_STAG_TPID))
-	{
-		hw_act->bf.stpid_cmd = rule->stag_tpid_cmd;
-		hw_act->bf.stpid_index = rule->stag_tpid_index;
-	}
-	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_CTAG_TPID))
-	{
-		hw_act->bf.ctpid_cmd = rule->ctag_tpid_cmd;
-		hw_act->bf.ctpid_index = rule->ctag_tpid_index;
-	}
-	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_COUNTER))
-	{
-		hw_act->bf.counter_en = 1;
-		hw_act->bf.counter_id = rule->counter_id;
-		hw_act->bf.counter_mode = rule->counter_mode;
-	}
-	hw_act->bf.bypass_bitmap = rule->bypass_bitmap[1];
-	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_SRC_INFO))
-	{
-		hw_act->bf.src_info_valid = 1;
-		hw_act->bf.src_info = rule->src_info;
-		hw_act->bf.src_info_type = rule->src_info_type;
-	}
-	hw_act->bf.dscp_pbit_mapping_index = rule->dscp_pcp_mapping_index;
-#endif
 
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_DSCP))
 	{
@@ -880,17 +850,11 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_PRI);
 		rule->stag_pri = hw_act->bf.stag_pcp;
-#if defined(JHPPE)
-		rule->stag_pri_change_cmd = hw_act->bf.stag_pcp_change_en; /* stag pcp change cmd */
-#endif
 	}
 	if(hw_act->bf.stag_dei_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_DEI);
 		rule->stag_dei = hw_act->bf.stag_dei;
-#if defined(JHPPE)
-		rule->stag_dei_change_cmd = hw_act->bf.stag_dei_change_en; /* stag dei change cmd */
-#endif
 	}
 	if(hw_act->bf.cvid_change_en)
 	{
@@ -913,47 +877,8 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_CFI);
 		rule->ctag_cfi = hw_act->bf.ctag_dei;
-#if defined(JHPPE)
-		rule->ctag_cfi_change_cmd = hw_act->bf.ctag_dei_change_en; /* ctag dei change cmd */
-#endif
 	}
 
-#if defined(JHPPE)
-	if(hw_act->bf.tags_to_remove)
-	{
-		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_REMOVE_TAGS);
-		rule->tags_to_remove = hw_act->bf.tags_to_remove;
-	}
-	if(hw_act->bf.stpid_cmd)
-	{
-		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_STAG_TPID);
-		rule->stag_tpid_cmd = hw_act->bf.stpid_cmd;
-		rule->stag_tpid_index = hw_act->bf.stpid_index;
-	}
-	if(hw_act->bf.ctpid_cmd)
-	{
-		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_REMARK_CTAG_TPID);
-		rule->ctag_tpid_cmd = hw_act->bf.ctpid_cmd;
-		rule->ctag_tpid_index = hw_act->bf.ctpid_index;
-	}
-	if (hw_act->bf.counter_en)
-	{
-		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_COUNTER);
-		rule->counter_id = hw_act->bf.counter_id;
-		rule->counter_mode = hw_act->bf.counter_mode;
-	}
-	if (hw_act->bf.bypass_bitmap)
-	{
-		rule->bypass_bitmap[1] = hw_act->bf.bypass_bitmap;
-	}
-	if (hw_act->bf.src_info_valid)
-	{
-		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_SRC_INFO);
-		rule->src_info = hw_act->bf.src_info;
-		rule->src_info_type = hw_act->bf.src_info_type;
-	}
-	rule->dscp_pcp_mapping_index = hw_act->bf.dscp_pbit_mapping_index;
-#endif
 
 	if(hw_act->bf.dscp_tc_change_en == 1)
 	{

@@ -748,9 +748,6 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"ptvrfid", "set",   SW_API_PT_VRF_ID_SET, NULL},
 #endif
 #endif
-#ifdef JHPPE
-	{"TransDscpPcpMapping", "set", SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, NULL},
-#endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
@@ -800,9 +797,6 @@ struct sub_cmd_des_t g_acl_des[] =
 	{"udfprofileEntry", "set", SW_API_ACL_UDF_PROFILE_ENTRY_ADD, NULL},
 	{"udfprofilecfg", "set", SW_API_ACL_UDF_PROFILE_CFG_SET, NULL},
 	{"vpgroup", "set", SW_API_ACL_VPGROUP_SET, NULL},
-#endif
-#ifdef JHPPE
-	{"DscpPcpMapping", "set", SW_API_ACL_DSCP_PCP_MAPPING_SET, NULL},
 #endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
@@ -1271,12 +1265,6 @@ struct sub_cmd_des_t g_qm_des[] =
     {"cnt", "set", SW_API_QUEUE_CNT_CLEANUP, NULL},
     {"enqueue", "set", SW_API_QM_ENQUEUE_CTRL_SET, NULL},
     {"srcprofile", "set", SW_API_QM_SOURCE_PROFILE_SET, NULL},
-#ifdef JHPPE
-    {"cntmonitoren", "set", SW_API_QM_COUNTER_MONITOR_EN_SET, NULL},
-    {"cntmonitorstatscleanup", "set", SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP, NULL},
-    {"cntmonitormap", "set", SW_API_QM_COUNTER_MONITOR_MAP_SET, NULL},
-    {"cntmonitorctrl", "set", SW_API_QM_COUNTER_MONITOR_CTRL_SET, NULL},
-#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 
 };
@@ -1440,10 +1428,6 @@ struct sub_cmd_des_t g_athtag_des[] =
 struct sub_cmd_des_t g_pktedit_des[] =
 {
 	{"padding", "set", SW_API_PKTEDIT_PADDING_SET, NULL},
-#if defined(JHPPE)
-	{"en", "set", SW_API_PKTEDIT_EN_SET, NULL},
-	{"RxdescCpucodeEn", "set", SW_API_RXDESC_CPUCODE_EN_SET, NULL},
-#endif
 	{NULL, NULL, 0, NULL},/*end of desc*/
 };
 

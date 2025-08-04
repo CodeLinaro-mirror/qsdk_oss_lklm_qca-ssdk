@@ -37,11 +37,11 @@ build_ssdk() {
 check_param $1 $2
 
 if [[ "$chip_type" == "ALL" ]];then
-	build_ssdk HMSPPE ${qsdk_path}
+//	build_ssdk HMSPPE ${qsdk_path}
 	build_ssdk MRPPE  ${qsdk_path}
 	build_ssdk APPE   ${qsdk_path}
 	build_ssdk MPPE   ${qsdk_path}
-	build_ssdk JHPPE  ${qsdk_path}
+//	build_ssdk JHPPE  ${qsdk_path}
 elif [[ "$chip_type" == "clean" ]];then
 	./make.sh clean
 	rm ../build -rf

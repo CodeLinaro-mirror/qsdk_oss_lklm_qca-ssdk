@@ -25,13 +25,6 @@ static const char *pktedit_padding[] = {
 	"tunnel_ip_len_gap_exp_en",
 };
 
-#if defined(JHPPE)
-static const char *pktedit_en[] = {
-	"cpucode",
-	"enable",
-};
-
-#endif
 int parse_pktedit(const char *command_name, struct switch_val *val)
 {
 	int rv = -1;
@@ -39,14 +32,6 @@ int parse_pktedit(const char *command_name, struct switch_val *val)
 	if (!strcmp(command_name, "Padding")) {
 		rv = parse_uci_option(val, pktedit_padding,
 				sizeof(pktedit_padding)/sizeof(char *));
-#if defined(JHPPE)
-	} else if (!strcmp(command_name, "En")) {
-		rv = parse_uci_option(val, pktedit_en,
-				sizeof(pktedit_en)/sizeof(char *));
-	} else if (!strcmp(command_name, "RxdescCpucodeEn")) {
-		rv = parse_uci_option(val, pktedit_en,
-				sizeof(pktedit_en)/sizeof(char *));
-#endif
 	}
 
 	return rv;

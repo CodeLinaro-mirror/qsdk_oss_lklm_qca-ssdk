@@ -13,9 +13,6 @@
 #include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_appe_portvlan.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_portvlan.h"
-#endif
 
 a_uint32_t
 _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
@@ -37,14 +34,6 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 			memset(&in_vlan_xlt_rule, 0, sizeof(in_vlan_xlt_rule));
 		}
 
-#if defined(JHPPE)
-		rule->stpid_idx_en = in_vlan_xlt_rule.bf.stpid_incl;
-		rule->stpid_idx = in_vlan_xlt_rule.bf.stpid_index;
-		rule->ctpid_idx_en = in_vlan_xlt_rule.bf.ctpid_incl;
-		rule->ctpid_idx = in_vlan_xlt_rule.bf.ctpid_index;
-		rule->dhcp_type = in_vlan_xlt_rule.bf.dhcp_type;
-		rule->mc_type = in_vlan_xlt_rule.bf.mc_type;
-#endif
 		rule->vni_resv = (in_vlan_xlt_rule.bf.vni_resv_0 |
 			in_vlan_xlt_rule.bf.vni_resv_1 << SW_FIELD_OFFSET_IN_WORD(XLT_RULE_TBL_VNI_RESV_OFFSET));
 		rule->vni_resv_enable = in_vlan_xlt_rule.bf.vni_resv_incl;
@@ -147,16 +136,6 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 
 		rule->s_tagged = eg_vlan_xlt_rule.bf.skey_fmt;
 		rule->s_vid_enable = eg_vlan_xlt_rule.bf.skey_vid_incl;
-#if defined(JHPPE)
-		rule->stpid_idx_en = eg_vlan_xlt_rule.bf.stpid_incl;
-		rule->stpid_idx = eg_vlan_xlt_rule.bf.stpid_index;
-		rule->ctpid_idx_en = eg_vlan_xlt_rule.bf.ctpid_incl;
-		rule->ctpid_idx = eg_vlan_xlt_rule.bf.ctpid_index;
-		rule->protocol_enable = eg_vlan_xlt_rule.bf.prot_incl;
-		rule->protocol = eg_vlan_xlt_rule.bf.prot_value;
-		rule->dhcp_type = eg_vlan_xlt_rule.bf.dhcp_type;
-		rule->mc_type = eg_vlan_xlt_rule.bf.mc_type;
-#endif
 		rule->s_vid = (eg_vlan_xlt_rule.bf.skey_vid_0 |
 			(eg_vlan_xlt_rule.bf.skey_vid_1 << SW_FIELD_OFFSET_IN_WORD(EG_VLAN_XLT_RULE_SKEY_VID_OFFSET)));
 		rule->port_bitmap = FAL_PORT_ID(adpt_port_type_convert(A_FALSE,
@@ -212,15 +191,6 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 
 		action->counter_enable = eg_vlan_xlt_action.bf.counter_en;
 		action->counter_id = eg_vlan_xlt_action.bf.counter_id;
-#if defined(JHPPE)
-		action->tags_to_rm = eg_vlan_xlt_action.bf.tags_to_remove;
-		action->stpid_idx_xlt_cmd = eg_vlan_xlt_action.bf.stpid_cmd;
-		action->stpid_idx_xlt = eg_vlan_xlt_action.bf.stpid_index;
-		action->ctpid_idx_xlt_cmd = eg_vlan_xlt_action.bf.ctpid_cmd;
-		action->ctpid_idx_xlt = eg_vlan_xlt_action.bf.ctpid_index;
-		action->dscp_map_idx = eg_vlan_xlt_action.bf.dscp_pbit_mapping_index;
-		action->fwd_cmd = eg_vlan_xlt_action.bf.fwd_cmd;
-#endif
 		action->vni_resv_enable = eg_vlan_xlt_action.bf.vni_resv_en;
 		action->vni_resv = (eg_vlan_xlt_action.bf.vni_resv_0 |
 			(eg_vlan_xlt_action.bf.vni_resv_1 << SW_FIELD_OFFSET_IN_WORD(EG_VLAN_XLT_ACTION_VNI_RESV_OFFSET)));
@@ -238,14 +208,6 @@ _check_if_rule_equal(fal_port_vlan_direction_t direction, fal_vlan_trans_adv_rul
 		rule1->s_pcp_enable == rule2->s_pcp_enable && rule1->s_pcp == rule2->s_pcp &&
 		rule1->s_dei_enable == rule2->s_dei_enable && rule1->s_dei == rule2->s_dei &&
 		rule1->c_tagged == rule2->c_tagged &&
-#if defined(JHPPE)
-		rule1->stpid_idx_en == rule2->stpid_idx_en &&
-		rule1->stpid_idx == rule2->stpid_idx &&
-		rule1->ctpid_idx_en == rule2->ctpid_idx_en &&
-		rule1->ctpid_idx == rule2->ctpid_idx &&
-		rule1->dhcp_type == rule2->dhcp_type &&
-		rule1->mc_type == rule2->mc_type &&
-#endif
 		FAL_PORT_ID_TYPE(rule1->port_bitmap) == FAL_PORT_ID_TYPE(rule2->port_bitmap) &&
 		rule1->c_vid_enable == rule2->c_vid_enable && rule1->c_vid == rule2->c_vid &&
 		rule1->c_pcp_enable == rule2->c_pcp_enable && rule1->c_pcp == rule2->c_pcp &&
@@ -266,10 +228,6 @@ _check_if_rule_equal(fal_port_vlan_direction_t direction, fal_vlan_trans_adv_rul
 		if (!(rule1->vsi_valid == rule2->vsi_valid &&
 					rule1->vsi_enable == rule2->vsi_enable &&
 					rule1->vsi == rule2->vsi
-#if defined(JHPPE)
-					&& rule1->protocol_enable == rule2->protocol_enable &&
-					rule1->protocol == rule2->protocol
-#endif
 					))
 			return 1;
 	}
@@ -296,29 +254,12 @@ _check_if_action_equal(fal_port_vlan_direction_t direction, fal_vlan_trans_adv_a
 		action1->spcp_xlt == action2->spcp_xlt &&
 		action1->cpcp_xlt_cmd == action2->cpcp_xlt_cmd &&
 		action1->cpcp_xlt == action2->cpcp_xlt &&
-#if defined(JHPPE)
-		action1->tags_to_rm == action2->tags_to_rm &&
-		action1->stpid_idx_xlt_cmd == action2->stpid_idx_xlt_cmd &&
-		action1->stpid_idx_xlt == action2->stpid_idx_xlt &&
-		action1->ctpid_idx_xlt_cmd == action2->ctpid_idx_xlt_cmd &&
-		action1->ctpid_idx_xlt == action2->ctpid_idx_xlt &&
-		action1->dscp_map_idx == action2->dscp_map_idx &&
-		action1->fwd_cmd == action2->fwd_cmd &&
-#endif
 		action1->counter_enable == action2->counter_enable &&
 		action1->counter_id == action2->counter_id))
 		return 1;
 
 	if (direction == FAL_PORT_VLAN_INGRESS) {
 		if (!(action1->vsi_xlt_enable == action2->vsi_xlt_enable &&
-#if defined(JHPPE)
-					action1->svc_code_en == action2->svc_code_en &&
-					action1->svc_code == action2->svc_code &&
-					action1->dst_valid == action2->dst_valid &&
-					action1->dst_port.dest_info_type == action2->dst_port.dest_info_type &&
-					action1->dst_port.dest_info_value == action2->dst_port.dest_info_value &&
-					action1->counter_mode == action2->counter_mode &&
-#endif
 					action1->src_info_enable == action2->src_info_enable &&
 					action1->src_info_type == action2->src_info_type &&
 					action1->src_info == action2->src_info &&
@@ -346,14 +287,6 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 
 	if (direction == FAL_PORT_VLAN_INGRESS)
 	{
-#if defined(JHPPE)
-		in_vlan_xlt_rule.bf.stpid_incl = rule->stpid_idx_en;
-		in_vlan_xlt_rule.bf.stpid_index = rule->stpid_idx;
-		in_vlan_xlt_rule.bf.ctpid_incl = rule->ctpid_idx_en;
-		in_vlan_xlt_rule.bf.ctpid_index = rule->ctpid_idx;
-		in_vlan_xlt_rule.bf.dhcp_type = rule->dhcp_type;
-		in_vlan_xlt_rule.bf.mc_type = rule->mc_type;
-#endif
 		in_vlan_xlt_rule.bf.vni_resv_0 = rule->vni_resv;
 		in_vlan_xlt_rule.bf.vni_resv_1 = (rule->vni_resv >>
 			(SW_FIELD_OFFSET_IN_WORD(XLT_RULE_TBL_VNI_RESV_OFFSET)));
@@ -462,16 +395,6 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 
 		eg_vlan_xlt_rule.bf.skey_fmt = rule->s_tagged;
 		eg_vlan_xlt_rule.bf.skey_vid_incl = rule->s_vid_enable;
-#if defined(JHPPE)
-		eg_vlan_xlt_rule.bf.stpid_incl = rule->stpid_idx_en;
-		eg_vlan_xlt_rule.bf.stpid_index = rule->stpid_idx;
-		eg_vlan_xlt_rule.bf.ctpid_incl = rule->ctpid_idx_en;
-		eg_vlan_xlt_rule.bf.ctpid_index = rule->ctpid_idx;
-		eg_vlan_xlt_rule.bf.prot_incl = rule->protocol_enable;
-		eg_vlan_xlt_rule.bf.prot_value = rule->protocol;
-		eg_vlan_xlt_rule.bf.dhcp_type = rule->dhcp_type;
-		eg_vlan_xlt_rule.bf.mc_type = rule->mc_type;
-#endif
 		eg_vlan_xlt_rule.bf.skey_vid_0 = rule->s_vid;
 		eg_vlan_xlt_rule.bf.skey_vid_1 = (rule->s_vid >>
 			(SW_FIELD_OFFSET_IN_WORD(EG_VLAN_XLT_RULE_SKEY_VID_OFFSET)));
@@ -526,19 +449,6 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		eg_vlan_xlt_action.bf.counter_en = action->counter_enable;
 		eg_vlan_xlt_action.bf.counter_id = action->counter_id;
 
-#if defined(JHPPE)
-		eg_vlan_xlt_action.bf.tags_to_remove = action->tags_to_rm;
-		eg_vlan_xlt_action.bf.stpid_cmd = action->stpid_idx_xlt_cmd;
-		eg_vlan_xlt_action.bf.stpid_index = action->stpid_idx_xlt;
-		eg_vlan_xlt_action.bf.ctpid_cmd = action->ctpid_idx_xlt_cmd;
-		eg_vlan_xlt_action.bf.ctpid_index = action->ctpid_idx_xlt;
-		eg_vlan_xlt_action.bf.dscp_pbit_mapping_index = action->dscp_map_idx;
-		if (action->fwd_cmd != FAL_MAC_FRWRD && action->fwd_cmd != FAL_MAC_DROP) {
-			SSDK_ERROR("egress xlt cmd: %#x is not supported\n", action->fwd_cmd);
-			return SW_NOT_SUPPORTED;
-		}
-		eg_vlan_xlt_action.bf.fwd_cmd = action->fwd_cmd;
-#endif
 		eg_vlan_xlt_action.bf.vni_resv_0 = action->vni_resv;
 		eg_vlan_xlt_action.bf.vni_resv_1 = (action->vni_resv >>
 			(SW_FIELD_OFFSET_IN_WORD(EG_VLAN_XLT_ACTION_VNI_RESV_OFFSET)));
@@ -3040,12 +2950,6 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_appe_port_egress_vlan_filter_set;
 		p_adpt_api->adpt_port_egress_vlan_filter_get =
 			adpt_appe_port_egress_vlan_filter_get;
-#endif
-#if defined(JHPPE)
-		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
-			adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
-		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
-			adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
 #endif
 #endif
 		p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;

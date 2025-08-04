@@ -495,47 +495,6 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		}
 	}
 
-#if defined(HMSPPE)
-	if (chip_type == HMSPPE_TYPE) {
-		ssdk_dt_scheduler_cfg *dt_cfg;
-		int tcont_id = 0, pon_port_qbase = 0;
-		fal_queue_tcont_cfg_t tcont_cfg = {0};
-		int vport = (SSDK_MAX_VIRTUAL_PORT_ID + 1) / 2;
-
-		/* Assign the queue base of port 6 as the last reserved queue,
-		 * and disable the enqueue for the port 6 queue base to make
-		 * the packet go to this queue dropped.
-		 */
-		dt_cfg = ssdk_bootup_shceduler_cfg_get(dev_id);
-		if (!dt_cfg)
-			return SW_NOT_SUPPORTED;
-
-		pon_port_qbase = dt_cfg->reserved_pool.ucastq_end;
-		queue_dst.dst_port = SSDK_PHYSICAL_PORT6;
-		fal_ucast_queue_base_profile_set(dev_id, &queue_dst,
-						 pon_port_qbase,
-						 SSDK_PHYSICAL_PORT6);
-		fal_qm_enqueue_ctrl_set(dev_id, pon_port_qbase, A_FALSE);
-
-		/* Assign 128 virtual ports (128-255) with 128 queues of PON port 6 */
-		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT6);
-		while (vport <= SSDK_MAX_VIRTUAL_PORT_ID) {
-			queue_dst.dst_port = vport;
-			fal_ucast_queue_base_profile_set(dev_id, &queue_dst,
-							 qbase, SSDK_PHYSICAL_PORT6);
-
-			tcont_cfg.valid = A_TRUE;
-			tcont_cfg.tcont_id = tcont_id;
-			fal_qm_tcont_set(dev_id, qbase, &tcont_cfg);
-
-			qbase++;
-			vport++;
-
-			if (vport % 4 == 0)
-				tcont_id++;
-		}
-	}
-#endif
 
 	/* Initialize the queue base for all CPU code. */
 	queue_dst.dst_port = 0;

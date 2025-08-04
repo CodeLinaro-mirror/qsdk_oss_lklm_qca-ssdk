@@ -759,11 +759,6 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 	fal_port_cnt_cfg_t init_cnt_cfg = {0};
 	fal_port_eee_cfg_t port_eee_cfg = {0};
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
-#ifdef JHPPE
-	sw_error_t rv = SW_OK;
-	fal_port_t lpbk_port_id = 0;
-	fal_loopback_config_t loopback_cfg = {0};
-#endif
 
 	SW_RTN_ON_NULL(priv);
 
@@ -811,16 +806,6 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 	for(i = SSDK_PHYSICAL_PORT0; i < priv->ports_num; i++) {
 		fal_port_cnt_cfg_set(dev_id, FAL_PORT_ID(FAL_PORT_TYPE_PPORT, i), &init_cnt_cfg);
 	}
-#ifdef JHPPE
-	rv = fal_switch_loopback_port_get(dev_id, &lpbk_port_id);
-	if (rv == SW_OK) {
-		loopback_cfg.enable = A_TRUE;
-		loopback_cfg.crc_stripped = A_TRUE;
-		/* 50Mpps by default in loopback module */
-		loopback_cfg.loopback_rate = 50;
-		fal_switch_port_loopback_set(dev_id, lpbk_port_id, &loopback_cfg);
-	}
-#endif
 	return SW_OK;
 }
 #endif

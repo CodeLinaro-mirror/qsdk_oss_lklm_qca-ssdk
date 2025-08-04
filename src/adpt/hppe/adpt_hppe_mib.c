@@ -15,9 +15,6 @@
 #include "hppe_xgmacmib.h"
 #include "hppe_init.h"
 #include "adpt_hppe.h"
-#ifdef JHPPE
-#include "adpt_jhppe_mib.h"
-#endif
 
 sw_error_t
 adpt_hppe_mib_cpukeep_get(a_uint32_t dev_id, a_bool_t *enable)
@@ -60,10 +57,6 @@ adpt_ppe_mib_cpukeep_set(a_uint32_t dev_id, a_bool_t enable)
 		g_port_id = HPPE_TO_GMAC_PORT_ID(port_id);
 		hppe_mac_mib_ctrl_mib_rd_clr_set(dev_id, g_port_id, (a_uint32_t)(!enable));
 	}
-#ifdef JHPPE
-	rv = adpt_jhppe_lpbk_mib_cpukeep_set(dev_id, enable);
-	SW_RTN_ON_ERROR(rv);
-#endif
 	return rv;
 }
 
@@ -157,12 +150,6 @@ adpt_ppe_get_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mib_info);
-#ifdef JHPPE
-	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_lpbk_get_mib_info(dev_id, port_id, mib_info);
-	}
-#endif
 	return adpt_hppe_get_mib_info(dev_id, port_id, mib_info);
 }
 
@@ -225,10 +212,6 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 	memset(&mmc_control, 0, sizeof(mmc_control));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#ifdef JHPPE
-	rv = adpt_jhppe_lpbk_mib_status_set(dev_id, enable);
-	SW_RTN_ON_ERROR(rv);
-#endif
 	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= port_num; port_id++) {
 		g_port_id = HPPE_TO_GMAC_PORT_ID(port_id);
 		hppe_mac_mib_ctrl_mib_en_set(dev_id, g_port_id, (a_uint32_t)enable);
@@ -284,12 +267,6 @@ adpt_hppe_mib_port_flush_counters(a_uint32_t dev_id, fal_port_t port_id)
 sw_error_t
 adpt_ppe_mib_port_flush_counters(a_uint32_t dev_id, fal_port_t port_id)
 {
-#ifdef JHPPE
-	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_lpbk_mib_flush_counters(dev_id, port_id);
-	}
-#endif
 	return adpt_hppe_mib_port_flush_counters(dev_id, port_id);
 }
 
@@ -367,12 +344,6 @@ adpt_ppe_get_rx_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mib_info);
 
-#ifdef JHPPE
-	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
-	{
-		return adpt_jhppe_lpbk_get_mib_info(dev_id, port_id, mib_info);
-	}
-#endif
 	return adpt_hppe_get_rx_mib_info(dev_id, port_id, mib_info);
 }
 
