@@ -501,6 +501,8 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		int tcont_id = 0, pon_port_qbase = 0;
 		fal_queue_tcont_cfg_t tcont_cfg = {0};
 		int vport = (SSDK_MAX_VIRTUAL_PORT_ID + 1) / 2;
+		a_uint8_t max_pri = ssdk_port_ucast_max_pri_get(dev_id,
+								SSDK_PHYSICAL_PORT6);
 
 		/* Assign the queue base of port 6 as the last reserved queue,
 		 * and disable the enqueue for the port 6 queue base to make
@@ -531,7 +533,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 			qbase++;
 			vport++;
 
-			if (vport % 4 == 0)
+			if (vport % max_pri == 0)
 				tcont_id++;
 		}
 	}
