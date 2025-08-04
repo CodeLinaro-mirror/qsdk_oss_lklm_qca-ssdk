@@ -205,38 +205,6 @@ static sw_error_t _program_type_2_id(a_uint32_t dev_id,
 	case FAL_TUNNEL_PROGRAM_TYPE_5:
 		*program_id = 5;
 		break;
-#if defined(JHPPE)
-	case FAL_TUNNEL_PROGRAM_TYPE_6:
-		*program_id = 6;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_7:
-		*program_id = 7;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_8:
-		*program_id = 8;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_9:
-		*program_id = 9;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_10:
-		*program_id = 10;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_11:
-		*program_id = 11;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_12:
-		*program_id = 12;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_13:
-		*program_id = 13;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_14:
-		*program_id = 14;
-		break;
-	case FAL_TUNNEL_PROGRAM_TYPE_15:
-		*program_id = 15;
-		break;
-#endif
 	default:
 		SSDK_ERROR("Invalid program type %d\n", type);
 		return SW_BAD_VALUE;
@@ -253,15 +221,6 @@ _is_program_entry_equal(a_uint32_t dev_id,
 		entry1->protocol== entry2->protocol &&
 		entry1->protocol_mask == entry2->protocol_mask)
 	{
-#if defined(JHPPE)
-		if (entry1->protocol_pos_valid != entry2->protocol_pos_valid ||
-			entry1->protocol_pos_mode != entry2->protocol_pos_mode ||
-			entry1->protocol_pos_offset != entry2->protocol_pos_offset ||
-			entry1->tuple_id_valid != entry2->tuple_id_valid ||
-			entry1->tuple_id != entry2->tuple_id)
-			return A_FALSE;
-		else
-#endif
 			/* equal */
 			return A_TRUE;
 	}
@@ -279,10 +238,6 @@ _get_program_entry_by_index(a_uint32_t dev_id,
 	union tpr_hdr_match_0_u match_0 = {0};
 	union tpr_hdr_match_1_u match_1 = {0};
 	union tpr_hdr_match_2_u match_2 = {0};
-#if defined(JHPPE)
-	union tpr_hdr_match_ctrl_u match_ctrl = {0};
-	union tpr_hdr_tuple_match_u tuple_match = {0};
-#endif
 	a_uint32_t outer_hdr_type;
 
 	rv = appe_tpr_hdr_match_0_get(dev_id, index, &match_0);
@@ -301,21 +256,6 @@ _get_program_entry_by_index(a_uint32_t dev_id,
 		aos_mem_zero(&match_2, sizeof (match_2));
 	}
 
-#if defined(JHPPE)
-	rv = jhppe_tpr_hdr_match_ctrl_get(dev_id, index, &match_ctrl);
-	if(rv != SW_OK)
-		aos_mem_zero(&match_ctrl, sizeof (match_ctrl));
-
-	rv = jhppe_tpr_hdr_tuple_match_get(dev_id, index, &tuple_match);
-	if(rv != SW_OK)
-		aos_mem_zero(&tuple_match, sizeof (tuple_match));
-
-	entry->protocol_pos_valid = match_ctrl.bf.protocol_pos_en;
-	entry->protocol_pos_mode = match_ctrl.bf.protocol_pos_mode;
-	entry->protocol_pos_offset = match_ctrl.bf.protocol_pos_offset << 1;
-	entry->tuple_id_valid = tuple_match.bf.tuple_id_incl;
-	entry->tuple_id = tuple_match.bf.tuple_id;
-#endif
 	entry->ip_ver = match_0.bf.ip_ver;
 	entry->protocol = match_1.bf.protocol;
 	entry->protocol_mask = match_2.bf.mask;
@@ -334,10 +274,6 @@ _set_program_entry_by_index(a_uint32_t dev_id,
 	union tpr_hdr_match_0_u match_0 = {0};
 	union tpr_hdr_match_1_u match_1 = {0};
 	union tpr_hdr_match_2_u match_2 = {0};
-#if defined(JHPPE)
-	union tpr_hdr_match_ctrl_u match_ctrl = {0};
-	union tpr_hdr_tuple_match_u tuple_match = {0};
-#endif
 	a_uint32_t outer_hdr_type;
 
 	SW_RTN_ON_ERROR(_program_outer_hdr_type_sw_2_hw(dev_id,
@@ -352,15 +288,6 @@ _set_program_entry_by_index(a_uint32_t dev_id,
 	SW_RTN_ON_ERROR(appe_tpr_hdr_match_1_set(dev_id, index, &match_1));
 	SW_RTN_ON_ERROR(appe_tpr_hdr_match_2_set(dev_id, index, &match_2));
 
-#if defined(JHPPE)
-	match_ctrl.bf.protocol_pos_en = entry->protocol_pos_valid;
-	match_ctrl.bf.protocol_pos_mode = entry->protocol_pos_mode;
-	match_ctrl.bf.protocol_pos_offset = entry->protocol_pos_offset >> 1;
-	SW_RTN_ON_ERROR(jhppe_tpr_hdr_match_ctrl_set(dev_id, index, &match_ctrl));
-	tuple_match.bf.tuple_id_incl = entry->tuple_id_valid;
-	tuple_match.bf.tuple_id = entry->tuple_id;
-	SW_RTN_ON_ERROR(jhppe_tpr_hdr_tuple_match_set(dev_id, index, &tuple_match));
-#endif
 	return SW_OK;
 }
 

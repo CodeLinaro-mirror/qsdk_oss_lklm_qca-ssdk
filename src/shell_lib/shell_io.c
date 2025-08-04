@@ -854,11 +854,6 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_QM_CLASS, (param_check_t)cmd_data_check_queue_class, NULL),
     SW_TYPE_DEF(SW_QM_QBASE, (param_check_t)cmd_data_check_queue_base, NULL),
     SW_TYPE_DEF(SW_QM_HASH, (param_check_t)cmd_data_check_queue_hash, NULL),
-#ifdef JHPPE
-    SW_TYPE_DEF(SW_MONITOR_MAP, (param_check_t)cmd_data_check_monitor_map, NULL),
-    SW_TYPE_DEF(SW_MONITOR_CTRL, (param_check_t)cmd_data_check_monitor_ctrl, NULL),
-    SW_TYPE_DEF(SW_MONITOR_STATS, NULL, NULL),
-#endif
 #endif
 #ifdef IN_BM
     SW_TYPE_DEF(SW_BMSTHRESH, (param_check_t)cmd_data_check_bm_static_thresh, NULL),
@@ -968,12 +963,6 @@ static sw_data_type_t sw_data_type[] =
 		    cmd_data_check_tunnel_type, NULL),
     SW_TYPE_DEF(SW_TUNNEL_KEY,
 		    (param_check_t)cmd_data_check_tunnel_key, NULL),
-#if defined(JHPPE)
-    SW_TYPE_DEF(SW_TUNNEL_TUPLE_ENTRY,
-		    (param_check_t)cmd_data_check_tunnel_tuple_entry, NULL),
-    SW_TYPE_DEF(SW_TUNNEL_DECAP_MISS_ACTION,
-		    (param_check_t)cmd_data_check_tunnel_decap_miss_action, NULL),
-#endif
 #endif
 #ifdef IN_MAPT
     SW_TYPE_DEF(SW_MAPT_DECAP_CTRL,
@@ -9818,71 +9807,6 @@ cmd_data_check_queue_config(char *cmd_str, char *config_name, a_uint32_t *arg_va
 	return rv;
 }
 
-#ifdef JHPPE
-sw_error_t
-cmd_data_check_monitor_map(char *cmd_str, void * val, a_uint32_t size)
-{
-    char *cmd;
-    sw_error_t rv;
-    fal_qm_monitor_map_t entry;
-
-    aos_mem_zero(&entry, sizeof (fal_qm_monitor_map_t));
-    do
-    {
-        cmd = get_sub_cmd("cnt_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.cnt_en),
-                                    sizeof (a_bool_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("cnt_id", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_uint32(cmd, &(entry.cnt_id), sizeof (a_uint32_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    *(fal_qm_monitor_map_t *)val = entry;
-
-    return SW_OK;
-}
-
-sw_error_t
-cmd_data_check_monitor_ctrl(char *cmd_str, void * val, a_uint32_t size)
-{
-    char *cmd;
-    sw_error_t rv;
-    fal_qm_monitor_ctrl_t entry;
-
-    aos_mem_zero(&entry, sizeof (fal_qm_monitor_ctrl_t));
-    do
-    {
-        cmd = get_sub_cmd("cnt_threshold_mode", "0-1");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_uint32(cmd, &(entry.cnt_threshold_mode), sizeof (a_uint32_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("cnt_threshold", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        rv = cmd_data_check_uint32(cmd, &(entry.cnt_threshold), sizeof (a_uint32_t));
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    *(fal_qm_monitor_ctrl_t *)val = entry;
-
-    return SW_OK;
-}
-#endif
-
 sw_error_t
 cmd_data_check_queue_profile(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
 {
@@ -11797,35 +11721,6 @@ cmd_data_check_tunnel_program_entry(char * cmd_str, void * val, a_uint32_t size)
                                &tmpdata, sizeof(tmpdata)));
     entry.outer_hdr_type = tmpdata & 0xf;
 
-#if defined(JHPPE)
-    cmd_data_check_element("protocol_pos_valid", "no",
-                       "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
-                       (cmd, A_FALSE, &entry.protocol_pos_valid, sizeof (a_bool_t)));
-
-    if (entry.protocol_pos_valid) {
-        cmd_data_check_element("protocol_pos_mode", "end",
-                        "usage: end for end of outer hdr, start for start of outer hdr\n",
-                        cmd_data_check_attr, ("tunnel_program_pos_mode", cmd,
-                        &tmpdata, sizeof(tmpdata)));
-        entry.protocol_pos_mode= tmpdata & 0x1;
-
-        cmd_data_check_element("protocol_pos_offset", "0",
-                        "usage: the format is 0x0-0x7e or 0-126, must be even\n",
-                        cmd_data_check_integer, (cmd, &tmpdata, 0x7e, 0x0));
-        entry.protocol_pos_offset = tmpdata;
-
-        cmd_data_check_element("protocol", NULL,
-                        "usage: the format is 0x0-0xffffffff or 0-4294967295\n",
-                        cmd_data_check_integer, (cmd, &tmpdata, 0xffffffff, 0x0));
-        entry.protocol = tmpdata & 0xffffffff;
-
-        cmd_data_check_element("protocol_mask", NULL,
-                        "usage: the format is 0x0-0xffffffff or 0-4294967295\n",
-                        cmd_data_check_integer, (cmd, &tmpdata, 0xffffffff, 0x0));
-        entry.protocol_mask = tmpdata & 0xffffffff;
-        goto tuple_id_config;
-    }
-#endif
     if(entry.outer_hdr_type == FAL_ETHERNET_HDR)
     {
         cmd_data_check_element("ethernet type", NULL,
@@ -11899,17 +11794,6 @@ cmd_data_check_tunnel_program_entry(char * cmd_str, void * val, a_uint32_t size)
         return SW_BAD_PARAM;
     }
 
-#if defined(JHPPE)
-tuple_id_config:
-    cmd_data_check_element("tuple_id_valid", "no",
-                    "usage: <yes/no/y/n>\n", cmd_data_check_confirm,
-                    (cmd, A_FALSE, &entry.tuple_id_valid, sizeof (a_bool_t)));
-
-    cmd_data_check_element("tuple_id", "0",
-                    "usage: the format is 0x0-0x1f or 0-31\n",
-                    cmd_data_check_integer, (cmd, &tmpdata, 0x1f, 0x0));
-    entry.tuple_id = tmpdata & 0x1f;
-#endif
     *(fal_tunnel_program_entry_t *) val = entry;
     return SW_OK;
 }
@@ -12787,34 +12671,6 @@ cmd_data_check_tunnel_decap_action_entry(char *cmd_str,
 			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
 	entry_action.ecn_mode = tmp;
 
-#if defined(JHPPE)
-	rv = __cmd_data_check_boolean("inner_type_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &(entry_action.inner_type_en),
-			sizeof (a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	cmd_data_check_element("inner_type", "ethernet",
-			"usage: ethernet, ipv4, ipv6\n",
-			cmd_data_check_attr, ("hdr_type", cmd, &tmp, sizeof(tmp)));
-	entry_action.inner_type = tmp & 0x3;
-
-	rv = __cmd_data_check_boolean("inner_offset_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &(entry_action.inner_offset_en),
-			sizeof (a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	cmd_data_check_element("inner_offset_mode", "0",
-			"usage: inner offset mode\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-	entry_action.inner_offset_mode = tmp;
-
-	cmd_data_check_element("inner_offset", "0",
-			"usage: inner offset\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-	entry_action.inner_offset = tmp;
-#endif
 	*arg_val = entry_action;
 	return rv;
 }
@@ -13435,218 +13291,11 @@ cmd_data_check_tunnel_key(char *cmd_str, fal_tunnel_decap_key_t *arg_val, a_uint
 			cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
 	entry.udf1_mask = tmp;
 
-#if defined(JHPPE)
-	rv = __cmd_data_check_boolean("key_tlinfo_udf0_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_TLINFO_UDF0_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_TLINFO_UDF0_EN);
-
-	rv = __cmd_data_check_boolean("key_tlinfo_udf1_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_TLINFO_UDF1_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_TLINFO_UDF1_EN);
-
-	rv = __cmd_data_check_boolean("key_sip_lpm_prefix_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_SIP_LPM_PREFIX_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_SIP_LPM_PREFIX_EN);
-
-	cmd_data_check_element("tunnel_info_udf0_idx", "0",
-			"usage: udf1 id to select\n",
-			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
-	entry.tunnel_info_udf0_idx = tmp;
-
-	cmd_data_check_element("tunnel_info_udf0_idx", "0",
-			"usage: udf1 id to select\n",
-			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
-	entry.tunnel_info_udf1_idx = tmp;
-#endif
 	*arg_val = entry;
 
 	return SW_OK;
 }
 
-#if defined(JHPPE)
-sw_error_t
-cmd_data_check_tunnel_tuple_entry(char *cmd_str, void *val, a_uint32_t size)
-{
-	char *cmd;
-	sw_error_t rv = SW_OK;
-	fal_tunnel_tuple_entry_t entry;
-	a_uint32_t tmp = 0;
-	a_bool_t enable = A_FALSE;
-
-	aos_mem_zero(&entry, sizeof(fal_tunnel_tuple_entry_t));
-
-	cmd_data_check_element("ip_ver", "0",
-			"usage: 0 for ipv4, 1 for ipv6\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-
-	entry.ip_ver = tmp;
-
-	rv = __cmd_data_check_boolean("sip_en", "no",
-                        "usage: <yes/no/y/n>\n",
-                        cmd_data_check_confirm, A_FALSE, &enable,
-						sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_SIP_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_SIP_EN);
-
-	if(entry.ip_ver == 0) {
-		cmd_data_check_element("sip4_addr", "0.0.0.0",
-				"usage: the format is xx.xx.xx.xx \n",
-				cmd_data_check_ip4addr, (cmd, &(entry.sip.ip4_addr), 4));
-	} else {
-		cmd_data_check_element("sip6_addr", "0::0",
-				"usage: the format is xxxx::xxxx \n",
-				cmd_data_check_ip6addr, (cmd, &(entry.sip.ip6_addr), 16));
-	}
-
-	rv = __cmd_data_check_boolean("dip_en", "no",
-                        "usage: <yes/no/y/n>\n",
-                        cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_DIP_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_DIP_EN);
-
-	if(entry.ip_ver == 0) {
-		cmd_data_check_element("dip4_addr", "0.0.0.0",
-				"usage: the format is xx.xx.xx.xx \n",
-				cmd_data_check_ip4addr, (cmd, &(entry.dip.ip4_addr), 4));
-	} else {
-		cmd_data_check_element("dip6_addr", "0::0",
-				"usage: the format is xxxx::xxxx \n",
-				cmd_data_check_ip6addr, (cmd, &(entry.dip.ip6_addr), 16));
-	}
-
-	rv = __cmd_data_check_boolean("l4_proto_en", "no",
-                        "usage: <yes/no/y/n>\n",
-                        cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_L4PROTO_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_L4PROTO_EN);
-
-	cmd_data_check_element("l4_proto", "0",
-			"usage: layer4 proto id\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-	entry.l4_proto = tmp;
-
-	rv = __cmd_data_check_boolean("sport_en", "no",
-                        "usage: <yes/no/y/n>\n",
-                        cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_SPORT_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_SPORT_EN);
-
-	cmd_data_check_element("sport", "0",
-			"usage: src port\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-	entry.sport = tmp;
-
-	rv = __cmd_data_check_boolean("dport_en", "no",
-                        "usage: <yes/no/y/n>\n",
-                        cmd_data_check_confirm, A_FALSE, &enable, sizeof(a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	if (enable == A_TRUE)
-		entry.key_bmp |= BIT(FAL_TUNNEL_KEY_DPORT_EN);
-	else
-		entry.key_bmp &= ~BIT(FAL_TUNNEL_KEY_DPORT_EN);
-
-	cmd_data_check_element("dport", "0",
-			"usage: dst port\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-	entry.dport = tmp;
-
-	cmd_data_check_element("tuple_context_type", "0",
-			"usage: tuple context type\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-	entry.context_type = tmp;
-
-	if(entry.context_type == FAL_TUNNEL_TUPLE_CONTEXT_TUNNEL_TYPE) {
-		cmd_data_check_element("tunnel_type", "gre_tap_ipv4",
-				"usage: tunnel_type: gre_tap_ipv4, gre_tap_ipv6, vxlan_ipv4, "
-				"vxlan_ipv6, vxlan_gpe_ipv4, vxlan_gpe_ipv6, tuple_tunnel_6, "
-				"ipv4_ipv6, program0, program1, program2, program3, program4, "
-				"program5, geneve_ipv4, geneve_ipv6, program6, program7, program8, "
-				"program9, program10, program11, program12, program13, program14, "
-				"program15, tuple_tunnel_26, tuple_tunnel_27, tuple_tunnel_28, "
-				"tuple_tunnel_29, tuple_tunnel_30",
-				cmd_data_check_attr, ("tunnel_type", cmd,
-					&(entry.context.tunnel_type),
-					sizeof(entry.context.tunnel_type)));
-	} else {
-		cmd_data_check_element("tuple_id", "0",
-			"usage: tuple id\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-		entry.context.tuple_id = tmp;
-	}
-
-	*(fal_tunnel_tuple_entry_t *)val = entry;
-
-	return SW_OK;
-}
-
-sw_error_t
-cmd_data_check_tunnel_decap_miss_action(char *cmd_str, void *val, a_uint32_t size)
-{
-	char *cmd;
-	sw_error_t rv = SW_OK;
-	fal_tunnel_decap_miss_action_t entry;
-	a_uint32_t tmp = 0;
-
-	aos_mem_zero(&entry, sizeof(fal_tunnel_decap_miss_action_t));
-
-	rv = __cmd_data_check_boolean("decap_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &(entry.decap_en),
-			sizeof (a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	rv = __cmd_data_check_boolean("service_code_en", "no",
-			"usage: <yes/no/y/n>\n",
-			cmd_data_check_confirm, A_FALSE, &(entry.service_code_en),
-			sizeof (a_bool_t));
-	SW_RTN_ON_ERROR(rv);
-
-	cmd_data_check_element("service_code", "0",
-			"usage: updated service code\n",
-			cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
-
-	entry.service_code = tmp;
-
-	*(fal_tunnel_decap_miss_action_t *)val = entry;
-
-	return SW_OK;
-}
-#endif
 #endif
 
 #ifdef IN_MAPT

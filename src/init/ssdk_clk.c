@@ -1476,29 +1476,6 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_NSSNOC_CE_AXI, ppe_rate);
 			break;
 #endif
-#if defined(JHPPE)
-		case JHPPE_TYPE:
-			noc_rate = JHPPE_NSS_NSSNOC_SNOC_CLK_RATE;
-			ppe_rate = JHPPE_CLK_RATE;
-			ssdk_clock_rate_set_and_enable(clock_node, IM_SLEEP_CLK, 0);
-			ssdk_clock_rate_set_and_enable(clock_node, NSS_CSR, NSS_NSSCC_CLK_RATE);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_NSS_CSR, NSS_NSSCC_CLK_RATE);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_CE_APB, ppe_rate);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_CE_AXI, ppe_rate);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_NSSNOC_CE_APB, ppe_rate);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_NSSNOC_CE_AXI, ppe_rate);
-			break;
-#endif
-#if defined(HMSPPE)
-		case HMSPPE_TYPE:
-			noc_rate = JHPPE_NSS_NSSNOC_SNOC_CLK_RATE;
-			ppe_rate = HMSPPE_CLK_RATE;
-			ssdk_clock_rate_set_and_enable(clock_node, IM_SLEEP_CLK, 0);
-			ssdk_clock_rate_set_and_enable(clock_node, NSS_CSR, NSS_NSSCC_CLK_RATE);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_NSS_CSR, NSS_NSSCC_CLK_RATE);
-			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_PON, ppe_rate);
-			break;
-#endif
 		default:
 			SSDK_ERROR("Unknown chip type %d\n", chip_type);
 			return;
@@ -2042,16 +2019,6 @@ void ssdk_gcc_clock_init(void)
 #if defined(MRPPE)
 		ssdk_gcc_appe_clock_init(MRPPE_TYPE);
 #endif
-	} else if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq96xx")) {
-#if defined(JHPPE)
-		ssdk_gcc_appe_clock_init(JHPPE_TYPE);
-#endif
-	} else if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq52xx")) {
-#if defined(HMSPPE)
-		ssdk_gcc_appe_clock_init(HMSPPE_TYPE);
-#endif
 	}
 	ssdk_gcc_reset_ids_init();
 }
@@ -2067,14 +2034,6 @@ void ssdk_gcc_clock_exit(void)
 	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
 #if defined(MRPPE)
 		ssdk_gcc_ppe_clock_deinit(MRPPE_TYPE);;
-#endif
-	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
-#if defined(JHPPE)
-		ssdk_gcc_ppe_clock_deinit(JHPPE_TYPE);;
-#endif
-	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx")) {
-#if defined(HMSPPE)
-		ssdk_gcc_ppe_clock_deinit(HMSPPE_TYPE);;
 #endif
 	}
 

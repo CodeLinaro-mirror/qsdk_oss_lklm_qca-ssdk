@@ -16,9 +16,6 @@
 #include "adpt_appe_qm.h"
 #include "hppe_global_reg.h"
 #include "hppe_global.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_qm.h"
-#endif
 
 #define SERVICE_CODE_QUEUE_OFFSET   2048
 #define CPU_CODE_QUEUE_OFFSET         1024
@@ -1403,25 +1400,6 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_threshold_reset = adpt_ppe_qm_threshold_reset;
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
-#if defined(JHPPE)
-	p_adpt_api->adpt_qm_tcont_get = adpt_jhppe_qm_tcont_get;
-	p_adpt_api->adpt_qm_tcont_set = adpt_jhppe_qm_tcont_set;
-	p_adpt_api->adpt_qm_tcont_stat_get = adpt_jhppe_qm_tcont_stat_get;
-	p_adpt_api->adpt_qm_tcont_stat_set = adpt_jhppe_qm_tcont_stat_set;
-	p_adpt_api->adpt_qm_cpucode_enqueue_get = adpt_jhppe_qm_cpucode_enqueue_get;
-	p_adpt_api->adpt_qm_cpucode_enqueue_set = adpt_jhppe_qm_cpucode_enqueue_set;
-	p_adpt_api->adpt_qm_counter_monitor_en_set = adpt_jhppe_qm_counter_monitor_en_set;
-	p_adpt_api->adpt_qm_counter_monitor_en_get = adpt_jhppe_qm_counter_monitor_en_get;
-	p_adpt_api->adpt_qm_counter_monitor_stats_cleanup = adpt_jhppe_qm_counter_monitor_stats_cleanup;
-	p_adpt_api->adpt_qm_counter_monitor_status_get = adpt_jhppe_qm_counter_monitor_status_get;
-	p_adpt_api->adpt_qm_counter_monitor_map_set = adpt_jhppe_qm_counter_monitor_map_set;
-	p_adpt_api->adpt_qm_counter_monitor_map_get = adpt_jhppe_qm_counter_monitor_map_get;
-	p_adpt_api->adpt_qm_counter_monitor_ctrl_set = adpt_jhppe_qm_counter_monitor_ctrl_set;
-	p_adpt_api->adpt_qm_counter_monitor_ctrl_get = adpt_jhppe_qm_counter_monitor_ctrl_get;
-	p_adpt_api->adpt_qm_counter_monitor_stats_get = adpt_jhppe_qm_counter_monitor_stats_get;
-	p_adpt_api->adpt_ucast_queue_ddrq_en_set = adpt_jhppe_ucast_queue_ddrq_en_set;
-	p_adpt_api->adpt_ucast_queue_ddrq_en_get = adpt_jhppe_ucast_queue_ddrq_en_get;
-#endif
 
 	return SW_OK;
 }

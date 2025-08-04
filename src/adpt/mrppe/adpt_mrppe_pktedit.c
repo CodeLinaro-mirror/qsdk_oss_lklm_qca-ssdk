@@ -12,9 +12,6 @@
 #include "sw.h"
 #include "hsl_reg.h"
 #include "adpt.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_pktedit.h"
-#endif
 
 sw_error_t
 adpt_mrppe_pktedit_padding_set(a_uint32_t dev_id, fal_pktedit_padding_t *padding)
@@ -104,12 +101,6 @@ sw_error_t adpt_mrppe_pktedit_init(a_uint32_t dev_id)
 
 	p_adpt_api->adpt_pktedit_padding_set = adpt_mrppe_pktedit_padding_set;
 	p_adpt_api->adpt_pktedit_padding_get = adpt_mrppe_pktedit_padding_get;
-#if defined(JHPPE)
-	p_adpt_api->adpt_pktedit_en_set = adpt_jhppe_pktedit_en_set;
-	p_adpt_api->adpt_pktedit_en_get = adpt_jhppe_pktedit_en_get;
-	p_adpt_api->adpt_rxdesc_cpucode_en_set = adpt_jhppe_rxdesc_cpucode_en_set;
-	p_adpt_api->adpt_rxdesc_cpucode_en_get = adpt_jhppe_rxdesc_cpucode_en_get;
-#endif
 	return SW_OK;
 }
 

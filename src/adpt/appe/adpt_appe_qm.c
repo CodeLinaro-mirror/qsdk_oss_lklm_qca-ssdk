@@ -13,12 +13,7 @@
 #include "fal_qm.h"
 #include "adpt.h"
 
-#if defined(JHPPE)
-#include "adpt_jhppe_qm.h"
-#define FLOW_ENQUEUE_MAP_INDEX	576
-#else
 #define FLOW_ENQUEUE_MAP_INDEX	512
-#endif
 
 sw_error_t
 adpt_appe_qm_enqueue_config_set(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cfg)

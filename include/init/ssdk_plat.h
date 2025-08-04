@@ -312,12 +312,6 @@ struct ssdk_port_priv {
 };
 
 struct ssdk_ppe_tunnel_priv {
-#if defined(JHPPE)
-#define TPR_TUPLE_IP_ADDR_CTRL_NUM	16
-#define TPR_TUPLE_L4_PORT_NUM		32
-	a_uint32_t tpr_tuple_ip_addr_entry_used_map[TPR_TUPLE_IP_ADDR_CTRL_NUM];
-	a_uint32_t tpr_tuple_l4_port_entry_used_map[TPR_TUPLE_L4_PORT_NUM];
-#endif
 };
 
 typedef enum {

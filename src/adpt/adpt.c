@@ -18,13 +18,6 @@
 #if defined(MRPPE)
 #include "adpt_mrppe.h"
 #endif
-#if defined(JHPPE)
-#include "adpt_jhppe.h"
-#include "adpt_jhppe_loopback.h"
-#endif
-#if defined(HMSPPE)
-#include "adpt_hmsppe.h"
-#endif
 
 #include "hsl_phy.h"
 #include "ssdk_dts.h"
@@ -209,26 +202,6 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 #if defined(IN_PKTEDIT)
 		case FAL_MODULE_PKTEDIT:
 			rv = adpt_mrppe_pktedit_init(dev_id);
-			break;
-#endif
-#if defined(IN_SAMPL)
-		case FAL_MODULE_SAMPL:
-			rv = adpt_jhppe_sampling_init(dev_id);
-			break;
-#endif
-#if defined(IN_PON)
-		case FAL_MODULE_PON:
-			rv = adpt_hmsppe_pon_init(dev_id);
-			break;
-#endif
-#if defined(IN_PON_PM)
-		case FAL_MODULE_PON_PM:
-			rv = adpt_jhppe_pon_pm_init(dev_id);
-			break;
-#endif
-#if defined(IN_IPMC)
-		case FAL_MODULE_IPMC:
-			rv = adpt_jhppe_ipmc_init(dev_id);
 			break;
 #endif
 		default:
@@ -416,22 +389,6 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
 	switch (cfg->chip_type)
 	{
-		case CHIP_HMSPPE:
-#if defined(HMSPPE)
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON);
-			SW_RTN_ON_ERROR(rv);
-#endif
-			fallthrough;
-		case CHIP_JHPPE:
-#if defined(JHPPE)
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_SAMPL);
-			SW_RTN_ON_ERROR(rv);
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON_PM);
-			SW_RTN_ON_ERROR(rv);
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_IPMC);
-			SW_RTN_ON_ERROR(rv);
-#endif
-			fallthrough;
 		case CHIP_MRPPE:
 		case CHIP_APPE:
 			/* APPE specific module initialization */
@@ -520,17 +477,6 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 a_bool_t
 adpt_ppe_loopback_port_validate(a_uint32_t dev_id, fal_port_t port_id)
 {
-#if defined(JHPPE)
-	sw_error_t rv = SW_OK;
-	fal_port_t ppe_loopback_port = 0;
-
-	rv = adpt_jhppe_switch_loopback_port_get(dev_id, &ppe_loopback_port);
-	if (rv == SW_OK) {
-		if (port_id == ppe_loopback_port) {
-			return A_TRUE;
-		}
-	}
-#endif
 	return A_FALSE;
 }
 

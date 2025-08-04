@@ -11,9 +11,6 @@
  */
 #include "hsl_reg.h"
 #include "adpt.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_tunnel.h"
-#endif
 
 #define TUNNEL_ENCAP_FROM_VP	0
 #define TUNNEL_ENCAP_FROM_L3IF	1
@@ -181,11 +178,6 @@ appe_tunnel_decap_entry_op(a_uint32_t dev_id,
 				rv = appe_tl_tbl_op_data13_set(dev_id,
 						(union tl_tbl_op_data13_u *)(&tl_tbl->val[13]));
 				SW_RTN_ON_ERROR(rv);
-#if defined(JHPPE)
-				rv = appe_tl_tbl_op_data14_set(dev_id,
-						(union tl_tbl_op_data14_u *)(&tl_tbl->val[14]));
-				SW_RTN_ON_ERROR(rv);
-#endif
 			}
 
 			rv = appe_tunnel_op_common(dev_id, op_type, op_mode, index);
@@ -240,11 +232,6 @@ appe_tunnel_decap_entry_op(a_uint32_t dev_id,
 				rv = appe_tl_tbl_rd_op_data13_set(dev_id,
 						(union tl_tbl_rd_op_data13_u *)(&tl_tbl->val[13]));
 				SW_RTN_ON_ERROR(rv);
-#if defined(JHPPE)
-				rv = appe_tl_tbl_rd_op_data14_set(dev_id,
-						(union tl_tbl_rd_op_data14_u *)(&tl_tbl->val[14]));
-				SW_RTN_ON_ERROR(rv);
-#endif
 			}
 
 			rv = appe_tunnel_rd_op_common(dev_id, op_type, op_mode, index);
@@ -292,11 +279,6 @@ appe_tunnel_decap_entry_op(a_uint32_t dev_id,
 			rv = appe_tl_tbl_rd_rslt_data13_get(dev_id,
 					(union tl_tbl_rd_rslt_data13_u *)(&tl_tbl->val[13]));
 			SW_RTN_ON_ERROR(rv);
-#if defined(JHPPE)
-			rv = appe_tl_tbl_rd_rslt_data14_get(dev_id,
-					(union tl_tbl_rd_rslt_data14_u *)(&tl_tbl->val[14]));
-			SW_RTN_ON_ERROR(rv);
-#endif
 
 			break;
 		default:
@@ -426,14 +408,6 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 			entry_action->verify_entry.verify_bmp & FAL_TUNNEL_L3IF_CHECK_EN ?
 			A_TRUE : A_FALSE;
 		tl_tbl.bf.exp_profile = entry_action->exp_profile;
-#if defined(JHPPE)
-		tl_tbl.bf.inner_type_en = entry_action->inner_type_en;
-		tl_tbl.bf.inner_type = entry_action->inner_type;
-		tl_tbl.bf.inner_offset_en = entry_action->inner_offset_en;
-		tl_tbl.bf.inner_offset_mode = entry_action->inner_offset_mode;
-		tl_tbl.bf.inner_offset_0 = (entry_action->inner_offset >> 1) & 0x7;
-		tl_tbl.bf.inner_offset_1 = ((entry_action->inner_offset >> 1) >> 3) & 0x3;
-#endif
 		*tl_entry = tl_tbl;
 	} else {
 		tl_tbl = *tl_entry;
@@ -571,14 +545,6 @@ adpt_appe_tunnel_decap_entry_convert(a_uint32_t dev_id, fal_tunnel_decap_entry_t
 		}
 
 		entry_action->exp_profile = tl_tbl.bf.exp_profile;
-#if defined(JHPPE)
-		entry_action->inner_type_en = tl_tbl.bf.inner_type_en;
-		entry_action->inner_type = tl_tbl.bf.inner_type;
-		entry_action->inner_offset_en = tl_tbl.bf.inner_offset_en;
-		entry_action->inner_offset_mode = tl_tbl.bf.inner_offset_mode;
-		entry_action->inner_offset = ((tl_tbl.bf.inner_offset_1 << 3) |
-					      tl_tbl.bf.inner_offset_0) << 1;
-#endif
 	}
 	return SW_OK;
 }
@@ -599,14 +565,6 @@ adpt_appe_tunnel_key_op(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
 	switch (op_type) {
 		case FAL_TUNNEL_OP_TYPE_DEL:
 		case FAL_TUNNEL_OP_TYPE_FLUSH:
-#if defined(JHPPE)
-			union tl_key_gen_u key_gen1;
-			rv = appe_tl_key_gen_get(dev_id, tunnel_type, &key_gen1);
-			SW_RTN_ON_ERROR(rv);
-			key_gen.bf.decap_en = key_gen1.bf.decap_en;
-			key_gen.bf.service_code_en  = key_gen1.bf.service_code_en;
-			key_gen.bf.service_code  = key_gen1.bf.service_code;
-#endif
 			rv = appe_tl_key_gen_set(dev_id, tunnel_type, &key_gen);
 			SW_RTN_ON_ERROR(rv);
 			break;
@@ -669,16 +627,6 @@ adpt_appe_tunnel_key_op(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
 			rule_key->tunnel_info_mask = key_gen.bf.vni_resv_mask_0 |
 				key_gen.bf.vni_resv_mask_1 <<
 				SW_FIELD_OFFSET_IN_WORD(TL_KEY_GEN_VNI_RESV_MASK_OFFSET);
-#if defined(JHPPE)
-			if (key_gen.bf.vni_udf0_inc)
-				rule_key->key_bmp |= BIT(FAL_TUNNEL_KEY_TLINFO_UDF0_EN);
-			if (key_gen.bf.vni_udf1_inc)
-				rule_key->key_bmp |= BIT(FAL_TUNNEL_KEY_TLINFO_UDF1_EN);
-			if (key_gen.bf.lpm_prefix_len_en)
-				rule_key->key_bmp |= BIT(FAL_TUNNEL_KEY_SIP_LPM_PREFIX_EN);
-			rule_key->tunnel_info_udf0_idx = key_gen.bf.vni_udf0_id;
-			rule_key->tunnel_info_udf1_idx = key_gen.bf.vni_udf1_id;
-#endif
 			// tunnel_type = key_gen.bf.key_type;
 			break;
 		case FAL_TUNNEL_OP_TYPE_ADD:
@@ -711,19 +659,6 @@ adpt_appe_tunnel_key_op(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
 				SW_FIELD_OFFSET_IN_WORD(TL_KEY_GEN_VNI_RESV_MASK_OFFSET);
 			key_gen.bf.key_type = tunnel_type;
 
-#if defined(JHPPE)
-			key_gen.bf.vni_udf0_inc = (rule_key->key_bmp >>
-					FAL_TUNNEL_KEY_TLINFO_UDF0_EN) & 1;
-			key_gen.bf.vni_udf1_inc = (rule_key->key_bmp >>
-					FAL_TUNNEL_KEY_TLINFO_UDF1_EN) & 1;
-			key_gen.bf.vni_udf_en = (rule_key->key_bmp &
-						(BIT(FAL_TUNNEL_KEY_TLINFO_UDF0_EN) |
-						 BIT(FAL_TUNNEL_KEY_TLINFO_UDF1_EN))) ? true : false;
-			key_gen.bf.lpm_prefix_len_en = (rule_key->key_bmp >>
-					FAL_TUNNEL_KEY_SIP_LPM_PREFIX_EN) & 1;
-			key_gen.bf.vni_udf0_id = rule_key->tunnel_info_udf0_idx;
-			key_gen.bf.vni_udf1_id = rule_key->tunnel_info_udf1_idx;
-#endif
 			rv = appe_tl_key_gen_set(dev_id, tunnel_type, &key_gen);
 			SW_RTN_ON_ERROR(rv);
 			break;
@@ -2980,20 +2915,6 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_tunnel_decap_counter_get =
 		adpt_appe_tunnel_decap_counter_get;
 
-#if defined(JHPPE)
-	p_adpt_api->adpt_tunnel_tuple_entry_add =
-		adpt_jhppe_tunnel_tuple_entry_add;
-	p_adpt_api->adpt_tunnel_tuple_entry_del =
-		adpt_jhppe_tunnel_tuple_entry_del;
-	p_adpt_api->adpt_tunnel_tuple_entry_getfirst =
-		adpt_jhppe_tunnel_tuple_entry_getfirst;
-	p_adpt_api->adpt_tunnel_tuple_entry_getnext =
-		adpt_jhppe_tunnel_tuple_entry_getnext;
-	p_adpt_api->adpt_tunnel_decap_miss_action_set =
-		adpt_jhppe_tunnel_decap_miss_action_set;
-	p_adpt_api->adpt_tunnel_decap_miss_action_get =
-		adpt_jhppe_tunnel_decap_miss_action_get;
-#endif
 	return SW_OK;
 }
 

@@ -198,36 +198,3 @@ appe_l2_cpu_code_ctrl_exception_fmt_ctrl_en_set(
 	return ret;
 }
 
-#ifdef JHPPE
-sw_error_t
-hppe_l2_cpu_code_ctrl_enqueue_disable_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union l2_cpu_code_ctrl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_l2_cpu_code_ctrl_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.enqueue_disable;
-	return ret;
-}
-
-sw_error_t
-hppe_l2_cpu_code_ctrl_enqueue_disable_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union l2_cpu_code_ctrl_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = appe_l2_cpu_code_ctrl_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.enqueue_disable = value;
-	ret = appe_l2_cpu_code_ctrl_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-#endif

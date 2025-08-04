@@ -50,19 +50,16 @@ extern "C" {
 #define SSDK_MAX_UNIPHY_INSTANCE        3
 
 #define IOCTL_COMPAT
-#if defined(HMSPPE)
-#define PPE_STR "HMSPPE"
-#elif defined(JHPPE)
-#define PPE_STR "JHPPE"
-#elif defined(MRPPE)
+
+#define SFP_I2C_BUS                   "SFP I2C Bus"
+
+#if defined(MRPPE)
 #define PPE_STR "MRPPE"
 #elif defined(MPPE)
 #define PPE_STR "MPPE"
 #else
 #define PPE_STR "APPE"
 #endif
-
-#define SFP_I2C_BUS                   "SFP I2C Bus"
 
 /*qca808x_start*/
     typedef enum {

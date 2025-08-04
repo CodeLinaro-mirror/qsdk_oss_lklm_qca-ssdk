@@ -414,12 +414,6 @@ sw_error_t
 cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_ac_obj(char *cmd_str, void * val, a_uint32_t size);
-#ifdef JHPPE
-sw_error_t
-cmd_data_check_monitor_map(char *cmd_str, void * val, a_uint32_t size);
-sw_error_t
-cmd_data_check_monitor_ctrl(char *cmd_str, void * val, a_uint32_t size);
-#endif
 sw_error_t
 cmd_data_check_queue_profile(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size);
 sw_error_t
@@ -575,12 +569,6 @@ sw_error_t
 cmd_data_check_tunnel_type(char *cmd_str, fal_tunnel_type_t *arg_val, a_uint32_t size);
 sw_error_t
 cmd_data_check_tunnel_key(char *cmd_str, fal_tunnel_decap_key_t *arg_val, a_uint32_t size);
-#if defined(JHPPE)
-sw_error_t
-cmd_data_check_tunnel_tuple_entry(char *cmd_str, void *val, a_uint32_t size);
-sw_error_t
-cmd_data_check_tunnel_decap_miss_action(char *cmd_str, void *val, a_uint32_t size);
-#endif
 #endif
 
 #if defined(IN_MAPT)

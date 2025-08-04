@@ -15,9 +15,6 @@
 #include "adpt.h"
 #include "adpt_hppe.h"
 #include "adpt_cppe_qos.h"
-#if defined(JHPPE)
-#include "adpt_jhppe_qos.h"
-#endif
 
 static fal_queue_bmp_t port_queue_map[8] = {0};
 
@@ -702,10 +699,6 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 #ifndef IN_QOS_MINI
 	p_adpt_api->adpt_reservedpool_scheduler_resource_get =
 		adpt_ppe_reservedpool_scheduler_resource_get;
-#endif
-#if defined(JHPPE)
-	p_adpt_api->adpt_qos_port_pcp_cfg_set = adpt_jhppe_qos_port_pcp_cfg_set;
-	p_adpt_api->adpt_qos_port_pcp_cfg_get = adpt_jhppe_qos_port_pcp_cfg_get;
 #endif
 	return SW_OK;
 }
