@@ -303,6 +303,12 @@ hsl_phy_debug_reg_write(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 	a_uint32_t debug_reg, a_uint16_t mask, a_uint16_t value);
+sw_error_t
+hsl_port_phy_eee_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg);
+sw_error_t
+hsl_port_phy_eee_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg);
 /*use the phy driver of nss ext or linux std for HSL APIs*/
 enum hsl_phy_api_id {
 	hibernation_set,

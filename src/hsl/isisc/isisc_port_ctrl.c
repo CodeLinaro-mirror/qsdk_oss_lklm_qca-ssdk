@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -1057,31 +1046,7 @@ _isisc_port_link_forcemode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *
 #define ISISC_LPI_BIT_STEP     2
 
 static sw_error_t
-_isisc_port_interface_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
-	fal_port_eee_cfg_t *port_eee_cfg)
-{
-	sw_error_t rv = SW_OK;
-	a_uint32_t reg_addr = 0;
-
-	/*config sleep timer*/
-	if(port_eee_cfg->lpi_sleep_timer != 0) {
-		rv = qca_mii_update(dev_id, EEE_GLOBAL_SLEEP_TIMER_OFFSET, BITS(0, 16),
-			port_eee_cfg->lpi_sleep_timer);
-		SW_RTN_ON_ERROR(rv);
-	}
-	/*config wake up timer, 2.5G is 0x58, 1G and 100M is 0x24*/
-	if(port_eee_cfg->lpi_wakeup_timer != 0) {
-		reg_addr = EEE_RES_VALUE_1_OFFSET + (port_id - 1) * 0x10;
-		rv = qca_mii_update(dev_id, reg_addr, BITS(0, 16),
-			port_eee_cfg->lpi_wakeup_timer);
-		SW_RTN_ON_ERROR(rv);
-	}
-
-	return SW_OK;
-}
-
-static sw_error_t
-_isisc_port_interface_eee_timer_get(a_uint32_t dev_id, fal_port_t port_id,
+_isisc_port_mac_eee_timer_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
 	a_uint32_t reg_addr = 0, reg_val = 0;
@@ -1097,19 +1062,50 @@ _isisc_port_interface_eee_timer_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 static sw_error_t
-_isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+_isisc_port_mac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+    sw_error_t rv = SW_OK;
+    a_uint32_t reg_addr = 0, reg_val = 0;
+    fal_port_eee_cfg_t port_eee_cfg_temp = {0};
+
+    HSL_REG_ENTRY_GET(rv, dev_id, MASK_CTL, 0, (a_uint8_t *) (&reg_val),
+         sizeof(a_uint32_t));
+    /*enable to change eee timer*/
+    reg_val |= BIT(EEE_CTL_CPU_CHANGE_EN_BOFFSET);
+    HSL_REG_ENTRY_SET(rv, dev_id, EEE_CTL, 0, (a_uint8_t *) (&reg_val),
+        sizeof (a_uint32_t));
+    SW_RTN_ON_ERROR(rv);
+
+    rv = _isisc_port_mac_eee_timer_get(dev_id, port_id, &port_eee_cfg_temp);
+    SW_RTN_ON_ERROR(rv);
+    /*config sleep timer*/
+    if(port_eee_cfg->lpi_sleep_timer &&
+        (port_eee_cfg_temp.lpi_sleep_timer != port_eee_cfg->lpi_sleep_timer)) {
+        rv = qca_mii_update(dev_id, EEE_GLOBAL_SLEEP_TIMER_OFFSET, BITS(0, 16),
+            port_eee_cfg->lpi_sleep_timer);
+        SW_RTN_ON_ERROR(rv);
+    }
+    /*config wake up timer, 2.5G is 0x58, 1G and 100M is 0x24*/
+    if(port_eee_cfg->lpi_wakeup_timer &&
+        (port_eee_cfg_temp.lpi_wakeup_timer != port_eee_cfg->lpi_wakeup_timer)) {
+        reg_addr = EEE_RES_VALUE_1_OFFSET + (port_id - 1) * 0x10;
+        rv = qca_mii_update(dev_id, reg_addr, BITS(0, 16),
+            port_eee_cfg->lpi_wakeup_timer);
+        SW_RTN_ON_ERROR(rv);
+    }
+
+    return SW_OK;
+}
+
+static sw_error_t
+_isisc_port_mac_eee_status_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
     sw_error_t rv = SW_OK;
     a_uint32_t reg = 0, field = 0, offset = 0, device_id = 0, rev_id = 0, reverse = 0;
-    a_uint32_t eee_mask = 0, adv = 0;
+    a_uint32_t eee_mask = 0;
 
-    if(port_eee_cfg->enable)
-        adv = port_eee_cfg->advertisement;
-    else
-        adv = 0;
-    HSL_PORT_PHY_API_RUN(eee_adv_set, dev_id, port_id, adv);
-    SW_RTN_ON_ERROR (rv);
     HSL_REG_ENTRY_GET(rv, dev_id, MASK_CTL, 0,
                         (a_uint8_t *) (&reg), sizeof (a_uint32_t));
     SW_RTN_ON_ERROR(rv);
@@ -1158,43 +1154,46 @@ _isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
     offset = (port_id - 1) * ISISC_LPI_BIT_STEP + ISISC_LPI_PORT1_OFFSET;
     reg &= (~(eee_mask << offset));
     reg |= (field << offset);
-    /*enable to change eee timer*/
-    reg |= BIT(EEE_CTL_CPU_CHANGE_EN_BOFFSET);
 
     HSL_REG_ENTRY_SET(rv, dev_id, EEE_CTL, 0,
                       (a_uint8_t *) (&reg), sizeof (a_uint32_t));
     SW_RTN_ON_ERROR(rv);
-    rv = _isisc_port_interface_eee_timer_set(dev_id, port_id, port_eee_cfg);
+
+    return SW_OK;
+}
+
+static sw_error_t
+_isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+    sw_error_t rv = SW_OK;
+    struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+    hsl_port_phy_eee_set(dev_id, port_id, port_eee_cfg);
+
+    SW_RTN_ON_NULL(priv);
+    rv = _isisc_port_mac_eee_status_set(dev_id, port_id, port_eee_cfg);
+    SW_RTN_ON_ERROR(rv);
+    /* If lpi_wakeup_timer is non-zero, wakeup_timer_force will be enabled, */
+    /* indicating that the wakeup timer is set via a shell command. */
+    /* If lpi_wakeup_timer is zero, wakeup_timer_force will be disabled, */
+    /* and the wakeup timer will be automatically adjusted based on the link speed. */
+    if(port_eee_cfg->lpi_wakeup_timer)
+        priv->ports[port_id].lpi_wakeup_timer_force = A_TRUE;
+    else
+        priv->ports[port_id].lpi_wakeup_timer_force = A_FALSE;
+    rv = _isisc_port_mac_eee_timer_set(dev_id, port_id, port_eee_cfg);
 
     return rv;
 }
 
 static sw_error_t
-_isisc_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+_isisc_port_mac_eee_status_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
     sw_error_t rv = SW_OK;
     a_uint32_t reg = 0, field, offset, device_id, rev_id, reverse = 0;
-    a_uint32_t eee_mask = 0, adv = 0, lp_adv = 0, cap = 0, status = 0;
-
-    HSL_PORT_PHY_API_RUN(eee_adv_get, dev_id, port_id, &adv);
-    SW_RTN_ON_ERROR (rv);
-    port_eee_cfg->advertisement = adv;
-    HSL_PORT_PHY_API_RUN(eee_partner_adv_get, dev_id, port_id, &lp_adv);
-    SW_RTN_ON_ERROR (rv);
-    port_eee_cfg->link_partner_advertisement = lp_adv;
-    HSL_PORT_PHY_API_RUN(eee_cap_get, dev_id, port_id, &cap);
-    SW_RTN_ON_ERROR (rv);
-    port_eee_cfg->capability = cap;
-    HSL_PORT_PHY_API_RUN(eee_status_get, dev_id, port_id, &status);
-    SW_RTN_ON_ERROR (rv);
-
-    port_eee_cfg->eee_status = status;
-    if (port_eee_cfg->advertisement) {
-        port_eee_cfg->enable = A_TRUE;
-    } else {
-        port_eee_cfg->enable = A_FALSE;
-    }
+    a_uint32_t eee_mask = 0;
 
     HSL_REG_ENTRY_GET(rv, dev_id, MASK_CTL, 0,
                       (a_uint8_t *) (&reg), sizeof (a_uint32_t));
@@ -1244,9 +1243,20 @@ _isisc_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
        port_eee_cfg->lpi_tx_enable = A_FALSE;
     }
 
-    _isisc_port_interface_eee_timer_get(dev_id, port_id, port_eee_cfg);
-
     return SW_OK;
+}
+
+static sw_error_t
+_isisc_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+    sw_error_t rv = SW_OK;
+
+    hsl_port_phy_eee_get(dev_id, port_id, port_eee_cfg);
+    rv = _isisc_port_mac_eee_status_get(dev_id, port_id, port_eee_cfg);
+    SW_RTN_ON_ERROR(rv);
+
+    return _isisc_port_mac_eee_timer_get(dev_id, port_id, port_eee_cfg);
 }
 
 #ifndef IN_PORTCONTROL_MINI
@@ -1994,6 +2004,42 @@ isisc_port_mac_loopback_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * en
     return rv;
 }
 #endif
+
+#if defined(MHT)
+sw_error_t mht_port_mac_eee_adjust(a_uint32_t dev_id, fal_port_t port_id,
+	a_uint32_t speed, struct qca_phy_priv *priv)
+{
+    fal_port_eee_cfg_t port_eee_cfg = {0};
+    sw_error_t rv = SW_OK;
+
+    rv = _isisc_port_interface_eee_cfg_get(dev_id, port_id, &port_eee_cfg);
+    SW_RTN_ON_ERROR(rv);
+   /* if lpi_wakeup_timer_force is 0, then wakeup timer is set here,*/
+   /* else the wakeup timer is set by shell commands */
+   if (priv->ports[port_id].lpi_wakeup_timer_force == 0) {
+        switch (speed) {
+            case FAL_SPEED_2500:
+                if (port_eee_cfg.eee_status & EEE_2500BASE_T)
+                    port_eee_cfg.lpi_wakeup_timer =
+                        PORT_LPI_WAKEUP_TIMER_2500M;
+                break;
+            case FAL_SPEED_1000:
+            case FAL_SPEED_100:
+                if(port_eee_cfg.eee_status & EEE_100BASE_T)
+                    port_eee_cfg.lpi_wakeup_timer =
+                        PORT_LPI_WAKEUP_TIMER_1000M;
+                break;
+            default:
+                break;
+        }
+        rv = _isisc_port_mac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
+        SW_RTN_ON_ERROR(rv);
+    }
+
+    return SW_OK;
+}
+#endif
+
 sw_error_t
 isisc_port_ctrl_init(a_uint32_t dev_id)
 {
