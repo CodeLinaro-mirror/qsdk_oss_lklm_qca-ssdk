@@ -45,7 +45,6 @@ typedef struct {
 	a_uint32_t phy_reset_gpio[SW_MAX_NR_PORT];
 	a_bool_t port_link_status[SW_MAX_NR_PORT];
 	a_uint32_t port_mode[SW_MAX_NR_PORT];
-	a_uint32_t combo_phy_type[SW_MAX_NR_PORT];
 	struct net_device *netdev[SW_MAX_NR_PORT];
 } phy_info_t;
 

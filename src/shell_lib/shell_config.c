@@ -1397,6 +1397,10 @@ struct sub_cmd_des_t g_tunnel_des[] =
 #endif
     {"Decapexpfmtctrl", "set", SW_API_TUNNEL_EXP_DECAP_SET, NULL},
     {"Decapkey", "set", SW_API_TUNNEL_DECAP_KEY_SET, NULL},
+#ifdef JHPPE
+    {"TupleEntry", "set", SW_API_TUNNEL_TUPLE_ENTRY_ADD, NULL},
+    {"DecapMissAction", "set", SW_API_TUNNEL_DECAP_MISS_ACTION_SET, NULL},
+#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif

@@ -13848,35 +13848,53 @@ parse_tunnelprogram_entry(struct switch_val *val)
 			val_ptr[1] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "outer_hdr_type")) {
 			val_ptr[2] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "ethernet_type")) {
+#if defined(JHPPE)
+		} else if(!strcmp(ext_value_p->option_name, "protocol_pos_valid")) {
 			val_ptr[3] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "ethernet_type_mask")) {
+		} else if(!strcmp(ext_value_p->option_name, "protocol_pos_mode")) {
 			val_ptr[4] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "ip_protocol")) {
-			val_ptr[3] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "ip_protocol_mask")) {
-			val_ptr[4] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "tunnel_hdr_f32bit")) {
-			val_ptr[3] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "tunnel_hdr_f32bit_mask")) {
-			val_ptr[4] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "l4_dst_port")) {
-			val_ptr[3] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "l4_dst_port_mask")) {
-			val_ptr[4] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "l4_src_port")) {
+		} else if (!strcmp(ext_value_p->option_name, "protocol_pos_offset")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "l4_src_port_mask")) {
+		} else if (!strcmp(ext_value_p->option_name, "protocol")) {
 			val_ptr[6] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "protocol_mask")) {
+			val_ptr[7] = (char*)ext_value_p->option_value;
+#endif
+		} else if(!strcmp(ext_value_p->option_name, "ethernet_type")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "ethernet_type_mask")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "ip_protocol")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "ip_protocol_mask")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "tunnel_hdr_f32bit")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "tunnel_hdr_f32bit_mask")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "l4_dst_port")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "l4_dst_port_mask")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "l4_src_port")) {
+			val_ptr[6] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "l4_src_port_mask")) {
+			val_ptr[7] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if(!strcmp(ext_value_p->option_name, "tuple_id_valid")) {
+			val_ptr[8] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "tuple_id")) {
+			val_ptr[9] = (char*)ext_value_p->option_value;
+#endif
 		} else {
 			rv = -1;
 			break;
 		}
 
-		parameter_length++;
 		switch_ext_p = switch_ext_p->next;
 	}
 
+	parameter_length = 10;
 	return rv;
 }
 

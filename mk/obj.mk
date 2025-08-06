@@ -351,7 +351,7 @@ ifeq (TRUE, $(IN_TUNNEL))
 OBJ-COMMON  += src/ref/ref_tunnel.o src/fal/fal_tunnel.o
 OBJ-APPE    += src/hsl/appe/appe_tunnel.o src/hsl/appe/appe_tunnel_map.o \
                src/adpt/appe/adpt_appe_tunnel.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_tunnel.o
+OBJ-JHPPE   += src/hsl/jhppe/jhppe_tunnel.o src/adpt/jhppe/adpt_jhppe_tunnel.o
 endif
 
 ifeq (TRUE, $(IN_TUNNEL_PROGRAM))

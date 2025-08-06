@@ -108,6 +108,10 @@ typedef struct {
 	struct servcode_dest_t {
 		a_uint32_t service_code; /* enqueue service code when enqueu type: service code */
 		a_uint32_t phy_port; /* destination phy port when enqueue type: service code */
+		a_bool_t queue_select_en;
+		/* queue selection based on service code enabled or not,
+		 * which is newly added for HMSPPE and JHPPE.
+		 */
 	} enqueue_servcode;
 } fal_enqueue_index_t;
 
@@ -152,6 +156,11 @@ typedef struct {
 	a_uint32_t tcont_id;
 } fal_queue_tcont_cfg_t;
 
+typedef struct {
+	a_uint64_t bytes;
+	a_uint32_t credit;
+} fal_queue_tcont_stat_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -161,6 +170,11 @@ sw_error_t
 fal_qm_tcont_get(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
 		 fal_queue_tcont_cfg_t *cfg);
+
+sw_error_t
+fal_qm_tcont_stat_get(a_uint32_t dev_id,
+		      a_uint32_t tcont_id,
+		      fal_queue_tcont_stat_t *stat);
 
 sw_error_t
 fal_ac_ctrl_set(

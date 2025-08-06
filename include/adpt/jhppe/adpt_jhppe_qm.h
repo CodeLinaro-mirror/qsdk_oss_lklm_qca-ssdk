@@ -25,6 +25,11 @@ adpt_jhppe_qm_tcont_set(a_uint32_t dev_id,
 			fal_queue_tcont_cfg_t *cfg);
 
 sw_error_t
+adpt_jhppe_qm_tcont_stat_get(a_uint32_t dev_id,
+			     a_uint32_t tcont_id,
+			     fal_queue_tcont_stat_t *stat);
+
+sw_error_t
 adpt_jhppe_qm_cpucode_enqueue_get(a_uint32_t dev_id,
 				  a_uint32_t cpu_code,
 				  a_bool_t *enable);
@@ -66,6 +71,14 @@ adpt_jhppe_qm_counter_monitor_ctrl_get(a_uint32_t dev_id, fal_qm_queue_type_t ty
 sw_error_t
 adpt_jhppe_qm_counter_monitor_stats_get(a_uint32_t dev_id, fal_qm_queue_type_t type,
 		a_uint32_t cnt_id, fal_qm_monitor_stats_t *monitor_stats);
+
+sw_error_t
+adpt_jhppe_qm_enqueue_servcode_config_set(a_uint32_t dev_id,
+					  fal_enqueue_cfg_t *enqueue_cfg);
+
+sw_error_t
+adpt_jhppe_qm_enqueue_servcode_config_get(a_uint32_t dev_id,
+					  fal_enqueue_cfg_t *enqueue_cfg);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

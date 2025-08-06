@@ -48,6 +48,12 @@ extern "C" {
 #define UNIPHY_PORT2_TX_RESET_ID	"uniphy_port2_tx_rst"
 #define UNIPHY_PORT3_RX_RESET_ID	"uniphy_port3_rx_rst"
 #define UNIPHY_PORT3_TX_RESET_ID	"uniphy_port3_tx_rst"
+#define UNIPHY_PORT4_RX_RESET_ID	"uniphy_port4_rx_rst"
+#define UNIPHY_PORT4_TX_RESET_ID	"uniphy_port4_tx_rst"
+#define UNIPHY_PORT5_RX_RESET_ID	"uniphy_port5_rx_rst"
+#define UNIPHY_PORT5_TX_RESET_ID	"uniphy_port5_tx_rst"
+#define UNIPHY_PORT6_RX_RESET_ID	"uniphy_port6_rx_rst"
+#define UNIPHY_PORT6_TX_RESET_ID	"uniphy_port6_tx_rst"
 
 #define SSDK_PORT1_RESET_ID	"nss_port1_rst"
 #define SSDK_PORT2_RESET_ID	"nss_port2_rst"
@@ -61,6 +67,12 @@ extern "C" {
 #define SSDK_PORT2_TX_RESET_ID	"nss_port2_tx_rst"
 #define SSDK_PORT3_RX_RESET_ID	"nss_port3_rx_rst"
 #define SSDK_PORT3_TX_RESET_ID	"nss_port3_tx_rst"
+#define SSDK_PORT4_RX_RESET_ID	"nss_port4_rx_rst"
+#define SSDK_PORT4_TX_RESET_ID	"nss_port4_tx_rst"
+#define SSDK_PORT5_RX_RESET_ID	"nss_port5_rx_rst"
+#define SSDK_PORT5_TX_RESET_ID	"nss_port5_tx_rst"
+#define SSDK_PORT6_RX_RESET_ID	"nss_port6_rx_rst"
+#define SSDK_PORT6_TX_RESET_ID	"nss_port6_tx_rst"
 
 #define SSDK_PORT1_MAC_RESET_ID	"nss_port1_mac_rst"
 #define SSDK_PORT2_MAC_RESET_ID	"nss_port2_mac_rst"
@@ -100,6 +112,12 @@ enum unphy_rst_type {
 	UNIPHY_PORT2_TX_RESET_E,
 	UNIPHY_PORT3_RX_RESET_E,
 	UNIPHY_PORT3_TX_RESET_E,
+	UNIPHY_PORT4_RX_RESET_E,
+	UNIPHY_PORT4_TX_RESET_E,
+	UNIPHY_PORT5_RX_RESET_E,
+	UNIPHY_PORT5_TX_RESET_E,
+	UNIPHY_PORT6_RX_RESET_E,
+	UNIPHY_PORT6_TX_RESET_E,
 	UNIPHY_RST_MAX
 };
 
@@ -287,6 +305,7 @@ enum mp_bcr_rst_type {
 #define NSS_NSSNOC_SNOC_CLK_RATE    342857143
 #define MPPE_NSS_NSSNOC_SNOC_1_CLK_RATE  266660000
 #define MPPE_NSS_NSSNOC_SNOC_CLK_RATE    266660000
+#define JHPPE_NSS_NSSNOC_SNOC_CLK_RATE   133330000
 
 #define UNIPHY_CLK_RATE_25M         25000000
 #define UNIPHY_CLK_RATE_50M         50000000
@@ -316,6 +335,7 @@ enum mp_bcr_rst_type {
 #define APPE_CLK_RATE               353000000
 #define MPPE_CLK_RATE               200000000
 #define MRPPE_CLK_RATE              375000000
+#define JHPPE_CLK_RATE              462000000
 
 enum {
 	UNIPHY_RX = 0,

@@ -298,17 +298,46 @@ typedef struct {
 
 #define FAL_TPID_CTAG_EN (0x1UL << 0)
 #define FAL_TPID_STAG_EN (0x1UL << 1)
-#define FAL_TUNNEL_TPID_CTAG_EN (0x1UL << 2)
-#define FAL_TUNNEL_TPID_STAG_EN (0x1UL << 3)
+#define FAL_EXT_TPID_CTAG_EN (0x1UL << 2)
+#define FAL_EXT_TPID_STAG_EN (0x1UL << 3)
+#define FAL_TUNNEL_TPID_CTAG_EN (0x1UL << 4)
+#define FAL_TUNNEL_TPID_STAG_EN (0x1UL << 5)
+#define FAL_EXT_TUNNEL_TPID_CTAG_EN (0x1UL << 6)
+#define FAL_EXT_TUNNEL_TPID_STAG_EN (0x1UL << 7)
+#define TPID_SIZE 4
 typedef struct
 {
-	a_uint32_t mask; /* bit 0 for ctpid and bit 1 for stpid
-			  * bit 2 for tunnel ctpid, bit 3 for tunnel stpid
-			  * */
-	a_uint16_t ctpid; /* customer tpid value */
-	a_uint16_t stpid; /* service tpid value */
-	a_uint16_t tunnel_ctpid; /* tunnel customer tpid value, added for ipq95xx */
-	a_uint16_t tunnel_stpid; /* tunnel service tpid value, added for ipq95xx */
+      a_uint32_t mask; /* bit 0 for ctpid and bit 1 for stpid
+                    * bit 2 for extra ctpid, bit 3 for extra stpid
+                    * bit 4 for tunnel ctpid, bit 5 for tunnel stpid
+                    * bit 6 for extra tunnel ctpid, bit 7 for extra tunnel stpid
+                    * */
+
+      union {
+            struct {
+                  a_uint16_t ctpid; /* customer tpid value, idx 0 for ipq52xx & ipq96xx */
+                  a_uint16_t stpid; /* service tpid value, idx 1 for ipq52xx & ipq96xx */
+                  a_uint16_t ext_ctpid; /* extra customer tpid value, idx 2 for ipq52xx & ipq96xx */
+                  a_uint16_t ext_stpid; /* extra service tpid value, idx 3 for ipq52xx & ipq96xx */
+            };
+            a_uint16_t tpid_arr[TPID_SIZE]; /* for get tpid_index by tpid */
+      };
+
+      a_uint8_t ctpid_map; /* bitmap for ctpid, set when any tpid configured */
+      a_uint8_t stpid_map; /* bitmap for stpid, set when any tpid configured */
+
+      union {
+            struct {
+                  a_uint16_t tunnel_ctpid; /* tunnel customer tpid value, added for ipq95xx, idx 0 for ipq52xx & ipq96xx */
+                  a_uint16_t tunnel_stpid; /* tunnel service tpid value, added for ipq95xx, idx 1 for ipq52xx & ipq96xx */
+                  a_uint16_t ext_tunnel_ctpid; /* extra tunnel customer tpid value, added for ipq95xx, idx 2 for ipq52xx & ipq96xx */
+                  a_uint16_t ext_tunnel_stpid; /* extra tunnel service tpid value, added for ipq95xx, idx 3 for ipq52xx & ipq96xx */
+            };
+            a_uint16_t tunnel_tpid_arr[TPID_SIZE]; /* for get tpid_index by tpid */
+      };
+
+      a_uint8_t tunnel_ctpid_map; /* bitmap for tunnel ctpid, set when any tunnel tpid configured */
+      a_uint8_t tunnel_stpid_map; /* bitmap for tunnel stpid, set when any tunnel tpid configured */
 } fal_tpid_t;
 
 typedef struct {

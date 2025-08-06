@@ -309,6 +309,15 @@ struct ssdk_port_priv {
 	a_uint32_t sfp_medium_pin;
 };
 
+struct ssdk_ppe_tunnel_priv {
+#if defined(JHPPE)
+#define TPR_TUPLE_IP_ADDR_CTRL_NUM	16
+#define TPR_TUPLE_L4_PORT_NUM		32
+	a_uint32_t tpr_tuple_ip_addr_entry_used_map[TPR_TUPLE_IP_ADDR_CTRL_NUM];
+	a_uint32_t tpr_tuple_l4_port_entry_used_map[TPR_TUPLE_L4_PORT_NUM];
+#endif
+};
+
 struct qca_phy_priv {
 	struct phy_device *phy;
 #if defined(IN_SWCONFIG)
@@ -385,6 +394,8 @@ struct qca_phy_priv {
 	u8 __iomem *hw_addr;
 	u8 __iomem *uniphy_hw_addr;
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
+
+	struct ssdk_ppe_tunnel_priv tnl_priv;
 /*qca808x_start*/
 };
 
