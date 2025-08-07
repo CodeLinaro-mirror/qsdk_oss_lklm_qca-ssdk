@@ -872,11 +872,11 @@ adpt_hppe_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 		ppe_tpid0.bf.stag_tpid = tpid->ext_stpid;
 	}
 
-	if (FAL_FLG_TST(tpid->mask, FAL_TPID_CTAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_CTAG_EN)) {
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_CTAG_MAP_EN)) {
 		ppe_tpid1.bf.ctag_tpid_map = tpid->ctpid_map;
 	}
 
-	if (FAL_FLG_TST(tpid->mask, FAL_TPID_STAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_STAG_EN)) {
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_STAG_MAP_EN)) {
 		ppe_tpid1.bf.stag_tpid_map = tpid->stpid_map;
 	}
 
@@ -888,11 +888,11 @@ adpt_hppe_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 		tunnel_tpid0.bf.stag_tpid = tpid->ext_tunnel_stpid;
 	}
 
-	if (FAL_FLG_TST(tpid->mask, FAL_TUNNEL_TPID_CTAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TUNNEL_TPID_CTAG_EN)) {
+	if (FAL_FLG_TST(tpid->mask, FAL_TUNNEL_TPID_CTAG_MAP_EN)) {
 		tunnel_tpid1.bf.ctag_tpid_map = tpid->tunnel_ctpid_map;
 	}
 
-	if (FAL_FLG_TST(tpid->mask, FAL_TUNNEL_TPID_STAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TUNNEL_TPID_STAG_EN)) {
+	if (FAL_FLG_TST(tpid->mask, FAL_TUNNEL_TPID_STAG_MAP_EN)) {
 		tunnel_tpid1.bf.stag_tpid_map = tpid->tunnel_stpid_map;
 	}
 
@@ -1010,13 +1010,13 @@ adpt_hppe_egress_tpid_set(a_uint32_t dev_id, fal_tpid_t *tpid)
 		SW_RTN_ON_ERROR(rtn);
 	}
 
-	if (FAL_FLG_TST(tpid->mask, FAL_TPID_CTAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_CTAG_EN)) {
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_CTAG_MAP_EN)) {
 		rtn = jhppe_eg_vlan_tpid_ext1_ctag_tpid_map_set(dev_id,
 				(a_uint32_t)tpid->ctpid_map);
 		SW_RTN_ON_ERROR(rtn);
 	}
 
-	if (FAL_FLG_TST(tpid->mask, FAL_TPID_STAG_EN) || FAL_FLG_TST(tpid->mask, FAL_EXT_TPID_STAG_EN)) {
+	if (FAL_FLG_TST(tpid->mask, FAL_TPID_STAG_MAP_EN)) {
 		rtn = jhppe_eg_vlan_tpid_ext1_stag_tpid_map_set(dev_id,
 				(a_uint32_t)tpid->stpid_map);
 		SW_RTN_ON_ERROR(rtn);

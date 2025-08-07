@@ -304,6 +304,10 @@ typedef struct {
 #define FAL_TUNNEL_TPID_STAG_EN (0x1UL << 5)
 #define FAL_EXT_TUNNEL_TPID_CTAG_EN (0x1UL << 6)
 #define FAL_EXT_TUNNEL_TPID_STAG_EN (0x1UL << 7)
+#define FAL_TPID_CTAG_MAP_EN (0x1UL << 8)
+#define FAL_TPID_STAG_MAP_EN (0x1UL << 9)
+#define FAL_TUNNEL_TPID_CTAG_MAP_EN (0x1UL << 10)
+#define FAL_TUNNEL_TPID_STAG_MAP_EN (0x1UL << 11)
 #define TPID_SIZE 4
 typedef struct
 {
@@ -311,6 +315,8 @@ typedef struct
                     * bit 2 for extra ctpid, bit 3 for extra stpid
                     * bit 4 for tunnel ctpid, bit 5 for tunnel stpid
                     * bit 6 for extra tunnel ctpid, bit 7 for extra tunnel stpid
+                    * bit 8 for ctpid bitmap, bit 9 for stpid bitmap
+                    * bit 10 for tunnel ctpid bitmap, bit 11 for tunnel stpid bitmap
                     * */
 
       union {
