@@ -76,6 +76,11 @@ typedef struct {
 	a_bool_t status; /* dynamic threshold enabled or not */
 } fal_ac_dynamic_threshold_t;
 
+typedef enum {
+	FAL_ESRAM_QUEUE = 0, /* egress sram queue */
+	FAL_ISRAM_QUEUE, /* ingress sram queue */
+} fal_sram_queue_type_t;
+
 typedef struct {
 	a_uint8_t src_profile; /* queue source profile */
 	a_bool_t service_code_en;
@@ -83,6 +88,7 @@ typedef struct {
 	a_bool_t cpu_code_en;
 	a_uint16_t cpu_code;
 	fal_port_t dst_port; /* destination physical or VP port */
+	fal_sram_queue_type_t sram_queue_type; /* esram queue or isram queue */
 } fal_ucast_queue_dest_t;
 
 typedef enum {
