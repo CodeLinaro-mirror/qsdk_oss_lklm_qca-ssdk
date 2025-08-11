@@ -86,6 +86,22 @@ a_uint16_t ssdk_ucast_l0_cdrr_num_get(a_uint32_t dev_id, a_uint32_t port)
 	return cfg->scheduler_cfg.pool[port].l0cdrr_end -
 		cfg->scheduler_cfg.pool[port].l0cdrr_start + 1;
 }
+
+a_uint8_t ssdk_port_ucast_max_pri_get(a_uint32_t dev_id, a_uint32_t port)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	return cfg->scheduler_cfg.pool[port].max_pri;
+}
+
+void ssdk_port_ucast_max_pri_set(a_uint32_t dev_id, a_uint32_t port,
+				 a_uint8_t max_pri)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	cfg->scheduler_cfg.pool[port].max_pri = max_pri;
+}
+
 #endif
 a_uint32_t ssdk_intf_mac_num_get(void)
 {
@@ -532,6 +548,7 @@ static void ssdk_dt_parse_l0_queue_cfg(
 	const __be32 *paddr;
 	a_uint32_t len, i, queue_id, pri_loop;
 	a_uint32_t max_pri = SSDK_SP_MAX_PRIORITY;
+	a_uint8_t cur_max_pri = ssdk_port_ucast_max_pri_get(dev_id, port_id);
 
 	paddr = of_get_property(node, queue_name, &len);
 	len /= sizeof(a_uint32_t);
@@ -548,6 +565,9 @@ static void ssdk_dt_parse_l0_queue_cfg(
 	if (!of_property_read_u32(node, "ucast_max_pri", &max_pri)) {
 		SSDK_DEBUG("Configure Max priority per SP: %d\n", max_pri);
 	}
+
+	if (max_pri > cur_max_pri)
+		ssdk_port_ucast_max_pri_set(dev_id, port_id, max_pri);
 
 	if (of_property_read_u32(node, loop_name, &pri_loop)) {
 		for (i = 0; i < len; i++) {

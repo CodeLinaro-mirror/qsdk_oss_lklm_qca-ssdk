@@ -30,6 +30,7 @@ typedef struct {
 	a_uint8_t l1cdrr_end;
 	a_uint8_t l1edrr_start;
 	a_uint8_t l1edrr_end;
+	a_uint8_t max_pri;
 } ssdk_dt_portscheduler_cfg;
 
 typedef struct {
@@ -138,6 +139,9 @@ a_uint8_t ssdk_bm_tick_mode_get(a_uint32_t dev_id);
 a_uint16_t ssdk_ucast_queue_start_get(a_uint32_t dev_id, a_uint32_t port);
 a_uint16_t ssdk_ucast_queue_num_get(a_uint32_t dev_id, a_uint32_t port);
 a_uint16_t ssdk_ucast_l0_cdrr_num_get(a_uint32_t dev_id, a_uint32_t port);
+a_uint8_t ssdk_port_ucast_max_pri_get(a_uint32_t dev_id, a_uint32_t port);
+void ssdk_port_ucast_max_pri_set(a_uint32_t dev_id, a_uint32_t port,
+				 a_uint8_t max_pri);
 #endif
 a_uint32_t ssdk_intf_mac_num_get(void);
 a_uint8_t* ssdk_intf_macaddr_get(a_uint32_t index);
