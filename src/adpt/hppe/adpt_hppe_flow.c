@@ -1210,6 +1210,13 @@ adpt_hppe_flow_entry_host_op_add(
 	if (rv)
 		return rv;
 #endif
+
+#if defined(JHPPE)
+	rv = adpt_jhppe_flow_gro_en_set(dev_id, flow_entry->entry_id, flow_entry->gro_en);
+	if (rv)
+		return rv;
+#endif
+
 	return adpt_hppe_flow_qos_set(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
@@ -1304,6 +1311,13 @@ adpt_hppe_flow_entry_host_op_get(
 	if (rv)
 		return rv;
 #endif
+
+#if defined(JHPPE)
+	rv = adpt_jhppe_flow_gro_en_get(dev_id, flow_entry->entry_id, &(flow_entry->gro_en));
+	if (rv)
+		return rv;
+#endif
+
 	return adpt_hppe_flow_qos_get(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
@@ -1534,6 +1548,13 @@ adpt_hppe_flow_entry_get(
 	if (rv)
 		return rv;
 #endif
+
+#if defined(JHPPE)
+	rv = adpt_jhppe_flow_gro_en_get(dev_id, flow_entry->entry_id, &(flow_entry->gro_en));
+	if (rv)
+		return rv;
+#endif
+
 	return adpt_hppe_flow_qos_get(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
@@ -1895,6 +1916,13 @@ adpt_hppe_flow_entry_add(
 	if (rv)
 		return rv;
 #endif
+
+#if defined(JHPPE)
+	rv = adpt_jhppe_flow_gro_en_set(dev_id, flow_entry->entry_id, flow_entry->gro_en);
+	if (rv)
+		return rv;
+#endif
+
 	return adpt_hppe_flow_qos_set(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 

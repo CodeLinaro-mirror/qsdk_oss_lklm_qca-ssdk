@@ -145,6 +145,7 @@ typedef struct {
 	a_uint32_t match_more; /* SPI value for NATT, UDF0+UDF1 for flow key sel. */
 	a_uint32_t sampling_id; /* STC index. */
 	a_uint32_t nat_action; /* NAT action for routing. */
+	a_bool_t gro_en; /* GRO enabled or not for ipq96xx. */
 } fal_flow_entry_t;
 
 enum {
