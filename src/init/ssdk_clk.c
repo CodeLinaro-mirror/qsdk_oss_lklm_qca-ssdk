@@ -2172,7 +2172,7 @@ void ssdk_pci_ppe_clock_init(a_uint32_t dev_id)
 
 		/* Switch clock gating setting */
 		val = qcom_fpga_mem_read(0x3A000008);
-		val &= ~BIT(4);
+		val &= ~(BIT(4) | GENMASK(15, 14));
 		qcom_fpga_mem_write(0x3A000008, val);
 
 		/* Check PPE register after clocks configured */
