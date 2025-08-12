@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
 /**
  * @defgroup
  * @{
@@ -166,7 +165,6 @@ char *cpucode[] = {
 "Service code action",
 "Egress mirror to CPU",
 "Ingress mirror to CPU",
-#ifdef APPE
 "L3 FLOW MTU CHECK FAIL",/*index 150, cpu code 93*/
 "L3 FLOW MTU CHECK DF FAIL",
 "L3 UDP CHECKSUM EXP",/*index 152, cpu code 95*/
@@ -216,11 +214,9 @@ char *cpucode[] = {
 "TUNNEL PROGRAM4",
 "TUNNEL PROGRAM5",/*index 193, cpu code 231*/
 "bypass l2 flooding and redirect to CPU",/*index 194, cpu code 232*/
-#endif
 };
 
 char *dropcode[] = {
-#ifdef APPE
 "None",
 "Unkown L2 protocol exception drop",
 "PPPoE wrong version or wrong header exception drop",
@@ -349,136 +345,6 @@ char *dropcode[] = {
 "Magagement packet APP_CTRL drop",
 "Fake L2 protocol indicated packet not routing or bypass L3 edit drop",
 "Policing drop",
-#else
-"None",
-"Unkown L2 protocol exception drop",
-"PPPoE wrong version or wrong type exception drop",
-"PPPoE wrong code exception drop",
-"PPPoE unsupported PPP protocol exception drop",
-"IPv4 wrong version exception drop",
-"IPv4 small IHL exception drop",
-"IPv4 with option exception drop",
-"IPv4 header incomplete exception drop",
-"IPv4 bad total length exception drop",
-"IPv4 data incomplete exception drop",
-"IPv4 fragment exception drop",
-"IPv4 ping of death exception drop",
-"IPv4 small TTL exception drop",
-"IPv4 unknown IP protocol exception drop",
-"IPv4 checksum error exception drop",
-"IPv4 invalid SIP exception drop",
-"IPv4 invalid DIP exception drop",
-"IPv4 LAND attack exception drop",
-"IPv4 AH header incomplete exception drop",
-"IPv4 AH header cross 128-byte exception drop",
-"IPv4 ESP header incomplete exception drop",
-"IPv6 wrong version exception drop",
-"IPv6 header incomplete exception drop",
-"IPv6 bad total length exception drop",
-"IPv6 data incomplete exception drop",
-"IPv6 with extension header exception drop",
-"IPv6 small hop limit exception drop",
-"IPv6 invalid SIP exception drop",
-"IPv6 invalid DIP exception drop",
-"IPv6 LAND attack exception drop",
-"IPv6 fragment exception drop",
-"IPv6 ping of death exception drop",
-"IPv6 with more than 2 extension headers exception drop",
-"IPv6 unknown last next header exception drop",
-"IPv6 mobility header incomplete exception drop",
-"IPv6 mobility header cross 128-byte exception drop",
-"IPv6 AH header incomplete exception drop",
-"IPv6 AH header cross 128-byte exception drop",
-"IPv6 ESP header incomplete exception drop",
-"IPv6 ESP header cross 128-byte exception drop",
-"IPv6 other extension header incomplete exception drop",
-"IPv6 other extension header cross 128-byte exception drop",
-"TCP header incomplete exception drop",
-"TCP header cross 128-byte exception drop",
-"TCP same SP and DP exception drop",
-"TCP small data offset drop",
-"TCP flags VALUE/MASK group 0 exception drop",
-"TCP flags VALUE/MASK group 1 exception drop",
-"TCP flags VALUE/MASK group 2 exception drop",
-"TCP flags VALUE/MASK group 3 exception drop",
-"TCP flags VALUE/MASK group 4 exception drop",
-"TCP flags VALUE/MASK group 5 exception drop",
-"TCP flags VALUE/MASK group 6 exception drop",
-"TCP flags VALUE/MASK group 7 exception drop",
-"TCP checksum error exception drop",
-"UDP header incomplete exception drop",
-"UDP header cross 128-byte exception drop",
-"UDP same SP and DP exception drop",
-"UDP bad length exception drop",
-"UDP data incomplete exception drop",
-"UDP checksum error exception drop",
-"UDP-Lite header incomplete exception drop",
-"UDP-Lite header cross 128-byte exception drop",
-"UDP-Lite same SP and DP exception drop",
-"UDP-Lite checksum coverage value 0-7 exception drop",
-"UDP-Lite checksum coverage value too big exception drop",
-"UDP-Lite checksum coverage value cross 128-byte exception drop",
-"UDP-Lite checksum error exception drop",
-"L3 multicast bridging action",
-"L3 no route with Preheader NAT action",
-"L3 no route with Preheader NAT action error configuration",
-"L3 route action drop",
-"L3 no route action drop",
-"L3 no route next hop invalid action drop",
-"L3 no route preheader action drop",
-"L3 bridge action drop",
-"L3 flow action drop",
-"L3 flow miss action drop",
-"L2 MRU checking fail drop",
-"L2 MTU checking fail drop",
-"L3 IP prefix broadcast drop",
-"L3 MTU checking fail drop",
-"L3 MRU checking fail drop",
-"L3 ICMP redirect drop",
-"Fake MAC header indicated packet not routing or bypass L3 edit drop",
-"L3 IP route TTL zero drop",
-"L3 flow service code loop drop",
-"L3 flow de-accelerate drop",
-"L3 flow source interface check fail drop",
-"Flow toggle mismatch exception drop",
-"MTU check exception if DF set drop",
-"PPPoE multicast packet with IP routing enabled drop",
-"IPv4 SG unkown drop",
-"IPv6 SG unkown drop",
-"ARP SG unkown drop",
-"ND SG unkown drop",
-"IPv4 SG violation drop",
-"IPv6 SG violation drop",
-"ARP SG violation drop",
-"ND SG violation drop",
-"L2 new MAC address drop",
-"L2 hash violation drop",
-"L2 station move drop",
-"L2 learn limit drop",
-"L2 SA lookup action drop",
-"L2 DA lookup action drop",
-"APP_CTRL action drop",
-"Ingress VLAN filtering action drop",
-"Ingress VLAN translation miss drop",
-"Egress VLAN filtering drop",
-"Pre-IPO entry hit action drop",
-"Post-IPO entry hit action drop",
-"Multicast SA or broadcast SA drop",
-"No destination drop",
-"STG ingress filtering drop",
-"STG egress filtering drop",
-"Source port filter drop",
-"Trunk select fail drop",
-"TX MAC disable drop",
-"Ingress VLAN tag format drop",
-"CRC error drop",
-"PAUSE frame drop",
-"Promisc drop",
-"Isolation drop",
-"Magagement packet APP_CTRL drop",
-"Fake L2 protocol indicated packet not routing or bypass L3 edit drop",
-"Policing drop"
-#endif
 };
 
 static sw_error_t
@@ -493,10 +359,8 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	union queue_tx_counter_tbl_u queue_tx_counter_tbl = {0};
 	union vp_tx_drop_cnt_tbl_u vp_tx_drop_cnt_tbl = {0};
 	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl = {0};
-#ifdef APPE
 	union port_rx_cnt_tbl_u port_rx_cnt_tbl = {0};
 	union phy_port_rx_cnt_tbl_u phy_port_rx_cnt_tbl = {0};
-#endif
 	a_uint32_t i;
 
 	/* clear PRX DROP_CNT */
@@ -552,14 +416,13 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	for (i = 0; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
 		hppe_drop_cpu_cnt_tbl_set(dev_id, i, &drop_cpu_cnt_tbl);
 
-#ifdef APPE
 	/* clear VP_RX_COUNTER_TBL and VP_RX_DROP_CNT_TBL */
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 		appe_port_rx_cnt_tbl_set (dev_id, i, &port_rx_cnt_tbl);
 	/* clear PORT_RX_COUNTER_TBL and PORT_RX_DROP_CNT_TBL */
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 		appe_phy_port_rx_cnt_tbl_set (dev_id, i, &phy_port_rx_cnt_tbl);
-#endif
+
 	return SW_OK;
 }
 
@@ -970,7 +833,6 @@ adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 30], i);
 			else if (i >= 178 && i <= 180)
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 33], i);
-#ifdef APPE
 			else if (i >= 93 && i <= 95)
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i + 57], i);
 			else if (i == 104)
@@ -979,7 +841,6 @@ adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 27], i);
 			else if (i >= 210 && i <= 232)
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 38], i);
-#endif
 			else if (i >= 254 && i <= 255)
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 106], i);
 			else
@@ -1015,7 +876,6 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
-#ifdef APPE
 static void
 adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
@@ -1149,7 +1009,6 @@ adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, 
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
-#endif
 /* if show_type = A_FALSE, show packets.
  * if show_type = A_TRUE, show bytes.
  */
@@ -1194,7 +1053,7 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 
 	/* show DROP_CPU_CNT_TBL */
 	adpt_hppe_debug_drop_cpu_counter_get(dev_id, show_type, buf, count);
-#ifdef APPE
+
 	/* show VP_PORT_RX_COUNTER_TBL*/
 	adpt_appe_debug_vp_rx_counter_get(dev_id, show_type, buf, count);
 	/* show VP_PORT_RX_DROP_CNT_TBL*/
@@ -1203,7 +1062,7 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 	adpt_appe_debug_port_rx_counter_get(dev_id, show_type, buf, count);
 	/* show PORT_RX_DROP_CNT_TBL*/
 	adpt_appe_debug_port_rx_drop_counter_get(dev_id, show_type, buf, count);
-#endif
+
 	return SW_OK;
 }
 

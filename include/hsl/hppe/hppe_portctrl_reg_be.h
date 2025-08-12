@@ -1,20 +1,8 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -564,16 +552,8 @@ union port_in_forward_u {
 
 /*[table] MRU_MTU_CTRL_TBL*/
 #define MRU_MTU_CTRL_TBL
-#if defined(APPE)
 #define MRU_MTU_CTRL_TBL_ADDRESS 0x5000
 #define MRU_MTU_CTRL_TBL_INC     0x10
-#elif defined(CPPE)
-#define MRU_MTU_CTRL_TBL_ADDRESS 0x3000
-#define MRU_MTU_CTRL_TBL_INC     0x10
-#else
-#define MRU_MTU_CTRL_TBL_ADDRESS 0x3000
-#define MRU_MTU_CTRL_TBL_INC     0x8
-#endif
 #define MRU_MTU_CTRL_TBL_NUM     256
 #define MRU_MTU_CTRL_TBL_TYPE    REG_TYPE_RW
 #define MRU_MTU_CTRL_TBL_DEFAULT 0x0
@@ -612,7 +592,6 @@ union port_in_forward_u {
 	#define MRU_MTU_CTRL_TBL_SRC_PROFILE_OFFSET  34
 	#define MRU_MTU_CTRL_TBL_SRC_PROFILE_LEN     2
 	#define MRU_MTU_CTRL_TBL_SRC_PROFILE_DEFAULT 0x0
-#if defined(APPE) || defined(CPPE)
 	/*[field] PCP_QOS_GROUP_ID*/
 	#define MRU_MTU_CTRL_TBL_PCP_QOS_GROUP_ID
 	#define MRU_MTU_CTRL_TBL_PCP_QOS_GROUP_ID_OFFSET  36
@@ -673,7 +652,6 @@ union port_in_forward_u {
 	#define MRU_MTU_CTRL_TBL_SOURCE_FILTERING_MODE_OFFSET  59
 	#define MRU_MTU_CTRL_TBL_SOURCE_FILTERING_MODE_LEN     1
 	#define MRU_MTU_CTRL_TBL_SOURCE_FILTERING_MODE_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] PRE_IPO_OUTER_RES_PREC*/
 	#define MRU_MTU_CTRL_TBL_PRE_IPO_OUTER_RES_PREC
 	#define MRU_MTU_CTRL_TBL_PRE_IPO_OUTER_RES_PREC_OFFSET  60
@@ -684,16 +662,12 @@ union port_in_forward_u {
 	#define MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_OFFSET  63
 	#define MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_LEN     3
 	#define MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_DEFAULT 0x0
-#endif
-#endif
 
 struct mru_mtu_ctrl_tbl {
 	a_uint32_t  mtu_cmd:2;
         a_uint32_t  mtu:14;
         a_uint32_t  mru_cmd:2;
 	a_uint32_t  mru:14;
-
-#if defined(APPE)
 	a_uint32_t  pre_ipo_inner_res_prec_0:1;
 	a_uint32_t  pre_ipo_outer_res_prec:3;
 	a_uint32_t  source_filtering_mode:1;
@@ -714,37 +688,10 @@ struct mru_mtu_ctrl_tbl {
 
 	a_uint32_t  _reserved0:30;
 	a_uint32_t  pre_ipo_inner_res_prec_1:2;
-#elif defined(CPPE)
-	a_uint32_t  _reserved0:4;
-	a_uint32_t  source_filtering_mode:1;
-	a_uint32_t  source_filtering_bypass:1;
-	a_uint32_t  post_acl_res_prec:3;
-	a_uint32_t  pre_acl_res_prec:3;
-	a_uint32_t  flow_res_prec:3;
-	a_uint32_t  dscp_res_prec:3;
-	a_uint32_t  pcp_res_prec:3;
-	a_uint32_t  preheader_res_prec:3;
-	a_uint32_t  dscp_res_prec_force:1;
-	a_uint32_t  pcp_res_prec_force:1;
-	a_uint32_t  dscp_qos_group_id:1;
-	a_uint32_t  pcp_qos_group_id:1;
-	a_uint32_t  src_profile:2;
-	a_uint32_t  tx_cnt_en:1;
-	a_uint32_t  rx_cnt_en:1;
-#else
-	a_uint32_t  _reserved0:28;
-	a_uint32_t  src_profile:2;
-	a_uint32_t  tx_cnt_en:1;
-	a_uint32_t  rx_cnt_en:1;
-#endif
 };
 
 union mru_mtu_ctrl_tbl_u {
-#if defined(APPE)
 	a_uint32_t val[3];
-#else
-	a_uint32_t val[2];
-#endif
 	struct mru_mtu_ctrl_tbl bf;
 };
 
@@ -926,11 +873,7 @@ union drop_stat_u {
 
 /*[register] PORT_TX_COUNTER_TBL_REG*/
 #define PORT_TX_COUNTER_TBL_REG
-#if defined (APPE)
 #define PORT_TX_COUNTER_TBL_REG_ADDRESS 0x25000
-#else
-#define PORT_TX_COUNTER_TBL_REG_ADDRESS 0x900
-#endif
 #define PORT_TX_COUNTER_TBL_REG_NUM     8
 #define PORT_TX_COUNTER_TBL_REG_INC     0x10
 #define PORT_TX_COUNTER_TBL_REG_TYPE    REG_TYPE_RW
@@ -960,11 +903,7 @@ union port_tx_counter_tbl_reg_u {
 
 /*[register] VP_TX_COUNTER_TBL_REG*/
 #define VP_TX_COUNTER_TBL_REG
-#if defined (APPE)
 #define VP_TX_COUNTER_TBL_REG_ADDRESS 0x27000
-#else
-#define VP_TX_COUNTER_TBL_REG_ADDRESS 0x1000
-#endif
 #define VP_TX_COUNTER_TBL_REG_NUM     256
 #define VP_TX_COUNTER_TBL_REG_INC     0x10
 #define VP_TX_COUNTER_TBL_REG_TYPE    REG_TYPE_RW
@@ -1229,7 +1168,6 @@ union ipr_byte_high_reg_u {
 	struct ipr_byte_high_reg bf;
 };
 
-#ifdef APPE
 /*[register] LINK_OAM_CTRL*/
 #define LINK_OAM_CTRL
 #define LINK_OAM_CTRL_ADDRESS 0x1800
@@ -1252,5 +1190,4 @@ union link_oam_ctrl_u {
 	a_uint32_t val;
 	struct link_oam_ctrl bf;
 };
-#endif
 #endif

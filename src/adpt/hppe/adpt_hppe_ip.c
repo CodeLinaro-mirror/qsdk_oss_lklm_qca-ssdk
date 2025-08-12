@@ -563,7 +563,6 @@ adpt_hppe_ip_port_macaddr_set(a_uint32_t dev_id, fal_port_t port_id,
 	hppe_l3_vp_port_tbl_get(dev_id, port_id, &l3_vp_port_tbl);
 
 	l3_vp_port_tbl.bf.mac_valid = macaddr->valid;
-#if defined(APPE)
 	l3_vp_port_tbl.bf.mac_da_0 =  ((macaddr->mac_addr.uc[4] & 0x7f) << 8) | \
 							macaddr->mac_addr.uc[5];
 	l3_vp_port_tbl.bf.mac_da_1 =  ((macaddr->mac_addr.uc[0] & 0x7f) << 25) | \
@@ -572,14 +571,6 @@ adpt_hppe_ip_port_macaddr_set(a_uint32_t dev_id, fal_port_t port_id,
 							macaddr->mac_addr.uc[3] << 1 | \
 							((macaddr->mac_addr.uc[4] >> 7) & 0x1);
 	l3_vp_port_tbl.bf.mac_da_2 =  (macaddr->mac_addr.uc[0] >> 7) & 0x1;
-#elif defined(HPPE)
-	l3_vp_port_tbl.bf.mac_da_0 =  macaddr->mac_addr.uc[4] << 8 | \
-							macaddr->mac_addr.uc[5];
-	l3_vp_port_tbl.bf.mac_da_1 =  macaddr->mac_addr.uc[0] << 24 | \
-							macaddr->mac_addr.uc[1] << 16 | \
-							macaddr->mac_addr.uc[2] << 8 | \
-							macaddr->mac_addr.uc[3];
-#endif
 	
 	return hppe_l3_vp_port_tbl_set(dev_id, port_id, &l3_vp_port_tbl);
 }
@@ -835,7 +826,6 @@ adpt_hppe_ip_intf_get(
 	entry->ttl_exceed_action = in_l3_if_tbl.bf.ttl_exceed_cmd;
 	entry->ttl_exceed_deacclr_en = in_l3_if_tbl.bf.ttl_exceed_de_acce;
 	entry->mac_addr_bitmap = in_l3_if_tbl.bf.mac_bitmap;
-#if defined(APPE)
 	entry->dmac_check_en = !in_l3_if_tbl.bf.dmac_check_dis;
 	entry->vpn_id = in_l3_if_tbl.bf.vpn_id;
 	entry->ip6_mru = in_l3_if_tbl.bf.mru_ipv6;
@@ -850,7 +840,6 @@ adpt_hppe_ip_intf_get(
 	entry->in_mac_addr.uc[1] = in_l3_if_tbl.bf.mac_da_1 >> 16;
 	entry->in_mac_addr.uc[0] = in_l3_if_tbl.bf.mac_da_1 >> 24;
 	entry->in_mac_valid = in_l3_if_tbl.bf.mac_valid;
-#endif
 #endif
 	entry->mac_addr.uc[5] = eg_l3_if_tbl.bf.mac_addr_0;
 	entry->mac_addr.uc[4] = eg_l3_if_tbl.bf.mac_addr_0 >> 8;
@@ -1382,13 +1371,11 @@ adpt_hppe_ip_intf_set(
 	in_l3_if_tbl.bf.ttl_exceed_cmd = entry->ttl_exceed_action;
 	in_l3_if_tbl.bf.ttl_exceed_de_acce = entry->ttl_exceed_deacclr_en;
 	in_l3_if_tbl.bf.mac_bitmap = entry->mac_addr_bitmap;
-#if defined(APPE)
 	in_l3_if_tbl.bf.dmac_check_dis = !entry->dmac_check_en;
 	in_l3_if_tbl.bf.vpn_id = entry->vpn_id;
 	in_l3_if_tbl.bf.mru_ipv6 = entry->ip6_mru;
 	in_l3_if_tbl.bf.mtu_ipv6 = entry->ip6_mtu;
 	in_l3_if_tbl.bf.udp_csm0_cmd = entry->udp_zero_csum_action;
-#endif
 #if defined(MRPPE)
 	in_l3_if_tbl.bf.mac_valid = entry->in_mac_valid;
 	/* Only update MAC of L3 intf when the mac_valid is true. */
@@ -1482,7 +1469,6 @@ adpt_hppe_ip_port_macaddr_get(a_uint32_t dev_id, fal_port_t port_id,
 		return rv;
 
 	macaddr->valid = l3_vp_port_tbl.bf.mac_valid;
-#if defined(APPE)
 	macaddr->mac_addr.uc[5] = l3_vp_port_tbl.bf.mac_da_0;
 	macaddr->mac_addr.uc[4] = l3_vp_port_tbl.bf.mac_da_0 >> 8 | \
 				  ((l3_vp_port_tbl.bf.mac_da_1 & 0x1) << 7);
@@ -1491,14 +1477,6 @@ adpt_hppe_ip_port_macaddr_get(a_uint32_t dev_id, fal_port_t port_id,
 	macaddr->mac_addr.uc[1] = l3_vp_port_tbl.bf.mac_da_1 >> 17;
 	macaddr->mac_addr.uc[0] = (l3_vp_port_tbl.bf.mac_da_2 & 0x1) << 7 | \
 				  (l3_vp_port_tbl.bf.mac_da_1 >> 25);
-#elif defined(HPPE)
-	macaddr->mac_addr.uc[5] = l3_vp_port_tbl.bf.mac_da_0;
-	macaddr->mac_addr.uc[4] = l3_vp_port_tbl.bf.mac_da_0 >> 8;
-	macaddr->mac_addr.uc[3] = l3_vp_port_tbl.bf.mac_da_1;
-	macaddr->mac_addr.uc[2] = l3_vp_port_tbl.bf.mac_da_1 >> 8;
-	macaddr->mac_addr.uc[1] = l3_vp_port_tbl.bf.mac_da_1 >> 16;
-	macaddr->mac_addr.uc[0] = l3_vp_port_tbl.bf.mac_da_1 >> 24;
-#endif
 
 	return SW_OK;
 }
@@ -1568,9 +1546,7 @@ adpt_hppe_ip_global_ctrl_get(a_uint32_t dev_id, fal_ip_global_cfg_t *cfg)
 	cfg->icmp_rdt_deacclr_en = l3_route_ctrl.bf.icmp_rdt_de_acce;
 	cfg->hash_mode_0 = l3_route_ctrl_ext.bf.host_hash_mode_0;
 	cfg->hash_mode_1 = l3_route_ctrl_ext.bf.host_hash_mode_1;
-#if defined(APPE)
 	cfg->rt_fail_no_eth_action = l3_route_ctrl_ext.bf.ip_route_fail_no_eth;
-#endif
 
 	return SW_OK;
 }
@@ -1605,9 +1581,7 @@ adpt_hppe_ip_global_ctrl_set(a_uint32_t dev_id, fal_ip_global_cfg_t *cfg)
 	l3_route_ctrl.bf.icmp_rdt_de_acce = cfg->icmp_rdt_deacclr_en;
 	l3_route_ctrl_ext.bf.host_hash_mode_0 = cfg->hash_mode_0;
 	l3_route_ctrl_ext.bf.host_hash_mode_1 = cfg->hash_mode_1;
-#if defined(APPE)
 	l3_route_ctrl_ext.bf.ip_route_fail_no_eth = cfg->rt_fail_no_eth_action;
-#endif
 
 	rv = hppe_l3_route_ctrl_set(dev_id, &l3_route_ctrl);
 	SW_RTN_ON_ERROR(rv);
@@ -1696,7 +1670,6 @@ adpt_hppe_ip_intf_mtu_mru_get(a_uint32_t dev_id, a_uint32_t l3_if,
 	return rv;
 }
 
-#if defined(APPE)
 sw_error_t
 adpt_hppe_ip6_intf_mtu_mru_set(a_uint32_t dev_id, a_uint32_t l3_if,
 		a_uint32_t mtu, a_uint32_t mru)
@@ -1788,7 +1761,6 @@ adpt_hppe_ip_intf_dmac_check_get(a_uint32_t dev_id, a_uint32_t l3_if, a_bool_t *
 
 	return rv;
 }
-#endif
 
 sw_error_t
 adpt_hppe_ip_intf_macaddr_add(a_uint32_t dev_id, a_uint32_t l3_if, fal_intf_macaddr_t *mac_entry)
@@ -2097,12 +2069,10 @@ sw_error_t adpt_hppe_ip_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_ip_global_ctrl_set = adpt_hppe_ip_global_ctrl_set;
 		p_adpt_api->adpt_ip_intf_mtu_mru_set = adpt_hppe_ip_intf_mtu_mru_set;
 		p_adpt_api->adpt_ip_intf_mtu_mru_get = adpt_hppe_ip_intf_mtu_mru_get;
-#if defined(APPE)
 		p_adpt_api->adpt_ip6_intf_mtu_mru_set = adpt_hppe_ip6_intf_mtu_mru_set;
 		p_adpt_api->adpt_ip6_intf_mtu_mru_get = adpt_hppe_ip6_intf_mtu_mru_get;
 		p_adpt_api->adpt_ip_intf_dmac_check_set = adpt_hppe_ip_intf_dmac_check_set;
 		p_adpt_api->adpt_ip_intf_dmac_check_get = adpt_hppe_ip_intf_dmac_check_get;
-#endif
 		p_adpt_api->adpt_ip_intf_macaddr_add = adpt_hppe_ip_intf_macaddr_add;
 		p_adpt_api->adpt_ip_intf_macaddr_del = adpt_hppe_ip_intf_macaddr_del;
 		p_adpt_api->adpt_ip_intf_macaddr_get_first = adpt_hppe_ip_intf_macaddr_get;

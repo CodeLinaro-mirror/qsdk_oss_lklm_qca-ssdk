@@ -12,9 +12,7 @@
 #include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
-#if defined(APPE)
 #include "adpt_appe_servcode.h"
-#endif
 #if defined(MPPE)
 #include "adpt_mppe_servcode.h"
 #endif
@@ -67,9 +65,8 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	eg_service_tbl.bf.tx_counting_en = (entry->bypass_bitmap[2] >> 2) & 0x1;
 	SW_RTN_ON_ERROR(hppe_eg_service_tbl_set(dev_id, servcode_index, &eg_service_tbl));
 
-#if defined(APPE)
 	SW_RTN_ON_ERROR(adpt_appe_servcode_tl_config_set(dev_id, servcode_index, entry));
-#endif
+
 	return SW_OK;
 }
 
@@ -112,9 +109,8 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	entry->offset_sel = eg_service_tbl.bf.offset_sel;
 	entry->bypass_bitmap[2] |= eg_service_tbl.bf.tx_counting_en << 2;
 
-#if defined (APPE)
 	SW_RTN_ON_ERROR(adpt_appe_servcode_tl_config_get(dev_id, servcode_index, entry));
-#endif
+
 	return SW_OK;
 }
 

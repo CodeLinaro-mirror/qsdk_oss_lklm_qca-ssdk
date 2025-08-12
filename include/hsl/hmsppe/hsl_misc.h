@@ -48,13 +48,7 @@ enum {
 
 /*[table] */
 #define FLOW_HOST_TBL_RD_RSLT_DATA
-#if defined(JHPPE)
 #define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x6f8
-#elif defined(APPE)
-#define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x6ec
-#else
-#define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x494
-#endif
 #define FLOW_HOST_TBL_RD_RSLT_DATA_NUM     10
 #define FLOW_HOST_TBL_RD_RSLT_DATA_INC     0x4
 #define FLOW_HOST_TBL_RD_RSLT_DATA_TYPE    REG_TYPE_RO
@@ -62,30 +56,15 @@ enum {
 
 /*[table] */
 #define IN_FLOW_TBL_OP_DATA
-#if defined(APPE)
 #define IN_FLOW_TBL_OP_DATA_ADDRESS 0x550
-#if defined(JHPPE)
 #define IN_FLOW_TBL_OP_DATA_NUM     12
-#else
-#define IN_FLOW_TBL_OP_DATA_NUM     11
-#endif
-#else
-#define IN_FLOW_TBL_OP_DATA_ADDRESS 0x3c0
-#define IN_FLOW_TBL_OP_DATA_NUM     9
-#endif
 #define IN_FLOW_TBL_OP_DATA_INC     0x4
 #define IN_FLOW_TBL_OP_DATA_TYPE    REG_TYPE_RW
 #define IN_FLOW_TBL_OP_DATA_DEFAULT 0x0
 
 /*[register] HOST_TBL_OP_DATA0*/
 #define HOST_TBL_OP_DATA
-#if defined(JHPPE)
 #define HOST_TBL_OP_DATA_ADDRESS 0x744
-#elif defined(APPE)
-#define HOST_TBL_OP_DATA_ADDRESS 0x738
-#else
-#define HOST_TBL_OP_DATA_ADDRESS 0x4c0
-#endif
 #define HOST_TBL_OP_DATA_NUM     10
 #define HOST_TBL_OP_DATA_INC     0x4
 #define HOST_TBL_OP_DATA_TYPE    REG_TYPE_RW
@@ -93,13 +72,7 @@ enum {
 
 /*[table] */
 #define FLOW_HOST_TBL_OP_DATA
-#if defined(JHPPE)
 #define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x590
-#elif defined(APPE)
-#define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x58c
-#else
-#define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x3e4
-#endif
 #define FLOW_HOST_TBL_OP_DATA_NUM     10
 #define FLOW_HOST_TBL_OP_DATA_INC     0x4
 #define FLOW_HOST_TBL_OP_DATA_TYPE    REG_TYPE_RW
@@ -107,44 +80,22 @@ enum {
 
 /*[table] */
 #define IN_FLOW_TBL_RD_OP_DATA
-#if defined(JHPPE)
 #define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x618
 #define IN_FLOW_TBL_RD_OP_DATA_NUM     12
-#elif defined(APPE)
-#define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x614
-#define IN_FLOW_TBL_RD_OP_DATA_NUM     11
-#else
-#define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x41c
-#define IN_FLOW_TBL_RD_OP_DATA_NUM     9
-#endif
 #define IN_FLOW_TBL_RD_OP_DATA_INC     0x4
 #define IN_FLOW_TBL_RD_OP_DATA_TYPE    REG_TYPE_RW
 #define IN_FLOW_TBL_RD_OP_DATA_DEFAULT 0x0
 
 #define IN_FLOW_TBL_RD_RSLT_DATA
-#if defined(JHPPE)
 #define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x6b8
 #define IN_FLOW_TBL_RD_RSLT_DATA_NUM     12
-#elif defined(APPE)
-#define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x6b0
-#define IN_FLOW_TBL_RD_RSLT_DATA_NUM     11
-#else
-#define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x470
-#define IN_FLOW_TBL_RD_RSLT_DATA_NUM     9
-#endif
 #define IN_FLOW_TBL_RD_RSLT_DATA_INC     0x4
 #define IN_FLOW_TBL_RD_RSLT_DATA_TYPE    REG_TYPE_RO
 #define IN_FLOW_TBL_RD_RSLT_DATA_DEFAULT 0x0
 
 /*[table] */
 #define HOST_TBL_RD_OP_DATA
-#if defined(JHPPE)
 #define HOST_TBL_RD_OP_DATA_ADDRESS 0x7a4
-#elif defined(APPE)
-#define HOST_TBL_RD_OP_DATA_ADDRESS 0x798
-#else
-#define HOST_TBL_RD_OP_DATA_ADDRESS 0x4f0
-#endif
 #define HOST_TBL_RD_OP_DATA_NUM     10
 #define HOST_TBL_RD_OP_DATA_INC     0x4
 #define HOST_TBL_RD_OP_DATA_TYPE    REG_TYPE_RW
@@ -152,13 +103,7 @@ enum {
 
 /*[register]*/
 #define HOST_TBL_RD_RSLT_DATA
-#if defined(JHPPE)
 #define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x7f0
-#elif defined(APPE)
-#define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x7e4
-#else
-#define HOST_TBL_RD_RSLT_DATA_ADDRESS 0x51c
-#endif
 #define HOST_TBL_RD_RSLT_DATA_NUM     10
 #define HOST_TBL_RD_RSLT_DATA_INC     0x4
 #define HOST_TBL_RD_RSLT_DATA_TYPE    REG_TYPE_RO
@@ -166,13 +111,7 @@ enum {
 
 /*[register] FLOW_HOST_TBL_RD_OP_DATA*/
 #define FLOW_HOST_TBL_RD_OP_DATA
-#if defined(JHPPE)
 #define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x658
-#elif defined(APPE)
-#define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x650
-#else
-#define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x440
-#endif
 #define FLOW_HOST_TBL_RD_OP_DATA_NUM     10
 #define FLOW_HOST_TBL_RD_OP_DATA_INC     0x4
 #define FLOW_HOST_TBL_RD_OP_DATA_TYPE    REG_TYPE_RW
@@ -1256,15 +1195,7 @@ appe_l2_vp_port_tbl_physical_port_set(
 		a_uint32_t index,
 		a_uint32_t value);
 //cppe_qos.h
-#if defined(MRPPE)
 #define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	4096
-#elif defined(MPPE)
-#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	2048
-#elif defined(APPE)
-#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	4096
-#else
-#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	2048
-#endif
 #define QOS_MAPPING_DSCP_TBL_MAX_ENTRY	256
 #define QOS_MAPPING_PCP_TBL_MAX_ENTRY	16
 #define QOS_MAPPING_TBL_MAX_GROUP	2

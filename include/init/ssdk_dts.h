@@ -126,11 +126,9 @@ typedef struct
 } ssdk_reg_map_info;
 
 /* DTS info for get */
-#ifdef HPPE
 #ifdef IN_QOS
 a_uint8_t ssdk_tm_tick_mode_get(a_uint32_t dev_id);
 ssdk_dt_scheduler_cfg* ssdk_bootup_shceduler_cfg_get(a_uint32_t dev_id);
-#endif
 #endif
 #ifdef IN_BM
 a_uint8_t ssdk_bm_tick_mode_get(a_uint32_t dev_id);

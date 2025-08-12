@@ -20,16 +20,9 @@
 #if defined DESS
 #include "dess_init.h"
 #endif
-#if defined HPPE
 #include "hppe_init.h"
-#endif
 #if defined MHT
 #include "mht_init.h"
-#endif
-#if defined SCOMPHY
-/*qca808x_start*/
-#include "scomphy_init.h"
-/*qca808x_end*/
 #endif
 /*qca808x_start*/
 #include "sw_api.h"
@@ -70,36 +63,7 @@ static inline sw_error_t hsl_set_current_chip_type(a_uint32_t dev_id, ssdk_chip_
 		return SW_OUT_OF_RANGE;
 
 	SSDK_CURRENT_CHIP_TYPE[dev_id] = chip_type;
-	if (SSDK_CURRENT_CHIP_TYPE[dev_id] == CHIP_UNSPECIFIED)
-	{
-		/*qca808x_end*/
-#if defined(ISIS)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_ISIS;
-#elif defined(ISISC)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_ISISC;
-#elif defined(MHT)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_MHT;
-#elif defined(DESS)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_DESS;
-#elif defined(APPE)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_APPE;
-#elif defined(HPPE)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_HPPE;
-#elif defined(MRPPE)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_MRPPE;
-#elif defined(JHPPE)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_JHPPE;
-#elif defined(HMSPPE)
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_HMSPPE;
-#elif defined(SCOMPHY)
-		/*qca808x_start*/
-		SSDK_CURRENT_CHIP_TYPE[dev_id] = CHIP_SCOMPHY;
-		/*qca808x_end*/
-#else
-		rv = SW_FAIL;
-#endif
-		/*qca808x_start*/
-	}
+
 	return rv;
 }
 
@@ -184,31 +148,12 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
             rv = mht_init(dev_id, cfg);
 #endif
             break;
-        case CHIP_DESS:
-#if defined DESS
-            rv = dess_init(dev_id, cfg);
-#endif
-            break;
 	case CHIP_HMSPPE:
 	case CHIP_JHPPE:
         case CHIP_MRPPE:
         case CHIP_APPE:
-        case CHIP_HPPE:
-#if defined HPPE
             rv = hppe_init(dev_id, cfg);
-#endif
             break;
-/*qca808x_start*/
-	case CHIP_SCOMPHY:
-/*qca808x_end*/
-#if defined SCOMPHY
-/*qca808x_start*/
-	    rv = scomphy_init(dev_id, cfg);
-/*qca808x_end*/
-#endif
-/*qca808x_start*/
-	    break;
-/*qca808x_end*/
         case CHIP_UNSPECIFIED:
 #if defined ISIS
             rv = isis_init(dev_id, cfg);

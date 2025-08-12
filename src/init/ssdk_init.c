@@ -63,16 +63,9 @@
 #include "ref_vsi.h"
 #include "shell.h"
 #include "adpt.h"
-#ifdef HPPE
 #include "ssdk_hppe.h"
 #include "adpt_hppe.h"
-#endif
-#ifdef APPE
 #include "ssdk_appe.h"
-#endif
-#ifdef SCOMPHY
-#include "ssdk_scomphy.h"
-#endif
 #ifdef IN_NETLINK
 #include "ssdk_netlink.h"
 #endif
@@ -1155,7 +1148,6 @@ qca_fdb_sw_sync_work_stop(struct qca_phy_priv *priv, fal_pbmp_t port_map)
 	SSDK_DEBUG("fdb_sw_sync_port_map 0x%x\n", priv->fdb_sw_sync_port_map);
 }
 
-#if defined(APPE)
 sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 {
 	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
@@ -1179,7 +1171,6 @@ sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 	return rv;
 }
 EXPORT_SYMBOL(ssdk_ppe_hw_recover);
-#endif
 
 #if defined(IN_SWCONFIG)
 static int qca_switchdev_register(struct qca_phy_priv *priv)
@@ -1210,24 +1201,12 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 		case QCA_VER_JHPPE:
 		case QCA_VER_HMSPPE:
 		case QCA_VER_HPPE:
-#ifdef HPPE
 			sw_dev->name = "QCA "PPE_STR;
 			sw_dev->alias = "QCA "PPE_STR;
-#endif
 			break;
 		case QCA_VER_MHT:
 			sw_dev->name = "QCA MHT";
 			sw_dev->alias = "QCA MHT";
-			break;
-		case QCA_VER_SCOMPHY:
-#ifdef MP
-			if(adapt_scomphy_revision_get(priv->device_id)
-				== MP_GEPHY)
-			{
-				sw_dev->name = "QCA MP";
-				sw_dev->alias = "QCA MP";
-			}
-#endif
 			break;
 		default:
 			sw_dev->name = "unknown switch";
@@ -1297,7 +1276,7 @@ static struct notifier_block ssdk_dsa_notifier_nb = {
 };
 #endif
 
-#if defined(DESS) || defined(HPPE) || defined (ISISC) || defined (ISIS) || defined(MP) || defined(MHT)
+#if defined(APPE) || defined (ISISC) || defined (ISIS) || defined(MHT)
 static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 {
 	struct qca_phy_priv *priv;
@@ -1307,18 +1286,10 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 
 	priv->mii_read = qca_mii_read;
 	priv->mii_write = qca_mii_write;
-#ifdef MP
-	if(chip_type == CHIP_SCOMPHY)
-	{
-		priv->version = QCA_VER_SCOMPHY;
-	}
-	else
-#endif
-	{
-		if (fal_reg_get(dev_id, 0, (a_uint8_t *)&chip_id, 4) == SW_OK) {
-			priv->version = ((chip_id >> 8) & 0xff);
-			priv->revision = (chip_id & 0xff);
-		}
+
+	if (fal_reg_get(dev_id, 0, (a_uint8_t *)&chip_id, 4) == SW_OK) {
+		priv->version = ((chip_id >> 8) & 0xff);
+		priv->revision = (chip_id & 0xff);
 	}
 
 	mutex_init(&priv->reg_mutex);
@@ -1340,7 +1311,6 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 	{
 		qm_err_check_work_start(priv);
 
-#ifdef HPPE
 		if (_ssdk_mac_sw_sync_chip_check(priv) != SW_OK) {
 			return 0;
 		}
@@ -1351,9 +1321,8 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 					priv->version, priv->revision);
 			return ret;
 		}
-#endif
 	}
-#if defined(HPPE) || defined(MHT)
+#if defined(APPE) || defined(MHT)
 	ret = qca_fdb_sw_sync_work_init(priv);
 	if (ret != 0) {
 		SSDK_ERROR("qca_fdb_sw_sync_work_init failed on chip 0x%02x%02x\n",
@@ -1408,9 +1377,7 @@ static int ssdk_switch_unregister(a_uint32_t dev_id)
 
 	if (priv->link_polling_required) {
 		qm_err_check_work_stop(priv);
-#ifdef HPPE
 		ssdk_mac_sw_sync_work_stop(dev_id);
-#endif
 	}
 
 	if (priv->interrupt_no > 0)
@@ -1666,11 +1633,6 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 {
 	int rv = 0;
 	ssdk_init_cfg cfg;
-#ifdef MP
-	a_uint32_t port_id = 0, dev_id = 0;
-	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
-	adpt_api_t *p_api = adpt_api_ptr_get(dev_id);
-#endif
 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
 
 	ssdk_cfg_default_init(&cfg);
@@ -1706,27 +1668,6 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 				}
 			}
 			break;
-#ifdef MP
-		case NETDEV_CHANGE:
-			if ((cfg.chip_type == CHIP_SCOMPHY) &&
-				(cfg.phy_id == MP_GEPHY)) {
-				if ((p_api == NULL) || (p_api->adpt_port_netdev_notify_set == NULL)
-					|| (priv == NULL)) {
-					SSDK_ERROR("Failed to get pointer\n");
-					return NOTIFY_DONE;
-				}
-				if (dev->phydev != NULL) {
-					port_id = qca_ssdk_phydev_to_port(priv->device_id,
-						dev->phydev);
-					rv = p_api->adpt_port_netdev_notify_set(priv, port_id);
-					if (rv) {
-						SSDK_ERROR("netdev change notify failed\n");
-						return NOTIFY_DONE;
-					}
-				}
-			}
-			break;
-#endif
 		case NETDEV_REGISTER:
 			if (strstr(dev->name, "eth") && !(dev->priv_flags & IFF_802_1Q_VLAN))
 				ssdk_netdev_switch_init(dev);
@@ -1910,7 +1851,6 @@ static int __init regi_init(void)
 			case CHIP_JHPPE:
 			case CHIP_MRPPE:
 			case CHIP_APPE:
-#if defined(APPE)
 				if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT4;
 				else if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
@@ -1925,25 +1865,8 @@ static int __init regi_init(void)
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
-#endif
 				break;
 			case CHIP_UNSPECIFIED:
-				break;
-			case CHIP_SCOMPHY:
-#if defined(SCOMPHY)
-					rv = qca_scomphy_hw_init(&cfg, dev_id);
-					SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-#if defined(MP)
-					if(cfg.phy_id == MP_GEPHY)
-					{
-						qca_phy_priv_global[dev_id]->ports_num =
-							SSDK_PHYSICAL_PORT3;
-						rv = ssdk_switch_register(dev_id, cfg.chip_type);
-						SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-					}
-#endif
-					SSDK_INFO("Initializing SCOMPHY Done!!\n");
-#endif
 				break;
 			default:
 				break;
@@ -1993,7 +1916,7 @@ regi_exit(void)
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		ssdk_driver_unregister(dev_id);
-#if defined(DESS) || defined(HPPE) || defined(ISISC) || defined(ISIS) || defined(MP)
+#if defined(APPE) || defined(ISISC) || defined(ISIS)
 		if (qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered == A_TRUE)
 			ssdk_switch_unregister(dev_id);
 #endif

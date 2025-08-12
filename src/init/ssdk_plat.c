@@ -14,9 +14,7 @@
 #include "ssdk_init.h"
 /*qca808x_end*/
 #include "ssdk_dts.h"
-#if (defined(HPPE) || defined(MP))
 #include "hppe_init.h"
-#endif
 #include <linux/kconfig.h>
 /*qca808x_start*/
 #include <linux/version.h>
@@ -59,14 +57,9 @@
 
 #include "hsl_port_prop.h"
 /*qca808x_start*/
-#ifdef HPPE
 #include "hppe_portctrl_reg.h"
 #include "hppe_xgportctrl_reg.h"
 #include "hppe_reg_access.h"
-#endif
-#ifdef MP
-#include "mp_portctrl_reg.h"
-#endif
 extern struct qca_phy_priv **qca_phy_priv_global;
 /*qca808x_end*/
 
@@ -597,7 +590,6 @@ sw_error_t
 qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
 {
-#if (defined(HPPE) || defined(MP))
 	uint32_t reg_val = 0;
 	void __iomem *hppe_uniphy_base = NULL;
 	a_uint32_t reg_addr1, reg_addr2;
@@ -636,7 +628,7 @@ qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		reg_val = readl(hppe_uniphy_base + reg_addr);
 		aos_mem_copy(reg_data, &reg_val, sizeof (a_uint32_t));
 	}
-#endif
+
 	return 0;
 }
 
@@ -644,7 +636,6 @@ sw_error_t
 qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
 {
-#if (defined(HPPE) || defined(MP))
 	void __iomem *hppe_uniphy_base = NULL;
 	a_uint32_t reg_addr1, reg_addr2;
 	uint32_t reg_val = 0;
@@ -682,7 +673,7 @@ qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		aos_mem_copy(&reg_val, reg_data, sizeof (a_uint32_t));
 		writel(reg_val, hppe_uniphy_base + reg_addr);
 	}
-#endif
+
 	return 0;
 }
 /*qca808x_start*/
@@ -946,7 +937,6 @@ static ssize_t ssdk_byte_counter_set(struct device *dev,
 	return count;
 }
 
-#ifdef HPPE
 #ifdef IN_QOS
 void ssdk_dts_port_scheduler_dump(a_uint32_t dev_id)
 {
@@ -1056,7 +1046,6 @@ void ssdk_dts_l1scheduler_dump(a_uint32_t dev_id)
 	}
 }
 #endif
-#endif
 static const a_int8_t *qca_phy_feature_str[QCA_PHY_FEATURE_MAX] = {
 	"PHY_CLAUSE45",
 	"PHY_COMBO",
@@ -1136,10 +1125,8 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 #ifdef IN_BM
 		printk("        bm_tick_mode = <0x%x>\n", ssdk_bm_tick_mode_get(dev_id));
 #endif
-#ifdef HPPE
 #ifdef IN_QOS
 		printk("        tm_tick_mode = <0x%x>\n", ssdk_tm_tick_mode_get(dev_id));
-#endif
 #endif
 #ifdef IN_UNIPHY
 		printk("ess-uniphy\n");
@@ -1153,7 +1140,6 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 		else
 			printk("        uniphy_access_mode = <(null)>\n");
 #endif
-#ifdef HPPE
 #ifdef IN_QOS
 		printk("\n");
 		ssdk_dts_port_scheduler_dump(dev_id);
@@ -1163,7 +1149,6 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 		ssdk_dts_l0scheduler_dump(dev_id);
 		printk("\n");
 		ssdk_dts_l1scheduler_dump(dev_id);
-#endif
 #endif
 		printk("\n");
 		ssdk_dts_phyinfo_dump(dev_id);
@@ -1280,10 +1265,6 @@ fail:
 	return -EINVAL;
 }
 
-#ifdef MP
-#define MP_GMAC_BASE_ADDR 0xc00000
-#endif
-
 static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
 {
 	a_uint32_t mac_reg = 0, port_id = 0;
@@ -1291,24 +1272,11 @@ static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
 	mac_reg = dev->base_addr & 0xffffff;
 	if (mac_reg < NSS_MAC_CSR_BASE_ADDR)
 		return SW_MAX_NR_PORT;
-#ifdef HPPE
 	/*xgmac*/
-	if(mac_reg >= NSS_XGMAC_CSR_BASE_ADDR) {
-#ifdef APPE
+	if(mac_reg >= NSS_XGMAC_CSR_BASE_ADDR)
 		port_id = (mac_reg - NSS_XGMAC_CSR_BASE_ADDR)/MAC_TX_CONFIGURATION_INC + 1;
-#else
-		port_id = (mac_reg - NSS_XGMAC_CSR_BASE_ADDR)/MAC_TX_CONFIGURATION_INC + 5;
-#endif
-	}
 	else
-#endif
-	{
-#ifdef MP
-		port_id = (mac_reg - MP_GMAC_BASE_ADDR)/MAC_CONFIGURATION_INC + 1;
-#else
 		port_id = (mac_reg - NSS_MAC_CSR_BASE_ADDR)/MAC_ENABLE_INC + 1;
-#endif
-	}
 
 	return port_id;
 }
@@ -1649,10 +1617,8 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 			SSDK_INFO("Enable ess clk\n");
 			clk_prepare_enable(ess_clk);
 		} else if (!IS_ERR(cmn_clk)) {
-#if defined(HPPE) || defined(MP)
 			/* clock ID cmn_ahb_clk defined in DTS */
 			ssdk_gcc_clock_init();
-#endif
 		}
 
 		cfg->reg_mode = HSL_HEADER;
@@ -1685,9 +1651,7 @@ ssdk_plat_exit(a_uint32_t dev_id)
 		iounmap(qca_phy_priv_global[dev_id]->hw_addr);
 		cmn_clk = ssdk_dts_cmnclk_get(dev_id);
 		if (!IS_ERR(cmn_clk)) {
-#if defined(HPPE) || defined(MP)
 			ssdk_gcc_clock_exit();
-#endif
 		}
 	}
 

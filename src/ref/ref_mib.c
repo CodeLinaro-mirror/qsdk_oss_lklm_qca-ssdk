@@ -1,19 +1,8 @@
 /*
- * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+* Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
+* Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+* SPDX-License-Identifier: ISC
+*/
 
 #include "sw.h"
 #include "ssdk_init.h"
@@ -105,7 +94,6 @@ qca_ar8327_sw_set_port_reset_mib(struct switch_dev *dev,
     return 0;
 }
 
-#ifdef HPPE
 static int qca_ar8327_sw_print_xgport_mib(struct switch_dev *dev,
 	const struct switch_attr *attr, struct switch_val *val)
 {
@@ -276,7 +264,6 @@ static int qca_ar8327_sw_print_xgport_mib(struct switch_dev *dev,
 
 	return 0;
 }
-#endif
 
 int
 qca_ar8327_sw_get_port_mib(struct switch_dev *dev,
@@ -293,15 +280,13 @@ qca_ar8327_sw_get_port_mib(struct switch_dev *dev,
     port = val->port_vlan;
     if (port >= dev->ports)
         return -EINVAL;
-#ifdef HPPE
-    if ((priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE ||
+    if ((priv->version == QCA_VER_APPE ||
         priv->version == QCA_VER_MRPPE) &&
         qca_hppe_port_mac_type_get(priv->device_id, port) == PORT_XGMAC_TYPE)
     {
         qca_ar8327_sw_print_xgport_mib(dev, attr, val);
         return 0;
     }
-#endif
     mutex_lock(&priv->mib_lock);
     _qca_ar8327_sw_capture_port_counter(dev, port);
     pos = port * (sizeof(fal_mib_counter_t)/sizeof(a_uint64_t));

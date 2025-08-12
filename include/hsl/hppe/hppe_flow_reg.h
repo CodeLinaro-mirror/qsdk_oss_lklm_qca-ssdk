@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2016-2017, 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 #if defined(CONFIG_CPU_BIG_ENDIAN)
 #include "hppe_flow_reg_be.h"
@@ -27,19 +16,12 @@
 
 /*[register] FLOW_CTRL0*/
 #define FLOW_CTRL0
-#if defined(APPE)
 #define FLOW_CTRL0_ADDRESS 0x4a8
-#else
-#define FLOW_CTRL0_ADDRESS 0x368
-#endif
 #define FLOW_CTRL0_NUM     1
 #define FLOW_CTRL0_INC     0x4
 #define FLOW_CTRL0_TYPE    REG_TYPE_RW
-#if defined(APPE)
 #define FLOW_CTRL0_DEFAULT 0x96000c89
-#else
-#define FLOW_CTRL0_DEFAULT 0xc89
-#endif
+
 	/*[field] FLOW_EN*/
 	#define FLOW_CTRL0_FLOW_EN
 	#define FLOW_CTRL0_FLOW_EN_OFFSET  0
@@ -65,13 +47,11 @@
 	#define FLOW_CTRL0_FLOW_AGE_TIMER_UNIT_OFFSET  21
 	#define FLOW_CTRL0_FLOW_AGE_TIMER_UNIT_LEN     2
 	#define FLOW_CTRL0_FLOW_AGE_TIMER_UNIT_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] CLK_FREQ_INMHZ*/
 	#define FLOW_CTRL0_CLK_FREQ_INMHZ
 	#define FLOW_CTRL0_CLK_FREQ_INMHZ_OFFSET  23
 	#define FLOW_CTRL0_CLK_FREQ_INMHZ_LEN     9
 	#define FLOW_CTRL0_CLK_FREQ_INMHZ_DEFAULT 0x12c
-#endif
 
 struct flow_ctrl0 {
 	a_uint32_t  flow_en:1;
@@ -79,11 +59,7 @@ struct flow_ctrl0 {
 	a_uint32_t  flow_hash_mode_1:2;
 	a_uint32_t  flow_age_timer:16;
 	a_uint32_t  flow_age_timer_unit:2;
-#if defined(APPE)
 	a_uint32_t  clk_freq_inmhz:9;
-#else
-	a_uint32_t  _reserved0:9;
-#endif
 };
 
 union flow_ctrl0_u {
@@ -93,11 +69,7 @@ union flow_ctrl0_u {
 
 /*[register] FLOW_CTRL1*/
 #define FLOW_CTRL1
-#if defined(APPE)
 #define FLOW_CTRL1_ADDRESS 0x4bc
-#else
-#define FLOW_CTRL1_ADDRESS 0x36c
-#endif
 #define FLOW_CTRL1_NUM     3
 #define FLOW_CTRL1_INC     0x4
 #define FLOW_CTRL1_TYPE    REG_TYPE_RW
@@ -264,11 +236,7 @@ union flow_ctrl1_u {
 
 /*[register] IN_FLOW_TBL_OP*/
 #define IN_FLOW_TBL_OP
-#if defined(APPE)
 #define IN_FLOW_TBL_OP_ADDRESS 0x528
-#else
-#define IN_FLOW_TBL_OP_ADDRESS 0x3b8
-#endif
 #define IN_FLOW_TBL_OP_NUM     1
 #define IN_FLOW_TBL_OP_INC     0x4
 #define IN_FLOW_TBL_OP_TYPE    REG_TYPE_RW
@@ -339,11 +307,7 @@ union in_flow_tbl_op_u {
 
 /*[register] IN_FLOW_HOST_TBL_OP*/
 #define IN_FLOW_HOST_TBL_OP
-#if defined(APPE)
 #define IN_FLOW_HOST_TBL_OP_ADDRESS 0x53c
-#else
-#define IN_FLOW_HOST_TBL_OP_ADDRESS 0x3bc
-#endif
 #define IN_FLOW_HOST_TBL_OP_NUM     1
 #define IN_FLOW_HOST_TBL_OP_INC     0x4
 #define IN_FLOW_HOST_TBL_OP_TYPE    REG_TYPE_RW
@@ -372,13 +336,8 @@ union in_flow_host_tbl_op_u {
 
 /*[register] IN_FLOW_TBL_OP_DATA0*/
 #define IN_FLOW_TBL_OP_DATA
-#if defined(APPE)
 #define IN_FLOW_TBL_OP_DATA_ADDRESS 0x550
 #define IN_FLOW_TBL_OP_DATA_NUM     11
-#else
-#define IN_FLOW_TBL_OP_DATA_ADDRESS 0x3c0
-#define IN_FLOW_TBL_OP_DATA_NUM     9
-#endif
 #define IN_FLOW_TBL_OP_DATA_INC     0x4
 #define IN_FLOW_TBL_OP_DATA_TYPE    REG_TYPE_RW
 #define IN_FLOW_TBL_OP_DATA_DEFAULT 0x0
@@ -399,11 +358,7 @@ union in_flow_tbl_op_data_u {
 
 /*[register] FLOW_HOST_TBL_OP_DATA*/
 #define FLOW_HOST_TBL_OP_DATA
-#if defined(APPE)
 #define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x58c
-#else
-#define FLOW_HOST_TBL_OP_DATA_ADDRESS 0x3e4
-#endif
 #define FLOW_HOST_TBL_OP_DATA_NUM     10
 #define FLOW_HOST_TBL_OP_DATA_INC     0x4
 #define FLOW_HOST_TBL_OP_DATA_TYPE    REG_TYPE_RW
@@ -425,11 +380,7 @@ union flow_host_tbl_op_data_u {
 
 /*[register] IN_FLOW_TBL_OP_RSLT*/
 #define IN_FLOW_TBL_OP_RSLT
-#if defined(APPE)
 #define IN_FLOW_TBL_OP_RSLT_ADDRESS 0x5c4
-#else
-#define IN_FLOW_TBL_OP_RSLT_ADDRESS 0x40c
-#endif
 #define IN_FLOW_TBL_OP_RSLT_NUM     10
 #define IN_FLOW_TBL_OP_RSLT_INC     0x4
 #define IN_FLOW_TBL_OP_RSLT_TYPE    REG_TYPE_RO
@@ -470,11 +421,7 @@ union in_flow_tbl_op_rslt_u {
 
 /*[register] FLOW_HOST_TBL_OP_RSLT*/
 #define FLOW_HOST_TBL_OP_RSLT
-#if defined(APPE)
 #define FLOW_HOST_TBL_OP_RSLT_ADDRESS 0x5d8
-#else
-#define FLOW_HOST_TBL_OP_RSLT_ADDRESS 0x410
-#endif
 #define FLOW_HOST_TBL_OP_RSLT_NUM     1
 #define FLOW_HOST_TBL_OP_RSLT_INC     0x4
 #define FLOW_HOST_TBL_OP_RSLT_TYPE    REG_TYPE_RO
@@ -497,11 +444,7 @@ union flow_host_tbl_op_rslt_u {
 
 /*[register] IN_FLOW_TBL_RD_OP*/
 #define IN_FLOW_TBL_RD_OP
-#if defined(APPE)
 #define IN_FLOW_TBL_RD_OP_ADDRESS 0x5ec
-#else
-#define IN_FLOW_TBL_RD_OP_ADDRESS 0x414
-#endif
 #define IN_FLOW_TBL_RD_OP_NUM     1
 #define IN_FLOW_TBL_RD_OP_INC     0x4
 #define IN_FLOW_TBL_RD_OP_TYPE    REG_TYPE_RW
@@ -572,11 +515,7 @@ union in_flow_tbl_rd_op_u {
 
 /*[register] IN_FLOW_HOST_TBL_RD_OP*/
 #define IN_FLOW_HOST_TBL_RD_OP
-#if defined(APPE)
 #define IN_FLOW_HOST_TBL_RD_OP_ADDRESS 0x600
-#else
-#define IN_FLOW_HOST_TBL_RD_OP_ADDRESS 0x418
-#endif
 #define IN_FLOW_HOST_TBL_RD_OP_NUM     1
 #define IN_FLOW_HOST_TBL_RD_OP_INC     0x4
 #define IN_FLOW_HOST_TBL_RD_OP_TYPE    REG_TYPE_RW
@@ -605,13 +544,8 @@ union in_flow_host_tbl_rd_op_u {
 
 /*[register] IN_FLOW_TBL_RD_OP_DATA*/
 #define IN_FLOW_TBL_RD_OP_DATA
-#if defined(APPE)
 #define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x614
 #define IN_FLOW_TBL_RD_OP_DATA_NUM     11
-#else
-#define IN_FLOW_TBL_RD_OP_DATA_ADDRESS 0x41c
-#define IN_FLOW_TBL_RD_OP_DATA_NUM     9
-#endif
 #define IN_FLOW_TBL_RD_OP_DATA_INC     0x4
 #define IN_FLOW_TBL_RD_OP_DATA_TYPE    REG_TYPE_RW
 #define IN_FLOW_TBL_RD_OP_DATA_DEFAULT 0x0
@@ -632,11 +566,7 @@ union in_flow_tbl_rd_op_data_u {
 
 /*[register] FLOW_HOST_TBL_RD_OP_DATA*/
 #define FLOW_HOST_TBL_RD_OP_DATA
-#if defined(APPE)
 #define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x650
-#else
-#define FLOW_HOST_TBL_RD_OP_DATA_ADDRESS 0x440
-#endif
 #define FLOW_HOST_TBL_RD_OP_DATA_NUM     10
 #define FLOW_HOST_TBL_RD_OP_DATA_INC     0x4
 #define FLOW_HOST_TBL_RD_OP_DATA_TYPE    REG_TYPE_RW
@@ -658,11 +588,7 @@ union flow_host_tbl_rd_op_data_u {
 
 /*[register] IN_FLOW_TBL_RD_OP_RSLT*/
 #define IN_FLOW_TBL_RD_OP_RSLT
-#if defined(APPE)
 #define IN_FLOW_TBL_RD_OP_RSLT_ADDRESS 0x688
-#else
-#define IN_FLOW_TBL_RD_OP_RSLT_ADDRESS 0x468
-#endif
 #define IN_FLOW_TBL_RD_OP_RSLT_NUM     1
 #define IN_FLOW_TBL_RD_OP_RSLT_INC     0x4
 #define IN_FLOW_TBL_RD_OP_RSLT_TYPE    REG_TYPE_RO
@@ -703,11 +629,7 @@ union in_flow_tbl_rd_op_rslt_u {
 
 /*[register] FLOW_HOST_TBL_RD_OP_RSLT*/
 #define FLOW_HOST_TBL_RD_OP_RSLT
-#if defined(APPE)
 #define FLOW_HOST_TBL_RD_OP_RSLT_ADDRESS 0x69c
-#else
-#define FLOW_HOST_TBL_RD_OP_RSLT_ADDRESS 0x46c
-#endif
 #define FLOW_HOST_TBL_RD_OP_RSLT_NUM     1
 #define FLOW_HOST_TBL_RD_OP_RSLT_INC     0x4
 #define FLOW_HOST_TBL_RD_OP_RSLT_TYPE    REG_TYPE_RO
@@ -730,13 +652,8 @@ union flow_host_tbl_rd_op_rslt_u {
 
 /*[register] IN_FLOW_TBL_RD_RSLT_DATA*/
 #define IN_FLOW_TBL_RD_RSLT_DATA
-#if defined(APPE)
 #define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x6b0
 #define IN_FLOW_TBL_RD_RSLT_DATA_NUM     11
-#else
-#define IN_FLOW_TBL_RD_RSLT_DATA_ADDRESS 0x470
-#define IN_FLOW_TBL_RD_RSLT_DATA_NUM     9
-#endif
 #define IN_FLOW_TBL_RD_RSLT_DATA_INC     0x4
 #define IN_FLOW_TBL_RD_RSLT_DATA_TYPE    REG_TYPE_RO
 #define IN_FLOW_TBL_RD_RSLT_DATA_DEFAULT 0x0
@@ -757,11 +674,7 @@ union in_flow_tbl_rd_rslt_data_u {
 
 /*[register] FLOW_HOST_TBL_RD_RSLT_DATA*/
 #define FLOW_HOST_TBL_RD_RSLT_DATA
-#if defined(APPE)
 #define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x6ec
-#else
-#define FLOW_HOST_TBL_RD_RSLT_DATA_ADDRESS 0x494
-#endif
 #define FLOW_HOST_TBL_RD_RSLT_DATA_NUM     10
 #define FLOW_HOST_TBL_RD_RSLT_DATA_INC     0x4
 #define FLOW_HOST_TBL_RD_RSLT_DATA_TYPE    REG_TYPE_RO
@@ -853,7 +766,6 @@ union flow_host_tbl_rd_rslt_data_u {
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2_OFFSET  32
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2_LEN     12
 	#define IN_FLOW_3TUPLE_TBL_NEXT_HOP2_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_3TUPLE_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_3TUPLE_TBL_VLAN_FMT_VALID_OFFSET  40
@@ -869,7 +781,6 @@ union flow_host_tbl_rd_rslt_data_u {
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT_OFFSET  42
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_3TUPLE_TBL_CVLAN_FMT_DEFAULT 0x0
-#endif
 	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_3TUPLE_TBL_PORT_VP_VALID1_OFFSET  44
@@ -915,7 +826,6 @@ union flow_host_tbl_rd_rslt_data_u {
 	#define IN_FLOW_3TUPLE_TBL_IP_PROTOCOL_OFFSET  108
 	#define IN_FLOW_3TUPLE_TBL_IP_PROTOCOL_LEN     8
 	#define IN_FLOW_3TUPLE_TBL_IP_PROTOCOL_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VPN_ID*/
 	#define IN_FLOW_3TUPLE_TBL_VPN_ID
 	#define IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET  116
@@ -931,7 +841,6 @@ union flow_host_tbl_rd_rslt_data_u {
 	#define IN_FLOW_3TUPLE_TBL_PMTU_OFFSET  125
 	#define IN_FLOW_3TUPLE_TBL_PMTU_LEN     14
 	#define IN_FLOW_3TUPLE_TBL_PMTU_DEFAULT 0x0
-#endif
 
 struct in_flow_tbl_3 {
 	a_uint32_t  valid:1;
@@ -944,7 +853,6 @@ struct in_flow_tbl_3 {
 	a_uint32_t  src_l3_if:8;
 	a_uint32_t  fwd_type:3;
 	a_uint32_t  port_vp2:8;
-#if defined(APPE)
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
@@ -954,9 +862,6 @@ struct in_flow_tbl_3 {
 	a_uint32_t  _reserved0:4;
 #else
 	a_uint32_t  _reserved0:17;
-#endif
-#else
-	a_uint32_t  _reserved0:20;
 #endif
 	a_uint32_t  de_acce:1;
 	a_uint32_t  copy_to_cpu_en:1;
@@ -969,15 +874,11 @@ struct in_flow_tbl_3 {
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:29;
-#else
-	a_uint32_t  _reserved1:20;
-#endif
 };
 
 struct in_flow_tbl_1 {
@@ -1003,15 +904,11 @@ struct in_flow_tbl_1 {
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved0:29;
-#else
-	a_uint32_t  _reserved0:20;
-#endif
 };
 
 struct in_flow_tbl_0 {
@@ -1037,15 +934,11 @@ struct in_flow_tbl_0 {
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved0:29;
-#else
-	a_uint32_t  _reserved0:20;
-#endif
 };
 
 struct in_flow_tbl_2 {
@@ -1073,23 +966,15 @@ struct in_flow_tbl_2 {
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:29;
-#else
-	a_uint32_t  _reserved1:20;
-#endif
 };
 
 union in_flow_tbl_u {
-#if defined(APPE)
 	a_uint32_t val[6];
-#else
-	a_uint32_t val[5];
-#endif
 	struct in_flow_tbl_0 bf;
 	struct in_flow_tbl_1 bf1;
 	struct in_flow_tbl_2 bf2;
@@ -1168,7 +1053,6 @@ union in_flow_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP2_OFFSET  32
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP2_LEN     8
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP2_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VLAN_FMT_VALID_OFFSET  40
@@ -1184,7 +1068,6 @@ union in_flow_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_CVLAN_FMT_OFFSET  42
 	#define IN_FLOW_IPV6_3TUPLE_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_CVLAN_FMT_DEFAULT 0x0
-#endif
 	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PORT_VP_VALID1_OFFSET  44
@@ -1220,7 +1103,6 @@ union in_flow_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_SERVICE_CODE_OFFSET  68
 	#define IN_FLOW_IPV6_3TUPLE_TBL_SERVICE_CODE_LEN     8
 	#define IN_FLOW_IPV6_3TUPLE_TBL_SERVICE_CODE_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VPN_ID*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VPN_ID
 	#define IN_FLOW_IPV6_3TUPLE_TBL_VPN_ID_OFFSET  76
@@ -1236,7 +1118,6 @@ union in_flow_tbl_u {
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PMTU_OFFSET  85
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PMTU_LEN     14
 	#define IN_FLOW_IPV6_3TUPLE_TBL_PMTU_DEFAULT 0x0
-#endif
 	/*[field] IP_PROTOCOL*/
 	#define IN_FLOW_IPV6_3TUPLE_TBL_IP_PROTOCOL
 	#define IN_FLOW_IPV6_3TUPLE_TBL_IP_PROTOCOL_OFFSET  108
@@ -1269,16 +1150,11 @@ struct in_flow_3tuple_tbl_1 {
 	a_uint32_t  ip_addr_0:20;
 	a_uint32_t  ip_addr_1:12;
 	a_uint32_t  ip_protocol:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:3;
 	a_uint32_t  pmtu_1:11;
 	a_uint32_t  _reserved1:21;
-#else
-	a_uint32_t  _reserved1_0:12;
-	a_uint32_t  _reserved1_1:32;
-#endif
 };
 
 struct in_flow_3tuple_tbl_3 {
@@ -1292,7 +1168,6 @@ struct in_flow_3tuple_tbl_3 {
 	a_uint32_t  src_l3_if:8;
 	a_uint32_t  fwd_type:3;
 	a_uint32_t  port_vp2:8;
-#if defined(APPE)
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
@@ -1303,9 +1178,6 @@ struct in_flow_3tuple_tbl_3 {
 #else
 	a_uint32_t  _reserved0:17;
 #endif
-#else
-	a_uint32_t  _reserved0:20;
-#endif
 	a_uint32_t  de_acce:1;
 	a_uint32_t  copy_to_cpu_en:1;
 	a_uint32_t  syn_toggle:1;
@@ -1315,16 +1187,11 @@ struct in_flow_3tuple_tbl_3 {
 	a_uint32_t  ip_addr_0:20;
 	a_uint32_t  ip_addr_1:12;
 	a_uint32_t  ip_protocol:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:3;
 	a_uint32_t  pmtu_1:11;
 	a_uint32_t  _reserved1:21;
-#else
-	a_uint32_t  _reserved1_0:12;
-	a_uint32_t  _reserved1_1:32;
-#endif
 };
 
 struct in_flow_3tuple_tbl_2 {
@@ -1350,16 +1217,11 @@ struct in_flow_3tuple_tbl_2 {
 	a_uint32_t  ip_addr_0:20;
 	a_uint32_t  ip_addr_1:12;
 	a_uint32_t  ip_protocol:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:3;
 	a_uint32_t  pmtu_1:11;
 	a_uint32_t  _reserved1:21;
-#else
-	a_uint32_t  _reserved1_0:12;
-	a_uint32_t  _reserved1_1:32;
-#endif
 };
 
 struct in_flow_3tuple_tbl_0 {
@@ -1383,16 +1245,11 @@ struct in_flow_3tuple_tbl_0 {
 	a_uint32_t  ip_addr_0:20;
 	a_uint32_t  ip_addr_1:12;
 	a_uint32_t  ip_protocol:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:3;
 	a_uint32_t  pmtu_1:11;
 	a_uint32_t  _reserved1:21;
-#else
-	a_uint32_t  _reserved1_0:12;
-	a_uint32_t  _reserved1_1:32;
-#endif
 };
 
 union in_flow_3tuple_tbl_u {
@@ -1475,7 +1332,6 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1_OFFSET  32
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1_LEN     12
 	#define IN_FLOW_IPV6_5TUPLE_TBL_NEXT_HOP1_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VLAN_FMT_VALID_OFFSET  40
@@ -1491,13 +1347,11 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT_OFFSET  42
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_CVLAN_FMT_DEFAULT 0x0
-#endif
 	/*[field] PORT_VP_VALID1 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1_OFFSET  44
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1_LEN     1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP_VALID1_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] L4_PORT1 reuse FWD_TYPE[0]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT1_OFFSET  44
@@ -1508,7 +1362,6 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2_OFFSET  44
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2_LEN     16
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_PORT2_DEFAULT 0x0
-#endif
 	/*[field] PORT_VP1 reuse FWD_TYPE[2]*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP1
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PORT_VP1_OFFSET  45
@@ -1539,7 +1392,6 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SERVICE_CODE_OFFSET  68
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SERVICE_CODE_LEN     8
 	#define IN_FLOW_IPV6_5TUPLE_TBL_SERVICE_CODE_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VPN_ID*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VPN_ID
 	#define IN_FLOW_IPV6_5TUPLE_TBL_VPN_ID_OFFSET  76
@@ -1555,7 +1407,6 @@ union in_flow_3tuple_tbl_u {
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PMTU_OFFSET  85
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PMTU_LEN     14
 	#define IN_FLOW_IPV6_5TUPLE_TBL_PMTU_DEFAULT 0x0
-#endif
 	/*[field] L4_SPORT*/
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT
 	#define IN_FLOW_IPV6_5TUPLE_TBL_L4_SPORT_OFFSET  108
@@ -1583,7 +1434,6 @@ struct in_flow_ipv6_5tuple_tbl_3 {
 	a_uint32_t  src_l3_if:8;
 	a_uint32_t  fwd_type:3;
 	a_uint32_t  port_vp2:8;
-#if defined(APPE)
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
@@ -1594,25 +1444,17 @@ struct in_flow_ipv6_5tuple_tbl_3 {
 #else
 	a_uint32_t  _reserved0:17;
 #endif
-#else
-	a_uint32_t  _reserved0:20;
-#endif
 	a_uint32_t  de_acce:1;
 	a_uint32_t  copy_to_cpu_en:1;
 	a_uint32_t  syn_toggle:1;
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
@@ -1635,27 +1477,18 @@ struct in_flow_ipv6_5tuple_tbl_0 {
 	a_uint32_t  src_l3_if:8;
 	a_uint32_t  fwd_type:3;
 	a_uint32_t  next_hop1:12;
-#if defined(APPE)
 	a_uint32_t  l4_port1:16;
-#else
-	a_uint32_t  _reserved0:16;
-#endif
 	a_uint32_t  de_acce:1;
 	a_uint32_t  copy_to_cpu_en:1;
 	a_uint32_t  syn_toggle:1;
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
@@ -1687,16 +1520,11 @@ struct in_flow_ipv6_5tuple_tbl_2 {
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
@@ -1719,27 +1547,18 @@ struct in_flow_ipv6_5tuple_tbl_1 {
 	a_uint32_t  src_l3_if:8;
 	a_uint32_t  fwd_type:3;
 	a_uint32_t  next_hop2:12;
-#if defined(APPE)
 	a_uint32_t  l4_port2:16;
-#else
-	a_uint32_t  _reserved0:16;
-#endif
 	a_uint32_t  de_acce:1;
 	a_uint32_t  copy_to_cpu_en:1;
 	a_uint32_t  syn_toggle:1;
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  l4_sport:16;
 	a_uint32_t  l4_dport_0:4;
 	a_uint32_t  l4_dport_1:12;
@@ -1837,7 +1656,6 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_TBL_NEXT_HOP1_OFFSET  32
 	#define IN_FLOW_TBL_NEXT_HOP1_LEN     12
 	#define IN_FLOW_TBL_NEXT_HOP1_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VLAN_FMT_VALID reuse FWD_TYPE[1]*/
 	#define IN_FLOW_TBL_VLAN_FMT_VALID
 	#define IN_FLOW_TBL_VLAN_FMT_VALID_OFFSET  40
@@ -1853,7 +1671,6 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_TBL_CVLAN_FMT_OFFSET  42
 	#define IN_FLOW_TBL_CVLAN_FMT_LEN     1
 	#define IN_FLOW_TBL_CVLAN_FMT_DEFAULT 0x0
-#endif
 	/*[field] L4_PORT2 reuse FWD_TYPE[3]*/
 	#define IN_FLOW_TBL_L4_PORT2
 	#define IN_FLOW_TBL_L4_PORT2_OFFSET  44
@@ -1914,7 +1731,6 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_TBL_L4_DPORT_OFFSET  124
 	#define IN_FLOW_TBL_L4_DPORT_LEN     16
 	#define IN_FLOW_TBL_L4_DPORT_DEFAULT 0x0
-#if defined(APPE)
 	/*[field] VPN_ID*/
 	#define IN_FLOW_TBL_VPN_ID
 	#define IN_FLOW_TBL_VPN_ID_OFFSET  140
@@ -1930,7 +1746,6 @@ union in_flow_ipv6_5tuple_tbl_u {
 	#define IN_FLOW_TBL_PMTU_OFFSET  149
 	#define IN_FLOW_TBL_PMTU_LEN     14
 	#define IN_FLOW_TBL_PMTU_DEFAULT 0x0
-#endif
 
 struct in_flow_ipv6_3tuple_tbl_1 {
 	a_uint32_t  valid:1;
@@ -1950,16 +1765,11 @@ struct in_flow_ipv6_3tuple_tbl_1 {
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  ip_protocol:8;
 	a_uint32_t  _reserved2_0:12;
 	a_uint32_t  _reserved2_1:12;
@@ -1989,16 +1799,11 @@ struct in_flow_ipv6_3tuple_tbl_0 {
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  ip_protocol:8;
 	a_uint32_t  _reserved2_0:12;
 	a_uint32_t  _reserved2_1:12;
@@ -2021,7 +1826,6 @@ struct in_flow_ipv6_3tuple_tbl_3 {
 	a_uint32_t  src_l3_if:8;
 	a_uint32_t  fwd_type:3;
 	a_uint32_t  port_vp2:8;
-#if defined(APPE)
 	a_uint32_t  vlan_fmt_valid:1;
 	a_uint32_t  svlan_fmt:1;
 	a_uint32_t  cvlan_fmt:1;
@@ -2032,25 +1836,17 @@ struct in_flow_ipv6_3tuple_tbl_3 {
 #else
 	a_uint32_t  _reserved0:17;
 #endif
-#else
-	a_uint32_t  _reserved0:20;
-#endif
 	a_uint32_t  de_acce:1;
 	a_uint32_t  copy_to_cpu_en:1;
 	a_uint32_t  syn_toggle:1;
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  ip_protocol:8;
 	a_uint32_t  _reserved2_0:12;
 	a_uint32_t  _reserved2_1:12;
@@ -2082,16 +1878,11 @@ struct in_flow_ipv6_3tuple_tbl_2 {
 	a_uint32_t  pri_profile_0:1;
 	a_uint32_t  pri_profile_1:4;
 	a_uint32_t  service_code:8;
-#if defined(APPE)
 	a_uint32_t  vpn_id:8;
 	a_uint32_t  pmtu_check_type:1;
 	a_uint32_t  pmtu_0:11;
 	a_uint32_t  pmtu_1:3;
 	a_uint32_t  _reserved1:9;
-#else
-	a_uint32_t  _reserved1_0:20;
-	a_uint32_t  _reserved1_1:12;
-#endif
 	a_uint32_t  ip_protocol:8;
 	a_uint32_t  _reserved2_0:12;
 	a_uint32_t  _reserved2_1:12;
@@ -2113,17 +1904,9 @@ union in_flow_ipv6_3tuple_tbl_u {
 
 /*[table] EG_FLOW_TREE_MAP_TBL*/
 #define EG_FLOW_TREE_MAP_TBL
-#if defined(APPE)
 #define EG_FLOW_TREE_MAP_TBL_ADDRESS 0x10000
-#else
-#define EG_FLOW_TREE_MAP_TBL_ADDRESS 0x8000
-#endif
 #define EG_FLOW_TREE_MAP_TBL_NUM     4096
-#if defined(APPE)
 #define EG_FLOW_TREE_MAP_TBL_INC     0x10
-#else
-#define EG_FLOW_TREE_MAP_TBL_INC     0x4
-#endif
 #define EG_FLOW_TREE_MAP_TBL_TYPE    REG_TYPE_RW
 #define EG_FLOW_TREE_MAP_TBL_DEFAULT 0x0
 	/*[field] TREE_ID*/
@@ -2132,7 +1915,6 @@ union in_flow_ipv6_3tuple_tbl_u {
 	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_LEN     24
 	#define EG_FLOW_TREE_MAP_TBL_TREE_ID_DEFAULT 0x0
 
-#if defined(APPE)
 #if defined(MRPPE)
 	/*[field] FLOW_COOKIE_EXT*/
 	#define EG_FLOW_TREE_MAP_TBL_FLOW_COOKIE_EXT
@@ -2160,7 +1942,6 @@ union in_flow_ipv6_3tuple_tbl_u {
 	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_OFFSET  32
 	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_LEN     1
 	#define EG_FLOW_TREE_MAP_TBL_WIFI_QOS_FLAG_DEFAULT 0x0
-#endif
 #endif
 
 #if defined(MRPPE)
@@ -2200,26 +1981,17 @@ struct eg_flow_tree_map_tbl_2 {
 	a_uint32_t  type:2;
 	a_uint32_t  _reserved1:29;
 };
-#elif defined(APPE)
+#else
 struct eg_flow_tree_map_tbl {
 	a_uint32_t  tree_id:24;
 	a_uint32_t  wifi_qos:8;
 	a_uint32_t  wifi_qos_flag:1;
 	a_uint32_t  _reserved0:31;
 };
-#else
-struct eg_flow_tree_map_tbl {
-	a_uint32_t  tree_id:24;
-	a_uint32_t  _reserved0:8;
-};
 #endif
 
 union eg_flow_tree_map_tbl_u {
-#if defined(APPE)
 	a_uint32_t val[2];
-#else
-	a_uint32_t val;
-#endif
 	struct eg_flow_tree_map_tbl bf;
 #if defined(MRPPE)
 	struct eg_flow_tree_map_tbl_1 bf1;

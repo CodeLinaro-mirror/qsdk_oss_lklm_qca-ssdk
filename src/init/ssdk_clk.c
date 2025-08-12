@@ -63,9 +63,7 @@ static struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX] = {0};
 struct device_node *rst_node = NULL;
 struct reset_control *uniphy_rsts[UNIPHY_RST_MAX] = {0};
 struct reset_control *port_rsts[SSDK_MAX_PORT_NUM * 2] = {0};
-#if defined(APPE)
 struct reset_control *port_mac_rsts[SSDK_MAX_PORT_NUM] = {0};
-#endif
 
 #if defined(SSDK_RAW_CLOCK)
 #define RST_LOOKUP(_cbc, _node_name, _rst_index, _rst_bits)	\
@@ -755,7 +753,7 @@ void ssdk_clock_rate_set_and_enable(
 {
 	struct clk *clk;
 
-#if defined(APPE) || defined(MRPPE)
+#if defined(MRPPE)
 	if ((!strcmp("uniphy0_sys_clk", clock_id)) ||
 			(!strcmp("uniphy0_ahb_clk", clock_id))) {
 		if (ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE0,
@@ -831,7 +829,6 @@ void ssdk_port_reset(
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
 		return;
 
-#if defined(APPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
@@ -845,7 +842,6 @@ void ssdk_port_reset(
 		}
 		ssdk_gcc_reset(mac_rst, action);
 	}
-#endif
 
 #if defined(MPPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
@@ -885,7 +881,6 @@ void ssdk_uniphy_clock_rate_set(
 {
 	struct clk *uniphy_clk;
 
-#if defined(APPE)
 #if defined(MRPPE)
 	if ((clock_type == NSS_PORT1_RX_CLK_E) ||
 		(clock_type == NSS_PORT1_TX_CLK_E)) {
@@ -928,7 +923,6 @@ void ssdk_uniphy_clock_rate_set(
 		}
 	}
 #endif
-#endif
 	uniphy_clk = uniphy_port_clks[clock_type];
 	if (!IS_ERR_OR_NULL(uniphy_clk)) {
 		if (rate) {
@@ -949,7 +943,6 @@ void ssdk_uniphy_clock_enable(
 {
 	struct clk *uniphy_clk;
 
-#if defined(APPE)
 #if defined(MRPPE)
 	if ((clock_type == UNIPHY0_PORT1_RX_CLK_E) ||
 		(clock_type == UNIPHY0_PORT1_TX_CLK_E)) {
@@ -985,7 +978,6 @@ void ssdk_uniphy_clock_enable(
 			return;
 		}
 	}
-#endif
 	uniphy_clk = uniphy_port_clks[clock_type];
 	if (!IS_ERR_OR_NULL(uniphy_clk)) {
 #if defined(SSDK_RAW_CLOCK)
@@ -1433,13 +1425,11 @@ void ssdk_uniphy_port5_clock_source_set(void)
 			id = SSDK_UNIPHY_INSTANCE0*2 + i;
 		} else {
 			id = SSDK_UNIPHY_INSTANCE1*2 + i;
-#if defined(APPE)
 			if (ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE1,
 				PORT_WRAPPER_MAX) == A_FALSE) {
 				SSDK_INFO("UNIPHY 1 is not available on this SKU!\n");
 				return;
 			}
-#endif
 		}
 
 		if (clk_set_parent(uniphy_port_clks[PORT5_RX_SRC_E + i],
@@ -1455,7 +1445,6 @@ void ssdk_gcc_ppe_clock_deinit(adpt_ppe_type_t chip_type)
 	ssdk_ppe_uniphy_clock_deinit(chip_type);
 }
 
-#if defined(APPE)
 static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 {
 	a_uint32_t noc_rate = 0, ppe_rate = 0;
@@ -1577,7 +1566,6 @@ void ssdk_gcc_appe_clock_init(adpt_ppe_type_t chip_type)
 	if (chip_type == APPE_TYPE)
 		ssdk_uniphy_port5_clock_source_set();
 }
-#endif
 
 void
 qca_gcc_uniphy_port_clock_set(
@@ -1592,12 +1580,10 @@ qca_gcc_uniphy_port_clock_set(
 					UNIPHY2_PORT6_TX_CLK_E, enable);
 	} else if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
 		if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx")) {
-#ifdef APPE
 			ssdk_uniphy_clock_enable(dev_id,
 					UNIPHY0_PORT5_RX_CLK_E, enable);
 			ssdk_uniphy_clock_enable(dev_id,
 					UNIPHY0_PORT5_TX_CLK_E, enable);
-#endif
 		} else {
 			ssdk_uniphy_clock_enable(dev_id,
 					UNIPHY1_PORT5_RX_CLK_E, enable);
@@ -1835,7 +1821,6 @@ static char *port_rst_ids[] = {
 };
 #endif
 
-#if defined(APPE)
 static char *port_mac_rst_ids[] = {
 	SSDK_PORT1_MAC_RESET_ID,
 	SSDK_PORT2_MAC_RESET_ID,
@@ -1844,7 +1829,6 @@ static char *port_mac_rst_ids[] = {
 	SSDK_PORT5_MAC_RESET_ID,
 	SSDK_PORT6_MAC_RESET_ID
 };
-#endif
 
 void ssdk_ppe_reset_init(a_uint32_t dev_id)
 {
@@ -1875,20 +1859,16 @@ static void ssdk_gcc_reset_ids_init(void)
 	for (i = 0; i < ARRAY_SIZE(port_rst_ids); i++)
 		port_rsts[i] = of_reset_control_get(rst_node, port_rst_ids[i]);
 
-#if defined(APPE)
 	for (i = 0; i < ARRAY_SIZE(port_mac_rst_ids); i++)
 		port_mac_rsts[i] = of_reset_control_get(rst_node, port_mac_rst_ids[i]);
-#endif
 }
 
 static void ssdk_gcc_reset_ids_deinit(void)
 {
 	a_uint32_t i;
 
-#if defined(APPE)
 	for (i = 0; i < ARRAY_SIZE(port_mac_rst_ids); i++)
 		reset_control_put(port_mac_rsts[i]);
-#endif
 
 	for (i = 0; i < ARRAY_SIZE(port_rst_ids); i++)
 		reset_control_put(port_rsts[i]);
@@ -1897,13 +1877,11 @@ static void ssdk_gcc_reset_ids_deinit(void)
 		reset_control_put(uniphy_rsts[i]);
 }
 
-#if defined(APPE)
 enum unphy_rst_type uniphy_sys_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
 	UNIPHY0_SYS_RESET_E,
 	UNIPHY1_SYS_RESET_E,
 	UNIPHY2_SYS_RESET_E
 };
-#endif
 
 #if defined(MRPPE)
 enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
@@ -1955,7 +1933,6 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 #endif
 	{
 		rst_type[index++] = uniphy_soft_rst[uniphy_index];
-#if defined(APPE)
 		if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx")) {
 			a_uint32_t mode0, mode1;
 
@@ -1978,16 +1955,13 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				rst_type[index++] = UNIPHY0_PORT4_DISABLE_E;
 			}
 		}
-#endif
 	}
 
-#if defined(APPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
 		rst_type[index++] = uniphy_sys_rst[uniphy_index];
 	}
-#endif
 
 	while (index > 0) {
 		ssdk_uniphy_reset(dev_id, rst_type[--index],
@@ -2024,9 +1998,7 @@ void ssdk_gcc_clock_init(void)
 
 	if (of_device_is_compatible(clock_node,
 			"qcom,ess-switch-ipq95xx")) {
-#if defined(APPE)
 		ssdk_gcc_appe_clock_init(APPE_TYPE);
-#endif
 	} else if (of_device_is_compatible(clock_node,
 			"qcom,ess-switch-ipq53xx")) {
 #if defined(MPPE)
@@ -2049,9 +2021,7 @@ void ssdk_gcc_clock_init(void)
 void ssdk_gcc_clock_exit(void)
 {
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx")) {
-#if defined(APPE)
 		ssdk_gcc_ppe_clock_deinit(APPE_TYPE);
-#endif
 	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
 #if defined(MPPE)
 		ssdk_gcc_ppe_clock_deinit(MPPE_TYPE);

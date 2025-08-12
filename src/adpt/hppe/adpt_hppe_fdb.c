@@ -7,9 +7,7 @@
 #include "sw.h"
 #include "hsl_reg.h"
 #include "adpt.h"
-#ifdef APPE
 #include "adpt_appe_fdb.h"
-#endif
 
 #define OP_TYPE_ADD	0x0
 #define OP_TYPE_DEL	0x1
@@ -200,15 +198,10 @@ _adpt_hppe_fdb_tbl_op_data_reg_set(a_uint32_t dev_id, fal_fdb_entry_t * entry)
 	rv = hppe_fdb_tbl_op_data1_set(dev_id, (union fdb_tbl_op_data1_u *)(&reg_value[1]));
 	if (rv != SW_OK)
 		return rv;
-#ifdef APPE
+
 	reg_value[2] = ((port_value >> 0x8) & 0x7) + ((dst_type & 0x3) << 4) +
 			((entry->sacmd & 0x3) << (FDB_TBL_SA_CMD_OFFSET - 64)) +
 			((entry->dacmd & 0x3) << (FDB_TBL_DA_CMD_OFFSET - 64));
-#else
-	reg_value[2] = ((port_value >> 0x9) & 0x7) + ((dst_type & 0x3) << 3) +
-			((entry->sacmd & 0x3) << (FDB_TBL_SA_CMD_OFFSET - 64)) +
-			((entry->dacmd & 0x3) << (FDB_TBL_DA_CMD_OFFSET - 64));
-#endif
 	if (entry->static_en == A_TRUE)
 		reg_value[2] += (0x3 << (FDB_TBL_HIT_AGE_OFFSET - 64));
 	else
@@ -288,12 +281,8 @@ _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(a_uint32_t dev_id, fal_fdb_entry_t * 
 			entry->lookup_valid = A_TRUE;
 		else
 			entry->lookup_valid = A_FALSE;
-#ifdef APPE
-				entry->fid = (rslt_data[1] >> (FDB_TBL_VSI_OFFSET - 32)) & 0x3f;
-#else
-				entry->fid = (rslt_data[1] >> (FDB_TBL_VSI_OFFSET - 32)) & 0x1f;
-#endif
 
+		entry->fid = (rslt_data[1] >> (FDB_TBL_VSI_OFFSET - 32)) & 0x3f;
 		entry->sacmd = (rslt_data[2] >> (FDB_TBL_SA_CMD_OFFSET - 64)) & 0x3;
 		entry->dacmd = (rslt_data[2] >> (FDB_TBL_DA_CMD_OFFSET - 64)) & 0x3;
 		if (((rslt_data[2] >> (FDB_TBL_HIT_AGE_OFFSET - 64)) & 0x3) == 0x3)
@@ -933,14 +922,12 @@ adpt_hppe_fdb_port_maclimit_ctrl_set(a_uint32_t dev_id, fal_port_t port_id, fal_
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_maclimit_ctrl_set(dev_id, port_id,
 			maclimit_ctrl);
 		return rv;
 	}
-#endif
 	rv = hppe_port_lrn_limit_ctrl_get(dev_id, port_id, &port_lrn_limit_ctrl);
 
 	if( rv != SW_OK )
@@ -962,14 +949,12 @@ adpt_hppe_fdb_port_maclimit_ctrl_get(a_uint32_t dev_id, fal_port_t port_id, fal_
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(maclimit_ctrl);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_maclimit_ctrl_get(dev_id, port_id,
 			maclimit_ctrl);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_lrn_limit_ctrl_get(dev_id, port_id, &port_lrn_limit_ctrl);
 
@@ -992,13 +977,11 @@ adpt_hppe_port_fdb_learn_limit_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_vport_fdb_learn_limit_set(dev_id, port_id, enable, cnt);
 		return rv;
 	}
-#endif
 
 	rv = adpt_hppe_fdb_port_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	if( rv != SW_OK )
@@ -1021,13 +1004,11 @@ adpt_hppe_port_fdb_learn_limit_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(cnt);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_vport_fdb_learn_limit_get(dev_id, port_id, enable, cnt);
 		return rv;
 	}
-#endif
 
 	rv = adpt_hppe_fdb_port_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	if( rv != SW_OK )
@@ -1146,13 +1127,11 @@ adpt_hppe_fdb_port_learn_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t ena
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_learn_set(dev_id, port_id, enable);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
 
@@ -1174,13 +1153,11 @@ adpt_hppe_fdb_port_learn_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *en
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_learn_get(dev_id, port_id, enable);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
 
@@ -1201,13 +1178,11 @@ adpt_hppe_fdb_port_newaddr_lrn_set(a_uint32_t dev_id, fal_port_t port_id, a_bool
 	memset(&port_bridge_ctrl, 0, sizeof(port_bridge_ctrl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_newaddr_lrn_set(dev_id, port_id, enable, cmd);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
 
@@ -1231,13 +1206,11 @@ adpt_hppe_fdb_port_newaddr_lrn_get(a_uint32_t dev_id, fal_port_t port_id, a_bool
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(cmd);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_newaddr_lrn_get(dev_id, port_id, enable, cmd);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
 
@@ -1259,13 +1232,11 @@ adpt_hppe_fdb_port_stamove_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t e
 	memset(&port_bridge_ctrl, 0, sizeof(port_bridge_ctrl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_stamove_set(dev_id, port_id, enable, cmd);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
 
@@ -1289,13 +1260,11 @@ adpt_hppe_fdb_port_stamove_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(cmd);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_fdb_vport_stamove_get(dev_id, port_id, enable, cmd);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
 
@@ -1319,13 +1288,11 @@ adpt_hppe_port_fdb_learn_counter_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(cnt);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_vport_fdb_learn_counter_get(dev_id, port_id, cnt);
 		return rv;
 	}
-#endif
 
 	rv = hppe_port_lrn_limit_counter_get(dev_id, port_id, &port_lrn_limit_counter);
 
@@ -1346,13 +1313,11 @@ adpt_hppe_port_fdb_learn_exceed_cmd_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_vport_fdb_learn_exceed_cmd_set(dev_id, port_id, cmd);
 		return rv;
 	}
-#endif
 
 	rv = adpt_hppe_fdb_port_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	if( rv != SW_OK )
@@ -1373,13 +1338,11 @@ adpt_hppe_port_fdb_learn_exceed_cmd_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(cmd);
 
-#if defined(APPE)
 	if(ADPT_IS_VPORT(port_id))
 	{
 		rv = adpt_appe_vport_fdb_learn_exceed_cmd_get(dev_id, port_id, cmd);
 		return rv;
 	}
-#endif
 
 	rv = adpt_hppe_fdb_port_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	if( rv != SW_OK )

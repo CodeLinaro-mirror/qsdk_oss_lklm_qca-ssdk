@@ -234,9 +234,7 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 		hppe_mac_mib_ctrl_mib_en_set(dev_id, g_port_id, (a_uint32_t)enable);
 	}
 
-#ifdef APPE
 	xg_port_index = SSDK_PHYSICAL_PORT1;
-#endif
 	for (port_id = xg_port_index; port_id <= port_num; port_id++) {
 		xg_port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
 		hppe_mmc_control_get(dev_id, xg_port_id, &mmc_control);

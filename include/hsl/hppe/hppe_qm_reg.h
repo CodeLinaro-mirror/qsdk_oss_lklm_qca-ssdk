@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
-
 #if defined(CONFIG_CPU_BIG_ENDIAN)
 #include "hppe_qm_reg_be.h"
 #else
@@ -2324,11 +2322,7 @@ union uq_agg_profile_map_u {
 
 /*[table] QUEUE_TX_COUNTER_TBL*/
 #define QUEUE_TX_COUNTER_TBL
-#if defined (APPE)
 #define QUEUE_TX_COUNTER_TBL_ADDRESS 0x2a000
-#else
-#define QUEUE_TX_COUNTER_TBL_ADDRESS 0x4000
-#endif
 #define QUEUE_TX_COUNTER_TBL_NUM     300
 #define QUEUE_TX_COUNTER_TBL_INC     0x10
 #define QUEUE_TX_COUNTER_TBL_TYPE    REG_TYPE_RW

@@ -8,18 +8,11 @@
 #include "adpt.h"
 #include "ssdk_init.h"
 #include "hsl_reg.h"
-#if defined(HPPE)
 #include "adpt_hppe.h"
-#endif
 #if defined(IN_SFP)
 #include "adpt_sfp.h"
 #endif
-#if defined(MP)
-#include "adpt_mp.h"
-#endif
-#if defined(APPE)
 #include "adpt_appe.h"
-#endif
 #if defined(MPPE)
 #include "adpt_mppe.h"
 #endif
@@ -48,26 +41,13 @@ adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id)
 
 	return g_adpt_api[dev_id];
 }
-#if defined (SCOMPHY)
-a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id)
-{
-	return g_chip_ver[dev_id].chip_revision;
-}
-#endif
-
 adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 {
 	adpt_ppe_type_t ppe_type = MAX_PPE_TYPE;
-#if defined(HPPE)
 	ssdk_chip_type chip_type = g_chip_ver[dev_id].chip_type;
 	a_uint32_t revision = g_chip_ver[dev_id].chip_revision;
 
 	switch (chip_type) {
-		case CHIP_HPPE:
-			ppe_type = HPPE_TYPE;
-			if (revision == CPPE_REVISION)
-				ppe_type = CPPE_TYPE;
-			break;
 		case CHIP_APPE:
 			ppe_type = APPE_TYPE;
 			if (revision == MPPE_REVISION)
@@ -85,7 +65,6 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 		default:
 			break;
 	}
-#endif
 
 	return ppe_type;
 }
@@ -93,11 +72,8 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 a_uint32_t
 adpt_ppe_uniphy_number_get(a_uint32_t dev_id)
 {
-#if defined(MPPE) || defined (CPPE)
-	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE ||
-		adpt_ppe_type_get(dev_id) == CPPE_TYPE)
+	if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
 		return (SSDK_UNIPHY_INSTANCE1+1);
-#endif
 
 	return (SSDK_UNIPHY_INSTANCE2+1);
 }
@@ -145,7 +121,6 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 	return ppe_freq;
 }
 
-#if defined(APPE)
 static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t module)
 {
 	sw_error_t rv= SW_OK;
@@ -216,9 +191,7 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 
 	return rv;
 }
-#endif
 
-#if defined(HPPE)
 static sw_error_t adpt_hppe_module_func_register(a_uint32_t dev_id, a_uint32_t module)
 {
 	sw_error_t rv= SW_OK;
@@ -346,7 +319,6 @@ static sw_error_t adpt_hppe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 
 	return rv;
 }
-#endif
 
 sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capacity)
 {
@@ -379,23 +351,45 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 {
 	sw_error_t rv= SW_OK;
 
+	if (g_adpt_api[dev_id] == NULL) {
+		g_adpt_api[dev_id] = aos_mem_alloc(sizeof(adpt_api_t));
+	
+		if(g_adpt_api[dev_id] == NULL)
+		{
+			SSDK_ERROR("%s, %d:malloc fail for adpt api\n",
+					__FUNCTION__, __LINE__);
+			return SW_FAIL;
+		}
+	
+		aos_mem_zero(g_adpt_api[dev_id], sizeof(adpt_api_t));
+	}
+	g_chip_ver[dev_id].chip_type = cfg->chip_type;
+	g_chip_ver[dev_id].chip_revision = cfg->chip_revision;
+
 	switch (cfg->chip_type)
 	{
-#if defined(APPE)
 		case CHIP_HMSPPE:
+#if defined(HMSPPE)
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON);
+			SW_RTN_ON_ERROR(rv);
+#endif
+			fallthrough;
 		case CHIP_JHPPE:
+#if defined(JHPPE)
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_SAMPL);
+			SW_RTN_ON_ERROR(rv);
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON_PM);
+			SW_RTN_ON_ERROR(rv);
+#endif
+			fallthrough;
 		case CHIP_MRPPE:
+#if defined(MRPPE)
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PKTEDIT);
+			SW_RTN_ON_ERROR(rv);
+#endif
+			fallthrough;
 		case CHIP_APPE:
 			/* APPE specific module initialization */
-			if (g_adpt_api[dev_id] == NULL) {
-				g_adpt_api[dev_id] = aos_mem_alloc(sizeof(adpt_api_t));
-			}
-
-			if(!g_adpt_api[dev_id]) {
-				SSDK_ERROR("%s, %d:malloc fail for adpt api\n",
-						__FUNCTION__, __LINE__);
-				return SW_FAIL;
-			}
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_VPORT);
 			SW_RTN_ON_ERROR(rv);
 
@@ -421,42 +415,6 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_ATHTAG);
 			SW_RTN_ON_ERROR(rv);
 #endif
-#if defined(MRPPE)
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PKTEDIT);
-			SW_RTN_ON_ERROR(rv);
-#endif
-#if defined(JHPPE)
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_SAMPL);
-			SW_RTN_ON_ERROR(rv);
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON_PM);
-			SW_RTN_ON_ERROR(rv);
-#endif
-#if defined(HMSPPE)
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON);
-			SW_RTN_ON_ERROR(rv);
-#endif
-#if defined(FALLTHROUGH)
-			fallthrough;
-#else
-			/* fall through */
-#endif
-#endif
-#if defined(HPPE)
-		case CHIP_HPPE:
-			if (g_adpt_api[dev_id] == NULL) {
-				g_adpt_api[dev_id] = aos_mem_alloc(sizeof(adpt_api_t));
-
-				if(g_adpt_api[dev_id] == NULL)
-				{
-					SSDK_ERROR("%s, %d:malloc fail for adpt api\n",
-							__FUNCTION__, __LINE__);
-					return SW_FAIL;
-				}
-
-				aos_mem_zero(g_adpt_api[dev_id], sizeof(adpt_api_t));
-			}
-			g_chip_ver[dev_id].chip_type = cfg->chip_type;
-			g_chip_ver[dev_id].chip_revision = cfg->chip_revision;
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MIRROR);
 			SW_RTN_ON_ERROR(rv);
 
@@ -531,46 +489,7 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 			/* uniphy */
 			rv = adpt_hppe_uniphy_init(dev_id);
 			SW_RTN_ON_ERROR(rv);
-
 			break;
-#endif
-#if defined (SCOMPHY)
-		case CHIP_SCOMPHY:
-			g_chip_ver[dev_id].chip_type = cfg->chip_type;
-			g_chip_ver[dev_id].chip_revision = cfg->phy_id;
-#if defined (MP)
-			if(cfg->phy_id == MP_GEPHY)
-			{
-				g_adpt_api[dev_id] = aos_mem_alloc(sizeof(adpt_api_t));
-				if(g_adpt_api[dev_id] == NULL)
-				{
-					SSDK_ERROR("malloc fail for adpt api\n");
-					return SW_FAIL;
-				}
-				aos_mem_zero(g_adpt_api[dev_id], sizeof(adpt_api_t));
-				rv = adpt_mp_intr_init(dev_id);
-				SW_RTN_ON_ERROR(rv);
-#if defined (IN_MIB)
-				rv = adpt_mp_mib_init(dev_id);
-				SW_RTN_ON_ERROR(rv);
-#endif
-#if defined (IN_PORTCONTROL)
-				rv = adpt_mp_portctrl_init(dev_id);
-				SW_RTN_ON_ERROR(rv);
-#endif
-#if defined (IN_UNIPHY)
-				rv = adpt_mp_uniphy_init(dev_id);
-				SW_RTN_ON_ERROR(rv);
-#endif
-#if defined(IN_SFP)
-				rv = adpt_sfp_init(dev_id);
-				SW_RTN_ON_ERROR(rv);
-#endif
-
-			}
-#endif
-			break;
-#endif
 		default:
 			break;
 	}

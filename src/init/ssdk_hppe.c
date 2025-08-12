@@ -71,7 +71,6 @@ sw_error_t qca_hppe_ctlpkt_hw_init(a_uint32_t dev_id)
 	a_uint8_t mac_id = 0, mac_num = 0;
 	a_uint8_t *mac = NULL;
 	a_uint32_t rfdb_profile_bmp = 0, rfdb_profile_index = 0;
-#if defined(APPE)
 	a_uint32_t cpu_code = 0;
 
 	while (cpu_code < APPE_CPU_CODE_CTRL_NUM) {
@@ -79,7 +78,6 @@ sw_error_t qca_hppe_ctlpkt_hw_init(a_uint32_t dev_id)
 		SW_RTN_ON_ERROR(rv);
 		cpu_code++;
 	}
-#endif
 
 	memset(&ctrlpkt_action, 0, sizeof(ctrlpkt_action));
 	memset(&ctrlpkt_profile, 0, sizeof(ctrlpkt_profile));
@@ -429,11 +427,9 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 8, 0);
 
 	queue_dst.service_code = 7;
-#if defined(APPE)
+
 	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 252, 0);
-#else
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 240, 0);
-#endif
+
 	queue_dst.service_code_en = A_FALSE;
 	queue_dst.service_code = 0;
 

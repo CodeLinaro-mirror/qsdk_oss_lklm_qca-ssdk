@@ -625,9 +625,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_SPEED, cmd_data_check_speed, NULL),
     SW_TYPE_DEF(SW_CAP, cmd_data_check_capable, NULL),
 #ifndef IN_PORTCONTROL_MINI
-#if defined (APPE)
     SW_TYPE_DEF(SW_PORT_8023AH_CTRL, (param_check_t)cmd_data_check_port_8023ah_ctrl, NULL),
-#endif
 #endif
     SW_TYPE_DEF(SW_PORT_EEE_CONFIG, (param_check_t)cmd_data_check_port_eee_config, NULL),
 #ifndef IN_PORTCONTROL_MINI
@@ -692,16 +690,13 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_ACLRULE, NULL, NULL),
     SW_TYPE_DEF(SW_ACL_UDF_PKT_TYPE, cmd_data_check_udf_pkt_type, NULL),
     SW_TYPE_DEF(SW_ACL_UDF_TYPE, cmd_data_check_udf_type, NULL),
-#ifdef APPE
     SW_TYPE_DEF(SW_VPORT_TYPE, cmd_data_check_vport_type, NULL),
-#endif
 #endif
 #ifdef IN_LED
     SW_TYPE_DEF(SW_LEDPATTERN, (param_check_t)cmd_data_check_ledpattern, NULL),
 #endif
 #ifdef IN_PORTVLAN
     SW_TYPE_DEF(SW_INVLAN, cmd_data_check_invlan_mode, NULL),
-#ifdef HPPE
     SW_TYPE_DEF(SW_GLOBAL_QINQMODE, (param_check_t)cmd_data_check_global_qinqmode, NULL),
     SW_TYPE_DEF(SW_PT_QINQMODE, (param_check_t)cmd_data_check_port_qinqmode, NULL),
     SW_TYPE_DEF(SW_TPID, (param_check_t)cmd_data_check_tpid, NULL),
@@ -715,10 +710,7 @@ static sw_data_type_t sw_data_type[] =
 		    (param_check_t)cmd_data_check_port_vlan_translation_adv_rule, NULL),
     SW_TYPE_DEF(SW_PT_VLAN_TRANS_ADV_ACTION,
 		    (param_check_t)cmd_data_check_port_vlan_translation_adv_action, NULL),
-#endif
-#ifdef APPE
 	SW_TYPE_DEF(SW_ISOL_CTRL, cmd_data_check_isol_ctrl, NULL),
-#endif
 #ifndef IN_PORTVLAN_MINI
     SW_TYPE_DEF(SW_VLANPROPAGATION, cmd_data_check_vlan_propagation, NULL),
     SW_TYPE_DEF(SW_VLANTRANSLATION, (param_check_t)cmd_data_check_vlan_translation, NULL),
@@ -781,13 +773,11 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_SEC_UDP, cmd_data_check_sec_udp, NULL),
     SW_TYPE_DEF(SW_SEC_ICMP4, cmd_data_check_sec_icmp4, NULL),
     SW_TYPE_DEF(SW_SEC_ICMP6, cmd_data_check_sec_icmp6, NULL),
-#ifdef HPPE
 #ifndef IN_SEC_MINI
     SW_TYPE_DEF(SW_L3_PARSER, (param_check_t)cmd_data_check_l3_parser, NULL),
 #endif
     SW_TYPE_DEF(SW_L4_PARSER, (param_check_t)cmd_data_check_l4_parser, NULL),
     SW_TYPE_DEF(SW_EXP_CTRL, (param_check_t)cmd_data_check_exp_ctrl, NULL),
-#endif
 #ifndef IN_SEC_MINI
     SW_TYPE_DEF(SW_L2_EXP_CTRL, (param_check_t)cmd_data_check_l2_exp_ctrl, NULL),
     SW_TYPE_DEF(SW_TUNNEL_EXP_CTRL, (param_check_t)cmd_data_check_tunnel_exp_ctrl, NULL),
@@ -826,9 +816,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_SRC_FILTER_CONFIG, cmd_data_check_src_filter_config, NULL),
     SW_TYPE_DEF(SW_MTU_ENTRY, (param_check_t)cmd_data_check_mtu_entry, NULL),
     SW_TYPE_DEF(SW_MRU_ENTRY, (param_check_t)cmd_data_check_mru_entry, NULL),
-#ifdef APPE
     SW_TYPE_DEF(SW_MTU_CFG, (param_check_t)cmd_data_check_mtu_cfg, NULL),
-#endif
 #endif
 #endif
 #ifdef IN_INTERFACECONTROL
@@ -839,10 +827,8 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_VSI_NEWADDR_LRN, (param_check_t)cmd_data_check_newadr_lrn, NULL),
     SW_TYPE_DEF(SW_VSI_STAMOVE, (param_check_t)cmd_data_check_stamove, NULL),
     SW_TYPE_DEF(SW_VSI_MEMBER, (param_check_t)cmd_data_check_vsi_member, NULL),
-#if defined (APPE)
     SW_TYPE_DEF(SW_VSI_BRIDGE_VSI,(param_check_t)cmd_data_check_vsi_bridge_vsi, NULL),
     SW_TYPE_DEF(SW_VSI_INVALIDVSI_CTRL,(param_check_t)cmd_data_check_vsi_invalidvsi_ctrl, NULL),
-#endif
     SW_TYPE_DEF(SW_VSI_COUNTER, NULL, NULL),
 #endif
 #ifdef IN_QM
@@ -888,23 +874,19 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_SHAPER_TOKEN_CONFIG, (param_check_t)cmd_data_check_shaper_token_config, NULL),
     SW_TYPE_DEF(SW_PORT_SHAPER_CONFIG, (param_check_t)cmd_data_check_port_shaper_config, NULL),
     SW_TYPE_DEF(SW_SHAPER_CONFIG, (param_check_t)cmd_data_check_shaper_config, NULL),
-#if defined(APPE)
     SW_TYPE_DEF(SW_QUEUE_SHAPER_CTRL, (param_check_t)cmd_data_check_queue_shaper_ctrl, NULL),
     SW_TYPE_DEF(SW_FLOW_SHAPER_CTRL, (param_check_t)cmd_data_check_flow_shaper_ctrl, NULL),
-#endif
 #endif
 
 #ifdef IN_POLICER
     SW_TYPE_DEF(SW_POLICER_ACL_CONFIG, (param_check_t)cmd_data_check_acl_policer_config, NULL),
     SW_TYPE_DEF(SW_POLICER_PORT_CONFIG, (param_check_t)cmd_data_check_port_policer_config, NULL),
     SW_TYPE_DEF(SW_POLICER_CMD_CONFIG, (param_check_t)cmd_data_check_policer_cmd_config, NULL),
-#if defined(APPE)
 #ifndef IN_POLICER_MINI
     SW_TYPE_DEF(SW_POLICER_REMAP, (param_check_t)cmd_data_check_policer_remap, NULL),
     SW_TYPE_DEF(SW_POLICER_PRIORITY, (param_check_t)cmd_data_check_policer_priority, NULL),
 #endif
     SW_TYPE_DEF(SW_POLICER_CTRL, (param_check_t)cmd_data_check_policer_ctrl, NULL),
-#endif
 #endif
 #ifdef IN_SERVCODE
     SW_TYPE_DEF(SW_SERVCODE_CONFIG, (param_check_t)cmd_data_check_servcode_config, NULL),
@@ -1410,7 +1392,6 @@ cmd_data_check_switch_port_loopback_config(char *cmd_str, void * val,
     return SW_OK;
 }
 
-#if defined (APPE)
 sw_error_t
 cmd_data_check_port_8023ah_ctrl(char *cmd_str, void * val,
 	a_uint32_t size)
@@ -1428,7 +1409,6 @@ cmd_data_check_port_8023ah_ctrl(char *cmd_str, void * val,
     *(fal_port_8023ah_ctrl_t *)val = port_8023ah_ctrl;
     return SW_OK;
 }
-#endif
 
 sw_error_t
 cmd_data_check_crossover_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
@@ -1596,7 +1576,7 @@ cmd_data_check_mtu_entry(char *cmd_str, void * val, a_uint32_t size)
     *(fal_mtu_ctrl_t *)val = entry;
     return SW_OK;
 }
-#ifdef APPE
+
 sw_error_t
 cmd_data_check_mtu_cfg(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -1630,7 +1610,7 @@ cmd_data_check_mtu_cfg(char *cmd_str, void * val, a_uint32_t size)
 
     return SW_OK;
 }
-#endif
+
 sw_error_t
 cmd_data_check_mru_entry(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -1684,8 +1664,6 @@ cmd_data_check_port_cnt_cfg(char *cmd_str, fal_port_cnt_cfg_t *arg_val, a_uint32
 						"usage: usage: enable/disable\n",
 						cmd_data_check_enable, (cmd,
 						&(entry.mc_tx_cnt_en), sizeof(entry.mc_tx_cnt_en)));
-
-#if defined(APPE)
 	cmd_data_check_element("tl_rx_cnt_enable", "disable",
 						"usage: usage: enable/disable\n",
 						cmd_data_check_enable, (cmd,
@@ -1700,7 +1678,6 @@ cmd_data_check_port_cnt_cfg(char *cmd_str, fal_port_cnt_cfg_t *arg_val, a_uint32
 						"usage: full_pkt or ip_pkt\n",
 						cmd_data_check_attr, ("cnt_mode", cmd,
 						&entry.tx_cnt_mode, sizeof(entry.tx_cnt_mode)));
-#endif
 
 	*(fal_port_cnt_cfg_t *)arg_val = entry;
 
@@ -1980,9 +1957,7 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
     char *cmd;
     sw_error_t rv;
     fal_qos_pri_precedence_t entry;
-#if defined(APPE)
     a_uint32_t tmp = 0;
-#endif
 
     aos_mem_zero(&entry, sizeof (fal_qos_pri_precedence_t));
 
@@ -2074,7 +2049,6 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("pre_acl_outer_pri_prece", "0");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -2092,7 +2066,6 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
 	    if (SW_OK == rv)
 		    entry.pre_acl_inner_pri = tmp;
     } while (talk_mode && (SW_OK != rv));
-#endif
 
     *(fal_qos_pri_precedence_t *)val = entry;
     return SW_OK;
@@ -3106,35 +3079,27 @@ cmd_data_check_ruletype(char *cmd_str, fal_acl_rule_type_t * arg_val,
     {
         *arg_val = FAL_ACL_RULE_UDF;
     }
+    else if (!strcasecmp(cmd_str, "tunnel_mac"))
+    {
+        *arg_val = FAL_ACL_RULE_TUNNEL_MAC;
+    }
+    else if (!strcasecmp(cmd_str, "tunnel_ip4"))
+    {
+        *arg_val = FAL_ACL_RULE_TUNNEL_IP4;
+    }
+    else if (!strcasecmp(cmd_str, "tunnel_ip6"))
+    {
+        *arg_val = FAL_ACL_RULE_TUNNEL_IP6;
+    }
+    else if (!strcasecmp(cmd_str, "tunnel_udf"))
+    {
+        *arg_val = FAL_ACL_RULE_TUNNEL_UDF;
+    }
     else
     {
-#ifdef APPE
-        if (!strcasecmp(cmd_str, "tunnel_mac"))
-        {
-            *arg_val = FAL_ACL_RULE_TUNNEL_MAC;
-        }
-        else if (!strcasecmp(cmd_str, "tunnel_ip4"))
-        {
-            *arg_val = FAL_ACL_RULE_TUNNEL_IP4;
-        }
-        else if (!strcasecmp(cmd_str, "tunnel_ip6"))
-        {
-            *arg_val = FAL_ACL_RULE_TUNNEL_IP6;
-        }
-        else if (!strcasecmp(cmd_str, "tunnel_udf"))
-        {
-            *arg_val = FAL_ACL_RULE_TUNNEL_UDF;
-        }
-        else
-        {
-            return SW_BAD_VALUE;
-        }
-        return SW_OK;
-#endif
         return SW_BAD_VALUE;
     }
-
-    return SW_OK;
+        return SW_OK;
 }
 
 sw_error_t
@@ -3291,14 +3256,12 @@ cmd_data_check_fieldop(char *cmdstr, fal_acl_field_op_t def,
     return SW_OK;
 }
 
-#ifdef APPE
 sw_error_t
 cmd_data_check_vport_type(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {
     return cmd_data_check_attr("vport_type", cmd_str,
                        arg_val, sizeof(*arg_val));
 }
-#endif
 #endif
 sw_error_t
 cmd_data_check_ip4addr(char *cmdstr, void * val, a_uint32_t size)
@@ -3878,7 +3841,7 @@ cmd_data_check_invlan_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 
     return SW_OK;
 }
-#ifdef HPPE
+
 sw_error_t
 cmd_data_check_global_qinqmode(char *info, void *val, a_uint32_t size)
 {
@@ -3962,7 +3925,6 @@ cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size)
         rv = cmd_data_check_qinq_role(cmd, &(pEntry->egress_port_role), sizeof(a_uint32_t));
     }while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
 	    cmd = get_sub_cmd("tunnel_qinq_role", "edge");
@@ -3976,7 +3938,6 @@ cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size)
 					"usage: tnl_decap_src_vp or org_src_port\n",
 					cmd_data_check_attr, ("port_select", cmd,
 					&(pEntry->ingress_port_sel), sizeof(pEntry->ingress_port_sel)));
-#endif
 #endif
 
     return SW_OK;
@@ -4023,7 +3984,6 @@ cmd_data_check_tpid(char *info, void *val, a_uint32_t size)
      pEntry->stpid = (a_uint16_t)tmp;
     }while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("tunnel_ctagtpid", "0x8100");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -4041,7 +4001,6 @@ cmd_data_check_tpid(char *info, void *val, a_uint32_t size)
 	    if (rv == SW_OK)
 		    pEntry->tunnel_stpid = (a_uint16_t)tmp;
     } while (talk_mode && (SW_OK != rv));
-#endif
 
     return SW_OK;
 }
@@ -4091,7 +4050,6 @@ cmd_data_check_ingress_filter(char *info, void *val, a_uint32_t size)
         rv = cmd_data_check_enable(cmd, &(pEntry->priority_filter), sizeof(a_uint32_t));
     }while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("ctag_tagged_filter_en", "disable");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -4115,7 +4073,6 @@ cmd_data_check_ingress_filter(char *info, void *val, a_uint32_t size)
 	    rv = cmd_data_check_enable(cmd, &(pEntry->ctag_priority_filter),
 			    sizeof(a_uint32_t));
     } while(talk_mode && (SW_OK != rv));
-#endif
 
     return SW_OK;
 }
@@ -4380,9 +4337,7 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, void *val, a_uint32_t 
 {
 	char *cmd = NULL;
 	sw_error_t rv;
-#if defined(APPE)
 	a_uint32_t tmp;
-#endif
 	fal_vlan_trans_adv_rule_t *pEntry = (fal_vlan_trans_adv_rule_t *)val;
 
 	memset(pEntry, 0, sizeof(fal_vlan_trans_adv_rule_t));
@@ -4594,7 +4549,6 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, void *val, a_uint32_t 
 	}
 	while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
 	do
 	{
 		cmd = get_sub_cmd("vni_resv_enable", "yes");
@@ -4622,12 +4576,10 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, void *val, a_uint32_t 
 		rv = cmd_data_check_uint32(cmd, &pEntry->vni_resv, sizeof (a_uint32_t));
 
 	} while (talk_mode && (SW_OK != rv));
-#endif
 
 	return SW_OK;
 }
 
-#if defined(APPE)
 sw_error_t
 cmd_data_check_srctype(char *cmdstr, a_uint8_t def, a_uint8_t *val, a_uint32_t size) {
 	if (0 == cmdstr[0]) {
@@ -4641,7 +4593,6 @@ cmd_data_check_srctype(char *cmdstr, a_uint8_t def, a_uint8_t *val, a_uint32_t s
 	}
 	return SW_OK;
 }
-#endif
 
 sw_error_t
 cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_t size)
@@ -4838,7 +4789,6 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 	}
 	while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
 	do
 	{
 		cmd = get_sub_cmd("src_info_enable", "yes");
@@ -4890,12 +4840,10 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 
 	}
 	while (talk_mode && (SW_OK != rv));
-#endif
 
 	return SW_OK;
 }
-#endif
-#ifdef APPE
+
 sw_error_t
 cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {
@@ -4931,7 +4879,7 @@ cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 
 	return SW_OK;
 }
-#endif
+
 sw_error_t
 cmd_data_check_vlan_propagation(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {
@@ -5226,7 +5174,6 @@ cmd_data_check_pppoe(char *cmd_str, void * val, a_uint32_t size)
     if (rv)
         return rv;
 
-#if defined(APPE)
     rv = __cmd_data_check_complex("tl_l3_interface_index", "0",
 		    "usage: the range is 0 -- 255\n",
 		    cmd_data_check_uint32, &entry.tl_l3_if_index,
@@ -5240,7 +5187,6 @@ cmd_data_check_pppoe(char *cmd_str, void * val, a_uint32_t size)
 		    sizeof (a_bool_t));
     if (rv)
 	    return rv;
-#endif
 
     *(fal_pppoe_session_t*)val = entry;
     return SW_OK;
@@ -6341,86 +6287,6 @@ cmd_data_check_port_policer(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 #endif
-#if 0
-sw_error_t
-cmd_data_check_mac_mode(char *cmd_str, fal_interface_mac_mode_t * arg_val,
-                        a_uint32_t size)
-{
-    if (NULL == cmd_str)
-    {
-        return SW_BAD_VALUE;
-    }
-
-    if (0 == cmd_str[0])
-    {
-        *arg_val = FAL_MAC_MODE_RGMII;
-    }
-    else if (!strcasecmp(cmd_str, "rgmii"))
-    {
-        *arg_val = FAL_MAC_MODE_RGMII;
-    }
-    else if (!strcasecmp(cmd_str, "rmii"))
-    {
-        *arg_val = FAL_MAC_MODE_RMII;
-    }
-    else if (!strcasecmp(cmd_str, "gmii"))
-    {
-        *arg_val = FAL_MAC_MODE_GMII;
-    }
-    else if (!strcasecmp(cmd_str, "mii"))
-    {
-        *arg_val = FAL_MAC_MODE_MII;
-    }
-    else if (!strcasecmp(cmd_str, "sgmii"))
-    {
-        *arg_val = FAL_MAC_MODE_SGMII;
-    }
-    else if (!strcasecmp(cmd_str, "fiber"))
-    {
-        *arg_val = FAL_MAC_MODE_FIBER;
-    }
-    else if (!strcasecmp(cmd_str, "default"))
-    {
-        *arg_val = FAL_MAC_MODE_DEFAULT;
-    }
-    else
-    {
-        return SW_BAD_VALUE;
-    }
-
-    return SW_OK;
-}
-
-
-sw_error_t
-cmd_data_check_clock_mode(char *cmd_str, fal_interface_clock_mode_t * arg_val,
-                          a_uint32_t size)
-{
-    if (NULL == cmd_str)
-    {
-        return SW_BAD_VALUE;
-    }
-
-    if (0 == cmd_str[0])
-    {
-        *arg_val = FAL_INTERFACE_CLOCK_MAC_MODE;
-    }
-    if (!strcasecmp(cmd_str, "mac"))
-    {
-        *arg_val = FAL_INTERFACE_CLOCK_MAC_MODE;
-    }
-    else if (!strcasecmp(cmd_str, "phy"))
-    {
-        *arg_val = FAL_INTERFACE_CLOCK_PHY_MODE;
-    }
-    else
-    {
-        return SW_BAD_VALUE;
-    }
-
-    return SW_OK;
-}
-#endif
 #ifdef IN_FDB
 #ifndef IN_FDB_MINI
 sw_error_t
@@ -6661,7 +6527,7 @@ cmd_data_check_sec_icmp6(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 
     return SW_OK;
 }
-#ifdef HPPE
+
 #ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_l3_parser(char *cmd_str, void * val, a_uint32_t size)
@@ -6998,7 +6864,6 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#ifdef APPE
     do
     {
         cmd = get_sub_cmd("l2flow_type", "flow_aware");
@@ -7018,11 +6883,10 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
                                  &entry.l3flow_type, sizeof(entry.l3flow_type));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
+
     *(fal_l3_excep_ctrl_t *)val = entry;
     return SW_OK;
 }
-#endif
 
 #ifndef IN_SEC_MINI
 sw_error_t
@@ -7446,45 +7310,6 @@ cmd_data_check_ip4_rfs_entry(char *cmd_str, void * val, a_uint32_t size)
 }
 #endif
 #endif
-#if 0
-sw_error_t
-cmd_data_check_fdb_rfs(char *cmd_str, void * val, a_uint32_t size)
-{
-	char *cmd;
-	a_uint32_t tmp;
-	sw_error_t rv;
-	fal_fdb_rfs_t entry;
-
-	aos_mem_zero(&entry, sizeof (fal_fdb_rfs_t));
-
-	rv = __cmd_data_check_complex("mac addr", NULL,
-                        "usage: the format is xx-xx-xx-xx-xx-xx \n",
-                        cmd_data_check_macaddr, &(entry.addr),
-                        sizeof (fal_mac_addr_t));
-    if (rv)
-        return rv;
-
-	rv = __cmd_data_check_complex("fid", NULL,
-                            "usage: the format is xx\n",
-                            cmd_data_check_uint32, &tmp,
-                            sizeof (a_uint32_t));
-    if (rv)
-        return rv;
-	entry.fid = tmp;
-
-	rv = __cmd_data_check_complex("loadbalance", "0",
-                        "usage: the format is xx \n",
-                        cmd_data_check_uint32, &tmp,
-                        sizeof (a_uint32_t));
-    if (rv)
-        return rv;
-
-	entry.load_balance = tmp;
-
-	*(fal_fdb_rfs_t *)val = entry;
-	return SW_OK;
-}
-#endif
 #if defined(IN_IP) || defined(IN_NAT)
 #if !defined(IN_IP_MINI)
 sw_error_t
@@ -7748,7 +7573,6 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("route_fail_no_eth_action", "forward");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -7756,7 +7580,6 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
 	    rv = cmd_data_check_maccmd(cmd, &(entry.rt_fail_no_eth_action),
 			    sizeof (fal_fwd_cmd_t));
     } while (talk_mode && (SW_OK != rv));
-#endif
 
     *(fal_ip_global_cfg_t *)val = entry;
     return SW_OK;
@@ -8146,9 +7969,7 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
     char *cmd;
     sw_error_t rv;
     fal_intf_entry_t entry;
-#if defined(APPE)
     a_uint32_t tmp = 0;
-#endif
 
     aos_mem_zero(&entry, sizeof (fal_intf_entry_t));
 
@@ -8242,7 +8063,6 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
     if (rv)
     	return rv;
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("dmac_check_en", "no");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -8283,7 +8103,6 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
 	    if (SW_OK == rv)
 		    entry.vpn_id = tmp;
     } while (talk_mode && (SW_OK != rv));
-#endif
 
 #if defined(MRPPE)
     do {
@@ -8652,7 +8471,7 @@ cmd_data_check_vsi_member(char *cmd_str, void * val, a_uint32_t size)
                         sizeof (a_uint32_t));
 	if (rv)
 		return rv;
-#if defined (APPE)
+
 	rv = __cmd_data_check_complex("vports_bitmap(port64-port95)", 0,
                         "usage: Bit0-port64 Bit1-port65 ....\n",
                         cmd_data_check_pbmp, &(entry.member_vports[0]),
@@ -8694,12 +8513,11 @@ cmd_data_check_vsi_member(char *cmd_str, void * val, a_uint32_t size)
                         sizeof (a_uint32_t));
 	if (rv)
 		return rv;
-#endif
+
 	*(fal_vsi_member_t *)val = entry;
 	return SW_OK;
 }
 
-#if defined (APPE)
 sw_error_t
 cmd_data_check_vsi_bridge_vsi(char *cmd_str, void *arg_val, a_uint32_t size)
 {
@@ -8754,7 +8572,6 @@ cmd_data_check_vsi_invalidvsi_ctrl(char *cmd_str, void *arg_val, a_uint32_t size
 
     return SW_OK;
 }
-#endif
 #endif
 
 #ifdef IN_FLOW
@@ -8882,7 +8699,6 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(CPPE) || defined(APPE)
     do
     {
 	    cmd = get_sub_cmd("flow_mismatch_copy_escape_en", "no");
@@ -8893,9 +8709,7 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("ptmu_fail_action", "forward");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -8947,7 +8761,6 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
 			    &(entry.l3_vpn_en),
 			    sizeof (a_bool_t));
     } while (talk_mode && (SW_OK != rv));
-#endif
 
 #if defined(MPPE)
     cmd_data_check_element("flow_cookie_pri", "0",
@@ -9228,7 +9041,6 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do {
 	    cmd = get_sub_cmd("pmtu_check_l3", "yes");
 	    SW_RTN_ON_NULL_PARAM(cmd);
@@ -9289,7 +9101,7 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
 	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint8_t));
 	    flow_qos->qos = tmp;
     } while (talk_mode && (SW_OK != rv));
-#endif
+
 #if defined(MPPE)
     cmd_data_check_element("qos_type", "0",
 		    "usage: 0 for tree_id, 1 for flowcookie 16 bits,"
@@ -10221,12 +10033,11 @@ cmd_data_check_shaper_config(char *cmd_str, void * val, a_uint32_t size)
     fal_shaper_config_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_shaper_config_t));
-#if defined(APPE)
+
     cmd_data_check_element("meter_type", "rfc",
                         "usage:meter_type:rfc/mef10_3, etc\n",
                         cmd_data_check_attr, ("shaper_meter_type", cmd,
                         &(entry.meter_type), sizeof(entry.meter_type)));
-#endif
 
     do
     {
@@ -10266,7 +10077,6 @@ cmd_data_check_shaper_config(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("cir_max", "0");
@@ -10274,7 +10084,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.cir_max), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10304,7 +10113,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("eir_max", "0");
@@ -10312,7 +10120,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.eir_max), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10323,7 +10130,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("next_ptr", "0");
@@ -10349,7 +10155,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
                                     sizeof (a_bool_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10364,7 +10169,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     return SW_OK;
 }
 
-#if defined(APPE)
 sw_error_t
 cmd_data_check_queue_shaper_ctrl(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -10427,7 +10231,6 @@ cmd_data_check_flow_shaper_ctrl(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 #endif
-#endif
 
 #ifdef IN_POLICER
 sw_error_t
@@ -10439,13 +10242,10 @@ cmd_data_check_port_policer_config(char *cmd_str, void * val, a_uint32_t size)
 
     aos_mem_zero(&entry, sizeof (fal_policer_config_t));
 
-#if defined(APPE)
     cmd_data_check_element("meter_type", "rfc",
                         "usage:meter_type:rfc/mef10_3, etc\n",
                         cmd_data_check_attr, ("policer_meter_type", cmd,
                         &(entry.meter_type), sizeof(entry.meter_type)));
-#endif
-
     do
     {
         cmd = get_sub_cmd("meter_enable", "no");
@@ -10456,7 +10256,6 @@ cmd_data_check_port_policer_config(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("vp_policer_index", "0-511");
@@ -10464,7 +10263,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.vp_meter_index), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10522,7 +10320,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("cir_max", "0");
@@ -10530,7 +10327,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.cir_max), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10550,7 +10346,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("eir_max", "0");
@@ -10558,7 +10353,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.eir_max), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10569,7 +10363,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("next_ptr", "0");
@@ -10595,7 +10388,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
                                     sizeof (a_bool_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     *(fal_policer_config_t *)val = entry;
     return SW_OK;
@@ -10610,12 +10402,10 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
 
     aos_mem_zero(&entry, sizeof (fal_policer_config_t));
 
-#if defined(APPE)
     cmd_data_check_element("meter_type", "rfc",
                         "usage:meter_type:rfc/mef10_3, etc\n",
                         cmd_data_check_attr, ("policer_meter_type", cmd,
                         &(entry.meter_type), sizeof(entry.meter_type)));
-#endif
 
     do
     {
@@ -10674,7 +10464,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
 	do
 	{
 		cmd = get_sub_cmd("cir_max", "0");
@@ -10683,7 +10472,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
 		rv = cmd_data_check_uint32(cmd, &(entry.cir_max), sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10703,7 +10491,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
 	do
 	{
 		cmd = get_sub_cmd("eir_max", "0");
@@ -10712,7 +10499,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
 		rv = cmd_data_check_uint32(cmd, &(entry.eir_max), sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10723,7 +10509,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
 	do
 	{
 		cmd = get_sub_cmd("next_ptr", "0");
@@ -10752,7 +10537,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
 			sizeof (a_bool_t));
 	}
 	while (talk_mode && (SW_OK != rv));
-#endif
 
     *(fal_policer_config_t *)val = entry;
     return SW_OK;
@@ -10808,7 +10592,6 @@ cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("yellow_dscp_remark", "no");
@@ -10826,7 +10609,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
                                     sizeof (a_bool_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10864,7 +10646,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("yellow_dscp", "0-63");
@@ -10872,8 +10653,8 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.yellow_dscp), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
-       do
+
+    do
     {
         cmd = get_sub_cmd("red_action", "drop");
         SW_RTN_ON_NULL_PARAM(cmd);
@@ -10922,7 +10703,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("red_dscp_remark", "no");
@@ -10939,7 +10719,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
                                     sizeof (a_bool_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     do
     {
@@ -10977,7 +10756,6 @@ SW_RTN_ON_NULL_PARAM(cmd);
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(APPE)
     do
     {
         cmd = get_sub_cmd("red_dscp", "0-63");
@@ -10985,13 +10763,11 @@ SW_RTN_ON_NULL_PARAM(cmd);
         rv = cmd_data_check_uint32(cmd, &(entry.red_dscp), sizeof (a_uint32_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
 
     *(fal_policer_action_t *)val = entry;
     return SW_OK;
 }
 
-#if defined(APPE)
 #ifndef IN_POLICER_MINI
 sw_error_t
 cmd_data_check_policer_remap(char *cmd_str, void * val, a_uint32_t size)
@@ -11102,7 +10878,6 @@ cmd_data_check_policer_ctrl(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 #endif
-#endif
 
 #ifdef IN_SERVCODE
 sw_error_t
@@ -11162,7 +10937,7 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 			&entry.bypass_bitmap[2], sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
-#ifdef APPE
+
 	do
 	{
 		cmd = get_sub_cmd("bypass_bitmap[3]", "0");
@@ -11172,7 +10947,7 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 			&entry.bypass_bitmap[3], sizeof (a_uint32_t));
 	}
 	while (talk_mode && (SW_OK != rv));
-#endif
+
 	do
 	{
 		cmd = get_sub_cmd("direction", "0");
@@ -11768,7 +11543,7 @@ cmd_data_check_ctrlpkt_appprofile(char *info, void *val, a_uint32_t size)
                                     sizeof (a_bool_t));
     }
     while (talk_mode && (SW_OK != rv));
-#if defined (APPE)
+
     /* get mgt_8023ah_oam */
     do
     {
@@ -11779,7 +11554,7 @@ cmd_data_check_ctrlpkt_appprofile(char *info, void *val, a_uint32_t size)
                                     sizeof (a_bool_t));
     }
     while (talk_mode && (SW_OK != rv));
-#endif
+
     /* get mgt_mld */
     do
     {

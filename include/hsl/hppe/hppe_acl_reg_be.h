@@ -1,20 +1,8 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -251,7 +239,6 @@ union udf_ctrl_reg_u {
 	#define IPV6_UDF3_CTRL_REG_UDF3_OFFSET_LEN     6
 	#define IPV6_UDF3_CTRL_REG_UDF3_OFFSET_DEFAULT 0x0
 
-#if defined(APPE)
 /*[table] IPO_RULE_REG*/
 #define IPO_RULE_REG
 #define IPO_RULE_REG_ADDRESS 0x0
@@ -333,81 +320,6 @@ struct ipo_rule_reg {
 	a_uint32_t  pri:9;
 	a_uint32_t  src_1:7;
 };
-#else
-/*[table] IPO_RULE_REG*/
-#define IPO_RULE_REG
-#define IPO_RULE_REG_ADDRESS 0x0
-#define IPO_RULE_REG_NUM     512
-#define IPO_RULE_REG_INC     0x10
-#define IPO_RULE_REG_TYPE    REG_TYPE_RW
-#define IPO_RULE_REG_DEFAULT 0x0
-	/*[field] RULE_FIELD*/
-	#define IPO_RULE_REG_RULE_FIELD
-	#define IPO_RULE_REG_RULE_FIELD_OFFSET  0
-	#define IPO_RULE_REG_RULE_FIELD_LEN     52
-	#define IPO_RULE_REG_RULE_FIELD_DEFAULT 0x0
-	/*[field] FAKE_MAC_HEADER*/
-	#define IPO_RULE_REG_FAKE_MAC_HEADER
-	#define IPO_RULE_REG_FAKE_MAC_HEADER_OFFSET  52
-	#define IPO_RULE_REG_FAKE_MAC_HEADER_LEN     1
-	#define IPO_RULE_REG_FAKE_MAC_HEADER_DEFAULT 0x0
-	/*[field] RANGE_EN*/
-	#define IPO_RULE_REG_RANGE_EN
-	#define IPO_RULE_REG_RANGE_EN_OFFSET  53
-	#define IPO_RULE_REG_RANGE_EN_LEN     1
-	#define IPO_RULE_REG_RANGE_EN_DEFAULT 0x0
-	/*[field] INVERSE_EN*/
-	#define IPO_RULE_REG_INVERSE_EN
-	#define IPO_RULE_REG_INVERSE_EN_OFFSET  54
-	#define IPO_RULE_REG_INVERSE_EN_LEN     1
-	#define IPO_RULE_REG_INVERSE_EN_DEFAULT 0x0
-	/*[field] RULE_TYPE*/
-	#define IPO_RULE_REG_RULE_TYPE
-	#define IPO_RULE_REG_RULE_TYPE_OFFSET  55
-	#define IPO_RULE_REG_RULE_TYPE_LEN     4
-	#define IPO_RULE_REG_RULE_TYPE_DEFAULT 0x0
-	/*[field] SRC_TYPE*/
-	#define IPO_RULE_REG_SRC_TYPE
-	#define IPO_RULE_REG_SRC_TYPE_OFFSET  59
-	#define IPO_RULE_REG_SRC_TYPE_LEN     2
-	#define IPO_RULE_REG_SRC_TYPE_DEFAULT 0x0
-	/*[field] SRC*/
-	#define IPO_RULE_REG_SRC
-	#define IPO_RULE_REG_SRC_OFFSET  61
-	#define IPO_RULE_REG_SRC_LEN     8
-	#define IPO_RULE_REG_SRC_DEFAULT 0x0
-	/*[field] PRI*/
-	#define IPO_RULE_REG_PRI
-	#define IPO_RULE_REG_PRI_OFFSET  69
-	#define IPO_RULE_REG_PRI_LEN     9
-	#define IPO_RULE_REG_PRI_DEFAULT 0x0
-	/*[field] RES_CHAIN*/
-	#define IPO_RULE_REG_RES_CHAIN
-	#define IPO_RULE_REG_RES_CHAIN_OFFSET  78
-	#define IPO_RULE_REG_RES_CHAIN_LEN     1
-	#define IPO_RULE_REG_RES_CHAIN_DEFAULT 0x0
-	/*[field] POST_ROUTING_EN*/
-	#define IPO_RULE_REG_POST_ROUTING_EN
-	#define IPO_RULE_REG_POST_ROUTING_EN_OFFSET  79
-	#define IPO_RULE_REG_POST_ROUTING_EN_LEN     1
-	#define IPO_RULE_REG_POST_ROUTING_EN_DEFAULT 0x0
-
-struct ipo_rule_reg {
-	a_uint32_t  rule_field_0:32;
-	a_uint32_t  src_0:3;
-        a_uint32_t  src_type:2;
-        a_uint32_t  rule_type:4;
-        a_uint32_t  inverse_en:1;
-        a_uint32_t  range_en:1;
-        a_uint32_t  fake_mac_header:1;
-        a_uint32_t  rule_field_1:20;
-	a_uint32_t  _reserved0:16;
-        a_uint32_t  post_routing_en:1;
-        a_uint32_t  res_chain:1;
-        a_uint32_t  pri:9;
-        a_uint32_t  src_1:5;
-};
-#endif
 
 union ipo_rule_reg_u {
 	a_uint32_t val[3];

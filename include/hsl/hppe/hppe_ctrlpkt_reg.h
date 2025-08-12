@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #if defined(CONFIG_CPU_BIG_ENDIAN)
@@ -55,11 +45,7 @@ union ethertype_ctrl_u {
 
 /*[table] APP_CTRL*/
 #define APP_CTRL
-#ifdef APPE
 #define APP_CTRL_ADDRESS 0x3400
-#else
-#define APP_CTRL_ADDRESS 0x1400
-#endif
 #define APP_CTRL_NUM     32
 #define APP_CTRL_INC     0x10
 #define APP_CTRL_TYPE    REG_TYPE_RW
@@ -152,12 +138,8 @@ struct app_ctrl {
 	a_uint32_t  l2_sec_byp:1;
 	a_uint32_t  sg_byp:1;
 	a_uint32_t  cmd:2;
-#ifdef APPE
 	a_uint32_t  port_type:2;
 	a_uint32_t  _reserved0:13;
-#else
-	a_uint32_t  _reserved0:15;
-#endif
 };
 
 union app_ctrl_u {
@@ -165,7 +147,6 @@ union app_ctrl_u {
 	struct app_ctrl bf;
 };
 
-#ifdef APPE
 /*[register] L2_CPU_CODE_CTRL*/
 #define L2_CPU_CODE_CTRL
 #define L2_CPU_CODE_CTRL_ADDRESS 0x1000
@@ -188,6 +169,5 @@ union l2_cpu_code_ctrl_u {
 	a_uint32_t val;
 	struct l2_cpu_code_ctrl bf;
 };
-#endif
 #endif
 #endif

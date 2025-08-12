@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
 /**
  * @defgroup
  * @{
@@ -13,13 +12,8 @@
 #define _HPPE_IP_H_
 
 #define MY_MAC_TBL_MAX_ENTRY	8
-#if defined(APPE)
 #define L3_VSI_MAX_ENTRY	64
 #define L3_VSI_EXT_MAX_ENTRY	64
-#else
-#define L3_VSI_MAX_ENTRY	32
-#define L3_VSI_EXT_MAX_ENTRY	32
-#endif
 #define NETWORK_ROUTE_IP_MAX_ENTRY	32
 #define NETWORK_ROUTE_IP_EXT_MAX_ENTRY	32
 #define NETWORK_ROUTE_ACTION_MAX_ENTRY	32
@@ -2108,7 +2102,6 @@ hppe_host_ipv6_mcast_get(
 sw_error_t
 hppe_host_flush_common(a_uint32_t dev_id);
 
-#if defined(APPE)
 sw_error_t
 appe_l3_vp_port_tbl_ipo_vp_profile_set(
 		a_uint32_t dev_id,
@@ -2119,5 +2112,4 @@ appe_l3_vp_port_tbl_ipo_vp_profile_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
-#endif
 #endif
