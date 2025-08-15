@@ -1832,10 +1832,10 @@ static char *port_mac_rst_ids[] = {
 
 void ssdk_ppe_reset_init(a_uint32_t dev_id)
 {
+	struct device_node *ppe_node = ssdk_dts_node_get(dev_id);
 	struct reset_control *rst;
 
-	rst_node = of_find_node_by_name(NULL, "ess-switch");
-	rst = of_reset_control_get(rst_node, PPE_RESET_ID);
+	rst = of_reset_control_get(ppe_node, PPE_RESET_ID);
 	if (IS_ERR(rst)) {
 		SSDK_ERROR("%s not exist!\n", PPE_RESET_ID);
 		return;
