@@ -807,6 +807,12 @@ typedef sw_error_t (*adpt_qm_cpucode_enqueue_get_func)(a_uint32_t dev_id,
 
 typedef sw_error_t (*adpt_qm_cpucode_enqueue_set_func)(a_uint32_t dev_id,
 		a_uint32_t cpu_code, a_bool_t enable);
+
+typedef sw_error_t (*adpt_ucast_queue_ddrq_en_set_func)(a_uint32_t dev_id,
+		a_uint32_t queue_id, a_bool_t enable);
+
+typedef sw_error_t (*adpt_ucast_queue_ddrq_en_get_func)(a_uint32_t dev_id,
+		a_uint32_t queue_id, a_bool_t *enable);
 /*portvlan module begin*/
 typedef sw_error_t (*adpt_global_qinq_mode_set_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
 typedef sw_error_t (*adpt_global_qinq_mode_get_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
@@ -1933,6 +1939,8 @@ typedef struct
 	adpt_qm_tcont_stat_get_func adpt_qm_tcont_stat_get;
 	adpt_qm_cpucode_enqueue_get_func adpt_qm_cpucode_enqueue_get;
 	adpt_qm_cpucode_enqueue_set_func adpt_qm_cpucode_enqueue_set;
+	adpt_ucast_queue_ddrq_en_set_func adpt_ucast_queue_ddrq_en_set;
+	adpt_ucast_queue_ddrq_en_get_func adpt_ucast_queue_ddrq_en_get;
 
 	/*portvlan module begin*/
 	adpt_global_qinq_mode_set_func adpt_global_qinq_mode_set;

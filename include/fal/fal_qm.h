@@ -423,6 +423,12 @@ fal_qm_cpucode_enqueue_get(a_uint32_t dev_id, a_uint32_t cpu_code, a_bool_t *ena
 
 sw_error_t
 fal_qm_cpucode_enqueue_set(a_uint32_t dev_id, a_uint32_t cpu_code, a_bool_t enable);
+
+sw_error_t
+fal_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable);
+
+sw_error_t
+fal_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

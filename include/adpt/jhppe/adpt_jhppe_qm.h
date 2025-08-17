@@ -79,6 +79,12 @@ adpt_jhppe_qm_enqueue_servcode_config_set(a_uint32_t dev_id,
 sw_error_t
 adpt_jhppe_qm_enqueue_servcode_config_get(a_uint32_t dev_id,
 					  fal_enqueue_cfg_t *enqueue_cfg);
+
+sw_error_t
+adpt_jhppe_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable);
+
+sw_error_t
+adpt_jhppe_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

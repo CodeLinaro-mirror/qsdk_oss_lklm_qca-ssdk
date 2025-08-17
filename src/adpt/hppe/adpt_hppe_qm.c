@@ -1417,6 +1417,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_counter_monitor_ctrl_set = adpt_jhppe_qm_counter_monitor_ctrl_set;
 	p_adpt_api->adpt_qm_counter_monitor_ctrl_get = adpt_jhppe_qm_counter_monitor_ctrl_get;
 	p_adpt_api->adpt_qm_counter_monitor_stats_get = adpt_jhppe_qm_counter_monitor_stats_get;
+	p_adpt_api->adpt_ucast_queue_ddrq_en_set = adpt_jhppe_ucast_queue_ddrq_en_set;
+	p_adpt_api->adpt_ucast_queue_ddrq_en_get = adpt_jhppe_ucast_queue_ddrq_en_get;
 #endif
 
 	return SW_OK;
