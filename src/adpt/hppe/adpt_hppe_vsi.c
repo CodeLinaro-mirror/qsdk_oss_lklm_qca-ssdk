@@ -202,6 +202,10 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 			}
 			else
 					xlt_rule.bf.ckey_fmt = 0x1;
+
+			/* new added rule fields in JUHU/HMS, 0x7 to match all type */
+			xlt_rule.bf.dhcp_type = 0x7;
+			xlt_rule.bf.mc_type = 0x7;
 #else
 			if(ctag_vid != FAL_VLAN_INVALID)
 			{

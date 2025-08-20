@@ -272,7 +272,7 @@ adpt_appe_port_egress_vlan_filter_get(a_uint32_t dev_id,
 	aos_mem_zero(&l2_vp_port_tbl, sizeof(l2_vp_port_tbl));
 
 #if defined(JHPPE)
-	rv = jhppe_l2_vp_port_post_tbl_set(dev_id, port_value, &l2_vp_port_tbl);
+	rv = jhppe_l2_vp_port_post_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 #else
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_value, &l2_vp_port_tbl);
 #endif
