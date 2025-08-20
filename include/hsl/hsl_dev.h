@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2012, 2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+* Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+* SPDX-License-Identifier: ISC
+*/
 
 /*qca808x_start*/
 #ifndef _HSL_DEV_H
@@ -25,6 +14,44 @@ extern "C" {
 
 #include "hsl_api.h"
 #include "ssdk_init.h"
+
+a_uint32_t hsl_ppe_module_base_get(a_uint32_t dev_id, a_uint32_t ppe_reg_module);
+
+#define NSS_PPE_INVALID_BASE_ADDR           0xF00000 
+#define PRX_BASE_ADDR                       0xB000
+#define NSS_PRX_CSR_BASE_ADDR               PRX_BASE_ADDR
+
+enum {
+	NSS_PPE_PTX = 0,
+	NSS_PPE_L2 = 1,
+	NSS_PPE_POLICER = 2,
+	NSS_PPE_BM = 3,
+	NSS_PPE_QM = 4,
+	NSS_PPE_EDMA = 5,
+	NSS_PPE_LPI= 6,
+	/* Max entry to check bounds */
+	NSS_PPE_MAX_MODULE_ENTRIES
+};
+
+#define EDMA_BASE_ADDR                      hsl_ppe_module_base_get(dev_id, NSS_PPE_EDMA)
+#define IPE_L3_BASE_ADDR                    0x200000
+#define QUEUE_MANAGER_BASE_ADDR             hsl_ppe_module_base_get(dev_id, NSS_PPE_QM)
+#define TRAFFIC_MANAGER_BASE_ADDR           0x400000
+#define INGRESS_POLICER_BASE_ADDR           hsl_ppe_module_base_get(dev_id, NSS_PPE_POLICER)
+#define INGRESS_VLAN_BASE_ADDR              0x00f000
+#define IPE_L2_BASE_ADDR                    hsl_ppe_module_base_get(dev_id, NSS_PPE_L2)
+#define IPO_CSR_BASE_ADDR                   0x0b0000
+#define PRE_IPO_CSR_BASE_ADDR               0x180000
+#define IPR_CSR_BASE_ADDR                   0x1e0000
+#define NSS_XGMAC_CSR_BASE_ADDR             0x500000
+#define TUNNEL_LOOKUP_BASE_ADDR             0x300000
+#define TUNNEL_PARSER_BASE_ADDR             0x1d0000
+#define NSS_MAC_CSR_BASE_ADDR               0x001000
+#define NSS_PTX_CSR_BASE_ADDR               hsl_ppe_module_base_get(dev_id, NSS_PPE_PTX)
+#define NSS_BM_CSR_BASE_ADDR                hsl_ppe_module_base_get(dev_id, NSS_PPE_BM)
+#define NSS_GLOBAL_BASE_ADDR                0x0
+#define NSS_UNIPHY_BASE_ADDR                0x0
+#define NSS_LPI_BASE_ADDR                   hsl_ppe_module_base_get(dev_id, NSS_PPE_LPI)
 
 #define HSL_DEV_ID_CHECK(dev_id) \
 do { \

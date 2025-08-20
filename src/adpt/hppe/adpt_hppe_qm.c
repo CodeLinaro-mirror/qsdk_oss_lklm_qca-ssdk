@@ -1086,7 +1086,7 @@ adpt_hppe_ac_group_buffer_set(
 }
 
 static a_uint32_t
-adpt_hppe_mcast_queue_dropcnt_start_addr_get(a_uint32_t queue_id)
+adpt_hppe_mcast_queue_dropcnt_start_addr_get(a_uint32_t dev_id, a_uint32_t queue_id)
 {
 	a_uint32_t start_addr = QUEUE_MANAGER_BASE_ADDR;
 
@@ -1140,7 +1140,7 @@ adpt_hppe_queue_counter_cleanup(a_uint32_t dev_id, a_uint32_t queue_id)
 	if (queue_id >= UCAST_QUEUE_ID_MAX) {
 		a_uint32_t start_addr = 0;
 
-		start_addr = adpt_hppe_mcast_queue_dropcnt_start_addr_get(queue_id);
+		start_addr = adpt_hppe_mcast_queue_dropcnt_start_addr_get(dev_id, queue_id);
 		for (i = 0; i < MCAST_QUEUE_ITEMS; i++) {
 			hppe_reg_tbl_set(dev_id, start_addr + i*DROP_INC, val, 3);
 		}
@@ -1182,7 +1182,7 @@ adpt_hppe_queue_counter_get(a_uint32_t dev_id, a_uint32_t queue_id, fal_queue_st
 		if( rv != SW_OK )
 			return rv;
 		info->pending_buff_num = mul_cnt.bf.ac_mul_queue_cnt;
-		start_addr = adpt_hppe_mcast_queue_dropcnt_start_addr_get(queue_id);
+		start_addr = adpt_hppe_mcast_queue_dropcnt_start_addr_get(dev_id, queue_id);
 		for (i = 0; i < MCAST_QUEUE_ITEMS; i++) {
 			hppe_reg_tbl_get(dev_id, start_addr + i*DROP_INC, drop_cnt.val, 3);
 			info->drop_packets[i+3] = drop_cnt.bf.mul_p7_drop_pkt;

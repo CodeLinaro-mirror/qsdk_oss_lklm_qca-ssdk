@@ -2,7 +2,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
  */
-
+#include "hsl_dev.h"
 #include "hmsppe/hppe_acl_reg.h"
 #include "hmsppe/hppe_bm_reg.h"
 #include "hmsppe/hppe_ctrlpkt_reg.h"
@@ -119,33 +119,6 @@
 #include "hmsppe/mppe_servcode_api.h"
 #include "hmsppe/mrppe_pktedit_api.h"
 
-#define NSS_GLOBAL_BASE_ADDR    	 	0x0
-#define TPR_UDF_PROFILE_BASE_ADDRESS 		0x480
-#define IPR_UDF_PROFILE_BASE_ADDRESS 		0x480
-#define NSS_MAC_BASE_ADDR    			0x1000
-#define PRX_BASE_ADDR				0xB000
-#define INGRESS_VLAN_BASE_ADDR    		0xf000
-#define IPO_CSR_BASE_ADDR    			0xb0000
-#define PRE_IPO_BASE_ADDR    			0x180000
-#define TPR_BASE_ADDR    			0x1d0000
-#define IPR_CSR_BASE_ADDR			0x1e0000
-#define IPE_L3_BASE_ADDR    			0x200000
-#define TT_BASE_ADDR    			0x300000
-#define TRAFFIC_MANAGER_BASE_ADDR    		0x400000
-#define IPE_L2_BASE_ADDR    			0x540000
-#define NSS_PTX_CSR_BASE_ADDR    		0x600000
-#define INGRESS_POLICER_BASE_ADDR    		0x700000
-#define BM_BASE_ADDR    			0x800000
-#define QUEUE_MANAGER_BASE_ADDR    		0xa00000
-#define EDMA_BASE_ADDR    			0xd00000
-
-#define TUNNEL_LOOKUP_BASE_ADDR 		TT_BASE_ADDR
-#define TUNNEL_PARSER_BASE_ADDR 		TPR_BASE_ADDR
-#define PRE_IPO_CSR_BASE_ADDR 			PRE_IPO_BASE_ADDR
-#define NSS_MAC_CSR_BASE_ADDR 			NSS_MAC_BASE_ADDR
-#define NSS_BM_CSR_BASE_ADDR 			BM_BASE_ADDR
-#define NSS_PRX_CSR_BASE_ADDR        		PRX_BASE_ADDR
-#define NSS_LPI_BASE_ADDR    		 	NSS_MAC_CSR_BASE_ADDR
 
 sw_error_t hppe_reg_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t *val);
 sw_error_t hppe_reg_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t val);
