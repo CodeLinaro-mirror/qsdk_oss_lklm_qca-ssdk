@@ -1237,10 +1237,6 @@ appe_l2_vp_port_tbl_physical_port_set(
 		a_uint32_t index,
 		a_uint32_t value);
 //cppe_qos.h
-#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	4096
-#define QOS_MAPPING_DSCP_TBL_MAX_ENTRY	256
-#define QOS_MAPPING_PCP_TBL_MAX_ENTRY	16
-#define QOS_MAPPING_TBL_MAX_GROUP	2
 sw_error_t
 cppe_qos_mapping_tbl_get(
 		a_uint32_t dev_id,

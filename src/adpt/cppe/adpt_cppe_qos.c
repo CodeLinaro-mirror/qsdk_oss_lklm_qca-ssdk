@@ -13,6 +13,15 @@
 #include "fal_qos.h"
 #include "adpt.h"
 
+#define QOS_MAPPING_DSCP_TBL_MAX_ENTRY	256
+#define QOS_MAPPING_PCP_TBL_MAX_ENTRY	16
+#define QOS_MAPPING_TBL_MAX_GROUP	2
+
+#define QOS_MAPPING_FLOW_TBL_MAX_ENTRY	(QOS_MAPPING_TBL_NUM - \
+					 QOS_MAPPING_TBL_MAX_GROUP * \
+					 (QOS_MAPPING_DSCP_TBL_MAX_ENTRY + \
+					  QOS_MAPPING_PCP_TBL_MAX_ENTRY))
+
 static sw_error_t
 adpt_cppe_qos_mapping_get(a_uint32_t dev_id, a_uint32_t index,
 			fal_qos_cosmap_t *cosmap)
@@ -150,7 +159,7 @@ adpt_cppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 		return SW_BAD_PARAM;
 
 	index = QOS_MAPPING_FLOW_TBL_MAX_ENTRY +
-		2 * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
+		QOS_MAPPING_TBL_MAX_GROUP * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
 		group_id * QOS_MAPPING_PCP_TBL_MAX_ENTRY + pcp;
 
 	return adpt_cppe_qos_mapping_get(dev_id, index, cosmap);
@@ -170,7 +179,7 @@ adpt_cppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 		return SW_BAD_PARAM;
 
 	index = QOS_MAPPING_FLOW_TBL_MAX_ENTRY +
-		2 * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
+		QOS_MAPPING_TBL_MAX_GROUP * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
 		group_id * QOS_MAPPING_PCP_TBL_MAX_ENTRY + pcp;
 
 	return adpt_cppe_qos_mapping_set(dev_id, index, cosmap);
