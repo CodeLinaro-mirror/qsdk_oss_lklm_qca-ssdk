@@ -351,6 +351,10 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 {
 	sw_error_t rv= SW_OK;
 
+	/* isisc and mht doesn't support adpt API */
+	if (cfg->chip_type == CHIP_ISISC || cfg->chip_type == CHIP_MHT)
+		return SW_OK;
+
 	if (g_adpt_api[dev_id] == NULL) {
 		g_adpt_api[dev_id] = aos_mem_alloc(sizeof(adpt_api_t));
 	
