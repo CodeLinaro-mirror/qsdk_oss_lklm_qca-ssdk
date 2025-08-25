@@ -64,6 +64,12 @@ extern "C" {
 
 #define SFP_I2C_BUS                   "SFP I2C Bus"
 
+struct ssdk_driver_priv {
+	a_uint32_t dev_id;
+	int ppe_type;
+	void *clk_data;
+};
+
 /*qca808x_start*/
     typedef enum {
         HSL_MDIO = 1,

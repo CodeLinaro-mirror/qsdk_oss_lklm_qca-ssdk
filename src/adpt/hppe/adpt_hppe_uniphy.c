@@ -1345,7 +1345,7 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 	a_uint32_t clock = UNIPHY_CLK_RATE_125M;
 
 	if (mode == PORT_WRAPPER_MAX) {
-		ssdk_uniphy_raw_clock_reset(index);
+		ssdk_uniphy_raw_clock_reset(dev_id, index);
 		return SW_OK;
 	}
 
@@ -1408,8 +1408,8 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 			rv = SW_FAIL;
 	}
 	if (SW_OK == rv) {
-		ssdk_uniphy_raw_clock_set(index, UNIPHY_RX, clock);
-		ssdk_uniphy_raw_clock_set(index, UNIPHY_TX, clock);
+		ssdk_uniphy_raw_clock_set(dev_id, index, UNIPHY_RX, clock);
+		ssdk_uniphy_raw_clock_set(dev_id, index, UNIPHY_TX, clock);
 	}
 #ifdef MPPE
 	/*configure phy clock from uniphy*/

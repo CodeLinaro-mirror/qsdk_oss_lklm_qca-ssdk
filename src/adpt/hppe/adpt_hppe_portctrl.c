@@ -2606,7 +2606,7 @@ _adpt_hppe_port_interface_mode_apply(a_uint32_t dev_id, a_bool_t force_switch)
 		ssdk_dt_global_set_mac_mode(dev_id, mode_index, mode_new[mode_index]);
 		ssdk_gcc_uniphy_sys_set(dev_id, mode_index, A_TRUE);
 	}
-	ssdk_uniphy_port5_clock_source_set();
+	ssdk_uniphy_port5_clock_source_set(dev_id);
 
 	/*configure the mode according to mode_new*/
 	for(mode_index = SSDK_UNIPHY_INSTANCE0; mode_index < uniphy_num; mode_index++)

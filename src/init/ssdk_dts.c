@@ -1473,6 +1473,16 @@ int ssdk_switch_device_num_init(void)
 
 	switch_instance = of_find_node_by_name(NULL, "ess-instance");
 	if (switch_instance) {
+		struct platform_device *pdev = of_find_device_by_node(switch_instance);
+		int ret;
+
+		ret = of_platform_populate(switch_instance, NULL, NULL, &pdev->dev);
+		if (ret) {
+			dev_err(&pdev->dev, "Failed to populate child devices: %d\n", ret);
+			put_device(&pdev->dev);
+			return ret;
+		}
+
 		num_devices = of_get_property(switch_instance, "num_devices", &len);
 		if (num_devices)
 			dev_num = be32_to_cpup(num_devices);

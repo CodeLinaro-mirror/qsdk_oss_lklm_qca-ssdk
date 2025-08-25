@@ -1643,8 +1643,6 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 /*qca808x_end*/
 	hsl_reg_mode reg_mode;
 	ssdk_reg_map_info map;
-	struct clk *  ess_clk;
-	struct clk *  cmn_clk;
 
 #ifdef IN_UNIPHY
 	reg_mode = ssdk_uniphy_reg_access_mode_get(dev_id);
@@ -1671,17 +1669,8 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 			SSDK_ERROR("%s ioremap fail.", __func__);
 			return -1;
 		}
-		ess_clk = ssdk_dts_essclk_get(dev_id);
-		cmn_clk = ssdk_dts_cmnclk_get(dev_id);
-		if (!IS_ERR(ess_clk)) {
-			/* Enable ess clock here */
-			SSDK_INFO("Enable ess clk\n");
-			clk_prepare_enable(ess_clk);
-		} else if (!IS_ERR(cmn_clk)) {
-			/* clock ID cmn_ahb_clk defined in DTS */
-			ssdk_gcc_clock_init();
-		}
 
+		ssdk_gcc_clock_init(dev_id);
 		cfg->reg_mode = HSL_HEADER;
 	} else if (reg_mode == HSL_REG_MDIO) {
 		cfg->reg_mode = HSL_MDIO;
@@ -1712,7 +1701,7 @@ ssdk_plat_exit(a_uint32_t dev_id)
 		iounmap(qca_phy_priv_global[dev_id]->hw_addr);
 		cmn_clk = ssdk_dts_cmnclk_get(dev_id);
 		if (!IS_ERR(cmn_clk)) {
-			ssdk_gcc_clock_exit();
+			ssdk_gcc_clock_exit(dev_id);
 		}
 	}
 

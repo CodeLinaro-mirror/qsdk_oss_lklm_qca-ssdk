@@ -1407,24 +1407,26 @@ static int ssdk_switch_unregister(a_uint32_t dev_id)
 }
 
 char ssdk_driver_name[] = "ess_ssdk";
-struct ssdk_driver_priv {
-	a_uint32_t dev_id;
-};
 
 static int ssdk_probe(struct platform_device *pdev)
 {
 	struct device_node *np;
 	struct ssdk_driver_priv *priv = NULL;
+	struct device *dev = &pdev->dev;
+	const adpt_ppe_type_t *type;
 
 	np = of_node_get(pdev->dev.of_node);
 	if (of_device_is_compatible(np, "qcom,ess-instance"))
-		return of_platform_populate(np, NULL, NULL, &pdev->dev);
+		return 0;
 
-	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
 	if (priv == NULL)
 		return -ENOMEM;
 
 	of_property_read_u32(np, "device_id", &(priv->dev_id));
+	type = of_device_get_match_data(dev);
+	priv->ppe_type = (adpt_ppe_type_t)(uintptr_t)type;
+
 	platform_set_drvdata(pdev, priv);
 
 	return 0;
@@ -1440,16 +1442,16 @@ static void ssdk_shutdown(struct platform_device *pdev)
 }
 
 static const struct of_device_id ssdk_of_mtable[] = {
-	{.compatible = "qcom,ess-switch" },
-	{.compatible = "qcom,ess-switch-ipq60xx" },
-	{.compatible = "qcom,ess-switch-ipq807x" },
-	{.compatible = "qcom,ess-switch-ipq95xx" },
-	{.compatible = "qcom,ess-switch-ipq53xx" },
-	{.compatible = "qcom,ess-switch-ipq54xx" },
-	{.compatible = "qcom,ess-switch-ipq96xx" },
-	{.compatible = "qcom,ess-switch-ipq52xx" },
-	{.compatible = "qcom,ess-switch-qce22xx" },
-	{.compatible = "qcom,ess-instance" },
+	{.compatible = "qcom,ess-switch", .data = (void *)HPPE_TYPE },
+	{.compatible = "qcom,ess-switch-ipq60xx", .data = (void *)CPPE_TYPE },
+	{.compatible = "qcom,ess-switch-ipq807x", .data = (void *)HPPE_TYPE},
+	{.compatible = "qcom,ess-switch-ipq95xx", .data = (void *)APPE_TYPE },
+	{.compatible = "qcom,ess-switch-ipq53xx", .data = (void *)MPPE_TYPE },
+	{.compatible = "qcom,ess-switch-ipq54xx", .data = (void *)MRPPE_TYPE },
+	{.compatible = "qcom,ess-switch-ipq96xx", .data = (void *)JHPPE_TYPE },
+	{.compatible = "qcom,ess-switch-ipq52xx", .data = (void *)HMSPPE_TYPE },
+	{.compatible = "qcom,ess-switch-qce22xx", .data = (void *)HTTPPE_TYPE },
+	{.compatible = "qcom,ess-instance", .data = (void *)MAX_PPE_TYPE },
 	{}
 };
 
@@ -1495,25 +1497,16 @@ ssdk_cleanup(a_uint32_t dev_id)
 }
 /*qca808x_end*/
 
-static void ssdk_driver_register(a_uint32_t dev_id)
+static void ssdk_driver_register(void)
 {
-	hsl_reg_mode reg_mode;
-
-	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
-	if ((dev_id == 0) && (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS)) {
-		platform_driver_register(&ssdk_driver);
-	}
+	platform_driver_register(&ssdk_driver);
 }
 
-static void ssdk_driver_unregister(a_uint32_t dev_id)
+static void ssdk_driver_unregister(void)
 {
-	hsl_reg_mode reg_mode;
-
-	reg_mode= ssdk_switch_reg_access_mode_get(dev_id);
-	if ((dev_id == 0) && (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS)) {
-		platform_driver_unregister(&ssdk_driver);
-	}
+	platform_driver_unregister(&ssdk_driver);
 }
+
 /*qca808x_start*/
 static inline a_uint32_t qca_detect_phyid(a_uint32_t dev_id)
 {
@@ -1819,6 +1812,9 @@ static int __init regi_init(void)
 /*qca808x_start*/
 	int rv = 0;
 /*qca808x_end*/
+
+	ssdk_driver_register();
+
 	/*init switch device num firstly*/
 	ssdk_switch_device_num_init();
 
@@ -1827,6 +1823,7 @@ static int __init regi_init(void)
 	rv = ssdk_alloc_priv(dev_num);
 	if (rv)
 		goto out;
+
 
 	for (num = 0; num < dev_num; num++) {
 		ssdk_cfg_default_init(&cfg);
@@ -1842,12 +1839,12 @@ static int __init regi_init(void)
 		qca_phy_priv_global[dev_id]->of_node = ssdk_dts_node_get(dev_id);
 		INIT_LIST_HEAD(&(qca_phy_priv_global[dev_id]->sw_fdb_tbl));
 		qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT7;
+
 /*qca808x_start*/
 		rv = ssdk_plat_init(&cfg, dev_id);
 		ssdk_init_status_debug_state(dev_id, SSDK_PLAT_INIT_FAILURE,rv);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 /*qca808x_end*/
-		ssdk_driver_register(dev_id);
 /*qca808x_start*/
 		rv = chip_ver_get(dev_id, &cfg);
 		ssdk_init_status_debug_state(dev_id, SSDK_CHIP_VER_GET_FAILURE, rv);
@@ -1971,7 +1968,6 @@ regi_exit(void)
 
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
-		ssdk_driver_unregister(dev_id);
 		if (qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered == A_TRUE)
 			ssdk_switch_unregister(dev_id);
 #ifdef IN_SFP_PHY
@@ -1979,6 +1975,8 @@ regi_exit(void)
 #endif
 		rv = ssdk_cleanup(dev_id);
 	}
+
+	ssdk_driver_unregister();
 
 	if (rv == SW_OK)
 		SSDK_INFO("qca-%s module exit  done!\n", SSDK_STR);

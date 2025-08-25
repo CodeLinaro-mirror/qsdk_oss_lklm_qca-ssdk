@@ -355,8 +355,9 @@ qca_gcc_mac_port_clock_set(a_uint32_t dev_id, a_uint32_t port_id,
 void
 qca_gcc_uniphy_port_clock_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
                                 a_uint32_t port_id, a_bool_t enable);
-void ssdk_gcc_clock_init(void);
-void ssdk_gcc_clock_exit(void);
+
+int ssdk_gcc_clock_init(a_uint32_t dev_id);
+void ssdk_gcc_clock_exit(a_uint32_t dev_id);
 
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
 void ssdk_pci_ppe_clock_init(a_uint32_t dev_id);
@@ -372,14 +373,15 @@ void ssdk_port_mac_clock_reset(
 	a_uint32_t port_id);
 
 void ssdk_ppe_reset_init(a_uint32_t dev_id);
-void ssdk_uniphy_raw_clock_reset(a_uint8_t uniphy_index);
+void ssdk_uniphy_raw_clock_reset(a_uint32_t dev_id, a_uint8_t uniphy_index);
 void ssdk_uniphy_raw_clock_set(
-	a_uint8_t uniphy_index,
-	a_uint8_t direction,
-	a_uint32_t clock);
+		a_uint32_t dev_id,
+		a_uint8_t uniphy_index,
+		a_uint8_t direction,
+		a_uint32_t clock);
 void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_bool_t enable);
-void ssdk_uniphy_port5_clock_source_set(void);
+void ssdk_uniphy_port5_clock_source_set(a_uint32_t dev_id);
 
 void ssdk_appe_port_speed_clock_set(
 	a_uint32_t dev_id,

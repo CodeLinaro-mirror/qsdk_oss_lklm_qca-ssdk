@@ -21,6 +21,8 @@
 #include <linux/clk.h>
 #include <linux/clk-provider.h>
 #include <linux/clkdev.h>
+#include <linux/of_platform.h>
+#include <linux/platform_device.h>
 
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
 #include <linux/qcom-fpga-pci.h>
@@ -57,13 +59,22 @@ struct clk {
 };
 #endif
 
-struct device_node *clock_node = NULL;
-static struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX] = {0};
+struct ssdk_clk_private {
+	a_uint32_t dev_id;
+	struct device *dev;
+	int ppe_type;
+	struct clk_hw *uniphy_raw_clks[SSDK_MAX_UNIPHY_INSTANCE * 2];
+	struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX];
+	struct reset_control *uniphy_rsts[UNIPHY_RST_MAX];
+	struct reset_control *port_rsts[SSDK_MAX_PORT_NUM * 2];
+	struct reset_control *port_mac_rsts[SSDK_MAX_PORT_NUM];
+};
 
-struct device_node *rst_node = NULL;
-struct reset_control *uniphy_rsts[UNIPHY_RST_MAX] = {0};
-struct reset_control *port_rsts[SSDK_MAX_PORT_NUM * 2] = {0};
-struct reset_control *port_mac_rsts[SSDK_MAX_PORT_NUM] = {0};
+typedef enum {
+	PPE_UNIPHY_RST,
+	PPE_MAC_RST,
+	PPE_PORT_RST,
+} ppe_hw_type;
 
 #if defined(SSDK_RAW_CLOCK)
 #define RST_LOOKUP(_cbc, _node_name, _rst_index, _rst_bits)	\
@@ -747,6 +758,71 @@ static bool ssdk_raw_clock_rate_set_and_enable(a_uint8_t* clock_id,
 }
 #endif
 
+static struct ssdk_clk_private *ssdk_dev_id_to_clk_priv(a_uint32_t dev_id)
+{
+	struct device_node *ppe_node = ssdk_dts_node_get(dev_id);
+	struct ssdk_clk_private *clk_priv = NULL;
+	struct ssdk_driver_priv *priv;
+	struct platform_device *pdev;
+
+	pdev = of_find_device_by_node(ppe_node);
+	if (!pdev)
+		return NULL;
+
+	priv = platform_get_drvdata(pdev);
+	if (priv)
+		clk_priv = priv->clk_data;
+
+	put_device(&pdev->dev);
+	return clk_priv;
+}
+
+static struct clk *ssdk_ppe_uniphy_raw_clock_get(a_uint32_t dev_id, int index)
+{
+	struct ssdk_clk_private *clk_priv = ssdk_dev_id_to_clk_priv(dev_id);
+
+	if (!clk_priv)
+		return NULL;
+
+	return clk_priv->uniphy_raw_clks[index]->clk;
+}
+
+static struct clk *ssdk_ppe_uniphy_clock_get(a_uint32_t dev_id, enum unphy_clk_type clock_type)
+{
+	struct ssdk_clk_private *clk_priv = ssdk_dev_id_to_clk_priv(dev_id);
+
+	if (!clk_priv)
+		return NULL;
+
+	return clk_priv->uniphy_port_clks[clock_type];
+}
+
+static struct reset_control *ssdk_ppe_reset_get(a_uint32_t dev_id,
+		ppe_hw_type hw_type, int clock_type)
+{
+	struct ssdk_clk_private *clk_priv = ssdk_dev_id_to_clk_priv(dev_id);
+	struct reset_control *rst = NULL;
+
+	if (!clk_priv)
+		return NULL;
+
+	switch (hw_type) {
+	case PPE_UNIPHY_RST:
+		rst = clk_priv->uniphy_rsts[clock_type];
+		break;
+	case PPE_MAC_RST:
+		rst = clk_priv->port_mac_rsts[clock_type];
+		break;
+	case PPE_PORT_RST:
+		rst = clk_priv->port_rsts[clock_type];
+		break;
+	default:
+		break;
+	}
+
+	return rst;
+}
+
 /* below 3 routines to be used as common */
 void ssdk_clock_rate_set_and_enable(
 	struct device_node *node, a_uint8_t* clock_id, a_uint32_t rate)
@@ -810,7 +886,7 @@ void ssdk_uniphy_reset(
 {
 	struct reset_control *rst;
 
-	rst = uniphy_rsts[rst_type];
+	rst = ssdk_ppe_reset_get(dev_id, PPE_UNIPHY_RST, rst_type);
 	if (IS_ERR(rst)) {
 		SSDK_ERROR("reset(%d) not exist!\n", rst_type);
 		return;
@@ -825,6 +901,7 @@ void ssdk_port_reset(
 	a_uint32_t action)
 {
 	struct reset_control *rst;
+	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 
 	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
 		return;
@@ -836,7 +913,7 @@ void ssdk_port_reset(
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
 		struct reset_control *mac_rst = NULL;
 
-		mac_rst = port_mac_rsts[port_id - 1];
+		mac_rst = ssdk_ppe_reset_get(dev_id, PPE_MAC_RST, port_id - 1);
 		if (IS_ERR(mac_rst)) {
 			SSDK_ERROR("appe port mac reset(%d) not exist!\n", port_id);
 			return;
@@ -850,7 +927,7 @@ void ssdk_port_reset(
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
 		/* reset RX */
-		rst = port_rsts[2 * (port_id - 1)];
+		rst = ssdk_ppe_reset_get(dev_id, PPE_PORT_RST, 2 * (port_id - 1));
 		if (IS_ERR(rst)) {
 			SSDK_ERROR("port RX reset(%d) not exist!\n", port_id);
 			return;
@@ -858,7 +935,7 @@ void ssdk_port_reset(
 		ssdk_gcc_reset(rst, action);
 
 		/* reset TX */
-		rst = port_rsts[2 * (port_id - 1) + 1];
+		rst = ssdk_ppe_reset_get(dev_id, PPE_PORT_RST, 2 * (port_id - 1) + 1);
 		if (IS_ERR(rst)) {
 			SSDK_ERROR("port TX reset(%d) not exist!\n", port_id);
 			return;
@@ -867,7 +944,7 @@ void ssdk_port_reset(
 	} else
 #endif
 	{
-		rst = port_rsts[port_id - 1];
+		rst = ssdk_ppe_reset_get(dev_id, PPE_PORT_RST, port_id - 1);
 		if (IS_ERR(rst)) {
 			SSDK_ERROR("port reset(%d) not exist!\n", port_id);
 			return;
@@ -925,7 +1002,7 @@ void ssdk_uniphy_clock_rate_set(
 		}
 	}
 #endif
-	uniphy_clk = uniphy_port_clks[clock_type];
+	uniphy_clk = ssdk_ppe_uniphy_clock_get(dev_id, clock_type);
 	if (!IS_ERR_OR_NULL(uniphy_clk)) {
 		if (rate) {
 #if defined(SSDK_RAW_CLOCK)
@@ -980,7 +1057,7 @@ void ssdk_uniphy_clock_enable(
 			return;
 		}
 	}
-	uniphy_clk = uniphy_port_clks[clock_type];
+	uniphy_clk = ssdk_ppe_uniphy_clock_get(dev_id, clock_type);
 	if (!IS_ERR_OR_NULL(uniphy_clk)) {
 #if defined(SSDK_RAW_CLOCK)
 		if (!ssdk_clock_en_set(uniphy_clk->con_id, enable))
@@ -1047,6 +1124,7 @@ static const struct clk_ops clk_uniphy_ops = {
 	.set_rate = uniphy_clks_set_rate,
 };
 
+#if 0
 static struct clk_uniphy uniphy0_gcc_rx_clk = {
                 .hw.init = &(struct clk_init_data){
                         .name = "uniphy0_gcc_rx_clk",
@@ -1112,6 +1190,7 @@ static struct clk_hw *uniphy_raw_clks[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
 	&uniphy1_gcc_rx_clk.hw, &uniphy1_gcc_tx_clk.hw,
 	&uniphy2_gcc_rx_clk.hw, &uniphy2_gcc_tx_clk.hw,
 };
+#endif
 
 static char *ppe_clk_ids[UNIPHYT_CLK_MAX] = {
 	NSS_PORT1_RX_CLK,
@@ -1144,10 +1223,45 @@ static char *ppe_clk_ids[UNIPHYT_CLK_MAX] = {
 	PORT5_TX_SRC
 };
 
-static void ssdk_ppe_uniphy_clock_init(adpt_ppe_type_t chip_type)
+const char *uniphy_raw_clk_names[] = {
+	"uniphy0_gcc_rx_clk",
+	"uniphy0_gcc_tx_clk",
+	"uniphy1_gcc_rx_clk",
+	"uniphy1_gcc_tx_clk",
+	"uniphy2_gcc_rx_clk",
+	"uniphy2_gcc_tx_clk",
+};
+
+static struct clk_hw *ssdk_uniphy_clk_register(struct device *dev, const char *clk_name, int index, int dir)
+{
+	struct clk_uniphy *uniphy_clk;
+	struct clk_init_data init = { };
+	int ret;
+
+	uniphy_clk = devm_kzalloc(dev, sizeof(*uniphy_clk), GFP_KERNEL);
+	if (!uniphy_clk)
+		return ERR_PTR(-ENOMEM);
+
+	init.name = clk_name;
+	init.ops = &clk_uniphy_ops;
+
+	uniphy_clk->hw.init = &init;
+	uniphy_clk->rate = UNIPHY_DEFAULT_RATE;
+	uniphy_clk->uniphy_index = index;
+	uniphy_clk->dir = dir;
+
+	ret = devm_clk_hw_register(dev, &uniphy_clk->hw);
+	if (ret)
+		return ERR_PTR(ret);
+
+	return &uniphy_clk->hw;
+}
+
+static void ssdk_ppe_uniphy_clock_init(struct ssdk_clk_private *priv, adpt_ppe_type_t chip_type)
 {
 	a_uint32_t i, inst_num = 0;
-	struct clk *clk;
+	struct clk_hw *uniphy_hw;
+	char name[64];
 
 	switch (chip_type) {
 		case HPPE_TYPE:
@@ -1167,23 +1281,31 @@ static void ssdk_ppe_uniphy_clock_init(adpt_ppe_type_t chip_type)
 	}
 
 	for (i = 0; i < inst_num * 2; i++) {
-		clk = clk_register(NULL, uniphy_raw_clks[i]);
-		if (IS_ERR(clk))
-			SSDK_ERROR("Clk register %d fail!\n", i);
+		if (priv->dev_id)
+			snprintf(name, sizeof(name), "%s_%d", uniphy_raw_clk_names[i], priv->dev_id);
+		else
+			snprintf(name, sizeof(name), "%s", uniphy_raw_clk_names[i]);
+
+		uniphy_hw = ssdk_uniphy_clk_register(priv->dev, name, i/2, i % 2);
+		if (IS_ERR(uniphy_hw))
+			SSDK_ERROR("Device %d: Clk register %s fail!\n",
+				   priv->dev_id, uniphy_raw_clk_names[i]);
+		else
+			priv->uniphy_raw_clks[i] = uniphy_hw;
 	}
 
 	for (i = 0; i < ARRAY_SIZE(ppe_clk_ids); i++) {
-		uniphy_port_clks[i] = of_clk_get_by_name(clock_node, ppe_clk_ids[i]);
-		if (IS_ERR(uniphy_port_clks[i]))
+		priv->uniphy_port_clks[i] = devm_clk_get_optional(priv->dev, ppe_clk_ids[i]);
+		if (IS_ERR(priv->uniphy_port_clks[i]))
 			continue;
 		if (i != PORT5_RX_SRC_E && i != PORT5_TX_SRC_E)
-			ssdk_uniphy_clock_enable(0, i, A_TRUE);
+			ssdk_uniphy_clock_enable(priv->dev_id, i, A_TRUE);
 	}
 
 	return;
 }
 
-static void ssdk_ppe_uniphy_clock_deinit(adpt_ppe_type_t chip_type)
+static void ssdk_ppe_uniphy_clock_deinit(struct ssdk_clk_private *priv, adpt_ppe_type_t chip_type)
 {
 	a_uint32_t i, inst_num = 0;
 
@@ -1205,19 +1327,12 @@ static void ssdk_ppe_uniphy_clock_deinit(adpt_ppe_type_t chip_type)
 	}
 
 	for (i = 0; i < ARRAY_SIZE(ppe_clk_ids); i++) {
-		if (IS_ERR(uniphy_port_clks[i]))
+		if (IS_ERR(priv->uniphy_port_clks[i]))
 			continue;
 		/* disable and unprepare uniphy port and nss port clock */
 		if (i != PORT5_RX_SRC_E && i != PORT5_TX_SRC_E)
-			ssdk_uniphy_clock_enable(0, i, A_FALSE);
-
-		/* put clock */
-		clk_put(uniphy_port_clks[i]);
+			ssdk_uniphy_clock_enable(priv->dev_id, i, A_FALSE);
 	}
-
-	/* unregister uniphy raw clock */
-	for (i = 0; i < inst_num * 2; i++)
-		clk_hw_unregister(uniphy_raw_clks[i]);
 }
 
 #if defined(SSDK_RAW_CLOCK)
@@ -1225,6 +1340,7 @@ struct clk_data_t *ssdk_clk_to_clk_data(const char *clock_id, unsigned int rate)
 {
 	unsigned int prate = PPE_CLK_UNAWARE_RATE;
 	uint32_t clk_id = 0xff;
+	struct clk *raw_clk;
 
 	if (strstr(clock_id, "port1_rx"))
 		clk_id = SSDK_UNIPHY_INSTANCE0 * 2 + UNIPHY_RX;
@@ -1240,10 +1356,13 @@ struct clk_data_t *ssdk_clk_to_clk_data(const char *clock_id, unsigned int rate)
 		clk_id = SSDK_UNIPHY_INSTANCE2 * 2 + UNIPHY_TX;
 
 	if (clk_id != 0xff) {
-		prate = clk_get_rate(uniphy_raw_clks[clk_id]->clk);
-		SSDK_DEBUG("UNIPHY CLK %s prate: %d for the clock %s rate %d set\n",
-				__clk_get_name(uniphy_raw_clks[clk_id]->clk), prate,
-				clock_id, rate);
+		raw_clk = ssdk_ppe_uniphy_raw_clock_get(0, clk_id);
+		if (raw_clk) {
+			prate = clk_get_rate(raw_clk);
+			SSDK_DEBUG("UNIPHY CLK %s prate: %d for the clock %s rate %d set\n",
+					__clk_get_name(raw_clk), prate,
+					clock_id, rate);
+		}
 	}
 
 	return ssdk_clock_find(clock_id, rate, prate);
@@ -1320,21 +1439,21 @@ void ssdk_port_mac_clock_reset(
 }
 
 static
-void ssdk_uniphy1_clock_source_set(void)
+void ssdk_uniphy1_clock_source_set(a_uint32_t dev_id)
 {
-	if (ssdk_uniphy_valid_check(0,
+	if (ssdk_uniphy_valid_check(dev_id,
 		SSDK_UNIPHY_INSTANCE1, PORT_WRAPPER_MAX) == A_FALSE) {
 		SSDK_INFO("UNIPHY 1 is not available on this SKU!\n");
 		return;
 	}
 
-	clk_set_parent(uniphy_port_clks[PORT5_RX_SRC_E],
-			uniphy_raw_clks[2]->clk);
-	clk_set_parent(uniphy_port_clks[PORT5_TX_SRC_E],
-			uniphy_raw_clks[3]->clk);
+	clk_set_parent(ssdk_ppe_uniphy_clock_get(dev_id, PORT5_RX_SRC_E),
+			ssdk_ppe_uniphy_raw_clock_get(dev_id, 2));
+	clk_set_parent(ssdk_ppe_uniphy_clock_get(dev_id, PORT5_TX_SRC_E),
+			ssdk_ppe_uniphy_raw_clock_get(dev_id, 3));
 }
 
-void ssdk_uniphy_raw_clock_reset(a_uint8_t uniphy_index)
+void ssdk_uniphy_raw_clock_reset(a_uint32_t dev_id, a_uint8_t uniphy_index)
 {
 	a_uint32_t id;
 
@@ -1342,18 +1461,20 @@ void ssdk_uniphy_raw_clock_reset(a_uint8_t uniphy_index)
 		return;
 
 	id = uniphy_index*2;
-	if (clk_set_rate(uniphy_raw_clks[id]->clk, UNIPHY_DEFAULT_RATE))
+	if (clk_set_rate(ssdk_ppe_uniphy_raw_clock_get(dev_id, id), UNIPHY_DEFAULT_RATE))
 		SSDK_ERROR("set rate for %d fail!\n", id);
-	if (clk_set_rate(uniphy_raw_clks[id+1]->clk, UNIPHY_DEFAULT_RATE))
+	if (clk_set_rate(ssdk_ppe_uniphy_raw_clock_get(dev_id, id + 1), UNIPHY_DEFAULT_RATE))
 		SSDK_ERROR("set rate for %d fail!\n", id+1);
 
 }
 
 void ssdk_uniphy_raw_clock_set(
-	a_uint8_t uniphy_index,
-	a_uint8_t direction,
-	a_uint32_t clock)
+		a_uint32_t dev_id,
+		a_uint8_t uniphy_index,
+		a_uint8_t direction,
+		a_uint32_t clock)
 {
+	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 	a_uint32_t old_clock, id, mode;
 	a_uint32_t rate = 0;
 
@@ -1366,13 +1487,13 @@ void ssdk_uniphy_raw_clock_set(
 	}
 
 	id = uniphy_index*2 + direction;
-	old_clock = clk_get_rate(uniphy_raw_clks[id]->clk);
+	old_clock = clk_get_rate(ssdk_ppe_uniphy_raw_clock_get(dev_id, id));
 
 #if defined(MPPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
 		if (clock != old_clock) {
-			if (clk_set_rate(uniphy_raw_clks[id]->clk, clock))
+			if (clk_set_rate(ssdk_ppe_uniphy_raw_clock_get(dev_id, id), clock))
 				SSDK_ERROR("set clock rate: %d fail!\n", clock);
 		}
 		return;
@@ -1392,65 +1513,69 @@ void ssdk_uniphy_raw_clock_set(
 	if (clock != old_clock) {
 		if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
 			if (UNIPHY_RX == direction)
-				ssdk_uniphy_clock_rate_set(0,
+				ssdk_uniphy_clock_rate_set(dev_id,
 						NSS_PORT5_RX_CLK_E,
 						rate);
 			else
-				ssdk_uniphy_clock_rate_set(0,
+				ssdk_uniphy_clock_rate_set(dev_id,
 						NSS_PORT5_TX_CLK_E,
 						rate);
 		}
-		if (clk_set_rate(uniphy_raw_clks[id]->clk, clock))
+		if (clk_set_rate(ssdk_ppe_uniphy_raw_clock_get(dev_id, id), clock))
 			SSDK_ERROR("set rate: %d fail!\n", clock);
 	}
 
-	mode = ssdk_dt_global_get_mac_mode(0, SSDK_UNIPHY_INSTANCE1);
+	mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
 	if (((uniphy_index == SSDK_UNIPHY_INSTANCE0) &&
 	     (mode == PORT_INTERFACE_MODE_MAX)) ||
 	    (uniphy_index == SSDK_UNIPHY_INSTANCE1)) {
-		if (clk_set_parent(uniphy_port_clks[PORT5_RX_SRC_E + direction],
-				uniphy_raw_clks[id]->clk))
+		if (clk_set_parent(ssdk_ppe_uniphy_clock_get(dev_id, PORT5_RX_SRC_E + direction),
+				ssdk_ppe_uniphy_raw_clock_get(dev_id, id)))
 			SSDK_ERROR("set parent fail!\n");
 	}
 }
 
-void ssdk_uniphy_port5_clock_source_set(void)
+void ssdk_uniphy_port5_clock_source_set(a_uint32_t dev_id)
 {
+	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 	a_uint32_t id, mode, i;
 
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
 		return;
 	}
-	mode = ssdk_dt_global_get_mac_mode(0, SSDK_UNIPHY_INSTANCE1);
+	mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
 
 	for (i = UNIPHY_RX; i <= UNIPHY_TX; i++) {
 		if (mode == PORT_WRAPPER_MAX) {
 			id = SSDK_UNIPHY_INSTANCE0*2 + i;
 		} else {
 			id = SSDK_UNIPHY_INSTANCE1*2 + i;
-			if (ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE1,
+			if (ssdk_uniphy_valid_check(dev_id, SSDK_UNIPHY_INSTANCE1,
 				PORT_WRAPPER_MAX) == A_FALSE) {
 				SSDK_INFO("UNIPHY 1 is not available on this SKU!\n");
 				return;
 			}
 		}
 
-		if (clk_set_parent(uniphy_port_clks[PORT5_RX_SRC_E + i],
-			uniphy_raw_clks[id]->clk)) {
+		if (clk_set_parent(ssdk_ppe_uniphy_clock_get(dev_id, PORT5_RX_SRC_E + i),
+			ssdk_ppe_uniphy_raw_clock_get(dev_id, id))) {
 			SSDK_ERROR("set parent fail!\n");
 		}
 	}
 }
 
 static
-void ssdk_gcc_ppe_clock_deinit(adpt_ppe_type_t chip_type)
+void ssdk_gcc_ppe_clock_deinit(struct ssdk_clk_private *priv)
 {
-	ssdk_ppe_uniphy_clock_deinit(chip_type);
+	ssdk_ppe_uniphy_clock_deinit(priv, priv->ppe_type);
 }
 
-static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
+static void ssdk_appe_fixed_clock_init(struct ssdk_clk_private *priv,
+		adpt_ppe_type_t chip_type)
 {
+	struct device *dev = priv->dev;
+	struct device_node *clock_node = dev->of_node;
 	a_uint32_t noc_rate = 0, ppe_rate = 0;
 	int uniphy_valid = 0;
 
@@ -1517,19 +1642,19 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_SNOC_1_CLK, noc_rate);
 
 	/* GCC_UNIPHY_SYS_CFG_RCGR init 24MHz and GCC_PCNOC_BFDCD_CFG_RCGR init 100MHz */
-	uniphy_valid = ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE0, PORT_WRAPPER_MAX);
+	uniphy_valid = ssdk_uniphy_valid_check(priv->dev_id, SSDK_UNIPHY_INSTANCE0, PORT_WRAPPER_MAX);
 	if (!!uniphy_valid) {
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_AHB_CLK, UNIPHY_AHB_CLK_RATE);
 	}
 
-	uniphy_valid = ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE1, PORT_WRAPPER_MAX);
+	uniphy_valid = ssdk_uniphy_valid_check(priv->dev_id, SSDK_UNIPHY_INSTANCE1, PORT_WRAPPER_MAX);
 	if (!!uniphy_valid) {
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_AHB_CLK, UNIPHY_AHB_CLK_RATE);
 	}
 
-	uniphy_valid = ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE2, PORT_WRAPPER_MAX);
+	uniphy_valid = ssdk_uniphy_valid_check(priv->dev_id, SSDK_UNIPHY_INSTANCE2, PORT_WRAPPER_MAX);
 	if (!!uniphy_valid) {
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_AHB_CLK, UNIPHY_AHB_CLK_RATE);
@@ -1568,26 +1693,26 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 	return;
 }
 
-void ssdk_gcc_appe_clock_init(adpt_ppe_type_t chip_type)
+static void ssdk_gcc_appe_clock_init(struct ssdk_clk_private *priv)
 {
 #if defined(SSDK_RAW_CLOCK)
 	gcc_clk_base_g = ioremap(GCC_BASE_ADDR, GCC_SIZE);
 	if (!gcc_clk_base_g)
 		SSDK_ERROR("ioremap error on base 0x%x\n", GCC_BASE_ADDR);
 
-	if (chip_type == JHPPE_TYPE)
+	if (priv->ppe_type == JHPPE_TYPE)
 		nsscc_clk_base_g = ioremap(JHPPE_NSSCC_BASE_ADDR, NSSCC_SIZE);
 	else
 		nsscc_clk_base_g = ioremap(NSSCC_BASE_ADDR, NSSCC_SIZE);
 
 	if (!nsscc_clk_base_g)
-		SSDK_ERROR("NSSCC ioremap error with the chip type %d\n", chip_type);
+		SSDK_ERROR("NSSCC ioremap error with the chip type %d\n", priv->ppe_type);
 #endif
-	ssdk_appe_fixed_clock_init(chip_type);
-	ssdk_ppe_uniphy_clock_init(chip_type);
+	ssdk_appe_fixed_clock_init(priv, priv->ppe_type);
+	ssdk_ppe_uniphy_clock_init(priv, priv->ppe_type);
 
-	if (chip_type == APPE_TYPE)
-		ssdk_uniphy_port5_clock_source_set();
+	if (priv->ppe_type == APPE_TYPE)
+		ssdk_uniphy_port5_clock_source_set(priv->dev_id);
 }
 
 void
@@ -1595,6 +1720,7 @@ qca_gcc_uniphy_port_clock_set(
 	a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_uint32_t port_id, a_bool_t enable)
 {
+	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 
 	if (uniphy_index == SSDK_UNIPHY_INSTANCE2) {
 		ssdk_uniphy_clock_enable(dev_id,
@@ -1762,7 +1888,7 @@ ssdk_port_speed_clock_set(
 					NSS_PORT5_TX_CLK_E, rate);
 			mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
 			if (mode != PORT_INTERFACE_MODE_MAX)
-				ssdk_uniphy1_clock_source_set();
+				ssdk_uniphy1_clock_source_set(dev_id);
 			break;
 		case SSDK_PHYSICAL_PORT6:
 			ssdk_uniphy_clock_rate_set(dev_id,
@@ -1889,33 +2015,18 @@ void ssdk_ppe_reset_init(a_uint32_t dev_id)
 	reset_control_put(rst);
 }
 
-static void ssdk_gcc_reset_ids_init(void)
-{
-	a_uint32_t i;
-	rst_node = of_find_node_by_name(NULL, "ess-switch");
-
-	for (i = 0; i < ARRAY_SIZE(ppe_rst_ids); i++)
-		uniphy_rsts[i] = of_reset_control_get(rst_node, ppe_rst_ids[i]);
-
-	for (i = 0; i < ARRAY_SIZE(port_rst_ids); i++)
-		port_rsts[i] = of_reset_control_get(rst_node, port_rst_ids[i]);
-
-	for (i = 0; i < ARRAY_SIZE(port_mac_rst_ids); i++)
-		port_mac_rsts[i] = of_reset_control_get(rst_node, port_mac_rst_ids[i]);
-}
-
-static void ssdk_gcc_reset_ids_deinit(void)
+static void ssdk_gcc_reset_ids_init(struct ssdk_clk_private *priv)
 {
 	a_uint32_t i;
 
-	for (i = 0; i < ARRAY_SIZE(port_mac_rst_ids); i++)
-		reset_control_put(port_mac_rsts[i]);
+	for (i = 0; i < ARRAY_SIZE(ppe_rst_ids); i++)
+		priv->uniphy_rsts[i] = devm_reset_control_get_exclusive(priv->dev, ppe_rst_ids[i]);
 
 	for (i = 0; i < ARRAY_SIZE(port_rst_ids); i++)
-		reset_control_put(port_rsts[i]);
+		priv->port_rsts[i] = devm_reset_control_get_exclusive(priv->dev, port_rst_ids[i]);
 
-	for (i = 0; i < ARRAY_SIZE(ppe_rst_ids); i++)
-		reset_control_put(uniphy_rsts[i]);
+	for (i = 0; i < ARRAY_SIZE(port_mac_rst_ids); i++)
+		priv->port_mac_rsts[i] = devm_reset_control_get_exclusive(priv->dev, port_mac_rst_ids[i]);
 }
 
 enum unphy_rst_type uniphy_sys_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
@@ -1951,6 +2062,7 @@ enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
 void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_bool_t enable)
 {
+	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 	a_uint32_t index = 0, uniphy_max = SSDK_UNIPHY_INSTANCE2;
 	enum unphy_rst_type rst_type[SSDK_MAX_UNIPHY_INSTANCE * 2] = {UNIPHY_RST_MAX};
 
@@ -2012,81 +2124,43 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	return;
 }
 
-void ssdk_gcc_clock_init(void)
+int ssdk_gcc_clock_init(a_uint32_t dev_id)
 {
-	enum cmnblk_clk_type cmnblk_clk_mode = INTERNAL_48MHZ;
-	a_uint8_t *mode = NULL;
+	struct device_node *ppe_node = ssdk_dts_node_get(dev_id);
+	struct ssdk_clk_private *clk_priv;
+	struct platform_device *pdev;
+	struct ssdk_driver_priv *priv;
+	struct device *dev;
 
-	clock_node = of_find_node_by_name(NULL, "ess-switch");
-	if (of_property_read_string(clock_node, "cmnblk_clk",
-				    (const char **)&mode)) {
-		cmnblk_clk_mode = INTERNAL_48MHZ;
-	} else {
-		if (!strcmp(mode, "external_50MHz")) {
-			cmnblk_clk_mode = EXTERNAL_50MHZ;
-		} else if (!strcmp(mode, "external_25MHz")) {
-			cmnblk_clk_mode = EXTERNAL_25MHZ;
-		} else if (!strcmp(mode, "external_31250KHz")) {
-			cmnblk_clk_mode = EXTERNAL_31250KHZ;
-		} else if (!strcmp(mode, "external_40MHz")) {
-			cmnblk_clk_mode = EXTERNAL_40MHZ;
-		} else if (!strcmp(mode, "external_48MHz")) {
-			cmnblk_clk_mode = EXTERNAL_48MHZ;
-		} else if (!strcmp(mode, "internal_96MHz")) {
-			cmnblk_clk_mode = INTERNAL_96MHZ;
-		}
+
+	pdev = of_find_device_by_node(ppe_node);
+	priv = platform_get_drvdata(pdev);
+	dev = &pdev->dev;
+
+	clk_priv = devm_kzalloc(dev, sizeof(*clk_priv), GFP_KERNEL);
+	if (!clk_priv) {
+		put_device(dev);
+		return -ENOMEM;
 	}
 
-	if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq95xx")) {
-		ssdk_gcc_appe_clock_init(APPE_TYPE);
-	} else if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq53xx")) {
-#if defined(MPPE)
-		ssdk_gcc_appe_clock_init(MPPE_TYPE);
-#endif
-	} else if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq54xx")) {
-#if defined(MRPPE)
-		ssdk_gcc_appe_clock_init(MRPPE_TYPE);
-#endif
-	} else if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq96xx")) {
-#if defined(JHPPE)
-		ssdk_gcc_appe_clock_init(JHPPE_TYPE);
-#endif
-	} else if (of_device_is_compatible(clock_node,
-			"qcom,ess-switch-ipq52xx")) {
-#if defined(HMSPPE)
-		ssdk_gcc_appe_clock_init(HMSPPE_TYPE);
-#endif
-	}
-	ssdk_gcc_reset_ids_init();
+	clk_priv->dev = dev;
+	clk_priv->dev_id = dev_id;
+	clk_priv->ppe_type = priv->ppe_type;
+
+	priv->clk_data = clk_priv;
+	ssdk_gcc_appe_clock_init(clk_priv);
+	ssdk_gcc_reset_ids_init(clk_priv);
+
+	return 0;
 }
-
-void ssdk_gcc_clock_exit(void)
+void ssdk_gcc_clock_exit(a_uint32_t dev_id)
 {
-	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx")) {
-		ssdk_gcc_ppe_clock_deinit(APPE_TYPE);
-	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
-#if defined(MPPE)
-		ssdk_gcc_ppe_clock_deinit(MPPE_TYPE);
-#endif
-	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
-#if defined(MRPPE)
-		ssdk_gcc_ppe_clock_deinit(MRPPE_TYPE);;
-#endif
-	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
-#if defined(JHPPE)
-		ssdk_gcc_ppe_clock_deinit(JHPPE_TYPE);;
-#endif
-	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx")) {
-#if defined(HMSPPE)
-		ssdk_gcc_ppe_clock_deinit(HMSPPE_TYPE);;
-#endif
-	}
+	struct ssdk_clk_private *clk_priv = ssdk_dev_id_to_clk_priv(dev_id);
 
-	ssdk_gcc_reset_ids_deinit();
+	if (!clk_priv)
+		return;
+
+	ssdk_gcc_ppe_clock_deinit(clk_priv);
 
 #if defined(SSDK_RAW_CLOCK)
 	if (gcc_clk_base_g)
@@ -2095,6 +2169,7 @@ void ssdk_gcc_clock_exit(void)
 	if (nsscc_clk_base_g)
 		iounmap(nsscc_clk_base_g);
 #endif
+	put_device(clk_priv->dev);
 }
 
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
