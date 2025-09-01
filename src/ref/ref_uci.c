@@ -10346,18 +10346,22 @@ parse_qm_ucastqbase(struct switch_val *val)
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "destport")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "queuebase")) {
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "sram_queue_type")) {
 			val_ptr[6] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "profile")) {
+#endif
+		} else if (!strcmp(ext_value_p->option_name, "queuebase")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "profile")) {
+			val_ptr[8] = (char*)ext_value_p->option_value;
 		}  else {
 			rv = -1;
 			break;
 		}
 
-		parameter_length++;
 		switch_ext_p = switch_ext_p->next;
 	}
+	parameter_length = 9;
 
 	return rv;
 }

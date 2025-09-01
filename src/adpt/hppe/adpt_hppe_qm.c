@@ -23,6 +23,7 @@
 #define SERVICE_CODE_QUEUE_OFFSET   2048
 #define CPU_CODE_QUEUE_OFFSET         1024
 #define VP_PORT_QUEUE_OFFSET            0
+#define VP_PORT_ISRAM_QUEUE_OFFSET	3072
 
 #define UCAST_QUEUE_ID_MAX	256
 #define ALL_QUEUE_ID_MAX	300
@@ -102,6 +103,37 @@ adpt_hppe_ac_dynamic_threshold_get(
 }
 
 sw_error_t
+_adpt_hppe_ucast_queue_map_index_get(a_uint32_t dev_id, fal_ucast_queue_dest_t *queue_dest)
+{
+	a_uint32_t index = 0;
+
+	if (queue_dest->service_code_en) {
+		if (queue_dest->service_code >= SSDK_MAX_SERVICE_CODE_NUM)
+			return SW_OUT_OF_RANGE;
+
+		index = SERVICE_CODE_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
+			+ queue_dest->service_code;
+	} else if (queue_dest->cpu_code_en) {
+		if (queue_dest->cpu_code >= SSDK_MAX_CPU_CODE_NUM)
+			return SW_OUT_OF_RANGE;
+
+		index = CPU_CODE_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
+			+ queue_dest->cpu_code;
+	} else {
+#if defined(JHPPE)
+		if (queue_dest->sram_queue_type == FAL_ISRAM_QUEUE)
+			index = VP_PORT_ISRAM_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
+				+ FAL_PORT_ID_VALUE(queue_dest->dst_port);
+		else
+#endif
+			index = VP_PORT_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
+				+ FAL_PORT_ID_VALUE(queue_dest->dst_port);
+	}
+
+	return index;
+}
+
+sw_error_t
 adpt_hppe_ucast_queue_base_profile_get(
 		a_uint32_t dev_id,
 		fal_ucast_queue_dest_t *queue_dest,
@@ -117,22 +149,7 @@ adpt_hppe_ucast_queue_base_profile_get(
 	ADPT_NULL_POINT_CHECK(queue_base);
 	ADPT_NULL_POINT_CHECK(profile);
 
-	if (queue_dest ->service_code_en) {
-		if (queue_dest->service_code >= SSDK_MAX_SERVICE_CODE_NUM)
-			return SW_OUT_OF_RANGE;
-
-		index = SERVICE_CODE_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
-				+ queue_dest->service_code;
-	} else if (queue_dest ->cpu_code_en) {
-		if (queue_dest->cpu_code >= SSDK_MAX_CPU_CODE_NUM)
-			return SW_OUT_OF_RANGE;
-
-		index = CPU_CODE_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
-				+ queue_dest->cpu_code;
-	} else {
-		index = VP_PORT_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
-				+ FAL_PORT_ID_VALUE(queue_dest->dst_port);
-	}
+	index = _adpt_hppe_ucast_queue_map_index_get(dev_id, queue_dest);
 
 	rv = hppe_ucast_queue_map_tbl_get(dev_id, index, &ucast_queue_map_tbl);
 	if (rv)
@@ -1034,22 +1051,7 @@ adpt_hppe_ucast_queue_base_profile_set(
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(queue_dest);
 
-	if (queue_dest ->service_code_en) {
-		if (queue_dest->service_code >= SSDK_MAX_SERVICE_CODE_NUM)
-			return SW_OUT_OF_RANGE;
-
-		index = SERVICE_CODE_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
-				+ queue_dest->service_code;
-	} else if (queue_dest ->cpu_code_en) {
-		if (queue_dest->cpu_code >= SSDK_MAX_CPU_CODE_NUM)
-			return SW_OUT_OF_RANGE;
-
-		index = CPU_CODE_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
-				+ queue_dest->cpu_code;
-	} else {
-		index = VP_PORT_QUEUE_OFFSET + (queue_dest->src_profile << 8) \
-				+ FAL_PORT_ID_VALUE(queue_dest->dst_port);
-	}
+	index = _adpt_hppe_ucast_queue_map_index_get(dev_id, queue_dest);
 
 	ucast_queue_map_tbl.bf.queue_id = queue_base;
 	ucast_queue_map_tbl.bf.profile_id = profile;
