@@ -49,6 +49,30 @@ static void adpt_ip_macaddr_convert(fal_mac_addr_t *mac_addr,
 	}
 }
 
+#if defined(MRPPE)
+static void adpt_ip_intf_macaddr_convert(fal_mac_addr_t *mac_addr,
+		union in_l3_if_tbl_u *intf_entry, a_bool_t to_hsl)
+{
+	if (to_hsl) {
+		intf_entry->bf.mac_da_0 = mac_addr->uc[5] |	\
+					  mac_addr->uc[4] << 8;
+
+		intf_entry->bf.mac_da_1 = mac_addr->uc[3] |	\
+					  mac_addr->uc[2] << 8 |	\
+					  mac_addr->uc[1] << 16 |	\
+					  mac_addr->uc[0] << 24;
+	} else {
+		mac_addr->uc[5] = intf_entry->bf.mac_da_0;
+		mac_addr->uc[4] = intf_entry->bf.mac_da_0 >> 8;
+
+		mac_addr->uc[3] = intf_entry->bf.mac_da_1;
+		mac_addr->uc[2] = intf_entry->bf.mac_da_1 >> 8;
+		mac_addr->uc[1] = intf_entry->bf.mac_da_1 >> 16;
+		mac_addr->uc[0] = intf_entry->bf.mac_da_1 >> 24;
+	}
+}
+#endif
+
 a_uint8_t adpt_ppe_l3_mac_bitmap_alloc(a_uint32_t dev_id, fal_mac_addr_t mac_addr)
 {
 	a_uint32_t i;
@@ -143,17 +167,16 @@ a_uint8_t adpt_ppe_l3_mac_addr_check(a_uint32_t dev_id, fal_mac_addr_t mac_addr)
 	return mac_index;
 }
 
-a_bool_t adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_mac_addr_t *mac_addr)
+a_bool_t adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_intf_macaddr_t *mac_entry)
 {
 	a_uint8_t mac_index = 0;
 	struct ppe_ip_intf_mac *mac_ints = NULL;
 	a_bool_t get_next = A_FALSE;
 	struct ppe_ip_mac *ip_mac_p = &ppe_l3_mac_g[dev_id];
+	fal_mac_addr_t *mac_addr = &mac_entry->mac_addr;
 
-	if (!mac_bitmap) {
-		eth_zero_addr(mac_addr->uc);
+	if (!mac_bitmap)
 		return A_FALSE;
-	}
 
 	/* the parameter mac_addr is not 0, for get next mac from the input mac_addr */
 	if (!is_zero_ether_addr(mac_addr->uc))
@@ -166,20 +189,20 @@ a_bool_t adpt_ppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint8_t mac_bitmap, fal_m
 			if (get_next == A_FALSE) {
 				ether_addr_copy(mac_addr->uc, mac_ints->mac.mac_addr.uc);
 				spin_unlock_bh(&ip_mac_p->lock);
+				mac_entry->type = FAL_IP_INTF_MAC_TYPE_MY_MAC;
 				return A_TRUE;
 			}
 
 			if (ether_addr_equal(mac_addr->uc, mac_ints->mac.mac_addr.uc) &&
-					get_next == A_TRUE)
+					get_next == A_TRUE) {
+				eth_zero_addr(mac_addr->uc);
 				get_next = A_FALSE;
+			}
 		}
 		mac_bitmap >>= 1;
 		mac_index++;
 	}
 	spin_unlock_bh(&ip_mac_p->lock);
-
-	/* mac_bitmap is not found */
-	eth_zero_addr(mac_addr->uc);
 
 	return A_FALSE;
 }
@@ -230,7 +253,7 @@ a_uint8_t adpt_jhppe_l3_mac_addr_check(a_uint32_t dev_id, a_uint32_t l3_if,
 	return i;
 }
 
-void adpt_jhppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint32_t l3_if,
+a_bool_t adpt_jhppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint32_t l3_if,
 		fal_intf_macaddr_t *vsi_mac_entry)
 {
 	union l3_my_mac_tbl_u l3_mymac;
@@ -256,18 +279,47 @@ void adpt_jhppe_l3_mac_addr_get(a_uint32_t dev_id, a_uint32_t l3_if,
 				ether_addr_copy(vsi_mac_entry->mac_addr.uc, hsl_mac_addr.uc);
 				vsi_mac_entry->vsi_valid = l3_mymac.bf.vsi_valid;
 				vsi_mac_entry->vsi = l3_mymac.bf.vsi;
-				return;
+				vsi_mac_entry->type = FAL_IP_INTF_MAC_TYPE_VSI_MAC;
+				return A_TRUE;
 			}
 		}
 
-		if (adpt_jhppe_l3_mac_entry_equal(*vsi_mac_entry, l3_if, l3_mymac) && get_next == A_TRUE)
+		if (adpt_jhppe_l3_mac_entry_equal(*vsi_mac_entry, l3_if, l3_mymac) &&
+				get_next == A_TRUE) {
+			eth_zero_addr(vsi_mac_entry->mac_addr.uc);
 			get_next = A_FALSE;
+		}
 	}
 
-	/* mac entry is not found */
-	eth_zero_addr(vsi_mac_entry->mac_addr.uc);
+	return A_FALSE;
 }
 
+#endif
+
+#if defined(MRPPE)
+static a_bool_t adpt_mrppe_l3_in_mac_addr_get(union in_l3_if_tbl_u intf_entry,
+		fal_intf_macaddr_t *mac_entry)
+{
+	fal_mac_addr_t in_mac_addr;
+
+	if (!intf_entry.bf.mac_valid)
+		return A_FALSE;
+
+	adpt_ip_intf_macaddr_convert(&in_mac_addr, &intf_entry, A_FALSE);
+
+	if (is_zero_ether_addr(mac_entry->mac_addr.uc)) {
+		ether_addr_copy(mac_entry->mac_addr.uc, in_mac_addr.uc);
+		mac_entry->type = FAL_IP_INTF_MAC_TYPE_LOCAL;
+		return A_TRUE;
+	}
+
+	if (ether_addr_equal(mac_entry->mac_addr.uc, in_mac_addr.uc)) {
+		/* get the first MAC entry from the next hardware table such as l3_my_mac table. */
+		eth_zero_addr(mac_entry->mac_addr.uc);
+	}
+
+	return A_FALSE;
+}
 #endif
 
 sw_error_t
@@ -803,6 +855,8 @@ adpt_hppe_ip_intf_get(
 	sw_error_t rv = SW_OK;
 	union in_l3_if_tbl_u in_l3_if_tbl;
 	union eg_l3_if_tbl_u eg_l3_if_tbl;
+	a_uint32_t mac_0;
+	a_uint16_t mac_1;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
@@ -832,21 +886,12 @@ adpt_hppe_ip_intf_get(
 	entry->ip6_mtu = in_l3_if_tbl.bf.mtu_ipv6;
 	entry->udp_zero_csum_action = in_l3_if_tbl.bf.udp_csm0_cmd;
 #if defined(MRPPE)
-	entry->in_mac_addr.uc[5] = in_l3_if_tbl.bf.mac_da_0;
-	entry->in_mac_addr.uc[4] = in_l3_if_tbl.bf.mac_da_0 >> 8;
-
-	entry->in_mac_addr.uc[3] = in_l3_if_tbl.bf.mac_da_1;
-	entry->in_mac_addr.uc[2] = in_l3_if_tbl.bf.mac_da_1 >> 8;
-	entry->in_mac_addr.uc[1] = in_l3_if_tbl.bf.mac_da_1 >> 16;
-	entry->in_mac_addr.uc[0] = in_l3_if_tbl.bf.mac_da_1 >> 24;
+	adpt_ip_intf_macaddr_convert(&entry->in_mac_addr, &in_l3_if_tbl, A_FALSE);
 	entry->in_mac_valid = in_l3_if_tbl.bf.mac_valid;
 #endif
-	entry->mac_addr.uc[5] = eg_l3_if_tbl.bf.mac_addr_0;
-	entry->mac_addr.uc[4] = eg_l3_if_tbl.bf.mac_addr_0 >> 8;
-	entry->mac_addr.uc[3] = eg_l3_if_tbl.bf.mac_addr_0 >> 16;
-	entry->mac_addr.uc[2] = eg_l3_if_tbl.bf.mac_addr_0 >> 24;
-	entry->mac_addr.uc[1] = eg_l3_if_tbl.bf.mac_addr_1;
-	entry->mac_addr.uc[0] = eg_l3_if_tbl.bf.mac_addr_1 >> 8;
+	mac_0 = eg_l3_if_tbl.bf.mac_addr_0;
+	mac_1 = eg_l3_if_tbl.bf.mac_addr_1;
+	adpt_ip_macaddr_convert(&entry->mac_addr, &mac_0, &mac_1, A_FALSE);
 
 #if defined(JHPPE)
 	entry->vlan_key_from_port = in_l3_if_tbl.bf.vlan_as_flow_key_port;
@@ -1349,6 +1394,8 @@ adpt_hppe_ip_intf_set(
 	union eg_l3_if_tbl_u eg_l3_if_tbl;
 	sw_error_t rv = SW_OK;
 	a_uint8_t i = 0;
+	a_uint32_t mac_0;
+	a_uint16_t mac_1;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
@@ -1379,14 +1426,8 @@ adpt_hppe_ip_intf_set(
 #if defined(MRPPE)
 	in_l3_if_tbl.bf.mac_valid = entry->in_mac_valid;
 	/* Only update MAC of L3 intf when the mac_valid is true. */
-	if (in_l3_if_tbl.bf.mac_valid == 1) {
-		in_l3_if_tbl.bf.mac_da_0 = entry->in_mac_addr.uc[5] | \
-					   entry->in_mac_addr.uc[4] << 8;
-		in_l3_if_tbl.bf.mac_da_1 = entry->in_mac_addr.uc[3] | \
-					   entry->in_mac_addr.uc[2] << 8 | \
-					   entry->in_mac_addr.uc[1] << 16 | \
-					   entry->in_mac_addr.uc[0] << 24;
-	}
+	if (in_l3_if_tbl.bf.mac_valid == 1)
+		adpt_ip_intf_macaddr_convert(&entry->in_mac_addr, &in_l3_if_tbl, A_TRUE);
 #endif
 
 #if defined(JHPPE)
@@ -1403,12 +1444,9 @@ adpt_hppe_ip_intf_set(
 	in_l3_if_tbl.bf.l3_ipv6_mc_mode = entry->mc_mode_cfg.l2_ipv6_mc_mode;
 #endif
 
-	eg_l3_if_tbl.bf.mac_addr_0 = entry->mac_addr.uc[5] | \
-							entry->mac_addr.uc[4] << 8 | \
-							entry->mac_addr.uc[3] << 16 | \
-							entry->mac_addr.uc[2] << 24;
-	eg_l3_if_tbl.bf.mac_addr_1 = entry->mac_addr.uc[1] | \
-							entry->mac_addr.uc[0] << 8;
+	adpt_ip_macaddr_convert(&entry->mac_addr, &mac_0, &mac_1, A_TRUE);
+	eg_l3_if_tbl.bf.mac_addr_0 = mac_0;
+	eg_l3_if_tbl.bf.mac_addr_1 = mac_1;
 
 	for (i = 0; i < 8; i++) {
 		if ((entry->mac_addr_bitmap >> i) & 0x1) {
@@ -1795,12 +1833,7 @@ adpt_hppe_ip_intf_macaddr_add(a_uint32_t dev_id, a_uint32_t l3_if, fal_intf_maca
 		 */
 		if(!in_l3_if_tbl.bf.mac_valid && !mac_entry->vsi_valid) {
 			in_l3_if_tbl.bf.mac_valid = 1;
-			in_l3_if_tbl.bf.mac_da_0 = mac_entry->mac_addr.uc[5] | \
-						   mac_entry->mac_addr.uc[4] << 8;
-			in_l3_if_tbl.bf.mac_da_1 = mac_entry->mac_addr.uc[3] | \
-						   mac_entry->mac_addr.uc[2] << 8 | \
-						   mac_entry->mac_addr.uc[1] << 16 | \
-						   mac_entry->mac_addr.uc[0] << 24;
+			adpt_ip_intf_macaddr_convert(&mac_entry->mac_addr, &in_l3_if_tbl, A_TRUE);
 		} else
 #endif
 		{
@@ -1989,7 +2022,7 @@ adpt_hppe_ip_intf_macaddr_get(a_uint32_t dev_id, a_uint32_t l3_if,
 {
 
 	sw_error_t rv = SW_OK;
-	a_bool_t my_mac_entry_found = A_FALSE;
+	a_bool_t mac_entry_found = A_FALSE;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mac_entry);
@@ -2006,16 +2039,25 @@ adpt_hppe_ip_intf_macaddr_get(a_uint32_t dev_id, a_uint32_t l3_if,
 		rv = hppe_in_l3_if_tbl_get(dev_id, l3_if, &in_l3_if_tbl);
 		SW_RTN_ON_ERROR(rv);
 
-		my_mac_bitmap = in_l3_if_tbl.bf.mac_bitmap;
-		my_mac_entry_found = adpt_ppe_l3_mac_addr_get(dev_id, my_mac_bitmap,
-				&mac_entry->mac_addr);
+#if defined(MRPPE)
+		mac_entry_found = adpt_mrppe_l3_in_mac_addr_get(in_l3_if_tbl, mac_entry);
+#endif
+
+		if (!mac_entry_found) {
+			my_mac_bitmap = in_l3_if_tbl.bf.mac_bitmap;
+			mac_entry_found = adpt_ppe_l3_mac_addr_get(dev_id, my_mac_bitmap,
+					mac_entry);
+		}
 	}
 
 #if defined(JHPPE)
 	/* Try to get the mac address from L3_MY_MAC if no MAC entry found in MY_MAC. */
-	if (!my_mac_entry_found)
-		adpt_jhppe_l3_mac_addr_get(dev_id, l3_if, mac_entry);
+	if (!mac_entry_found)
+		mac_entry_found = adpt_jhppe_l3_mac_addr_get(dev_id, l3_if, mac_entry);
 #endif
+
+	if (!mac_entry_found)
+		rv = SW_NOT_FOUND;
 
 	/* intf_mac get function is always for ingress */
 	mac_entry->direction = FAL_IP_INGRESS;

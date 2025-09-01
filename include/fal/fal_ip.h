@@ -357,11 +357,18 @@ typedef enum {
 	FAL_IP_EGRESS,
 } fal_ip_direction_t;
 
+typedef enum {
+	FAL_IP_INTF_MAC_TYPE_LOCAL,
+	FAL_IP_INTF_MAC_TYPE_MY_MAC,
+	FAL_IP_INTF_MAC_TYPE_VSI_MAC,
+} fal_ip_intf_mac_type;
+
 typedef struct {
 	fal_ip_direction_t direction;
 	fal_mac_addr_t mac_addr; /* mac address */
 	a_bool_t vsi_valid;
 	a_uint32_t vsi;
+	fal_ip_intf_mac_type type;
 } fal_intf_macaddr_t;
 
 sw_error_t
