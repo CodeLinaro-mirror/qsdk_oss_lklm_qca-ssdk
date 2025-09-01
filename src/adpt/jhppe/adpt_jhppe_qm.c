@@ -536,6 +536,143 @@ adpt_jhppe_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_boo
 	return jhppe_ucast_queue_ctrl_tbl_ddrq_en_get(dev_id, queue_id, enable);
 }
 
+sw_error_t
+adpt_jhppe_qm_passthrough_source_profile_set(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile)
+{
+	a_bool_t esram_en, isram_en;
+	union enq_ctrl_u reg_val;
+	sw_error_t rv;
+
+	rv = jhppe_enq_ctrl_get(dev_id, &reg_val);
+	SW_RTN_ON_ERROR(rv);
+
+	esram_en = profile->esramq_src_profile_en ? A_TRUE : A_FALSE;
+	isram_en = profile->isramq_src_profile_en ? A_TRUE : A_FALSE;
+
+	switch (mode) {
+	case FAL_PASSTHROUGH_MODE_192_128:
+		reg_val.bf.pass_through0_src_profile = profile->src_profile;
+		reg_val.bf.pass_through0_src_profile_eg_en = esram_en;
+		reg_val.bf.pass_through0_src_profile_en = isram_en;
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL_2ND_PASS:
+		reg_val.bf.pass_through1_src_profile = profile->src_profile;
+		reg_val.bf.pass_through1_src_profile_eg_en = esram_en;
+		reg_val.bf.pass_through1_src_profile_en = isram_en;
+		break;
+	case FAL_PASSTHROUGH_MODE_NO:
+		reg_val.bf.pass_through2_src_profile = profile->src_profile;
+		reg_val.bf.pass_through2_src_profile_eg_en = esram_en;
+		reg_val.bf.pass_through2_src_profile_en = isram_en;
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL:
+		reg_val.bf.pass_through3_src_profile = profile->src_profile;
+		reg_val.bf.pass_through3_src_profile_eg_en = esram_en;
+		reg_val.bf.pass_through3_src_profile_en = isram_en;
+		break;
+	default:
+		return SW_BAD_PARAM;
+	}
+
+	return jhppe_enq_ctrl_set(dev_id, &reg_val);
+}
+
+sw_error_t
+adpt_jhppe_qm_passthrough_source_profile_get(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile)
+{
+	union enq_ctrl_u reg_val;
+	sw_error_t rv;
+
+	rv = jhppe_enq_ctrl_get(dev_id, &reg_val);
+	SW_RTN_ON_ERROR(rv);
+
+	switch (mode) {
+	case FAL_PASSTHROUGH_MODE_192_128:
+		profile->src_profile = reg_val.bf.pass_through0_src_profile;
+		profile->esramq_src_profile_en = reg_val.bf.pass_through0_src_profile_eg_en;
+		profile->isramq_src_profile_en = reg_val.bf.pass_through0_src_profile_en;
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL_2ND_PASS:
+		profile->src_profile = reg_val.bf.pass_through1_src_profile;
+		profile->esramq_src_profile_en = reg_val.bf.pass_through1_src_profile_eg_en;
+		profile->isramq_src_profile_en = reg_val.bf.pass_through1_src_profile_en;
+		break;
+	case FAL_PASSTHROUGH_MODE_NO:
+		profile->src_profile = reg_val.bf.pass_through2_src_profile;
+		profile->esramq_src_profile_en = reg_val.bf.pass_through2_src_profile_eg_en;
+		profile->isramq_src_profile_en = reg_val.bf.pass_through2_src_profile_en;
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL:
+		profile->src_profile = reg_val.bf.pass_through3_src_profile;
+		profile->esramq_src_profile_en = reg_val.bf.pass_through3_src_profile_eg_en;
+		profile->isramq_src_profile_en = reg_val.bf.pass_through3_src_profile_en;
+		break;
+	default:
+		return SW_BAD_PARAM;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_jhppe_qm_passthrough_direct_enqueue_set(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t enable)
+{
+	sw_error_t rv;
+
+	switch (mode) {
+	case FAL_PASSTHROUGH_MODE_192_128:
+		rv = jhppe_enq_ctrl_pass_through0_direc_enq_dis_set(dev_id, !enable);
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL_2ND_PASS:
+		rv = jhppe_enq_ctrl_pass_through1_direc_enq_dis_set(dev_id, !enable);
+		break;
+	case FAL_PASSTHROUGH_MODE_NO:
+		rv = jhppe_enq_ctrl_pass_through2_direc_enq_dis_set(dev_id, !enable);
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL:
+		rv = jhppe_enq_ctrl_pass_through3_direc_enq_dis_set(dev_id, !enable);
+		break;
+	default:
+		rv = SW_BAD_PARAM;
+		break;
+	}
+
+	return rv;
+}
+
+sw_error_t
+adpt_jhppe_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t *enable)
+{
+	a_uint32_t val = 0;
+	sw_error_t rv;
+
+	switch (mode) {
+	case FAL_PASSTHROUGH_MODE_192_128:
+		rv = jhppe_enq_ctrl_pass_through0_direc_enq_dis_get(dev_id, &val);
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL_2ND_PASS:
+		rv = jhppe_enq_ctrl_pass_through1_direc_enq_dis_get(dev_id, &val);
+		break;
+	case FAL_PASSTHROUGH_MODE_NO:
+		rv = jhppe_enq_ctrl_pass_through2_direc_enq_dis_get(dev_id, &val);
+		break;
+	case FAL_PASSTHROUGH_MODE_FULL:
+		rv = jhppe_enq_ctrl_pass_through3_direc_enq_dis_get(dev_id, &val);
+		break;
+	default:
+		rv = SW_BAD_PARAM;
+		break;
+	}
+
+	*enable = !val;
+
+	return rv;
+}
+
 /**
  * @}
  */

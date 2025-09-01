@@ -338,6 +338,7 @@ typedef enum
 	SW_IPMC_GLOBAL_CFG,
 	SW_IPMC_ENTRY,
 	SW_IPMC_UCAST_FWD,
+	SW_PASSTHROUGH_SRC_PROFILE,
 /* auto_insert_flag */
 } sw_data_type_e;
 

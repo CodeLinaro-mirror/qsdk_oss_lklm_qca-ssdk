@@ -13028,6 +13028,18 @@ static const char *ucastq_ddrq_en[] = {
 	"queue_id",
 	"ddrq_en",
 };
+
+static const char *passthrough_src_profile[] = {
+	"passthrough_mode",
+	"esramq_src_profile_en",
+	"isramq_src_profile_en",
+	"src_profile",
+};
+
+static const char *passthrough_direct_enqueue[] = {
+	"passthrough_mode",
+	"direct_enqueue",
+};
 #endif
 
 static int
@@ -13084,6 +13096,12 @@ parse_qm(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "UcastqDdrqen")) {
 		rv = parse_uci_option(val, ucastq_ddrq_en,
 				sizeof(ucastq_ddrq_en)/sizeof(char *));
+	} else if (!strcmp(command_name, "PassthroughSrcprofile")) {
+		rv = parse_uci_option(val, passthrough_src_profile,
+				sizeof(passthrough_src_profile)/sizeof(char *));
+	} else if (!strcmp(command_name, "PassthroughDirectEnqueue")) {
+		rv = parse_uci_option(val, passthrough_direct_enqueue,
+				sizeof(passthrough_direct_enqueue)/sizeof(char *));
 #endif
 	}
 #if !defined(IN_QM_MINI)

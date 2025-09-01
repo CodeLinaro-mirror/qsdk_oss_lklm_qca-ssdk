@@ -1264,6 +1264,8 @@ struct sub_cmd_des_t g_qm_des[] =
     {"cntmonitormap", "set", SW_API_QM_COUNTER_MONITOR_MAP_SET, NULL},
     {"cntmonitorctrl", "set", SW_API_QM_COUNTER_MONITOR_CTRL_SET, NULL},
     {"ucastqddrqen", "set", SW_API_UCAST_QUEUE_DDRQ_EN_SET, NULL},
+    {"passthroughsrcprofile", "set", SW_API_QM_PASSTHROUGH_SOURCE_PROFILE_SET, NULL},
+    {"passthroughdirectenqueue", "set", SW_API_QM_PASSTHROUGH_DIRECT_ENQUEUE_SET, NULL},
 #endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 
