@@ -100,6 +100,32 @@ static a_uint32_t _adpt_mppe_athtag_bit_index(a_uint32_t bits)
 	return 0xff;
 }
 
+static sw_error_t _adpt_mppe_fix_athtag_ver(a_uint32_t dev_id,
+		a_uint32_t ppe_port, fal_athtag_version_t *athtag_ver)
+{
+	a_uint32_t pp_id = ppe_port;
+	ssdk_netdev_switch_t *netdev_switch = NULL;
+
+	if (ppe_port >= SSDK_MIN_VIRTUAL_PORT_ID) {
+		adpt_api_t *p_api = NULL;
+		SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+		SW_RTN_ON_NULL(p_api->adpt_vport_physical_port_id_get);
+
+		SW_RTN_ON_ERROR(p_api->adpt_vport_physical_port_id_get(dev_id, ppe_port, &pp_id));
+	}
+
+	netdev_switch = ssdk_dts_netdev_switch_find(pp_id);
+	if (!netdev_switch) {
+		return SW_NOT_INITIALIZED;
+	}
+
+	/* s17c only supports v2 atherose header */
+	if (hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_ISISC)
+		*athtag_ver = FAL_ATHTAG_VER2;
+
+	return SW_OK;
+}
+
 sw_error_t
 adpt_mppe_port_athtag_rx_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_athtag_rx_cfg_t *cfg)
@@ -155,6 +181,8 @@ adpt_mppe_port_athtag_tx_set(a_uint32_t dev_id,
 	eg_vp_tbl.bf.ath_hdr_default_type = cfg->action;
 	eg_vp_tbl.bf.ath_hdr_from_cpu = cfg->bypass_fwd_en;
 	eg_vp_tbl.bf.ath_hdr_disable_bit = cfg->field_disable;
+
+	SW_RTN_ON_ERROR(_adpt_mppe_fix_athtag_ver(dev_id, FAL_PORT_ID_VALUE(port_id), &cfg->version));
 	if (cfg->version == FAL_ATHTAG_VER2)
 	{
 		eg_vp_tbl.bf.ath_hdr_ver = 2;
