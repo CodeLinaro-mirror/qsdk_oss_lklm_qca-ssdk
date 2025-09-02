@@ -1362,6 +1362,7 @@ appe_tpr_port_parsing_vlan_mode_set(
 	return ret;
 }
 
+#endif
 sw_error_t
 appe_tpr_vp_parsing_get(
 		a_uint32_t dev_id,
@@ -1390,6 +1391,7 @@ appe_tpr_vp_parsing_set(
 				value->val);
 }
 
+#ifdef HMSPPE
 sw_error_t
 appe_tpr_vp_parsing_port_role_get(
 		a_uint32_t dev_id,

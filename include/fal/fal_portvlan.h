@@ -294,6 +294,12 @@ typedef struct {
 						* 0 is used to selcet srcvp of tunnel decap, 1 always selet original source port.
 						* default: 0, will use srcvp of tunnel decap.
 						* added for ipq5332*/
+	a_bool_t in_port_ponmode_en; /* enable pon mode on ingress port. when pon mode enable, ppe would treat tag
+						* to be inner tag(ctag) if there is only one tag parsed(core port + tpid match, would
+						* treat single tag to be stag when pon mode disable).
+						* added for ipq52xx & ipq96xx */
+	a_bool_t tl_port_ponmode_en; /* enable pon mode on tunnel parsing port.
+						* added for ipq52xx & ipq96xx */
 } fal_port_qinq_role_t;
 
 #define FAL_TPID_CTAG_EN (0x1UL << 0)

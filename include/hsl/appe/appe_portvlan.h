@@ -641,4 +641,17 @@ appe_tpr_port_parsing_port_role_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+#define TPR_VP_PARSING_MAX_ENTRY	TPR_VP_PARSING_NUM
+
+sw_error_t
+appe_tpr_vp_parsing_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tpr_vp_parsing_u *value);
+
+sw_error_t
+appe_tpr_vp_parsing_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union tpr_vp_parsing_u *value);
 #endif
