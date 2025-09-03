@@ -96,9 +96,6 @@
 #include "mppe/mppe_servcode.h"
 #include "mppe/mppe_athtag.h"
 
-
-#define PRX_BASE_ADDR		NSS_PRX_CSR_BASE_ADDR
-#define EDMA_BASE_ADDR		EDMA_CSR_BASE_ADDR
 #define L2_CPU_CODE_CTRL_MAX_ENTRY		L2_CPU_CODE_CTRL_NUM
 #define PORT_DEF_PCP_MAX_ENTRY			PORT_DEF_PCP_NUM
 #define PORT_DEF_VID_MAX_ENTRY			PORT_DEF_VID_NUM

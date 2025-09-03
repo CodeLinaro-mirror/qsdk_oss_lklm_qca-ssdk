@@ -38,6 +38,57 @@
 #ifdef MP
 #include "hsl_phy.h"
 #endif
+
+typedef struct {
+	a_uint32_t addr0;
+	a_uint32_t addr1;
+} ppe_module_addr_pair;
+
+static const ppe_module_addr_pair ppe_base_addrs_table[] = {
+	[NSS_PPE_PTX] = {0x020000, 0x600000},
+	[NSS_PPE_L2] = {0x060000, 0x540000},
+	[NSS_PPE_POLICER] = {0x100000, 0x700000},
+	[NSS_PPE_BM] = {0x600000, 0x800000},
+	[NSS_PPE_QM] = {0x800000, 0xa00000},
+	[NSS_PPE_EDMA] = {0xb00000, 0xd00000},
+	[NSS_PPE_LPI] = {0x400, 0x001000},
+};
+
+#define IS_APPE_OR_MRPPE(version) ((version) == QCA_VER_APPE || (version) == QCA_VER_MRPPE)
+#define IS_HMSPPE_JHPPE_OR_HTTPPE(version) \
+    ((version) == QCA_VER_HMSPPE || (version) == QCA_VER_JHPPE || (version) == QCA_VER_HTTPPE)
+
+a_uint32_t hsl_ppe_module_base_get(a_uint32_t dev_id, a_uint32_t ppe_reg_module)
+{
+	struct qca_phy_priv *priv = NULL;
+	a_uint32_t ret_addr = NSS_PPE_INVALID_BASE_ADDR;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv) {
+		return ret_addr;
+	}
+
+	if (ppe_reg_module >= sizeof(ppe_base_addrs_table) / sizeof(ppe_base_addrs_table[0])) {
+		return ret_addr; /* Invalid module */
+	}
+
+	if (ppe_reg_module == NSS_PPE_LPI) {
+		if (priv->version == QCA_VER_APPE) {
+			ret_addr = ppe_base_addrs_table[NSS_PPE_LPI].addr0;
+		} else if (IS_HMSPPE_JHPPE_OR_HTTPPE(priv->version) || priv->version == QCA_VER_MRPPE) {
+			ret_addr = ppe_base_addrs_table[NSS_PPE_LPI].addr1;
+		}
+	} else {
+		if (IS_APPE_OR_MRPPE(priv->version)) {
+			ret_addr = ppe_base_addrs_table[ppe_reg_module].addr0;
+		} else if (IS_HMSPPE_JHPPE_OR_HTTPPE(priv->version)) {
+			ret_addr = ppe_base_addrs_table[ppe_reg_module].addr1;
+		}
+	}
+
+	return ret_addr;
+}
+
 /*qca808x_start*/
 static hsl_dev_t dev_table[SW_MAX_NR_DEV];
 static ssdk_init_cfg *dev_ssdk_cfg[SW_MAX_NR_DEV] = { 0 };
