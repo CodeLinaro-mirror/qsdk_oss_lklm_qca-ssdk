@@ -1245,7 +1245,7 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 	return SW_OK;
 
 }
-#if (defined(APPE) || defined(MHT))
+
 #ifdef IN_LED
 sw_error_t ssdk_dt_port_source_pattern_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t source_id, led_ctrl_pattern_t *pattern)
@@ -1374,7 +1374,6 @@ static void ssdk_dt_parse_led(a_uint32_t dev_id, struct device_node *switch_node
 	return ssdk_dt_parse_led_source(dev_id, switch_node);
 }
 #endif
-#endif
 static sw_error_t ssdk_dt_get_switch_node(struct device_node **switch_node,
 		a_uint32_t num)
 {
@@ -1448,7 +1447,8 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq53xx") ||
 		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq54xx") ||
 		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq96xx") ||
-		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx")) {
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-qce22xx")) {
 		/* HPPE chip */
 		a_uint32_t mode = 0;
 #ifdef IN_UNIPHY

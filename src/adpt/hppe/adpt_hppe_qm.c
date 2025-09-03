@@ -1305,6 +1305,7 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 		case APPE_TYPE:
 		case JHPPE_TYPE:
 		case HMSPPE_TYPE:
+		case HTTPPE_TYPE:
 			ceiling = 1200;
 			weight = 7;
 			resume_offset = 36;

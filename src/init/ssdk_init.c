@@ -81,6 +81,9 @@ struct notifier_block ssdk_dev_notifier;
 #ifdef IN_SFP_PHY
 #include "sfp_phy.h"
 #endif
+#if defined(HTTPPE)
+#include "ssdk_httppe.h"
+#endif
 
 extern void qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv);
 extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
@@ -110,10 +113,13 @@ qca_hppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id)
 	if (!priv)
 		return 0;
 
-	if (port_id < SSDK_PHYSICAL_PORT1 || port_id >= SW_MAX_NR_PORT)
-		return 0;
-
-	return priv->ports[port_id].port_mac_type;
+	if (priv->version == QCA_VER_HTTPPE) {
+		return priv->ports[port_id].port_mac_type;
+	} else {
+		if (port_id < SSDK_PHYSICAL_PORT1 || port_id >= SW_MAX_NR_PORT)
+			return 0;
+		return priv->ports[port_id].port_mac_type;
+	}
 }
 
 sw_error_t
@@ -122,10 +128,13 @@ qca_hppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t por
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	if (port_id < SSDK_PHYSICAL_PORT1 || port_id >= SW_MAX_NR_PORT)
-		return SW_BAD_PARAM;
-
-	priv->ports[port_id].port_mac_type = port_type;
+	if (priv->version == QCA_VER_HTTPPE) {
+		priv->ports[port_id].port_mac_type = port_type;
+	} else {
+		if (port_id < SSDK_PHYSICAL_PORT1 || port_id >= SW_MAX_NR_PORT)
+			return SW_BAD_PARAM;
+		priv->ports[port_id].port_mac_type = port_type;
+	}
 
 	return SW_OK;
 }
@@ -1201,6 +1210,7 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 		case QCA_VER_JHPPE:
 		case QCA_VER_HMSPPE:
 		case QCA_VER_HPPE:
+		case QCA_VER_HTTPPE:
 			sw_dev->name = "QCA "PPE_STR;
 			sw_dev->alias = "QCA "PPE_STR;
 			break;
@@ -1276,7 +1286,6 @@ static struct notifier_block ssdk_dsa_notifier_nb = {
 };
 #endif
 
-#if defined(APPE) || defined (ISISC) || defined (ISIS) || defined(MHT)
 static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 {
 	struct qca_phy_priv *priv;
@@ -1322,14 +1331,12 @@ static int ssdk_switch_register(a_uint32_t dev_id, ssdk_chip_type  chip_type)
 			return ret;
 		}
 	}
-#if defined(APPE) || defined(MHT)
 	ret = qca_fdb_sw_sync_work_init(priv);
 	if (ret != 0) {
 		SSDK_ERROR("qca_fdb_sw_sync_work_init failed on chip 0x%02x%02x\n",
 				priv->version, priv->revision);
 		return ret;
 	}
-#endif
 	if(priv->interrupt_no > 0)
 	{
 		snprintf(priv->intr_name, IFNAMSIZ, "switch%d", dev_id);
@@ -1396,7 +1403,6 @@ static int ssdk_switch_unregister(a_uint32_t dev_id)
 
 	return 0;
 }
-#endif
 
 char ssdk_driver_name[] = "ess_ssdk";
 struct ssdk_driver_priv {
@@ -1437,6 +1443,7 @@ static const struct of_device_id ssdk_of_mtable[] = {
 	{.compatible = "qcom,ess-switch-ipq54xx" },
 	{.compatible = "qcom,ess-switch-ipq96xx" },
 	{.compatible = "qcom,ess-switch-ipq52xx" },
+	{.compatible = "qcom,ess-switch-qce22xx" },
 	{.compatible = "qcom,ess-instance" },
 	{}
 };
@@ -1488,7 +1495,7 @@ static void ssdk_driver_register(a_uint32_t dev_id)
 	hsl_reg_mode reg_mode;
 
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
-	if(reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS) {
+	if ((dev_id == 0) && (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS)) {
 		platform_driver_register(&ssdk_driver);
 	}
 }
@@ -1498,7 +1505,7 @@ static void ssdk_driver_unregister(a_uint32_t dev_id)
 	hsl_reg_mode reg_mode;
 
 	reg_mode= ssdk_switch_reg_access_mode_get(dev_id);
-	if (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS) {
+	if ((dev_id == 0) && (reg_mode == HSL_REG_LOCAL_BUS || reg_mode == HSL_REG_PCIE_BUS)) {
 		platform_driver_unregister(&ssdk_driver);
 	}
 }
@@ -1572,6 +1579,8 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		chip_ver = (reg_val&0xff00)>>8;
 		chip_revision = reg_val&0xff;
 	}
+	qca_phy_priv_global[dev_id]->version = chip_ver;
+	qca_phy_priv_global[dev_id]->revision = chip_revision;
 /*qca808x_start*/
 	switch (chip_ver) {
 		case QCA_VER_AR8337:
@@ -1602,6 +1611,9 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 			break;
 		case QCA_VER_HMSPPE:
 			cfg->chip_type = CHIP_HMSPPE;
+			break;
+		case QCA_VER_HTTPPE:
+			cfg->chip_type = CHIP_HTTPPE;
 			break;
 		default:
 			/* try single phy without switch connected */
@@ -1851,21 +1863,37 @@ static int __init regi_init(void)
 			case CHIP_JHPPE:
 			case CHIP_MRPPE:
 			case CHIP_APPE:
-				if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE)
+				if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT4;
-				else if(adpt_ppe_type_get(dev_id) == MPPE_TYPE)
+				}
+				else if(adpt_ppe_type_get(dev_id) == MPPE_TYPE) {
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT3;
-				else if(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)
+				}
+				else if(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) {
 					/* port0 cpu port, port1-port6 MAC ports, port7 loopback */
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT8;
-				else if(adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+				}
+				else if(adpt_ppe_type_get(dev_id) == JHPPE_TYPE) {
 					/* port0 cpu port, port1-port6 MAC ports, port7 EIP, port8 loopback */
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT8 + 1;
+				}
+				else if (adpt_ppe_type_get(dev_id) == APPE_TYPE) {
+					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT8;
+				}
 				qca_appe_hw_init(dev_id);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
 				break;
+#if defined(HTTPPE)
+			case CHIP_HTTPPE:
+				qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
+				qca_httppe_hw_init(dev_id);
+				rv = ssdk_switch_register(dev_id, cfg.chip_type);
+				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
+				SSDK_INFO("Initializing HTTPPE Done!!\n");
+				break;
+#endif
 			case CHIP_UNSPECIFIED:
 				break;
 			default:
@@ -1916,10 +1944,8 @@ regi_exit(void)
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		ssdk_driver_unregister(dev_id);
-#if defined(APPE) || defined(ISISC) || defined(ISIS)
 		if (qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered == A_TRUE)
 			ssdk_switch_unregister(dev_id);
-#endif
 #ifdef IN_SFP_PHY
 		sfp_phy_exit(dev_id);
 #endif

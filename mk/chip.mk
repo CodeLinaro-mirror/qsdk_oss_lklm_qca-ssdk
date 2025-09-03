@@ -42,6 +42,10 @@ ifeq ($(MHT_ENABLE), enable)
     SUPPORT_CHIP += MHT ISISC
 endif
 
+ifeq ($(HTTPPE_ENABLE), enable)
+    SUPPORT_CHIP += HTTPPE
+endif
+
 ifndef SUPPORT_CHIP
     $(error defined CHIP_TYPE isn't supported!)
 endif

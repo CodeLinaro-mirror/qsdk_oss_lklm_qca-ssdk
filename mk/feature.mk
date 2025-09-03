@@ -89,6 +89,7 @@ endif
 
 ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq54xx ipq53xx ipq95xx ipq60xx))
 	MHT_ENABLE=enable
+	HTTPPE_ENABLE=enable
 endif
 
 ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq54xx ipq53xx ipq807x ipq60xx ipq50xx))

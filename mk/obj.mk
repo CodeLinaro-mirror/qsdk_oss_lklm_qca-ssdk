@@ -12,6 +12,7 @@ OBJ-JHPPE   :=
 OBJ-HMSPPE  :=
 OBJ-MHT     :=
 OBJ-SCOMPHY :=
+OBJ-HTTPPE  :=
 
 ###############################################################################
 #                                 IN_ACL
@@ -100,6 +101,7 @@ OBJ-APPE   += src/adpt/appe/adpt_appe_portctrl.o
 OBJ-CPPE   += src/hsl/cppe/cppe_portctrl.o
 OBJ-MHT    += src/hsl/mht/mht_port_ctrl.o
 OBJ-JHPPE  += src/hsl/jhppe/jhppe_loopback.o src/adpt/jhppe/adpt_jhppe_loopback.o
+OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_portctrl.o
 endif
 
 ###############################################################################
@@ -448,6 +450,7 @@ OBJ-HPPE    += src/init/ssdk_hppe.o  src/hsl/hppe/hppe_init.o
 OBJ-APPE    += src/init/ssdk_appe.o
 OBJ-MHT     += src/hsl/mht/mht_init.o src/init/ssdk_mht.o src/init/ssdk_mht_pinctrl.o
 OBJ-SCOMPHY += src/init/ssdk_scomphy.o
+OBJ-HTTPPE    += src/init/ssdk_httppe.o
 
 ###############################################################################
 #                                 SHELL_LIB
@@ -532,6 +535,10 @@ endif
 
 ifneq (,$(findstring HMSPPE, $(SUPPORT_CHIP)))
 OBJ += $(OBJ-JHPPE) $(OBJ-HMSPPE)
+endif
+
+ifneq (,$(findstring HTTPPE, $(SUPPORT_CHIP)))
+OBJ += $(OBJ-HTTPPE)
 endif
 
 SSDK_OBJ=$(addprefix ../, $(OBJ))
