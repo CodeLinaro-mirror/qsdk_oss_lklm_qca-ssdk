@@ -4906,6 +4906,15 @@ extern "C" {
 		    sizeof(fal_queue_tcont_stat_t), SW_PARAM_PTR|SW_PARAM_OUT, \
 		    "TCONT stat"),
 
+#define SW_API_QM_TCONT_STAT_SET_DESC \
+    SW_PARAM_DEF(SW_API_QM_TCONT_STAT_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_QM_TCONT_STAT_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "TCONT ID"), \
+    SW_PARAM_DEF(SW_API_QM_TCONT_STAT_SET, SW_TCONT_STAT, \
+		    sizeof(fal_queue_tcont_stat_t), SW_PARAM_PTR|SW_PARAM_IN, \
+		    "TCONT stat"),
+
 #define SW_API_QM_CPUCODE_ENQUEUE_GET_DESC \
     SW_PARAM_DEF(SW_API_QM_CPUCODE_ENQUEUE_GET, SW_UINT32, \
 		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \

@@ -801,6 +801,9 @@ typedef sw_error_t (*adpt_qm_tcont_stat_get_func)(a_uint32_t dev_id,
 						  a_uint32_t tcont_id,
 						  fal_queue_tcont_stat_t *stat);
 
+typedef sw_error_t (*adpt_qm_tcont_stat_set_func)(a_uint32_t dev_id,
+						  a_uint32_t tcont_id,
+						  fal_queue_tcont_stat_t *stat);
 
 typedef sw_error_t (*adpt_qm_cpucode_enqueue_get_func)(a_uint32_t dev_id,
 		a_uint32_t cpu_code, a_bool_t *enable);
@@ -1937,6 +1940,7 @@ typedef struct
 	adpt_qm_tcont_set_func adpt_qm_tcont_set;
 	adpt_qm_tcont_get_func adpt_qm_tcont_get;
 	adpt_qm_tcont_stat_get_func adpt_qm_tcont_stat_get;
+	adpt_qm_tcont_stat_set_func adpt_qm_tcont_stat_set;
 	adpt_qm_cpucode_enqueue_get_func adpt_qm_cpucode_enqueue_get;
 	adpt_qm_cpucode_enqueue_set_func adpt_qm_cpucode_enqueue_set;
 	adpt_ucast_queue_ddrq_en_set_func adpt_ucast_queue_ddrq_en_set;

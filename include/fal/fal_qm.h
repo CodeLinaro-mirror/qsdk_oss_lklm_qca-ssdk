@@ -183,6 +183,11 @@ fal_qm_tcont_stat_get(a_uint32_t dev_id,
 		      fal_queue_tcont_stat_t *stat);
 
 sw_error_t
+fal_qm_tcont_stat_set(a_uint32_t dev_id,
+		      a_uint32_t tcont_id,
+		      fal_queue_tcont_stat_t *stat);
+
+sw_error_t
 fal_ac_ctrl_set(
 		a_uint32_t dev_id,
 		fal_ac_obj_t *obj,
