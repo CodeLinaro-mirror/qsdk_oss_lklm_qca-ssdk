@@ -1263,6 +1263,7 @@ struct sub_cmd_des_t g_qm_des[] =
     {"cntmonitorstatscleanup", "set", SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP, NULL},
     {"cntmonitormap", "set", SW_API_QM_COUNTER_MONITOR_MAP_SET, NULL},
     {"cntmonitorctrl", "set", SW_API_QM_COUNTER_MONITOR_CTRL_SET, NULL},
+    {"ucastqddrqen", "set", SW_API_UCAST_QUEUE_DDRQ_EN_SET, NULL},
 #endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 

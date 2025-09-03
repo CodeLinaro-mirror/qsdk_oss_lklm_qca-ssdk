@@ -13023,6 +13023,13 @@ static const char *enqueue_cfg[] = {
 };
 #endif
 
+#if defined(JHPPE)
+static const char *ucastq_ddrq_en[] = {
+	"queue_id",
+	"ddrq_en",
+};
+#endif
+
 static int
 parse_qm(const char *command_name, struct switch_val *val)
 {
@@ -13074,6 +13081,9 @@ parse_qm(const char *command_name, struct switch_val *val)
 		rv = parse_qm_cntmonitormap(val);
 	} else if (!strcmp(command_name, "Cntmonitorctrl")) {
 		rv = parse_qm_cntmonitorctrl(val);
+	} else if (!strcmp(command_name, "UcastqDdrqen")) {
+		rv = parse_uci_option(val, ucastq_ddrq_en,
+				sizeof(ucastq_ddrq_en)/sizeof(char *));
 #endif
 	}
 #if !defined(IN_QM_MINI)
