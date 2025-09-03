@@ -15,6 +15,176 @@
 #define HTTPPE_BM_PHY_PORT_OFFSET     1
 #define HTTPPE_BM_PORT_MIN            0
 
+#if defined(IN_BM) && defined(IN_QOS)
+fal_port_tdm_tick_cfg_t httppe_port_tdm_tbl[] = {
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 3, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 4, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 4, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 3, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 4, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 4, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 3, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 4, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 4, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 0, 0},
+};
+
+fal_port_scheduler_cfg_t httppe_port_scheduler_tbl[] = {
+	{0x1E, 0xF, 0x0, 0x0, 0x0},
+	{0x1C, 0xF, 0x5, 0x0, 0x0},
+	{0x1C, 0x0, 0x1, 0x0, 0x0},
+	{0x1C, 0xF, 0x5, 0x0, 0x0},
+	{0x1A, 0x1, 0x0, 0x0, 0x0},
+	{0x1A, 0x5, 0x2, 0x0, 0x0},
+	{0x1A, 0xF, 0x0, 0x0, 0x0},
+	{0x16, 0x2, 0x5, 0x0, 0x0},
+	{0x16, 0x0, 0x3, 0x0, 0x0},
+	{0x16, 0xF, 0x5, 0x0, 0x0},
+	{0x0E, 0x3, 0x0, 0x0, 0x0},
+	{0x0E, 0x5, 0x4, 0x0, 0x0},
+	{0x0E, 0xF, 0x0, 0x0, 0x0},
+	{0x1C, 0x4, 0x5, 0x0, 0x0},
+	{0x1C, 0x0, 0x1, 0x0, 0x0},
+	{0x1C, 0xF, 0x5, 0x0, 0x0},
+	{0x1A, 0x1, 0x0, 0x0, 0x0},
+	{0x1A, 0x5, 0x2, 0x0, 0x0},
+	{0x1A, 0xF, 0x0, 0x0, 0x0},
+	{0x16, 0x2, 0x5, 0x0, 0x0},
+	{0x16, 0x0, 0x3, 0x0, 0x0},
+	{0x16, 0xF, 0x5, 0x0, 0x0},
+	{0x0E, 0x3, 0x0, 0x0, 0x0},
+	{0x0E, 0x5, 0x4, 0x0, 0x0},
+	{0x0E, 0xF, 0x0, 0x0, 0x0},
+	{0x1C, 0x4, 0x5, 0x0, 0x0},
+	{0x1C, 0x0, 0x1, 0x0, 0x0},
+	{0x1C, 0xF, 0x5, 0x0, 0x0},
+	{0x1A, 0x1, 0x0, 0x0, 0x0},
+	{0x1A, 0x5, 0x2, 0x0, 0x0},
+	{0x1A, 0xF, 0x0, 0x0, 0x0},
+	{0x16, 0x2, 0x5, 0x0, 0x0},
+	{0x16, 0x0, 0x3, 0x0, 0x0},
+	{0x16, 0xF, 0x5, 0x0, 0x0},
+	{0x1E, 0x3, 0x0, 0x0, 0x0},
+	{0x1E, 0xF, 0x5, 0x0, 0x0},
+	{0x0E, 0xF, 0x0, 0x0, 0x0},
+	{0x0E, 0x5, 0x4, 0x0, 0x0},
+	{0x0E, 0xF, 0x0, 0x0, 0x0},
+	{0x1E, 0x4, 0x5, 0x0, 0x0},
+};
+
+sw_error_t
+qca_httppe_tdm_hw_init(a_uint32_t dev_id)
+{
+	adpt_api_t *p_api;
+	a_uint32_t i = 0;
+	a_uint32_t num = 0;
+	fal_port_tdm_ctrl_t tdm_ctrl;
+	fal_port_scheduler_cfg_t *scheduler_cfg = NULL;
+	fal_port_tdm_tick_cfg_t *bm_cfg = NULL;
+
+	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
+	SW_RTN_ON_NULL(p_api->adpt_port_scheduler_cfg_set);
+	SW_RTN_ON_NULL(p_api->adpt_tdm_tick_num_set);
+
+	num = ARRAY_SIZE(httppe_port_scheduler_tbl);
+	scheduler_cfg = httppe_port_scheduler_tbl;
+	if (scheduler_cfg != NULL) {
+		for (i = 0; i < num; i++) {
+			p_api->adpt_port_scheduler_cfg_set(dev_id, i, &scheduler_cfg[i]);
+		}
+		p_api->adpt_tdm_tick_num_set(dev_id, num);
+	}
+
+	SW_RTN_ON_NULL(p_api->adpt_port_tdm_tick_cfg_set);
+	SW_RTN_ON_NULL(p_api->adpt_port_tdm_ctrl_set);
+
+	num = ARRAY_SIZE(httppe_port_tdm_tbl);
+	bm_cfg = httppe_port_tdm_tbl;
+	if (bm_cfg != NULL) {
+		for (i = 0; i < num; i++) {
+			p_api->adpt_port_tdm_tick_cfg_set(dev_id, i, &bm_cfg[i]);
+		}
+	}
+
+	tdm_ctrl.enable = A_TRUE;
+	tdm_ctrl.offset = A_FALSE;
+	tdm_ctrl.depth = num;
+	p_api->adpt_port_tdm_ctrl_set(dev_id, &tdm_ctrl);
+
+	return SW_OK;
+}
+#endif
+
 #if defined(IN_PORTCONTROL)
 sw_error_t
 qca_httppe_portctrl_hw_init(a_uint32_t dev_id)
@@ -220,7 +390,7 @@ sw_error_t qca_httppe_hw_init(a_uint32_t dev_id)
 #endif
 
 #if defined(IN_BM) && defined(IN_QOS)
-	rv = qca_appe_tdm_hw_init(dev_id);
+	rv = qca_httppe_tdm_hw_init(dev_id);
 	SW_RTN_ON_ERROR(rv);
 #endif
 
