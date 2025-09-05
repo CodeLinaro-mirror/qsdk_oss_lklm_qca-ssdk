@@ -487,14 +487,14 @@ adpt_hppe_vsi_member_set(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 		return rv;
 
 #ifdef JHPPE
-	vsi_tbl.bf.bc_bitmap_0 = vsi_member->bc_ports & 0x1f;
-	vsi_tbl.bf.bc_bitmap_1 = (vsi_member->bc_ports >> 5) & 0xf;
+	vsi_tbl.bf.bc_bitmap_0 = vsi_member->bc_ports;
+	vsi_tbl.bf.bc_bitmap_1 = vsi_member->bc_ports >> 5;
 #else
-	vsi_tbl.bf.bc_bitmap = vsi_member->bc_ports & 0xff;
+	vsi_tbl.bf.bc_bitmap = vsi_member->bc_ports;
 #endif
-	vsi_tbl.bf.member_port_bitmap = vsi_member->member_ports & 0xff;
-	vsi_tbl.bf.umc_bitmap = vsi_member->umc_ports & 0xff;
-	vsi_tbl.bf.uuc_bitmap = vsi_member->uuc_ports & 0xff;
+	vsi_tbl.bf.member_port_bitmap = vsi_member->member_ports;
+	vsi_tbl.bf.umc_bitmap = vsi_member->umc_ports;
+	vsi_tbl.bf.uuc_bitmap = vsi_member->uuc_ports;
 
 	rv = hppe_vsi_tbl_set(dev_id, vsi_id, &vsi_tbl);
 	if( rv != SW_OK )
