@@ -95,8 +95,9 @@ adpt_hppe_bm_port_dynamic_thresh_get(a_uint32_t dev_id, fal_port_t port,
 		return SW_FAIL;
 
 	cfg->weight = port_fc_cfg.bf.port_shared_weight;
-	cfg->shared_ceiling = port_fc_cfg.bf.port_shared_ceiling_0 |
-				port_fc_cfg.bf.port_shared_ceiling_1 << 3;
+	cfg->shared_ceiling = port_fc_cfg.bf.port_shared_ceiling_0;
+	cfg->shared_ceiling |= port_fc_cfg.bf.port_shared_ceiling_1 <<
+		SW_FIELD_OFFSET_IN_WORD(PORT_FC_CFG_PORT_SHARED_CEILING_OFFSET);
 	cfg->resume_off = port_fc_cfg.bf.port_resume_offset;
 	cfg->resume_min_thresh = port_fc_cfg.bf.port_resume_floor_th;
 
@@ -178,8 +179,9 @@ adpt_hppe_bm_port_static_thresh_get(a_uint32_t dev_id, fal_port_t port,
 		return SW_FAIL;
 
 	cfg->resume_off = port_fc_cfg.bf.port_resume_offset;
-	cfg->max_thresh = port_fc_cfg.bf.port_shared_ceiling_0 |
-			port_fc_cfg.bf.port_shared_ceiling_1 << 3;
+	cfg->max_thresh = port_fc_cfg.bf.port_shared_ceiling_0;
+	cfg->max_thresh |= port_fc_cfg.bf.port_shared_ceiling_1 <<
+		SW_FIELD_OFFSET_IN_WORD(PORT_FC_CFG_PORT_SHARED_CEILING_OFFSET);
 
 	return SW_OK;
 }
@@ -201,7 +203,7 @@ adpt_hppe_bm_port_static_thresh_set(a_uint32_t dev_id, fal_port_t port,
 
 	port_fc_cfg.bf.port_resume_offset = cfg->resume_off;
 	port_fc_cfg.bf.port_shared_ceiling_0 = cfg->max_thresh;
-	port_fc_cfg.bf.port_shared_ceiling_1 = cfg->max_thresh >> 3;
+	port_fc_cfg.bf.port_shared_ceiling_1 = cfg->max_thresh >> SW_FIELD_OFFSET_IN_WORD(PORT_FC_CFG_PORT_SHARED_CEILING_OFFSET);
 	port_fc_cfg.bf.port_shared_dynamic = 0;
 
 	return hppe_port_fc_cfg_set(dev_id, port, &port_fc_cfg);;
@@ -245,7 +247,7 @@ adpt_hppe_bm_port_dynamic_thresh_set(a_uint32_t dev_id, fal_port_t port,
 
 	port_fc_cfg.bf.port_shared_weight = cfg->weight;
 	port_fc_cfg.bf.port_shared_ceiling_0 = cfg->shared_ceiling;
-	port_fc_cfg.bf.port_shared_ceiling_1 = cfg->shared_ceiling >> 3;
+	port_fc_cfg.bf.port_shared_ceiling_1 = cfg->shared_ceiling >> SW_FIELD_OFFSET_IN_WORD(PORT_FC_CFG_PORT_SHARED_CEILING_OFFSET);
 	port_fc_cfg.bf.port_resume_offset = cfg->resume_off;
 	port_fc_cfg.bf.port_resume_floor_th = cfg->resume_min_thresh;
 	port_fc_cfg.bf.port_shared_dynamic = 1;
