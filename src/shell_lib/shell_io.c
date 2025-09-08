@@ -2934,15 +2934,12 @@ cmd_data_check_fdbentry(char *info, void *val, a_uint32_t size)
     if (rv)
         return rv;
 
-    if (A_TRUE == entry.load_balance_en)
-    {
-        rv = __cmd_data_check_complex("load_balance", NULL,
-                            "usage: input number such as <0/1/2/3>\n",
-                            (param_check_t)cmd_data_check_uint32, &tmp, sizeof (a_uint32_t));
-        if (rv)
-            return rv;
-        entry.load_balance = tmp;
-    }
+    rv = __cmd_data_check_complex("age_value", NULL,
+                        "usage: input number such as <0/1/2/3>\n",
+                        (param_check_t)cmd_data_check_uint8, &tmp, sizeof (a_uint8_t));
+    if (rv)
+        return rv;
+    entry.age_value = tmp;
 
     rv = __cmd_data_check_complex("type", "0",
                         "usage: the range is 0 or 1\n",
