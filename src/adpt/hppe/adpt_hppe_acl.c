@@ -3859,7 +3859,7 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 		hw_act->bf.stag_fmt = rule->stag_fmt;
 #ifdef JHPPE
 		hw_act->bf.svid_0 = rule->stag_vid & 0x7ff;
-		hw_act->bf.svid_1 = (rule->stag_vid > 11) & 0x1;
+		hw_act->bf.svid_1 = (rule->stag_vid >> 11) & 0x1;
 #else
 		hw_act->bf.svid = rule->stag_vid;
 #endif
