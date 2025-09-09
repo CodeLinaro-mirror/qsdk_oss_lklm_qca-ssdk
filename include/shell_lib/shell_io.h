@@ -184,6 +184,10 @@ cmd_data_check_hdrmode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 #ifdef IN_FDB
 sw_error_t
 cmd_data_check_fdboperation(char *cmd_str, void * val, a_uint32_t size);
+sw_error_t
+cmd_data_check_fdb_age_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+sw_error_t
+cmd_data_check_fdbentry(char *info, void *val, a_uint32_t size);
 #endif
 #ifdef IN_PPPOE
 sw_error_t

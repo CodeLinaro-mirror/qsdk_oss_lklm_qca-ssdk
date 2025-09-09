@@ -114,6 +114,13 @@ extern "C" {
         SW_CTRL_LEARNING
     } fal_fdb_learning_ctrl;
 
+    typedef enum
+    {
+        FAL_FDB_AGE_DISABLE = 0,
+        FAL_FDB_AGE_ENABLE,
+        FAL_FDB_AGE_ENABLE_TIMER_ONLY
+    } fal_fdb_age_ctrl_t;
+
     sw_error_t
     fal_fdb_entry_add(a_uint32_t dev_id, const fal_fdb_entry_t * entry);
 #if defined(IN_RFS)
@@ -172,11 +179,11 @@ sw_error_t
                                  a_bool_t *enable, fal_fwd_cmd_t *cmd);
 
     sw_error_t
-    fal_fdb_aging_ctrl_set(a_uint32_t dev_id, a_bool_t enable);
+    fal_fdb_aging_ctrl_set(a_uint32_t dev_id, fal_fdb_age_ctrl_t ctrl);
 
 #ifndef IN_FDB_MINI
     sw_error_t
-    fal_fdb_aging_ctrl_get(a_uint32_t dev_id, a_bool_t * enable);
+    fal_fdb_aging_ctrl_get(a_uint32_t dev_id, fal_fdb_age_ctrl_t * ctrl);
 #endif
 
     sw_error_t

@@ -188,8 +188,8 @@ sw_error_t fal_fdb_port_stamove_ctrl_get(a_uint32_t dev_id, fal_port_t port_id, 
     DEFINE_FAL_FUNC_ADPT(fdb_port_stamove_get, dev_id, port_id, enable, cmd)
     EXPORT_SYMBOL(fal_fdb_port_stamove_ctrl_get);
 
-sw_error_t fal_fdb_aging_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_ADPT_HSL(fdb_age_ctrl_set, age_ctrl_set, dev_id, enable)
+sw_error_t fal_fdb_aging_ctrl_set(a_uint32_t dev_id, fal_fdb_age_ctrl_t ctrl)
+    DEFINE_FAL_FUNC_ADPT_HSL(fdb_age_ctrl_set, age_ctrl_set, dev_id, ctrl)
     EXPORT_SYMBOL(fal_fdb_aging_ctrl_set);
 
 sw_error_t fal_fdb_vlan_ivl_svl_set(a_uint32_t dev_id, fal_fdb_smode smode)
@@ -279,8 +279,8 @@ sw_error_t fal_fdb_entry_getnext_byindex(a_uint32_t dev_id, a_uint32_t * iterato
 sw_error_t fal_fdb_port_learn_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(fdb_port_learn_get, port_learn_get, dev_id, port_id, enable)
 
-sw_error_t fal_fdb_aging_ctrl_get(a_uint32_t dev_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_ADPT_HSL(fdb_age_ctrl_get, age_ctrl_get, dev_id, enable)
+sw_error_t fal_fdb_aging_ctrl_get(a_uint32_t dev_id, fal_fdb_age_ctrl_t * ctrl)
+    DEFINE_FAL_FUNC_ADPT_HSL(fdb_age_ctrl_get, age_ctrl_get, dev_id, ctrl)
     EXPORT_SYMBOL(fal_fdb_aging_ctrl_get);
 
 sw_error_t fal_fdb_entry_update_byport(a_uint32_t dev_id, fal_port_t old_port, fal_port_t new_port, a_uint32_t fid, fal_fdb_op_t * option)

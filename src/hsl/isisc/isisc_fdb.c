@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2012, 2016, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -1228,16 +1218,16 @@ isisc_fdb_port_learn_get(a_uint32_t dev_id, fal_port_t port_id,
  * @return SW_OK or error code
  */
 HSL_LOCAL sw_error_t
-isisc_fdb_age_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
+isisc_fdb_age_ctrl_set(a_uint32_t dev_id, fal_fdb_age_ctrl_t ctrl)
 {
     a_uint32_t data;
     sw_error_t rv;
 
     HSL_DEV_ID_CHECK(dev_id);
 
-    if (A_TRUE == enable)
+    if (FAL_FDB_AGE_ENABLE == ctrl)
         data = 1;
-    else if (A_FALSE == enable)
+    else if (FAL_FDB_AGE_DISABLE == ctrl)
         data = 0;
     else
         return SW_BAD_PARAM;
@@ -1254,7 +1244,7 @@ isisc_fdb_age_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
  * @return SW_OK or error code
  */
 HSL_LOCAL sw_error_t
-isisc_fdb_age_ctrl_get(a_uint32_t dev_id, a_bool_t * enable)
+isisc_fdb_age_ctrl_get(a_uint32_t dev_id, fal_fdb_age_ctrl_t * ctrl)
 {
     a_uint32_t data = 0;
     sw_error_t rv;
@@ -1266,9 +1256,9 @@ isisc_fdb_age_ctrl_get(a_uint32_t dev_id, a_bool_t * enable)
     SW_RTN_ON_ERROR(rv);
 
     if (1 == data)
-        *enable = A_TRUE;
+        *ctrl = FAL_FDB_AGE_ENABLE;
     else
-        *enable = A_FALSE;
+        *ctrl = FAL_FDB_AGE_DISABLE;
 
     return SW_OK;
 }
