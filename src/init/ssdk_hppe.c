@@ -33,21 +33,25 @@ sw_error_t qca_hppe_fdb_hw_init(a_uint32_t dev_id)
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
 	SW_RTN_ON_NULL(p_api->adpt_port_bridge_txmac_set);
 
-	for(port = SSDK_PHYSICAL_PORT0; port <= SSDK_PHYSICAL_PORT7; port++) {
-		if(port == SSDK_PHYSICAL_PORT0) {
+	for(port = SSDK_PHYSICAL_PORT0; port < SSDK_MAX_PORT_NUM; port++) {
+		if (hsl_port_prop_check(dev_id, port, HSL_PP_CPU)) {
+			/* CPU port disable new addr learning and station move */
 			fal_fdb_port_learning_ctrl_set(dev_id, port, A_FALSE, FAL_MAC_FRWRD);
 			fal_fdb_port_stamove_ctrl_set(dev_id, port, A_FALSE, FAL_MAC_FRWRD);
 		} else {
 			fal_fdb_port_learning_ctrl_set(dev_id, port, A_TRUE, FAL_MAC_FRWRD);
 			fal_fdb_port_stamove_ctrl_set(dev_id, port, A_TRUE, FAL_MAC_FRWRD);
 		}
-		fal_portvlan_member_update(dev_id, port, 0x7f);
-		if (port == SSDK_PHYSICAL_PORT0 || port == SSDK_PHYSICAL_PORT7 ||
-		(hsl_port_feature_get(dev_id, port, PHY_F_FORCE) == A_TRUE)) {
-			p_api->adpt_port_bridge_txmac_set(dev_id, port, A_TRUE);
-		} else {
+
+		/* Isolation member includes itself and other ports */
+		fal_portvlan_member_update(dev_id, port, GENMASK(SSDK_MAX_PORT_NUM - 1, 0));
+
+		if (hsl_port_prop_check(dev_id, port, HSL_PP_PHY))
+			/* For MAC ports, bridge tx mac is enabled latter when port link up */
 			p_api->adpt_port_bridge_txmac_set(dev_id, port, A_FALSE);
-		}
+		else
+			p_api->adpt_port_bridge_txmac_set(dev_id, port, A_TRUE);
+
 		fal_port_promisc_mode_set(dev_id, port, A_TRUE);
 	}
 
