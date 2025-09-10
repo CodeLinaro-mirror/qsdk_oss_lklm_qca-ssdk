@@ -832,6 +832,7 @@ void ssdk_port_reset(
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
+			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
 		struct reset_control *mac_rst = NULL;
 
@@ -846,6 +847,7 @@ void ssdk_port_reset(
 #if defined(MPPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
+			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
 		/* reset RX */
 		rst = port_rsts[2 * (port_id - 1)];
@@ -1152,6 +1154,7 @@ static void ssdk_ppe_uniphy_clock_init(adpt_ppe_type_t chip_type)
 		case APPE_TYPE:
 		case MRPPE_TYPE:
 		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
 			inst_num = SSDK_MAX_UNIPHY_INSTANCE;
 			break;
 		case CPPE_TYPE:
@@ -1189,6 +1192,7 @@ static void ssdk_ppe_uniphy_clock_deinit(adpt_ppe_type_t chip_type)
 	case APPE_TYPE:
 	case MRPPE_TYPE:
 	case JHPPE_TYPE:
+	case HMSPPE_TYPE:
 		inst_num = SSDK_MAX_UNIPHY_INSTANCE;
 		break;
 	case CPPE_TYPE:
@@ -1485,6 +1489,16 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_NSSNOC_CE_AXI, ppe_rate);
 			break;
 #endif
+#if defined(HMSPPE)
+		case HMSPPE_TYPE:
+			noc_rate = JHPPE_NSS_NSSNOC_SNOC_CLK_RATE;
+			ppe_rate = HMSPPE_CLK_RATE;
+			ssdk_clock_rate_set_and_enable(clock_node, IM_SLEEP_CLK, 0);
+			ssdk_clock_rate_set_and_enable(clock_node, NSS_CSR, NSS_NSSCC_CLK_RATE);
+			ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_NSS_CSR, NSS_NSSCC_CLK_RATE);
+			ssdk_clock_rate_set_and_enable(clock_node, NSSCC_PON, ppe_rate);
+			break;
+#endif
 		default:
 			SSDK_ERROR("Unknown chip type %d\n", chip_type);
 			return;
@@ -1517,6 +1531,7 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 	switch (chip_type) {
 		case APPE_TYPE:
 		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
 			ssdk_clock_rate_set_and_enable(clock_node, PORT4_MAC_CLK, ppe_rate);
 			ssdk_clock_rate_set_and_enable(clock_node, PORT5_MAC_CLK, ppe_rate);
 			ssdk_clock_rate_set_and_enable(clock_node, PORT6_MAC_CLK, ppe_rate);
@@ -1784,9 +1799,27 @@ static char *ppe_rst_ids[UNIPHY_RST_MAX] = {
 	UNIPHY_PORT5_TX_RESET_ID,
 	UNIPHY_PORT6_RX_RESET_ID,
 	UNIPHY_PORT6_TX_RESET_ID,
+	PON_RESET_ID,
 };
 
-#if defined(JHPPE)
+#if defined(HMSPPE)
+static char *port_rst_ids[] = {
+	SSDK_PORT1_RX_RESET_ID,
+	SSDK_PORT1_TX_RESET_ID,
+	SSDK_PORT2_RX_RESET_ID,
+	SSDK_PORT2_TX_RESET_ID,
+	SSDK_PORT3_RX_RESET_ID,
+	SSDK_PORT3_TX_RESET_ID,
+	SSDK_PORT4_RX_RESET_ID,
+	SSDK_PORT4_TX_RESET_ID,
+	SSDK_PORT5_RX_RESET_ID,
+	SSDK_PORT5_TX_RESET_ID,
+	SSDK_PORT6_RX_RESET_ID,
+	SSDK_PORT6_TX_RESET_ID,
+	EPHY_RX_RESET_ID,
+	EPHY_TX_RESET_ID,
+};
+#elif defined(JHPPE)
 static char *port_rst_ids[] = {
 	SSDK_PORT1_RX_RESET_ID,
 	SSDK_PORT1_TX_RESET_ID,
@@ -2014,6 +2047,11 @@ void ssdk_gcc_clock_init(void)
 #if defined(JHPPE)
 		ssdk_gcc_appe_clock_init(JHPPE_TYPE);
 #endif
+	} else if (of_device_is_compatible(clock_node,
+			"qcom,ess-switch-ipq52xx")) {
+#if defined(HMSPPE)
+		ssdk_gcc_appe_clock_init(HMSPPE_TYPE);
+#endif
 	}
 	ssdk_gcc_reset_ids_init();
 }
@@ -2033,6 +2071,10 @@ void ssdk_gcc_clock_exit(void)
 	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
 #if defined(JHPPE)
 		ssdk_gcc_ppe_clock_deinit(JHPPE_TYPE);;
+#endif
+	} else if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx")) {
+#if defined(HMSPPE)
+		ssdk_gcc_ppe_clock_deinit(HMSPPE_TYPE);;
 #endif
 	}
 

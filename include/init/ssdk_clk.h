@@ -44,6 +44,7 @@ extern "C" {
 #define UNIPHY_PORT5_TX_RESET_ID	"uniphy_port5_tx_rst"
 #define UNIPHY_PORT6_RX_RESET_ID	"uniphy_port6_rx_rst"
 #define UNIPHY_PORT6_TX_RESET_ID	"uniphy_port6_tx_rst"
+#define PON_RESET_ID			"pon_rst"
 
 #define SSDK_PORT1_RESET_ID	"nss_port1_rst"
 #define SSDK_PORT2_RESET_ID	"nss_port2_rst"
@@ -63,6 +64,8 @@ extern "C" {
 #define SSDK_PORT5_TX_RESET_ID	"nss_port5_tx_rst"
 #define SSDK_PORT6_RX_RESET_ID	"nss_port6_rx_rst"
 #define SSDK_PORT6_TX_RESET_ID	"nss_port6_tx_rst"
+#define EPHY_RX_RESET_ID	"ephy_rx_rst"
+#define EPHY_TX_RESET_ID	"ephy_tx_rst"
 
 #define SSDK_PORT1_MAC_RESET_ID	"nss_port1_mac_rst"
 #define SSDK_PORT2_MAC_RESET_ID	"nss_port2_mac_rst"
@@ -108,6 +111,7 @@ enum unphy_rst_type {
 	UNIPHY_PORT5_TX_RESET_E,
 	UNIPHY_PORT6_RX_RESET_E,
 	UNIPHY_PORT6_TX_RESET_E,
+	PON_RESET_E,
 	UNIPHY_RST_MAX
 };
 
@@ -151,6 +155,7 @@ enum unphy_rst_type {
 #define NSSCC_CE_AXI		"nsscc_ce_axi_clk"
 #define NSSCC_NSSNOC_CE_APB	"nsscc_nssnoc_ce_apb_clk"
 #define NSSCC_NSSNOC_CE_AXI	"nsscc_nssnoc_ce_axi_clk"
+#define NSSCC_PON		"nsscc_pon_clk"
 
 #define UNIPHY_AHB_CLK	"uniphy_ahb_clk"
 #define UNIPHY_SYS_CLK	"uniphy_sys_clk"
@@ -326,6 +331,7 @@ enum mp_bcr_rst_type {
 #define MPPE_CLK_RATE               200000000
 #define MRPPE_CLK_RATE              375000000
 #define JHPPE_CLK_RATE              462000000
+#define HMSPPE_CLK_RATE             429000000
 
 enum {
 	UNIPHY_RX = 0,
