@@ -894,13 +894,13 @@ typedef sw_error_t (*adpt_port_vlan_vpgroup_set_func)(a_uint32_t dev_id,
 		a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t vpgroup_id);
 typedef sw_error_t (*adpt_port_vlan_vpgroup_get_func)(a_uint32_t dev_id,
 		a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id);
-typedef sw_error_t (*adpt_portvlan_isol_set_func)(a_uint32_t dev_id,
-		fal_port_t port_id, fal_portvlan_isol_ctrl_t *isol_ctrl);
-typedef sw_error_t (*adpt_portvlan_isol_get_func)(a_uint32_t dev_id,
-		fal_port_t port_id, fal_portvlan_isol_ctrl_t *isol_ctrl);
-typedef sw_error_t (*adpt_portvlan_isol_group_set_func)(a_uint32_t dev_id,
+typedef sw_error_t (*adpt_port_isol_ctrl_set_func)(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
+typedef sw_error_t (*adpt_port_isol_ctrl_get_func)(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
+typedef sw_error_t (*adpt_port_isol_group_set_func)(a_uint32_t dev_id,
 		a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp);
-typedef sw_error_t (*adpt_portvlan_isol_group_get_func)(a_uint32_t dev_id,
+typedef sw_error_t (*adpt_port_isol_group_get_func)(a_uint32_t dev_id,
 		a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp);
 typedef sw_error_t (*adpt_port_egress_vlan_filter_set_func)(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
@@ -912,6 +912,14 @@ typedef sw_error_t (*adpt_vlan_trans_dscp_pcp_mapping_set_func)(a_uint32_t dev_i
 typedef sw_error_t (*adpt_vlan_trans_dscp_pcp_mapping_get_func)(a_uint32_t dev_id,
 		fal_port_vlan_direction_t direction,
 		a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp);
+typedef sw_error_t (*adpt_port_isol_action_ctrl_set_func)(a_uint32_t dev_id,
+		fal_port_isol_act_ctrl_t *act_ctrl);
+typedef sw_error_t (*adpt_port_isol_action_ctrl_get_func)(a_uint32_t dev_id,
+		fal_port_isol_act_ctrl_t *act_ctrl);
+typedef sw_error_t (*adpt_port_isol_action_set_func)(a_uint32_t dev_id,
+		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
+typedef sw_error_t (*adpt_port_isol_action_get_func)(a_uint32_t dev_id,
+		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
 /*portvlan module end*/
 
 /*ctrlpkt module end*/
@@ -2029,14 +2037,18 @@ typedef struct
 	adpt_portvlan_member_get_func adpt_portvlan_member_get;
 	adpt_port_vlan_vpgroup_set_func adpt_port_vlan_vpgroup_set;
 	adpt_port_vlan_vpgroup_get_func adpt_port_vlan_vpgroup_get;
-	adpt_portvlan_isol_set_func adpt_portvlan_isol_set;
-	adpt_portvlan_isol_get_func adpt_portvlan_isol_get;
-	adpt_portvlan_isol_group_set_func adpt_portvlan_isol_group_set;
-	adpt_portvlan_isol_group_get_func adpt_portvlan_isol_group_get;
+	adpt_port_isol_ctrl_set_func adpt_port_isol_ctrl_set;
+	adpt_port_isol_ctrl_get_func adpt_port_isol_ctrl_get;
+	adpt_port_isol_group_set_func adpt_port_isol_group_set;
+	adpt_port_isol_group_get_func adpt_port_isol_group_get;
 	adpt_port_egress_vlan_filter_set_func adpt_port_egress_vlan_filter_set;
 	adpt_port_egress_vlan_filter_get_func adpt_port_egress_vlan_filter_get;
 	adpt_vlan_trans_dscp_pcp_mapping_set_func adpt_vlan_trans_dscp_pcp_mapping_set;
 	adpt_vlan_trans_dscp_pcp_mapping_get_func adpt_vlan_trans_dscp_pcp_mapping_get;
+	adpt_port_isol_action_ctrl_set_func adpt_port_isol_action_ctrl_set;
+	adpt_port_isol_action_ctrl_get_func adpt_port_isol_action_ctrl_get;
+	adpt_port_isol_action_set_func adpt_port_isol_action_set;
+	adpt_port_isol_action_get_func adpt_port_isol_action_get;
 	/*portvlan module end*/
 
 	/*ctrlpkt module begin*/
