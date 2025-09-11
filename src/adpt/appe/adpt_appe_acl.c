@@ -1037,7 +1037,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 #ifdef JHPPE
 		nat_action = (hw_act->bf.nat_action_0 & 0x3) |
-					((hw_act->bf.nat_action_0 & 0x1) << 2);
+					((hw_act->bf.nat_action_1 & 0x1) << 2);
 #else
 		nat_action = hw_act->bf.nat_action;
 
