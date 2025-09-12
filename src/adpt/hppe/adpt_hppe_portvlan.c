@@ -688,14 +688,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mode);
 
-	if (ADPT_IS_PPORT(port_id)) {
-		if (FAL_FLG_TST(mode->mask, FAL_PORT_QINQ_ROLE_TUNNEL_EN)) {
-			rtn = appe_tpr_port_parsing_port_role_set(dev_id,
-					port_value, mode->tunnel_port_role);
-			SW_RTN_ON_ERROR(rtn);
-		}
-	}
-
 	if (ADPT_IS_VPORT(port_id)) {
 		if (FAL_FLG_TST(mode->mask, FAL_PORT_QINQ_ROLE_INGRESS_EN)) {
 			union ipr_vp_parsing_u vp_parsing_reg;
@@ -709,6 +701,9 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			vp_parsing_reg.bf.src_port_sel =
 					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
 #endif
+#if defined(JHPPE)
+			vp_parsing_reg.bf.vlan_mode = mode->in_port_ponmode_en;
+#endif
 			rtn = appe_ipr_vp_parsing_set(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -716,6 +711,20 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		if (FAL_FLG_TST(mode->mask, FAL_PORT_QINQ_ROLE_EGRESS_EN)) {
 			rtn = appe_eg_vp_tbl_port_vlan_type_set(dev_id, port_value,
 					(a_uint32_t)mode->egress_port_role);
+			SW_RTN_ON_ERROR(rtn);
+		}
+
+		if (FAL_FLG_TST(mode->mask, FAL_PORT_QINQ_ROLE_TUNNEL_EN)) {
+			union tpr_vp_parsing_u tl_vp_parsing_reg;
+			aos_mem_zero(&tl_vp_parsing_reg, sizeof(tl_vp_parsing_reg));
+
+			rtn = appe_tpr_vp_parsing_get(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &tl_vp_parsing_reg);
+			SW_RTN_ON_ERROR(rtn);
+			tl_vp_parsing_reg.bf.port_role = mode->tunnel_port_role;
+#if defined(JHPPE)
+			tl_vp_parsing_reg.bf.vlan_mode = mode->tl_port_ponmode_en;
+#endif
+			rtn = appe_tpr_vp_parsing_set(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &tl_vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
 	} else
@@ -732,6 +741,9 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			port_parsing_reg.bf.src_port_sel =
 					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
 #endif
+#if defined(JHPPE)
+			port_parsing_reg.bf.vlan_mode = mode->in_port_ponmode_en;
+#endif
 			rtn = hppe_port_parsing_reg_set(dev_id, port_value, &port_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -739,6 +751,20 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		if (FAL_FLG_TST(mode->mask, FAL_PORT_QINQ_ROLE_EGRESS_EN)) {
 			SW_RTN_ON_ERROR(hppe_port_eg_vlan_port_vlan_type_set(dev_id, port_value,
 						(a_uint32_t)mode->egress_port_role));
+		}
+
+		if (FAL_FLG_TST(mode->mask, FAL_PORT_QINQ_ROLE_TUNNEL_EN)) {
+			union tpr_port_parsing_u tl_port_parsing_reg;
+			aos_mem_zero(&tl_port_parsing_reg, sizeof(tl_port_parsing_reg));
+
+			rtn = appe_tpr_port_parsing_get(dev_id, port_value, &tl_port_parsing_reg);
+			SW_RTN_ON_ERROR(rtn);
+			tl_port_parsing_reg.bf.port_role = mode->tunnel_port_role;
+#if defined(JHPPE)
+			tl_port_parsing_reg.bf.vlan_mode = mode->tl_port_ponmode_en;
+#endif
+			rtn = appe_tpr_port_parsing_set(dev_id, port_value, &tl_port_parsing_reg);
+			SW_RTN_ON_ERROR(rtn);
 		}
 	}
 
@@ -754,15 +780,11 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(mode);
 
-	if (ADPT_IS_PPORT(port_id)) {
-		rtn = appe_tpr_port_parsing_port_role_get(dev_id,
-				port_value, (a_uint32_t *)&mode->tunnel_port_role);
-		SW_RTN_ON_ERROR(rtn);
-	}
-
 	if (ADPT_IS_VPORT(port_id)) {
 		union ipr_vp_parsing_u vp_parsing_reg;
+		union tpr_vp_parsing_u tl_vp_parsing_reg;
 		aos_mem_zero(&vp_parsing_reg, sizeof(vp_parsing_reg));
+		aos_mem_zero(&tl_vp_parsing_reg, sizeof(tl_vp_parsing_reg));
 
 		rtn = appe_ipr_vp_parsing_get(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &vp_parsing_reg);
 		SW_RTN_ON_ERROR(rtn);
@@ -772,13 +794,24 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		mode->ingress_port_sel =
 				vp_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
 #endif
-
+#if defined(JHPPE)
+		mode->in_port_ponmode_en = vp_parsing_reg.bf.vlan_mode;
+#endif
 		rtn = appe_eg_vp_tbl_port_vlan_type_get(dev_id, port_value,
 				(a_uint32_t *)&mode->egress_port_role);
 		SW_RTN_ON_ERROR(rtn);
+
+		rtn = appe_tpr_vp_parsing_get(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &tl_vp_parsing_reg);
+		SW_RTN_ON_ERROR(rtn);
+		mode->tunnel_port_role = tl_vp_parsing_reg.bf.port_role;
+#if defined(JHPPE)
+		mode->tl_port_ponmode_en = tl_vp_parsing_reg.bf.vlan_mode;
+#endif
 	} else if (ADPT_IS_PPORT(port_id)) {
 		union port_parsing_reg_u port_parsing_reg;
+		union tpr_port_parsing_u tl_port_parsing_reg;
 		aos_mem_zero(&port_parsing_reg, sizeof(port_parsing_reg));
+		aos_mem_zero(&tl_port_parsing_reg, sizeof(tl_port_parsing_reg));
 
 		rtn = hppe_port_parsing_reg_get(dev_id, port_value, &port_parsing_reg);
 		SW_RTN_ON_ERROR(rtn);
@@ -788,9 +821,20 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		mode->ingress_port_sel =
 				port_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
 #endif
+#if defined(JHPPE)
+		mode->in_port_ponmode_en = port_parsing_reg.bf.vlan_mode;
+#endif
 
-		SW_RTN_ON_ERROR(hppe_port_eg_vlan_port_vlan_type_get(dev_id, port_value,
-					(a_uint32_t *)&mode->egress_port_role));
+		rtn = hppe_port_eg_vlan_port_vlan_type_get(dev_id, port_value,
+					(a_uint32_t *)&mode->egress_port_role);
+		SW_RTN_ON_ERROR(rtn);
+
+		rtn = appe_tpr_port_parsing_get(dev_id, port_value, &tl_port_parsing_reg);
+		SW_RTN_ON_ERROR(rtn);
+		mode->tunnel_port_role = tl_port_parsing_reg.bf.port_role;
+#if defined(JHPPE)
+		mode->tl_port_ponmode_en = tl_port_parsing_reg.bf.vlan_mode;
+#endif
 	}
 
 	return rtn;
