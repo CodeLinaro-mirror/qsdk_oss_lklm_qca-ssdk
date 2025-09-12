@@ -1048,6 +1048,7 @@ ssdk_mac_sw_sync_work_stop(a_uint32_t dev_id)
 	SW_RTN_ON_ERROR(rv);
 
 	cancel_delayed_work_sync(&priv->mac_sw_sync_dwork);
+	priv->ssdk_module_cnt.polling_stop_cnt++;
 
 	return rv;
 }
@@ -1065,6 +1066,7 @@ ssdk_mac_sw_sync_work_start(a_uint32_t dev_id)
 
 	schedule_delayed_work(&priv->mac_sw_sync_dwork,
 			msecs_to_jiffies(QCA_MAC_SW_SYNC_WORK_DELAY));
+	priv->ssdk_module_cnt.polling_start_cnt++;
 	return rv;
 }
 EXPORT_SYMBOL(ssdk_mac_sw_sync_work_start);
@@ -1789,6 +1791,23 @@ static void qca_ar8327_gpio_reset(struct qca_phy_priv *priv)
 	return;
 }
 #endif
+
+void ssdk_init_status_debug_state(a_uint32_t dev_id, ssdk_init_state_t state, int rv)
+{
+	struct qca_phy_priv *priv;
+
+	if (dev_id >= SW_MAX_NR_DEV || !qca_phy_priv_global)
+		return;
+
+	priv = qca_phy_priv_global[dev_id];
+	if (!priv)
+		return;
+
+	if (rv != SW_OK || state == SSDK_INIT_START || state == SSDK_INIT_SUCCESS) {
+		priv->ssdk_module_cnt.ssdk_init_state = state;
+	}
+}
+
 static int __init regi_init(void)
 {
 	a_uint32_t num = 0, dev_id = 0, dev_num = 1;
@@ -1809,13 +1828,12 @@ static int __init regi_init(void)
 	for (num = 0; num < dev_num; num++) {
 		ssdk_cfg_default_init(&cfg);
 /*qca808x_end*/
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 		if(SW_DISABLE == ssdk_dt_parse(&cfg, num, &dev_id)) {
 			SSDK_INFO("ess-switch node is unavalilable\n");
+			ssdk_init_status_debug_state(dev_id, SSDK_DTS_PARSE_FAILURE, SW_DISABLE);
 			continue;
 		}
-#endif
-
+		ssdk_init_status_debug_state(dev_id, SSDK_INIT_START, SW_OK);
 		/* device id is the array index */
 		qca_phy_priv_global[dev_id]->device_id = ssdk_device_id_get(dev_id);
 		qca_phy_priv_global[dev_id]->of_node = ssdk_dts_node_get(dev_id);
@@ -1823,11 +1841,13 @@ static int __init regi_init(void)
 		qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT7;
 /*qca808x_start*/
 		rv = ssdk_plat_init(&cfg, dev_id);
+		ssdk_init_status_debug_state(dev_id, SSDK_PLAT_INIT_FAILURE,rv);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 /*qca808x_end*/
 		ssdk_driver_register(dev_id);
 /*qca808x_start*/
 		rv = chip_ver_get(dev_id, &cfg);
+		ssdk_init_status_debug_state(dev_id, SSDK_CHIP_VER_GET_FAILURE, rv);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 
 		rv = ssdk_init(dev_id, &cfg);
@@ -1843,8 +1863,10 @@ static int __init regi_init(void)
 				if (qca_phy_priv_global[dev_id]->of_node) {
 					qca_ar8327_gpio_reset(qca_phy_priv_global[dev_id]);
 					rv = ssdk_switch_register(dev_id, cfg.chip_type);
+					ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
 					SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 					rv = qca_ar8327_hw_init(qca_phy_priv_global[dev_id]);
+					ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
 					SSDK_INFO("Initializing ISISC Done!!\n");
 				}
 #endif
@@ -1853,8 +1875,10 @@ static int __init regi_init(void)
 #if defined(MHT)
 				qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
 				rv = qca_mht_hw_init(&cfg, dev_id);
+				ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
+				ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				SSDK_INFO("Initializing MHT Done!!\n");
 #endif
@@ -1880,16 +1904,20 @@ static int __init regi_init(void)
 				else if (adpt_ppe_type_get(dev_id) == APPE_TYPE) {
 					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT8;
 				}
-				qca_appe_hw_init(dev_id);
+				rv = qca_appe_hw_init(dev_id);
+				ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
+				ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
 				break;
 #if defined(HTTPPE)
 			case CHIP_HTTPPE:
 				qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
-				qca_httppe_hw_init(dev_id);
+				rv = qca_httppe_hw_init(dev_id);
+				ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
 				rv = ssdk_switch_register(dev_id, cfg.chip_type);
+				ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				SSDK_INFO("Initializing HTTPPE Done!!\n");
 				break;
@@ -1899,15 +1927,8 @@ static int __init regi_init(void)
 			default:
 				break;
 		}
-/*qca808x_start*/
-
+		ssdk_init_status_debug_state(dev_id, SSDK_INIT_SUCCESS, SW_OK);
 	}
-/*qca808x_end*/
-
-	ssdk_sysfs_init();
-#ifdef IN_NETLINK
-	ssdk_genl_init();
-#endif
 
 	if (rv == 0){
 		/* register the notifier later should be ok */
@@ -1918,6 +1939,10 @@ static int __init regi_init(void)
 /*qca808x_start*/
 
 out:
+	ssdk_sysfs_init();
+#ifdef IN_NETLINK
+	ssdk_genl_init();
+#endif
 	if (rv == 0)
 		SSDK_INFO("qca-%s module init succeeded!\n", SSDK_STR);
 	else {
