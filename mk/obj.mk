@@ -477,8 +477,6 @@ OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_misc.o
 ###############################################################################
 #                                 PON
 ###############################################################################
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_ipmc.o
-
 ifeq (TRUE, $(IN_PON))
 OBJ-COMMON  += src/fal/fal_pon.o
 OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_prx_pon.o \
@@ -491,7 +489,13 @@ ifeq (TRUE, $(IN_PON_PM))
 OBJ-COMMON  += src/fal/fal_pon_pm.o src/ref/ref_pon_pm.o
 OBJ-JHPPE += src/hsl/jhppe/jhppe_pm.o src/adpt/jhppe/adpt_jhppe_pon_pm.o
 endif
-
+################################################################################
+#                             IN_IPMC
+#################################################################################
+ifeq (TRUE, $(IN_IPMC))
+OBJ-COMMON  += src/fal/fal_ipmc.o
+OBJ-JHPPE   += src/hsl/jhppe/jhppe_ipmc.o
+endif
 ###############################################################################
 #                              Collect OBJ
 ###############################################################################

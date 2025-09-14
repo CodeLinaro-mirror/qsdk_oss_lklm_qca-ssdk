@@ -277,4 +277,8 @@ endif
 ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
 	IN_PON_PM=TRUE
 endif
+
+ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
+	IN_IPMC=TRUE
+endif
 #auto_insert_flag

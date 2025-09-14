@@ -334,6 +334,9 @@ typedef enum
 	SW_TUNNEL_TUPLE_ENTRY,
 	SW_TUNNEL_DECAP_MISS_ACTION,
 	SW_TCONT_STAT,
+	SW_IPMC_GLOBAL_CFG,
+	SW_IPMC_ENTRY,
+	SW_IPMC_UCAST_FWD,
 /* auto_insert_flag */
 } sw_data_type_e;
 

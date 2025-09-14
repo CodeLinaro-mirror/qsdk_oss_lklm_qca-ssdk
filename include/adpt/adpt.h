@@ -53,6 +53,7 @@ extern "C" {
 #include "fal_sampling.h"
 #include "fal_pon.h"
 #include "fal_pon_pm.h"
+#include "fal_ipmc.h"
 #include "ssdk_plat.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
@@ -1608,6 +1609,25 @@ typedef sw_error_t (*adpt_pon_pm_counter_get_func)(a_uint32_t dev_id, a_uint32_t
 		                fal_direction_t direction, fal_pon_pm_counter_t *pm_counter);
 typedef sw_error_t (*adpt_pon_pm_counter_flush_func)(a_uint32_t dev_id, a_uint32_t counter_id,
 				fal_direction_t direction);
+
+/* IPMC */
+typedef sw_error_t (*adpt_ipmc_status_set_func)(a_uint32_t dev_id, a_bool_t enable);
+typedef sw_error_t (*adpt_ipmc_status_get_func)(a_uint32_t dev_id, a_bool_t *enable);
+typedef sw_error_t (*adpt_ipmc_global_cfg_set_func)(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg);
+typedef sw_error_t (*adpt_ipmc_global_cfg_get_func)(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg);
+typedef sw_error_t (*adpt_ipmc_entry_add_func)(a_uint32_t dev_id,
+		fal_ipmc_op_mode_t add_mode, fal_ipmc_entry_t *ipmc_entry);
+typedef sw_error_t (*adpt_ipmc_entry_del_func)(a_uint32_t dev_id,
+		fal_ipmc_op_mode_t del_mode, fal_ipmc_entry_t *ipmc_entry);
+typedef sw_error_t (*adpt_ipmc_entry_get_func)(a_uint32_t dev_id,
+		fal_ipmc_op_mode_t get_mode, fal_ipmc_entry_t *ipmc_entry);
+typedef sw_error_t (*adpt_ipmc_entry_getnext_func)(a_uint32_t dev_id,
+		fal_ipmc_next_mode_t next_mode, fal_ipmc_entry_t *ipmc_entry);
+typedef sw_error_t (*adpt_ipmc_entry_flush_func)(a_uint32_t dev_id);
+typedef sw_error_t (*adpt_ipmc_ucast_fwd_set_func)(a_uint32_t dev_id,
+		fal_ipmc_ucast_fwd_t *ucast_fwd);
+typedef sw_error_t (*adpt_ipmc_ucast_fwd_get_func)(a_uint32_t dev_id,
+		fal_ipmc_ucast_fwd_t *ucast_fwd);
 /* auto_insert_flag */
 typedef struct
 {
@@ -2365,6 +2385,18 @@ typedef struct
 	adpt_pon_pm_counter_entry_get_func adpt_pon_pm_counter_entry_get;
 	adpt_pon_pm_counter_get_func adpt_pon_pm_counter_get;
 	adpt_pon_pm_counter_flush_func adpt_pon_pm_counter_flush;
+	/* IPMC */
+	adpt_ipmc_status_set_func adpt_ipmc_status_set;
+	adpt_ipmc_status_get_func adpt_ipmc_status_get;
+	adpt_ipmc_global_cfg_set_func adpt_ipmc_global_cfg_set;
+	adpt_ipmc_global_cfg_get_func adpt_ipmc_global_cfg_get;
+	adpt_ipmc_entry_add_func adpt_ipmc_entry_add;
+	adpt_ipmc_entry_del_func adpt_ipmc_entry_del;
+	adpt_ipmc_entry_get_func adpt_ipmc_entry_get;
+	adpt_ipmc_entry_getnext_func adpt_ipmc_entry_getnext;
+	adpt_ipmc_entry_flush_func adpt_ipmc_entry_flush;
+	adpt_ipmc_ucast_fwd_set_func adpt_ipmc_ucast_fwd_set;
+	adpt_ipmc_ucast_fwd_get_func adpt_ipmc_ucast_fwd_get;
 /* auto_insert_flag_1 */
 }adpt_api_t;
 
