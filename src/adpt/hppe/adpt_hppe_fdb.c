@@ -205,7 +205,7 @@ _adpt_hppe_fdb_tbl_op_data_reg_set(a_uint32_t dev_id, fal_fdb_entry_t * entry)
 	if (entry->static_en == A_TRUE)
 		reg_value[2] += (0x3 << (FDB_TBL_HIT_AGE_OFFSET - 64));
 	else
-		reg_value[2] += (0x2 << (FDB_TBL_HIT_AGE_OFFSET - 64));
+		reg_value[2] += ((entry->age_value & 0x3) << (FDB_TBL_HIT_AGE_OFFSET - 64));
 	rv = hppe_fdb_tbl_op_data2_set(dev_id, (union fdb_tbl_op_data2_u *)(&reg_value[2]));
 	if (rv != SW_OK)
 		return rv;
@@ -258,6 +258,7 @@ _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(a_uint32_t dev_id, fal_fdb_entry_t * 
 	a_uint32_t rslt_data[3] = {0};
 	a_uint32_t entry_valid, lookup_valid;
 	a_uint32_t i, dst_info_encode;
+	a_uint8_t age_value;
 
 	hppe_fdb_tbl_rd_op_rslt_data0_get(dev_id,
 		(union fdb_tbl_rd_op_rslt_data0_u *)(&rslt_data[0]));
@@ -285,7 +286,9 @@ _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(a_uint32_t dev_id, fal_fdb_entry_t * 
 		entry->fid = (rslt_data[1] >> (FDB_TBL_VSI_OFFSET - 32)) & 0x3f;
 		entry->sacmd = (rslt_data[2] >> (FDB_TBL_SA_CMD_OFFSET - 64)) & 0x3;
 		entry->dacmd = (rslt_data[2] >> (FDB_TBL_DA_CMD_OFFSET - 64)) & 0x3;
-		if (((rslt_data[2] >> (FDB_TBL_HIT_AGE_OFFSET - 64)) & 0x3) == 0x3)
+		age_value = (rslt_data[2] >> (FDB_TBL_HIT_AGE_OFFSET - 64)) & 0x3;
+		entry->age_value = age_value;
+		if (age_value == 0x3)
 			entry->static_en = A_TRUE;
 		else
 			entry->static_en = A_FALSE;
@@ -514,7 +517,7 @@ void _fdb_copy(fal_fdb_entry_t *new, const fal_fdb_entry_t *old)
 	new->portmap_en = old->portmap_en;
 	new->is_multicast = old->is_multicast;
 	new->static_en = old->static_en;
-
+	new->age_value = old->age_value;
 }
 
 sw_error_t
