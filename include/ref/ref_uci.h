@@ -44,6 +44,10 @@ int parse_pktedit(const char *command_name, struct switch_val *val);
 #if defined(IN_PON_PM)
 int parse_ponpm(const char *command_name, struct switch_val *val);
 #endif
+
+#if defined(IN_IPMC)
+int parse_ipmc(const char *command_name, struct switch_val *val);
+#endif
 #endif
 
 #ifdef __cplusplus

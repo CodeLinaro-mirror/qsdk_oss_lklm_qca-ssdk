@@ -28,6 +28,19 @@ jhppe_ipmc_tbl_op_set(
 }
 
 sw_error_t
+jhppe_ipmc_tbl_op_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	return hppe_reg_set(
+			dev_id,
+			IPE_L2_BASE_ADDR + IPMC_TBL_OP_DATA0_ADDRESS +
+			IPMC_TBL_OP_DATA0_INC * index,
+			value);
+}
+
+sw_error_t
 jhppe_ipmc_tbl_op_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data0_u *value)
@@ -303,6 +316,19 @@ jhppe_ipmc_tbl_rd_op_set(
 }
 
 sw_error_t
+jhppe_ipmc_tbl_rd_op_data_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	return hppe_reg_set(
+			dev_id,
+			IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_DATA0_ADDRESS +
+			IPMC_TBL_RD_OP_DATA0_INC * index,
+			value);
+}
+
+sw_error_t
 jhppe_ipmc_tbl_rd_op_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data0_u *value)
@@ -553,6 +579,19 @@ jhppe_ipmc_tbl_rd_op_rslt_get(
 				dev_id,
 				IPE_L2_BASE_ADDR + IPMC_TBL_RD_OP_RSLT_ADDRESS,
 				&value->val);
+}
+
+sw_error_t
+jhppe_ipmc_tbl_rd_rslt_data_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	return hppe_reg_get(
+			dev_id,
+			IPE_L2_BASE_ADDR + IPMC_TBL_RD_RSLT_DATA0_ADDRESS +
+			IPMC_TBL_RD_RSLT_DATA0_INC * index,
+			value);
 }
 
 sw_error_t
