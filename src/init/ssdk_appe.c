@@ -888,7 +888,7 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 			fal_port_rxmac_status_set(dev_id, i, A_FALSE);
 			fal_port_rxfc_status_set(dev_id, i, A_TRUE);
 			fal_port_txfc_status_set(dev_id, i, A_TRUE);
-			fal_port_max_frame_size_set(dev_id, i, SSDK_MAX_FRAME_SIZE);
+			fal_port_max_frame_size_set(dev_id, i, SSDK_MAX_FRAME_SIZE_12K);
 			fal_port_interface_eee_cfg_get(dev_id, i, &port_eee_cfg);
 			port_eee_cfg.enable = A_FALSE;
 			port_eee_cfg.lpi_tx_enable = A_FALSE;

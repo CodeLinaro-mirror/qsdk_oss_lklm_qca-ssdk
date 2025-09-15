@@ -754,7 +754,7 @@ adpt_ppe_port_mru_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(ctrl);
-	if(ctrl->mru_size > SSDK_MAX_FRAME_SIZE)
+	if(ctrl->mru_size > SSDK_MAX_FRAME_SIZE_16K)
 		return SW_OUT_OF_RANGE;
 	port_value = FAL_PORT_ID_VALUE(port_id);
 	ADPT_PPE_PORT_ID_CHECK(port_value);
@@ -791,7 +791,7 @@ adpt_ppe_port_mtu_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(ctrl);
-	if(ctrl->mtu_size > SSDK_MAX_MTU)
+	if(ctrl->mtu_size > SSDK_MAX_FRAME_SIZE_16K)
 		return SW_OUT_OF_RANGE;
 	port_value = FAL_PORT_ID_VALUE(port_id);
 	ADPT_PPE_PORT_ID_CHECK(port_value);
@@ -808,10 +808,6 @@ adpt_hppe_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
-
-	if (max_frame > SSDK_MAX_FRAME_SIZE) {
-		return SW_BAD_VALUE;
-	}
 
 	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
 	if (port_mac_type == PORT_XGMAC_TYPE)
@@ -833,6 +829,17 @@ sw_error_t
 adpt_ppe_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t max_frame)
 {
+	a_uint32_t size = SSDK_MAX_FRAME_SIZE_12K;
+
+#if defined(HTTPPE)
+	/* HTTPPE max framesize is 16K, others are 12K */
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+		size = SSDK_MAX_FRAME_SIZE_16K;
+#endif
+
+	if (max_frame > size)
+		return SW_OUT_OF_RANGE;
+
 #ifdef JHPPE
 	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{

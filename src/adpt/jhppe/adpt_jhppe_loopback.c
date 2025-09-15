@@ -214,11 +214,6 @@ adpt_jhppe_lpbk_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_FALSE)
 		return SW_NOT_SUPPORTED;
-
-	if (max_frame > SSDK_MAX_FRAME_SIZE)
-	{
-		return SW_BAD_VALUE;
-	}
 	port_id = TO_LPBK_ID(port_id);
 	rv = jhppe_lpbk_mac_junmo_size_get(dev_id, port_id, &lpbk_mac_junmo_size);
 	SW_RTN_ON_ERROR(rv);
