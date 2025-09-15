@@ -12,6 +12,8 @@
 #include "fal_ipmc.h"
 #include "adpt.h"
 
+#define ADPT_IPMC_RD_RSLT_DATA_NUM (sizeof(union ipmc_sipv6_gipv6_tbl_u)/sizeof(a_uint32_t) + 1)
+
 #define IPMC_ENTRY_ID_CHECK(entry_index) \
 do { \
     if (entry_index >= IPMC_GIPV4_TBL_NUM) \
@@ -463,8 +465,8 @@ static sw_error_t jhppe_ipmc_entry_op(a_uint32_t dev_id,
 	a_uint32_t data_size,
 	a_uint32_t *index)
 {
-	sw_error_t rv = SW_OK;
-	a_uint32_t i;
+	sw_error_t ret, rv = SW_OK;
+	a_uint32_t i, tmp_data;
 
 	switch (op_type) {
 	case FAL_IPMC_OP_TYPE_ADD:
@@ -492,13 +494,22 @@ static sw_error_t jhppe_ipmc_entry_op(a_uint32_t dev_id,
 			}
 		}
 
-		rv = jhppe_ipmc_rd_op_common(dev_id, op_type, op_mode, index);
-		SW_RTN_ON_ERROR(rv);
+		ret = jhppe_ipmc_rd_op_common(dev_id, op_type, op_mode, index);
 
 		for (i = 0; i < data_size; i++) {
 			rv = jhppe_ipmc_tbl_rd_rslt_data_get(dev_id, i, &data[i]);
 			SW_RTN_ON_ERROR(rv);
 		}
+
+		/* For IPMC GET operation, need to read all the result data even
+		 * the read operation is failed or valid data is no more than all
+		 * the data number. OR next GET operation will be failed.
+		 */
+		for (i = data_size; i < ADPT_IPMC_RD_RSLT_DATA_NUM; i++) {
+			rv = jhppe_ipmc_tbl_rd_rslt_data_get(dev_id, i, &tmp_data);
+			SW_RTN_ON_ERROR(rv);
+		}
+		SW_RTN_ON_ERROR(ret);
 		break;
 	default:
 		SSDK_ERROR("%s bad op type: %d\n", __func__, op_type);
