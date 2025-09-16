@@ -247,11 +247,9 @@ qca_httppe_bm_hw_init(a_uint32_t dev_id)
 	a_uint16_t prealloc_buf = 0, react_buf = 0;
 
 	for (i = 0; i < HTTPPE_BM_PORT_NUM; i++) {
-		/*disable fc for phy ports and enable fc for port 0 */
-		if(i >= HTTPPE_BM_PHY_PORT_OFFSET && i <= HTTPPE_BM_PHY_PORT_MAX)
-			fal_port_bm_ctrl_set(dev_id, i, A_FALSE);
-		else
-			fal_port_bm_ctrl_set(dev_id, i, A_TRUE);
+		/*disable fc for phy ports and cpu port */
+		fal_port_bm_ctrl_set(dev_id, i, A_FALSE);
+
 		/* map to group 0 */
 		fal_port_bufgroup_map_set(dev_id, i, 0);
 	}

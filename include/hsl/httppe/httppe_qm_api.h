@@ -1532,4 +1532,28 @@ httppe_oq_ll_mul_p5_tbl_normal_fwd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+sw_error_t
+httppe_queue_tx_counter_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union queue_tx_counter_tbl_u *value);
+
+sw_error_t
+httppe_queue_tx_counter_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union queue_tx_counter_tbl_u *value);
+
+sw_error_t
+httppe_uni_drop_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uni_drop_cnt_tbl_u *value);
+
+sw_error_t
+httppe_uni_drop_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uni_drop_cnt_tbl_u *value);
+
 #endif

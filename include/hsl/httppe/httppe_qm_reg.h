@@ -993,4 +993,94 @@ union oq_ll_mul_p5_tbl_u {
 	struct oq_ll_mul_p5_tbl bf;
 };
 
+/*[table] QUEUE_TX_COUNTER_TBL*/
+#define QUEUE_TX_COUNTER_TBL
+#define QUEUE_TX_COUNTER_TBL_ADDRESS 0x1a000
+#define QUEUE_TX_COUNTER_TBL_NUM     300
+#define QUEUE_TX_COUNTER_TBL_INC     0x10
+#define QUEUE_TX_COUNTER_TBL_TYPE    REG_TYPE_RW
+#define QUEUE_TX_COUNTER_TBL_DEFAULT 0x0
+	/*[field] TX_PACKETS*/
+	#define QUEUE_TX_COUNTER_TBL_TX_PACKETS
+	#define QUEUE_TX_COUNTER_TBL_TX_PACKETS_OFFSET  0
+	#define QUEUE_TX_COUNTER_TBL_TX_PACKETS_LEN     32
+	#define QUEUE_TX_COUNTER_TBL_TX_PACKETS_DEFAULT 0x0
+	/*[field] TX_BYTES*/
+	#define QUEUE_TX_COUNTER_TBL_TX_BYTES
+	#define QUEUE_TX_COUNTER_TBL_TX_BYTES_OFFSET  32
+	#define QUEUE_TX_COUNTER_TBL_TX_BYTES_LEN     40
+	#define QUEUE_TX_COUNTER_TBL_TX_BYTES_DEFAULT 0x0
+
+struct queue_tx_counter_tbl {
+	a_uint32_t  tx_packets:32;
+	a_uint32_t  tx_bytes_0:32;
+	a_uint32_t  tx_bytes_1:8;
+	a_uint32_t  _reserved0:24;
+};
+
+union queue_tx_counter_tbl_u {
+	a_uint32_t val[3];
+	struct queue_tx_counter_tbl bf;
+};
+
+/*[table] MUL_P5_DROP_CNT_TBL*/
+#define MUL_P5_DROP_CNT_TBL
+#define MUL_P5_DROP_CNT_TBL_ADDRESS 0x1f5000
+#define MUL_P5_DROP_CNT_TBL_NUM     12
+#define MUL_P5_DROP_CNT_TBL_INC     0x10
+#define MUL_P5_DROP_CNT_TBL_TYPE    REG_TYPE_RW
+#define MUL_P5_DROP_CNT_TBL_DEFAULT 0x0
+	/*[field] MUL_P5_DROP_PKT*/
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_PKT
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_PKT_OFFSET  0
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_PKT_LEN     32
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_PKT_DEFAULT 0x0
+	/*[field] MUL_P5_DROP_BYTE*/
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_BYTE
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_BYTE_OFFSET  32
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_BYTE_LEN     40
+	#define MUL_P5_DROP_CNT_TBL_MUL_P5_DROP_BYTE_DEFAULT 0x0
+
+struct mul_p5_drop_cnt_tbl {
+	a_uint32_t  mul_p5_drop_pkt:32;
+	a_uint32_t  mul_p5_drop_byte_0:32;
+	a_uint32_t  mul_p5_drop_byte_1:8;
+	a_uint32_t  _reserved0:24;
+};
+
+union mul_p5_drop_cnt_tbl_u {
+	a_uint32_t val[3];
+	struct mul_p5_drop_cnt_tbl bf;
+};
+
+/*[table] UNI_DROP_CNT_TBL*/
+#define UNI_DROP_CNT_TBL
+#define UNI_DROP_CNT_TBL_ADDRESS 0x1e0000
+#define UNI_DROP_CNT_TBL_NUM     1536
+#define UNI_DROP_CNT_TBL_INC     0x10
+#define UNI_DROP_CNT_TBL_TYPE    REG_TYPE_RW
+#define UNI_DROP_CNT_TBL_DEFAULT 0x0
+	/*[field] UNI_DROP_PKT*/
+	#define UNI_DROP_CNT_TBL_UNI_DROP_PKT
+	#define UNI_DROP_CNT_TBL_UNI_DROP_PKT_OFFSET  0
+	#define UNI_DROP_CNT_TBL_UNI_DROP_PKT_LEN     32
+	#define UNI_DROP_CNT_TBL_UNI_DROP_PKT_DEFAULT 0x0
+	/*[field] UNI_DROP_BYTE*/
+	#define UNI_DROP_CNT_TBL_UNI_DROP_BYTE
+	#define UNI_DROP_CNT_TBL_UNI_DROP_BYTE_OFFSET  32
+	#define UNI_DROP_CNT_TBL_UNI_DROP_BYTE_LEN     40
+	#define UNI_DROP_CNT_TBL_UNI_DROP_BYTE_DEFAULT 0x0
+
+struct uni_drop_cnt_tbl {
+	a_uint32_t  uni_drop_pkt:32;
+	a_uint32_t  uni_drop_byte_0:32;
+	a_uint32_t  uni_drop_byte_1:8;
+	a_uint32_t  _reserved0:24;
+};
+
+union uni_drop_cnt_tbl_u {
+	a_uint32_t val[3];
+	struct uni_drop_cnt_tbl bf;
+};
+
 #endif

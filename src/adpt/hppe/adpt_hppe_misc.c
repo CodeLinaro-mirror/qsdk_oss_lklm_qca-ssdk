@@ -12,7 +12,9 @@
 #include "hsl_reg.h"
 #include "adpt_hppe.h"
 #include "adpt.h"
-
+#if defined(HTTPPE)
+#include "adpt_httppe_misc.h"
+#endif
 
 char *cpucode[] = {
 "Forwarding to CPU",
@@ -405,8 +407,14 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 		hppe_vp_tx_counter_tbl_reg_set(dev_id, i, &vp_tx_counter_tbl);
 
 	/* clear QUEUE_TX_COUNTER_TBL */
-	for (i = 0; i < QUEUE_TX_COUNTER_TBL_MAX_ENTRY; i++)
-		hppe_queue_tx_counter_tbl_set(dev_id, i, &queue_tx_counter_tbl);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		adpt_httppe_queue_tx_counter_tbl_set(dev_id);
+#endif
+	} else {
+		for (i = 0; i < QUEUE_TX_COUNTER_TBL_MAX_ENTRY; i++)
+			hppe_queue_tx_counter_tbl_set(dev_id, i, &queue_tx_counter_tbl);
+	}
 
 	/* clear VP_TX_DROP_CNT_TBL */
 	for (i = 0; i < VP_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
@@ -1069,8 +1077,14 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 	/* show VP_TX_COUNTER_TBL */
 	adpt_hppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
 
-	/* show QUEUE_TX_COUNTER_TBL */
-	adpt_hppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		adpt_httppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
+#endif
+	} else {
+		/* show QUEUE_TX_COUNTER_TBL */
+		adpt_hppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
+	}
 
 	/* show VP_TX_DROP_CNT_TBL */
 	adpt_hppe_debug_vp_tx_drop_counter_get(dev_id, show_type, buf, count);

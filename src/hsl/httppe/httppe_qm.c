@@ -559,3 +559,59 @@ httppe_oq_ll_mul_p5_tbl_set(
 				value->val);
 }
 
+sw_error_t
+httppe_queue_tx_counter_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union queue_tx_counter_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + QUEUE_TX_COUNTER_TBL_ADDRESS + \
+				index * QUEUE_TX_COUNTER_TBL_INC,
+				value->val,
+				sizeof(union queue_tx_counter_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_queue_tx_counter_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union queue_tx_counter_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + QUEUE_TX_COUNTER_TBL_ADDRESS + \
+				index * QUEUE_TX_COUNTER_TBL_INC,
+				value->val,
+				sizeof(union queue_tx_counter_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_uni_drop_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uni_drop_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + UNI_DROP_CNT_TBL_ADDRESS + \
+				index * UNI_DROP_CNT_TBL_INC,
+				value->val,
+				sizeof(union uni_drop_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_uni_drop_cnt_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uni_drop_cnt_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + UNI_DROP_CNT_TBL_ADDRESS + \
+				index * UNI_DROP_CNT_TBL_INC,
+				value->val,
+				sizeof(union uni_drop_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
