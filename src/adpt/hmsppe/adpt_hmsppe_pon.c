@@ -32,6 +32,10 @@ adpt_hmsppe_pon_gemport_global_set(a_uint32_t dev_id, fal_gemport_global_cfg_t *
 	ret = jhppe_mc_enq_ctrl_dot1p_pon_vp_set(dev_id, cfg->gen_miss_pon_port);
 	SW_RTN_ON_ERROR(ret);
 
+	/* egress PON port configuration */
+	ret = hppe_eg_global_ctrl_pm_port_bitmap_for_gem_set(dev_id, BIT(PON_PORT_ID));
+	SW_RTN_ON_ERROR(ret);
+
 	return SW_OK;
 }
 
