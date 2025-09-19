@@ -3,7 +3,7 @@
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
  */
- 
+
 /**
  * @defgroup
  * @{
@@ -37,7 +37,11 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	in_l2_service_tbl.bf.rx_cnt_en = (entry->bypass_bitmap[2] >> 1) & 0x1;
 	in_l2_service_tbl.bf.tx_cnt_en = (entry->bypass_bitmap[2] >> 3) & 0x1;
 #if defined(MRPPE)
-	in_l2_service_tbl.bf.bypass_bitmap_ext = (entry->bypass_bitmap[1] >> 24) & 0xff;
+	in_l2_service_tbl.bf.bypass_bitmap_ext = entry->bypass_bitmap[1] >> SMAC_MC_DROP_BYP;
+#endif
+#if defined(JHPPE)
+	in_l2_service_tbl.bf.bypass_bitmap_new = entry->bypass_bitmap[1] >> DOT1P_EG_PORT_OVERRIDE;
+	in_l2_service_tbl.bf.post_bypass_bitmap = entry->bypass_bitmap[1] >> QM_QID_MISMATCH_BYPASS;
 #endif
 	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_set(dev_id, servcode_index, &in_l2_service_tbl));
 
@@ -50,14 +54,23 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	/*do not touch the athtag configurations*/
 	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
 	eg_service_tbl.bf.field_update_action &= ATHTAG_UPDATE;
-	eg_service_tbl.bf.field_update_action |= entry->field_update_bitmap;
+	eg_service_tbl.bf.field_update_action |= entry->field_update_bitmap[0];
 #if defined(JHPPE)
 	/* extend field update action */
-	eg_service_tbl.bf.field_update_action_ext_0 = (entry->field_update_bitmap >> 32) & 0x3;
-	eg_service_tbl.bf.field_update_action_ext_1 = (entry->field_update_bitmap >> 34) & 0x3fffff;
+	eg_service_tbl.bf.field_update_action_ext_0 = entry->field_update_bitmap[0] >>
+		FLD_UPDATE_XLAN_XLT_DROP_BYPASS;
+	eg_service_tbl.bf.field_update_action_ext_1 = entry->field_update_bitmap[0] >>
+		(FLD_UPDATE_XLAN_XLT_DROP_BYPASS +
+		 SW_FIELD_OFFSET_IN_WORD(EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_OFFSET));
+	eg_service_tbl.bf.field_update_action_ext1_0 = entry->field_update_bitmap[0] >>
+		FLD_UP_EG_CNT_VSI_BYPASS | entry->field_update_bitmap[1] <<
+		(BITS_PER_TYPE(u64) - FLD_UP_EG_CNT_VSI_BYPASS);
+	eg_service_tbl.bf.field_update_action_ext1_1 = entry->field_update_bitmap[1] >>
+		(SW_FIELD_OFFSET_IN_WORD(EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_OFFSET) -
+		 (BITS_PER_TYPE(u64) - FLD_UP_EG_CNT_VSI_BYPASS));
 #endif
 #else
-	eg_service_tbl.bf.field_update_action = entry->field_update_bitmap;
+	eg_service_tbl.bf.field_update_action = entry->field_update_bitmap[0];
 #endif
 	eg_service_tbl.bf.next_service_code = entry->next_service_code;
 	eg_service_tbl.bf.hw_services = entry->hw_services;
@@ -89,7 +102,14 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	entry->direction = in_l2_service_tbl.bf.direction;
 	entry->bypass_bitmap[1] = in_l2_service_tbl.bf.bypass_bitmap;
 #if defined(MRPPE)
-	entry->bypass_bitmap[1] |= (in_l2_service_tbl.bf.bypass_bitmap_ext & 0xff) << 24;
+	entry->bypass_bitmap[1] |= (a_uint64_t)(in_l2_service_tbl.bf.bypass_bitmap_ext) <<
+						SMAC_MC_DROP_BYP;
+#endif
+#if defined(JHPPE)
+	entry->bypass_bitmap[1] |= (a_uint64_t)(in_l2_service_tbl.bf.bypass_bitmap_new) <<
+						DOT1P_EG_PORT_OVERRIDE;
+	entry->bypass_bitmap[1] |= (a_uint64_t)(in_l2_service_tbl.bf.post_bypass_bitmap) <<
+						QM_QID_MISMATCH_BYPASS;
 #endif
 	entry->bypass_bitmap[2] |= in_l2_service_tbl.bf.rx_cnt_en << 1;
 	entry->bypass_bitmap[2] |= in_l2_service_tbl.bf.tx_cnt_en << 3;
@@ -99,10 +119,18 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	entry->bypass_bitmap[2] |= service_tbl.bf.rx_counting_en;
 
 	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
-	entry->field_update_bitmap = eg_service_tbl.bf.field_update_action;
+	entry->field_update_bitmap[0] = eg_service_tbl.bf.field_update_action;
 #if defined(JHPPE)
-	entry->field_update_bitmap |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext_0 |
-				(eg_service_tbl.bf.field_update_action_ext_1 << 2)) << 32;
+	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext_0 |
+		eg_service_tbl.bf.field_update_action_ext_1 <<
+		SW_FIELD_OFFSET_IN_WORD(EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_OFFSET)) <<
+		FLD_UPDATE_XLAN_XLT_DROP_BYPASS;
+	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext1_0)
+		<< FLD_UP_EG_CNT_VSI_BYPASS;
+	entry->field_update_bitmap[1] = (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext1_0 |
+		eg_service_tbl.bf.field_update_action_ext1_1 <<
+		SW_FIELD_OFFSET_IN_WORD(EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT1_OFFSET)) >>
+		(BITS_PER_TYPE(u64) - FLD_UP_EG_CNT_VSI_BYPASS);
 #endif
 	entry->next_service_code = eg_service_tbl.bf.next_service_code;
 	entry->hw_services = eg_service_tbl.bf.hw_services;
