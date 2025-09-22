@@ -18,14 +18,17 @@
 #if defined(JHPPE)
 #include "adpt_jhppe_qos.h"
 #endif
+#if defined(HTTPPE)
+#include "adpt_httppe_qos.h"
+#endif
 
-static fal_queue_bmp_t port_queue_map[8] = {0};
+static fal_queue_bmp_t port_queue_map[9] = {0};
 
 sw_error_t
 adpt_hppe_l1_flow_map_get(a_uint32_t dev_id,
-					a_uint32_t node_id,
-					fal_port_t *port_id,
-					fal_qos_scheduler_cfg_t *scheduler_cfg)
+		a_uint32_t node_id,
+		fal_port_t *port_id,
+		fal_qos_scheduler_cfg_t *scheduler_cfg)
 {
 	union l1_flow_map_tbl_u l1_flow_map_tbl;
 #if !defined(JHPPE)
@@ -164,7 +167,7 @@ adpt_hppe_l0_queue_map_set(a_uint32_t dev_id,
 	i = node_id / 32;
 	j = node_id % 32;
 	port_queue_map[port_id].bmp[i] |= 1 << j;
-	for (k = 0; k < 8; k++) {
+	for (k = 0; k < 9; k++) {
 		if (k != port_id) {
 			port_queue_map[k].bmp[i] &= ~(1 << j);
 		}
@@ -364,6 +367,34 @@ adpt_hppe_queue_scheduler_set(a_uint32_t dev_id, a_uint32_t node_id,
 		return adpt_hppe_l0_queue_map_set(dev_id, node_id, port_id, scheduler_cfg);
 	else if ((level == FAL_QUEUE_SCHEDULER_LEVEL1))
 		return adpt_hppe_l1_flow_map_set(dev_id, node_id, port_id, scheduler_cfg);
+	else
+		return SW_FAIL;
+}
+
+sw_error_t
+adpt_httppe_queue_scheduler_set(a_uint32_t dev_id, a_uint32_t node_id,
+					fal_queue_scheduler_level_t level,
+					fal_port_t port_id,
+					fal_qos_scheduler_cfg_t *scheduler_cfg)
+{
+	if (level == FAL_QUEUE_SCHEDULER_LEVEL0)
+		return adpt_httppe_l0_queue_map_set(dev_id, node_id, port_id, scheduler_cfg);
+	else if ((level == FAL_QUEUE_SCHEDULER_LEVEL1))
+		return adpt_httppe_l1_flow_map_set(dev_id, node_id, port_id, scheduler_cfg);
+	else
+		return SW_FAIL;
+}
+
+sw_error_t
+adpt_httppe_queue_scheduler_get(a_uint32_t dev_id, a_uint32_t node_id,
+					fal_queue_scheduler_level_t level,
+					fal_port_t *port_id,
+					fal_qos_scheduler_cfg_t *scheduler_cfg)
+{
+	if (level == FAL_QUEUE_SCHEDULER_LEVEL0)
+		return adpt_httppe_l0_queue_map_get(dev_id, node_id, port_id, scheduler_cfg);
+	else if ((level == FAL_QUEUE_SCHEDULER_LEVEL1))
+		return adpt_httppe_l1_flow_map_get(dev_id, node_id, port_id, scheduler_cfg);
 	else
 		return SW_FAIL;
 }
@@ -659,6 +690,7 @@ adpt_ppe_reservedpool_scheduler_resource_get(a_uint32_t dev_id,
 
 sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 {
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
 	adpt_api_t *p_adpt_api = NULL;
 
 	p_adpt_api = adpt_api_ptr_get(dev_id);
@@ -666,17 +698,41 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
+	switch (ppe_type) {
+#if defined(HTTPPE)
+		case HTTPPE_TYPE:
+			p_adpt_api->adpt_queue_scheduler_set = adpt_httppe_queue_scheduler_set;
+			p_adpt_api->adpt_queue_scheduler_get = adpt_httppe_queue_scheduler_get;
+			p_adpt_api->adpt_tdm_tick_num_set = adpt_httppe_tdm_tick_num_set;
+			p_adpt_api->adpt_port_scheduler_cfg_set = adpt_httppe_port_scheduler_cfg_set;
+#ifndef IN_QOS_MINI
+			p_adpt_api->adpt_port_queues_get = adpt_httppe_port_queues_get;
+			p_adpt_api->adpt_tdm_tick_num_get = adpt_httppe_tdm_tick_num_get;
+			p_adpt_api->adpt_port_scheduler_cfg_get = adpt_httppe_port_scheduler_cfg_get;
+#endif
+			break;
+#endif
+		default:
+			p_adpt_api->adpt_queue_scheduler_set = adpt_hppe_queue_scheduler_set;
+			p_adpt_api->adpt_queue_scheduler_get = adpt_hppe_queue_scheduler_get;
+			p_adpt_api->adpt_tdm_tick_num_set = adpt_hppe_tdm_tick_num_set;
+			p_adpt_api->adpt_port_scheduler_cfg_set = adpt_hppe_port_scheduler_cfg_set;
+#ifndef IN_QOS_MINI
+			p_adpt_api->adpt_port_queues_get = adpt_hppe_port_queues_get;
+			p_adpt_api->adpt_tdm_tick_num_get = adpt_hppe_tdm_tick_num_get;
+			p_adpt_api->adpt_port_scheduler_cfg_get = adpt_hppe_port_scheduler_cfg_get;
+#endif
+			break;
+	}
+
 	p_adpt_api->adpt_qos_port_pri_set = adpt_ppe_qos_port_pri_set;
 	p_adpt_api->adpt_qos_port_pri_get = adpt_ppe_qos_port_pri_get;
 #ifndef IN_QOS_MINI
 
 	p_adpt_api->adpt_qos_cosmap_pcp_get = adpt_ppe_qos_cosmap_pcp_get;
-#endif
-	p_adpt_api->adpt_queue_scheduler_set = adpt_hppe_queue_scheduler_set;
-	p_adpt_api->adpt_queue_scheduler_get = adpt_hppe_queue_scheduler_get;
-#ifndef IN_QOS_MINI
-	p_adpt_api->adpt_port_queues_get = adpt_hppe_port_queues_get;
 	p_adpt_api->adpt_qos_cosmap_pcp_set = adpt_ppe_qos_cosmap_pcp_set;
+	p_adpt_api->adpt_reservedpool_scheduler_resource_get =
+		adpt_ppe_reservedpool_scheduler_resource_get;
 #endif
 	p_adpt_api->adpt_qos_cosmap_dscp_get = adpt_ppe_qos_cosmap_dscp_get;
 	p_adpt_api->adpt_qos_cosmap_flow_set = adpt_ppe_qos_cosmap_flow_set;
@@ -686,23 +742,11 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qos_cosmap_flow_get = adpt_ppe_qos_cosmap_flow_get;
 	p_adpt_api->adpt_qos_port_group_get = adpt_ppe_qos_port_group_get;
 	p_adpt_api->adpt_ring_queue_map_get = adpt_hppe_ring_queue_map_get;
-	p_adpt_api->adpt_tdm_tick_num_set = adpt_hppe_tdm_tick_num_set;
-#ifndef IN_QOS_MINI
-	p_adpt_api->adpt_tdm_tick_num_get = adpt_hppe_tdm_tick_num_get;
-#endif
-	p_adpt_api->adpt_port_scheduler_cfg_set = adpt_hppe_port_scheduler_cfg_set;
-#ifndef IN_QOS_MINI
-	p_adpt_api->adpt_port_scheduler_cfg_get = adpt_hppe_port_scheduler_cfg_get;
-#endif
 	p_adpt_api->adpt_scheduler_dequeue_ctrl_get = adpt_hppe_scheduler_dequeue_ctrl_get;
 	p_adpt_api->adpt_scheduler_dequeue_ctrl_set = adpt_hppe_scheduler_dequeue_ctrl_set;
 	p_adpt_api->adpt_port_scheduler_cfg_reset = adpt_hppe_port_scheduler_cfg_reset;
 	p_adpt_api->adpt_port_scheduler_resource_get =
 		adpt_hppe_port_scheduler_resource_get;
-#ifndef IN_QOS_MINI
-	p_adpt_api->adpt_reservedpool_scheduler_resource_get =
-		adpt_ppe_reservedpool_scheduler_resource_get;
-#endif
 #if defined(JHPPE)
 	p_adpt_api->adpt_qos_port_pcp_cfg_set = adpt_jhppe_qos_port_pcp_cfg_set;
 	p_adpt_api->adpt_qos_port_pcp_cfg_get = adpt_jhppe_qos_port_pcp_cfg_get;
