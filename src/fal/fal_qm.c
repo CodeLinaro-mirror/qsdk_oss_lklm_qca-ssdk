@@ -164,6 +164,18 @@ sw_error_t fal_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a
 sw_error_t fal_qm_tcont_stat_set(a_uint32_t dev_id, a_uint32_t tcont_id, fal_queue_tcont_stat_t *stat)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qm_tcont_stat_set, dev_id, tcont_id, stat)
 
+sw_error_t fal_qm_passthrough_source_profile_set(a_uint32_t dev_id, fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_passthrough_source_profile_set, dev_id, mode, profile)
+
+sw_error_t fal_qm_passthrough_source_profile_get(a_uint32_t dev_id, fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_passthrough_source_profile_get, dev_id, mode, profile)
+
+sw_error_t fal_qm_passthrough_direct_enqueue_set(a_uint32_t dev_id, fal_passthrough_mode_t mode, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_passthrough_direct_enqueue_set, dev_id, mode, enable)
+
+sw_error_t fal_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id, fal_passthrough_mode_t mode, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_passthrough_direct_enqueue_get, dev_id, mode, enable)
+
 #if !defined(IN_QM_MINI)
 sw_error_t fal_ucast_default_hash_get( a_uint32_t dev_id, a_uint8_t *hash_value)
     DEFINE_FAL_FUNC_ADPT_EXPORT(ucast_default_hash_get, dev_id, hash_value)

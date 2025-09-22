@@ -858,6 +858,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_MONITOR_MAP, (param_check_t)cmd_data_check_monitor_map, NULL),
     SW_TYPE_DEF(SW_MONITOR_CTRL, (param_check_t)cmd_data_check_monitor_ctrl, NULL),
     SW_TYPE_DEF(SW_MONITOR_STATS, NULL, NULL),
+    SW_TYPE_DEF(SW_PASSTHROUGH_SRC_PROFILE, (param_check_t)cmd_data_check_passthrough_src_profile, NULL),
 #endif
 #endif
 #ifdef IN_BM
@@ -9880,6 +9881,35 @@ cmd_data_check_monitor_ctrl(char *cmd_str, void * val, a_uint32_t size)
     *(fal_qm_monitor_ctrl_t *)val = entry;
 
     return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_passthrough_src_profile(char *cmd_str, void * val, a_uint32_t size)
+{
+	fal_passthrough_src_profile_t profile;
+	sw_error_t rv;
+	char *cmd;
+
+	aos_mem_zero(&profile, sizeof(fal_passthrough_src_profile_t));
+
+	rv = __cmd_data_check_boolean("esramq_src_profile_en", "no",
+			"usage: <yes/no/y/n>\n",
+			cmd_data_check_confirm, A_FALSE, &(profile.esramq_src_profile_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	rv = __cmd_data_check_boolean("isramq_src_profile_en", "no",
+			"usage: <yes/no/y/n>\n",
+			cmd_data_check_confirm, A_FALSE, &(profile.isramq_src_profile_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	cmd_data_check_element("src_profile", "0",
+			"usage: source profile value\n",
+			cmd_data_check_uint32, (cmd, &(profile.src_profile), sizeof(a_uint32_t)));
+
+	*(fal_passthrough_src_profile_t *)val = profile;
+	return SW_OK;
 }
 #endif
 

@@ -167,6 +167,19 @@ typedef struct {
 	a_uint32_t credit;
 } fal_queue_tcont_stat_t;
 
+typedef enum {
+	FAL_PASSTHROUGH_MODE_192_128 = 0, /* 192 or 128 header passthrough mode */
+	FAL_PASSTHROUGH_MODE_FULL_2ND_PASS, /* full packet 2nd passthrough mode */
+	FAL_PASSTHROUGH_MODE_NO, /* no header passthrough mode */
+	FAL_PASSTHROUGH_MODE_FULL, /* full packet passthrough mode */
+} fal_passthrough_mode_t;
+
+typedef struct {
+	a_bool_t esramq_src_profile_en;
+	a_bool_t isramq_src_profile_en;
+	a_uint32_t src_profile;
+} fal_passthrough_src_profile_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -434,6 +447,22 @@ fal_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t ena
 
 sw_error_t
 fal_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
+
+sw_error_t
+fal_qm_passthrough_source_profile_set(a_uint32_t dev_id, fal_passthrough_mode_t mode,
+		fal_passthrough_src_profile_t *profile);
+
+sw_error_t
+fal_qm_passthrough_source_profile_get(a_uint32_t dev_id, fal_passthrough_mode_t mode,
+		fal_passthrough_src_profile_t *profile);
+
+sw_error_t
+fal_qm_passthrough_direct_enqueue_set(a_uint32_t dev_id, fal_passthrough_mode_t mode,
+		a_bool_t enable);
+
+sw_error_t
+fal_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id, fal_passthrough_mode_t mode,
+		a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

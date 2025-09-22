@@ -90,6 +90,22 @@ adpt_jhppe_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_boo
 
 sw_error_t
 adpt_jhppe_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_source_profile_set(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_source_profile_get(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_direct_enqueue_set(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t enable);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
