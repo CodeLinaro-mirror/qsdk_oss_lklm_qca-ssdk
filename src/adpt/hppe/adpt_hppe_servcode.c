@@ -22,16 +22,14 @@
 sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_index,
 					fal_servcode_config_t *entry)
 {
-	union in_l2_service_tbl_u in_l2_service_tbl;
-	union service_tbl_u service_tbl;
-	union eg_service_tbl_u eg_service_tbl;
+	union in_l2_service_tbl_u in_l2_service_tbl = {0};
+	union service_tbl_u service_tbl = {0};
+	union eg_service_tbl_u eg_service_tbl = {0};
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
 
-	if (servcode_index >= IN_L2_SERVICE_TBL_MAX_ENTRY || entry->dest_port_id >= MAX_PHYSICAL_PORT)
-		return SW_OUT_OF_RANGE;
-
+	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_get(dev_id, servcode_index, &in_l2_service_tbl));
 	in_l2_service_tbl.bf.dst_port_id_valid = entry->dest_port_valid;
 	in_l2_service_tbl.bf.dst_port_id = entry->dest_port_id;
 	in_l2_service_tbl.bf.direction = entry->direction;
@@ -42,6 +40,8 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	in_l2_service_tbl.bf.bypass_bitmap_ext = (entry->bypass_bitmap[1] >> 24) & 0xff;
 #endif
 	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_set(dev_id, servcode_index, &in_l2_service_tbl));
+
+	SW_RTN_ON_ERROR(hppe_service_tbl_get(dev_id, servcode_index, &service_tbl));
 	service_tbl.bf.bypass_bitmap = entry->bypass_bitmap[0];
 	service_tbl.bf.rx_counting_en = entry->bypass_bitmap[2] & 0x1;
 	SW_RTN_ON_ERROR(hppe_service_tbl_set(dev_id, servcode_index, &service_tbl));
