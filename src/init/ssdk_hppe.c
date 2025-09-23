@@ -834,7 +834,7 @@ sw_error_t qca_hppe_acl_remark_ptp_servcode(a_uint32_t dev_id) {
 #define PTP_MSG_PRESP                   3
 
 	sw_error_t ret;
-	fal_servcode_config_t servcode_conf;
+	fal_servcode_config_t servcode_conf = {0};
 	fal_acl_rule_t *entry = NULL;
 	a_uint32_t index = 0, msg_type = 0;
 	a_uint32_t ptp_port_bmp = 0;

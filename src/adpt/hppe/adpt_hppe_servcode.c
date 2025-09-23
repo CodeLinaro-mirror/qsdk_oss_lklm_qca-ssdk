@@ -16,6 +16,9 @@
 #if defined(MPPE)
 #include "adpt_mppe_servcode.h"
 #endif
+#if defined(JHPPE)
+#include "adpt_jhppe_servcode.h"
+#endif
 
 #define MAX_PHYSICAL_PORT 8
 
@@ -25,11 +28,20 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	union in_l2_service_tbl_u in_l2_service_tbl = {0};
 	union service_tbl_u service_tbl = {0};
 	union eg_service_tbl_u eg_service_tbl = {0};
+	a_uint32_t servcode_type = FAL_SERVCODE_TYPE(servcode_index);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
 
-	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_get(dev_id, servcode_index, &in_l2_service_tbl));
+	servcode_index = FAL_SERVCODE_VALUE(servcode_index);
+
+#if defined(JHPPE)
+	if (servcode_type == FAL_SERVCODE_TYPE_PASSTHROUGH)
+		return adpt_jhppe_spec_servcode_config_set(dev_id, servcode_index, entry);
+#endif
+	if (servcode_type != FAL_SERVCODE_TYPE_NORMAL)
+		return SW_BAD_PARAM;
+
 	in_l2_service_tbl.bf.dst_port_id_valid = entry->dest_port_valid;
 	in_l2_service_tbl.bf.dst_port_id = entry->dest_port_id;
 	in_l2_service_tbl.bf.direction = entry->direction;
@@ -89,12 +101,20 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	union in_l2_service_tbl_u in_l2_service_tbl;
 	union service_tbl_u service_tbl;
 	union eg_service_tbl_u eg_service_tbl;
+	a_uint32_t servcode_type = FAL_SERVCODE_TYPE(servcode_index);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
 
-	if (servcode_index >= IN_L2_SERVICE_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
+	servcode_index = FAL_SERVCODE_VALUE(servcode_index);
+
+#if defined(JHPPE)
+	if (servcode_type == FAL_SERVCODE_TYPE_PASSTHROUGH)
+		return adpt_jhppe_spec_servcode_config_get(dev_id, servcode_index, entry);
+#endif
+
+	if (servcode_type != FAL_SERVCODE_TYPE_NORMAL)
+		return SW_BAD_PARAM;
 
 	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_get(dev_id, servcode_index, &in_l2_service_tbl));
 	entry->dest_port_valid = in_l2_service_tbl.bf.dst_port_id_valid;
