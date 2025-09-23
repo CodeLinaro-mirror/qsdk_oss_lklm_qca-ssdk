@@ -170,7 +170,7 @@ adpt_hmsppe_pon_gemport_gen_entry_get(a_uint32_t dev_id, a_uint32_t index, fal_g
 	gen_entry->src_info = FAL_PORT_ID(adpt_port_type_convert(A_FALSE, reg_val.bf.port_type),
 		reg_val.bf.src_info);
 	gen_entry->dest_info_valid = reg_val.bf.dest_incl;
-	gen_entry->dest_info.dest_info_type = FAL_DEST_INFO_PORT_ID;
+	gen_entry->dest_info.dest_info_type = (reg_val.bf.dest_incl) ? FAL_DEST_INFO_PORT_ID : 0;
 	gen_entry->dest_info.dest_info_value = reg_val.bf.dest_info;
 	gen_entry->vlan_id_valid = reg_val.bf.vid_incl;
 	gen_entry->vlan_id = (reg_val.bf.vid_1 << SW_FIELD_OFFSET_IN_WORD(DOT1P_MAPPER_RULE_VID_OFFSET)) | reg_val.bf.vid_0;

@@ -120,7 +120,7 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 		action->dst_valid = in_vlan_xlt_action.bf.dest_info_valid;
 		action->dst_port.dest_info_value = (in_vlan_xlt_action.bf.dest_info_0 |
 			(in_vlan_xlt_action.bf.dest_info_1 << SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_DEST_INFO_OFFSET)));
-		action->dst_port.dest_info_type = FAL_DEST_INFO_PORT_ID;
+		action->dst_port.dest_info_type = (in_vlan_xlt_action.bf.dest_info_valid) ? FAL_DEST_INFO_PORT_ID : 0;
 		action->svc_code_en = in_vlan_xlt_action.bf.service_code_en;
 		action->svc_code = in_vlan_xlt_action.bf.service_code;
 		action->counter_id = in_vlan_xlt_action.bf.counter_id;
