@@ -1357,7 +1357,7 @@ adpt_hppe_port_fdb_learn_exceed_cmd_get(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-adpt_hppe_fdb_age_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
+adpt_hppe_fdb_age_ctrl_set(a_uint32_t dev_id, fal_fdb_age_ctrl_t ctrl)
 {
 	sw_error_t rv = SW_OK;
 	union l2_global_conf_u l2_global_conf = {0};
@@ -1369,26 +1369,46 @@ adpt_hppe_fdb_age_ctrl_set(a_uint32_t dev_id, a_bool_t enable)
 	if( rv != SW_OK )
 		return rv;
 
-	l2_global_conf.bf.age_en = enable;
+	switch (ctrl) {
+	case FAL_FDB_AGE_DISABLE:
+		l2_global_conf.bf.age_en = 0;
+		l2_global_conf.bf.age_ctrl_mode = 0;
+		break;
+	case FAL_FDB_AGE_ENABLE:
+		l2_global_conf.bf.age_en = 1;
+		l2_global_conf.bf.age_ctrl_mode = 0;
+		break;
+	case FAL_FDB_AGE_ENABLE_TIMER_ONLY:
+		l2_global_conf.bf.age_en = 1;
+		l2_global_conf.bf.age_ctrl_mode = 1;
+		break;
+	default:
+		return SW_BAD_PARAM;
+	}
 
 	return hppe_l2_global_conf_set(dev_id, &l2_global_conf);
 }
 #ifndef IN_FDB_MINI
 sw_error_t
-adpt_hppe_fdb_age_ctrl_get(a_uint32_t dev_id, a_bool_t * enable)
+adpt_hppe_fdb_age_ctrl_get(a_uint32_t dev_id, fal_fdb_age_ctrl_t * ctrl)
 {
 	sw_error_t rv = SW_OK;
 	union l2_global_conf_u l2_global_conf = {0};
 
 	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(enable);
+	ADPT_NULL_POINT_CHECK(ctrl);
 
 	rv = hppe_l2_global_conf_get(dev_id, &l2_global_conf);
 
 	if( rv != SW_OK )
 		return rv;
 
-	*enable = l2_global_conf.bf.age_en;
+	if (l2_global_conf.bf.age_en == 0)
+		*ctrl = FAL_FDB_AGE_DISABLE;
+	else if (l2_global_conf.bf.age_ctrl_mode == 0)
+		*ctrl = FAL_FDB_AGE_ENABLE;
+	else
+		*ctrl = FAL_FDB_AGE_ENABLE_TIMER_ONLY;
 
 	return SW_OK;
 }

@@ -107,13 +107,13 @@ typedef sw_error_t (*adpt_port_fdb_learn_exceed_cmd_get_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_fdb_del_by_port_func)(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t flag);
 typedef sw_error_t (*adpt_port_fdb_learn_limit_get_func)(a_uint32_t dev_id, fal_port_t port_id,
                                  a_bool_t * enable, a_uint32_t * cnt);
-typedef sw_error_t (*adpt_fdb_age_ctrl_set_func)(a_uint32_t dev_id, a_bool_t enable);
+typedef sw_error_t (*adpt_fdb_age_ctrl_set_func)(a_uint32_t dev_id, fal_fdb_age_ctrl_t ctrl);
 typedef sw_error_t (*adpt_fdb_del_by_mac_func)(a_uint32_t dev_id, const fal_fdb_entry_t *entry);
 typedef sw_error_t (*adpt_fdb_iterate_func)(a_uint32_t dev_id, a_uint32_t * iterator, fal_fdb_entry_t * entry);
 typedef sw_error_t (*adpt_port_fdb_learn_exceed_cmd_set_func)(a_uint32_t dev_id, fal_port_t port_id,
                                       fal_fwd_cmd_t cmd);
 typedef sw_error_t (*adpt_fdb_del_all_func)(a_uint32_t dev_id, a_uint32_t flag);
-typedef sw_error_t (*adpt_fdb_age_ctrl_get_func)(a_uint32_t dev_id, a_bool_t * enable);
+typedef sw_error_t (*adpt_fdb_age_ctrl_get_func)(a_uint32_t dev_id, fal_fdb_age_ctrl_t * ctrl);
 typedef sw_error_t (*adpt_fdb_port_maclimit_ctrl_set_func)(a_uint32_t dev_id, fal_port_t port_id, fal_maclimit_ctrl_t * maclimit_ctrl);
 typedef sw_error_t (*adpt_fdb_port_maclimit_ctrl_get_func)(a_uint32_t dev_id, fal_port_t port_id, fal_maclimit_ctrl_t * maclimit_ctrl);
 typedef sw_error_t (*adpt_fdb_del_by_fid_func)(a_uint32_t dev_id, a_uint16_t fid, a_uint32_t flag);

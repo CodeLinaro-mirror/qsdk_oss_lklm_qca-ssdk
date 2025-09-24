@@ -319,7 +319,7 @@ sw_error_t qca_httppe_fdb_hw_init(a_uint32_t dev_id)
 		fal_port_promisc_mode_set(dev_id, port, A_TRUE);
 	}
 
-	fal_fdb_aging_ctrl_set(dev_id, A_TRUE);
+	fal_fdb_aging_ctrl_set(dev_id, FAL_FDB_AGE_ENABLE);
 	fal_fdb_learning_ctrl_set(dev_id, HW_CTRL_LEARNING);
 
 	return SW_OK;

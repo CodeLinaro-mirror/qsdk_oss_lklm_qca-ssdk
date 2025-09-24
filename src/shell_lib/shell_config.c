@@ -152,7 +152,7 @@ struct cmd_des_t gcmd_des[] =
             {"firstEntry", "find", "find the first FDB entry", "", SW_API_FDB_FIRST, NULL},
             {"nextEntry", "find", "find next FDB entry", "", SW_API_FDB_NEXT, NULL},
             {"portLearn", "set", "set FDB entry learning status of a port", "<port_id> <enable|disable>", SW_API_FDB_PT_LEARN_SET, NULL},
-            {"ageCtrl", "set", "set FDB entry aging status", "<enable|disable>", SW_API_FDB_AGE_CTRL_SET, NULL},
+            {"ageCtrl", "set", "set FDB entry aging status", "<disable|enable|enable_timer_only>", SW_API_FDB_AGE_CTRL_SET, NULL},
             {"vlansmode", "set", "set FDB vlan search mode", "<ivl|svl>", SW_API_FDB_VLAN_IVL_SVL_SET, NULL},
             {"ageTime", "set", "set FDB entry aging time", "<time:s>", SW_API_FDB_AGE_TIME_SET, NULL},
             {"ptlearnlimit", "set", "set port FDB entry learn limit", "<port_id> <enable|disable> <limitcounter>", SW_API_PT_FDB_LEARN_LIMIT_SET, NULL},

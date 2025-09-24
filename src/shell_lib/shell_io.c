@@ -660,6 +660,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_MACADDR, (param_check_t)cmd_data_check_macaddr, NULL),
 #ifdef IN_FDB
     SW_TYPE_DEF(SW_FDBENTRY, (param_check_t)cmd_data_check_fdbentry, NULL),
+    SW_TYPE_DEF(SW_FDB_AGE_CTRL, cmd_data_check_fdb_age_ctrl, NULL),
 #ifndef IN_FDB_MINI
     SW_TYPE_DEF(SW_MACLIMIT_CTRL, (param_check_t)cmd_data_check_maclimit_ctrl, NULL),
     SW_TYPE_DEF(SW_FDB_LEARN_CTRL, (param_check_t)cmd_data_check_fdb_learning_ctrl, NULL),
@@ -1218,6 +1219,24 @@ cmd_data_check_enable(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
     {
         return SW_BAD_VALUE;
     }
+
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_fdb_age_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
+{
+    if (cmd_str == NULL)
+        return SW_BAD_PARAM;
+
+    if (!strcasecmp(cmd_str, "disable"))
+        *arg_val = FAL_FDB_AGE_DISABLE;
+    else if (!strcasecmp(cmd_str, "enable"))
+        *arg_val = FAL_FDB_AGE_ENABLE;
+    else if (!strcasecmp(cmd_str, "enable_timer_only"))
+        *arg_val = FAL_FDB_AGE_ENABLE_TIMER_ONLY;
+    else
+        return SW_BAD_VALUE;
 
     return SW_OK;
 }
