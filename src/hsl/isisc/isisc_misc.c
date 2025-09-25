@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2012, 2015-2017, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -32,7 +22,6 @@
 #endif
 
 #define ISISC_RX_MIN_IPG_3        11
-#define ISISC_MAX_FRMAE_SIZE      9216
 
 #define ARP_REQ_EN_OFFSET    6
 #define ARP_ACK_EN_OFFSET    5
@@ -154,9 +143,9 @@ _isisc_frame_max_size_set(a_uint32_t dev_id, a_uint32_t size)
 
     HSL_DEV_ID_CHECK(dev_id);
 
-    if (ISISC_MAX_FRMAE_SIZE < size)
+    if (SSDK_MAX_FRAME_SIZE_16K < size)
     {
-        return SW_BAD_PARAM;
+        return SW_OUT_OF_RANGE;
     }
 
     data = size;
