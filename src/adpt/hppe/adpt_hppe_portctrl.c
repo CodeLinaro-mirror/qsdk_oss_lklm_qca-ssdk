@@ -2076,6 +2076,41 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 
 #if defined(HTTPPE)
 sw_error_t
+adpt_httppe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id)
+{
+	sw_error_t rv = SW_OK;
+	union appe_port_mux_ctrl_u appe_port_mux_ctrl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	memset(&appe_port_mux_ctrl, 0, sizeof(appe_port_mux_ctrl));
+
+	if (port_id >= SSDK_PHYSICAL_PORT6) {
+		return SW_BAD_PARAM;
+	}
+
+	rv = appe_port_mux_ctrl_get(dev_id, &appe_port_mux_ctrl);
+	SW_RTN_ON_ERROR (rv);
+
+	if (port_id == SSDK_PHYSICAL_PORT0) {
+		if (qca_hppe_port_mac_type_get(dev_id, port_id) == PORT_XGMAC_TYPE)
+			appe_port_mux_ctrl.bf.port1_mac_sel = 1;
+		else
+			appe_port_mux_ctrl.bf.port1_mac_sel = 0;
+	}
+	if (port_id == SSDK_PHYSICAL_PORT5) {
+		if (qca_hppe_port_mac_type_get(dev_id, port_id) == PORT_XGMAC_TYPE)
+			appe_port_mux_ctrl.bf.port5_mac_sel = 1;
+		else
+			appe_port_mux_ctrl.bf.port5_mac_sel = 0;
+	}
+
+	rv = appe_port_mux_ctrl_set(dev_id, &appe_port_mux_ctrl);
+	SW_RTN_ON_ERROR (rv);
+
+	return rv;
+}
+
+sw_error_t
 adpt_httppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t mode0, a_uint32_t mode1, a_uint32_t mode2)
 {
@@ -4847,12 +4882,18 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 		adpt_hppe_port_flowctrl_forcemode_get;
 	p_adpt_api->adpt_port_source_filter_config_get = adpt_ppe_port_source_filter_config_get;
 	p_adpt_api->adpt_port_source_filter_config_set = adpt_ppe_port_source_filter_config_set;
-	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
 #if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
 		p_adpt_api->adpt_port_mux_mac_type_set = adpt_httppe_port_mux_mac_type_set;
+		p_adpt_api->adpt_port_mtu_cfg_set = adpt_httppe_port_mtu_cfg_set;
+		p_adpt_api->adpt_port_mtu_cfg_get = adpt_httppe_port_mtu_cfg_get;
+	}
+	else
 #endif
-	} else {
+	{
 		p_adpt_api->adpt_port_mux_mac_type_set = adpt_hppe_port_mux_mac_type_set;
+		p_adpt_api->adpt_port_mtu_cfg_set = adpt_appe_port_mtu_cfg_set;
+		p_adpt_api->adpt_port_mtu_cfg_get = adpt_appe_port_mtu_cfg_get;
 	}
 	p_adpt_api->adpt_port_mac_speed_set = adpt_hppe_port_mac_speed_set;
 	p_adpt_api->adpt_port_mac_duplex_set = adpt_hppe_port_mac_duplex_set;
@@ -4865,14 +4906,9 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_port_8023ah_set = adpt_appe_port_8023ah_set;
 		p_adpt_api->adpt_port_8023ah_get = adpt_appe_port_8023ah_get;
 #endif
-		p_adpt_api->adpt_port_mtu_cfg_set = adpt_appe_port_mtu_cfg_set;
-		p_adpt_api->adpt_port_mtu_cfg_get = adpt_appe_port_mtu_cfg_get;
-		p_adpt_api->adpt_port_tx_buff_thresh_set =
-			adpt_appe_port_tx_buff_thresh_set;
-		p_adpt_api->adpt_port_tx_buff_thresh_get =
-			adpt_appe_port_tx_buff_thresh_get;
-		p_adpt_api->adpt_port_erp_power_mode_set =
-			adpt_appe_port_erp_power_mode_set;
+	p_adpt_api->adpt_port_tx_buff_thresh_set = adpt_appe_port_tx_buff_thresh_set;
+	p_adpt_api->adpt_port_tx_buff_thresh_get = adpt_appe_port_tx_buff_thresh_get;
+	p_adpt_api->adpt_port_erp_power_mode_set = adpt_appe_port_erp_power_mode_set;
 	p_adpt_api->adpt_port_cnt_cfg_set = adpt_ppe_port_cnt_cfg_set;
 	p_adpt_api->adpt_port_cnt_cfg_get = adpt_ppe_port_cnt_cfg_get;
 	p_adpt_api->adpt_port_cnt_get = adpt_ppe_port_cnt_get;
