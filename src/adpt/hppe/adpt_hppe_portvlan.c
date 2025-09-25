@@ -2992,10 +2992,10 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
 		p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;
 		p_adpt_api->adpt_port_vlan_vpgroup_get = adpt_appe_port_vlan_vpgroup_get;
-		p_adpt_api->adpt_portvlan_isol_set = adpt_appe_portvlan_isol_set;
-		p_adpt_api->adpt_portvlan_isol_get = adpt_appe_portvlan_isol_get;
-		p_adpt_api->adpt_portvlan_isol_group_set = adpt_appe_portvlan_isol_group_set;
-		p_adpt_api->adpt_portvlan_isol_group_get = adpt_appe_portvlan_isol_group_get;
+		p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
+		p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
+		p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
+		p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
 		p_adpt_api->adpt_port_egress_vlan_filter_set =
 			adpt_appe_port_egress_vlan_filter_set;
 		p_adpt_api->adpt_port_egress_vlan_filter_get =
@@ -3005,6 +3005,10 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
 		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
 			adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
+		p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
+		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
+		p_adpt_api->adpt_port_isol_action_set = adpt_jhppe_port_isol_action_set;
+		p_adpt_api->adpt_port_isol_action_get = adpt_jhppe_port_isol_action_get;
 #endif
 #endif
 		p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;

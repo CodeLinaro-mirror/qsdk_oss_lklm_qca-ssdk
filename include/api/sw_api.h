@@ -339,6 +339,9 @@ typedef enum
 	SW_IPMC_ENTRY,
 	SW_IPMC_UCAST_FWD,
 	SW_PASSTHROUGH_SRC_PROFILE,
+	SW_ISOL_ACT_CTRL,
+	SW_ISOL_ID,
+	SW_ISOL_ACT,
 /* auto_insert_flag */
 } sw_data_type_e;
 

@@ -512,16 +512,22 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_COUNTER_CLEANUP, fal_port_vlan_counter_cleanup), \
     SW_API_DEF(SW_API_PT_VLAN_VPGROUP_SET, fal_port_vlan_vpgroup_set), \
     SW_API_DEF(SW_API_PT_VLAN_VPGROUP_GET, fal_port_vlan_vpgroup_get), \
-    SW_API_DEF(SW_API_PT_VLAN_ISOL_SET, fal_portvlan_isol_set), \
-    SW_API_DEF(SW_API_PT_VLAN_ISOL_GET, fal_portvlan_isol_get), \
-    SW_API_DEF(SW_API_PT_VLAN_ISOL_GROUP_SET, fal_portvlan_isol_group_set), \
-    SW_API_DEF(SW_API_PT_VLAN_ISOL_GROUP_GET, fal_portvlan_isol_group_get), \
+    SW_API_DEF(SW_API_PT_ISOL_CTRL_SET, fal_port_isol_ctrl_set), \
+    SW_API_DEF(SW_API_PT_ISOL_CTRL_GET, fal_port_isol_ctrl_get), \
+    SW_API_DEF(SW_API_PT_ISOL_GROUP_SET, fal_port_isol_group_set), \
+    SW_API_DEF(SW_API_PT_ISOL_GROUP_GET, fal_port_isol_group_get), \
     SW_API_DEF(SW_API_PT_EGRESS_VLAN_FILTER_SET, fal_port_egress_vlan_filter_set), \
     SW_API_DEF(SW_API_PT_EGRESS_VLAN_FILTER_GET, fal_port_egress_vlan_filter_get), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, fal_port_vlan_trans_adv_set),  \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, fal_port_vlan_trans_adv_get), \
     SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, fal_vlan_trans_dscp_pcp_mapping_set), \
-    SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, fal_vlan_trans_dscp_pcp_mapping_get),
+    SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, fal_vlan_trans_dscp_pcp_mapping_get), \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_CTRL_SET, fal_port_isol_action_ctrl_set),  \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_CTRL_GET, fal_port_isol_action_ctrl_get), \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_SET, fal_port_isol_action_set), \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_GET, fal_port_isol_action_get), \
+    SW_API_DEF(SW_API_PT_ISOL_MEM_SET, fal_port_isol_member_set), \
+    SW_API_DEF(SW_API_PT_ISOL_MEM_GET, fal_port_isol_member_get),
 
 #define PORTVLAN_API_PARAM \
     SW_API_DESC(SW_API_PT_ING_MODE_GET) \
@@ -596,16 +602,22 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_COUNTER_CLEANUP) \
     SW_API_DESC(SW_API_PT_VLAN_VPGROUP_SET) \
     SW_API_DESC(SW_API_PT_VLAN_VPGROUP_GET) \
-    SW_API_DESC(SW_API_PT_VLAN_ISOL_SET) \
-    SW_API_DESC(SW_API_PT_VLAN_ISOL_GET) \
-    SW_API_DESC(SW_API_PT_VLAN_ISOL_GROUP_SET) \
-    SW_API_DESC(SW_API_PT_VLAN_ISOL_GROUP_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_CTRL_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_CTRL_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_GROUP_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_GROUP_GET) \
     SW_API_DESC(SW_API_PT_EGRESS_VLAN_FILTER_SET) \
     SW_API_DESC(SW_API_PT_EGRESS_VLAN_FILTER_GET) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_SET) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GET) \
     SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET) \
-    SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET)
+    SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET)\
+    SW_API_DESC(SW_API_PT_ISOL_ACT_CTRL_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_ACT_CTRL_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_ACT_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_ACT_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_MEM_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_MEM_GET)
 #else
 #define PORTVLAN_API \
     SW_API_DEF(SW_API_GLOBAL_QINQ_MODE_SET, fal_global_qinq_mode_set), \
@@ -657,7 +669,13 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, fal_port_vlan_trans_adv_set),  \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, fal_port_vlan_trans_adv_get), \
     SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, fal_vlan_trans_dscp_pcp_mapping_set), \
-    SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, fal_vlan_trans_dscp_pcp_mapping_get),
+    SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET, fal_vlan_trans_dscp_pcp_mapping_get), \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_CTRL_SET, fal_port_isol_action_ctrl_set),  \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_CTRL_GET, fal_port_isol_action_ctrl_get), \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_SET, fal_port_isol_action_set), \
+    SW_API_DEF(SW_API_PT_ISOL_ACT_GET, fal_port_isol_action_get), \
+    SW_API_DEF(SW_API_PT_ISOL_MEM_SET, fal_port_isol_member_set), \
+    SW_API_DEF(SW_API_PT_ISOL_MEM_GET, fal_port_isol_member_get),
 
 #define PORTVLAN_API_PARAM \
     SW_API_DESC(SW_API_GLOBAL_QINQ_MODE_SET)  \
@@ -709,7 +727,13 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_SET) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GET) \
     SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET) \
-    SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET)
+    SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_GET)\
+    SW_API_DESC(SW_API_PT_ISOL_ACT_CTRL_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_ACT_CTRL_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_ACT_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_ACT_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_MEM_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_MEM_GET)
 #endif
 #else
 #define PORTVLAN_API

@@ -524,9 +524,65 @@ typedef struct
 } fal_port_vlan_counter_t;
 
 typedef struct {
-	a_bool_t enable; /*enable or not */
-	a_uint8_t group_id; /* isolation group id */
-} fal_portvlan_isol_ctrl_t;
+	fal_direction_t dir; 		/* ipq52xx & ipq96xx, ingress <pre> or egress <post> for pre vp and post vp table */
+	a_bool_t enable;	 		/* enable or not */
+	a_uint8_t isol_group_id; 	/* isolation group id */
+} fal_port_isol_ctrl_t;
+
+typedef struct {
+	a_bool_t bc_isol_en; /* isolation action enable for broadcast traffic */
+	a_bool_t mc_isol_en; /* isolation action enable for multicast traffic */
+} fal_port_isol_act_ctrl_t;
+
+#define FAL_ISOL_ACT_ARR_SIZE 4
+
+typedef struct {
+	a_uint32_t act_bitmap[FAL_ISOL_ACT_ARR_SIZE];
+} fal_port_isol_act_t;
+
+typedef enum {
+	FAL_ISOL_ACT_PPORT = 0,      /* isol action based on physical port */
+	FAL_ISOL_ACT_GROUP,          /* isol action based on isolation profile(group) associating with VP */
+	FAL_ISOL_ACT_BUTT            /* MAX check */
+} fal_port_isol_act_type_t;
+
+typedef struct {
+	fal_port_isol_act_type_t isol_type;
+
+	union {
+		a_uint32_t pport_id;          /* physical port id */
+		a_uint32_t isol_group_id;     /* isolation group id */
+	};
+} fal_port_isol_act_idx_t;
+
+sw_error_t
+fal_port_isol_ctrl_set(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
+sw_error_t
+fal_port_isol_ctrl_get(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
+
+sw_error_t
+fal_port_isol_group_set(a_uint32_t dev_id,
+		a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp);
+sw_error_t
+fal_port_isol_group_get(a_uint32_t dev_id,
+		a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp);
+
+sw_error_t
+fal_port_isol_action_ctrl_set(a_uint32_t dev_id, fal_port_isol_act_ctrl_t *act_ctrl);
+sw_error_t
+fal_port_isol_action_ctrl_get(a_uint32_t dev_id, fal_port_isol_act_ctrl_t *act_ctrl);
+
+sw_error_t
+fal_port_isol_action_set(a_uint32_t dev_id,
+		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
+sw_error_t
+fal_port_isol_action_get(a_uint32_t dev_id,
+		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
+
+sw_error_t fal_port_isol_member_set(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp_t mem_port_map);
+sw_error_t fal_port_isol_member_get(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp_t *mem_port_map);
 
 typedef struct {
 	a_bool_t membership_filter; /* membership filter or not for vport */
@@ -612,18 +668,7 @@ fal_port_egress_vlan_filter_set(a_uint32_t dev_id,
 sw_error_t
 fal_port_egress_vlan_filter_get(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
-sw_error_t
-fal_portvlan_isol_set(a_uint32_t dev_id,
-		fal_port_t port_id, fal_portvlan_isol_ctrl_t *isol_ctrl);
-sw_error_t
-fal_portvlan_isol_get(a_uint32_t dev_id,
-		fal_port_t port_id, fal_portvlan_isol_ctrl_t *isol_ctrl);
-sw_error_t
-fal_portvlan_isol_group_set(a_uint32_t dev_id,
-		a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp);
-sw_error_t
-fal_portvlan_isol_group_get(a_uint32_t dev_id,
-		a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp);
+
 sw_error_t
 fal_port_vlan_counter_get(a_uint32_t dev_id, a_uint32_t cnt_index,
 		fal_port_vlan_counter_t * counter);

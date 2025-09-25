@@ -4881,10 +4881,10 @@ cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {
 	char *cmd;
 	sw_error_t rv;
-	fal_portvlan_isol_ctrl_t entry;
+	fal_port_isol_ctrl_t entry;
 	a_uint32_t tmp = 0;
 
-	aos_mem_zero(&entry, sizeof(fal_portvlan_isol_ctrl_t));
+	aos_mem_zero(&entry, sizeof(fal_port_isol_ctrl_t));
 
 	do {
 		cmd = get_sub_cmd("isol_en", "n");
@@ -4904,10 +4904,10 @@ cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 		if (SW_OK != rv)
 			rv = SW_BAD_VALUE;
 		else
-			entry.group_id = tmp;
+			entry.isol_group_id = tmp;
 	} while(talk_mode && (SW_OK != rv));
 
-	*(fal_portvlan_isol_ctrl_t *)arg_val = entry;
+	*(fal_port_isol_ctrl_t *)arg_val = entry;
 
 	return SW_OK;
 }

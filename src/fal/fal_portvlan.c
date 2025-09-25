@@ -224,6 +224,32 @@ sw_error_t fal_vlan_trans_dscp_pcp_mapping_set(a_uint32_t dev_id, fal_port_vlan_
 sw_error_t fal_vlan_trans_dscp_pcp_mapping_get(a_uint32_t dev_id, fal_port_vlan_direction_t direction, a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp)
     DEFINE_FAL_FUNC_ADPT_EXPORT(vlan_trans_dscp_pcp_mapping_get, dev_id, direction, group_id, dscp, pcp)
 
+sw_error_t
+fal_port_isol_action_ctrl_set(a_uint32_t dev_id, fal_port_isol_act_ctrl_t *act_ctrl)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_action_ctrl_set, dev_id, act_ctrl)
+
+sw_error_t
+fal_port_isol_action_ctrl_get(a_uint32_t dev_id, fal_port_isol_act_ctrl_t *act_ctrl)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_action_ctrl_get, dev_id, act_ctrl)
+
+sw_error_t
+fal_port_isol_action_set(a_uint32_t dev_id,
+		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_action_set, dev_id, isol_id, isol_act)
+
+sw_error_t
+fal_port_isol_action_get(a_uint32_t dev_id,
+		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_action_get, dev_id, isol_id, isol_act)
+
+sw_error_t fal_port_isol_member_set(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp_t mem_port_map)
+    DEFINE_FAL_FUNC_ADPT(portvlan_member_update, dev_id, port_id, mem_port_map)
+    EXPORT_SYMBOL(fal_port_isol_member_set);
+
+sw_error_t fal_port_isol_member_get(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp_t *mem_port_map)
+    DEFINE_FAL_FUNC_ADPT(portvlan_member_get, dev_id, port_id, mem_port_map)
+    EXPORT_SYMBOL(fal_port_isol_member_get);
+
 #ifndef IN_PORTVLAN_MINI
 sw_error_t fal_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_trans_entry_t *entry)
     DEFINE_FAL_FUNC_EXPORT(port_vlan_trans_add, dev_id, port_id, entry)
@@ -255,17 +281,17 @@ sw_error_t fal_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport, fal_po
 sw_error_t fal_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_vpgroup_get, dev_id, vport, direction, vpgroup_id)
 
-sw_error_t fal_portvlan_isol_set(a_uint32_t dev_id, fal_port_t port_id, fal_portvlan_isol_ctrl_t *isol_ctrl)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(portvlan_isol_set, dev_id, port_id, isol_ctrl)
+sw_error_t fal_port_isol_ctrl_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_ctrl_set, dev_id, port_id, isol_ctrl)
 
-sw_error_t fal_portvlan_isol_get(a_uint32_t dev_id, fal_port_t port_id, fal_portvlan_isol_ctrl_t *isol_ctrl)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(portvlan_isol_get, dev_id, port_id, isol_ctrl)
+sw_error_t fal_port_isol_ctrl_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_ctrl_get, dev_id, port_id, isol_ctrl)
 
-sw_error_t fal_portvlan_isol_group_set(a_uint32_t dev_id, a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(portvlan_isol_group_set, dev_id, isol_group_id, isol_group_bmp)
+sw_error_t fal_port_isol_group_set(a_uint32_t dev_id, a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_group_set, dev_id, isol_group_id, isol_group_bmp)
 
-sw_error_t fal_portvlan_isol_group_get(a_uint32_t dev_id, a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(portvlan_isol_group_get, dev_id, isol_group_id, isol_group_bmp)
+sw_error_t fal_port_isol_group_get(a_uint32_t dev_id, a_uint8_t isol_group_id, a_uint64_t *isol_group_bmp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_isol_group_get, dev_id, isol_group_id, isol_group_bmp)
 
 sw_error_t fal_port_egress_vlan_filter_set(a_uint32_t dev_id, fal_port_t port_id, fal_egress_vlan_filter_t *filter)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_egress_vlan_filter_set, dev_id, port_id, filter)
