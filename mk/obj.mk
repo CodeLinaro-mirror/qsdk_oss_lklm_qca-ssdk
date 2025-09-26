@@ -259,6 +259,7 @@ ifeq (TRUE, $(IN_VSI))
 OBJ-COMMON += src/fal/fal_vsi.o src/ref/ref_vsi.o
 OBJ-HPPE    += src/hsl/hppe/hppe_vsi.o src/adpt/hppe/adpt_hppe_vsi.o
 OBJ-APPE    += src/hsl/appe/appe_vsi.o src/adpt/appe/adpt_appe_vsi.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_vsi.o
 endif
 
 ###############################################################################
@@ -478,6 +479,7 @@ OBJ-APPE    += src/hsl/appe/appe_counter.o src/hsl/appe/appe_global.o \
 OBJ-CPPE    += src/hsl/cppe/cppe_loopback.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_counter.o src/hsl/jhppe/jhppe_l2_vp.o
 OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_misc.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_l2_vp.o
 
 ###############################################################################
 #                                 PON
