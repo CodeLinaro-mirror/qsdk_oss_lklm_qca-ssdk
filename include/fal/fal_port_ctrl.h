@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2012, 2015-2019, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -44,6 +34,7 @@ extern "c" {
 		FAL_SPEED_2500 = 2500,
 		FAL_SPEED_5000 = 5000,
 		FAL_SPEED_10000 = 10000,
+		FAL_SPEED_25000 = 25000,
 		FAL_SPEED_BUTT = 0xffff,
 	} fal_port_speed_t;
 
@@ -251,6 +242,8 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 				/**<PORT_USXGMII mode*/
 		PORT_UQXGMII = PHY_INTERFACE_MODE_QUSGMII,
 				/**<PORT_UQXGMII mode*/
+		PORT_25GBASE_R = PHY_INTERFACE_MODE_25GBASER,
+				/**<PORT_25GBASE_R mode*/
 		PORT_PON_SERDES,
 				/**<PON SERDES mode*/
 		PORT_INTERFACE_MODE_AUTO,

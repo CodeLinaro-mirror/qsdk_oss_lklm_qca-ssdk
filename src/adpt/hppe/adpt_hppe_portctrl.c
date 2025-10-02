@@ -59,6 +59,16 @@
 #define MAC_SPEED_2500M 4
 #define MAC_SPEED_5000M 5
 
+#if defined(JHPPE)
+#define XGMAC_SPEED_XGMII_10000M	0
+#define XGMAC_SPEED_XGMII_25000M	1
+#define XGMAC_SPEED_XGMII_5000M		5
+#define XGMAC_SPEED_XGMII_2500M		6
+#define XGMAC_SPEED_GMII_2500M		2
+#define XGMAC_SPEED_GMII_1000M		3
+#define XGMAC_SPEED_MII_100M		4
+#define XGMAC_SPEED_MII_10M		7
+#else
 #define XGMAC_USXGMII_ENABLE 1
 #define XGMAC_USXGMII_CLEAR 0
 
@@ -66,6 +76,8 @@
 #define XGMAC_SPEED_SELECT_5000M 1
 #define XGMAC_SPEED_SELECT_2500M 2
 #define XGMAC_SPEED_SELECT_1000M 3
+#endif
+
 #define LPI_WAKEUP_TIMER	0x20
 #define LPI_SLEEP_TIMER	0x100
 #define PROMISCUOUS_MODE 0x1
@@ -1584,14 +1596,105 @@ _adpt_hppe_gmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed_
 	return rv;
 }
 
+
+#if defined(JHPPE)
+static sw_error_t
+_adpt_jhppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mode, fal_port_speed_t speed)
+{
+	union mac_tx_configuration_u mac_tx_configuration = {0};
+	a_uint32_t ss = 0;
+	sw_error_t rv;
+
+	rv = hppe_mac_tx_configuration_get(dev_id, mac_id, &mac_tx_configuration);
+	SW_RTN_ON_ERROR (rv);
+
+	switch (speed) {
+	case FAL_SPEED_25000:
+		ss = XGMAC_SPEED_XGMII_25000M;
+		break;
+	case FAL_SPEED_10000:
+		ss = XGMAC_SPEED_XGMII_10000M;
+		break;
+	case FAL_SPEED_5000:
+		ss = XGMAC_SPEED_XGMII_5000M;
+		break;
+	case FAL_SPEED_2500:
+		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
+			ss = XGMAC_SPEED_XGMII_2500M;
+		else
+			ss = XGMAC_SPEED_GMII_2500M;
+		break;
+	case FAL_SPEED_1000:
+		ss = XGMAC_SPEED_GMII_1000M;
+		break;
+	case FAL_SPEED_100:
+		ss = XGMAC_SPEED_MII_100M;
+		break;
+	case FAL_SPEED_10:
+		ss = XGMAC_SPEED_MII_10M;
+		break;
+	default:
+		return SW_BAD_PARAM;
+	}
+	mac_tx_configuration.bf.ss = ss;
+
+	return hppe_mac_tx_configuration_set(dev_id, mac_id, &mac_tx_configuration);
+}
+#endif
+
+#if !defined(JHPPE)
+static sw_error_t
+_adpt_appe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mode, fal_port_speed_t speed)
+{
+	union mac_tx_configuration_u mac_tx_configuration = {0};
+	a_uint32_t uss = 0, ss = 0;
+	sw_error_t rv;
+
+	rv = hppe_mac_tx_configuration_get(dev_id, mac_id, &mac_tx_configuration);
+	SW_RTN_ON_ERROR (rv);
+
+	switch (speed) {
+	case FAL_SPEED_10000:
+		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
+			uss = XGMAC_USXGMII_ENABLE;
+		else
+			uss = XGMAC_USXGMII_CLEAR;
+		ss = XGMAC_SPEED_SELECT_10000M;
+		break;
+	case FAL_SPEED_5000:
+		uss = XGMAC_USXGMII_ENABLE;
+		ss = XGMAC_SPEED_SELECT_5000M;
+		break;
+	case FAL_SPEED_2500:
+		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
+			uss = XGMAC_USXGMII_ENABLE;
+		else
+			uss = XGMAC_USXGMII_CLEAR;
+		ss = XGMAC_SPEED_SELECT_2500M;
+		break;
+	case FAL_SPEED_1000:
+	case FAL_SPEED_100:
+	case FAL_SPEED_10:
+		uss = XGMAC_USXGMII_CLEAR;
+		ss = XGMAC_SPEED_SELECT_1000M;
+		break;
+	default:
+		return SW_BAD_PARAM;
+	}
+	mac_tx_configuration.bf.ss = ss;
+	mac_tx_configuration.bf.uss = uss;
+
+	return hppe_mac_tx_configuration_set(dev_id, mac_id, &mac_tx_configuration);
+}
+#endif
+
 static sw_error_t
 _adpt_hppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed_t speed)
 {
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
 	sw_error_t rv = SW_OK;
-	union mac_tx_configuration_u mac_tx_configuration;
 	a_uint32_t mode = 0;
 
-	memset(&mac_tx_configuration, 0, sizeof(mac_tx_configuration));
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
@@ -1599,56 +1702,20 @@ _adpt_hppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 	SSDK_DEBUG ("port %d interface mode is 0x%x\n", port_id, mode);
 
 	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
-	hppe_mac_tx_configuration_get(dev_id, port_id, &mac_tx_configuration);
 
-	if(FAL_SPEED_1000 == speed)
-	{
-		mac_tx_configuration.bf.uss= XGMAC_USXGMII_CLEAR;
-		mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_1000M;
+	switch (ppe_type) {
+	case JHPPE_TYPE:
+	case HMSPPE_TYPE:
+#if defined(JHPPE)
+		rv = _adpt_jhppe_xgmac_speed_set(dev_id, port_id, mode, speed);
+#endif
+		break;
+	default:
+#if !defined(JHPPE)
+		rv = _adpt_appe_xgmac_speed_set(dev_id, port_id, mode, speed);
+#endif
+		break;
 	}
-	else if(FAL_SPEED_10000 == speed)
-	{
-		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
-		{
-			mac_tx_configuration.bf.uss= XGMAC_USXGMII_ENABLE;
-			mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_10000M;
-		}
-		else
-		{
-			mac_tx_configuration.bf.uss= XGMAC_USXGMII_CLEAR;
-			mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_10000M;
-		}
-	}
-	else if(FAL_SPEED_5000 == speed)
-	{
-		mac_tx_configuration.bf.uss= XGMAC_USXGMII_ENABLE;
-		mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_5000M;
-	}
-	else if(FAL_SPEED_2500 == speed)
-	{
-		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
-		{
-			mac_tx_configuration.bf.uss= XGMAC_USXGMII_ENABLE;
-			mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_2500M;
-		}
-		else
-		{
-			mac_tx_configuration.bf.uss= XGMAC_USXGMII_CLEAR;
-			mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_2500M;
-		}
-	}
-	else if(FAL_SPEED_100 == speed)
-	{
-		mac_tx_configuration.bf.uss= XGMAC_USXGMII_CLEAR;
-		mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_1000M;
-	}
-	else if(FAL_SPEED_10 == speed)
-	{
-		mac_tx_configuration.bf.uss= XGMAC_USXGMII_CLEAR;
-		mac_tx_configuration.bf.ss= XGMAC_SPEED_SELECT_1000M;
-	}
-
-	rv = hppe_mac_tx_configuration_set(dev_id, port_id, &mac_tx_configuration);
 
 	return rv;
 }
@@ -1989,6 +2056,10 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 		case PORT_WRAPPER_10GBASE_R:
 			qca_hppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
 			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_10GBASE_R);
+			break;
+		case PORT_WRAPPER_25GBASE_R:
+			qca_hppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
+			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_25GBASE_R);
 			break;
 		case PORT_WRAPPER_PON_SERDES:
 			qca_hppe_port_mac_type_set(dev_id, port_id, PORT_PON_MAC_TYPE);
