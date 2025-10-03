@@ -19,19 +19,13 @@ extern "C" {
 
 #define HPPE_GCC_UNIPHY_REG_INC                            0x100
 
-#if defined(HMSPPE)
-#define HPPE_TO_XGMAC_PORT_ID(port_id)	((port_id) > 4  ? (port_id) - 4 : (port_id) - 1)
-#else
 #define HPPE_TO_XGMAC_PORT_ID(port_id)	((port_id) - 1)
-#endif
+
 #define HPPE_TO_GMAC_PORT_ID(port_id)                      (port_id -1)
-#ifdef HMSPPE
-#define PHYSICAL_LPBK_PORT_ID                              7
-#define TO_LPBK_ID(port_id)                                (port_id -1)
-#else
+
 #define PHYSICAL_LPBK_PORT_ID                              8
 #define TO_LPBK_ID(port_id)                                (port_id -2)
-#endif
+
 #define HPPE_FCS_LEN                                       4
 #define HPPE_GCC_UNIPHY_PSGMII_SOFT_RESET                  0x3ff2
 #define HPPE_GCC_UNIPHY_USXGMII_SOFT_RESET                 0x36

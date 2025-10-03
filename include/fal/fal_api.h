@@ -3439,133 +3439,6 @@ extern "C" {
 #define PKTEDIT_API_PARAM
 #endif
 
-#ifdef IN_SAMPL
-#define SAMPL_API \
-	SW_API_DEF(SW_API_SAMPL_TIME_SET, fal_sampling_time_set), \
-	SW_API_DEF(SW_API_SAMPL_TIME_GET, fal_sampling_time_get), \
-	SW_API_DEF(SW_API_SAMPL_BUFF_STATUS_GET, \
-			fal_sampling_buff_status_get), \
-	SW_API_DEF(SW_API_SAMPL_BUFF_STATUS_CLEAR, \
-			fal_sampling_buff_status_clear), \
-	SW_API_DEF(SW_API_SAMPL_DONE_MISS_CNT_GET, \
-			fal_sampling_done_miss_counter_get), \
-	SW_API_DEF(SW_API_SAMPL_DONE_MISS_CNT_CLEAR, \
-			fal_sampling_done_miss_counter_clear), \
-	SW_API_DEF(SW_API_SAMPL_BURST_CFG_SET, fal_sampling_burst_cfg_set), \
-	SW_API_DEF(SW_API_SAMPL_BURST_CFG_GET, fal_sampling_burst_cfg_get), \
-	SW_API_DEF(SW_API_SAMPL_CTRL_SET, fal_sampling_ctrl_set), \
-	SW_API_DEF(SW_API_SAMPL_CTRL_GET, fal_sampling_ctrl_get), \
-	SW_API_DEF(SW_API_SAMPL_WINDOW_EN_SET, fal_sampling_window_en_set), \
-	SW_API_DEF(SW_API_SAMPL_WINDOW_EN_GET, fal_sampling_window_en_get), \
-	SW_API_DEF(SW_API_SAMPL_COUNTER_GET, fal_sampling_counter_get),
-#define SAMPL_API_PARAM \
-	SW_API_DESC(SW_API_SAMPL_TIME_SET) \
-	SW_API_DESC(SW_API_SAMPL_TIME_GET) \
-	SW_API_DESC(SW_API_SAMPL_BUFF_STATUS_GET) \
-	SW_API_DESC(SW_API_SAMPL_BUFF_STATUS_CLEAR) \
-	SW_API_DESC(SW_API_SAMPL_DONE_MISS_CNT_GET) \
-	SW_API_DESC(SW_API_SAMPL_DONE_MISS_CNT_CLEAR) \
-	SW_API_DESC(SW_API_SAMPL_BURST_CFG_SET) \
-	SW_API_DESC(SW_API_SAMPL_BURST_CFG_GET) \
-	SW_API_DESC(SW_API_SAMPL_CTRL_SET) \
-	SW_API_DESC(SW_API_SAMPL_CTRL_GET) \
-	SW_API_DESC(SW_API_SAMPL_WINDOW_EN_SET) \
-	SW_API_DESC(SW_API_SAMPL_WINDOW_EN_GET) \
-	SW_API_DESC(SW_API_SAMPL_COUNTER_GET)
-#else
-#define SAMPL_API
-#define SAMPL_API_PARAM
-#endif
-
-#ifdef IN_PON
-#define PON_API \
-	SW_API_DEF(SW_API_PON_GEMPORT_GLB_SET, fal_pon_gemport_global_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GLB_GET, fal_pon_gemport_global_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GEN_DFT_SET, \
-			fal_pon_gemport_gen_default_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GEN_DFT_GET, \
-			fal_pon_gemport_gen_default_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_SET, \
-			fal_pon_gemport_gen_entry_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GEN_ENTRY_GET, \
-			fal_pon_gemport_gen_entry_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GEN_EN_SET, fal_pon_gemport_gen_en_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_GEN_EN_GET, fal_pon_gemport_gen_en_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_MAP_EN_SET, fal_pon_gemport_map_en_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_MAP_EN_GET, fal_pon_gemport_map_en_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_MAP_SET, fal_pon_gemport_map_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_MAP_GET, fal_pon_gemport_map_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_CFG_SET, fal_pon_gemport_cfg_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_CFG_GET, fal_pon_gemport_cfg_get), \
-	SW_API_DEF(SW_API_PON_GEMPORT_PLC_SET, fal_pon_gemport_policer_set), \
-	SW_API_DEF(SW_API_PON_GEMPORT_PLC_GET, fal_pon_gemport_policer_get),
-#define PON_API_PARAM \
-	SW_API_DESC(SW_API_PON_GEMPORT_GLB_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GLB_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GEN_DFT_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GEN_DFT_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GEN_ENTRY_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GEN_ENTRY_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GEN_EN_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_GEN_EN_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_MAP_EN_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_MAP_EN_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_MAP_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_MAP_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_CFG_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_CFG_GET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_PLC_SET) \
-	SW_API_DESC(SW_API_PON_GEMPORT_PLC_GET)
-#else
-#define PON_API
-#define PON_API_PARAM
-#endif
-
-#ifdef IN_PON_PM
-#define PON_PM_API \
-	SW_API_DEF(SW_API_PON_PM_COUNTER_ENTRY_SET, fal_pon_pm_counter_entry_set), \
-	SW_API_DEF(SW_API_PON_PM_COUNTER_ENTRY_GET, fal_pon_pm_counter_entry_get), \
-	SW_API_DEF(SW_API_PON_PM_COUNTER_GET, fal_pon_pm_counter_get), \
-	SW_API_DEF(SW_API_PON_PM_COUNTER_FLUSH, fal_pon_pm_counter_flush),
-#define PON_PM_API_PARAM \
-	SW_API_DESC(SW_API_PON_PM_COUNTER_ENTRY_SET) \
-	SW_API_DESC(SW_API_PON_PM_COUNTER_ENTRY_GET) \
-	SW_API_DESC(SW_API_PON_PM_COUNTER_GET) \
-	SW_API_DESC(SW_API_PON_PM_COUNTER_FLUSH)
-#else
-#define PON_PM_API
-#define PON_PM_API_PARAM
-#endif
-
-#ifdef IN_IPMC
-#define IPMC_API \
-	SW_API_DEF(SW_API_IPMC_STATUS_SET, fal_ipmc_status_set), \
-	SW_API_DEF(SW_API_IPMC_STATUS_GET, fal_ipmc_status_get), \
-	SW_API_DEF(SW_API_IPMC_GLOBAL_CFG_SET, fal_ipmc_global_cfg_set), \
-	SW_API_DEF(SW_API_IPMC_GLOBAL_CFG_GET, fal_ipmc_global_cfg_get), \
-	SW_API_DEF(SW_API_IPMC_ENTRY_ADD, fal_ipmc_entry_add), \
-	SW_API_DEF(SW_API_IPMC_ENTRY_DEL, fal_ipmc_entry_del), \
-	SW_API_DEF(SW_API_IPMC_ENTRY_GET, fal_ipmc_entry_get), \
-	SW_API_DEF(SW_API_IPMC_ENTRY_GETNEXT, fal_ipmc_entry_getnext), \
-	SW_API_DEF(SW_API_IPMC_ENTRY_FLUSH, fal_ipmc_entry_flush), \
-	SW_API_DEF(SW_API_IPMC_UCAST_FWD_SET, fal_ipmc_ucast_fwd_set), \
-	SW_API_DEF(SW_API_IPMC_UCAST_FWD_GET, fal_ipmc_ucast_fwd_get),
-#define IPMC_API_PARAM \
-	SW_API_DESC(SW_API_IPMC_STATUS_SET) \
-	SW_API_DESC(SW_API_IPMC_STATUS_GET) \
-	SW_API_DESC(SW_API_IPMC_GLOBAL_CFG_SET) \
-	SW_API_DESC(SW_API_IPMC_GLOBAL_CFG_GET) \
-	SW_API_DESC(SW_API_IPMC_ENTRY_ADD) \
-	SW_API_DESC(SW_API_IPMC_ENTRY_DEL) \
-	SW_API_DESC(SW_API_IPMC_ENTRY_GET) \
-	SW_API_DESC(SW_API_IPMC_ENTRY_GETNEXT) \
-	SW_API_DESC(SW_API_IPMC_ENTRY_FLUSH) \
-	SW_API_DESC(SW_API_IPMC_UCAST_FWD_SET) \
-	SW_API_DESC(SW_API_IPMC_UCAST_FWD_GET)
-#else
-#define IPMC_API
-#define IPMC_API_PARAM
-#endif
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3619,10 +3492,6 @@ extern "C" {
     MAPT_API \
     ATHTAG_API \
     PKTEDIT_API \
-    SAMPL_API \
-    PON_API \
-    PON_PM_API \
-    IPMC_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3683,10 +3552,6 @@ extern "C" {
     MAPT_API_PARAM \
     ATHTAG_API_PARAM \
     PKTEDIT_API_PARAM \
-    SAMPL_API_PARAM \
-    PON_API_PARAM \
-    PON_PM_API_PARAM \
-    IPMC_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

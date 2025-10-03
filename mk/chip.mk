@@ -26,24 +26,12 @@ ifeq (MRPPE, $(CHIP_TYPE))
     SUPPORT_CHIP = HPPE APPE MPPE MRPPE
 endif
 
-ifeq (HMSPPE, $(CHIP_TYPE))
-    SUPPORT_CHIP = HPPE APPE MPPE MRPPE JHPPE HMSPPE
-endif
-
-ifeq (JHPPE, $(CHIP_TYPE))
-    SUPPORT_CHIP = HPPE APPE MPPE MRPPE JHPPE
-endif
-
 ifeq ($(ISISC_ENABLE), enable)
     SUPPORT_CHIP += ISISC
 endif
 
 ifeq ($(MHT_ENABLE), enable)
     SUPPORT_CHIP += MHT ISISC
-endif
-
-ifeq ($(HTTPPE_ENABLE), enable)
-    SUPPORT_CHIP += HTTPPE
 endif
 
 ifndef SUPPORT_CHIP

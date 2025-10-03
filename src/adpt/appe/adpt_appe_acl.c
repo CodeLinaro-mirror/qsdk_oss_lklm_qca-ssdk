@@ -405,29 +405,16 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	{
 		hw_act->bf.svid_change_en = 1;
 		hw_act->bf.stag_fmt = rule->stag_fmt;
-#ifdef JHPPE
-		hw_act->bf.svid_0 = (rule->stag_vid) & 0x7FF;
-		hw_act->bf.svid_1 = (rule->stag_vid >> 11) & 0x1;
-#else
 		hw_act->bf.svid = rule->stag_vid;
-#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_PRI))
 	{
-#if defined(JHPPE)
-		hw_act->bf.stag_pcp_change_en = rule->stag_pri_change_cmd;
-#else
 		hw_act->bf.stag_pcp_change_en = 1;
-#endif
 		hw_act->bf.stag_pcp = rule->stag_pri;
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_DEI))
 	{
-#if defined(JHPPE)
-		hw_act->bf.stag_dei_change_en = rule->stag_dei_change_cmd;
-#else
 		hw_act->bf.stag_dei_change_en = 1;
-#endif
 		hw_act->bf.stag_dei = rule->stag_dei;
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_VID))
@@ -438,22 +425,13 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI))
 	{
-#if defined(JHPPE)
-		hw_act->bf.ctag_pcp_change_en = rule->ctag_pri_change_cmd;
-		hw_act->bf.ctag_pcp = rule->ctag_pri & 0x7;
-#else
 		hw_act->bf.ctag_pcp_change_en = 1;
 		hw_act->bf.ctag_pcp_0 = rule->ctag_pri&0x3;
 		hw_act->bf.ctag_pcp_1 = (rule->ctag_pri>>2)&0x1;
-#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_CFI))
 	{
-#if defined(JHPPE)
-		hw_act->bf.ctag_dei_change_en = rule->ctag_cfi_change_cmd;
-#else
 		hw_act->bf.ctag_dei_change_en = 1;
-#endif
 		hw_act->bf.ctag_dei = rule->ctag_cfi;
 	}
 
@@ -487,12 +465,8 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE))
 	{
 		hw_act->bf.service_code_en = 1;
-#ifdef JHPPE
-		hw_act->bf.service_code = rule->service_code & 0xff;
-#else
 		hw_act->bf.service_code_0 = rule->service_code&0x1;
 		hw_act->bf.service_code_1 = (rule->service_code>>1)&0x7f;
-#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_SYN_TOGGLE))
 	{
@@ -517,25 +491,17 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_CASCADE))
 	{
 		hw_act->bf.cascade_en = 1;
-#ifdef JHPPE
-		hw_act->bf.cascade_data = rule->cascade_data;;
-#else
 		hw_act->bf.cascade_data_0 = rule->cascade_data;
 		hw_act->bf.cascade_data_1 = rule->cascade_data>>
 			SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_CASCADE_DATA_OFFSET);
-#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_VPN))
 	{
 		hw_act->bf.vpn_valid = 1;
 		hw_act->bf.vpn_type = rule->vpn_type;
-#ifdef JHPPE
-		hw_act->bf.vpn_id = rule->vpn_id;
-#else
 		hw_act->bf.vpn_id_0 = rule->vpn_id;
 		hw_act->bf.vpn_id_1 = rule->vpn_id>>
 			SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_VPN_ID_OFFSET);
-#endif
 	}
 	if(FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_POLICY_FORWARD_EN))
 	{
@@ -565,12 +531,7 @@ _adpt_appe_pre_acl_action_sw_2_hw(a_uint32_t dev_id,
 		{
 			return SW_BAD_PARAM;
 		}
-#ifdef JHPPE
-		hw_act->bf.nat_action_0 = nat_action&3;
-		hw_act->bf.nat_action_1 = (nat_action>>2) & 0x1;
-#else
 		hw_act->bf.nat_action = nat_action;
-#endif
 	}
 	if (FAL_ACTION_FLG_TST(rule->action_flg_ext, FAL_ACL_ACTION_LEARN_DIS))
 	{
@@ -840,11 +801,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_STAG_VID);
 		rule->stag_fmt = hw_act->bf.stag_fmt;
-#ifdef JHPPE
-		rule->stag_vid = (hw_act->bf.svid_0 & 0x7f) | ((hw_act->bf.svid_1& 0x1) << 11);
-#else
 		rule->stag_vid = hw_act->bf.svid;
-#endif
 	}
 	if(hw_act->bf.stag_pcp_change_en)
 	{
@@ -865,13 +822,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.ctag_pcp_change_en)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_REMARK_CTAG_PRI);
-
-#ifdef JHPPE
-		rule->ctag_pri_change_cmd = hw_act->bf.ctag_pcp_change_en; /* ctag pcp change cmd */
-		rule->ctag_pri = hw_act->bf.ctag_pcp & 0x7;
-#else
 		rule->ctag_pri = (hw_act->bf.ctag_pcp_1<<2)|hw_act->bf.ctag_pcp_0;
-#endif
 	}
 	if(hw_act->bf.ctag_dei_change_en)
 	{
@@ -909,11 +860,7 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.service_code_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_SERVICE_CODE);
-#ifdef JHPPE
-		rule->service_code = hw_act->bf.service_code & 0xff;
-#else
 		rule->service_code = (hw_act->bf.service_code_1<<1)|hw_act->bf.service_code_0;
-#endif
 	}
 	if(hw_act->bf.syn_toggle)
 	{
@@ -938,35 +885,21 @@ _adpt_appe_pre_acl_action_hw_2_sw(a_uint32_t dev_id,
 	if(hw_act->bf.cascade_en == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_CASCADE);
-#ifdef JHPPE
-		rule->cascade_data = hw_act->bf.cascade_data;
-#else
 		rule->cascade_data = (hw_act->bf.cascade_data_1 <<
 				SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_CASCADE_DATA_OFFSET)) |
 				hw_act->bf.cascade_data_0;
-#endif
 	}
 	if(hw_act->bf.vpn_valid == 1)
 	{
 		FAL_ACTION_FLG_SET(rule->action_flg_ext, FAL_ACL_ACTION_VPN);
 		rule->vpn_type = hw_act->bf.vpn_type;
-#ifdef JHPPE
-		rule->vpn_id = hw_act->bf.vpn_id;
-#else
 		rule->vpn_id = (hw_act->bf.vpn_id_1 <<
 				SW_FIELD_OFFSET_IN_WORD(PRE_IPO_ACTION_VPN_ID_OFFSET)) |
 				hw_act->bf.vpn_id_0;
-#endif
 	}
 	if(FAL_ACL_DEST_TYPE(rule->ports) == FAL_ACL_DEST_NEXTHOP)
 	{
-#ifdef JHPPE
-		nat_action = (hw_act->bf.nat_action_0 & 0x3) |
-					((hw_act->bf.nat_action_1 & 0x1) << 2);
-#else
 		nat_action = hw_act->bf.nat_action;
-
-#endif
 
 		if(nat_action == APPE_ACL_POLICY_ROUTE)
 		{

@@ -40,36 +40,7 @@ hppe_tdm_depth_cfg_set(
 				value->val);
 }
 
-#if defined(JHPPE)
-sw_error_t
-hppe_l0_flow_map_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_flow_map_tbl_u *value)
-{
-	return hppe_reg_tbl_get(
-				dev_id,
-				TRAFFIC_MANAGER_BASE_ADDR + L0_FLOW_MAP_TBL_ADDRESS + \
-				index * L0_FLOW_MAP_TBL_INC,
-				value->val,
-				sizeof(union l0_flow_map_tbl_u)/sizeof(a_uint32_t));
-}
 
-sw_error_t
-hppe_l0_flow_map_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l0_flow_map_tbl_u *value)
-{
-	return hppe_reg_tbl_set(
-				dev_id,
-				TRAFFIC_MANAGER_BASE_ADDR + L0_FLOW_MAP_TBL_ADDRESS + \
-				index * L0_FLOW_MAP_TBL_INC,
-				value->val,
-				sizeof(union l0_flow_map_tbl_u)/sizeof(a_uint32_t));
-}
-
-#else
 sw_error_t
 hppe_l0_flow_map_tbl_get(
 		a_uint32_t dev_id,
@@ -154,7 +125,6 @@ hppe_l0_e_sp_cfg_tbl_set(
 				value->val);
 }
 
-#endif
 sw_error_t
 hppe_l0_flow_port_map_tbl_get(
 		a_uint32_t dev_id,
@@ -239,36 +209,7 @@ hppe_deq_dis_tbl_set(
 				value->val);
 }
 
-#if defined(JHPPE)
-sw_error_t
-hppe_l1_flow_map_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_flow_map_tbl_u *value)
-{
-	return hppe_reg_tbl_get(
-				dev_id,
-				TRAFFIC_MANAGER_BASE_ADDR + L1_FLOW_MAP_TBL_ADDRESS + \
-				index * L1_FLOW_MAP_TBL_INC,
-				value->val,
-				sizeof(union l1_flow_map_tbl_u)/sizeof(a_uint32_t));
-}
 
-sw_error_t
-hppe_l1_flow_map_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l1_flow_map_tbl_u *value)
-{
-	return hppe_reg_tbl_set(
-				dev_id,
-				TRAFFIC_MANAGER_BASE_ADDR + L1_FLOW_MAP_TBL_ADDRESS + \
-				index * L1_FLOW_MAP_TBL_INC,
-				value->val,
-				sizeof(union l1_flow_map_tbl_u)/sizeof(a_uint32_t));
-}
-
-#else
 sw_error_t
 hppe_l1_flow_map_tbl_get(
 		a_uint32_t dev_id,
@@ -353,7 +294,6 @@ hppe_l1_e_sp_cfg_tbl_set(
 				value->val);
 }
 
-#endif
 sw_error_t
 hppe_l1_flow_port_map_tbl_get(
 		a_uint32_t dev_id,

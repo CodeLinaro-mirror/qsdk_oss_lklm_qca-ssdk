@@ -50,10 +50,6 @@ adpt_appe_qm_enqueue_config_set(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 			SW_RTN_ON_ERROR(rv);
 			break;
 		case FAL_ENQUEUE_SERVCODE:
-#if defined(JHPPE)
-			rv = adpt_jhppe_qm_enqueue_servcode_config_set(dev_id, enqueue_cfg);
-			SW_RTN_ON_ERROR(rv);
-#else
 			index = enqueue_cfg->rule_entry.dst_port;
 
 			rv = appe_l2_vp_port_tbl_get(dev_id, index, &l2_vp_tbl);
@@ -67,7 +63,6 @@ adpt_appe_qm_enqueue_config_set(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 
 			rv = appe_l2_vp_port_tbl_set(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
-#endif
 			break;
 		default:
 			SSDK_ERROR("Unsupported enqueue type\n");
@@ -110,10 +105,6 @@ adpt_appe_qm_enqueue_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 
 			break;
 		case FAL_ENQUEUE_SERVCODE:
-#if defined(JHPPE)
-			rv = adpt_jhppe_qm_enqueue_servcode_config_get(dev_id, enqueue_cfg);
-			SW_RTN_ON_ERROR(rv);
-#else
 			index = enqueue_cfg->rule_entry.dst_port;
 			rv = appe_l2_vp_port_tbl_get(dev_id, index, &l2_vp_tbl);
 			SW_RTN_ON_ERROR(rv);
@@ -123,7 +114,6 @@ adpt_appe_qm_enqueue_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *enqueue_cf
 				l2_vp_tbl.bf.enq_service_code;
 			enqueue_cfg->index_entry.enqueue_servcode.phy_port =
 				l2_vp_tbl.bf.enq_phy_port;
-#endif
 			break;
 		default:
 			SSDK_ERROR("Unsupported enqueue type\n");

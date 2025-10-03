@@ -8,11 +8,8 @@ OBJ-APPE    :=
 OBJ-CPPE    :=
 OBJ-MPPE    :=
 OBJ-MRPPE   :=
-OBJ-JHPPE   :=
-OBJ-HMSPPE  :=
 OBJ-MHT     :=
 OBJ-SCOMPHY :=
-OBJ-HTTPPE  :=
 
 ###############################################################################
 #                                 IN_ACL
@@ -23,7 +20,6 @@ OBJ-ISISC  += src/hsl/isisc/isisc_acl.o src/hsl/isisc/isisc_acl_parse.o \
               src/hsl/isisc/isisc_multicast_acl.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_acl.o src/hsl/hppe/hppe_acl.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_acl.o src/hsl/appe/appe_acl.o
-OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_acl.o src/hsl/jhppe/jhppe_acl.o
 endif
 
 ###############################################################################
@@ -68,7 +64,6 @@ OBJ-COMMON += src/fal/fal_mib.o src/ref/ref_mib.o
 OBJ-ISISC  += src/hsl/isisc/isisc_mib.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_mib.o src/hsl/hppe/hppe_mib.o \
               src/hsl/hppe/hppe_xgmacmib.o
-OBJ-JHPPE   += src/adpt/jhppe/adpt_jhppe_mib.o
 endif
 
 ###############################################################################
@@ -100,8 +95,6 @@ OBJ-HPPE   += src/adpt/hppe/adpt_hppe_portctrl.o src/hsl/hppe/hppe_portctrl.o \
 OBJ-APPE   += src/adpt/appe/adpt_appe_portctrl.o
 OBJ-CPPE   += src/hsl/cppe/cppe_portctrl.o
 OBJ-MHT    += src/hsl/mht/mht_port_ctrl.o
-OBJ-JHPPE  += src/hsl/jhppe/jhppe_loopback.o src/adpt/jhppe/adpt_jhppe_loopback.o
-OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_portctrl.o
 endif
 
 ###############################################################################
@@ -112,7 +105,6 @@ OBJ-COMMON += src/fal/fal_portvlan.o
 OBJ-ISISC  += src/hsl/isisc/isisc_portvlan.o
 OBJ-HPPE   += src/hsl/hppe/hppe_portvlan.o src/adpt/hppe/adpt_hppe_portvlan.o
 OBJ-APPE   += src/hsl/appe/appe_portvlan.o src/adpt/appe/adpt_appe_portvlan.o
-OBJ-JHPPE  += src/hsl/jhppe/jhppe_portvlan.o src/adpt/jhppe/adpt_jhppe_portvlan.o
 endif
 
 ###############################################################################
@@ -124,7 +116,6 @@ OBJ-ISISC  += src/hsl/isisc/isisc_qos.o
 OBJ-HPPE   += src/hsl/hppe/hppe_qos.o src/adpt/hppe/adpt_hppe_qos.o
 OBJ-CPPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o
 OBJ-APPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o #to be fixed
-OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_qos.o
 endif
 
 ###############################################################################
@@ -169,7 +160,6 @@ OBJ-COMMON  += src/fal/fal_ip.o
 OBJ-ISISC   += src/hsl/isisc/isisc_ip.o
 OBJ-MHT     += src/hsl/mht/mht_ip.o
 OBJ-HPPE    += src/hsl/hppe/hppe_ip.o src/adpt/hppe/adpt_hppe_ip.o
-OBJ-JHPPE   += src/adpt/jhppe/adpt_jhppe_ip.o
 endif
 
 ###############################################################################
@@ -180,8 +170,6 @@ OBJ-COMMON  +=  src/fal/fal_flow.o
 OBJ-HPPE    += src/hsl/hppe/hppe_flow.o src/adpt/hppe/adpt_hppe_flow.o
 OBJ-CPPE    += src/adpt/cppe/adpt_cppe_flow.o
 OBJ-APPE    += src/adpt/cppe/adpt_cppe_flow.o #to be fixed
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_l3_flow.o src/adpt/jhppe/adpt_jhppe_flow.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_flow_misc.o
 endif
 
 ###############################################################################
@@ -245,7 +233,6 @@ ifeq (TRUE, $(IN_QM))
 OBJ-COMMON  += src/fal/fal_qm.o
 OBJ-HPPE    += src/hsl/hppe/hppe_qm.o src/adpt/hppe/adpt_hppe_qm.o
 OBJ-APPE    += src/hsl/appe/appe_qm.o src/adpt/appe/adpt_appe_qm.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_qm.o src/adpt/jhppe/adpt_jhppe_qm.o
 endif
 
 ###############################################################################
@@ -264,7 +251,6 @@ ifeq (TRUE, $(IN_CTRLPKT))
 OBJ-COMMON  += src/fal/fal_ctrlpkt.o
 OBJ-HPPE    += src/hsl/hppe/hppe_ctrlpkt.o src/adpt/hppe/adpt_hppe_ctrlpkt.o
 OBJ-APPE    += src/adpt/appe/adpt_appe_ctrlpkt.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_ctrlpkt.o
 endif
 
 ###############################################################################
@@ -275,7 +261,6 @@ OBJ-COMMON  += src/fal/fal_servcode.o
 OBJ-HPPE    += src/hsl/hppe/hppe_servcode.o src/adpt/hppe/adpt_hppe_servcode.o
 OBJ-APPE    += src/hsl/appe/appe_servcode.o src/adpt/appe/adpt_appe_servcode.o
 OBJ-MPPE    += src/hsl/mppe/mppe_servcode.o src/adpt/mppe/adpt_mppe_servcode.o
-OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_servcode.o
 endif
 
 
@@ -305,7 +290,6 @@ ifeq (TRUE, $(IN_POLICER))
 OBJ-COMMON  += src/fal/fal_policer.o
 OBJ-HPPE    += src/hsl/hppe/hppe_policer.o src/adpt/hppe/adpt_hppe_policer.o
 OBJ-APPE    += src/hsl/appe/appe_policer.o src/adpt/appe/adpt_appe_policer.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_policer.o
 endif
 
 
@@ -353,13 +337,11 @@ ifeq (TRUE, $(IN_TUNNEL))
 OBJ-COMMON  += src/ref/ref_tunnel.o src/fal/fal_tunnel.o
 OBJ-APPE    += src/hsl/appe/appe_tunnel.o src/hsl/appe/appe_tunnel_map.o \
                src/adpt/appe/adpt_appe_tunnel.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_tunnel.o src/adpt/jhppe/adpt_jhppe_tunnel.o
 endif
 
 ifeq (TRUE, $(IN_TUNNEL_PROGRAM))
 OBJ-COMMON  += src/fal/fal_tunnel_program.o
 OBJ-APPE    += src/hsl/appe/appe_tunnel_program.o src/adpt/appe/adpt_appe_tunnel_program.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_tunnel_program.o
 endif
 
 ###############################################################################
@@ -400,15 +382,6 @@ endif
 ifeq (TRUE, $(IN_PKTEDIT))
 OBJ-COMMON  += src/fal/fal_pktedit.o src/ref/ref_pktedit.o
 OBJ-MRPPE   += src/hsl/mrppe/mrppe_pktedit.o src/adpt/mrppe/adpt_mrppe_pktedit.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_pktedit.o src/adpt/jhppe/adpt_jhppe_pktedit.o
-endif
-
-###############################################################################
-#                             IN_SAMPL
-###############################################################################
-ifeq (TRUE, $(IN_SAMPL))
-OBJ-COMMON  += src/fal/fal_sampling.o
-OBJ-JHPPE  += src/hsl/jhppe/jhppe_policer.o src/adpt/jhppe/adpt_jhppe_sampling.o
 endif
 
 ###############################################################################
@@ -450,7 +423,6 @@ OBJ-HPPE    += src/init/ssdk_hppe.o  src/hsl/hppe/hppe_init.o
 OBJ-APPE    += src/init/ssdk_appe.o
 OBJ-MHT     += src/hsl/mht/mht_init.o src/init/ssdk_mht.o src/init/ssdk_mht_pinctrl.o
 OBJ-SCOMPHY += src/init/ssdk_scomphy.o
-OBJ-HTTPPE    += src/init/ssdk_httppe.o
 
 ###############################################################################
 #                                 SHELL_LIB
@@ -471,31 +443,7 @@ OBJ-HPPE    += src/hsl/hppe/hppe_global.o src/hsl/hppe/hppe_reg_access.o
 OBJ-APPE    += src/hsl/appe/appe_counter.o src/hsl/appe/appe_global.o \
                src/hsl/appe/appe_l2_vp.o src/hsl/appe/appe_misc.o
 OBJ-CPPE    += src/hsl/cppe/cppe_loopback.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_counter.o src/hsl/jhppe/jhppe_l2_vp.o
-OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_misc.o
 
-###############################################################################
-#                                 PON
-###############################################################################
-ifeq (TRUE, $(IN_PON))
-OBJ-COMMON  += src/fal/fal_pon.o
-OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_prx_pon.o \
-               src/adpt/hmsppe/adpt_hmsppe_pon.o
-endif
-################################################################################
-#                             IN_PON_PM
-################################################################################
-ifeq (TRUE, $(IN_PON_PM))
-OBJ-COMMON  += src/fal/fal_pon_pm.o src/ref/ref_pon_pm.o
-OBJ-JHPPE += src/hsl/jhppe/jhppe_pm.o src/adpt/jhppe/adpt_jhppe_pon_pm.o
-endif
-################################################################################
-#                             IN_IPMC
-#################################################################################
-ifeq (TRUE, $(IN_IPMC))
-OBJ-COMMON  += src/fal/fal_ipmc.o src/ref/ref_ipmc.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_ipmc.o src/adpt/jhppe/adpt_jhppe_ipmc.o
-endif
 ###############################################################################
 #                              Collect OBJ
 ###############################################################################
@@ -531,18 +479,6 @@ endif
 
 ifneq (,$(findstring SCOMPHY, $(SUPPORT_CHIP)))
 OBJ += $(OBJ-SCOMPHY)
-endif
-
-ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-JHPPE)
-endif
-
-ifneq (,$(findstring HMSPPE, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-JHPPE) $(OBJ-HMSPPE)
-endif
-
-ifneq (,$(findstring HTTPPE, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-HTTPPE)
 endif
 
 SSDK_OBJ=$(addprefix ../, $(OBJ))

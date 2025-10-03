@@ -31,9 +31,6 @@
 #include "sfp_phy.h"
 #include "adpt_appe_portctrl.h"
 #include "ref_port_ctrl.h"
-#if defined(HTTPPE)
-#include "adpt_httppe_portctrl.h"
-#endif
 
 #define PORT4_PCS_SEL_GMII_FROM_PCS0 1
 #define PORT4_PCS_SEL_RGMII 0
@@ -1792,9 +1789,7 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 		rv = adpt_hppe_port_interface_mode_switch_mac_reset(dev_id, port_id);
 	}
 	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE||
-		adpt_chip_type_get(dev_id) == CHIP_JHPPE ||
-		adpt_chip_type_get(dev_id) == CHIP_HMSPPE) {
+		adpt_chip_type_get(dev_id) == CHIP_MRPPE) {
 		rv = _adpt_appe_port_mux_mac_set(dev_id, port_id, port_type);
 	}
 
@@ -1973,61 +1968,6 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	return rv;
 }
-
-#if defined(HTTPPE)
-sw_error_t
-adpt_httppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
-	a_uint32_t mode0, a_uint32_t mode1, a_uint32_t mode2)
-{
-	sw_error_t rv = SW_OK;
-	a_uint32_t mode_tmp = PORT_WRAPPER_MAX;
-
-	rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_INTERFACE_MODE_MAX);
-	SW_RTN_ON_ERROR(rv);
-
-	if (port_id == SSDK_PHYSICAL_PORT0)
-		mode_tmp = mode0;
-	else if (port_id == SSDK_PHYSICAL_PORT5)
-		mode_tmp = mode1;
-	else {
-		rv = qca_hppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
-		SW_RTN_ON_ERROR(rv);
-		rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_SGMII_PLUS);
-		SW_RTN_ON_ERROR(rv);
-		rv = _adpt_hppe_gmac_speed_set(dev_id, port_id, FAL_SPEED_1000);
-		SW_RTN_ON_ERROR(rv);
-		rv = _adpt_hppe_gmac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
-		SW_RTN_ON_ERROR(rv);
-		return SW_OK;
-	}
-	switch (mode_tmp) {
-		case PORT_WRAPPER_SGMII_PLUS:
-			rv = qca_hppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
-			SW_RTN_ON_ERROR(rv);
-			rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_SGMII_PLUS);
-			SW_RTN_ON_ERROR(rv);
-			rv = _adpt_hppe_gmac_speed_set(dev_id, port_id, FAL_SPEED_1000);
-			SW_RTN_ON_ERROR(rv);
-			rv = _adpt_hppe_gmac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
-			SW_RTN_ON_ERROR(rv);
-			break;
-		case PORT_WRAPPER_USXGMII:
-			rv = qca_hppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
-			SW_RTN_ON_ERROR(rv);
-			rv = _adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_USXGMII);
-			SW_RTN_ON_ERROR(rv);
-			rv = _adpt_hppe_xgmac_speed_set(dev_id, port_id, FAL_SPEED_10000);
-			SW_RTN_ON_ERROR(rv);
-			break;
-		default:
-			break;
-	}
-
-	rv = adpt_httppe_port_mux_mac_set(dev_id, port_id);
-
-	return rv;
-}
-#endif
 
 static sw_error_t
 _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t max_port_id,
@@ -4741,13 +4681,8 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 		adpt_hppe_port_flowctrl_forcemode_get;
 	p_adpt_api->adpt_port_source_filter_config_get = adpt_ppe_port_source_filter_config_get;
 	p_adpt_api->adpt_port_source_filter_config_set = adpt_ppe_port_source_filter_config_set;
-	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
-#if defined(HTTPPE)
-		p_adpt_api->adpt_port_mux_mac_type_set = adpt_httppe_port_mux_mac_type_set;
-#endif
-	} else {
-		p_adpt_api->adpt_port_mux_mac_type_set = adpt_hppe_port_mux_mac_type_set;
-	}
+	p_adpt_api->adpt_port_mux_mac_type_set = adpt_hppe_port_mux_mac_type_set;
+
 	p_adpt_api->adpt_port_mac_speed_set = adpt_hppe_port_mac_speed_set;
 	p_adpt_api->adpt_port_mac_duplex_set = adpt_hppe_port_mac_duplex_set;
 	p_adpt_api->adpt_port_polling_sw_sync_set = qca_hppe_mac_sw_sync_task;

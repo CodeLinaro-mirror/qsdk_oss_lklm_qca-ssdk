@@ -19,9 +19,7 @@ extern "C" {
 #define ADPT_ACL_OUTER_RULE	0
 #define ADPT_ACL_INNER_RULE	1
 
-#if defined(HMSPPE)
-#define ADPT_PRE_ACL_HW_LIST_NUM 16
-#elif defined(MRPPE)
+#if defined(MRPPE)
 #define ADPT_PRE_ACL_HW_LIST_NUM 64 /* hw list number */
 #elif defined(MPPE)
 #define ADPT_PRE_ACL_HW_LIST_NUM 16

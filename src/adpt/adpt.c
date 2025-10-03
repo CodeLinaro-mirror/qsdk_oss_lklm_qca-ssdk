@@ -48,15 +48,6 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 		case CHIP_MRPPE:
 			ppe_type = MRPPE_TYPE;
 			break;
-		case CHIP_JHPPE:
-			ppe_type = JHPPE_TYPE;
-			break;
-		case CHIP_HMSPPE:
-			ppe_type = HMSPPE_TYPE;
-			break;
-		case CHIP_HTTPPE:
-			ppe_type = HTTPPE_TYPE;
-			break;
 		default:
 			break;
 	}
@@ -408,15 +399,13 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 			SW_RTN_ON_ERROR(rv);
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_RSS_HASH);
 			SW_RTN_ON_ERROR(rv);
-			fallthrough;
-		case CHIP_HTTPPE:
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_VPORT);
 			SW_RTN_ON_ERROR(rv);
-#if defined(MRPPE) || defined(HTTPPE)
+#if defined(MRPPE)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PKTEDIT);
 			SW_RTN_ON_ERROR(rv);
 #endif
-#if defined(MPPE) || defined(HTTPPE)
+#if defined(MPPE)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_ATHTAG);
 			SW_RTN_ON_ERROR(rv);
 #endif

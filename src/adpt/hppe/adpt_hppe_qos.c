@@ -25,11 +25,9 @@ adpt_hppe_l1_flow_map_get(a_uint32_t dev_id,
 					fal_qos_scheduler_cfg_t *scheduler_cfg)
 {
 	union l1_flow_map_tbl_u l1_flow_map_tbl;
-#if !defined(JHPPE)
 	union l1_c_sp_cfg_tbl_u l1_c_sp_cfg_tbl;
 	union l1_e_sp_cfg_tbl_u l1_e_sp_cfg_tbl;
 	a_uint32_t c_sp_id, e_sp_id;
-#endif
 	union l1_flow_port_map_tbl_u port_map;
 	union l1_comp_cfg_tbl_u l1_comp_cfg_tbl;
 
@@ -45,12 +43,7 @@ adpt_hppe_l1_flow_map_get(a_uint32_t dev_id,
 	scheduler_cfg->e_pri = l1_flow_map_tbl.bf.e_pri;
 	scheduler_cfg->c_pri = l1_flow_map_tbl.bf.c_pri;
 	scheduler_cfg->sp_id = l1_flow_map_tbl.bf.sp_id;
-#if defined(JHPPE)
-	scheduler_cfg->c_drr_id = l1_flow_map_tbl.bf.c_drr_id;
-	scheduler_cfg->e_drr_id = l1_flow_map_tbl.bf.e_drr_id;
-	scheduler_cfg->c_drr_unit = l1_flow_map_tbl.bf.c_drr_credit_unit;
-	scheduler_cfg->e_drr_unit = l1_flow_map_tbl.bf.e_drr_credit_unit;
-#else
+
 	c_sp_id = scheduler_cfg->sp_id * 8 + scheduler_cfg->c_pri;
 	hppe_l1_c_sp_cfg_tbl_get(dev_id, c_sp_id, &l1_c_sp_cfg_tbl);
 	scheduler_cfg->c_drr_unit = l1_c_sp_cfg_tbl.bf.drr_credit_unit;
@@ -60,7 +53,6 @@ adpt_hppe_l1_flow_map_get(a_uint32_t dev_id,
 	hppe_l1_e_sp_cfg_tbl_get(dev_id, e_sp_id, &l1_e_sp_cfg_tbl);
 	scheduler_cfg->e_drr_unit = l1_e_sp_cfg_tbl.bf.drr_credit_unit;
 	scheduler_cfg->e_drr_id = l1_e_sp_cfg_tbl.bf.drr_id;
-#endif
 
 	hppe_l1_flow_port_map_tbl_get(dev_id, node_id, &port_map);
 	*port_id = port_map.bf.port_num;
@@ -111,11 +103,9 @@ adpt_hppe_l0_queue_map_set(a_uint32_t dev_id,
 					fal_qos_scheduler_cfg_t *scheduler_cfg)
 {
 	union l0_flow_map_tbl_u l0_flow_map_tbl;
-#if !defined(JHPPE)
 	union l0_c_sp_cfg_tbl_u l0_c_sp_cfg_tbl;
 	union l0_e_sp_cfg_tbl_u l0_e_sp_cfg_tbl;
 	a_uint32_t c_sp_id, e_sp_id;
-#endif
 	union l0_flow_port_map_tbl_u l0_flow_port_map_tbl;
 	union l0_comp_cfg_tbl_u l0_comp_cfg_tbl;
 	a_uint32_t i, j, k;
@@ -126,12 +116,6 @@ adpt_hppe_l0_queue_map_set(a_uint32_t dev_id,
 	if (node_id >= L0_FLOW_MAP_TBL_MAX_ENTRY)
 		return SW_BAD_PARAM;
 
-#if defined(JHPPE)
-	l0_flow_map_tbl.bf.e_drr_credit_unit = scheduler_cfg->e_drr_unit;
-	l0_flow_map_tbl.bf.c_drr_credit_unit = scheduler_cfg->c_drr_unit;
-	l0_flow_map_tbl.bf.e_drr_id = scheduler_cfg->e_drr_id;
-	l0_flow_map_tbl.bf.c_drr_id = scheduler_cfg->c_drr_id;
-#else
 	c_sp_id = scheduler_cfg->sp_id * 8 + scheduler_cfg->c_pri;
 	l0_c_sp_cfg_tbl.bf.drr_credit_unit = scheduler_cfg->c_drr_unit;
 	l0_c_sp_cfg_tbl.bf.drr_id = scheduler_cfg->c_drr_id;
@@ -141,7 +125,6 @@ adpt_hppe_l0_queue_map_set(a_uint32_t dev_id,
 	l0_e_sp_cfg_tbl.bf.drr_credit_unit = scheduler_cfg->e_drr_unit;
 	l0_e_sp_cfg_tbl.bf.drr_id = scheduler_cfg->e_drr_id;
 	hppe_l0_e_sp_cfg_tbl_set(dev_id, e_sp_id, &l0_e_sp_cfg_tbl);
-#endif
 
 	l0_flow_map_tbl.bf.e_drr_wt= scheduler_cfg->e_drr_wt;
 	l0_flow_map_tbl.bf.c_drr_wt = scheduler_cfg->c_drr_wt;
@@ -177,11 +160,9 @@ adpt_hppe_l0_queue_map_get(a_uint32_t dev_id,
 					fal_qos_scheduler_cfg_t *scheduler_cfg)
 {
 	union l0_flow_map_tbl_u l0_flow_map_tbl;
-#if !defined(JHPPE)
 	union l0_c_sp_cfg_tbl_u l0_c_sp_cfg_tbl;
 	union l0_e_sp_cfg_tbl_u l0_e_sp_cfg_tbl;
 	a_uint32_t c_sp_id, e_sp_id;
-#endif
 	union l0_flow_port_map_tbl_u l0_flow_port_map_tbl;
 	union l0_comp_cfg_tbl_u l0_comp_cfg_tbl;
 
@@ -197,12 +178,6 @@ adpt_hppe_l0_queue_map_get(a_uint32_t dev_id,
 	scheduler_cfg->e_pri = l0_flow_map_tbl.bf.e_pri;
 	scheduler_cfg->c_pri = l0_flow_map_tbl.bf.c_pri;
 	scheduler_cfg->sp_id = l0_flow_map_tbl.bf.sp_id;
-#if defined(JHPPE)
-	scheduler_cfg->c_drr_id = l0_flow_map_tbl.bf.c_drr_id;
-	scheduler_cfg->e_drr_id = l0_flow_map_tbl.bf.e_drr_id;
-	scheduler_cfg->c_drr_unit = l0_flow_map_tbl.bf.c_drr_credit_unit;
-	scheduler_cfg->e_drr_unit = l0_flow_map_tbl.bf.e_drr_credit_unit;
-#else
 	c_sp_id = scheduler_cfg->sp_id * 8 + scheduler_cfg->c_pri;
 	hppe_l0_c_sp_cfg_tbl_get(dev_id, c_sp_id, &l0_c_sp_cfg_tbl);
 	scheduler_cfg->c_drr_unit = l0_c_sp_cfg_tbl.bf.drr_credit_unit;
@@ -212,7 +187,6 @@ adpt_hppe_l0_queue_map_get(a_uint32_t dev_id,
 	hppe_l0_e_sp_cfg_tbl_get(dev_id, e_sp_id, &l0_e_sp_cfg_tbl);
 	scheduler_cfg->e_drr_unit = l0_e_sp_cfg_tbl.bf.drr_credit_unit;
 	scheduler_cfg->e_drr_id = l0_e_sp_cfg_tbl.bf.drr_id;
-#endif
 
 	hppe_l0_flow_port_map_tbl_get(dev_id, node_id, &l0_flow_port_map_tbl);
 	*port_id = l0_flow_port_map_tbl.bf.port_num;
@@ -302,11 +276,9 @@ adpt_hppe_l1_flow_map_set(a_uint32_t dev_id,
 					fal_qos_scheduler_cfg_t *scheduler_cfg)
 {
 	union l1_flow_map_tbl_u l1_flow_map_tbl;
-#if !defined(JHPPE)
 	union l1_c_sp_cfg_tbl_u l1_c_sp_cfg_tbl;
 	union l1_e_sp_cfg_tbl_u l1_e_sp_cfg_tbl;
 	a_uint32_t c_sp_id, e_sp_id;
-#endif
 	union l1_flow_port_map_tbl_u l1_flow_port_map_tbl;
 	union l1_comp_cfg_tbl_u l1_comp_cfg_tbl;
 
@@ -316,12 +288,6 @@ adpt_hppe_l1_flow_map_set(a_uint32_t dev_id,
 	if (node_id >= L1_FLOW_MAP_TBL_MAX_ENTRY)
 		return SW_BAD_PARAM;
 
-#if defined(JHPPE)
-	l1_flow_map_tbl.bf.e_drr_credit_unit = scheduler_cfg->e_drr_unit;
-	l1_flow_map_tbl.bf.c_drr_credit_unit = scheduler_cfg->c_drr_unit;
-	l1_flow_map_tbl.bf.e_drr_id = scheduler_cfg->e_drr_id;
-	l1_flow_map_tbl.bf.c_drr_id = scheduler_cfg->c_drr_id;
-#else
 	c_sp_id = scheduler_cfg->sp_id * 8 + scheduler_cfg->c_pri;
 	l1_c_sp_cfg_tbl.bf.drr_credit_unit = scheduler_cfg->c_drr_unit;
 	l1_c_sp_cfg_tbl.bf.drr_id = scheduler_cfg->c_drr_id;
@@ -331,7 +297,6 @@ adpt_hppe_l1_flow_map_set(a_uint32_t dev_id,
 	l1_e_sp_cfg_tbl.bf.drr_credit_unit = scheduler_cfg->e_drr_unit;
 	l1_e_sp_cfg_tbl.bf.drr_id = scheduler_cfg->e_drr_id;
 	hppe_l1_e_sp_cfg_tbl_set(dev_id, e_sp_id, &l1_e_sp_cfg_tbl);
-#endif
 
 	l1_flow_map_tbl.bf.e_drr_wt= scheduler_cfg->e_drr_wt;
 	l1_flow_map_tbl.bf.c_drr_wt = scheduler_cfg->c_drr_wt;

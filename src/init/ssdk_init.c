@@ -81,9 +81,6 @@ struct notifier_block ssdk_dev_notifier;
 #ifdef IN_SFP_PHY
 #include "sfp_phy.h"
 #endif
-#if defined(HTTPPE)
-#include "ssdk_httppe.h"
-#endif
 
 extern void qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv);
 extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
@@ -1608,15 +1605,6 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		case QCA_VER_MHT:
 			cfg->chip_type = CHIP_MHT;
 			break;
-		case QCA_VER_JHPPE:
-			cfg->chip_type = CHIP_JHPPE;
-			break;
-		case QCA_VER_HMSPPE:
-			cfg->chip_type = CHIP_HMSPPE;
-			break;
-		case QCA_VER_HTTPPE:
-			cfg->chip_type = CHIP_HTTPPE;
-			break;
 		default:
 			/* try single phy without switch connected */
 			rv = chip_is_scomphy(dev_id, cfg);
@@ -1883,8 +1871,6 @@ static int __init regi_init(void)
 				SSDK_INFO("Initializing MHT Done!!\n");
 #endif
 				break;
-			case CHIP_HMSPPE:
-			case CHIP_JHPPE:
 			case CHIP_MRPPE:
 			case CHIP_APPE:
 				if(adpt_ppe_type_get(dev_id) == MRPPE_TYPE) {
@@ -1911,17 +1897,7 @@ static int __init regi_init(void)
 				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
 				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
 				break;
-#if defined(HTTPPE)
-			case CHIP_HTTPPE:
-				qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
-				rv = qca_httppe_hw_init(dev_id);
-				ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
-				rv = ssdk_switch_register(dev_id, cfg.chip_type);
-				ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
-				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-				SSDK_INFO("Initializing HTTPPE Done!!\n");
-				break;
-#endif
+
 			case CHIP_UNSPECIFIED:
 				break;
 			default:

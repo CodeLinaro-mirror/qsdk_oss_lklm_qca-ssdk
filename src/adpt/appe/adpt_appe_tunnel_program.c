@@ -11,13 +11,8 @@
 #include "hsl_reg.h"
 #include "adpt.h"
 
-#if defined(JHPPE)
-#define ADPT_TUNNEL_PROGRAM_ENTRY_NUM  16
-#define ADPT_TUNNEL_PROGRAM_UDF_ENTRY_NUM 32
-#else
 #define ADPT_TUNNEL_PROGRAM_ENTRY_NUM  6
 #define ADPT_TUNNEL_PROGRAM_UDF_ENTRY_NUM 16
-#endif
 
 /* record the used program id map for one program udf entry */
 static a_uint32_t g_program_entry_used_map[SW_MAX_NR_DEV][ADPT_TUNNEL_PROGRAM_ENTRY_NUM];

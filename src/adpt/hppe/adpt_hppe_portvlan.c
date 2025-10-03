@@ -49,12 +49,8 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 		rule->s_dei = in_vlan_xlt_rule.bf.skey_dei;
 		rule->protocol = (in_vlan_xlt_rule.bf.prot_value_0 |
 			in_vlan_xlt_rule.bf.prot_value_1 << SW_FIELD_OFFSET_IN_WORD(XLT_RULE_TBL_PROT_VALUE_OFFSET));
-#if defined(JHPPE)
-		rule->c_tagged = in_vlan_xlt_rule.bf.ckey_fmt;
-#else
 		rule->c_tagged = in_vlan_xlt_rule.bf.ckey_fmt_0 |
 			(in_vlan_xlt_rule.bf.ckey_fmt_1 << SW_FIELD_OFFSET_IN_WORD(XLT_RULE_TBL_CKEY_FMT_OFFSET));
-#endif
 		rule->c_vid_enable = in_vlan_xlt_rule.bf.ckey_vid_incl;
 		rule->c_vid = in_vlan_xlt_rule.bf.ckey_vid;
 		rule->c_pcp_enable = in_vlan_xlt_rule.bf.ckey_pcp_incl;
@@ -82,12 +78,8 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 
 		action->swap_spcp_cpcp = in_vlan_xlt_action.bf.pcp_swap_cmd;
 		action->spcp_xlt_cmd = in_vlan_xlt_action.bf.xlt_spcp_cmd;
-#if defined(JHPPE)
-		action->spcp_xlt = in_vlan_xlt_action.bf.xlt_spcp;
-#else
 		action->spcp_xlt = (in_vlan_xlt_action.bf.xlt_spcp_0 |
 			(in_vlan_xlt_action.bf.xlt_spcp_1 << SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_XLT_SPCP_OFFSET)));
-#endif
 		action->cpcp_xlt_cmd = in_vlan_xlt_action.bf.xlt_cpcp_cmd;
 		action->cpcp_xlt = in_vlan_xlt_action.bf.xlt_cpcp;
 
@@ -97,26 +89,8 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 		action->cdei_xlt_cmd = in_vlan_xlt_action.bf.xlt_cdei_cmd;
 		action->cdei_xlt = in_vlan_xlt_action.bf.xlt_cdei;
 		action->counter_enable = in_vlan_xlt_action.bf.counter_en;
-#if defined(JHPPE)
-		action->tags_to_rm = in_vlan_xlt_action.bf.tags_to_remove;
-		action->stpid_idx_xlt_cmd = in_vlan_xlt_action.bf.stpid_cmd;
-		action->stpid_idx_xlt = in_vlan_xlt_action.bf.stpid_index;
-		action->ctpid_idx_xlt_cmd = in_vlan_xlt_action.bf.ctpid_cmd;
-		action->ctpid_idx_xlt = in_vlan_xlt_action.bf.ctpid_index;
-		action->dscp_map_idx = in_vlan_xlt_action.bf.dscp_pbit_mapping_index;
-		action->counter_mode = in_vlan_xlt_action.bf.counter_mode;
-		action->fwd_cmd = in_vlan_xlt_action.bf.fwd_cmd;
-		action->dst_valid = in_vlan_xlt_action.bf.dest_info_valid;
-		action->dst_port.dest_info_value = (in_vlan_xlt_action.bf.dest_info_0 |
-			(in_vlan_xlt_action.bf.dest_info_1 << SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_DEST_INFO_OFFSET)));
-		action->dst_port.dest_info_type = FAL_DEST_INFO_PORT_ID;
-		action->svc_code_en = in_vlan_xlt_action.bf.service_code_en;
-		action->svc_code = in_vlan_xlt_action.bf.service_code;
-		action->counter_id = in_vlan_xlt_action.bf.counter_id;
-#else
 		action->counter_id = (in_vlan_xlt_action.bf.counter_id_0 |
 			(in_vlan_xlt_action.bf.counter_id_1 << SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_COUNTER_ID_OFFSET)));
-#endif
 		action->src_info_enable = in_vlan_xlt_action.bf.src_info_valid;
 		action->src_info_type = in_vlan_xlt_action.bf.src_info_type;
 		action->src_info = in_vlan_xlt_action.bf.src_info;
@@ -173,12 +147,8 @@ _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
 
 		action->swap_spcp_cpcp = eg_vlan_xlt_action.bf.pcp_swap_cmd;
 		action->spcp_xlt_cmd = eg_vlan_xlt_action.bf.xlt_spcp_cmd;
-#if defined(JHPPE)
-		action->spcp_xlt = eg_vlan_xlt_action.bf.xlt_spcp;
-#else
 		action->spcp_xlt = (eg_vlan_xlt_action.bf.xlt_spcp_0 |
 			(eg_vlan_xlt_action.bf.xlt_spcp_1 << SW_FIELD_OFFSET_IN_WORD(EG_VLAN_XLT_ACTION_XLT_SPCP_OFFSET)));
-#endif
 		action->cpcp_xlt_cmd = eg_vlan_xlt_action.bf.xlt_cpcp_cmd;
 		action->cpcp_xlt = eg_vlan_xlt_action.bf.xlt_cpcp;
 
@@ -303,13 +273,9 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		in_vlan_xlt_rule.bf.skey_pcp = rule->s_pcp;
 		in_vlan_xlt_rule.bf.skey_dei_incl = rule->s_dei_enable;
 		in_vlan_xlt_rule.bf.skey_dei = rule->s_dei;
-#if defined(JHPPE)
-		in_vlan_xlt_rule.bf.ckey_fmt = rule->c_tagged;
-#else
 		in_vlan_xlt_rule.bf.ckey_fmt_0 = rule->c_tagged;
 		in_vlan_xlt_rule.bf.ckey_fmt_1 = (rule->c_tagged >>
 			(SW_FIELD_OFFSET_IN_WORD(XLT_RULE_TBL_CKEY_FMT_OFFSET)));
-#endif
 		in_vlan_xlt_rule.bf.prot_value_0 = rule->protocol;
 		in_vlan_xlt_rule.bf.prot_value_1 = (rule->protocol >>
 			(SW_FIELD_OFFSET_IN_WORD(XLT_RULE_TBL_PROT_VALUE_OFFSET)));
@@ -336,13 +302,9 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 
 		in_vlan_xlt_action.bf.pcp_swap_cmd = action->swap_spcp_cpcp;
 		in_vlan_xlt_action.bf.xlt_spcp_cmd = action->spcp_xlt_cmd;
-#if defined(JHPPE)
-		in_vlan_xlt_action.bf.xlt_spcp = action->spcp_xlt;
-#else
 		in_vlan_xlt_action.bf.xlt_spcp_0 = action->spcp_xlt;
 		in_vlan_xlt_action.bf.xlt_spcp_1 = (action->spcp_xlt >>
 			(SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_XLT_SPCP_OFFSET)));
-#endif
 		in_vlan_xlt_action.bf.xlt_cpcp_cmd = action->cpcp_xlt_cmd;
 		in_vlan_xlt_action.bf.xlt_cpcp = action->cpcp_xlt;
 
@@ -353,32 +315,9 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 		in_vlan_xlt_action.bf.xlt_sdei = action->sdei_xlt;
 
 		in_vlan_xlt_action.bf.counter_en = action->counter_enable;
-#if defined(JHPPE)
-		in_vlan_xlt_action.bf.tags_to_remove = action->tags_to_rm;
-		in_vlan_xlt_action.bf.stpid_cmd = action->stpid_idx_xlt_cmd;
-		in_vlan_xlt_action.bf.stpid_index = action->stpid_idx_xlt;
-		in_vlan_xlt_action.bf.ctpid_cmd = action->ctpid_idx_xlt_cmd;
-		in_vlan_xlt_action.bf.ctpid_index = action->ctpid_idx_xlt;
-		in_vlan_xlt_action.bf.dscp_pbit_mapping_index = action->dscp_map_idx;
-		in_vlan_xlt_action.bf.counter_mode = action->counter_mode;
-		in_vlan_xlt_action.bf.fwd_cmd = action->fwd_cmd;
-		if (action->dst_valid && action->dst_port.dest_info_type != FAL_DEST_INFO_PORT_ID) {
-			SSDK_ERROR("dest_info_type: %#x is not supported\n",
-				action->dst_port.dest_info_type);
-			return SW_NOT_SUPPORTED;
-		}
-		in_vlan_xlt_action.bf.dest_info_valid = action->dst_valid;
-		in_vlan_xlt_action.bf.dest_info_0 = action->dst_port.dest_info_value;
-		in_vlan_xlt_action.bf.dest_info_1 = (action->dst_port.dest_info_value >>
-			(SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_DEST_INFO_OFFSET)));
-		in_vlan_xlt_action.bf.service_code_en = action->svc_code_en;
-		in_vlan_xlt_action.bf.service_code = action->svc_code;
-		in_vlan_xlt_action.bf.counter_id = action->counter_id;
-#else
 		in_vlan_xlt_action.bf.counter_id_0 = action->counter_id;
 		in_vlan_xlt_action.bf.counter_id_1 = (action->counter_id >>
 			(SW_FIELD_OFFSET_IN_WORD(XLT_ACTION_TBL_COUNTER_ID_OFFSET)));
-#endif
 		in_vlan_xlt_action.bf.src_info_valid = action->src_info_enable;
 		in_vlan_xlt_action.bf.src_info_type = action->src_info_type;
 		in_vlan_xlt_action.bf.src_info = action->src_info;
@@ -429,13 +368,9 @@ _insert_vlan_trans_adv_rule_action(a_uint32_t dev_id, a_uint32_t index,
 
 		eg_vlan_xlt_action.bf.pcp_swap_cmd = action->swap_spcp_cpcp;
 		eg_vlan_xlt_action.bf.xlt_spcp_cmd = action->spcp_xlt_cmd;
-#if defined(JHPPE)
-		eg_vlan_xlt_action.bf.xlt_spcp = action->spcp_xlt;
-#else
 		eg_vlan_xlt_action.bf.xlt_spcp_0 = action->spcp_xlt;
 		eg_vlan_xlt_action.bf.xlt_spcp_1 = (action->spcp_xlt >>
 			(SW_FIELD_OFFSET_IN_WORD(EG_VLAN_XLT_ACTION_XLT_SPCP_OFFSET)));
-#endif
 		eg_vlan_xlt_action.bf.xlt_cpcp_cmd = action->cpcp_xlt_cmd;
 		eg_vlan_xlt_action.bf.xlt_cpcp = action->cpcp_xlt;
 
@@ -611,9 +546,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			vp_parsing_reg.bf.src_port_sel =
 					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
 #endif
-#if defined(JHPPE)
-			vp_parsing_reg.bf.vlan_mode = mode->in_port_ponmode_en;
-#endif
 			rtn = appe_ipr_vp_parsing_set(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -631,9 +563,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			rtn = appe_tpr_vp_parsing_get(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &tl_vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 			tl_vp_parsing_reg.bf.port_role = mode->tunnel_port_role;
-#if defined(JHPPE)
-			tl_vp_parsing_reg.bf.vlan_mode = mode->tl_port_ponmode_en;
-#endif
 			rtn = appe_tpr_vp_parsing_set(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &tl_vp_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -651,9 +580,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			port_parsing_reg.bf.src_port_sel =
 					mode->ingress_port_sel == FAL_QINQ_SEL_TNL_DECAP_SRC_VP ? 0 : 1;
 #endif
-#if defined(JHPPE)
-			port_parsing_reg.bf.vlan_mode = mode->in_port_ponmode_en;
-#endif
 			rtn = hppe_port_parsing_reg_set(dev_id, port_value, &port_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -670,9 +596,6 @@ adpt_hppe_port_qinq_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 			rtn = appe_tpr_port_parsing_get(dev_id, port_value, &tl_port_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 			tl_port_parsing_reg.bf.port_role = mode->tunnel_port_role;
-#if defined(JHPPE)
-			tl_port_parsing_reg.bf.vlan_mode = mode->tl_port_ponmode_en;
-#endif
 			rtn = appe_tpr_port_parsing_set(dev_id, port_value, &tl_port_parsing_reg);
 			SW_RTN_ON_ERROR(rtn);
 		}
@@ -704,9 +627,6 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		mode->ingress_port_sel =
 				vp_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
 #endif
-#if defined(JHPPE)
-		mode->in_port_ponmode_en = vp_parsing_reg.bf.vlan_mode;
-#endif
 		rtn = appe_eg_vp_tbl_port_vlan_type_get(dev_id, port_value,
 				(a_uint32_t *)&mode->egress_port_role);
 		SW_RTN_ON_ERROR(rtn);
@@ -714,9 +634,6 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		rtn = appe_tpr_vp_parsing_get(dev_id, (port_value - SSDK_MIN_VIRTUAL_PORT_ID), &tl_vp_parsing_reg);
 		SW_RTN_ON_ERROR(rtn);
 		mode->tunnel_port_role = tl_vp_parsing_reg.bf.port_role;
-#if defined(JHPPE)
-		mode->tl_port_ponmode_en = tl_vp_parsing_reg.bf.vlan_mode;
-#endif
 	} else if (ADPT_IS_PPORT(port_id)) {
 		union port_parsing_reg_u port_parsing_reg;
 		union tpr_port_parsing_u tl_port_parsing_reg;
@@ -731,10 +648,6 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		mode->ingress_port_sel =
 				port_parsing_reg.bf.src_port_sel ? FAL_QINQ_SEL_ORG_SRC_PORT : FAL_QINQ_SEL_TNL_DECAP_SRC_VP;
 #endif
-#if defined(JHPPE)
-		mode->in_port_ponmode_en = port_parsing_reg.bf.vlan_mode;
-#endif
-
 		rtn = hppe_port_eg_vlan_port_vlan_type_get(dev_id, port_value,
 					(a_uint32_t *)&mode->egress_port_role);
 		SW_RTN_ON_ERROR(rtn);
@@ -742,9 +655,6 @@ adpt_hppe_port_qinq_mode_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_qin
 		rtn = appe_tpr_port_parsing_get(dev_id, port_value, &tl_port_parsing_reg);
 		SW_RTN_ON_ERROR(rtn);
 		mode->tunnel_port_role = tl_port_parsing_reg.bf.port_role;
-#if defined(JHPPE)
-		mode->tl_port_ponmode_en = tl_port_parsing_reg.bf.vlan_mode;
-#endif
 	}
 
 	return rtn;
@@ -2208,7 +2118,6 @@ adpt_hppe_port_tag_propagation_get(a_uint32_t dev_id,
 	return rtn;
 }
 
-#if !defined(JHPPE)
 a_uint32_t
 _get_port_vlan_ingress_trans_by_index(a_uint32_t dev_id,
 		a_uint32_t index, fal_vlan_trans_entry_t *entry)
@@ -2700,7 +2609,6 @@ adpt_hppe_port_vlan_trans_del(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_tr
 
 	return SW_NOT_FOUND;
 }
-#endif
 
 sw_error_t
 adpt_hppe_port_vlan_counter_get(a_uint32_t dev_id,
@@ -2757,12 +2665,10 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 #ifndef IN_PORTVLAN_MINI
 		p_adpt_api->adpt_port_tag_propagation_set = adpt_hppe_port_tag_propagation_set;
 		p_adpt_api->adpt_port_tag_propagation_get = adpt_hppe_port_tag_propagation_get;
-#if !defined(JHPPE)
 		p_adpt_api->adpt_port_vlan_trans_iterate = adpt_hppe_port_vlan_trans_iterate;
 		p_adpt_api->adpt_port_vlan_trans_add = adpt_hppe_port_vlan_trans_add;
 		p_adpt_api->adpt_port_vlan_trans_get = adpt_hppe_port_vlan_trans_get;
 		p_adpt_api->adpt_port_vlan_trans_del = adpt_hppe_port_vlan_trans_del;
-#endif
 		p_adpt_api->adpt_port_vlan_counter_get = adpt_hppe_port_vlan_counter_get;
 		p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
 		p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;

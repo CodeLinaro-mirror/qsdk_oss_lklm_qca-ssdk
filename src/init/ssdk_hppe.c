@@ -635,7 +635,7 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 	for (i = 0; i < SSDK_L1SCHEDULER_CFG_MAX; i++) {
 		if (dt_cfg->l1cfg[i].valid) {
 			port_id = dt_cfg->l1cfg[i].port_id;
-#if defined(IN_ATHTAG) && !defined(JHPPE)
+#if defined(IN_ATHTAG)
 			qca_qos_scheduler_port_id_convert(dev_id, &port_id);
 #endif
 			cfg.sp_id = dt_cfg->l1cfg[i].sp_id;
@@ -654,7 +654,7 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 	for (i = 0; i < SSDK_L0SCHEDULER_CFG_MAX; i++) {
 		if (dt_cfg->l0cfg[i].valid) {
 			port_id = dt_cfg->l0cfg[i].port_id;
-#if defined(IN_ATHTAG) && !defined(JHPPE)
+#if defined(IN_ATHTAG)
 			qca_qos_scheduler_port_id_convert(dev_id, &port_id);
 #endif
 			cfg.sp_id = dt_cfg->l0cfg[i].sp_id;

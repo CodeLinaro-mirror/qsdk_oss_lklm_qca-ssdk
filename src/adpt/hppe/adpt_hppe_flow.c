@@ -254,22 +254,12 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 	case FAL_FLOW_QOS_TYPE_TREE_ID:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->tree_id, sizeof(flow_qos->tree_id));
-#if defined(JHPPE)
-			eg_treemap->bf.tree_id_0 = FIELD_GET(FLOW_TREE_ID_24BIT_L, tmp);
-			eg_treemap->bf.tree_id_1 = FIELD_GET(FLOW_TREE_ID_24BIT_H, tmp);
-#else
 			eg_treemap->bf.tree_id = FIELD_GET(FLOW_TREE_ID_24BIT, tmp);
-#endif
 #if defined(MPPE)
 			eg_treemap->bf.type = 0;
 #endif
 		} else {
-#if defined(JHPPE)
-			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT_L, eg_treemap->bf.tree_id_0);
-			tmp |= FIELD_PREP(FLOW_TREE_ID_24BIT_H, eg_treemap->bf.tree_id_1);
-#else
 			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT, eg_treemap->bf.tree_id);
-#endif
 			memcpy(flow_qos->tree_id, &tmp, sizeof(flow_qos->tree_id));
 		}
 		break;
@@ -296,10 +286,8 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
 			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
 
-#if !defined(JHPPE)
 			/* wifi qos is valid only when the flag is true on only Marina. */
 			eg_treemap->bf1.wifi_qos_flag = true;
-#endif
 			eg_treemap->bf1.type = 1;
 		} else {
 			tmp = FIELD_PREP(FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie);
@@ -500,12 +488,7 @@ sw_error_t adpt_ppe_flow_key_ipv4_3tuple_convert(fal_flow_entry_t *flow_entry,
 		entry->bf.ip_addr_0 = flow_entry->flow_ip.ipv4;
 		entry->bf.ip_addr_1 = flow_entry->flow_ip.ipv4 >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_IP_ADDR_OFFSET);
 		entry->bf.ip_protocol = flow_entry->ip_type;
-#if defined(JHPPE)
-		entry->bf.vpn_id_0 = flow_entry->vpn_id;
-		entry->bf.vpn_id_1 = flow_entry->vpn_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
-#else
 		entry->bf.vpn_id = flow_entry->vpn_id;
-#endif
 	} else {
 		flow_entry->invalid = !entry->bf.valid;
 		flow_entry->host_addr_type = entry->bf.host_addr_index_type;
@@ -514,12 +497,7 @@ sw_error_t adpt_ppe_flow_key_ipv4_3tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->flow_ip.ipv4 = entry->bf.ip_addr_0;
 		flow_entry->flow_ip.ipv4 |= entry->bf.ip_addr_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_IP_ADDR_OFFSET);
 		flow_entry->ip_type = entry->bf.ip_protocol;
-#if defined(JHPPE)
-		flow_entry->vpn_id = entry->bf.vpn_id_0;
-		flow_entry->vpn_id |= entry->bf.vpn_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_VPN_ID_OFFSET);
-#else
 		flow_entry->vpn_id = entry->bf.vpn_id;
-#endif
 	}
 
 	return SW_OK;
@@ -574,16 +552,9 @@ sw_error_t adpt_ppe_flow_ipv4_5tuple_convert(fal_flow_entry_t *flow_entry,
 		entry->bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry->bf.src_l3_if = flow_entry->src_intf_index;
 		entry->bf.age = flow_entry->age;
-#if defined(JHPPE)
-		entry->bf.fwd_type_0 = flow_entry->fwd_type;
-		entry->bf.fwd_type_1 = flow_entry->fwd_type >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_FWD_TYPE_OFFSET);
-		entry->bf.pri_profile = flow_entry->pri_profile;
-		entry->bf.counter_id = flow_entry->sampling_id;
-#else
 		entry->bf.fwd_type = flow_entry->fwd_type;
 		entry->bf.pri_profile_0 = flow_entry->pri_profile;
 		entry->bf.pri_profile_1 = flow_entry->pri_profile >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry->bf.next_hop1 = flow_entry->snat_nexthop;
 			entry->bf.l4_port1 = flow_entry->snat_srcport;
@@ -616,16 +587,9 @@ sw_error_t adpt_ppe_flow_ipv4_5tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->src_intf_valid = entry->bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry->bf.src_l3_if;
 		flow_entry->age = entry->bf.age;
-#if defined(JHPPE)
-		flow_entry->fwd_type = entry->bf.fwd_type_0;
-		flow_entry->fwd_type |= entry->bf.fwd_type_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_FWD_TYPE_OFFSET);
-		flow_entry->pri_profile = entry->bf.pri_profile;
-		flow_entry->sampling_id = entry->bf.counter_id;
-#else
 		flow_entry->fwd_type = entry->bf.fwd_type;
 		flow_entry->pri_profile = entry->bf.pri_profile_0;
 		flow_entry->pri_profile |= entry->bf.pri_profile_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry->bf.next_hop1;
 			flow_entry->snat_srcport = entry->bf.l4_port1;
@@ -665,17 +629,9 @@ sw_error_t adpt_ppe_flow_ipv6_5tuple_convert(fal_flow_entry_t *flow_entry,
 		entry->bf.age = flow_entry->age;
 		entry->bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry->bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(JHPPE)
-		entry->bf.fwd_type_0 = flow_entry->fwd_type;
-		entry->bf.fwd_type_1 = flow_entry->fwd_type >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_FWD_TYPE_OFFSET);
-		entry->bf.pri_profile = flow_entry->pri_profile;
-		entry->bf.counter_id_0 = flow_entry->sampling_id;
-		entry->bf.counter_id_1 = flow_entry->sampling_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_OFFSET);
-#else
 		entry->bf.fwd_type = flow_entry->fwd_type;
 		entry->bf.pri_profile_0 = flow_entry->pri_profile;
 		entry->bf.pri_profile_1 = flow_entry->pri_profile >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry->bf.next_hop1 = flow_entry->snat_nexthop;
 			entry->bf.l4_port1 = flow_entry->snat_srcport;
@@ -707,17 +663,9 @@ sw_error_t adpt_ppe_flow_ipv6_5tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->age = entry->bf.age;
 		flow_entry->src_intf_valid = entry->bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry->bf.src_l3_if;
-#if defined(JHPPE)
-		flow_entry->fwd_type = entry->bf.fwd_type_0;
-		flow_entry->fwd_type |= entry->bf.fwd_type_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_FWD_TYPE_OFFSET);
-		flow_entry->pri_profile = entry->bf.pri_profile;
-		flow_entry->sampling_id = entry->bf.counter_id_0;
-		flow_entry->sampling_id |= entry->bf.counter_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_OFFSET);
-#else
 		flow_entry->fwd_type = entry->bf.fwd_type;
 		flow_entry->pri_profile = entry->bf.pri_profile_0;
 		flow_entry->pri_profile |= entry->bf.pri_profile_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry->bf.next_hop1;
 			flow_entry->snat_srcport = entry->bf.l4_port1;
@@ -757,16 +705,9 @@ sw_error_t adpt_ppe_flow_ipv4_3tuple_convert(fal_flow_entry_t *flow_entry,
 		entry->bf.age = flow_entry->age;
 		entry->bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry->bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(JHPPE)
-		entry->bf.fwd_type_0 = flow_entry->fwd_type;
-		entry->bf.fwd_type_1 = flow_entry->fwd_type >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_FWD_TYPE_OFFSET);
-		entry->bf.pri_profile = flow_entry->pri_profile;
-		entry->bf.counter_id = flow_entry->sampling_id;
-#else
 		entry->bf.fwd_type = flow_entry->fwd_type;
 		entry->bf.pri_profile_0 = flow_entry->pri_profile;
 		entry->bf.pri_profile_1 = flow_entry->pri_profile >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry->bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
@@ -789,27 +730,16 @@ sw_error_t adpt_ppe_flow_ipv4_3tuple_convert(fal_flow_entry_t *flow_entry,
 		entry->bf.copy_to_cpu_en = flow_entry->copy_tocpu_en;
 		entry->bf.syn_toggle = flow_entry->syn_toggle;
 		entry->bf.service_code = flow_entry->sevice_code;
-#if defined(JHPPE)
-		entry->bf.pmtu = flow_entry->pmtu;
-#else
 		entry->bf.pmtu_0 = flow_entry->pmtu;
 		entry->bf.pmtu_1 = flow_entry->pmtu >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
-#endif
 		entry->bf.pmtu_check_type = flow_entry->pmtu_check_l3;
 	} else {
 		flow_entry->age = entry->bf.age;
 		flow_entry->src_intf_valid = entry->bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry->bf.src_l3_if;
-#if defined(JHPPE)
-		flow_entry->fwd_type = entry->bf.fwd_type_0;
-		flow_entry->fwd_type |= entry->bf.fwd_type_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_FWD_TYPE_OFFSET);
-		flow_entry->pri_profile = entry->bf.pri_profile;
-		flow_entry->sampling_id = entry->bf.counter_id;
-#else
 		flow_entry->fwd_type = entry->bf.fwd_type;
 		flow_entry->pri_profile = entry->bf.pri_profile_0;
 		flow_entry->pri_profile |= entry->bf.pri_profile_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry->bf.next_hop1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
@@ -833,12 +763,8 @@ sw_error_t adpt_ppe_flow_ipv4_3tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->syn_toggle = entry->bf.syn_toggle;
 		flow_entry->sevice_code = entry->bf.service_code;
 		flow_entry->pmtu_check_l3 = entry->bf.pmtu_check_type;
-#if defined(JHPPE)
-		flow_entry->pmtu = entry->bf.pmtu;
-#else
 		flow_entry->pmtu = entry->bf.pmtu_0;
 		flow_entry->pmtu |= entry->bf.pmtu_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_3TUPLE_TBL_PMTU_OFFSET);
-#endif
 	}
 
 	return SW_OK;
@@ -851,17 +777,9 @@ sw_error_t adpt_ppe_flow_ipv6_3tuple_convert(fal_flow_entry_t *flow_entry,
 		entry->bf.age = flow_entry->age;
 		entry->bf.src_l3_if_valid = flow_entry->src_intf_valid;
 		entry->bf.src_l3_if = flow_entry->src_intf_index;
-#if defined(JHPPE)
-		entry->bf.fwd_type_0 = flow_entry->fwd_type;
-		entry->bf.fwd_type_1 = flow_entry->fwd_type >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_FWD_TYPE_OFFSET);
-		entry->bf.pri_profile = flow_entry->pri_profile;
-		entry->bf.counter_id_0 = flow_entry->sampling_id;
-		entry->bf.counter_id_1 = flow_entry->sampling_id >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_OFFSET);
-#else
 		entry->bf.fwd_type = flow_entry->fwd_type;
 		entry->bf.pri_profile_0 = flow_entry->pri_profile;
 		entry->bf.pri_profile_1 = flow_entry->pri_profile >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			entry->bf.next_hop1 = flow_entry->snat_nexthop;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
@@ -891,17 +809,9 @@ sw_error_t adpt_ppe_flow_ipv6_3tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->age = entry->bf.age;
 		flow_entry->src_intf_valid = entry->bf.src_l3_if_valid;
 		flow_entry->src_intf_index = entry->bf.src_l3_if;
-#if defined(JHPPE)
-		flow_entry->fwd_type = entry->bf.fwd_type_0;
-		flow_entry->fwd_type |= entry->bf.fwd_type_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_FWD_TYPE_OFFSET);
-		flow_entry->pri_profile = entry->bf.pri_profile;
-		flow_entry->sampling_id = entry->bf.counter_id_0;
-		flow_entry->sampling_id |= entry->bf.counter_id_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_OFFSET);
-#else
 		flow_entry->fwd_type = entry->bf.fwd_type;
 		flow_entry->pri_profile = entry->bf.pri_profile_0;
 		flow_entry->pri_profile |= entry->bf.pri_profile_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_PRI_PROFILE_OFFSET);
-#endif
 		if (flow_entry->fwd_type == FAL_FLOW_SNAT) {
 			flow_entry->snat_nexthop = entry->bf.next_hop1;
 		} else if (flow_entry->fwd_type == FAL_FLOW_DNAT) {
@@ -992,12 +902,6 @@ adpt_hppe_flow_entry_host_op_add(
 		return rv;
 #endif
 
-#if defined(JHPPE)
-	rv = adpt_jhppe_flow_gro_en_set(dev_id, flow_entry->entry_id, flow_entry->gro_en);
-	if (rv)
-		return rv;
-#endif
-
 	return adpt_hppe_flow_qos_set(dev_id, flow_entry->entry_id, &(flow_entry->flow_qos));
 }
 
@@ -1076,12 +980,6 @@ adpt_hppe_flow_entry_host_op_get(
 #if defined(MPPE)
 	rv = mppe_qos_mapping_tbl_flow_policer_get(dev_id, flow_entry->entry_id,
 			&(flow_entry->policer_valid), &(flow_entry->policer_index));
-	if (rv)
-		return rv;
-#endif
-
-#if defined(JHPPE)
-	rv = adpt_jhppe_flow_gro_en_get(dev_id, flow_entry->entry_id, &(flow_entry->gro_en));
 	if (rv)
 		return rv;
 #endif
@@ -1290,12 +1188,6 @@ adpt_hppe_flow_entry_get(
 #if defined(MPPE)
 	rv = mppe_qos_mapping_tbl_flow_policer_get(dev_id, flow_entry->entry_id,
 			&(flow_entry->policer_valid), &(flow_entry->policer_index));
-	if (rv)
-		return rv;
-#endif
-
-#if defined(JHPPE)
-	rv = adpt_jhppe_flow_gro_en_get(dev_id, flow_entry->entry_id, &(flow_entry->gro_en));
 	if (rv)
 		return rv;
 #endif
@@ -1635,12 +1527,6 @@ adpt_hppe_flow_entry_add(
 	rv = mppe_qos_mapping_tbl_flow_policer_set(dev_id, flow_entry->entry_id,
 			flow_entry->policer_valid, flow_entry->policer_index);
 
-	if (rv)
-		return rv;
-#endif
-
-#if defined(JHPPE)
-	rv = adpt_jhppe_flow_gro_en_set(dev_id, flow_entry->entry_id, flow_entry->gro_en);
 	if (rv)
 		return rv;
 #endif

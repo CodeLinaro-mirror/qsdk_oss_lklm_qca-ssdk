@@ -467,36 +467,6 @@ hppe_eg_ipv6_prefix_tbl_set(
 				sizeof(union eg_ipv6_prefix_tbl_u)/sizeof(a_uint32_t));
 }
 
-#ifdef JHPPE
-sw_error_t
-hppe_eg_flow_ipv6_iid_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union eg_flow_ipv6_iid_tbl_u *value)
-{
-	if (index >= EG_FLOW_IPV6_IID_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-	return hppe_reg_get(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_IPV6_IID_TBL_ADDRESS + \
-				(index/2) * EG_FLOW_IPV6_IID_TBL_INC,
-				&value->val);
-}
-
-sw_error_t
-hppe_eg_flow_ipv6_iid_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union eg_flow_ipv6_iid_tbl_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				NSS_PTX_CSR_BASE_ADDR + EG_FLOW_IPV6_IID_TBL_ADDRESS + \
-				(index/2) * EG_FLOW_IPV6_IID_TBL_INC,
-				value->val);
-}
-
-#else
 sw_error_t
 hppe_eg_flow_ipv6_iid_tbl_get(
 		a_uint32_t dev_id,
@@ -525,7 +495,6 @@ hppe_eg_flow_ipv6_iid_tbl_set(
 				ARRAY_SIZE(value->val));
 }
 
-#endif
 sw_error_t
 hppe_eg_global_ctrl_get(
 		a_uint32_t dev_id,

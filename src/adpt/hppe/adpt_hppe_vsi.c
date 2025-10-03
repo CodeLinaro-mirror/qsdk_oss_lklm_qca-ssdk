@@ -22,11 +22,7 @@ enum{
 static a_bool_t _adpt_hppe_vsi_xlt_match(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t stag_vid, a_uint32_t ctag_vid, union xlt_rule_tbl_u *xlt_rule)
 {
-#ifdef JHPPE
-	struct xlt_rule_tbl_0 bf = xlt_rule->bf;
-#else
 	struct xlt_rule_tbl bf = xlt_rule->bf;
-#endif
 	if (bf.port_type != adpt_port_type_convert(A_TRUE, FAL_PORT_ID_TYPE(port_id))) {
 		return A_FALSE;
 	}
@@ -103,11 +99,7 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 	sw_error_t rv;
 	union xlt_rule_tbl_u xlt_rule;
 	union xlt_action_tbl_u xlt_action;
-#ifdef JHPPE
-	struct xlt_rule_tbl_0 bf;
-#else
 	struct xlt_rule_tbl bf;
-#endif
 	/*printk("%s,%d: port_id 0x%x svlan %d cvlan %d vsi %d op %d\n",
 			__FUNCTION__, __LINE__, port_id, stag_vid, ctag_vid, vsi_id, op);*/
 
@@ -190,23 +182,6 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 			}
 			xlt_rule.bf.valid = A_TRUE;
 
-#ifdef JHPPE
-			if(ctag_vid != FAL_VLAN_INVALID)
-			{
-				xlt_rule.bf.ckey_vid_incl = A_TRUE;
-				xlt_rule.bf.ckey_vid = ctag_vid;
-				if(ctag_vid == 0)
-					xlt_rule.bf.ckey_fmt = 0x2;
-				else
-					xlt_rule.bf.ckey_fmt = 0x4;
-			}
-			else
-					xlt_rule.bf.ckey_fmt = 0x1;
-
-			/* new added rule fields in JUHU/HMS, 0x7 to match all type */
-			xlt_rule.bf.dhcp_type = 0x7;
-			xlt_rule.bf.mc_type = 0x7;
-#else
 			if(ctag_vid != FAL_VLAN_INVALID)
 			{
 				xlt_rule.bf.ckey_vid_incl = A_TRUE;
@@ -218,7 +193,6 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 			}
 			else
 					xlt_rule.bf.ckey_fmt_0 = 0x1;
-#endif
 			if(stag_vid != FAL_VLAN_INVALID)
 			{
 				xlt_rule.bf.skey_vid_incl = A_TRUE;
@@ -486,12 +460,7 @@ adpt_hppe_vsi_member_set(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 	if( rv != SW_OK )
 		return rv;
 
-#ifdef JHPPE
-	vsi_tbl.bf.bc_bitmap_0 = vsi_member->bc_ports;
-	vsi_tbl.bf.bc_bitmap_1 = vsi_member->bc_ports >> 5;
-#else
 	vsi_tbl.bf.bc_bitmap = vsi_member->bc_ports;
-#endif
 	vsi_tbl.bf.member_port_bitmap = vsi_member->member_ports;
 	vsi_tbl.bf.umc_bitmap = vsi_member->umc_ports;
 	vsi_tbl.bf.uuc_bitmap = vsi_member->uuc_ports;
@@ -519,11 +488,7 @@ adpt_hppe_vsi_member_get(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 	if( rv != SW_OK )
 		return rv;
 
-#ifdef JHPPE
-	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap_0 | ((vsi_tbl.bf.bc_bitmap_1 & 0xf) << 5);
-#else
 	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap;
-#endif
 	vsi_member->member_ports = vsi_tbl.bf.member_port_bitmap;
 	vsi_member->umc_ports = vsi_tbl.bf.umc_bitmap;
 	vsi_member->uuc_ports = vsi_tbl.bf.uuc_bitmap;

@@ -9452,13 +9452,6 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-#if defined(JHPPE)
-    cmd_data_check_element("sram_queue_type", "0",
-		    "usage: 0 esram queue, 1 isram queue\n",
-		    cmd_data_check_uint32, (cmd, &(entry.sram_queue_type),
-			    sizeof (a_uint32_t)));
-#endif
-
     *(fal_ucast_queue_dest_t *)val = entry;
     return SW_OK;
 }

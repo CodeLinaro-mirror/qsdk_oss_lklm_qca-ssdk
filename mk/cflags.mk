@@ -289,22 +289,6 @@ ifeq (TRUE, $(IN_PKTEDIT))
   MODULE_CFLAG += -DIN_PKTEDIT
 endif
 
-ifeq (TRUE, $(IN_SAMPL))
-  MODULE_CFLAG += -DIN_SAMPL
-endif
-
-ifeq (TRUE, $(IN_PON))
-  MODULE_CFLAG += -DIN_PON
-endif
-
-ifeq (TRUE, $(IN_PON_PM))
-  MODULE_CFLAG += -DIN_PON_PM
-endif
-
-ifeq (TRUE, $(IN_IPMC))
-  MODULE_CFLAG += -DIN_IPMC
-endif
-
 ifneq (TRUE, $(FAL))
   MODULE_CFLAG += -DHSL_STANDALONG
 endif
@@ -396,25 +380,6 @@ ifneq (,$(findstring MRPPE, $(SUPPORT_CHIP)))
   MODULE_CFLAG += -DMRPPE
 endif
 
-ifneq (,$(findstring HMSPPE, $(SUPPORT_CHIP)))
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/hmsppe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/hmsppe
-  MODULE_CFLAG += -DHMSPPE
-  ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
-  MODULE_CFLAG += -DSSDK_RAW_CLOCK
-  endif
-endif
-
-ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/hmsppe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/hmsppe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/jhppe
-  MODULE_CFLAG += -DJHPPE
-  ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
-  MODULE_CFLAG += -DSSDK_RAW_CLOCK
-  endif
-endif
-
 ifneq (,$(findstring SCOMPHY, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/scomphy
   MODULE_CFLAG += -DSCOMPHY
@@ -423,11 +388,6 @@ endif
 ifneq (,$(findstring MHT, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/mht
   MODULE_CFLAG += -DMHT
-endif
-
-ifneq (,$(findstring HTTPPE, $(SUPPORT_CHIP)))
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/httppe
-  MODULE_CFLAG += -DHTTPPE
 endif
 
 ifeq (TRUE, $(IN_SFP))

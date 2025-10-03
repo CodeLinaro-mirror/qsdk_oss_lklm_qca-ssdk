@@ -50,10 +50,6 @@ extern "C" {
 #include "fal_vport.h"
 #include "fal_athtag.h"
 #include "fal_pktedit.h"
-#include "fal_sampling.h"
-#include "fal_pon.h"
-#include "fal_pon_pm.h"
-#include "fal_ipmc.h"
 #include "ssdk_plat.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
@@ -1536,98 +1532,6 @@ typedef sw_error_t (*adpt_rxdesc_cpucode_en_set_func)(a_uint32_t dev_id,
 		a_uint32_t cpucode, a_bool_t enable);
 typedef sw_error_t (*adpt_rxdesc_cpucode_en_get_func)(a_uint32_t dev_id,
 		a_uint32_t cpucode, a_bool_t *enable);
-
-/* sampling */
-typedef sw_error_t (*adpt_sampling_time_set_func)(a_uint32_t dev_id,
-		a_uint32_t buff_index, a_uint32_t time_value);
-typedef sw_error_t (*adpt_sampling_time_get_func)(a_uint32_t dev_id,
-		a_uint32_t buff_index, a_uint32_t *time_value);
-typedef sw_error_t (*adpt_sampling_buff_status_get_func)(a_uint32_t dev_id,
-		a_uint32_t buff_index, a_bool_t *done_status);
-typedef sw_error_t (*adpt_sampling_buff_status_clear_func)(a_uint32_t dev_id,
-		a_uint32_t buff_index);
-typedef sw_error_t (*adpt_sampling_done_miss_counter_get_func)(
-		a_uint32_t dev_id, a_uint32_t *done_miss);
-typedef sw_error_t (*adpt_sampling_done_miss_counter_clear_func)(
-		a_uint32_t dev_id);
-typedef sw_error_t (*adpt_sampling_burst_cfg_set_func)(a_uint32_t dev_id,
-		fal_sampling_burst_cfg_t *burst_cfg);
-typedef sw_error_t (*adpt_sampling_burst_cfg_get_func)(a_uint32_t dev_id,
-		fal_sampling_burst_cfg_t *burst_cfg);
-typedef sw_error_t (*adpt_sampling_ctrl_set_func)(a_uint32_t dev_id,
-		fal_sampling_ctrl_t *ctrl_cfg);
-typedef sw_error_t (*adpt_sampling_ctrl_get_func)(a_uint32_t dev_id,
-		fal_sampling_ctrl_t *ctrl_cfg);
-typedef sw_error_t (*adpt_sampling_window_en_set_func)(a_uint32_t dev_id,
-		a_uint32_t window_index, a_bool_t enable);
-typedef sw_error_t (*adpt_sampling_window_en_get_func)(a_uint32_t dev_id,
-		a_uint32_t window_index, a_bool_t *enable);
-typedef sw_error_t (*adpt_sampling_counter_get_func)(a_uint32_t dev_id,
-		a_uint32_t buff_index, a_uint32_t counter_id,
-		fal_sampling_counter_entry_t *counter);
-
-/* pon */
-typedef sw_error_t (*adpt_pon_gemport_global_set_func)(a_uint32_t dev_id,
-		fal_gemport_global_cfg_t *cfg);
-typedef sw_error_t (*adpt_pon_gemport_global_get_func)(a_uint32_t dev_id,
-		fal_gemport_global_cfg_t *cfg);
-typedef sw_error_t (*adpt_pon_gemport_gen_default_set_func)(a_uint32_t dev_id,
-		fal_gemport_gen_default_t *def_property);
-typedef sw_error_t (*adpt_pon_gemport_gen_default_get_func)(a_uint32_t dev_id,
-		fal_gemport_gen_default_t *def_property);
-typedef sw_error_t (*adpt_pon_gemport_gen_entry_set_func)(a_uint32_t dev_id,
-		a_uint32_t index, fal_gemport_gen_t *gen_entry);
-typedef sw_error_t (*adpt_pon_gemport_gen_entry_get_func)(a_uint32_t dev_id,
-		a_uint32_t index, fal_gemport_gen_t *gen_entry);
-typedef sw_error_t (*adpt_pon_gemport_gen_en_set_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, a_bool_t enable);
-typedef sw_error_t (*adpt_pon_gemport_gen_en_get_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, a_bool_t *enable);
-typedef sw_error_t (*adpt_pon_gemport_map_en_set_func)(a_uint32_t dev_id,
-		fal_port_t port_id, a_bool_t mapping_en);
-typedef sw_error_t (*adpt_pon_gemport_map_en_get_func)(a_uint32_t dev_id,
-		fal_port_t port_id, a_bool_t *mapping_en);
-typedef sw_error_t (*adpt_pon_gemport_map_set_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, fal_gemport_map_t *map_entry);
-typedef sw_error_t (*adpt_pon_gemport_map_get_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, fal_gemport_map_t *map_entry);
-typedef sw_error_t (*adpt_pon_gemport_cfg_set_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, fal_gemport_cfg_t *cfg);
-typedef sw_error_t (*adpt_pon_gemport_cfg_get_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, fal_gemport_cfg_t *cfg);
-typedef sw_error_t (*adpt_pon_gemport_policer_set_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, fal_gemport_policer_t *policer_cfg);
-typedef sw_error_t (*adpt_pon_gemport_policer_get_func)(a_uint32_t dev_id,
-		a_uint32_t gemport, fal_gemport_policer_t *policer_cfg);
-
-/* PON PM */
-typedef sw_error_t (*adpt_pon_pm_counter_entry_set_func)(a_uint32_t dev_id, a_uint32_t entry_index,
-		                fal_direction_t direction, fal_pon_pm_counter_entry_t *entry);
-typedef sw_error_t (*adpt_pon_pm_counter_entry_get_func)(a_uint32_t dev_id, a_uint32_t entry_index,
-		                fal_direction_t direction, fal_pon_pm_counter_entry_t *entry);
-typedef sw_error_t (*adpt_pon_pm_counter_get_func)(a_uint32_t dev_id, a_uint32_t counter_id,
-		                fal_direction_t direction, fal_pon_pm_counter_t *pm_counter);
-typedef sw_error_t (*adpt_pon_pm_counter_flush_func)(a_uint32_t dev_id, a_uint32_t counter_id,
-				fal_direction_t direction);
-
-/* IPMC */
-typedef sw_error_t (*adpt_ipmc_status_set_func)(a_uint32_t dev_id, a_bool_t enable);
-typedef sw_error_t (*adpt_ipmc_status_get_func)(a_uint32_t dev_id, a_bool_t *enable);
-typedef sw_error_t (*adpt_ipmc_global_cfg_set_func)(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg);
-typedef sw_error_t (*adpt_ipmc_global_cfg_get_func)(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg);
-typedef sw_error_t (*adpt_ipmc_entry_add_func)(a_uint32_t dev_id,
-		fal_ipmc_op_mode_t add_mode, fal_ipmc_entry_t *ipmc_entry);
-typedef sw_error_t (*adpt_ipmc_entry_del_func)(a_uint32_t dev_id,
-		fal_ipmc_op_mode_t del_mode, fal_ipmc_entry_t *ipmc_entry);
-typedef sw_error_t (*adpt_ipmc_entry_get_func)(a_uint32_t dev_id,
-		fal_ipmc_op_mode_t get_mode, fal_ipmc_entry_t *ipmc_entry);
-typedef sw_error_t (*adpt_ipmc_entry_getnext_func)(a_uint32_t dev_id,
-		fal_ipmc_next_mode_t next_mode, fal_ipmc_entry_t *ipmc_entry);
-typedef sw_error_t (*adpt_ipmc_entry_flush_func)(a_uint32_t dev_id);
-typedef sw_error_t (*adpt_ipmc_ucast_fwd_set_func)(a_uint32_t dev_id,
-		fal_ipmc_ucast_fwd_t *ucast_fwd);
-typedef sw_error_t (*adpt_ipmc_ucast_fwd_get_func)(a_uint32_t dev_id,
-		fal_ipmc_ucast_fwd_t *ucast_fwd);
 /* auto_insert_flag */
 typedef struct
 {
@@ -2347,56 +2251,6 @@ typedef struct
 	adpt_pktedit_en_get_func adpt_pktedit_en_get;
 	adpt_rxdesc_cpucode_en_set_func adpt_rxdesc_cpucode_en_set;
 	adpt_rxdesc_cpucode_en_get_func adpt_rxdesc_cpucode_en_get;
-	/* sampling */
-	adpt_sampling_time_set_func adpt_sampling_time_set;
-	adpt_sampling_time_get_func adpt_sampling_time_get;
-	adpt_sampling_buff_status_get_func adpt_sampling_buff_status_get;
-	adpt_sampling_buff_status_clear_func adpt_sampling_buff_status_clear;
-	adpt_sampling_done_miss_counter_get_func
-		adpt_sampling_done_miss_counter_get;
-	adpt_sampling_done_miss_counter_clear_func
-		adpt_sampling_done_miss_counter_clear;
-	adpt_sampling_burst_cfg_set_func adpt_sampling_burst_cfg_set;
-	adpt_sampling_burst_cfg_get_func adpt_sampling_burst_cfg_get;
-	adpt_sampling_ctrl_set_func adpt_sampling_ctrl_set;
-	adpt_sampling_ctrl_get_func adpt_sampling_ctrl_get;
-	adpt_sampling_window_en_set_func adpt_sampling_window_en_set;
-	adpt_sampling_window_en_get_func adpt_sampling_window_en_get;
-	adpt_sampling_counter_get_func adpt_sampling_counter_get;
-	/* pon */
-	adpt_pon_gemport_global_set_func adpt_pon_gemport_global_set;
-	adpt_pon_gemport_global_get_func adpt_pon_gemport_global_get;
-	adpt_pon_gemport_gen_default_set_func adpt_pon_gemport_gen_default_set;
-	adpt_pon_gemport_gen_default_get_func adpt_pon_gemport_gen_default_get;
-	adpt_pon_gemport_gen_entry_set_func adpt_pon_gemport_gen_entry_set;
-	adpt_pon_gemport_gen_entry_get_func adpt_pon_gemport_gen_entry_get;
-	adpt_pon_gemport_gen_en_set_func adpt_pon_gemport_gen_en_set;
-	adpt_pon_gemport_gen_en_get_func adpt_pon_gemport_gen_en_get;
-	adpt_pon_gemport_map_en_set_func adpt_pon_gemport_map_en_set;
-	adpt_pon_gemport_map_en_get_func adpt_pon_gemport_map_en_get;
-	adpt_pon_gemport_map_set_func adpt_pon_gemport_map_set;
-	adpt_pon_gemport_map_get_func adpt_pon_gemport_map_get;
-	adpt_pon_gemport_cfg_set_func adpt_pon_gemport_cfg_set;
-	adpt_pon_gemport_cfg_get_func adpt_pon_gemport_cfg_get;
-	adpt_pon_gemport_policer_set_func adpt_pon_gemport_policer_set;
-	adpt_pon_gemport_policer_get_func adpt_pon_gemport_policer_get;
-	/* PON PM */
-	adpt_pon_pm_counter_entry_set_func adpt_pon_pm_counter_entry_set;
-	adpt_pon_pm_counter_entry_get_func adpt_pon_pm_counter_entry_get;
-	adpt_pon_pm_counter_get_func adpt_pon_pm_counter_get;
-	adpt_pon_pm_counter_flush_func adpt_pon_pm_counter_flush;
-	/* IPMC */
-	adpt_ipmc_status_set_func adpt_ipmc_status_set;
-	adpt_ipmc_status_get_func adpt_ipmc_status_get;
-	adpt_ipmc_global_cfg_set_func adpt_ipmc_global_cfg_set;
-	adpt_ipmc_global_cfg_get_func adpt_ipmc_global_cfg_get;
-	adpt_ipmc_entry_add_func adpt_ipmc_entry_add;
-	adpt_ipmc_entry_del_func adpt_ipmc_entry_del;
-	adpt_ipmc_entry_get_func adpt_ipmc_entry_get;
-	adpt_ipmc_entry_getnext_func adpt_ipmc_entry_getnext;
-	adpt_ipmc_entry_flush_func adpt_ipmc_entry_flush;
-	adpt_ipmc_ucast_fwd_set_func adpt_ipmc_ucast_fwd_set;
-	adpt_ipmc_ucast_fwd_get_func adpt_ipmc_ucast_fwd_get;
 /* auto_insert_flag_1 */
 }adpt_api_t;
 

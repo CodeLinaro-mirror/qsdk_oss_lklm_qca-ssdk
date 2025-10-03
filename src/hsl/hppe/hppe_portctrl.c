@@ -1805,101 +1805,7 @@ hppe_ipr_byte_high_reg_set(
 				value->val);
 }
 
-#ifdef JHPPE
-sw_error_t
-hppe_ipr_pkt_num_tbl_reg_packets_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ipr_pkt_num_tbl_reg_u reg_val;
-	sw_error_t ret = SW_OK;
 
-	ret = hppe_ipr_pkt_num_tbl_reg_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ipr_pkt_num_tbl_reg;
-	return ret;
-}
-
-sw_error_t
-hppe_ipr_pkt_num_tbl_reg_packets_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ipr_pkt_num_tbl_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ipr_pkt_num_tbl_reg_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ipr_pkt_num_tbl_reg = value;
-	ret = hppe_ipr_pkt_num_tbl_reg_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_ipr_byte_low_reg_reg_bytes_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ipr_byte_low_reg_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ipr_byte_low_reg_reg_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ipr_byte_low_reg_reg;
-	return ret;
-}
-
-sw_error_t
-hppe_ipr_byte_low_reg_reg_bytes_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ipr_byte_low_reg_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ipr_byte_low_reg_reg_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ipr_byte_low_reg_reg = value;
-	ret = hppe_ipr_byte_low_reg_reg_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
-hppe_ipr_byte_high_reg_bytes_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value)
-{
-	union ipr_byte_high_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ipr_byte_high_reg_get(dev_id, index, &reg_val);
-	*value = reg_val.bf.ipr_byte_high_reg;
-	return ret;
-}
-
-sw_error_t
-hppe_ipr_byte_high_reg_bytes_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union ipr_byte_high_reg_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_ipr_byte_high_reg_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ipr_byte_high_reg = value;
-	ret = hppe_ipr_byte_high_reg_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-#else
 sw_error_t
 hppe_ipr_pkt_num_tbl_reg_packets_set(
 		a_uint32_t dev_id,
@@ -1950,7 +1856,7 @@ hppe_ipr_byte_high_reg_bytes_set(
 	ret = hppe_ipr_byte_high_reg_set(dev_id, index, &reg_val);
 	return ret;
 }
-#endif
+
 sw_error_t
 appe_link_oam_ctrl_get(
 		a_uint32_t dev_id,

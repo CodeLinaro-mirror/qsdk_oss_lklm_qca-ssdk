@@ -915,38 +915,6 @@ parse_qos_portscheduler(struct switch_val *val)
 	return rv;
 }
 
-#if defined (JHPPE)
-static int
-parse_qos_pcpcfg(struct switch_val *val)
-{
-	struct switch_ext *switch_ext_p, *ext_value_p;
-	int rv = 0;
-
-	switch_ext_p = val->value.ext_val;
-	while (switch_ext_p) {
-		ext_value_p = switch_ext_p;
-
-		if (!strcmp(ext_value_p->option_name, "name")) {
-			switch_ext_p = switch_ext_p->next;
-			continue;
-		} else if (!strcmp(ext_value_p->option_name, "port_id")) {
-			val_ptr[0] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "pcp_mode")) {
-			val_ptr[1] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "default_pcp_dei")) {
-			val_ptr[2] = (char*)ext_value_p->option_value;
-		}  else {
-			rv = -1;
-			break;
-		}
-
-		parameter_length++;
-		switch_ext_p = switch_ext_p->next;
-	}
-
-	return rv;
-}
-#endif
 #endif
 #endif
 
@@ -10139,10 +10107,6 @@ parse_qm_ucastqbase(struct switch_val *val)
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "destport")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-#if defined(JHPPE)
-		} else if (!strcmp(ext_value_p->option_name, "sram_queue_type")) {
-			val_ptr[6] = (char*)ext_value_p->option_value;
-#endif
 		} else if (!strcmp(ext_value_p->option_name, "queuebase")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "profile")) {
@@ -11839,11 +11803,6 @@ parse_qos(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "Portscheduler")) {
 		rv = parse_qos_portscheduler(val);
 	}
-#if defined (JHPPE)
-	else if (!strcmp(command_name, "Pcpcfg")) {
-		rv = parse_qos_pcpcfg(val);
-	}
-#endif
 	#endif
 
 	return rv;
@@ -12689,12 +12648,6 @@ static const char *enqueue_cfg[] = {
 };
 #endif
 
-#if defined(JHPPE)
-static const char *ucastq_ddrq_en[] = {
-	"queue_id",
-	"ddrq_en",
-};
-#endif
 
 static int
 parse_qm(const char *command_name, struct switch_val *val)
