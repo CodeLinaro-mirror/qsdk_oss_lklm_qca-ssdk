@@ -1266,6 +1266,8 @@ struct sub_cmd_des_t g_qm_des[] =
     {"ucastqddrqen", "set", SW_API_UCAST_QUEUE_DDRQ_EN_SET, NULL},
     {"passthroughsrcprofile", "set", SW_API_QM_PASSTHROUGH_SOURCE_PROFILE_SET, NULL},
     {"passthroughdirectenqueue", "set", SW_API_QM_PASSTHROUGH_DIRECT_ENQUEUE_SET, NULL},
+    {"passthroughcpucode", "set", SW_API_QM_PASSTHROUGH_CPUCODE_SET, NULL},
+    {"passthroughcpucodeen", "set", SW_API_QM_PASSTHROUGH_CPUCODE_EN_SET, NULL},
 #endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 

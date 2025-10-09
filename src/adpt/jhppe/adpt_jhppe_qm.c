@@ -673,6 +673,78 @@ adpt_jhppe_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id,
 	return rv;
 }
 
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_set(a_uint32_t dev_id, fal_passthrough_cpucode_t *cpucode)
+{
+	union enq_ctrl_ext_u enq_ctrl_ext = {0};
+	sw_error_t rv;
+
+	rv = jhppe_enq_ctrl_ext_get(dev_id, &enq_ctrl_ext);
+	SW_RTN_ON_ERROR(rv);
+
+	enq_ctrl_ext.bf.drop_cpu_code = cpucode->drop_cpucode;
+	enq_ctrl_ext.bf.cpu_code_0 = cpucode->cpucode[0];
+	enq_ctrl_ext.bf.cpu_code_1 = cpucode->cpucode[1];
+	rv = jhppe_enq_ctrl_ext_set(dev_id, &enq_ctrl_ext);
+	SW_RTN_ON_ERROR(rv);
+
+	return jhppe_enq_ctrl_qid_mismatch_enq_cpu_code_set(dev_id, cpucode->qid_mismatch_cpucode);
+}
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_get(a_uint32_t dev_id, fal_passthrough_cpucode_t *cpucode)
+{
+	union enq_ctrl_ext_u enq_ctrl_ext = {0};
+	sw_error_t rv;
+
+	rv = jhppe_enq_ctrl_ext_get(dev_id, &enq_ctrl_ext);
+	SW_RTN_ON_ERROR(rv);
+
+	cpucode->drop_cpucode = enq_ctrl_ext.bf.drop_cpu_code;
+	cpucode->cpucode[0] = enq_ctrl_ext.bf.cpu_code_0;
+	cpucode->cpucode[1] = enq_ctrl_ext.bf.cpu_code_1;
+
+	return jhppe_enq_ctrl_qid_mismatch_enq_cpu_code_get(dev_id, &cpucode->qid_mismatch_cpucode);
+}
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_en_set(a_uint32_t dev_id,
+			fal_passthrough_mode_t mode, a_bool_t enable)
+{
+	union enq_ctrl_ext_u enq_ctrl_ext = {0};
+	sw_error_t rv;
+
+	if (mode > FAL_PASSTHROUGH_MODE_FULL)
+		return SW_BAD_PARAM;
+
+	rv = jhppe_enq_ctrl_ext_get(dev_id, &enq_ctrl_ext);
+	SW_RTN_ON_ERROR(rv);
+
+	if (enable)
+		enq_ctrl_ext.bf.cpu_code_en |= BIT(mode);
+	else
+		enq_ctrl_ext.bf.cpu_code_en &= ~BIT(mode);
+
+	return jhppe_enq_ctrl_ext_set(dev_id, &enq_ctrl_ext);
+}
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_en_get(a_uint32_t dev_id,
+			fal_passthrough_mode_t mode, a_bool_t *enable)
+{
+	union enq_ctrl_ext_u enq_ctrl_ext = {0};
+	sw_error_t rv;
+
+	if (mode > FAL_PASSTHROUGH_MODE_FULL)
+		return SW_BAD_PARAM;
+
+	rv = jhppe_enq_ctrl_ext_get(dev_id, &enq_ctrl_ext);
+	SW_RTN_ON_ERROR(rv);
+
+	*enable = !!(enq_ctrl_ext.bf.cpu_code_en & BIT(mode));
+
+	return SW_OK;
+}
 /**
  * @}
  */

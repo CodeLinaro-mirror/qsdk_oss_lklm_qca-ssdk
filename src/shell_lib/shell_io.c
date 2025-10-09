@@ -859,6 +859,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_MONITOR_CTRL, (param_check_t)cmd_data_check_monitor_ctrl, NULL),
     SW_TYPE_DEF(SW_MONITOR_STATS, NULL, NULL),
     SW_TYPE_DEF(SW_PASSTHROUGH_SRC_PROFILE, (param_check_t)cmd_data_check_passthrough_src_profile, NULL),
+    SW_TYPE_DEF(SW_PASSTHROUGH_CPUCODE, (param_check_t)cmd_data_check_passthrough_cpucode, NULL),
 #endif
 #endif
 #ifdef IN_BM
@@ -9929,6 +9930,35 @@ cmd_data_check_passthrough_src_profile(char *cmd_str, void * val, a_uint32_t siz
 			cmd_data_check_uint32, (cmd, &(profile.src_profile), sizeof(a_uint32_t)));
 
 	*(fal_passthrough_src_profile_t *)val = profile;
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_passthrough_cpucode(char *cmd_str, void * val, a_uint32_t size)
+{
+	fal_passthrough_cpucode_t cpucode;
+	char *cmd;
+
+	aos_mem_zero(&cpucode, sizeof(fal_passthrough_cpucode_t));
+
+	cmd_data_check_element("qid_mismatch_cpucode", "251",
+			"usage: cpu code value\n",
+			cmd_data_check_uint32, (cmd, &(cpucode.qid_mismatch_cpucode),
+				sizeof(a_uint32_t)));
+
+	cmd_data_check_element("drop_cpucode", "252",
+			"usage: cpu code value\n",
+			cmd_data_check_uint32, (cmd, &(cpucode.drop_cpucode), sizeof(a_uint32_t)));
+
+	cmd_data_check_element("cpucode_0", "250",
+			"usage: cpu code value\n",
+			cmd_data_check_uint32, (cmd, &(cpucode.cpucode[0]), sizeof(a_uint32_t)));
+
+	cmd_data_check_element("cpucode_1", "249",
+			"usage: cpu code value\n",
+			cmd_data_check_uint32, (cmd, &(cpucode.cpucode[1]), sizeof(a_uint32_t)));
+
+	*(fal_passthrough_cpucode_t *)val = cpucode;
 	return SW_OK;
 }
 #endif

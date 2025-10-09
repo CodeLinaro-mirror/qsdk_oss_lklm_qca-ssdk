@@ -830,6 +830,18 @@ typedef sw_error_t (*adpt_qm_passthrough_direct_enqueue_set_func)(a_uint32_t dev
 typedef sw_error_t (*adpt_qm_passthrough_direct_enqueue_get_func)(a_uint32_t dev_id,
 		fal_passthrough_mode_t mode, a_bool_t *enable);
 
+typedef sw_error_t (*adpt_qm_passthrough_cpucode_set_func)(a_uint32_t dev_id,
+		fal_passthrough_cpucode_t *cpucode);
+
+typedef sw_error_t (*adpt_qm_passthrough_cpucode_get_func)(a_uint32_t dev_id,
+		fal_passthrough_cpucode_t *cpucode);
+
+typedef sw_error_t (*adpt_qm_passthrough_cpucode_en_set_func)(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t enable);
+
+typedef sw_error_t (*adpt_qm_passthrough_cpucode_en_get_func)(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t *enable);
+
 /*portvlan module begin*/
 typedef sw_error_t (*adpt_global_qinq_mode_set_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
 typedef sw_error_t (*adpt_global_qinq_mode_get_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
@@ -1990,6 +2002,10 @@ typedef struct
 	adpt_qm_passthrough_source_profile_get_func adpt_qm_passthrough_source_profile_get;
 	adpt_qm_passthrough_direct_enqueue_set_func adpt_qm_passthrough_direct_enqueue_set;
 	adpt_qm_passthrough_direct_enqueue_get_func adpt_qm_passthrough_direct_enqueue_get;
+	adpt_qm_passthrough_cpucode_set_func adpt_qm_passthrough_cpucode_set;
+	adpt_qm_passthrough_cpucode_get_func adpt_qm_passthrough_cpucode_get;
+	adpt_qm_passthrough_cpucode_en_set_func adpt_qm_passthrough_cpucode_en_set;
+	adpt_qm_passthrough_cpucode_en_get_func adpt_qm_passthrough_cpucode_en_get;
 	/*portvlan module begin*/
 	adpt_global_qinq_mode_set_func adpt_global_qinq_mode_set;
 	adpt_global_qinq_mode_get_func adpt_global_qinq_mode_get;
