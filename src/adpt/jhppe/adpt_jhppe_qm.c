@@ -525,15 +525,35 @@ adpt_jhppe_qm_enqueue_servcode_config_get(a_uint32_t dev_id, fal_enqueue_cfg_t *
 }
 
 sw_error_t
-adpt_jhppe_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable)
+adpt_jhppe_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id,
+		fal_ucast_queue_ddrq_en_t *ddrqen)
 {
-	return jhppe_ucast_queue_ctrl_tbl_ddrq_en_set(dev_id, queue_id, enable);
+	union ucast_queue_ctrl_tbl_u reg_val;
+	sw_error_t rv;
+
+	rv = jhppe_ucast_queue_ctrl_tbl_get(dev_id, queue_id, &reg_val);
+	SW_RTN_ON_ERROR(rv);
+
+	reg_val.bf.ddrq_en = ddrqen->ddrq_en;
+	reg_val.bf.qid_mismatch_check_en = ddrqen->qid_mismatch_check_en;
+
+	return jhppe_ucast_queue_ctrl_tbl_set(dev_id, queue_id, &reg_val);;
 }
 
 sw_error_t
-adpt_jhppe_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable)
+adpt_jhppe_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id,
+		fal_ucast_queue_ddrq_en_t *ddrqen)
 {
-	return jhppe_ucast_queue_ctrl_tbl_ddrq_en_get(dev_id, queue_id, enable);
+	union ucast_queue_ctrl_tbl_u reg_val = {0};
+	sw_error_t rv;
+
+	rv = jhppe_ucast_queue_ctrl_tbl_get(dev_id, queue_id, &reg_val);
+	SW_RTN_ON_ERROR(rv);
+
+	ddrqen->ddrq_en = reg_val.bf.ddrq_en;
+	ddrqen->qid_mismatch_check_en = reg_val.bf.qid_mismatch_check_en;
+
+	return SW_OK;
 }
 
 sw_error_t

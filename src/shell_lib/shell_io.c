@@ -860,6 +860,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_MONITOR_STATS, NULL, NULL),
     SW_TYPE_DEF(SW_PASSTHROUGH_SRC_PROFILE, (param_check_t)cmd_data_check_passthrough_src_profile, NULL),
     SW_TYPE_DEF(SW_PASSTHROUGH_CPUCODE, (param_check_t)cmd_data_check_passthrough_cpucode, NULL),
+    SW_TYPE_DEF(SW_DDRQ_EN, (param_check_t)cmd_data_check_ddrq_en, NULL),
 #endif
 #endif
 #ifdef IN_BM
@@ -9959,6 +9960,30 @@ cmd_data_check_passthrough_cpucode(char *cmd_str, void * val, a_uint32_t size)
 			cmd_data_check_uint32, (cmd, &(cpucode.cpucode[1]), sizeof(a_uint32_t)));
 
 	*(fal_passthrough_cpucode_t *)val = cpucode;
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ddrq_en(char *cmd_str, void * val, a_uint32_t size)
+{
+	fal_ucast_queue_ddrq_en_t ddrqen;
+	sw_error_t rv;
+
+	aos_mem_zero(&ddrqen, sizeof(fal_ucast_queue_ddrq_en_t));
+
+	rv = __cmd_data_check_boolean("ddrq_en", "no",
+			"usage: <yes/no/y/n>\n",
+			cmd_data_check_confirm, A_FALSE, &(ddrqen.ddrq_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	rv = __cmd_data_check_boolean("qid_mismatch_check_en", "no",
+			"usage: <yes/no/y/n>\n",
+			cmd_data_check_confirm, A_FALSE, &(ddrqen.qid_mismatch_check_en),
+			sizeof (a_bool_t));
+	SW_RTN_ON_ERROR(rv);
+
+	*(fal_ucast_queue_ddrq_en_t *)val = ddrqen;
 	return SW_OK;
 }
 #endif

@@ -13031,6 +13031,7 @@ static const char *enqueue_cfg[] = {
 static const char *ucastq_ddrq_en[] = {
 	"queue_id",
 	"ddrq_en",
+	"qid_mismatch_check_en",
 };
 
 static const char *passthrough_src_profile[] = {
