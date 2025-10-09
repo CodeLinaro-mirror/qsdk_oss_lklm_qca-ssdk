@@ -1241,6 +1241,26 @@ cmd_data_check_fdb_age_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size
 
     return SW_OK;
 }
+
+sw_error_t
+cmd_data_check_tag_format(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
+{
+	if (cmd_str == NULL)
+		return SW_BAD_PARAM;
+
+	if (!strcasecmp(cmd_str, "tag")) {
+		*arg_val = 1;
+	}
+	else if (!strcasecmp(cmd_str, "untag")) {
+		*arg_val = 0;
+	}
+	else {
+		return SW_BAD_VALUE;
+	}
+
+	return SW_OK;
+}
+
 #ifdef IN_PORTCONTROL
 /*port ctrl*/
 sw_error_t
@@ -12373,25 +12393,6 @@ cmd_data_check_tunnel_vlan_intf(char *cmd_str, fal_tunnel_vlan_intf_t *arg_val, 
 	return rv;
 }
 #endif
-
-sw_error_t
-cmd_data_check_tag_format(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
-{
-	if (cmd_str == NULL)
-		return SW_BAD_PARAM;
-
-	if (!strcasecmp(cmd_str, "tag")) {
-		*arg_val = 1;
-	}
-	else if (!strcasecmp(cmd_str, "untag")) {
-		*arg_val = 0;
-	}
-	else {
-		return SW_BAD_VALUE;
-	}
-
-	return SW_OK;
-}
 
 sw_error_t
 cmd_data_check_tunnel_mode(char *cmd_str, fal_tunnel_mode_t *arg_val, a_uint32_t size)
