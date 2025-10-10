@@ -427,6 +427,7 @@ endif
 
 ifneq (,$(findstring HTTPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/httppe
+  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/httppe
   MODULE_CFLAG += -DHTTPPE
 endif
 

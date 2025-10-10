@@ -113,6 +113,7 @@ OBJ-ISISC  += src/hsl/isisc/isisc_portvlan.o
 OBJ-HPPE   += src/hsl/hppe/hppe_portvlan.o src/adpt/hppe/adpt_hppe_portvlan.o
 OBJ-APPE   += src/hsl/appe/appe_portvlan.o src/adpt/appe/adpt_appe_portvlan.o
 OBJ-JHPPE  += src/hsl/jhppe/jhppe_portvlan.o src/adpt/jhppe/adpt_jhppe_portvlan.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_portvlan.o
 endif
 
 ###############################################################################
@@ -246,6 +247,7 @@ OBJ-COMMON  += src/fal/fal_qm.o
 OBJ-HPPE    += src/hsl/hppe/hppe_qm.o src/adpt/hppe/adpt_hppe_qm.o
 OBJ-APPE    += src/hsl/appe/appe_qm.o src/adpt/appe/adpt_appe_qm.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_qm.o src/adpt/jhppe/adpt_jhppe_qm.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_qm.o
 endif
 
 ###############################################################################
