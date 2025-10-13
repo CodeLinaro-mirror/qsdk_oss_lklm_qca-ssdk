@@ -18,6 +18,9 @@
 #if defined(JHPPE)
 #include "adpt_jhppe_acl.h"
 #endif
+#if defined(HTTPPE)
+#include "adpt_httppe_acl.h"
+#endif
 
 #define ADPT_ACL_HPPE_MAC_DA_RULE 0
 #define ADPT_ACL_HPPE_MAC_SA_RULE 1
@@ -33,7 +36,6 @@
 #define ADPT_ACL_HPPE_IPV6_SIP2_RULE 11
 #define ADPT_ACL_HPPE_IPMISC_RULE 12
 
-#define ADPT_ACL_ENTRY_NUM_PER_LIST 8 /* hw rule entries number per hw list */
 #define ADPT_ACL_RULE_NUM_PER_LIST 8 /* can change this MACRO to support more rules per ACL list */
 
 typedef struct{
@@ -754,23 +756,11 @@ static void _acl_slice_ext_bitmap_gen(a_uint32_t ext_n)
 }
 #endif
 
-enum {
-	HPPE_ACL_TYPE_PORTBITMAP = 0,
-	HPPE_ACL_TYPE_PORT,
-	HPPE_ACL_TYPE_SERVICE_CODE,
-	HPPE_ACL_TYPE_L3_IF,
-	APPE_ACL_TYPE_VP_GROUP,
-	APPE_ACL_TYPE_SERVICE_PORTBITMAP,
-#if defined(JHPPE)
-	JHPPE_ACL_TYPE_L3_DST_PORT,
-	JHPPE_ACL_TYPE_DST_PORT,
-#endif
-	HPPE_ACL_TYPE_INVALID,
-};
-
-static a_uint32_t _adpt_hppe_acl_srctype_to_hw(fal_acl_bind_obj_t obj_t)
+a_uint32_t _adpt_hppe_acl_srctype_to_hw(a_uint32_t dev_id, fal_acl_bind_obj_t obj_t)
 {
 	a_uint32_t src_type = HPPE_ACL_TYPE_INVALID;
+
+	ADPT_DEV_ID_CHECK(dev_id);
 
 	switch(obj_t)
 	{
@@ -792,12 +782,14 @@ static a_uint32_t _adpt_hppe_acl_srctype_to_hw(fal_acl_bind_obj_t obj_t)
 		case FAL_ACL_BIND_SERVICE_PORTBITMAP:
 			src_type = APPE_ACL_TYPE_SERVICE_PORTBITMAP;
 			break;
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 		case FAL_ACL_BIND_L3_DST_PORT:
-			src_type = JHPPE_ACL_TYPE_L3_DST_PORT;
+			if (adpt_ppe_type_get(dev_id) >= JHPPE_TYPE)
+				src_type = JHPPE_ACL_TYPE_L3_DST_PORT;
 			break;
 		case FAL_ACL_BIND_DST_PORT:
-			src_type = JHPPE_ACL_TYPE_DST_PORT;
+			if (adpt_ppe_type_get(dev_id) >= JHPPE_TYPE)
+				src_type = JHPPE_ACL_TYPE_DST_PORT;
 			break;
 #endif
 		default:
@@ -831,7 +823,7 @@ _adpt_hppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t hw_list_id, a_uint32_t hw
 			obj_idx = (1<<obj_idx);
 		}
 
-		hw_srctype = _adpt_hppe_acl_srctype_to_hw(obj_t);
+		hw_srctype = _adpt_hppe_acl_srctype_to_hw(dev_id, obj_t);
 
 		if(hw_srctype == HPPE_ACL_TYPE_INVALID)
 		{
@@ -909,8 +901,14 @@ _adpt_ppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_
 
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		return _adpt_hppe_acl_rule_bind(dev_id, hw_list_id,
-				hw_entries, direc, obj_t, obj_idx);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			return _adpt_httppe_acl_rule_bind(dev_id, hw_list_id,
+					hw_entries, direc, obj_t, obj_idx);
+		else
+#endif
+			return _adpt_hppe_acl_rule_bind(dev_id, hw_list_id,
+					hw_entries, direc, obj_t, obj_idx);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
 	{
@@ -2133,7 +2131,12 @@ _adpt_ppe_acl_rule_sw_query(a_uint32_t dev_id,
 	sw_error_t rv = SW_OK;
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		rv = _adpt_hppe_acl_rule_sw_query(dev_id, hw_list_id, hw_entries, rule);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			rv = _adpt_httppe_acl_rule_sw_query(dev_id, hw_list_id, hw_entries, rule);
+		else
+#endif
+			rv = _adpt_hppe_acl_rule_sw_query(dev_id, hw_list_id, hw_entries, rule);
 		SW_RTN_ON_ERROR(rv);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
@@ -2247,7 +2250,7 @@ _adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t hw_list_id, a_uint32_t 
 			obj_idx = (1<<obj_idx);
 		}
 
-		if(hw_reg.bf.src_type != _adpt_hppe_acl_srctype_to_hw(obj_t))
+		if(hw_reg.bf.src_type != _adpt_hppe_acl_srctype_to_hw(dev_id, obj_t))
 		{
 			SSDK_ERROR("ACL unbind fail obj_t %d\n", obj_t);
 			return SW_NOT_FOUND;
@@ -2295,8 +2298,14 @@ _adpt_ppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_S
 
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		return _adpt_hppe_acl_rule_unbind(dev_id, hw_list_id,
-				hw_entries, direc, obj_t, obj_idx);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			return _adpt_httppe_acl_rule_unbind(dev_id, hw_list_id,
+					hw_entries, direc, obj_t, obj_idx);
+		else
+#endif
+			return _adpt_hppe_acl_rule_unbind(dev_id, hw_list_id,
+					hw_entries, direc, obj_t, obj_idx);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
 	{
@@ -4297,8 +4306,14 @@ _adpt_ppe_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_pri,
 
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		rv = _adpt_hppe_acl_rule_hw_add(dev_id, list_pri, hw_list_id,
-			rule_id, rule_nr, rule, rule_map, allocated_entries);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			rv = _adpt_httppe_acl_rule_hw_add(dev_id, list_pri, hw_list_id,
+					rule_id, rule_nr, rule, rule_map, allocated_entries);
+		else
+#endif
+			rv = _adpt_hppe_acl_rule_hw_add(dev_id, list_pri, hw_list_id,
+				rule_id, rule_nr, rule, rule_map, allocated_entries);
 		SW_RTN_ON_ERROR(rv);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
@@ -5078,7 +5093,13 @@ _adpt_ppe_acl_rule_hw_delete(a_uint32_t dev_id,
 	sw_error_t rv = SW_OK;
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		rv = _adpt_hppe_acl_rule_hw_delete(dev_id, hw_list_id, hw_entries, rule_nr);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			rv = _adpt_httppe_acl_rule_hw_delete(dev_id, hw_list_id,
+					hw_entries, rule_nr);
+		else
+#endif
+			rv = _adpt_hppe_acl_rule_hw_delete(dev_id, hw_list_id, hw_entries, rule_nr);
 		SW_RTN_ON_ERROR(rv);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
@@ -5227,7 +5248,12 @@ _adpt_ppe_acl_rule_dump(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_
 		   rule_entry->ext1_val, rule_entry->ext2_val, rule_entry->ext4_val);
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		return _adpt_hppe_acl_rule_dump(dev_id, hw_list_id, hw_entries);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			return _adpt_httppe_acl_rule_dump(dev_id, hw_list_id, hw_entries);
+		else
+#endif
+			return _adpt_hppe_acl_rule_dump(dev_id, hw_list_id, hw_entries);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
 	{
@@ -5442,8 +5468,14 @@ adpt_hppe_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t list_id,
 
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
-		rv = _adpt_hppe_acl_rule_priority_set(dev_id, hw_list_id,
-				hw_entries, priority);
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			rv = _adpt_httppe_acl_rule_priority_set(dev_id, hw_list_id,
+					hw_entries, priority);
+		else
+#endif
+			rv = _adpt_hppe_acl_rule_priority_set(dev_id, hw_list_id,
+					hw_entries, priority);
 		SW_RTN_ON_ERROR(rv);
 	}
 	else if (hw_list_id < adpt_ppe_acl_total_entries_get(dev_id)/ADPT_ACL_ENTRY_NUM_PER_LIST)
@@ -5477,6 +5509,12 @@ adpt_hppe_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t list_id,
 
 	if (hw_list_id < adpt_ppe_acl_hw_list_num_get(dev_id))
 	{
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			rv = _adpt_httppe_acl_rule_priority_get(dev_id, hw_list_id,
+					hw_entries, priority);
+		else
+#endif
 		rv = _adpt_hppe_acl_rule_priority_get(dev_id, hw_list_id,
 				hw_entries, priority);
 		SW_RTN_ON_ERROR(rv);

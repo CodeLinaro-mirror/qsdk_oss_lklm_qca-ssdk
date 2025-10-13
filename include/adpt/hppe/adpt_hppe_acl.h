@@ -15,6 +15,8 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
+#define ADPT_ACL_ENTRY_NUM_PER_LIST 8 /* hw rule entries number per hw list */
+
 #define ADPT_ACL_HPPE_UDF0_RULE 13
 #define ADPT_ACL_HPPE_UDF1_RULE 14
 #define ADPT_ACL_HPPE_RULE_TYPE_NUM 19
@@ -35,6 +37,20 @@ enum{
 	HPPE_ACL_DEST_NEXTHOP,
 	HPPE_ACL_DEST_PORT_ID,
 	HPPE_ACL_DEST_PORT_BMP,
+};
+
+enum {
+	HPPE_ACL_TYPE_PORTBITMAP = 0,
+	HPPE_ACL_TYPE_PORT,
+	HPPE_ACL_TYPE_SERVICE_CODE,
+	HPPE_ACL_TYPE_L3_IF,
+	APPE_ACL_TYPE_VP_GROUP,
+	APPE_ACL_TYPE_SERVICE_PORTBITMAP,
+#if defined(JHPPE) || defined(HTTPPE)
+	JHPPE_ACL_TYPE_L3_DST_PORT,
+	JHPPE_ACL_TYPE_DST_PORT,
+#endif
+	HPPE_ACL_TYPE_INVALID,
 };
 
 typedef struct {
@@ -58,6 +74,8 @@ sw_error_t
 _adpt_hppe_acl_rule_hw_2_sw(a_uint32_t dev_id, a_uint32_t rule_type,
 	a_uint8_t range_en, a_uint8_t inverse_en,
 	void * hw_rule, void *hw_rule_mask, fal_acl_rule_t * rule);
+
+a_uint32_t _adpt_hppe_acl_srctype_to_hw(a_uint32_t dev_id, fal_acl_bind_obj_t obj_t);
 
 #ifdef __cplusplus
 }
