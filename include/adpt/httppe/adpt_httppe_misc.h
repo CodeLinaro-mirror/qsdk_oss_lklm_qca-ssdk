@@ -1,0 +1,22 @@
+/*
+* Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+* SPDX-License-Identifier: ISC
+*/
+
+#ifndef _ADPT_HTTPPE_MISC_
+#define _ADPT_HTTPPE_MISC_
+
+#ifdef __cplusplus
+extern "C" {
+#endif                          /* __cplusplus */
+
+void
+adpt_httppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count);
+
+void
+adpt_httppe_queue_tx_counter_tbl_set(a_uint32_t dev_id);
+
+ #ifdef __cplusplus
+}
+#endif                          /* __cplusplus */
+#endif

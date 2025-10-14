@@ -19,7 +19,9 @@
 #if defined(JHPPE)
 #include "adpt_jhppe_qm.h"
 #endif
-
+#if defined(HTTPPE)
+#include "adpt_httppe_qm.h"
+#endif
 #define SERVICE_CODE_QUEUE_OFFSET   2048
 #define CPU_CODE_QUEUE_OFFSET         1024
 #define VP_PORT_QUEUE_OFFSET            0
@@ -1087,7 +1089,7 @@ adpt_hppe_ac_group_buffer_set(
 	return hppe_ac_grp_cfg_tbl_set(dev_id, group_id, &ac_grp_cfg_tbl);;
 }
 
-static a_uint32_t
+a_uint32_t
 adpt_hppe_mcast_queue_dropcnt_start_addr_get(a_uint32_t dev_id, a_uint32_t queue_id)
 {
 	a_uint32_t start_addr = QUEUE_MANAGER_BASE_ADDR;
@@ -1361,18 +1363,49 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
-	p_adpt_api->adpt_ac_ctrl_set = adpt_hppe_ac_ctrl_set;
-	p_adpt_api->adpt_ac_prealloc_buffer_set = adpt_hppe_ac_prealloc_buffer_set;
-	p_adpt_api->adpt_ac_queue_group_set = adpt_hppe_ac_queue_group_set;
-	p_adpt_api->adpt_ac_static_threshold_set = adpt_hppe_ac_static_threshold_set;
-	p_adpt_api->adpt_ac_dynamic_threshold_set = adpt_hppe_ac_dynamic_threshold_set;
-	p_adpt_api->adpt_ac_group_buffer_set = adpt_hppe_ac_group_buffer_set;
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		p_adpt_api->adpt_queue_flush = adpt_httppe_queue_flush;
+		p_adpt_api->adpt_ac_dynamic_threshold_set = adpt_httppe_ac_dynamic_threshold_set;
+		p_adpt_api->adpt_ac_dynamic_threshold_get = adpt_httppe_ac_dynamic_threshold_get;
+		p_adpt_api->adpt_ac_static_threshold_set = adpt_httppe_ac_static_threshold_set;
+		p_adpt_api->adpt_ac_static_threshold_get = adpt_httppe_ac_static_threshold_get;
+		p_adpt_api->adpt_ac_ctrl_set = adpt_httppe_ac_ctrl_set;
+		p_adpt_api->adpt_ac_ctrl_get = adpt_httppe_ac_ctrl_get;
+		p_adpt_api->adpt_ac_queue_group_set = adpt_httppe_ac_queue_group_set;
+		p_adpt_api->adpt_ac_queue_group_get = adpt_httppe_ac_queue_group_get;
+		p_adpt_api->adpt_ac_group_buffer_set = adpt_httppe_ac_group_buffer_set;
+		p_adpt_api->adpt_ac_group_buffer_get = adpt_httppe_ac_group_buffer_get;
+		p_adpt_api->adpt_ac_prealloc_buffer_set = adpt_httppe_ac_prealloc_buffer_set;
+		p_adpt_api->adpt_ac_prealloc_buffer_get = adpt_httppe_ac_prealloc_buffer_get;
+		p_adpt_api->adpt_queue_counter_get = adpt_httppe_queue_counter_get;
+		p_adpt_api->adpt_qm_threshold_reset = adpt_httppe_qm_threshold_reset;
+		p_adpt_api->adpt_queue_counter_ctrl_get = adpt_httppe_queue_counter_ctrl_get;
+		p_adpt_api->adpt_queue_counter_ctrl_set = adpt_httppe_queue_counter_ctrl_set;
+#endif
+	} else {
+		p_adpt_api->adpt_queue_flush = adpt_hppe_queue_flush;
+		p_adpt_api->adpt_ac_dynamic_threshold_set = adpt_hppe_ac_dynamic_threshold_set;
+		p_adpt_api->adpt_ac_dynamic_threshold_get = adpt_hppe_ac_dynamic_threshold_get;
+		p_adpt_api->adpt_ac_static_threshold_set = adpt_hppe_ac_static_threshold_set;
+		p_adpt_api->adpt_ac_static_threshold_get = adpt_hppe_ac_static_threshold_get;
+		p_adpt_api->adpt_ac_ctrl_set = adpt_hppe_ac_ctrl_set;
+		p_adpt_api->adpt_ac_ctrl_get = adpt_hppe_ac_ctrl_get;
+		p_adpt_api->adpt_ac_queue_group_set = adpt_hppe_ac_queue_group_set;
+		p_adpt_api->adpt_ac_queue_group_get = adpt_hppe_ac_queue_group_get;
+		p_adpt_api->adpt_ac_group_buffer_set = adpt_hppe_ac_group_buffer_set;
+		p_adpt_api->adpt_ac_group_buffer_get = adpt_hppe_ac_group_buffer_get;
+		p_adpt_api->adpt_ac_prealloc_buffer_set = adpt_hppe_ac_prealloc_buffer_set;
+		p_adpt_api->adpt_ac_prealloc_buffer_get = adpt_hppe_ac_prealloc_buffer_get;
+		p_adpt_api->adpt_queue_counter_get = adpt_hppe_queue_counter_get;
+		p_adpt_api->adpt_qm_threshold_reset = adpt_ppe_qm_threshold_reset;
+		p_adpt_api->adpt_queue_counter_ctrl_get = adpt_hppe_queue_counter_ctrl_get;
+		p_adpt_api->adpt_queue_counter_ctrl_set = adpt_hppe_queue_counter_ctrl_set;
+	}
 	p_adpt_api->adpt_ucast_queue_base_profile_set =
 		adpt_hppe_ucast_queue_base_profile_set;
-	p_adpt_api->adpt_queue_flush = adpt_hppe_queue_flush;
 	p_adpt_api->adpt_qm_enqueue_ctrl_set = adpt_hppe_qm_enqueue_ctrl_set;
 	p_adpt_api->adpt_ucast_hash_map_set = adpt_hppe_ucast_hash_map_set;
-	p_adpt_api->adpt_ac_dynamic_threshold_get = adpt_hppe_ac_dynamic_threshold_get;
 	p_adpt_api->adpt_ucast_queue_base_profile_get =
 			adpt_hppe_ucast_queue_base_profile_get;
 #if !defined(IN_QM_MINI)
@@ -1385,22 +1418,13 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_ucast_default_hash_get = adpt_hppe_ucast_default_hash_get;
 	p_adpt_api->adpt_ucast_default_hash_set = adpt_hppe_ucast_default_hash_set;
 #endif
-	p_adpt_api->adpt_ac_queue_group_get = adpt_hppe_ac_queue_group_get;
-	p_adpt_api->adpt_ac_ctrl_get = adpt_hppe_ac_ctrl_get;
-	p_adpt_api->adpt_ac_prealloc_buffer_get = adpt_hppe_ac_prealloc_buffer_get;
 	p_adpt_api->adpt_ucast_hash_map_get = adpt_hppe_ucast_hash_map_get;
-	p_adpt_api->adpt_ac_group_buffer_get = adpt_hppe_ac_group_buffer_get;
 	p_adpt_api->adpt_ucast_priority_class_get = adpt_hppe_ucast_priority_class_get;
 	p_adpt_api->adpt_ucast_priority_class_set = adpt_hppe_ucast_priority_class_set;
-	p_adpt_api->adpt_ac_static_threshold_get = adpt_hppe_ac_static_threshold_get;
 	p_adpt_api->adpt_queue_counter_cleanup = adpt_hppe_queue_counter_cleanup;
-	p_adpt_api->adpt_queue_counter_get = adpt_hppe_queue_counter_get;
-	p_adpt_api->adpt_queue_counter_ctrl_get = adpt_hppe_queue_counter_ctrl_get;
-	p_adpt_api->adpt_queue_counter_ctrl_set = adpt_hppe_queue_counter_ctrl_set;
 	p_adpt_api->adpt_qm_enqueue_ctrl_get = adpt_hppe_qm_enqueue_ctrl_get;
 	p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
 	p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
-	p_adpt_api->adpt_qm_threshold_reset = adpt_ppe_qm_threshold_reset;
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
 #if defined(JHPPE)

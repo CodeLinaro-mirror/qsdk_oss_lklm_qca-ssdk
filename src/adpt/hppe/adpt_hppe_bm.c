@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+ *
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
  */
 
-/**
- * @defgroup
- * @{
- */
 #include "sw.h"
 #include "hsl_reg.h"
 #include "fal_bm.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_bm.h"
+#endif
 
 sw_error_t
 adpt_hppe_port_bufgroup_map_get(a_uint32_t dev_id, fal_port_t port,
@@ -357,20 +357,38 @@ sw_error_t adpt_hppe_bm_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
-	p_adpt_api->adpt_port_bufgroup_map_get = adpt_hppe_port_bufgroup_map_get;
-	p_adpt_api->adpt_bm_port_reserved_buffer_get = adpt_hppe_bm_port_reserved_buffer_get;
-	p_adpt_api->adpt_bm_bufgroup_buffer_get = adpt_hppe_bm_bufgroup_buffer_get;
-	p_adpt_api->adpt_bm_port_dynamic_thresh_get = adpt_hppe_bm_port_dynamic_thresh_get;
-	p_adpt_api->adpt_port_bm_ctrl_get = adpt_hppe_port_bm_ctrl_get;
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		p_adpt_api->adpt_port_bufgroup_map_get = adpt_httppe_port_bufgroup_map_get;
+		p_adpt_api->adpt_port_bufgroup_map_set = adpt_httppe_port_bufgroup_map_set;
+		p_adpt_api->adpt_bm_port_reserved_buffer_get = adpt_httppe_bm_port_reserved_buffer_get;
+		p_adpt_api->adpt_bm_port_reserved_buffer_set = adpt_httppe_bm_port_reserved_buffer_set;
+		p_adpt_api->adpt_bm_bufgroup_buffer_get = adpt_httppe_bm_bufgroup_buffer_get;
+		p_adpt_api->adpt_bm_bufgroup_buffer_set = adpt_httppe_bm_bufgroup_buffer_set;
+		p_adpt_api->adpt_bm_port_dynamic_thresh_get = adpt_httppe_bm_port_dynamic_thresh_get;
+		p_adpt_api->adpt_bm_port_dynamic_thresh_set = adpt_httppe_bm_port_dynamic_thresh_set;
+		p_adpt_api->adpt_bm_port_counter_get = adpt_httppe_bm_port_counter_get;
 #ifndef IN_BM_MINI
-	p_adpt_api->adpt_bm_port_static_thresh_get = adpt_hppe_bm_port_static_thresh_get;
-	p_adpt_api->adpt_bm_port_static_thresh_set = adpt_hppe_bm_port_static_thresh_set;
+		p_adpt_api->adpt_bm_port_static_thresh_get = adpt_httppe_bm_port_static_thresh_get;
+		p_adpt_api->adpt_bm_port_static_thresh_set = adpt_httppe_bm_port_static_thresh_set;
 #endif
-	p_adpt_api->adpt_bm_port_counter_get = adpt_hppe_bm_port_counter_get;
-	p_adpt_api->adpt_bm_bufgroup_buffer_set = adpt_hppe_bm_bufgroup_buffer_set;
-	p_adpt_api->adpt_port_bufgroup_map_set = adpt_hppe_port_bufgroup_map_set;
-	p_adpt_api->adpt_bm_port_reserved_buffer_set = adpt_hppe_bm_port_reserved_buffer_set;
-	p_adpt_api->adpt_bm_port_dynamic_thresh_set = adpt_hppe_bm_port_dynamic_thresh_set;
+#endif
+	} else {
+		p_adpt_api->adpt_port_bufgroup_map_get = adpt_hppe_port_bufgroup_map_get;
+		p_adpt_api->adpt_port_bufgroup_map_set = adpt_hppe_port_bufgroup_map_set;
+		p_adpt_api->adpt_bm_port_reserved_buffer_get = adpt_hppe_bm_port_reserved_buffer_get;
+		p_adpt_api->adpt_bm_port_reserved_buffer_set = adpt_hppe_bm_port_reserved_buffer_set;
+		p_adpt_api->adpt_bm_bufgroup_buffer_get = adpt_hppe_bm_bufgroup_buffer_get;
+		p_adpt_api->adpt_bm_bufgroup_buffer_set = adpt_hppe_bm_bufgroup_buffer_set;
+		p_adpt_api->adpt_bm_port_dynamic_thresh_get = adpt_hppe_bm_port_dynamic_thresh_get;
+		p_adpt_api->adpt_bm_port_dynamic_thresh_set = adpt_hppe_bm_port_dynamic_thresh_set;
+		p_adpt_api->adpt_bm_port_counter_get = adpt_hppe_bm_port_counter_get;
+#ifndef IN_BM_MINI
+		p_adpt_api->adpt_bm_port_static_thresh_get = adpt_hppe_bm_port_static_thresh_get;
+		p_adpt_api->adpt_bm_port_static_thresh_set = adpt_hppe_bm_port_static_thresh_set;
+#endif
+	}
+	p_adpt_api->adpt_port_bm_ctrl_get = adpt_hppe_port_bm_ctrl_get;
 	p_adpt_api->adpt_port_bm_ctrl_set = adpt_hppe_port_bm_ctrl_set;
 	p_adpt_api->adpt_port_tdm_ctrl_set = adpt_hppe_port_tdm_ctrl_set;
 	p_adpt_api->adpt_port_tdm_tick_cfg_set = adpt_hppe_port_tdm_tick_cfg_set;

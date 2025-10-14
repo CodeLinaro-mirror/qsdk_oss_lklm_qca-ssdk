@@ -87,6 +87,7 @@ ifeq (TRUE, $(IN_MISC))
 OBJ-COMMON += src/adpt/hppe/adpt_hppe_misc.o src/ref/ref_misc.o \
               src/fal/fal_misc.o
 OBJ-ISISC  += src/hsl/isisc/isisc_misc.o
+OBJ-HTTPPE  += src/adpt/httppe/adpt_httppe_misc.o
 endif
 
 ###############################################################################
@@ -247,7 +248,7 @@ OBJ-COMMON  += src/fal/fal_qm.o
 OBJ-HPPE    += src/hsl/hppe/hppe_qm.o src/adpt/hppe/adpt_hppe_qm.o
 OBJ-APPE    += src/hsl/appe/appe_qm.o src/adpt/appe/adpt_appe_qm.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_qm.o src/adpt/jhppe/adpt_jhppe_qm.o
-OBJ-HTTPPE  += src/hsl/httppe/httppe_qm.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_qm.o src/adpt/httppe/adpt_httppe_qm.o
 endif
 
 ###############################################################################
@@ -287,6 +288,7 @@ endif
 ifeq (TRUE, $(IN_BM))
 OBJ-COMMON  += src/fal/fal_bm.o
 OBJ-HPPE    += src/hsl/hppe/hppe_bm.o src/adpt/hppe/adpt_hppe_bm.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_bm.o src/adpt/httppe/adpt_httppe_bm.o
 endif
 
 
