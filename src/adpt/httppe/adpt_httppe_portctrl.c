@@ -104,3 +104,56 @@ adpt_httppe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 
 	return SW_OK;
 }
+
+#define HTT_XGMAC_USXGMII_ENABLE 1
+#define HTT_XGMAC_USXGMII_CLEAR 0
+
+#define HTT_XGMAC_SPEED_SELECT_10000M 0
+#define HTT_XGMAC_SPEED_SELECT_5000M 1
+#define HTT_XGMAC_SPEED_SELECT_2500M 2
+#define HTT_XGMAC_SPEED_SELECT_1000M 3
+
+sw_error_t
+_adpt_httppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id,
+			     a_uint32_t mode, fal_port_speed_t speed)
+{
+	union mac_tx_configuration_u mac_tx_configuration = {0};
+	a_uint32_t uss = 0, ss = 0;
+	sw_error_t rv;
+
+	rv = httppe_mac_tx_configuration_get(dev_id, mac_id, &mac_tx_configuration);
+	SW_RTN_ON_ERROR (rv);
+
+	switch (speed) {
+	case FAL_SPEED_10000:
+		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
+			uss = HTT_XGMAC_USXGMII_ENABLE;
+		else
+			uss = HTT_XGMAC_USXGMII_CLEAR;
+		ss = HTT_XGMAC_SPEED_SELECT_10000M;
+		break;
+	case FAL_SPEED_5000:
+		uss = HTT_XGMAC_USXGMII_ENABLE;
+		ss = HTT_XGMAC_SPEED_SELECT_5000M;
+		break;
+	case FAL_SPEED_2500:
+		if ((mode == PORT_USXGMII) || (mode == PORT_UQXGMII))
+			uss = HTT_XGMAC_USXGMII_ENABLE;
+		else
+			uss = HTT_XGMAC_USXGMII_CLEAR;
+		ss = HTT_XGMAC_SPEED_SELECT_2500M;
+		break;
+	case FAL_SPEED_1000:
+	case FAL_SPEED_100:
+	case FAL_SPEED_10:
+		uss = HTT_XGMAC_USXGMII_CLEAR;
+		ss = HTT_XGMAC_SPEED_SELECT_1000M;
+		break;
+	default:
+		return SW_BAD_PARAM;
+	}
+	mac_tx_configuration.bf.ss = ss;
+	mac_tx_configuration.bf.uss = uss;
+
+	return httppe_mac_tx_configuration_set(dev_id, mac_id, &mac_tx_configuration);
+}
