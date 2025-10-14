@@ -1354,6 +1354,40 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 	}
 }
 
+sw_error_t
+adpt_hppe_qm_dequeue_drop_set(
+		a_uint32_t dev_id,
+		a_uint32_t queue_id,
+		a_bool_t enable)
+{
+	union oq_deq_opr_tbl_u dequeue_ctrl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	memset(&dequeue_ctrl, 0, sizeof(dequeue_ctrl));
+
+	hppe_oq_deq_opr_tbl_get(dev_id, queue_id, &dequeue_ctrl);
+	dequeue_ctrl.bf.deq_drop = enable;
+
+	return hppe_oq_deq_opr_tbl_set(dev_id, queue_id, &dequeue_ctrl);
+}
+
+sw_error_t
+adpt_hppe_qm_dequeue_drop_get(
+		a_uint32_t dev_id,
+		a_uint32_t queue_id,
+		a_bool_t *enable)
+{
+	union oq_deq_opr_tbl_u dequeue_ctrl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	memset(&dequeue_ctrl, 0, sizeof(dequeue_ctrl));
+
+	hppe_oq_deq_opr_tbl_get(dev_id, queue_id, &dequeue_ctrl);
+	*enable = dequeue_ctrl.bf.deq_drop;
+
+	return SW_OK;
+}
+
 sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
@@ -1458,6 +1492,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_passthrough_cpucode_en_set = adpt_jhppe_qm_passthrough_cpucode_en_set;
 	p_adpt_api->adpt_qm_passthrough_cpucode_en_get = adpt_jhppe_qm_passthrough_cpucode_en_get;
 #endif
+	p_adpt_api->adpt_qm_dequeue_drop_set = adpt_hppe_qm_dequeue_drop_set;
+	p_adpt_api->adpt_qm_dequeue_drop_get = adpt_hppe_qm_dequeue_drop_get;
 
 	return SW_OK;
 }
