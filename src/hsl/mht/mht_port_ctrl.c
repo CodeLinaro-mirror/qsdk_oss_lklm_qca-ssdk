@@ -1458,7 +1458,10 @@ mht_port_link_update(struct qca_phy_priv *priv, a_uint32_t port_id,
 			SSDK_DEBUG("mht port %d link up update rxfc %d\n",
 			port_id, phy_status.rx_flowctrl);
 		}
-		mht_port_mac_eee_adjust(priv->device_id, port_id, phy_status.speed, priv);
+		if(phy_status.speed != priv->port_old_speed[port_id]) {
+			mht_port_mac_eee_timer_adjust(priv->device_id, port_id, phy_status.speed, priv);
+			priv->port_old_speed[port_id] = phy_status.speed;
+		}
 		if (port_id != SSDK_PHYSICAL_PORT5) {
 			/* enable eth phy clock */
 			rv = ssdk_mht_port_clk_en_set(priv->device_id, port_id,

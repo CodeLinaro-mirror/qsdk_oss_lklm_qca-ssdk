@@ -1069,7 +1069,7 @@ _isisc_port_mac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
     a_uint32_t reg_addr = 0, reg_val = 0;
     fal_port_eee_cfg_t port_eee_cfg_temp = {0};
 
-    HSL_REG_ENTRY_GET(rv, dev_id, MASK_CTL, 0, (a_uint8_t *) (&reg_val),
+    HSL_REG_ENTRY_GET(rv, dev_id, EEE_CTL, 0, (a_uint8_t *) (&reg_val),
          sizeof(a_uint32_t));
     /*enable to change eee timer*/
     reg_val |= BIT(EEE_CTL_CPU_CHANGE_EN_BOFFSET);
@@ -1167,21 +1167,28 @@ _isisc_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
     sw_error_t rv = SW_OK;
-    struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
     hsl_port_phy_eee_set(dev_id, port_id, port_eee_cfg);
 
-    SW_RTN_ON_NULL(priv);
     rv = _isisc_port_mac_eee_status_set(dev_id, port_id, port_eee_cfg);
     SW_RTN_ON_ERROR(rv);
-    /* If lpi_wakeup_timer is non-zero, wakeup_timer_force will be enabled, */
-    /* indicating that the wakeup timer is set via a shell command. */
-    /* If lpi_wakeup_timer is zero, wakeup_timer_force will be disabled, */
-    /* and the wakeup timer will be automatically adjusted based on the link speed. */
-    if(port_eee_cfg->lpi_wakeup_timer)
-        priv->lpi_wakeup_timer_force[port_id] = A_TRUE;
-    else
-        priv->lpi_wakeup_timer_force[port_id] = A_FALSE;
+#if defined(MHT)
+    if (hsl_get_current_chip_type(dev_id) == CHIP_MHT) {
+        struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+        SW_RTN_ON_NULL(priv);
+        /* If lpi_wakeup_timer is non-zero, wakeup_timer_force will be enabled, */
+        /* indicating that the wakeup timer is set via a shell command. */
+        /* If lpi_wakeup_timer is zero, wakeup_timer_force will be disabled, */
+        /* and the wakeup timer will be automatically adjusted based on the link speed. */
+        if(port_eee_cfg->lpi_wakeup_timer)
+             priv->lpi_wakeup_timer_force[port_id] = A_TRUE;
+        else
+             priv->lpi_wakeup_timer_force[port_id] = A_FALSE;;
+        mht_port_mac_eee_timer_adjust(priv->device_id, port_id,
+                priv->port_old_speed[port_id], priv);
+    }
+#endif
     rv = _isisc_port_mac_eee_timer_set(dev_id, port_id, port_eee_cfg);
 
     return rv;
@@ -2009,7 +2016,7 @@ isisc_port_mac_loopback_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * en
 #endif
 
 #if defined(MHT)
-sw_error_t mht_port_mac_eee_adjust(a_uint32_t dev_id, fal_port_t port_id,
+sw_error_t mht_port_mac_eee_timer_adjust(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t speed, struct qca_phy_priv *priv)
 {
     fal_port_eee_cfg_t port_eee_cfg = {0};
@@ -2017,27 +2024,25 @@ sw_error_t mht_port_mac_eee_adjust(a_uint32_t dev_id, fal_port_t port_id,
 
     rv = _isisc_port_interface_eee_cfg_get(dev_id, port_id, &port_eee_cfg);
     SW_RTN_ON_ERROR(rv);
+    if (port_eee_cfg.lpi_tx_enable == A_FALSE ||
+        priv->lpi_wakeup_timer_force[port_id] == A_TRUE)
+        return SW_OK;
+
    /* if lpi_wakeup_timer_force is 0, then wakeup timer is set here,*/
    /* else the wakeup timer is set by shell commands */
-   if (priv->lpi_wakeup_timer_force[port_id] == 0) {
-        switch (speed) {
-            case FAL_SPEED_2500:
-                if (port_eee_cfg.eee_status & EEE_2500BASE_T)
-                    port_eee_cfg.lpi_wakeup_timer =
-                        PORT_LPI_WAKEUP_TIMER_2500M;
-                break;
-            case FAL_SPEED_1000:
-            case FAL_SPEED_100:
-                if(port_eee_cfg.eee_status & EEE_100BASE_T)
-                    port_eee_cfg.lpi_wakeup_timer =
-                        PORT_LPI_WAKEUP_TIMER_1000M;
-                break;
-            default:
-                break;
-        }
-        rv = _isisc_port_mac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
-        SW_RTN_ON_ERROR(rv);
+    switch (speed) {
+        case FAL_SPEED_2500:
+            port_eee_cfg.lpi_wakeup_timer = PORT_LPI_WAKEUP_TIMER_2500M;
+            break;
+        case FAL_SPEED_1000:
+        case FAL_SPEED_100:
+            port_eee_cfg.lpi_wakeup_timer = PORT_LPI_WAKEUP_TIMER_1000M;
+            break;
+        default:
+            return SW_OK;
     }
+    rv = _isisc_port_mac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
+    SW_RTN_ON_ERROR(rv);
 
     return SW_OK;
 }

@@ -18,7 +18,7 @@ extern "C" {
 #define PORT_LPI_WAKEUP_TIMER_2500M	0x58
 #define PORT_LPI_WAKEUP_TIMER_1000M	0x24
 
-sw_error_t mht_port_mac_eee_adjust(a_uint32_t dev_id, fal_port_t port_id,
+sw_error_t mht_port_mac_eee_timer_adjust(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t speed, struct qca_phy_priv *priv);
 #endif
     sw_error_t isisc_port_ctrl_init(a_uint32_t dev_id);

@@ -378,6 +378,7 @@ struct qca_phy_priv {
 	/*sfp_medium_pin, use to select sfp medium or not in combo mode*/
 	a_uint32_t sfp_medium_pin[SW_MAX_NR_PORT];
 	a_bool_t lpi_wakeup_timer_force[SW_MAX_NR_PORT];
+	a_bool_t lpi_sleep_timer_force[SW_MAX_NR_PORT];
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
 /*qca808x_start*/
 };
