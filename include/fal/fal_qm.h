@@ -19,9 +19,10 @@ extern "C" {
 #include "sw.h"
 #include "fal/fal_type.h"
 
-#define FAL_QM_PROFILE_COMMON_ID	0
-#define FAL_QM_PROFILE_PO_ID		15
-#define FAL_QM_PROFILE_CPU_CODE_ID	14
+#define FAL_QM_PROFILE_COMMON_ID		0
+#define FAL_QM_PROFILE_PO_ID			15
+#define FAL_QM_PROFILE_CPU_CODE_ID		14
+#define FAL_QM_PROFILE_EIP_SERVCODE_ID		13
 #define FAL_QM_PROFILE_PO_RSS_HASH_MAX		256
 #define FAL_QM_PROFILE_PO_RSS_HASH_CLASS	0
 
