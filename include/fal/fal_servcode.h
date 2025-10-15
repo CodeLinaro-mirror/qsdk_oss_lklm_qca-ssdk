@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2016-2018, 2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -42,8 +32,9 @@ extern "C" {
 #define SERVICE_BYP_NUM 4
 #define FAL_SERVCODE_INVALID 0xffff
 
-/* field_update_bitmap */
+/* field_update_bitmap in EG_SERVICE_TBL */
 enum {
+	/* 32bit FIELD_UPDATE_ACTION field */
 	FLD_UPDATE_CAPWAP_EN = 0, /*only for IP197*/
 	FLD_UPDATE_DIRECTION, /*only for IP197*/
 	FLD_UPDATE_DEST_INFO,
@@ -72,9 +63,43 @@ enum {
 	FLD_UPDATE_DST_INFO_BYPASS,
 	FLD_UPDATE_MAC_HDR_BYPASS,
 	FLD_UPDATE_FAKE_MAC_CLEAR,
-	/* New added extention field update bitmap for IPQ96xx */
+
+	/* New add 24bit FIELD_UPDATE_ACTION_EXT field for IPQ96xx */
 	FLD_UPDATE_XLAN_XLT_DROP_BYPASS = 32,
 	FLD_UPDATE_CPU_EDIT_EN,
+	FLD_UP_SRC_WITH_DST,
+	EPE_PASSTHROUGH_SERV_CODE_SEL_BIT0,
+	FLD_UP_PPPOE_BYPASS,
+	FLD_UP_TTL_BYPASS,
+	FLD_UP_DSCP_BYPASS,
+	FLD_UP_SIP_BYPASS,
+	FLD_UP_DIP_BYPASS,
+	FLD_UP_L4_PORT_BYPASS,
+	EPE_VLAN_XLT_BYPASS,
+	EPE_VLAN_FMT_BYPASS,
+	EPE_LOOPBACK_VLAN_START,
+	EPE_LOOPBACK_VLAN_END_BYPASS,
+	EPE_PASSTHROUGH_SERV_CODE_SEL_BIT1,
+	FLD_UP_DST_INFO_WITH_GEM,
+	FLD_UP_DST_INFO_FORCE,
+	EPE_PRE_HEADER_VALID,
+	EPE_DST_INFO_WITH_PROFILE,
+	FLD_UP_DDRQ_FLOW_INDEX,
+	FLD_UP_SRC_INFO_GEM_BYPASS,
+	FLD_UP_MACSEC_OFFSET_SEL,
+	FLD_UP_SERVICE_CODE_DDRQ,
+	FLD_UP_DDRQ_DIRECT_ENQ,
+
+	/* New add 16bit FIELD_UPDATE_ACTION_EXT1 field for IPQ96xx */
+	FLD_UP_EG_CNT_VSI_BYPASS = 56,
+	FLD_UP_EG_CNT_VLAN_DEV_BYPASS,
+	FLD_UP_EG_CNT_VP_BYPASS,
+	FLD_UP_EG_CNT_PM_BYPASS,
+	FLD_UP_DDRQ_VLD_SC_SEL_BIT0,
+	FLD_UP_DDRQ_VLD_SC_SEL_BIT1,
+	FLD_UP_SPEC_SC_CONVERT,
+
+	FLD_UP_MAX = 72,
 };
 
 /* athtag field update bitmap, new add for IPQ53xx */
@@ -86,7 +111,7 @@ enum {
 	FLD_UPDATE_ATH_TAG_FIELD_DISABLE, /*update field disable*/
 };
 
-/* bypss_bitmap_0 */
+/* bypss_bitmap_0: bypass bitmap in IN_SERVICE_TBL */
 enum {
 	IN_VLAN_TAG_FMT_CHECK_BYP = 0,
 	IN_VLAN_MEMBER_CHECK_BYP,
@@ -109,15 +134,23 @@ enum {
 	DEFAULT_VLAN_BYP,
 	DEFAULT_PCP_BYP, /* new add for IPQ95xx */
 	VSI_ASSIGN_BYP, /* new add for IPQ95xx */
+	WRONG_PKT_FMT_TUNNEL_BYP,
+	L3_MY_MAC_DST_BYP, /* new add for IPQ96xx */
+	WRONG_PKT_FMT_L4_CSM_BYP, /* new add for IPQ96xx */
 	IN_VLAN_ASSIGN_FAIL_BYP = 24,
 	SOURCE_GUARD_BYP,
 	MRU_MTU_CHECK_BYP,
 	FLOW_SRC_CHECK_BYP,
 	FLOW_QOS_BYP,
+	/* New add for IPQ96xx */
+	L3_ROUTING_BYP,
+	PASSTHROUGH_SERV_CODE_SEL_BIT0,
+	PASSTHROUGH_SERV_CODE_SEL_BIT1 = 31,
 };
 
-/* bypss_bitmap_1 */
+/* bypss_bitmap_1: bypass bitmap in IN_L2_SERVICE_TBL */
 enum {
+	/* 24bit BYPASS_BITMAP field */
 	EG_VLAN_MEMBER_CHECK_BYP = 0,
 	EG_VLAN_XLT_BYP,
 	EG_VLAN_TAG_FMT_CTRL_BYP,
@@ -145,13 +178,37 @@ enum {
 	TUNL_CONTEXT_BYP,
 	/* new add for IPQ53xx */
 	FLOW_POLICER_BYP,
+
+	/* 8bit BYPASS_BITMAP_EXT field */
 	/* new add for IPQ54xx */
-	SMAC_MC_DROP_BYP,
+	SMAC_MC_DROP_BYP = 24,
 	L2_FLOODING_BYP,
 	TUNNEL_EXP_CNT_CTRL,
 	/* new add for IPQ96xx */
 	VLAN_PORT_ISOLATION_BYP,
 	L2_VP_SERVICE_CODE_ENQ_BYP,
+	DOT1P_VLAN_FROM_LOOPBACK,
+	DOT1P_MAPPER_BYP,
+	IPMC_FWD_BYP = 31,
+
+	/* 16bit BYPASS_BITMAP_NEW field */
+	DOT1P_EG_PORT_OVERRIDE = 32,
+	DOT1P_UNI_LOOKUP_REVERSE,
+	DOT1P_DST_LOOKUP_BYPASS,
+	L2_PASSTHROUGH_SERV_CODE_SEL_BIT0,
+	L2_PASSTHROUGH_SERV_CODE_SEL_BIT1,
+	SERVICE_HIGH_PRIORITY,
+	L2_PASSTHROUGH_SERV_CODE_SEL_BIT2,
+	L2_FLOW_QOS_BYP,
+
+	/* 8bit POST_BYPASS_BITMAP field */
+	QM_QID_MISMATCH_BYPASS = 48,
+	QM_DDRQ_ID_GEN_BYPASS,
+	QM_DDRQ_ID_GEN_FORCE,
+	SAWF_BYP,
+	QM_PASSTHROUGH_CPU_CODE_0_SEL,
+	QM_PASSTHROUGH_CPU_CODE_1_SEL,
+	DROP_CPUCODE_CNT_BYP,
 };
 
 /* bypss_bitmap_2 */
@@ -182,19 +239,21 @@ enum {
 	TL_WRONG_PKT_FMT_L3_IPV6_BYP = 15,
 	TL_WRONG_PKT_FMT_L4_BYP,
 	TL_WRONG_PKT_FMT_TUNNEL_BYP,
+	TL_WRONG_PKT_FMT_L4_CSM_BYP, /* new add for IPQ96xx */
+	TL_PASSTHROUGH_SERV_CODE_SEL_BIT0, /* new add for IPQ96xx */
 	TL_PRE_IPO_BYP = 20,
-	TL_PADDING_STRIP_CKSUM_BYP,
-	TL_INNER_IP_LEN_UPDATE_BYP,
+	TL_PADDING_STRIP_CKSUM_BYP, /* TODO: also TL_PASSTHROUGH_SERV_CODE_SEL_BIT1 for IPQ96xx */
+	TL_INNER_IP_LEN_UPDATE_BYP, /* TODO: also TL_PASSTHROUGH_SERV_CODE_SEL_BIT2 for IPQ96xx */
 	TL_INNER_IP_PADDING_EXP_BYP,
 };
 
 typedef struct {
 	a_bool_t dest_port_valid; /* dest_port_id valid or not */
 	fal_port_t dest_port_id; /* destination physical port id:0-7 */
-	a_uint32_t  bypass_bitmap[SERVICE_BYP_NUM]; /* refer to enum IN_VLAN_TAG_FMT_CHECK_BYP... */
+	a_uint64_t  bypass_bitmap[SERVICE_BYP_NUM]; /* refer to enum IN_VLAN_TAG_FMT_CHECK_BYP... */
 	a_uint32_t  direction; /* if dest is vp, fill it in dest_info or src_info, 0:dest, 1:src */
 
-	a_uint64_t  field_update_bitmap; /* refer to enum FLD_UPDATE_CAPWAP_EN... */
+	a_uint64_t field_update_bitmap[BITS_TO_U64(FLD_UP_MAX)]; /* refer to enum FLD_UPDATE_CAPWAP_EN... */
 	a_uint32_t  next_service_code; /* next service code */
 	a_uint32_t  hw_services; /* HW_SERVICES to IP-197 */
 	a_uint32_t  offset_sel; /* Select the offset value to IP-197:0: l3_offset, 1:l4_offset */
