@@ -41,6 +41,81 @@ union mc_enq_ctrl_u {
 	struct mc_enq_ctrl bf;
 };
 
+/*[register] ENQ_CTRL_EXT*/
+#define ENQ_CTRL_EXT
+#define ENQ_CTRL_EXT_ADDRESS 0x8c
+#define ENQ_CTRL_EXT_NUM     1
+#define ENQ_CTRL_EXT_INC     0x4
+#define ENQ_CTRL_EXT_TYPE    REG_TYPE_RW
+#define ENQ_CTRL_EXT_DEFAULT 0xf9fafc00
+	/*[field] CPU_CODE_EN*/
+	#define ENQ_CTRL_EXT_CPU_CODE_EN
+	#define ENQ_CTRL_EXT_CPU_CODE_EN_OFFSET  0
+	#define ENQ_CTRL_EXT_CPU_CODE_EN_LEN     4
+	#define ENQ_CTRL_EXT_CPU_CODE_EN_DEFAULT 0x0
+	/*[field] RSV*/
+	#define ENQ_CTRL_EXT_RSV
+	#define ENQ_CTRL_EXT_RSV_OFFSET  4
+	#define ENQ_CTRL_EXT_RSV_LEN     4
+	#define ENQ_CTRL_EXT_RSV_DEFAULT 0x0
+	/*[field] DROP_CPU_CODE*/
+	#define ENQ_CTRL_EXT_DROP_CPU_CODE
+	#define ENQ_CTRL_EXT_DROP_CPU_CODE_OFFSET  8
+	#define ENQ_CTRL_EXT_DROP_CPU_CODE_LEN     8
+	#define ENQ_CTRL_EXT_DROP_CPU_CODE_DEFAULT 0xfc
+	/*[field] CPU_CODE_0*/
+	#define ENQ_CTRL_EXT_CPU_CODE_0
+	#define ENQ_CTRL_EXT_CPU_CODE_0_OFFSET  16
+	#define ENQ_CTRL_EXT_CPU_CODE_0_LEN     8
+	#define ENQ_CTRL_EXT_CPU_CODE_0_DEFAULT 0xfa
+	/*[field] CPU_CODE_1*/
+	#define ENQ_CTRL_EXT_CPU_CODE_1
+	#define ENQ_CTRL_EXT_CPU_CODE_1_OFFSET  24
+	#define ENQ_CTRL_EXT_CPU_CODE_1_LEN     8
+	#define ENQ_CTRL_EXT_CPU_CODE_1_DEFAULT 0xf9
+
+struct enq_ctrl_ext {
+	a_uint32_t  cpu_code_en:4;
+	a_uint32_t  rsv:4;
+	a_uint32_t  drop_cpu_code:8;
+	a_uint32_t  cpu_code_0:8;
+	a_uint32_t  cpu_code_1:8;
+};
+
+union enq_ctrl_ext_u {
+	a_uint32_t val;
+	struct enq_ctrl_ext bf;
+};
+
+/*[table] OQ_DEQ_OPR_TBL*/
+#define OQ_DEQ_OPR_TBL
+#define OQ_DEQ_OPR_TBL_ADDRESS 0x64000
+#define OQ_DEQ_OPR_TBL_NUM     300
+#define OQ_DEQ_OPR_TBL_INC     0x10
+#define OQ_DEQ_OPR_TBL_TYPE    REG_TYPE_RW
+#define OQ_DEQ_OPR_TBL_DEFAULT 0x0
+	/*[field] DEQ_DROP*/
+	#define OQ_DEQ_OPR_TBL_DEQ_DROP
+	#define OQ_DEQ_OPR_TBL_DEQ_DROP_OFFSET  0
+	#define OQ_DEQ_OPR_TBL_DEQ_DROP_LEN     1
+	#define OQ_DEQ_OPR_TBL_DEQ_DROP_DEFAULT 0x0
+	/*[field] DEQ_HIGH_PRI*/
+	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI
+	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI_OFFSET  1
+	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI_LEN     1
+	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI_DEFAULT 0x0
+
+struct oq_deq_opr_tbl {
+	a_uint32_t  deq_drop:1;
+	a_uint32_t  deq_high_pri:1;
+	a_uint32_t  _reserved0:30;
+};
+
+union oq_deq_opr_tbl_u {
+	a_uint32_t val;
+	struct oq_deq_opr_tbl bf;
+};
+
 /*[register] ENQ_CTRL*/
 #define ENQ_CTRL
 #define ENQ_CTRL_ADDRESS 0x90
@@ -504,44 +579,54 @@ union mcast_priority_map8_u {
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_OFFSET  11
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_LEN     8
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_DEFAULT 0x0
+	/*[field] FIELD_0_INFO_HI reuse FIELD_0_MODE[1]*/
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_HI
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_HI_OFFSET  19
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_HI_LEN     8
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_0_INFO_HI_DEFAULT 0x0
 	/*[field] FIELD_1_MODE*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_MODE
-	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_MODE_OFFSET  19
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_MODE_OFFSET  27
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_MODE_LEN     1
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_MODE_DEFAULT 0x0
 	/*[field] FIELD_1_TYPE_MAP reuse FIELD_1_MODE[0]*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_MAP
-	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_MAP_OFFSET  20
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_MAP_OFFSET  28
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_MAP_LEN     4
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_MAP_DEFAULT 0x0
 	/*[field] FIELD_1_TYPE reuse FIELD_1_MODE[1]*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE
-	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_OFFSET  20
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_OFFSET  28
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_LEN     2
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_TYPE_DEFAULT 0x0
 	/*[field] FIELD_1_INFO reuse FIELD_1_MODE[1]*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO
-	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_OFFSET  22
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_OFFSET  30
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_LEN     8
 	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_DEFAULT 0x0
+	/*[field] FIELD_1_INFO_HI reuse FIELD_1_MODE[1]*/
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_HI
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_HI_OFFSET  38
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_HI_LEN     8
+	#define UCAST_QUEUE_MAP_RULE_TBL_FIELD_1_INFO_HI_DEFAULT 0x0
 	/*[field] INT_PRI_INCL*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_INCL
-	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_INCL_OFFSET  30
+	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_INCL_OFFSET  46
 	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_INCL_LEN     1
 	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_INCL_DEFAULT 0x0
 	/*[field] INT_PRI*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI
-	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_OFFSET  31
+	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_OFFSET  47
 	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_LEN     4
 	#define UCAST_QUEUE_MAP_RULE_TBL_INT_PRI_DEFAULT 0x0
 	/*[field] SLICE*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_SLICE
-	#define UCAST_QUEUE_MAP_RULE_TBL_SLICE_OFFSET  35
+	#define UCAST_QUEUE_MAP_RULE_TBL_SLICE_OFFSET  51
 	#define UCAST_QUEUE_MAP_RULE_TBL_SLICE_LEN     1
 	#define UCAST_QUEUE_MAP_RULE_TBL_SLICE_DEFAULT 0x0
 	/*[field] VALID*/
 	#define UCAST_QUEUE_MAP_RULE_TBL_VALID
-	#define UCAST_QUEUE_MAP_RULE_TBL_VALID_OFFSET  36
+	#define UCAST_QUEUE_MAP_RULE_TBL_VALID_OFFSET  52
 	#define UCAST_QUEUE_MAP_RULE_TBL_VALID_LEN     1
 	#define UCAST_QUEUE_MAP_RULE_TBL_VALID_DEFAULT 0x0
 
@@ -550,16 +635,15 @@ struct ucast_queue_map_rule_tbl_0 {
 	a_uint32_t  pass_through_map:4;
 	a_uint32_t  field_0_mode:1;
 	a_uint32_t  field_0_type_map:4;
-	a_uint32_t  _reserved0:6;
+	a_uint32_t  _reserved0:14;
 	a_uint32_t  field_1_mode:1;
 	a_uint32_t  field_1_type_map:4;
-	a_uint32_t  _reserved1:6;
+	a_uint32_t  _reserved1:14;
 	a_uint32_t  int_pri_incl:1;
-	a_uint32_t  int_pri_0:1;
-	a_uint32_t  int_pri_1:3;
+	a_uint32_t  int_pri:4;
 	a_uint32_t  slice:1;
 	a_uint32_t  valid:1;
-	a_uint32_t  _reserved2:27;
+	a_uint32_t  _reserved2:11;
 };
 
 struct ucast_queue_map_rule_tbl_1 {
@@ -567,16 +651,17 @@ struct ucast_queue_map_rule_tbl_1 {
 	a_uint32_t  pass_through_map:4;
 	a_uint32_t  field_0_mode:1;
 	a_uint32_t  field_0_type_map:4;
-	a_uint32_t  _reserved0:6;
+	a_uint32_t  _reserved0:14;
 	a_uint32_t  field_1_mode:1;
 	a_uint32_t  field_1_type:2;
-	a_uint32_t  field_1_info:8;
+	a_uint32_t  field_1_info_0:2;
+	a_uint32_t  field_1_info_1:6;
+	a_uint32_t  field_1_info_hi:8;
 	a_uint32_t  int_pri_incl:1;
-	a_uint32_t  int_pri_0:1;
-	a_uint32_t  int_pri_1:3;
+	a_uint32_t  int_pri:4;
 	a_uint32_t  slice:1;
 	a_uint32_t  valid:1;
-	a_uint32_t  _reserved1:27;
+	a_uint32_t  _reserved1:11;
 };
 
 struct ucast_queue_map_rule_tbl_2 {
@@ -585,15 +670,15 @@ struct ucast_queue_map_rule_tbl_2 {
 	a_uint32_t  field_0_mode:1;
 	a_uint32_t  field_0_type:2;
 	a_uint32_t  field_0_info:8;
+	a_uint32_t  field_0_info_hi:8;
 	a_uint32_t  field_1_mode:1;
 	a_uint32_t  field_1_type_map:4;
-	a_uint32_t  _reserved0:6;
+	a_uint32_t  _reserved0:14;
 	a_uint32_t  int_pri_incl:1;
-	a_uint32_t  int_pri_0:1;
-	a_uint32_t  int_pri_1:3;
+	a_uint32_t  int_pri:4;
 	a_uint32_t  slice:1;
 	a_uint32_t  valid:1;
-	a_uint32_t  _reserved1:27;
+	a_uint32_t  _reserved1:11;
 };
 
 struct ucast_queue_map_rule_tbl_3 {
@@ -602,15 +687,17 @@ struct ucast_queue_map_rule_tbl_3 {
 	a_uint32_t  field_0_mode:1;
 	a_uint32_t  field_0_type:2;
 	a_uint32_t  field_0_info:8;
+	a_uint32_t  field_0_info_hi:8;
 	a_uint32_t  field_1_mode:1;
 	a_uint32_t  field_1_type:2;
-	a_uint32_t  field_1_info:8;
+	a_uint32_t  field_1_info_0:2;
+	a_uint32_t  field_1_info_1:6;
+	a_uint32_t  field_1_info_hi:8;
 	a_uint32_t  int_pri_incl:1;
-	a_uint32_t  int_pri_0:1;
-	a_uint32_t  int_pri_1:3;
+	a_uint32_t  int_pri:4;
 	a_uint32_t  slice:1;
 	a_uint32_t  valid:1;
-	a_uint32_t  _reserved0:27;
+	a_uint32_t  _reserved0:11;
 };
 
 union ucast_queue_map_rule_tbl_u {

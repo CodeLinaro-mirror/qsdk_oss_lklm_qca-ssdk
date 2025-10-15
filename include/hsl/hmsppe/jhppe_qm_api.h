@@ -49,6 +49,105 @@ jhppe_mc_enq_ctrl_uc_port_id_set(
 
 
 sw_error_t
+jhppe_enq_ctrl_ext_get(
+		a_uint32_t dev_id,
+		union enq_ctrl_ext_u *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_set(
+		a_uint32_t dev_id,
+		union enq_ctrl_ext_u *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_cpu_code_0_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_cpu_code_0_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_cpu_code_1_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_cpu_code_1_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_cpu_code_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_cpu_code_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_drop_cpu_code_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_drop_cpu_code_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_rsv_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+jhppe_enq_ctrl_ext_rsv_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+#define OQ_DEQ_OPR_TBL_MAX_ENTRY	OQ_DEQ_OPR_TBL_NUM
+
+sw_error_t
+jhppe_oq_deq_opr_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union oq_deq_opr_tbl_u *value);
+
+sw_error_t
+jhppe_oq_deq_opr_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union oq_deq_opr_tbl_u *value);
+
+sw_error_t
+jhppe_oq_deq_opr_tbl_deq_drop_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_oq_deq_opr_tbl_deq_drop_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+jhppe_oq_deq_opr_tbl_deq_high_pri_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_oq_deq_opr_tbl_deq_high_pri_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+
+sw_error_t
 jhppe_enq_ctrl_get(
 		a_uint32_t dev_id,
 		union enq_ctrl_u *value);
@@ -605,6 +704,18 @@ jhppe_ucast_queue_map_rule_tbl_field_0_info_set(
 		a_uint32_t value);
 
 sw_error_t
+jhppe_ucast_queue_map_rule_tbl_field_0_info_hi_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_ucast_queue_map_rule_tbl_field_0_info_hi_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
 jhppe_ucast_queue_map_rule_tbl_field_0_mode_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -648,6 +759,18 @@ jhppe_ucast_queue_map_rule_tbl_field_1_info_get(
 
 sw_error_t
 jhppe_ucast_queue_map_rule_tbl_field_1_info_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+jhppe_ucast_queue_map_rule_tbl_field_1_info_hi_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_ucast_queue_map_rule_tbl_field_1_info_hi_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
