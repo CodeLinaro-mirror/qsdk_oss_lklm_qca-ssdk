@@ -22,6 +22,9 @@
 #include "sw.h"
 #include "hsl_reg.h"
 #include "adpt.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_mirror.h"
+#endif
 
 sw_error_t
 adpt_hppe_mirr_analysis_config_get(a_uint32_t dev_id, fal_mirr_direction_t direction, fal_mirr_analysis_config_t * config)
@@ -86,12 +89,23 @@ adpt_hppe_mirr_port_in_get(a_uint32_t dev_id, fal_port_t port_id,
 
 		*enable = port_mirror.bf.in_mirr_en;
 	}
-#if defined(JHPPE)
+
 	if (ADPT_IS_VPORT(port_id)) {
-		rv = appe_l2_vp_port_tbl_mirror_en_get(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
-		SW_RTN_ON_ERROR(rv);
-	}
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_mirr_vp_in_get(dev_id, port_id, enable);
+			SW_RTN_ON_ERROR(rv);
 #endif
+		} else {
+#if defined(JHPPE)
+			rv = appe_l2_vp_port_tbl_mirror_en_get(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+			SW_RTN_ON_ERROR(rv);
+#else
+			return SW_NOT_SUPPORTED;
+#endif
+		}
+	}
+
 	return SW_OK;
 }
 
@@ -112,12 +126,23 @@ adpt_hppe_mirr_port_eg_get(a_uint32_t dev_id, fal_port_t port_id,
 
 		*enable = port_mirror.bf.eg_mirr_en;
 	}
-#if defined(JHPPE)
+
 	if (ADPT_IS_VPORT(port_id)) {
-		rv = jhppe_l2_vp_port_post_tbl_mirror_en_get(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
-		SW_RTN_ON_ERROR(rv);
-	}
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_mirr_vp_eg_get(dev_id, port_id, enable);
+			SW_RTN_ON_ERROR(rv);
 #endif
+		} else {
+#if defined(JHPPE)
+			rv = jhppe_l2_vp_port_post_tbl_mirror_en_get(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+			SW_RTN_ON_ERROR(rv);
+#else
+			return SW_NOT_SUPPORTED;
+#endif
+		}
+	}
+
 	return SW_OK;
 }
 
@@ -171,12 +196,23 @@ adpt_hppe_mirr_port_in_set(a_uint32_t dev_id, fal_port_t port_id,
 		rv = hppe_port_mirror_set(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
 		SW_RTN_ON_ERROR(rv);
 	}
-#if defined(JHPPE)
+
 	if (ADPT_IS_VPORT(port_id)) {
-		rv = appe_l2_vp_port_tbl_mirror_en_set(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
-		SW_RTN_ON_ERROR(rv);
-	}
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_mirr_vp_in_set(dev_id, port_id, enable);
+			SW_RTN_ON_ERROR(rv);
 #endif
+		} else {
+#if defined(JHPPE)
+			rv = appe_l2_vp_port_tbl_mirror_en_set(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+			SW_RTN_ON_ERROR(rv);
+#else
+			return SW_NOT_SUPPORTED;
+#endif
+		}
+	}
+
 	return SW_OK;
 }
 sw_error_t
@@ -204,12 +240,23 @@ adpt_hppe_mirr_port_eg_set(a_uint32_t dev_id, fal_port_t port_id,
 		rv = hppe_port_mirror_set(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
 		SW_RTN_ON_ERROR(rv);
 	}
-#if defined(JHPPE)
+
 	if (ADPT_IS_VPORT(port_id)) {
-		rv = jhppe_l2_vp_port_post_tbl_mirror_en_set(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
-		SW_RTN_ON_ERROR(rv);
-	}
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_mirr_vp_eg_set(dev_id, port_id, enable);
+			SW_RTN_ON_ERROR(rv);
 #endif
+		} else {
+#if defined(JHPPE)
+			rv = jhppe_l2_vp_port_post_tbl_mirror_en_set(dev_id, FAL_PORT_ID_VALUE(port_id), enable);
+			SW_RTN_ON_ERROR(rv);
+#else
+			return SW_NOT_SUPPORTED;
+#endif
+		}
+	}
+
 	return SW_OK;
 }
 sw_error_t

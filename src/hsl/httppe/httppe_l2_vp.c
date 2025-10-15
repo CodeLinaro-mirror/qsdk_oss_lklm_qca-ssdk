@@ -6,34 +6,6 @@
 #include "hsl_htt_reg.h"
 
 sw_error_t
-httppe_port_mirror_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union port_mirror_u *value)
-{
-	if (index >= PORT_MIRROR_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-	return hppe_reg_get(
-				dev_id,
-				IPE_L2_BASE_ADDR + PORT_MIRROR_ADDRESS + \
-				index * PORT_MIRROR_INC,
-				&value->val);
-}
-
-sw_error_t
-httppe_port_mirror_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union port_mirror_u *value)
-{
-	return hppe_reg_set(
-				dev_id,
-				IPE_L2_BASE_ADDR + PORT_MIRROR_ADDRESS + \
-				index * PORT_MIRROR_INC,
-				value->val);
-}
-
-sw_error_t
 httppe_l2_vp_port_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

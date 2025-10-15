@@ -7,35 +7,6 @@
 #ifndef _HTTPPE_L2_VP_REG_H_
 #define _HTTPPE_L2_VP_REG_H_
 
-/*[register] PORT_MIRROR*/
-#define PORT_MIRROR
-#define PORT_MIRROR_ADDRESS 0x800
-#define PORT_MIRROR_NUM     9
-#define PORT_MIRROR_INC     0x4
-#define PORT_MIRROR_TYPE    REG_TYPE_RW
-#define PORT_MIRROR_DEFAULT 0x0
-	/*[field] IN_MIRR_EN*/
-	#define PORT_MIRROR_IN_MIRR_EN
-	#define PORT_MIRROR_IN_MIRR_EN_OFFSET  0
-	#define PORT_MIRROR_IN_MIRR_EN_LEN     1
-	#define PORT_MIRROR_IN_MIRR_EN_DEFAULT 0x0
-	/*[field] EG_MIRR_EN*/
-	#define PORT_MIRROR_EG_MIRR_EN
-	#define PORT_MIRROR_EG_MIRR_EN_OFFSET  1
-	#define PORT_MIRROR_EG_MIRR_EN_LEN     1
-	#define PORT_MIRROR_EG_MIRR_EN_DEFAULT 0x0
-
-struct port_mirror {
-	a_uint32_t  in_mirr_en:1;
-	a_uint32_t  eg_mirr_en:1;
-	a_uint32_t  _reserved0:30;
-};
-
-union port_mirror_u {
-	a_uint32_t val;
-	struct port_mirror bf;
-};
-
 /*[table] L2_VP_PORT_TBL*/
 #define L2_VP_PORT_TBL
 #define L2_VP_PORT_TBL_ADDRESS 0x23000

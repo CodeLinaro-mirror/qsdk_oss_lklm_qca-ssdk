@@ -15,6 +15,9 @@
 #if defined(JHPPE)
 #include "adpt_jhppe_portvlan.h"
 #endif
+#if defined(HTTPPE)
+#include "adpt_httppe_portvlan.h"
+#endif
 
 a_uint32_t
 _get_port_vlan_trans_adv_rule_by_index(a_uint32_t dev_id,
@@ -2979,56 +2982,30 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
-#ifndef IN_PORTVLAN_MINI
-		p_adpt_api->adpt_port_tag_propagation_set = adpt_hppe_port_tag_propagation_set;
-		p_adpt_api->adpt_port_tag_propagation_get = adpt_hppe_port_tag_propagation_get;
-#if !defined(JHPPE)
-		p_adpt_api->adpt_port_vlan_trans_iterate = adpt_hppe_port_vlan_trans_iterate;
-		p_adpt_api->adpt_port_vlan_trans_add = adpt_hppe_port_vlan_trans_add;
-		p_adpt_api->adpt_port_vlan_trans_get = adpt_hppe_port_vlan_trans_get;
-		p_adpt_api->adpt_port_vlan_trans_del = adpt_hppe_port_vlan_trans_del;
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		p_adpt_api->adpt_port_qinq_mode_set = adpt_httppe_port_qinq_mode_set;
+		p_adpt_api->adpt_port_qinq_mode_get = adpt_httppe_port_qinq_mode_get;
+		p_adpt_api->adpt_tpid_set = adpt_httppe_tpid_set;
+		p_adpt_api->adpt_tpid_get = adpt_httppe_tpid_get;
+		p_adpt_api->adpt_egress_tpid_set = adpt_httppe_egress_tpid_set;
+		p_adpt_api->adpt_egress_tpid_get = adpt_httppe_egress_tpid_get;
+		p_adpt_api->adpt_port_vlan_trans_adv_add = adpt_httppe_port_vlan_trans_adv_add;
+		p_adpt_api->adpt_port_vlan_trans_adv_del = adpt_httppe_port_vlan_trans_adv_del;
+		p_adpt_api->adpt_port_vlan_trans_adv_get = adpt_httppe_port_vlan_trans_adv_get;
+		p_adpt_api->adpt_port_vlan_trans_adv_set = adpt_httppe_port_vlan_trans_adv_set;
+		p_adpt_api->adpt_port_vlan_trans_adv_getfirst =
+			adpt_httppe_port_vlan_trans_adv_getfirst;
+		p_adpt_api->adpt_port_vlan_trans_adv_getnext =
+			adpt_httppe_port_vlan_trans_adv_getnext;
 #endif
-		p_adpt_api->adpt_port_vlan_counter_get = adpt_hppe_port_vlan_counter_get;
-		p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
-		p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;
-		p_adpt_api->adpt_port_vlan_vpgroup_get = adpt_appe_port_vlan_vpgroup_get;
-		p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
-		p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
-		p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
-		p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
-		p_adpt_api->adpt_port_egress_vlan_filter_set =
-			adpt_appe_port_egress_vlan_filter_set;
-		p_adpt_api->adpt_port_egress_vlan_filter_get =
-			adpt_appe_port_egress_vlan_filter_get;
-#if defined(JHPPE)
-		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
-			adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
-		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
-			adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
-		p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
-		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
-		p_adpt_api->adpt_port_isol_action_set = adpt_jhppe_port_isol_action_set;
-		p_adpt_api->adpt_port_isol_action_get = adpt_jhppe_port_isol_action_get;
-#endif
-#endif
-		p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;
-		p_adpt_api->adpt_global_qinq_mode_get = adpt_hppe_global_qinq_mode_get;
+	} else {
 		p_adpt_api->adpt_port_qinq_mode_set = adpt_hppe_port_qinq_mode_set;
 		p_adpt_api->adpt_port_qinq_mode_get = adpt_hppe_port_qinq_mode_get;
 		p_adpt_api->adpt_tpid_set = adpt_hppe_tpid_set;
 		p_adpt_api->adpt_tpid_get = adpt_hppe_tpid_get;
 		p_adpt_api->adpt_egress_tpid_set = adpt_hppe_egress_tpid_set;
 		p_adpt_api->adpt_egress_tpid_get = adpt_hppe_egress_tpid_get;
-		p_adpt_api->adpt_port_vlantag_egmode_set = adpt_hppe_port_vlantag_egmode_set;
-		p_adpt_api->adpt_port_vlantag_egmode_get = adpt_hppe_port_vlantag_egmode_get;
-		p_adpt_api->adpt_port_vlan_xlt_miss_cmd_set = adpt_hppe_port_vlan_xlt_miss_cmd_set;
-		p_adpt_api->adpt_port_vlan_xlt_miss_cmd_get = adpt_hppe_port_vlan_xlt_miss_cmd_get;
-		p_adpt_api->adpt_port_vsi_egmode_set = adpt_hppe_port_vsi_egmode_set;
-		p_adpt_api->adpt_port_vsi_egmode_get = adpt_hppe_port_vsi_egmode_get;
-		p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_set =
-			adpt_hppe_port_vlantag_vsi_egmode_enable_set;
-		p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_get =
-			adpt_hppe_port_vlantag_vsi_egmode_enable_get;
 		p_adpt_api->adpt_port_vlan_trans_adv_add = adpt_hppe_port_vlan_trans_adv_add;
 		p_adpt_api->adpt_port_vlan_trans_adv_del = adpt_hppe_port_vlan_trans_adv_del;
 		p_adpt_api->adpt_port_vlan_trans_adv_get = adpt_hppe_port_vlan_trans_adv_get;
@@ -3037,22 +3014,68 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_hppe_port_vlan_trans_adv_getfirst;
 		p_adpt_api->adpt_port_vlan_trans_adv_getnext =
 			adpt_hppe_port_vlan_trans_adv_getnext;
-		p_adpt_api->adpt_portvlan_member_update = adpt_hppe_portvlan_member_update;
-		p_adpt_api->adpt_portvlan_member_get = adpt_hppe_portvlan_member_get;
-		p_adpt_api->adpt_qinq_mode_set = adpt_hppe_qinq_mode_set;
-		p_adpt_api->adpt_qinq_mode_get = adpt_hppe_qinq_mode_get;
-		p_adpt_api->adpt_port_qinq_role_set = adpt_hppe_port_qinq_role_set;
-		p_adpt_api->adpt_port_qinq_role_get = adpt_hppe_port_qinq_role_get;
-		p_adpt_api->adpt_port_default_vlantag_set = adpt_hppe_port_default_vlantag_set;
-		p_adpt_api->adpt_port_default_vlantag_get = adpt_hppe_port_default_vlantag_get;
-		p_adpt_api->adpt_portvlan_member_add = adpt_hppe_portvlan_member_add;
-		p_adpt_api->adpt_portvlan_member_del = adpt_hppe_portvlan_member_del;
-		p_adpt_api->adpt_port_ingress_vlan_filter_set =
-			adpt_hppe_port_ingress_vlan_filter_set;
-		p_adpt_api->adpt_port_ingress_vlan_filter_get =
-			adpt_hppe_port_ingress_vlan_filter_get;
-		p_adpt_api->adpt_port_invlan_mode_set = adpt_hppe_port_invlan_mode_set;
-		p_adpt_api->adpt_port_invlan_mode_get = adpt_hppe_port_invlan_mode_get;
+	}
+
+#ifndef IN_PORTVLAN_MINI
+	p_adpt_api->adpt_port_tag_propagation_set = adpt_hppe_port_tag_propagation_set;
+	p_adpt_api->adpt_port_tag_propagation_get = adpt_hppe_port_tag_propagation_get;
+#if !defined(JHPPE)
+	p_adpt_api->adpt_port_vlan_trans_iterate = adpt_hppe_port_vlan_trans_iterate;
+	p_adpt_api->adpt_port_vlan_trans_add = adpt_hppe_port_vlan_trans_add;
+	p_adpt_api->adpt_port_vlan_trans_get = adpt_hppe_port_vlan_trans_get;
+	p_adpt_api->adpt_port_vlan_trans_del = adpt_hppe_port_vlan_trans_del;
+#endif
+	p_adpt_api->adpt_port_vlan_counter_get = adpt_hppe_port_vlan_counter_get;
+	p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
+	p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;
+	p_adpt_api->adpt_port_vlan_vpgroup_get = adpt_appe_port_vlan_vpgroup_get;
+	p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
+	p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
+	p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
+	p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
+	p_adpt_api->adpt_port_egress_vlan_filter_set =
+		adpt_appe_port_egress_vlan_filter_set;
+	p_adpt_api->adpt_port_egress_vlan_filter_get =
+		adpt_appe_port_egress_vlan_filter_get;
+#if defined(JHPPE)
+	p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
+		adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
+	p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
+		adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
+	p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
+	p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
+	p_adpt_api->adpt_port_isol_action_set = adpt_jhppe_port_isol_action_set;
+	p_adpt_api->adpt_port_isol_action_get = adpt_jhppe_port_isol_action_get;
+#endif
+#endif
+	p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;
+	p_adpt_api->adpt_global_qinq_mode_get = adpt_hppe_global_qinq_mode_get;
+	p_adpt_api->adpt_port_vlantag_egmode_set = adpt_hppe_port_vlantag_egmode_set;
+	p_adpt_api->adpt_port_vlantag_egmode_get = adpt_hppe_port_vlantag_egmode_get;
+	p_adpt_api->adpt_port_vlan_xlt_miss_cmd_set = adpt_hppe_port_vlan_xlt_miss_cmd_set;
+	p_adpt_api->adpt_port_vlan_xlt_miss_cmd_get = adpt_hppe_port_vlan_xlt_miss_cmd_get;
+	p_adpt_api->adpt_port_vsi_egmode_set = adpt_hppe_port_vsi_egmode_set;
+	p_adpt_api->adpt_port_vsi_egmode_get = adpt_hppe_port_vsi_egmode_get;
+	p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_set =
+		adpt_hppe_port_vlantag_vsi_egmode_enable_set;
+	p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_get =
+		adpt_hppe_port_vlantag_vsi_egmode_enable_get;
+	p_adpt_api->adpt_portvlan_member_update = adpt_hppe_portvlan_member_update;
+	p_adpt_api->adpt_portvlan_member_get = adpt_hppe_portvlan_member_get;
+	p_adpt_api->adpt_qinq_mode_set = adpt_hppe_qinq_mode_set;
+	p_adpt_api->adpt_qinq_mode_get = adpt_hppe_qinq_mode_get;
+	p_adpt_api->adpt_port_qinq_role_set = adpt_hppe_port_qinq_role_set;
+	p_adpt_api->adpt_port_qinq_role_get = adpt_hppe_port_qinq_role_get;
+	p_adpt_api->adpt_port_default_vlantag_set = adpt_hppe_port_default_vlantag_set;
+	p_adpt_api->adpt_port_default_vlantag_get = adpt_hppe_port_default_vlantag_get;
+	p_adpt_api->adpt_portvlan_member_add = adpt_hppe_portvlan_member_add;
+	p_adpt_api->adpt_portvlan_member_del = adpt_hppe_portvlan_member_del;
+	p_adpt_api->adpt_port_ingress_vlan_filter_set =
+		adpt_hppe_port_ingress_vlan_filter_set;
+	p_adpt_api->adpt_port_ingress_vlan_filter_get =
+		adpt_hppe_port_ingress_vlan_filter_get;
+	p_adpt_api->adpt_port_invlan_mode_set = adpt_hppe_port_invlan_mode_set;
+	p_adpt_api->adpt_port_invlan_mode_get = adpt_hppe_port_invlan_mode_get;
 
 	return SW_OK;
 }

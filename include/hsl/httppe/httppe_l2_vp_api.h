@@ -7,44 +7,6 @@
 #ifndef _HTTPPE_L2_VP_API_H_
 #define _HTTPPE_L2_VP_API_H_
 
-#define PORT_MIRROR_MAX_ENTRY	PORT_MIRROR_NUM
-
-sw_error_t
-httppe_port_mirror_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union port_mirror_u *value);
-
-sw_error_t
-httppe_port_mirror_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union port_mirror_u *value);
-
-sw_error_t
-httppe_port_mirror_eg_mirr_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-httppe_port_mirror_eg_mirr_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-httppe_port_mirror_in_mirr_en_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-httppe_port_mirror_in_mirr_en_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
 #define L2_VP_PORT_TBL_MAX_ENTRY	L2_VP_PORT_TBL_NUM
 
 sw_error_t

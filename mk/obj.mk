@@ -78,6 +78,7 @@ ifeq (TRUE, $(IN_MIRROR))
 OBJ-COMMON += src/fal/fal_mirror.o
 OBJ-ISISC  += src/hsl/isisc/isisc_mirror.o
 OBJ-HPPE   += src/hsl/hppe/hppe_mirror.o src/adpt/hppe/adpt_hppe_mirror.o
+OBJ-HTTPPE  += src/adpt/httppe/adpt_httppe_mirror.o
 endif
 
 ###############################################################################
@@ -114,7 +115,7 @@ OBJ-ISISC  += src/hsl/isisc/isisc_portvlan.o
 OBJ-HPPE   += src/hsl/hppe/hppe_portvlan.o src/adpt/hppe/adpt_hppe_portvlan.o
 OBJ-APPE   += src/hsl/appe/appe_portvlan.o src/adpt/appe/adpt_appe_portvlan.o
 OBJ-JHPPE  += src/hsl/jhppe/jhppe_portvlan.o src/adpt/jhppe/adpt_jhppe_portvlan.o
-OBJ-HTTPPE  += src/hsl/httppe/httppe_portvlan.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_portvlan.o src/adpt/httppe/adpt_httppe_portvlan.o
 endif
 
 ###############################################################################
