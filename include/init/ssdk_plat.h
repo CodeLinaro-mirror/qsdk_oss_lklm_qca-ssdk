@@ -309,6 +309,7 @@ struct ssdk_port_priv {
 	/*sfp_medium_pin, use to select sfp medium or not in combo mode*/
 	a_uint32_t sfp_medium_pin;
 	a_bool_t lpi_wakeup_timer_force;
+	a_bool_t lpi_sleep_timer_force;
 };
 
 struct ssdk_ppe_tunnel_priv {
