@@ -326,34 +326,40 @@ _get_fdb_table_entryindex_by_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
+	mb();
 	rv = _adpt_hppe_fdb_tbl_rd_op_reg_set(dev_id, cmd_id, OP_MODE_HASH, init_entry_index);
 	if (rv != SW_OK)
 	{
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
 	mb();
-
-#ifdef JHPPE
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
-	rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
-	if (rv != SW_OK)
-	{
-		aos_unlock_bh(&hppe_fdb_lock);
-		return SW_NOT_FOUND;
+#if defined(JHPPE) || defined (HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
+		mb();
+		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
+		if (rv != SW_OK)
+		{
+			aos_unlock_bh(&hppe_fdb_lock);
+			return SW_NOT_FOUND;
+		}
 	}
-
-#else
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
-	rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
-	if (rv != SW_OK)
-	{
-		aos_unlock_bh(&hppe_fdb_lock);
-		return SW_NOT_FOUND;
-	}
+	else
 #endif
+	{
+		rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
+		mb();
+		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
+		if (rv != SW_OK)
+		{
+			aos_unlock_bh(&hppe_fdb_lock);
+			return SW_NOT_FOUND;
+		}
+	}
+
 	aos_unlock_bh(&hppe_fdb_lock);
 
 	if (*entry_index == 0)
@@ -385,32 +391,39 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
+	mb();
 	rv = _adpt_hppe_fdb_tbl_rd_op_reg_set(dev_id, cmd_id, OP_MODE_INDEX, entry_index);
 	if (rv != SW_OK)
 	{
 		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-
 	mb();
-#ifdef JHPPE
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
-	rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
-	if (rv != SW_OK)
-	{
-		aos_unlock_bh(&hppe_fdb_lock);
-		return SW_NOT_FOUND;
+#if defined(JHPPE) || defined (HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
+		mb();
+		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
+		if (rv != SW_OK)
+		{
+			aos_unlock_bh(&hppe_fdb_lock);
+			return SW_NOT_FOUND;
+		}
 	}
-#else
-	rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
-	rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
-	if (rv != SW_OK)
-	{
-		aos_unlock_bh(&hppe_fdb_lock);
-		return SW_NOT_FOUND;
-	}
+	else
 #endif
+	{
+		rv = _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
+		mb();
+		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
+		if (rv != SW_OK)
+		{
+			aos_unlock_bh(&hppe_fdb_lock);
+			return SW_NOT_FOUND;
+		}
+	}
 	aos_unlock_bh(&hppe_fdb_lock);
 
 	return rv;
