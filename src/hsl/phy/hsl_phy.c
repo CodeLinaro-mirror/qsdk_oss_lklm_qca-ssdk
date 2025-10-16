@@ -1650,7 +1650,7 @@ hsl_phy_modify_debug(a_uint32_t dev_id, a_uint32_t phy_addr,
 
 sw_error_t
 hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
-	struct nss_phy_device *nss_phydev, struct nss_phy_ops  **nss_phy_ops)
+	struct nss_phy_device **nss_phydev, struct nss_phy_ops  **nss_phy_ops)
 {
 	struct phy_device *phydev = NULL;
 
@@ -1659,7 +1659,8 @@ hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
 	SW_RTN_ON_NULL(phydev);
 	SW_RTN_ON_NULL(phydev->drv);
 	SW_RTN_ON_NULL(nss_phydev);
-	nss_phydev->phydev = phydev;
+	*nss_phydev = dev_get_drvdata(&phydev->mdio.dev);
+	SW_RTN_ON_NULL(*nss_phydev);
 
 	*nss_phy_ops = (struct nss_phy_ops*)(phydev->drv->driver_data);
 	SW_RTN_ON_NULL(*nss_phy_ops);

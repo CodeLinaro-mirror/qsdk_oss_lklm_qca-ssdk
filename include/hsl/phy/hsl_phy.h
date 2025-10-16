@@ -377,16 +377,16 @@ struct hsl_phy_api {
 };
 
 sw_error_t hsl_port_nss_phy_ops_get(a_uint32_t dev_id, fal_port_t port_id,
-	struct nss_phy_device *nss_phydev, struct nss_phy_ops  **nss_phy_ops);
+	struct nss_phy_device **nss_phydev, struct nss_phy_ops  **nss_phy_ops);
 struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 
 #define HSL_PORT_PHY_EXT_API_RUN(func, dev_id, port_id, ...) \
 	{ \
 		struct nss_phy_ops *nss_phy_ops = NULL; \
-		struct nss_phy_device nss_phydev; \
+		struct nss_phy_device *nss_phydev = NULL; \
 		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
 		if (nss_phy_ops && nss_phy_ops->func) { \
-			rv = nss_phy_ops->func(&nss_phydev, ##__VA_ARGS__); \
+			rv = nss_phy_ops->func(nss_phydev, ##__VA_ARGS__); \
 		} \
 	}
 
@@ -410,10 +410,10 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 #define HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN(func, dev_id, port_id, ...) \
 	{ \
 		struct nss_phy_ops *nss_phy_ops = NULL; \
-		struct nss_phy_device nss_phydev; \
+		struct nss_phy_device *nss_phydev = NULL; \
 		hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops); \
 		if (nss_phy_ops && nss_phy_ops->func) { \
-			rv = nss_phy_ops->func(&nss_phydev, ##__VA_ARGS__); \
+			rv = nss_phy_ops->func(nss_phydev, ##__VA_ARGS__); \
 		} else { \
 			a_uint32_t phy_addr = 0; \
 			hsl_port_prop_get_phyid (dev_id, port_id, &phy_addr); \
@@ -429,11 +429,11 @@ struct hsl_phy_api *hsl_phy_api_get(a_uint32_t id);
 		if (hsl_port_phy_connected(dev_id, port_id)) {					\
 			struct nss_phy_ops *nss_phy_ops = NULL;					\
 			struct nss_phy_ptp_ops *ptp_ops = NULL;					\
-			struct nss_phy_device nss_phydev;					\
+			struct nss_phy_device *nss_phydev = NULL;				\
 			hsl_port_nss_phy_ops_get(dev_id, port_id, &nss_phydev, &nss_phy_ops);	\
 			ptp_ops = nss_phy_ops->ptp_ops;						\
 			if (ptp_ops && ptp_ops->func)						\
-				rv = ptp_ops->func(&nss_phydev, ##__VA_ARGS__);			\
+				rv = ptp_ops->func(nss_phydev, ##__VA_ARGS__);			\
 		}										\
 	}
 
