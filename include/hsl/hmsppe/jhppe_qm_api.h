@@ -108,44 +108,6 @@ jhppe_enq_ctrl_ext_rsv_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
-#define OQ_DEQ_OPR_TBL_MAX_ENTRY	OQ_DEQ_OPR_TBL_NUM
-
-sw_error_t
-jhppe_oq_deq_opr_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union oq_deq_opr_tbl_u *value);
-
-sw_error_t
-jhppe_oq_deq_opr_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union oq_deq_opr_tbl_u *value);
-
-sw_error_t
-jhppe_oq_deq_opr_tbl_deq_drop_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-jhppe_oq_deq_opr_tbl_deq_drop_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-jhppe_oq_deq_opr_tbl_deq_high_pri_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-jhppe_oq_deq_opr_tbl_deq_high_pri_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
 
 sw_error_t
 jhppe_enq_ctrl_get(
