@@ -127,6 +127,7 @@ OBJ-HPPE   += src/hsl/hppe/hppe_qos.o src/adpt/hppe/adpt_hppe_qos.o
 OBJ-CPPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o
 OBJ-APPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o #to be fixed
 OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_qos.o
+OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_qos.o src/hsl/httppe/httppe_qos.o
 endif
 
 ###############################################################################
