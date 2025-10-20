@@ -116,3 +116,93 @@ httppe_ipo_cnt_tbl_set(
 					value->val,
 					sizeof(union ipo_cnt_tbl_u)/sizeof(a_uint32_t));
 }
+
+sw_error_t
+httppe_l2_dscp_pbit_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l2_dscp_pbit_map_tbl_u *value)
+{
+	if (index >= L2_DSCP_PBIT_MAP_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + L2_DSCP_PBIT_MAP_TBL_ADDRESS + \
+				index * L2_DSCP_PBIT_MAP_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_l2_dscp_pbit_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l2_dscp_pbit_map_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + L2_DSCP_PBIT_MAP_TBL_ADDRESS + \
+				index * L2_DSCP_PBIT_MAP_TBL_INC,
+				value->val);
+}
+
+sw_error_t
+httppe_l2_dscp_pbit_map_tbl_pcp_0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union l2_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_l2_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_0;
+	return ret;
+}
+
+sw_error_t
+httppe_l2_dscp_pbit_map_tbl_pcp_0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union l2_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_l2_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_0 = value;
+	ret = httppe_l2_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_l2_dscp_pbit_map_tbl_pcp_1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union l2_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_l2_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_1;
+	return ret;
+}
+
+sw_error_t
+httppe_l2_dscp_pbit_map_tbl_pcp_1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union l2_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_l2_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_1 = value;
+	ret = httppe_l2_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
