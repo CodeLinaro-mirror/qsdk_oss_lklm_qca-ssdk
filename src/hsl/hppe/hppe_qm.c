@@ -698,6 +698,34 @@ hppe_oq_enq_opr_tbl_set(
 }
 
 sw_error_t
+hppe_oq_deq_opr_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union oq_deq_opr_tbl_u *value)
+{
+	if (index >= OQ_DEQ_OPR_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + OQ_DEQ_OPR_TBL_ADDRESS + \
+				index * OQ_DEQ_OPR_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_oq_deq_opr_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union oq_deq_opr_tbl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + OQ_DEQ_OPR_TBL_ADDRESS + \
+				index * OQ_DEQ_OPR_TBL_INC,
+				value->val);
+}
+
+sw_error_t
 hppe_uni_drop_cnt_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

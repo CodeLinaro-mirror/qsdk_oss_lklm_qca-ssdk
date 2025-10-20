@@ -87,35 +87,6 @@ union enq_ctrl_ext_u {
 	struct enq_ctrl_ext bf;
 };
 
-/*[table] OQ_DEQ_OPR_TBL*/
-#define OQ_DEQ_OPR_TBL
-#define OQ_DEQ_OPR_TBL_ADDRESS 0x64000
-#define OQ_DEQ_OPR_TBL_NUM     300
-#define OQ_DEQ_OPR_TBL_INC     0x10
-#define OQ_DEQ_OPR_TBL_TYPE    REG_TYPE_RW
-#define OQ_DEQ_OPR_TBL_DEFAULT 0x0
-	/*[field] DEQ_DROP*/
-	#define OQ_DEQ_OPR_TBL_DEQ_DROP
-	#define OQ_DEQ_OPR_TBL_DEQ_DROP_OFFSET  0
-	#define OQ_DEQ_OPR_TBL_DEQ_DROP_LEN     1
-	#define OQ_DEQ_OPR_TBL_DEQ_DROP_DEFAULT 0x0
-	/*[field] DEQ_HIGH_PRI*/
-	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI
-	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI_OFFSET  1
-	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI_LEN     1
-	#define OQ_DEQ_OPR_TBL_DEQ_HIGH_PRI_DEFAULT 0x0
-
-struct oq_deq_opr_tbl {
-	a_uint32_t  deq_drop:1;
-	a_uint32_t  deq_high_pri:1;
-	a_uint32_t  _reserved0:30;
-};
-
-union oq_deq_opr_tbl_u {
-	a_uint32_t val;
-	struct oq_deq_opr_tbl bf;
-};
-
 /*[register] ENQ_CTRL*/
 #define ENQ_CTRL
 #define ENQ_CTRL_ADDRESS 0x90
