@@ -416,23 +416,47 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	 */
 	queue_dst.service_code_en = A_TRUE;
 	queue_dst.service_code = 2;
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 8, 0);
+	qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT0);
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, qbase + 8, 0);
 
+	/* Service code configuration for loopback port. */
 	queue_dst.service_code = 3;
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 128, 8);
+	switch (chip_type) {
+	case JHPPE_TYPE:
+		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT8);
+		break;
+	case HMSPPE_TYPE:
+		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT7);
+		break;
+	default:
+		qbase = 128;
+		break;
+	}
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, qbase, 8);
 
 	queue_dst.service_code = 4;
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 128, 8);
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, qbase, 8);
 
 	queue_dst.service_code = 5;
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 0, 0);
+	qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT0);
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, qbase, 0);
 
 	queue_dst.service_code = 6;
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 8, 0);
+	qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT0);
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, qbase + 8, 0);
 
+	/* Service code configuration for EIP port. */
 	queue_dst.service_code = 7;
-
-	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, 252, 0);
+	switch (chip_type) {
+	case APPE_TYPE:
+	case JHPPE_TYPE:
+		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT7);
+		break;
+	default:
+		qbase = 252;
+		break;
+	}
+	fal_ucast_queue_base_profile_set(dev_id, &queue_dst, qbase, 0);
 
 	queue_dst.service_code_en = A_FALSE;
 	queue_dst.service_code = 0;
@@ -485,11 +509,15 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 			/*
 			 * For CPU port, we need to initialize the hash map offset to 0 for the
 			 * PO and cpu code profile.
+			 *
+			 * For EIP port, initialize the hash of service code 7 profile ID.
 			 */
 			for (hash = 0; hash < FAL_QM_PROFILE_PO_RSS_HASH_MAX; hash++) {
 				fal_ucast_hash_map_set(dev_id, FAL_QM_PROFILE_PO_ID,
 						hash, FAL_QM_PROFILE_PO_RSS_HASH_CLASS);
 				fal_ucast_hash_map_set(dev_id, FAL_QM_PROFILE_CPU_CODE_ID,
+						hash, FAL_QM_PROFILE_PO_RSS_HASH_CLASS);
+				fal_ucast_hash_map_set(dev_id, FAL_QM_PROFILE_EIP_SERVCODE_ID,
 						hash, FAL_QM_PROFILE_PO_RSS_HASH_CLASS);
 			}
 		}
