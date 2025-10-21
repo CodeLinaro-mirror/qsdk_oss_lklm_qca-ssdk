@@ -517,6 +517,29 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 	return rv;
 }
 
+sw_error_t adpt_deinit(a_uint32_t dev_id)
+{
+	sw_error_t rv = SW_OK;
+
+	switch (adpt_chip_type_get(dev_id)) {
+	case CHIP_HPPE:
+	case CHIP_APPE:
+	case CHIP_MRPPE:
+	case CHIP_JHPPE:
+	case CHIP_HMSPPE:
+	case CHIP_HTTPPE:
+#if defined(IN_ACL)
+		rv = adpt_hppe_acl_deinit(dev_id);
+		break;
+#endif
+	default:
+		/* do not need adpt API */
+		break;
+	}
+
+	return rv;
+}
+
 a_bool_t
 adpt_ppe_loopback_port_validate(a_uint32_t dev_id, fal_port_t port_id)
 {
