@@ -181,6 +181,14 @@ typedef struct {
 	a_uint32_t src_profile;
 } fal_passthrough_src_profile_t;
 
+typedef struct {
+	a_uint32_t qid_mismatch_cpucode; /* cpu code for ddrq qid mismatch */
+	a_uint32_t drop_cpucode; /* cpu code for drop */
+	a_uint32_t cpucode[2]; /* cpu code for trapped to cpu packet and multicast
+				* traffic, selected by service code
+				*/
+} fal_passthrough_cpucode_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -464,6 +472,21 @@ fal_qm_passthrough_direct_enqueue_set(a_uint32_t dev_id, fal_passthrough_mode_t 
 sw_error_t
 fal_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id, fal_passthrough_mode_t mode,
 		a_bool_t *enable);
+
+sw_error_t
+fal_qm_passthrough_cpucode_set(a_uint32_t dev_id, fal_passthrough_cpucode_t *cpucode);
+
+sw_error_t
+fal_qm_passthrough_cpucode_get(a_uint32_t dev_id, fal_passthrough_cpucode_t *cpucode);
+
+sw_error_t
+fal_qm_passthrough_cpucode_en_set(a_uint32_t dev_id, fal_passthrough_mode_t mode,
+		a_bool_t enable);
+
+sw_error_t
+fal_qm_passthrough_cpucode_en_get(a_uint32_t dev_id, fal_passthrough_mode_t mode,
+		a_bool_t *enable);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

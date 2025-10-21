@@ -106,6 +106,20 @@ adpt_jhppe_qm_passthrough_direct_enqueue_set(a_uint32_t dev_id,
 sw_error_t
 adpt_jhppe_qm_passthrough_direct_enqueue_get(a_uint32_t dev_id,
 		fal_passthrough_mode_t mode, a_bool_t *enable);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_set(a_uint32_t dev_id, fal_passthrough_cpucode_t *cpucode);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_get(a_uint32_t dev_id, fal_passthrough_cpucode_t *cpucode);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_en_set(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t enable);
+
+sw_error_t
+adpt_jhppe_qm_passthrough_cpucode_en_get(a_uint32_t dev_id,
+		fal_passthrough_mode_t mode, a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

@@ -13044,6 +13044,18 @@ static const char *passthrough_direct_enqueue[] = {
 	"passthrough_mode",
 	"direct_enqueue",
 };
+
+static const char *passthrough_cpucode[] = {
+	"qid_mismatch_cpucode",
+	"drop_cpucode",
+	"cpucode_0",
+	"cpucode_1",
+};
+
+static const char *passthrough_cpucode_en[] = {
+	"passthrough_mode",
+	"cpucode_en",
+};
 #endif
 
 static int
@@ -13106,6 +13118,12 @@ parse_qm(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "PassthroughDirectEnqueue")) {
 		rv = parse_uci_option(val, passthrough_direct_enqueue,
 				sizeof(passthrough_direct_enqueue)/sizeof(char *));
+	} else if (!strcmp(command_name, "PassthroughCpucode")) {
+		rv = parse_uci_option(val, passthrough_cpucode,
+				sizeof(passthrough_cpucode)/sizeof(char *));
+	} else if (!strcmp(command_name, "PassthroughCpucodeen")) {
+		rv = parse_uci_option(val, passthrough_cpucode_en,
+				sizeof(passthrough_cpucode_en)/sizeof(char *));
 #endif
 	}
 #if !defined(IN_QM_MINI)

@@ -421,6 +421,8 @@ sw_error_t
 cmd_data_check_monitor_ctrl(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_passthrough_src_profile(char *cmd_str, void * val, a_uint32_t size);
+sw_error_t
+cmd_data_check_passthrough_cpucode(char *cmd_str, void *val, a_uint32_t size);
 #endif
 sw_error_t
 cmd_data_check_queue_profile(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size);
