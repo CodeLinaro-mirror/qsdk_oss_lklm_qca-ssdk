@@ -256,10 +256,10 @@ endif
 #                             IN_VSI
 ###############################################################################
 ifeq (TRUE, $(IN_VSI))
-OBJ-COMMON += src/fal/fal_vsi.o src/ref/ref_vsi.o
+OBJ-COMMON  += src/fal/fal_vsi.o src/ref/ref_vsi.o
 OBJ-HPPE    += src/hsl/hppe/hppe_vsi.o src/adpt/hppe/adpt_hppe_vsi.o
 OBJ-APPE    += src/hsl/appe/appe_vsi.o src/adpt/appe/adpt_appe_vsi.o
-OBJ-HTTPPE  += src/hsl/httppe/httppe_vsi.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_vsi.o src/adpt/httppe/adpt_httppe_vsi.o
 endif
 
 ###############################################################################

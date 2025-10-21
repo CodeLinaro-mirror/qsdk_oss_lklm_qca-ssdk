@@ -11,6 +11,10 @@
 #include "hsl_reg.h"
 #include "adpt.h"
 #include "adpt_appe_vsi.h"
+#ifdef HTTPPE
+#include "adpt_httppe_vsi.h"
+#endif
+
 #define ADPT_VSI_MAX FAL_VSI_MAX
 #define ADPT_VSI_STRIP_VLAN_TAG 2
 
@@ -620,20 +624,31 @@ sw_error_t adpt_hppe_vsi_init(a_uint32_t dev_id)
 
 #ifndef IN_VSI_MINI
 	p_adpt_api->adpt_port_vsi_get = adpt_hppe_port_vsi_get;
-#endif
-	p_adpt_api->adpt_vsi_stamove_get = adpt_hppe_vsi_stamove_get;
-	p_adpt_api->adpt_vsi_newaddr_lrn_get = adpt_hppe_vsi_newaddr_lrn_get;
-#ifndef IN_VSI_MINI
 	p_adpt_api->adpt_vsi_counter_get = adpt_hppe_vsi_counter_get;
 	p_adpt_api->adpt_vsi_counter_cleanup = adpt_hppe_vsi_counter_cleanup;
 #endif
 	p_adpt_api->adpt_port_vlan_vsi_set = adpt_hppe_port_vlan_vsi_set;
 	p_adpt_api->adpt_port_vlan_vsi_get = adpt_hppe_port_vlan_vsi_get;
 	p_adpt_api->adpt_port_vsi_set = adpt_hppe_port_vsi_set;
-	p_adpt_api->adpt_vsi_stamove_set = adpt_hppe_vsi_stamove_set;
-	p_adpt_api->adpt_vsi_newaddr_lrn_set = adpt_hppe_vsi_newaddr_lrn_set;
-	p_adpt_api->adpt_vsi_member_set = adpt_hppe_vsi_member_set;
-	p_adpt_api->adpt_vsi_member_get = adpt_hppe_vsi_member_get;
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		p_adpt_api->adpt_vsi_stamove_get = adpt_httppe_vsi_stamove_get;
+		p_adpt_api->adpt_vsi_newaddr_lrn_get = adpt_httppe_vsi_newaddr_lrn_get;
+		p_adpt_api->adpt_vsi_stamove_set = adpt_httppe_vsi_stamove_set;
+		p_adpt_api->adpt_vsi_newaddr_lrn_set = adpt_httppe_vsi_newaddr_lrn_set;
+		p_adpt_api->adpt_vsi_member_set = adpt_httppe_vsi_member_set;
+		p_adpt_api->adpt_vsi_member_get = adpt_httppe_vsi_member_get;
+	}
+	else
+#endif
+	{
+		p_adpt_api->adpt_vsi_stamove_get = adpt_hppe_vsi_stamove_get;
+		p_adpt_api->adpt_vsi_newaddr_lrn_get = adpt_hppe_vsi_newaddr_lrn_get;
+		p_adpt_api->adpt_vsi_stamove_set = adpt_hppe_vsi_stamove_set;
+		p_adpt_api->adpt_vsi_newaddr_lrn_set = adpt_hppe_vsi_newaddr_lrn_set;
+		p_adpt_api->adpt_vsi_member_set = adpt_hppe_vsi_member_set;
+		p_adpt_api->adpt_vsi_member_get = adpt_hppe_vsi_member_get;
+	}
 	p_adpt_api->adpt_vsi_bridge_vsi_get = adpt_appe_vsi_bridge_vsi_get;
 	p_adpt_api->adpt_vsi_bridge_vsi_set = adpt_appe_vsi_bridge_vsi_set;
 	p_adpt_api->adpt_vsi_invalidvsi_ctrl_get = adpt_appe_vsi_invalidvsi_ctrl_get;
