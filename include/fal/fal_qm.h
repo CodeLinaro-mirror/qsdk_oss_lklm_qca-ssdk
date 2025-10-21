@@ -496,6 +496,11 @@ sw_error_t
 fal_qm_passthrough_cpucode_en_get(a_uint32_t dev_id, fal_passthrough_mode_t mode,
 		a_bool_t *enable);
 
+sw_error_t
+fal_qm_dequeue_drop_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable);
+
+sw_error_t
+fal_qm_dequeue_drop_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
