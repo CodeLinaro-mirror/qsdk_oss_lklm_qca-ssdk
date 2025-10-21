@@ -189,6 +189,13 @@ typedef struct {
 				*/
 } fal_passthrough_cpucode_t;
 
+typedef struct {
+	a_bool_t ddrq_en; /* enable ddrq */
+	a_bool_t qid_mismatch_check_en; /* enable qid mismatch check for ddrq
+					 * second and first pass
+					 */
+} fal_ucast_queue_ddrq_en_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -452,10 +459,12 @@ sw_error_t
 fal_qm_cpucode_enqueue_set(a_uint32_t dev_id, a_uint32_t cpu_code, a_bool_t enable);
 
 sw_error_t
-fal_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable);
+fal_ucast_queue_ddrq_en_set(a_uint32_t dev_id, a_uint32_t queue_id,
+		fal_ucast_queue_ddrq_en_t *ddrqen);
 
 sw_error_t
-fal_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
+fal_ucast_queue_ddrq_en_get(a_uint32_t dev_id, a_uint32_t queue_id,
+		fal_ucast_queue_ddrq_en_t *ddrqen);
 
 sw_error_t
 fal_qm_passthrough_source_profile_set(a_uint32_t dev_id, fal_passthrough_mode_t mode,

@@ -813,10 +813,10 @@ typedef sw_error_t (*adpt_qm_cpucode_enqueue_set_func)(a_uint32_t dev_id,
 		a_uint32_t cpu_code, a_bool_t enable);
 
 typedef sw_error_t (*adpt_ucast_queue_ddrq_en_set_func)(a_uint32_t dev_id,
-		a_uint32_t queue_id, a_bool_t enable);
+		a_uint32_t queue_id, fal_ucast_queue_ddrq_en_t *ddrqen);
 
 typedef sw_error_t (*adpt_ucast_queue_ddrq_en_get_func)(a_uint32_t dev_id,
-		a_uint32_t queue_id, a_bool_t *enable);
+		a_uint32_t queue_id, fal_ucast_queue_ddrq_en_t *ddrqen);
 
 typedef sw_error_t (*adpt_qm_passthrough_source_profile_set_func)(a_uint32_t dev_id,
 		fal_passthrough_mode_t mode, fal_passthrough_src_profile_t *profile);

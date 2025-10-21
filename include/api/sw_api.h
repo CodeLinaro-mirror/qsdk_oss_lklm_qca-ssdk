@@ -343,6 +343,7 @@ typedef enum
 	SW_ISOL_ID,
 	SW_ISOL_ACT,
 	SW_PASSTHROUGH_CPUCODE,
+	SW_DDRQ_EN,
 /* auto_insert_flag */
 } sw_data_type_e;
 
