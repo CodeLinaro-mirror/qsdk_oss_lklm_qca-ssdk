@@ -252,8 +252,8 @@ sw_error_t fal_port_rxmac_status_get (a_uint32_t dev_id, fal_port_t port_id, a_b
 sw_error_t fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t queue_id, a_bool_t enable)
     DEFINE_FAL_FUNC_HSL_EXPORT(port_congestion_drop_set, dev_id, port_id, queue_id, enable)
 
-sw_error_t fal_ring_flow_ctrl_thres_set (a_uint32_t dev_id, a_uint32_t ring_id, a_uint16_t on_thres, a_uint16_t off_thres)
-    DEFINE_FAL_FUNC_HSL_EXPORT(ring_flow_ctrl_thres_set, dev_id, ring_id, on_thres, off_thres)
+sw_error_t fal_vch_bp_thres_set (a_uint32_t dev_id, a_uint32_t vch_id, a_uint16_t on_thres, a_uint16_t off_thres)
+    DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(vch_bp_thres_set, ring_flow_ctrl_thres_set,dev_id, vch_id, on_thres, off_thres)
 
 sw_error_t fal_port_bp_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
     DEFINE_FAL_FUNC_HSL_EXPORT(port_bp_status_set, dev_id, port_id, enable)
@@ -273,8 +273,8 @@ sw_error_t fal_port_mac_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a_b
 sw_error_t fal_port_congestion_drop_get (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t queue_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_HSL_EXPORT(port_congestion_drop_get, dev_id, port_id, queue_id, enable)
 
-sw_error_t fal_ring_flow_ctrl_thres_get (a_uint32_t dev_id, a_uint32_t ring_id, a_uint16_t * on_thres, a_uint16_t * off_thres)
-    DEFINE_FAL_FUNC_HSL_EXPORT(ring_flow_ctrl_thres_get, dev_id, ring_id, on_thres, off_thres)
+sw_error_t fal_vch_bp_thres_get (a_uint32_t dev_id, a_uint32_t vch_id, a_uint16_t * on_thres, a_uint16_t * off_thres)
+    DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(vch_bp_thres_get, ring_flow_ctrl_thres_get, dev_id, vch_id, on_thres, off_thres)
 
 sw_error_t fal_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_interface_mode_t mode)
     DEFINE_FAL_FUNC_EXPORT(port_interface_mode_set, dev_id, port_id, mode)
@@ -294,8 +294,9 @@ sw_error_t fal_port_8023ah_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_8
 sw_error_t fal_port_8023ah_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_8023ah_ctrl_t *port_8023ah_ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_8023ah_get, dev_id, port_id, port_8023ah_ctrl)
 
-sw_error_t fal_ring_flow_ctrl_status_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *status)
-    DEFINE_FAL_FUNC_HSL_EXPORT(ring_flow_ctrl_status_get, dev_id, ring_id, status)
+sw_error_t fal_vch_bp_status_get(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t *status)
+    DEFINE_FAL_FUNC_HSL(ring_flow_ctrl_status_get, dev_id, vch_id, status)
+	EXPORT_SYMBOL(fal_vch_bp_status_get);
 
 sw_error_t fal_ring_union_set(a_uint32_t dev_id, a_bool_t en)
     DEFINE_FAL_FUNC_HSL_EXPORT(ring_union_set, dev_id, en)
@@ -307,13 +308,17 @@ sw_error_t fal_port_rx_fifo_thres_get(a_uint32_t dev_id, a_uint32_t port_id, a_u
     DEFINE_FAL_FUNC_ADPT(port_rx_buff_thresh_get, dev_id, port_id, thres)
     EXPORT_SYMBOL(fal_port_rx_fifo_thres_get);
 
-sw_error_t fal_ring_flow_ctrl_config_get(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t *status)
-    DEFINE_FAL_FUNC_HSL(ring_flow_ctrl_get, dev_id, ring_id, status)
-    EXPORT_SYMBOL(fal_ring_flow_ctrl_config_get);
+sw_error_t fal_vch_bp_config_get(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t *status)
+    DEFINE_FAL_FUNC_ADPT_HSL(vch_bp_config_get, ring_flow_ctrl_get, dev_id, vch_id, status)
+    EXPORT_SYMBOL(fal_vch_bp_config_get);
 
-sw_error_t fal_ring_flow_ctrl_config_set(a_uint32_t dev_id, a_uint32_t ring_id, a_bool_t status)
-    DEFINE_FAL_FUNC_HSL(ring_flow_ctrl_set, dev_id, ring_id, status)
-    EXPORT_SYMBOL(fal_ring_flow_ctrl_config_set);
+sw_error_t fal_vch_bp_config_set(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t status)
+    DEFINE_FAL_FUNC_ADPT_HSL(vch_bp_config_set, ring_flow_ctrl_set, dev_id, vch_id, status)
+    EXPORT_SYMBOL(fal_vch_bp_config_set);
+
+sw_error_t fal_vch_bp_stats_get(a_uint32_t dev_id, a_uint32_t vch_id, a_uint32_t *stats)
+    DEFINE_FAL_FUNC_ADPT(vch_bp_stats_get, dev_id, vch_id, stats)
+    EXPORT_SYMBOL(fal_vch_bp_stats_get);
 
 sw_error_t fal_port_8023az_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
     DEFINE_FAL_PORT_PHY_FUNC(ieee_8023az_set, dev_id, port_id, enable)

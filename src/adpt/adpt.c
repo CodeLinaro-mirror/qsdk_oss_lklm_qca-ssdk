@@ -25,6 +25,9 @@
 #if defined(HMSPPE)
 #include "adpt_hmsppe.h"
 #endif
+#if defined(HTTPPE)
+#include "adpt_httppe.h"
+#endif
 
 #include "hsl_phy.h"
 #include "ssdk_dts.h"
@@ -229,6 +232,11 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 #if defined(IN_IPMC)
 		case FAL_MODULE_IPMC:
 			rv = adpt_jhppe_ipmc_init(dev_id);
+			break;
+#endif
+#if defined(IN_CROSSCHIP)
+		case FAL_MODULE_CROSSCHIP:
+			rv = adpt_httppe_crosschip_init(dev_id);
 			break;
 #endif
 		default:
@@ -507,6 +515,12 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 			SW_RTN_ON_ERROR(rv);
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_PTP);
 			SW_RTN_ON_ERROR(rv);
+#if defined(HTTPPE)
+			if (cfg->chip_type == CHIP_HTTPPE) {
+				rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_CROSSCHIP);
+				SW_RTN_ON_ERROR(rv);
+			}
+#endif
 			/* uniphy */
 			rv = adpt_hppe_uniphy_init(dev_id);
 			SW_RTN_ON_ERROR(rv);

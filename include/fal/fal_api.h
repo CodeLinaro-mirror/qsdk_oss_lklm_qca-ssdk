@@ -66,15 +66,15 @@ extern "C" {
     SW_API_DEF(SW_API_PTS_LINK_STATUS_GET, fal_ports_link_status_get), \
     SW_API_DEF(SW_API_PT_CONGESTION_DROP_SET, fal_port_congestion_drop_set), \
     SW_API_DEF(SW_API_PT_CONGESTION_DROP_GET, fal_port_congestion_drop_get), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_SET, fal_ring_flow_ctrl_thres_set), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_GET, fal_ring_flow_ctrl_thres_get), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_STATUS_GET, fal_ring_flow_ctrl_status_get), \
+    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_SET, fal_vch_bp_thres_set), \
+    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_GET, fal_vch_bp_thres_get), \
+    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_STATUS_GET, fal_vch_bp_status_get), \
     SW_API_DEF(SW_API_PT_RING_UNION_SET, fal_ring_union_set), \
     SW_API_DEF(SW_API_PT_RING_UNION_GET, fal_ring_union_get), \
     SW_API_DEF(SW_API_PT_FLOW_CTRL_THRES_SET, fal_port_flow_ctrl_thres_set), \
     SW_API_DEF(SW_API_PT_FLOW_CTRL_THRES_GET, fal_port_flow_ctrl_thres_get), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_SET, fal_ring_flow_ctrl_config_set), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_GET, fal_ring_flow_ctrl_config_get), \
+    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_SET, fal_vch_bp_config_set), \
+    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_GET, fal_vch_bp_config_get), \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_PT_8023AZ_SET, fal_port_8023az_set), \
     SW_API_DEF(SW_API_PT_8023AZ_GET, fal_port_8023az_get), \
@@ -143,7 +143,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_ERP_POWER_MODE_GET, fal_port_erp_power_mode_get), \
     SW_API_DEF(SW_API_PT_ERP_STANDBY_ENTER, fal_erp_standby_enter), \
     SW_API_DEF(SW_API_PT_ERP_STANDBY_EXIT, fal_erp_standby_exit), \
-    SW_API_DEF(SW_API_PT_SWITCH_LOOPBACK_PORT_GET, fal_switch_loopback_port_get),
+    SW_API_DEF(SW_API_PT_SWITCH_LOOPBACK_PORT_GET, fal_switch_loopback_port_get), \
+    SW_API_DEF(SW_API_PT_VCH_BP_STATS_GET, fal_vch_bp_stats_get),
 /*qca808x_start*/
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
@@ -273,7 +274,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_ERP_POWER_MODE_GET) \
     SW_API_DESC(SW_API_PT_ERP_STANDBY_ENTER) \
     SW_API_DESC(SW_API_PT_ERP_STANDBY_EXIT) \
-    SW_API_DESC(SW_API_PT_SWITCH_LOOPBACK_PORT_GET)
+    SW_API_DESC(SW_API_PT_SWITCH_LOOPBACK_PORT_GET) \
+    SW_API_DESC(SW_API_PT_VCH_BP_STATS_GET)
 /*qca808x_start*/
 /*end of PORTCONTROL_API_PARAM*/
 /*qca808x_end*/
@@ -3665,6 +3667,23 @@ extern "C" {
 #define IPMC_API
 #define IPMC_API_PARAM
 #endif
+
+#ifdef IN_CROSSCHIP
+#define CROSSCHIP_API \
+	SW_API_DEF(SW_API_CROSSCHIP_BP_MODE_SET, fal_crosschip_bp_mode_set), \
+	SW_API_DEF(SW_API_CROSSCHIP_BP_MODE_GET, fal_crosschip_bp_mode_get), \
+	SW_API_DEF(SW_API_CROSSCHIP_BP_EN_SET, fal_crosschip_bp_en_set), \
+	SW_API_DEF(SW_API_CROSSCHIP_BP_EN_GET, fal_crosschip_bp_en_get),
+#define CROSSCHIP_API_PARAM \
+	SW_API_DESC(SW_API_CROSSCHIP_BP_MODE_SET) \
+	SW_API_DESC(SW_API_CROSSCHIP_BP_MODE_GET) \
+	SW_API_DESC(SW_API_CROSSCHIP_BP_EN_SET) \
+	SW_API_DESC(SW_API_CROSSCHIP_BP_EN_GET)
+#else
+#define CROSSCHIP_API
+#define CROSSCHIP_API_PARAM
+#endif
+
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3722,6 +3741,7 @@ extern "C" {
     PON_API \
     PON_PM_API \
     IPMC_API \
+    CROSSCHIP_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
@@ -3786,6 +3806,7 @@ extern "C" {
     PON_API_PARAM \
     PON_PM_API_PARAM \
     IPMC_API_PARAM \
+    CROSSCHIP_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

@@ -57,6 +57,7 @@ enum{
 	FAL_MODULE_PON,
 	FAL_MODULE_PON_PM,
 	FAL_MODULE_IPMC,
+	FAL_MODULE_CROSSCHIP,
 /* auto_insert_flag */
 	FAL_MODULE_MAX,
 };
