@@ -1452,6 +1452,7 @@ void ssdk_gcc_ppe_clock_deinit(adpt_ppe_type_t chip_type)
 static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 {
 	a_uint32_t noc_rate = 0, ppe_rate = 0;
+	int uniphy_valid = 0;
 
 	switch (chip_type) {
 		case APPE_TYPE:
@@ -1515,17 +1516,24 @@ static void ssdk_appe_fixed_clock_init(adpt_ppe_type_t chip_type)
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_SNOC_CLK, noc_rate);
 	ssdk_clock_rate_set_and_enable(clock_node, NSSNOC_SNOC_1_CLK, noc_rate);
 
-	/* GCC_UNIPHY_SYS_CFG_RCGR init 24MHz */
-	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
-	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
-	if (chip_type != MPPE_TYPE)
-		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
+	/* GCC_UNIPHY_SYS_CFG_RCGR init 24MHz and GCC_PCNOC_BFDCD_CFG_RCGR init 100MHz */
+	uniphy_valid = ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE0, PORT_WRAPPER_MAX);
+	if (!!uniphy_valid) {
+		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
+		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_AHB_CLK, UNIPHY_AHB_CLK_RATE);
+	}
 
-	/* GCC_PCNOC_BFDCD_CFG_RCGR init 100MHz */
-	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY0_AHB_CLK, UNIPHY_AHB_CLK_RATE);
-	ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_AHB_CLK, UNIPHY_AHB_CLK_RATE);
-	if (chip_type != MPPE_TYPE)
+	uniphy_valid = ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE1, PORT_WRAPPER_MAX);
+	if (!!uniphy_valid) {
+		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
+		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY1_AHB_CLK, UNIPHY_AHB_CLK_RATE);
+	}
+
+	uniphy_valid = ssdk_uniphy_valid_check(0, SSDK_UNIPHY_INSTANCE2, PORT_WRAPPER_MAX);
+	if (!!uniphy_valid) {
+		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_SYS_CLK, APPE_UNIPHY_SYS_CLK_RATE);
 		ssdk_clock_rate_set_and_enable(clock_node, UNIPHY2_AHB_CLK, UNIPHY_AHB_CLK_RATE);
+	}
 
 	/* NSS_CC_PPE_CFG_RCGR init 353MHz for APPE, 200MHZ for MPPE, 375M for MRPPE. */
 	switch (chip_type) {
