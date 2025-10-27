@@ -1071,6 +1071,131 @@ ssdk_mac_sw_sync_work_start(a_uint32_t dev_id)
 }
 EXPORT_SYMBOL(ssdk_mac_sw_sync_work_start);
 
+static const phy_interface_t mac_interfaces[] = {
+	PHY_INTERFACE_MODE_SGMII,
+	PHY_INTERFACE_MODE_QSGMII,
+	PHY_INTERFACE_MODE_PSGMII,
+	PHY_INTERFACE_MODE_1000BASEX,
+	PHY_INTERFACE_MODE_2500BASEX,
+	PHY_INTERFACE_MODE_USXGMII,
+	PHY_INTERFACE_MODE_10GBASER,
+	PHY_INTERFACE_MODE_QUSGMII,
+};
+
+static void ssdk_phylink_mac_config(struct phylink_config *config,
+				unsigned int mode,
+				const struct phylink_link_state *state)
+{
+	struct ssdk_port_priv *port_priv = container_of(config, struct ssdk_port_priv,
+							 phylink_config);
+
+	SSDK_DEBUG("PPE port %d mac config interface %s\n",
+			port_priv->port_id, phy_modes(state->interface));
+}
+
+static void ssdk_phylink_mac_link_up(struct phylink_config *config,
+				 struct phy_device *phy,
+				 unsigned int mode,
+				 phy_interface_t interface,
+				 int speed, int duplex,
+				 bool tx_pause, bool rx_pause)
+{
+	struct ssdk_port_priv *port_priv = container_of(config, struct ssdk_port_priv,
+							 phylink_config);
+	SSDK_DEBUG("PPE port %d mac link up: interface %s speed %d, duplex %d, tx_pause %d, "
+			"rx_pause %d\n", port_priv->port_id, phy_modes(interface), speed,
+			duplex, tx_pause, rx_pause);
+}
+
+static void ssdk_phylink_mac_link_down(struct phylink_config *config,
+				   unsigned int mode,
+				   phy_interface_t interface)
+{
+	struct ssdk_port_priv *port_priv = container_of(config, struct ssdk_port_priv,
+							 phylink_config);
+	SSDK_DEBUG("PPE port %d mac link down: interface %s\n",
+			port_priv->port_id, phy_modes(interface));
+}
+
+static const struct phylink_mac_ops ssdk_phylink_ops = {
+	.mac_config = ssdk_phylink_mac_config,
+	.mac_link_up = ssdk_phylink_mac_link_up,
+	.mac_link_down = ssdk_phylink_mac_link_down,
+};
+
+struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
+					a_uint32_t port_id, struct net_device *netdev)
+{
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	struct ssdk_port_priv *port_priv = NULL;
+	int i, ret;
+
+	if (!priv || port_id >= SW_MAX_NR_PORT)
+		return NULL;
+
+	port_priv = &priv->ports[port_id];
+	if (!port_priv->np) {
+		SSDK_ERROR("No PPE port %d node found.\n", port_id);
+		return NULL;
+	}
+
+	/* Port phylink capability */
+	port_priv->phylink_config.dev = &netdev->dev;
+	port_priv->phylink_config.type = PHYLINK_NETDEV;
+	port_priv->phylink_config.mac_capabilities = MAC_ASYM_PAUSE |
+		MAC_SYM_PAUSE | MAC_10 | MAC_100 | MAC_1000 |
+		MAC_2500FD | MAC_5000FD | MAC_10000FD;
+
+	for (i = 0; i < ARRAY_SIZE(mac_interfaces); i++)
+		__set_bit(mac_interfaces[i],
+			  port_priv->phylink_config.supported_interfaces);
+
+	/* Create phylink */
+	port_priv->phylink = phylink_create(&port_priv->phylink_config,
+					   of_fwnode_handle(port_priv->np),
+					   port_priv->interface,
+					   &ssdk_phylink_ops);
+	if (IS_ERR(port_priv->phylink)) {
+		SSDK_ERROR("PPE port %d failed to create phylink, ret %d\n",
+			port_priv->port_id, PTR_ERR(port_priv->phylink));
+		port_priv->phylink = NULL;
+		return NULL;
+	}
+	/* Connect phylink */
+	ret = phylink_of_phy_connect(port_priv->phylink, port_priv->np, 0);
+	if (ret) {
+		SSDK_ERROR("PPE port %d failed to connect phylink, ret %d\n",
+			port_priv->port_id, ret);
+		goto err_free_phylink;
+	}
+	return port_priv->phylink;
+err_free_phylink:
+	phylink_destroy(port_priv->phylink);
+	port_priv->phylink = NULL;
+	return NULL;
+}
+EXPORT_SYMBOL(ssdk_port_phylink_setup);
+
+void ssdk_port_phylink_destroy(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	struct ssdk_port_priv *port_priv;
+
+	if (!priv || port_id >= SW_MAX_NR_PORT)
+		return;
+
+	port_priv = &priv->ports[port_id];
+
+	if (port_priv->phylink) {
+		rtnl_lock();
+		phylink_disconnect_phy(port_priv->phylink);
+		rtnl_unlock();
+		phylink_destroy(port_priv->phylink);
+		port_priv->phylink = NULL;
+	}
+}
+EXPORT_SYMBOL(ssdk_port_phylink_destroy);
+
 void
 qca_fdb_sw_sync_work_task(struct work_struct *work)
 {

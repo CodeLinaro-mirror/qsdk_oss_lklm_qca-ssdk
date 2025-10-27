@@ -29,6 +29,7 @@
 #else
 #include <soc/qcom/socinfo.h>
 #endif
+#include <linux/phylink.h>
 
 /*qca808x_start*/
 #include <linux/phy.h>
@@ -290,6 +291,11 @@ typedef enum {
 } fdb_sync_t;
 
 struct ssdk_port_priv {
+	a_uint32_t port_id;
+	phy_interface_t interface;
+	struct device_node *np;
+	struct phylink *phylink;
+	struct phylink_config phylink_config;
 	a_uint32_t port_mac_type;
 	a_uint32_t port_link_up;
 	a_uint32_t port_old_link;
