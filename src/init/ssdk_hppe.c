@@ -526,7 +526,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 #if defined(HMSPPE)
 	if (chip_type == HMSPPE_TYPE) {
 		ssdk_dt_scheduler_cfg *dt_cfg;
-		int tcont_id = 0, pon_port_qbase = 0;
+		int tcont_id = 0, pon_port_qbase = 0, q_num = 0;
 		fal_queue_tcont_cfg_t tcont_cfg = {0};
 		int vport = (SSDK_MAX_VIRTUAL_PORT_ID + 1) / 2;
 		a_uint8_t max_pri = ssdk_port_ucast_max_pri_get(dev_id,
@@ -547,22 +547,22 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 						 SSDK_PHYSICAL_PORT6);
 		fal_qm_enqueue_ctrl_set(dev_id, pon_port_qbase, A_FALSE);
 
-		/* Assign 128 virtual ports (128-255) with 128 queues of PON port 6 */
+		/* Assign the virtual ports starting from 128 with the queues of PON port 6 */
 		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT6);
-		while (vport <= SSDK_MAX_VIRTUAL_PORT_ID) {
+		q_num = ssdk_ucast_queue_num_get(dev_id, SSDK_PHYSICAL_PORT6);
+		while (qbase < qbase + q_num) {
 			queue_dst.dst_port = vport;
 			fal_ucast_queue_base_profile_set(dev_id, &queue_dst,
 							 qbase, SSDK_PHYSICAL_PORT6);
 
 			tcont_cfg.valid = A_TRUE;
 			tcont_cfg.tcont_id = tcont_id;
-			fal_qm_tcont_set(dev_id, qbase, &tcont_cfg);
+			for (i = 0; i < max_pri; i++)
+				fal_qm_tcont_set(dev_id, qbase + i, &tcont_cfg);
 
-			qbase++;
+			qbase += max_pri;
+			tcont_id++;
 			vport++;
-
-			if (vport % max_pri == 0)
-				tcont_id++;
 		}
 	}
 #endif
