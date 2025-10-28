@@ -52,6 +52,7 @@ sw_error_t adpt_hppe_sec_init(a_uint32_t dev_id);
 
 void adpt_hppe_acl_func_bitmap_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id);
+sw_error_t adpt_hppe_acl_deinit(a_uint32_t dev_id);
 void adpt_hppe_qos_func_bitmap_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id);
 void adpt_hppe_bm_func_bitmap_init(a_uint32_t dev_id);

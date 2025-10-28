@@ -37,7 +37,6 @@ enum{
 	HPPE_ACL_DEST_PORT_BMP,
 };
 
-
 typedef struct {
 	a_uint32_t rule_type_map; /* rule type map */
 	a_uint8_t inverse_rule_type_count[ADPT_ACL_HPPE_RULE_TYPE_NUM]; /* inverse rule type count */

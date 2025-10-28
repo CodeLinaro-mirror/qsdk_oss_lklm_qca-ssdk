@@ -2650,6 +2650,7 @@ adpt_forward_action_convert(fal_fwd_cmd_t *fwd_cmd, a_uint32_t *value, a_bool_t 
 
 adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id);
 sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
+sw_error_t adpt_deinit(a_uint32_t dev_id);
 a_uint32_t adpt_chip_type_get(a_uint32_t dev_id);
 a_uint32_t adpt_chip_revision_get(a_uint32_t dev_id);
 a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id);
