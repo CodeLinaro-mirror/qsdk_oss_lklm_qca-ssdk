@@ -771,6 +771,73 @@ adpt_jhppe_qm_passthrough_cpucode_en_get(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+
+sw_error_t
+adpt_jhppe_qm_crosschip_bp_qmap_set(a_uint32_t dev_id, a_uint32_t lp_qid,
+			     fal_bp_queue_bmp_t *queue_bmp)
+{
+	union uniq_q_map_tbl_u q_map;
+	sw_error_t rv = SW_OK;
+	int i;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(queue_bmp);
+
+	aos_mem_zero(&q_map, sizeof(q_map));
+
+	rv = jhppe_uniq_q_map_tbl_get(dev_id, lp_qid, &q_map);
+	SW_RTN_ON_ERROR(rv);
+
+	for (i = 0; i < ARRAY_SIZE(q_map.val); i++)
+		q_map.val[i] = queue_bmp->bmp[i];
+
+	return jhppe_uniq_q_map_tbl_set(dev_id, lp_qid, &q_map);
+}
+
+sw_error_t
+adpt_jhppe_qm_crosschip_bp_qmap_get(a_uint32_t dev_id, a_uint32_t lp_qid,
+			     fal_bp_queue_bmp_t *queue_bmp)
+{
+	union uniq_q_map_tbl_u q_map;
+	sw_error_t rv = SW_OK;
+	int i;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(queue_bmp);
+
+	aos_mem_zero(&q_map, sizeof(q_map));
+
+	rv = jhppe_uniq_q_map_tbl_get(dev_id, lp_qid, &q_map);
+	SW_RTN_ON_ERROR(rv);
+
+	for (i = 0; i < ARRAY_SIZE(q_map.val); i++)
+		queue_bmp->bmp[i] = q_map.val[i];
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_jhppe_qm_crosschip_bp_status_get(a_uint32_t dev_id,
+			       fal_bp_queue_bmp_t *queue_bmp)
+{
+	union uniq_flowctrl_status_u fc_qmap_status;
+	sw_error_t rv = SW_OK;
+	int i;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(queue_bmp);
+
+	for (i = 0; i < UNIQ_FLOWCTRL_STATUS_NUM; i++) {
+		aos_mem_zero(&fc_qmap_status, sizeof(fc_qmap_status));
+
+		rv = jhppe_uniq_flowctrl_status_get(dev_id, i, &fc_qmap_status);
+		SW_RTN_ON_ERROR(rv);
+
+		queue_bmp->bmp[i] = fc_qmap_status.bf.uniq_flowctrl_status_status;
+	}
+
+	return SW_OK;
+}
 /**
  * @}
  */

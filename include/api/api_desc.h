@@ -5065,6 +5065,28 @@ extern "C" {
     SW_PARAM_DEF(SW_API_QM_DEQUEUE_DROP_GET, SW_ENABLE, \
 		    sizeof(a_bool_t), SW_PARAM_PTR|SW_PARAM_OUT, "dequeue drop en"),
 
+#define SW_API_QM_CROSSCHIP_BP_QMAP_SET_DESC \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_QMAP_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_QMAP_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "link partner queue ID"), \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_QMAP_SET, SW_BP_QUEUEBMP, \
+		    sizeof(fal_bp_queue_bmp_t), SW_PARAM_PTR|SW_PARAM_IN, "Queue bmp"),
+
+#define SW_API_QM_CROSSCHIP_BP_QMAP_GET_DESC \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_QMAP_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_QMAP_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "link partner queue ID"), \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_QMAP_GET, SW_BP_QUEUEBMP, \
+		    sizeof(fal_bp_queue_bmp_t), SW_PARAM_PTR|SW_PARAM_OUT, "Queue bmp"),
+
+#define SW_API_QM_CROSSCHIP_BP_STATUS_GET_DESC \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_STATUS_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_STATUS_GET, SW_BP_QUEUEBMP, \
+		    sizeof(fal_bp_queue_bmp_t), SW_PARAM_PTR|SW_PARAM_OUT, "Queue bmp"),
+
 #define SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET_DESC \
     SW_PARAM_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, SW_UINT32, 4, SW_PARAM_IN, "Profile ID"), \

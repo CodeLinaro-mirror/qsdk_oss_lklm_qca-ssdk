@@ -344,6 +344,7 @@ typedef enum
 	SW_ISOL_ACT,
 	SW_PASSTHROUGH_CPUCODE,
 	SW_DDRQ_EN,
+	SW_BP_QUEUEBMP,
 /* auto_insert_flag */
 } sw_data_type_e;
 
