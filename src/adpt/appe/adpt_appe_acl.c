@@ -1301,6 +1301,8 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 
 	if (inner_rule) {
 		acl_rule_field_convert(inner_rule, &rule->inner_rule_field, A_TRUE);
+		aos_mem_copy(&rule->tunnel_info, &inner_rule->tunnel_info,
+			     sizeof(fal_acl_tunnel_info_t));
 		aos_mem_free(inner_rule);
 		inner_rule = NULL;
 	}

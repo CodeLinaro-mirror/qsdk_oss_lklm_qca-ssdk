@@ -4915,6 +4915,8 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 			return SW_FAIL;
 
 		acl_rule_field_convert(inner_rule, &rule->inner_rule_field, A_FALSE);
+		aos_mem_copy(&inner_rule->tunnel_info, &rule->tunnel_info,
+			     sizeof(fal_acl_tunnel_info_t));
 	}
 	aos_lock_bh(&hppe_acl_lock[dev_id]);
 	list_find_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
