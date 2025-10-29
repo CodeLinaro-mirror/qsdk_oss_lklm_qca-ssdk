@@ -103,7 +103,7 @@ OBJ-APPE   += src/adpt/appe/adpt_appe_portctrl.o
 OBJ-CPPE   += src/hsl/cppe/cppe_portctrl.o
 OBJ-MHT    += src/hsl/mht/mht_port_ctrl.o
 OBJ-JHPPE  += src/hsl/jhppe/jhppe_loopback.o src/adpt/jhppe/adpt_jhppe_loopback.o
-OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_portctrl.o
+OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_portctrl.o src/hsl/httppe/httppe_xgportctrl.o
 endif
 
 ###############################################################################

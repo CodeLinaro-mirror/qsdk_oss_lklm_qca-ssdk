@@ -1704,6 +1704,11 @@ _adpt_hppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	switch (ppe_type) {
+#if defined(HTTPPE)
+	case HTTPPE_TYPE:
+		rv = _adpt_httppe_xgmac_speed_set(dev_id, port_id, mode, speed);
+		break;
+#endif
 	case JHPPE_TYPE:
 	case HMSPPE_TYPE:
 #if defined(JHPPE)
@@ -2084,9 +2089,8 @@ adpt_httppe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id)
 	ADPT_DEV_ID_CHECK(dev_id);
 	memset(&appe_port_mux_ctrl, 0, sizeof(appe_port_mux_ctrl));
 
-	if (port_id >= SSDK_PHYSICAL_PORT6) {
+	if (port_id >= SSDK_PHYSICAL_PORT6)
 		return SW_BAD_PARAM;
-	}
 
 	rv = appe_port_mux_ctrl_get(dev_id, &appe_port_mux_ctrl);
 	SW_RTN_ON_ERROR (rv);
@@ -2097,6 +2101,7 @@ adpt_httppe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id)
 		else
 			appe_port_mux_ctrl.bf.port1_mac_sel = 0;
 	}
+
 	if (port_id == SSDK_PHYSICAL_PORT5) {
 		if (qca_hppe_port_mac_type_get(dev_id, port_id) == PORT_XGMAC_TYPE)
 			appe_port_mux_ctrl.bf.port5_mac_sel = 1;
@@ -2104,10 +2109,7 @@ adpt_httppe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id)
 			appe_port_mux_ctrl.bf.port5_mac_sel = 0;
 	}
 
-	rv = appe_port_mux_ctrl_set(dev_id, &appe_port_mux_ctrl);
-	SW_RTN_ON_ERROR (rv);
-
-	return rv;
+	return appe_port_mux_ctrl_set(dev_id, &appe_port_mux_ctrl);
 }
 
 sw_error_t
