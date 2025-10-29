@@ -708,6 +708,12 @@ adpt_jhppe_qm_passthrough_cpucode_set(a_uint32_t dev_id, fal_passthrough_cpucode
 	rv = jhppe_enq_ctrl_ext_set(dev_id, &enq_ctrl_ext);
 	SW_RTN_ON_ERROR(rv);
 
+	rv = hppe_eg_bridge_config_passthrough_cpu_code0_set(dev_id, cpucode->cpucode[0]);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = hppe_eg_bridge_config_passthrough_cpu_code1_set(dev_id, cpucode->cpucode[1]);
+	SW_RTN_ON_ERROR(rv);
+
 	return jhppe_enq_ctrl_qid_mismatch_enq_cpu_code_set(dev_id, cpucode->qid_mismatch_cpucode);
 }
 
