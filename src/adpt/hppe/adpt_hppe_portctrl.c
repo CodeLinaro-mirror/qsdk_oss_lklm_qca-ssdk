@@ -872,12 +872,16 @@ adpt_hppe_port_rxfc_status_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(enable);
 
 	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
-	if (port_mac_type == PORT_XGMAC_TYPE)
+	if (port_mac_type == PORT_XGMAC_TYPE) {
 		_adpt_xgmac_port_rxfc_status_get( dev_id, port_id, &rxfc_status);
-	else if (port_mac_type == PORT_GMAC_TYPE)
+	} else if (port_mac_type == PORT_GMAC_TYPE) {
 		_adpt_gmac_port_rxfc_status_get( dev_id, port_id, &rxfc_status);
-	else
+	} else if (port_mac_type == PORT_PON_MAC_TYPE) {
+		*enable = A_TRUE;
+		return SW_OK;
+	} else {
 		return SW_BAD_VALUE;
+	}
 
 	if (rxfc_status)
 		*enable = A_TRUE;
@@ -892,17 +896,24 @@ adpt_hppe_port_txfc_status_get(a_uint32_t dev_id, fal_port_t port_id,
 				     a_bool_t * enable)
 {
 	a_uint32_t txfc_status = 0, port_mac_type;
+	adpt_api_t *p_adpt_api;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
 	port_mac_type =qca_hppe_port_mac_type_get(dev_id, port_id);
-	if (port_mac_type == PORT_XGMAC_TYPE)
+	if (port_mac_type == PORT_XGMAC_TYPE) {
 		_adpt_xgmac_port_txfc_status_get( dev_id, port_id, &txfc_status);
-	else if (port_mac_type == PORT_GMAC_TYPE)
+	} else if (port_mac_type == PORT_GMAC_TYPE) {
 		_adpt_gmac_port_txfc_status_get( dev_id, port_id, &txfc_status);
-	else
+	} else if (port_mac_type == PORT_PON_MAC_TYPE) {
+		p_adpt_api = adpt_api_ptr_get(dev_id);
+		if (p_adpt_api && p_adpt_api->adpt_port_bm_ctrl_get)
+			return p_adpt_api->adpt_port_bm_ctrl_get(dev_id,
+					PHY_PORT_TO_BM_PORT(port_id), enable);
+	} else {
 		return SW_BAD_VALUE;
+	}
 
 	if (txfc_status)
 		*enable = A_TRUE;
@@ -1279,6 +1290,9 @@ _adpt_hppe_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 		rv = _adpt_xgmac_port_txfc_status_set( dev_id, port_id, enable);
 	else if (port_mac_type == PORT_GMAC_TYPE)
 		rv = _adpt_gmac_port_txfc_status_set( dev_id, port_id, enable);
+	else if (port_mac_type == PORT_PON_MAC_TYPE)
+		/* pon mac port does not need to configure */
+		rv = SW_OK;
 	else
 		return SW_BAD_VALUE;
 
@@ -1369,6 +1383,9 @@ _adpt_hppe_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 		rv = _adpt_xgmac_port_rxfc_status_set( dev_id, port_id, enable);
 	else if (port_mac_type == PORT_GMAC_TYPE)
 		rv = _adpt_gmac_port_rxfc_status_set( dev_id, port_id, enable);
+	else if (port_mac_type == PORT_PON_MAC_TYPE)
+		/* pon mac port does not need to configure */
+		rv = SW_OK;
 	else
 		return SW_BAD_VALUE;
 
