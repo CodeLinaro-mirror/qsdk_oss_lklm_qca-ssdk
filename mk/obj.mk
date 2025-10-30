@@ -281,7 +281,7 @@ OBJ-COMMON  += src/fal/fal_servcode.o
 OBJ-HPPE    += src/hsl/hppe/hppe_servcode.o src/adpt/hppe/adpt_hppe_servcode.o
 OBJ-APPE    += src/hsl/appe/appe_servcode.o src/adpt/appe/adpt_appe_servcode.o
 OBJ-MPPE    += src/hsl/mppe/mppe_servcode.o src/adpt/mppe/adpt_mppe_servcode.o
-OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_servcode.o
+OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_servcode.o src/adpt/jhppe/adpt_jhppe_servcode.o
 endif
 
 

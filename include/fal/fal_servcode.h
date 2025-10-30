@@ -247,16 +247,25 @@ enum {
 	TL_INNER_IP_PADDING_EXP_BYP,
 };
 
-typedef struct {
-	a_bool_t dest_port_valid; /* dest_port_id valid or not */
-	fal_port_t dest_port_id; /* destination physical port id:0-7 */
-	a_uint64_t  bypass_bitmap[SERVICE_BYP_NUM]; /* refer to enum IN_VLAN_TAG_FMT_CHECK_BYP... */
-	a_uint32_t  direction; /* if dest is vp, fill it in dest_info or src_info, 0:dest, 1:src */
+#define FAL_SERVCODE_TYPE_NORMAL		0
+#define FAL_SERVCODE_TYPE_PASSTHROUGH		1
+#define FAL_SERVCODE_TYPE(servcode_index)	(((servcode_index)>>24)&0xff)
+#define FAL_SERVCODE_VALUE(servcode_index)	((servcode_index)&0xffffff)
+#define FAL_SERVCODE(type, value)		(((type)<<24)|(value))
 
+typedef struct {
+	a_bool_t dest_port_valid; /* dest_port_id valid or not, passthrough servcode not support */
+	fal_port_t dest_port_id; /* dest physical port id, passthrough servcode not support */
+	a_uint64_t  bypass_bitmap[SERVICE_BYP_NUM]; /* refer to enum IN_VLAN_TAG_FMT_CHECK_BYP... */
+	a_uint32_t  direction; /* if dest is vp, fill it in dest_info or src_info, 0:dest, 1:src
+				* passthrough servcode not support
+				*/
 	a_uint64_t field_update_bitmap[BITS_TO_U64(FLD_UP_MAX)]; /* refer to enum FLD_UPDATE_CAPWAP_EN... */
-	a_uint32_t  next_service_code; /* next service code */
-	a_uint32_t  hw_services; /* HW_SERVICES to IP-197 */
-	a_uint32_t  offset_sel; /* Select the offset value to IP-197:0: l3_offset, 1:l4_offset */
+	a_uint32_t  next_service_code; /* next service code, passthrough servcode not support */
+	a_uint32_t  hw_services; /* HW_SERVICES to IP-197, passthrough servcode not support */
+	a_uint32_t  offset_sel; /* Select the offset value to IP-197:0: l3_offset, 1:l4_offset
+				 * passthrough servcode not support
+				 */
 } fal_servcode_config_t;
 
 typedef struct {
