@@ -515,15 +515,21 @@ static void ssdk_dt_parse_l1_scheduler_cfg(
 				cfg->l1cfg[l0_sp_id + i].port_id = port_id;
 				j = 0;
 
-				if (cfg_cnt == 5)
+				if (cfg_cnt == 5) {
 					cfg->l1cfg[l0_sp_id + i].sp_id = tmp_cfg[j++] + i/max_pri;
-				else
+					cfg->l1cfg[l0_sp_id + i].cpri = tmp_cfg[j++] + i%max_pri;
+					cfg->l1cfg[l0_sp_id + i].cdrr_id = tmp_cfg[j++] + i%max_pri + (i/max_pri) * max_pri;
+					cfg->l1cfg[l0_sp_id + i].epri = tmp_cfg[j++] + i%max_pri;
+					cfg->l1cfg[l0_sp_id + i].edrr_id = tmp_cfg[j++] + i%max_pri + (i/max_pri) * max_pri;
+				} else {
 					cfg->l1cfg[l0_sp_id + i].sp_id = port_id;
+					cfg->l1cfg[l0_sp_id + i].cpri = tmp_cfg[j++] + i%max_pri;
+					cfg->l1cfg[l0_sp_id + i].cdrr_id = tmp_cfg[j++] + i%max_pri;
+					cfg->l1cfg[l0_sp_id + i].epri = tmp_cfg[j++] + i%max_pri;
+					cfg->l1cfg[l0_sp_id + i].edrr_id = tmp_cfg[j++] + i%max_pri;
+				}
 
-				cfg->l1cfg[l0_sp_id + i].cpri = tmp_cfg[j++] + i%max_pri;
-				cfg->l1cfg[l0_sp_id + i].cdrr_id = tmp_cfg[j++] + i%max_pri;
-				cfg->l1cfg[l0_sp_id + i].epri = tmp_cfg[j++] + i%max_pri;
-				cfg->l1cfg[l0_sp_id + i].edrr_id = tmp_cfg[j++] + i%max_pri;
+
 			}
 		}
 	}
@@ -595,9 +601,9 @@ static void ssdk_dt_parse_l0_queue_cfg(
 			cfg->l0cfg[queue_id + i].port_id = port_id;
 			cfg->l0cfg[queue_id + i].sp_id = tmp_cfg[0] + i/max_pri;
 			cfg->l0cfg[queue_id + i].cpri = tmp_cfg[1] + i%max_pri;
-			cfg->l0cfg[queue_id + i].cdrr_id = tmp_cfg[2] + i%max_pri;
+			cfg->l0cfg[queue_id + i].cdrr_id = tmp_cfg[2] + i%max_pri + (i/max_pri) * max_pri;
 			cfg->l0cfg[queue_id + i].epri = tmp_cfg[3] + i%max_pri;
-			cfg->l0cfg[queue_id + i].edrr_id = tmp_cfg[4] + i%max_pri;
+			cfg->l0cfg[queue_id + i].edrr_id = tmp_cfg[4] + i%max_pri + (i/max_pri) * max_pri;
 		}
 	}
 }
