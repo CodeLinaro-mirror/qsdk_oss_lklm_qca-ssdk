@@ -345,7 +345,11 @@ char *dropcode[] = {
 "Promisc drop",
 "Isolation drop",
 "Magagement packet APP_CTRL drop",
+#if defined(JHPPE)
+"Dot1p miss action drop",
+#else
 "Fake L2 protocol indicated packet not routing or bypass L3 edit drop",
+#endif
 "Policing drop",
 };
 
