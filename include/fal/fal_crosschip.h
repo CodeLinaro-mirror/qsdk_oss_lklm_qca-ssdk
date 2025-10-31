@@ -31,6 +31,9 @@ fal_crosschip_bp_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable)
 sw_error_t
 fal_crosschip_bp_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
 
+sw_error_t
+fal_crosschip_mdio_master_config(a_uint32_t dev_id, a_bool_t timer_en, a_uint32_t div);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

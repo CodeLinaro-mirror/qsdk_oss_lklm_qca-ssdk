@@ -1707,6 +1707,7 @@ typedef sw_error_t (*adpt_vch_bp_thres_set_func)(a_uint32_t dev_id, a_uint32_t v
 typedef sw_error_t (*adpt_vch_bp_thres_get_func)(a_uint32_t dev_id, a_uint32_t vch_id,
 		a_uint16_t *on_thres, a_uint16_t *off_thres);
 typedef sw_error_t (*adpt_vch_bp_stats_get_func)(a_uint32_t dev_id, a_uint32_t vch_id, a_uint32_t *stats);
+typedef sw_error_t (*adpt_crosschip_mdio_master_config_func)(a_uint32_t dev_id, a_bool_t timer_en, a_uint32_t div);
 
 typedef struct
 {
@@ -2511,6 +2512,7 @@ typedef struct
 	adpt_vch_bp_thres_set_func adpt_vch_bp_thres_set;
 	adpt_vch_bp_thres_get_func adpt_vch_bp_thres_get;
 	adpt_vch_bp_stats_get_func adpt_vch_bp_stats_get;
+	adpt_crosschip_mdio_master_config_func adpt_crosschip_mdio_master_config;
 
 /* auto_insert_flag_1 */
 }adpt_api_t;

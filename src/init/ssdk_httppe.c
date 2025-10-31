@@ -362,6 +362,15 @@ qca_httppe_interface_mode_init(a_uint32_t dev_id)
 	return rv;
 }
 
+sw_error_t qca_httppe_mdio_master_init(a_uint32_t dev_id)
+{
+#define HTT_MDIO_MASTER_CLK_62P5M		3
+
+	return fal_crosschip_mdio_master_config(dev_id,
+						A_TRUE,
+						HTT_MDIO_MASTER_CLK_62P5M);
+}
+
 sw_error_t qca_httppe_hw_init(a_uint32_t dev_id)
 {
 	sw_error_t rv = SW_OK;
@@ -437,6 +446,6 @@ sw_error_t qca_httppe_hw_init(a_uint32_t dev_id)
 	SW_RTN_ON_ERROR(rv);
 #endif
 
-	return rv;
+	return qca_httppe_mdio_master_init(dev_id);
 }
 

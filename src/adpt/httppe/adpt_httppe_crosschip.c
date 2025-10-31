@@ -15,6 +15,45 @@
 #define HTTPPE_VCH_ID                          16
 
 sw_error_t
+adpt_httppe_crosschip_mdio_master_config(a_uint32_t dev_id, a_bool_t timer_en, a_uint32_t div)
+{
+#define HTTPPE_MDIO_TIMER_CNT_DEFAULT 0xc8  /* 200 cycles - provides appropriate polling interval */
+
+	union mdio_master_ctrl0_u ctrl_0;
+	union mdio_master_ctrl1_u ctrl_1;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	memset(&ctrl_0, 0, sizeof(ctrl_0));
+	memset(&ctrl_1, 0, sizeof(ctrl_1));
+
+	rv = httppe_mdio_master_ctrl0_get(dev_id, &ctrl_0);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = httppe_mdio_master_ctrl1_get(dev_id, &ctrl_1);
+	SW_RTN_ON_ERROR(rv);
+
+	/* Enable the MDIO transmission. */
+	ctrl_0.bf.trigger_en = 1;
+
+	/* polling or trigger. */
+	ctrl_0.bf.timer_en = timer_en;
+
+	/* In the timer mode, the timer is 250MHZ/div * timer_cnt. */
+	ctrl_0.bf.div_factor = div;
+	ctrl_1.bf.timer_cnt = HTTPPE_MDIO_TIMER_CNT_DEFAULT;
+
+	/* Preamble bytes. */
+	ctrl_0.bf.preamble = 2;
+
+	rv = httppe_mdio_master_ctrl0_set(dev_id, &ctrl_0);
+	SW_RTN_ON_ERROR(rv);
+
+	return httppe_mdio_master_ctrl1_set(dev_id, &ctrl_1);
+}
+
+sw_error_t
 adpt_httppe_crosschip_bp_mode_set(a_uint32_t dev_id, fal_crosschip_bp_mode_t mode)
 {
 	sw_error_t rv = SW_OK;
@@ -269,6 +308,7 @@ sw_error_t adpt_httppe_crosschip_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_vch_bp_thres_set = adpt_httppe_vch_bp_thres_set;
 	p_adpt_api->adpt_vch_bp_thres_get = adpt_httppe_vch_bp_thres_get;
 	p_adpt_api->adpt_vch_bp_stats_get = adpt_httppe_vch_bp_stats_get;
+	p_adpt_api->adpt_crosschip_mdio_master_config = adpt_httppe_crosschip_mdio_master_config;
 
 	return SW_OK;
 }

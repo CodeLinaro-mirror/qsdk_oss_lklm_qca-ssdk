@@ -19,6 +19,8 @@ sw_error_t fal_crosschip_bp_en_set(a_uint32_t dev_id, a_uint32_t queue_id, a_boo
 sw_error_t fal_crosschip_bp_en_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable)
 	DEFINE_FAL_FUNC_ADPT_EXPORT(crosschip_bp_en_get, dev_id, queue_id, enable)
 
+sw_error_t fal_crosschip_mdio_master_config(a_uint32_t dev_id, a_bool_t timer_en, a_uint32_t div)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(crosschip_mdio_master_config, dev_id, timer_en, div)
 /**
  * @}
  */

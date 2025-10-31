@@ -6,6 +6,76 @@
 #ifndef _HTTPPE_CROSSCHIP_REG_H_
 #define _HTTPPE_CROSSCHIP_REG_H_
 
+/*[register] MDIO_MASTER_CTRL0*/
+#define MDIO_MASTER_CTRL0
+#define MDIO_MASTER_CTRL0_ADDRESS 0x88
+#define MDIO_MASTER_CTRL0_NUM     1
+#define MDIO_MASTER_CTRL0_INC     0x4
+#define MDIO_MASTER_CTRL0_TYPE    REG_TYPE_RW
+#define MDIO_MASTER_CTRL0_DEFAULT 0x0
+	/*[field] DIV_FACTOR*/
+	#define MDIO_MASTER_CTRL0_DIV_FACTOR
+	#define MDIO_MASTER_CTRL0_DIV_FACTOR_OFFSET  0
+	#define MDIO_MASTER_CTRL0_DIV_FACTOR_LEN     8
+	#define MDIO_MASTER_CTRL0_DIV_FACTOR_DEFAULT 0x0
+	/*[field] TIMER_EN*/
+	#define MDIO_MASTER_CTRL0_TIMER_EN
+	#define MDIO_MASTER_CTRL0_TIMER_EN_OFFSET  8
+	#define MDIO_MASTER_CTRL0_TIMER_EN_LEN     1
+	#define MDIO_MASTER_CTRL0_TIMER_EN_DEFAULT 0x0
+	/*[field] TRIGGER_EN*/
+	#define MDIO_MASTER_CTRL0_TRIGGER_EN
+	#define MDIO_MASTER_CTRL0_TRIGGER_EN_OFFSET  9
+	#define MDIO_MASTER_CTRL0_TRIGGER_EN_LEN     1
+	#define MDIO_MASTER_CTRL0_TRIGGER_EN_DEFAULT 0x0
+	/*[field] PREAMBLE*/
+	#define MDIO_MASTER_CTRL0_PREAMBLE
+	#define MDIO_MASTER_CTRL0_PREAMBLE_OFFSET  15
+	#define MDIO_MASTER_CTRL0_PREAMBLE_LEN     6
+	#define MDIO_MASTER_CTRL0_PREAMBLE_DEFAULT 0x0
+	/*[field] PHY_ADDR*/
+	#define MDIO_MASTER_CTRL0_PHY_ADDR
+	#define MDIO_MASTER_CTRL0_PHY_ADDR_OFFSET  21
+	#define MDIO_MASTER_CTRL0_PHY_ADDR_LEN     5
+	#define MDIO_MASTER_CTRL0_PHY_ADDR_DEFAULT 0x0
+
+struct mdio_master_ctrl0 {
+	a_uint32_t  div_factor:8;
+	a_uint32_t  timer_en:1;
+	a_uint32_t  trigger_en:1;
+	a_uint32_t  _reserved0:5;
+	a_uint32_t  preamble:6;
+	a_uint32_t  phy_addr:5;
+	a_uint32_t  _reserved1:6;
+};
+
+union mdio_master_ctrl0_u {
+	a_uint32_t val;
+	struct mdio_master_ctrl0 bf;
+};
+
+/*[register] MDIO_MASTER_CTRL1*/
+#define MDIO_MASTER_CTRL1
+#define MDIO_MASTER_CTRL1_ADDRESS 0x8c
+#define MDIO_MASTER_CTRL1_NUM     1
+#define MDIO_MASTER_CTRL1_INC     0x4
+#define MDIO_MASTER_CTRL1_TYPE    REG_TYPE_RW
+#define MDIO_MASTER_CTRL1_DEFAULT 0x0
+	/*[field] TIMER_CNT*/
+	#define MDIO_MASTER_CTRL1_TIMER_CNT
+	#define MDIO_MASTER_CTRL1_TIMER_CNT_OFFSET  0
+	#define MDIO_MASTER_CTRL1_TIMER_CNT_LEN     32
+	#define MDIO_MASTER_CTRL1_TIMER_CNT_DEFAULT 0x0
+
+struct mdio_master_ctrl1 {
+	a_uint32_t  timer_cnt:32;
+};
+
+union mdio_master_ctrl1_u {
+	a_uint32_t val;
+	struct mdio_master_ctrl1 bf;
+};
+
 /*[register] CROSSCHIP_QUEUE_CTRL*/
 #define CROSSCHIP_QUEUE_CTRL
 #define CROSSCHIP_QUEUE_CTRL_ADDRESS 0x100
