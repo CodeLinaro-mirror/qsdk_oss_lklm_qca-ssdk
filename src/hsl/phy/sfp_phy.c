@@ -25,6 +25,8 @@
 #include "hsl_port_prop.h"
 #include <linux/mdio/mdio-i2c.h>
 #include <linux/i2c.h>
+#include <linux/phylink.h>
+#include <linux/sfp.h>
 
 static a_bool_t sfp_phy_drv_registered = A_FALSE;
 
@@ -261,6 +263,246 @@ sfp_port_status_get_from_uniphy(a_uint32_t dev_id, a_uint32_t port_id,
 	return SW_OK;
 }
 
+static int sfp_phy_read_abilities(struct phy_device *pdev)
+{
+	int features[] = {
+		ETHTOOL_LINK_MODE_TP_BIT,
+		ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_Pause_BIT,
+		ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+		ETHTOOL_LINK_MODE_Autoneg_BIT,
+	};
+	pdev->port = PORT_TP;
+	linkmode_set_bit_array(features,
+		ARRAY_SIZE(features),
+		pdev->supported);
+	linkmode_copy(pdev->advertising, pdev->supported);
+
+	return 0;
+}
+
+static void
+sfp_phy_parse_port(struct phy_device *pdev, const struct sfp_eeprom_id *sfp_id)
+{
+	a_uint8_t connector_type;
+	a_bool_t is_fibre = A_FALSE;
+	a_bool_t is_copper = A_FALSE;
+
+	connector_type = sfp_id->base.connector;
+
+	/* Determine if connector is fibre type */
+	if (connector_type == SFF8024_CONNECTOR_SC ||
+	    connector_type == SFF8024_CONNECTOR_FIBERJACK ||
+	    connector_type == SFF8024_CONNECTOR_LC ||
+	    connector_type == SFF8024_CONNECTOR_MT_RJ ||
+	    connector_type == SFF8024_CONNECTOR_MU ||
+	    connector_type == SFF8024_CONNECTOR_OPTICAL_PIGTAIL ||
+	    connector_type == SFF8024_CONNECTOR_MPO_1X12 ||
+	    connector_type == SFF8024_CONNECTOR_MPO_2X16) {
+		is_fibre = A_TRUE;
+	}
+
+	/* Determine if connector is copper type */
+	if (connector_type == SFF8024_CONNECTOR_RJ45) {
+		is_copper = A_TRUE;
+	}
+
+	/* Handle unspecified connector with 1000BASE-T support */
+	if (connector_type == SFF8024_CONNECTOR_UNSPEC && sfp_id->base.e1000_base_t) {
+		is_copper = A_TRUE;
+	}
+
+	/* Configure PHY device based on connector type */
+	if (is_fibre) {
+		phylink_set(pdev->supported, FIBRE);
+		pdev->port = PORT_FIBRE;
+	} else if (is_copper || connector_type == SFF8024_CONNECTOR_COPPER_PIGTAIL) {
+		phylink_set(pdev->supported, TP);
+		pdev->port = PORT_TP;
+	} else {
+		/* Default to TP for other/unknown connector types */
+		phylink_set(pdev->supported, TP);
+		pdev->port = PORT_TP;
+	}
+}
+
+static void
+sfp_phy_parse_to_support(struct phy_device *pdev, const struct sfp_eeprom_id *id)
+{
+	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported_modes) = { 0, };
+	a_uint32_t rate_lower_bound = 0, rate_upper_bound = 0, rate_nominal = 0;
+	a_uint8_t nominal_br, ext_cc;
+	a_bool_t has_passive_cable, has_active_cable;
+	a_bool_t rate_valid = A_FALSE;
+
+	sfp_phy_parse_port(pdev, id);
+
+	nominal_br = id->base.br_nominal;
+
+	/* Calculate bitrate boundaries */
+	if (nominal_br != 0) {
+		if (nominal_br != 255) {
+			rate_nominal = nominal_br * 100;
+			rate_lower_bound = rate_nominal - nominal_br * id->ext.br_min;
+			rate_upper_bound = rate_nominal + nominal_br * id->ext.br_max;
+			rate_valid = A_TRUE;
+		} else {
+			if (id->ext.br_max != 0) {
+				rate_nominal = 250 * id->ext.br_max;
+				rate_upper_bound = rate_nominal + rate_nominal * id->ext.br_min / 100;
+				rate_lower_bound = rate_nominal - rate_nominal * id->ext.br_min / 100;
+				rate_valid = A_TRUE;
+			}
+		}
+		if (rate_lower_bound == rate_upper_bound && id->base.sfp_ct_passive) {
+			rate_lower_bound = 0;
+		}
+	}
+
+	has_passive_cable = id->base.sfp_ct_passive ? A_TRUE : A_FALSE;
+	has_active_cable = id->base.sfp_ct_active ? A_TRUE : A_FALSE;
+
+	/* Process 10G Ethernet compliance codes */
+	if (id->base.e10g_base_sr) phylink_set(supported_modes, 10000baseSR_Full);
+	if (id->base.e10g_base_lr) phylink_set(supported_modes, 10000baseLR_Full);
+	if (id->base.e10g_base_lrm) phylink_set(supported_modes, 10000baseLRM_Full);
+	if (id->base.e10g_base_er) phylink_set(supported_modes, 10000baseER_Full);
+
+	/* Process 1G Ethernet compliance codes */
+	if (id->base.e1000_base_sx || id->base.e1000_base_lx || id->base.e1000_base_cx) {
+		phylink_set(supported_modes, 1000baseX_Full);
+	}
+	if (id->base.e1000_base_t) {
+		phylink_set(supported_modes, 1000baseT_Half);
+		phylink_set(supported_modes, 1000baseT_Full);
+	}
+	if ((id->base.e_base_px || id->base.e_base_bx10) &&
+	    rate_lower_bound <= 1300 && rate_upper_bound >= 1200) {
+		phylink_set(supported_modes, 1000baseX_Full);
+	}
+
+	/* Process 100M Ethernet compliance codes */
+	if (id->base.e100_base_fx || id->base.e100_base_lx) {
+		phylink_set(supported_modes, 100baseFX_Full);
+	}
+	if ((id->base.e_base_px || id->base.e_base_bx10) && rate_nominal == 100) {
+		phylink_set(supported_modes, 100baseFX_Full);
+	}
+
+	/* Process cable types with bitrate analysis */
+	if ((has_passive_cable || has_active_cable) && rate_valid) {
+		if (rate_lower_bound <= 12000 && rate_upper_bound >= 10300) {
+			phylink_set(supported_modes, 10000baseCR_Full);
+		}
+		if (rate_lower_bound <= 3200 && rate_upper_bound >= 3100) {
+			phylink_set(supported_modes, 2500baseX_Full);
+		}
+		if (rate_lower_bound <= 1300 && rate_upper_bound >= 1200) {
+			phylink_set(supported_modes, 1000baseX_Full);
+		}
+	}
+
+	/* Process passive cable specific attributes */
+	if (has_passive_cable && id->base.passive.sff8431_app_e) {
+		phylink_set(supported_modes, 10000baseCR_Full);
+	}
+
+	/* Process active cable specific attributes */
+	if (has_active_cable) {
+		if (id->base.active.sff8431_app_e || id->base.active.sff8431_lim) {
+			phylink_set(supported_modes, 10000baseCR_Full);
+		}
+	}
+
+	/* Process extended compliance code */
+	ext_cc = id->base.extended_cc;
+	if (ext_cc == SFF8024_ECC_100G_25GAUI_C2M_AOC) {
+		if (rate_lower_bound <= 28000 && rate_upper_bound >= 25000) {
+			phylink_set(supported_modes, 25000baseSR_Full);
+		}
+	} else if (ext_cc == SFF8024_ECC_100GBASE_SR4_25GBASE_SR) {
+		phylink_set(supported_modes, 100000baseSR4_Full);
+		phylink_set(supported_modes, 25000baseSR_Full);
+	} else if (ext_cc == SFF8024_ECC_100GBASE_LR4_25GBASE_LR ||
+		ext_cc == SFF8024_ECC_100GBASE_ER4_25GBASE_ER) {
+		phylink_set(supported_modes, 100000baseLR4_ER4_Full);
+	} else if (ext_cc == SFF8024_ECC_100GBASE_LR4_25GBASE_LR ||
+		ext_cc == SFF8024_ECC_100GBASE_ER4_25GBASE_ER) {
+		phylink_set(supported_modes, 100000baseLR4_ER4_Full);
+	} else if (ext_cc == SFF8024_ECC_100GBASE_CR4) {
+		phylink_set(supported_modes, 100000baseCR4_Full);
+		phylink_set(supported_modes, 25000baseCR_Full);
+	} else if (ext_cc == SFF8024_ECC_25GBASE_CR_S ||
+		ext_cc == SFF8024_ECC_25GBASE_CR_N) {
+		phylink_set(supported_modes, 25000baseCR_Full);
+	} else if (ext_cc == SFF8024_ECC_10GBASE_T_SFI ||
+		ext_cc == SFF8024_ECC_10GBASE_T_SR) {
+		phylink_set(supported_modes, 10000baseT_Full);
+	} else if (ext_cc == SFF8024_ECC_5GBASE_T) {
+		phylink_set(supported_modes, 5000baseT_Full);
+	} else if (ext_cc == SFF8024_ECC_2_5GBASE_T) {
+		phylink_set(supported_modes, 2500baseT_Full);
+	}
+
+	/* Process Fibre Channel speeds */
+	if (id->base.fc_speed_100 || id->base.fc_speed_200 || id->base.fc_speed_400) {
+		if (nominal_br >= 31) phylink_set(supported_modes, 2500baseX_Full);
+		if (nominal_br >= 12) phylink_set(supported_modes, 1000baseX_Full);
+	}
+
+	/* Fallback bitrate-based mode detection */
+	if (bitmap_empty(supported_modes, __ETHTOOL_LINK_MODE_MASK_NBITS) && rate_nominal != 0) {
+		if (rate_lower_bound <= 1300 && rate_upper_bound >= 1200) {
+			phylink_set(supported_modes, 1000baseX_Full);
+		}
+		if (rate_lower_bound <= 3200 && rate_upper_bound >= 2500) {
+			phylink_set(supported_modes, 2500baseX_Full);
+		}
+	}
+
+	/* Add standard link capabilities */
+	phylink_set(supported_modes, Autoneg);
+	phylink_set(supported_modes, Pause);
+	phylink_set(supported_modes, Asym_Pause);
+
+	/* Update PHY device capabilities */
+	linkmode_or(pdev->supported, pdev->supported, supported_modes);
+	linkmode_copy(pdev->advertising, pdev->supported);
+}
+
+static int
+sfp_link_mode_adjust(struct phy_device *pdev)
+{
+	struct sfp_eeprom_id sfp_id;
+	int ret;
+
+	linkmode_zero(pdev->supported);
+	linkmode_zero(pdev->advertising);
+	/* Read base EEPROM data (0x00-0x5F) */
+	ret = sfp_eeprom_i2c_read(pdev, 0x50, 0, &sfp_id.base, sizeof(sfp_id.base));
+	if (ret < 0 || ret != sizeof(sfp_id.base))
+		goto default_setting;
+
+	/* Read extended EEPROM data (0x60-0x7F) */
+	ret = sfp_eeprom_i2c_read(pdev, 0x50, sizeof(sfp_id.base), &sfp_id.ext, sizeof(sfp_id.ext));
+	if (ret < 0 || ret != sizeof(sfp_id.ext))
+		goto default_setting;
+
+	sfp_phy_parse_to_support(pdev, &sfp_id);
+	/* Apply the parsed capabilities to the PHY device */
+	if (!linkmode_empty(pdev->supported))
+		return 0;
+	default_setting:
+	/* apply the default setting */
+	sfp_phy_read_abilities(pdev);
+
+	return 0;
+}
+
 static int
 sfp_read_status(struct phy_device *pdev)
 {
@@ -312,28 +554,7 @@ sfp_read_status(struct phy_device *pdev)
 		pdev->duplex = FAL_DUPLEX_BUTT;
 	}
 #endif
-	return 0;
-}
-
-static int sfp_phy_read_abilities(struct phy_device *pdev)
-{
-	int features[] = {
-		ETHTOOL_LINK_MODE_FIBRE_BIT,
-		ETHTOOL_LINK_MODE_100baseT_Full_BIT,
-		ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-#ifndef MP
-		ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
-#endif
-		ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-		ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-		ETHTOOL_LINK_MODE_Pause_BIT,
-		ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-		ETHTOOL_LINK_MODE_Autoneg_BIT,
-	};
-
-	linkmode_set_bit_array(features,
-		ARRAY_SIZE(features),
-		pdev->supported);
+	sfp_link_mode_adjust(pdev);
 
 	return 0;
 }
