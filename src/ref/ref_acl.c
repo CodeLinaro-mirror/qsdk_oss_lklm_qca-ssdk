@@ -150,11 +150,16 @@ _ref_acl_mac_entry_create_rule(a_uint32_t dev_id,
 		rule = (fal_acl_rule_t *)kzalloc(sizeof(fal_acl_rule_t), GFP_ATOMIC);
 		if (!rule)
 			return SW_FAIL;
+
 		rule->rule_type = FAL_ACL_RULE_MAC;
 		rule->pri = PPE_ACL_MAC_ENTRY_RULE_DENY_PRI;
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_DENY);
 		rv = fal_acl_rule_add(dev_id, PPE_ACL_MAC_ENTRY_LIST_START, 0, 1, rule);
-		SW_RTN_ON_ERROR(rv);
+		if (rv != SW_OK) {
+			aos_mem_free(rule);
+			rule = NULL;
+			return rv;
+		}
 
 		FAL_ACTION_FLG_CLR(rule->action_flg, FAL_ACL_ACTION_DENY);
 		rule->ethtype_val = ETH_P_PAE;
@@ -163,9 +168,9 @@ _ref_acl_mac_entry_create_rule(a_uint32_t dev_id,
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_PERMIT);
 		rv = fal_acl_rule_add(dev_id, PPE_ACL_MAC_ENTRY_LIST_START, 1, 1, rule);
-		SW_RTN_ON_ERROR(rv);
 		aos_mem_free(rule);
 		rule = NULL;
+		SW_RTN_ON_ERROR(rv);
 
 		rv = fal_acl_list_bind(dev_id, PPE_ACL_MAC_ENTRY_LIST_START,
 				FAL_ACL_DIREC_IN, FAL_ACL_BIND_PORTBITMAP, BIT(port_id));
@@ -197,6 +202,9 @@ _ref_acl_mac_entry_create_rule(a_uint32_t dev_id,
 		}
 
 		rule = (fal_acl_rule_t *)kzalloc(sizeof(fal_acl_rule_t), GFP_ATOMIC);
+		if (rule == NULL)
+			return SW_FAIL;
+
 		rule->rule_type = FAL_ACL_RULE_MAC;
 		rule->pri = PPE_ACL_MAC_ENTRY_RULE_ACCEPT_PRI;
 		ether_addr_copy(rule->src_mac_val.uc, entry->src_mac.uc);
@@ -206,9 +214,9 @@ _ref_acl_mac_entry_create_rule(a_uint32_t dev_id,
 		FAL_ACTION_FLG_SET(rule->action_flg, FAL_ACL_ACTION_PERMIT);
 		rv = fal_acl_rule_add(dev_id, PPE_ACL_MAC_ENTRY_LIST_START + port_id,
 				ENTRY_ID_TO_RULE_ID(entry_idx), 1, rule);
-		SW_RTN_ON_ERROR(rv);
 		aos_mem_free(rule);
 		rule = NULL;
+		SW_RTN_ON_ERROR(rv);
 
 		rv = fal_acl_list_bind(dev_id, PPE_ACL_MAC_ENTRY_LIST_START + port_id,
 				FAL_ACL_DIREC_IN, FAL_ACL_BIND_PORTBITMAP, BIT(port_id));

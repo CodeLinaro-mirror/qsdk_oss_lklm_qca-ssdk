@@ -688,7 +688,7 @@ void qca_qos_scheduler_port_id_convert(a_uint32_t dev_id, a_uint32_t *port_id)
 {
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
-	if (*port_id >= priv->ports_num)
+	if (priv && *port_id >= priv->ports_num)
 		*port_id = SSDK_PHYSICAL_PORT1;
 }
 

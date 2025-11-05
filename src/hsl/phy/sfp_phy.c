@@ -81,7 +81,7 @@ static int sfp_eeprom_i2c_read(struct phy_device *phydev, u32 bus_addr,
 static int
 sfp_module_info(struct phy_device *phydev, struct ethtool_modinfo *modinfo)
 {
-	a_uint8_t mod_compliance, addrmode;
+	a_uint8_t mod_compliance = 0, addrmode = 0;
 	int ret;
 
 	ret  = sfp_eeprom_i2c_read(phydev, 0x50, 0x5e, &mod_compliance, 1);
@@ -618,6 +618,7 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 	struct phy_device *phydev;
 	a_uint32_t addr = 0;
 	struct mii_bus *bus;
+	int ret = 0;
 
 	if (A_TRUE == hsl_port_phy_combo_capability_get(dev_id, port))
 	{
@@ -636,7 +637,11 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id,
 	}
 	phydev->priv = priv;
 	/*register phy device*/
-	phy_device_register(phydev);
+	ret = phy_device_register(phydev);
+	if (ret) {
+		phy_device_free(phydev);
+		return ret;
+	}
 
 	return 0;
 }

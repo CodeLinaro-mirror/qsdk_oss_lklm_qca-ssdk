@@ -342,7 +342,8 @@ __adpt_mppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 		break;
 #endif
 	default:
-		break;
+		SSDK_ERROR("invalid uniphy index %d\n", uniphy_index);
+		return;
 	}
 
 	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_ASSERT);

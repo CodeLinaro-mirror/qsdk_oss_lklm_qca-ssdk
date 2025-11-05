@@ -1258,7 +1258,8 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 		hw_index = _acl_bit_index(hw_entries, ADPT_PRE_ACL_ENTRY_NUM_PER_LIST, 0);
 		if(hw_index >= ADPT_PRE_ACL_ENTRY_NUM_PER_LIST)
 		{
-			return SW_FAIL;
+			rv = SW_FAIL;
+			goto cleanup;
 		}
 		rv |= appe_pre_ipo_rule_reg_get(dev_id,
 			hw_list_id*ADPT_PRE_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
@@ -1299,6 +1300,7 @@ _adpt_appe_pre_acl_rule_sw_query(a_uint32_t dev_id,
 		hw_entries &= (~(1<<hw_index));
 	}
 
+cleanup:
 	if (inner_rule) {
 		acl_rule_field_convert(inner_rule, &rule->inner_rule_field, A_TRUE);
 		aos_mem_copy(&rule->tunnel_info, &inner_rule->tunnel_info,
