@@ -7,6 +7,29 @@
 #ifndef _HTTPPE_L2_VP_REG_H_
 #define _HTTPPE_L2_VP_REG_H_
 
+/*[register] PORT_ISOL_ACTION*/
+#define PORT_ISOL_ACTION
+#define PORT_ISOL_ACTION_ADDRESS 0x1840
+#define PORT_ISOL_ACTION_NUM     9
+#define PORT_ISOL_ACTION_INC     0x4
+#define PORT_ISOL_ACTION_TYPE    REG_TYPE_RW
+#define PORT_ISOL_ACTION_DEFAULT 0x0
+	/*[field] ACTION*/
+	#define PORT_ISOL_ACTION_ACTION
+	#define PORT_ISOL_ACTION_ACTION_OFFSET  0
+	#define PORT_ISOL_ACTION_ACTION_LEN     18
+	#define PORT_ISOL_ACTION_ACTION_DEFAULT 0x0
+
+struct port_isol_action {
+	a_uint32_t  action:18;
+	a_uint32_t  _reserved0:14;
+};
+
+union port_isol_action_u {
+	a_uint32_t val;
+	struct port_isol_action bf;
+};
+
 /*[table] L2_VP_PORT_TBL*/
 #define L2_VP_PORT_TBL
 #define L2_VP_PORT_TBL_ADDRESS 0x23000
@@ -270,6 +293,31 @@ struct l2_vp_port_post_tbl {
 union l2_vp_port_post_tbl_u {
 	a_uint32_t val[2];
 	struct l2_vp_port_post_tbl bf;
+};
+
+/*[table] VP_ISOL_ACTION_TBL*/
+#define VP_ISOL_ACTION_TBL
+#define VP_ISOL_ACTION_TBL_ADDRESS 0x28800
+#define VP_ISOL_ACTION_TBL_NUM     64
+#define VP_ISOL_ACTION_TBL_INC     0x10
+#define VP_ISOL_ACTION_TBL_TYPE    REG_TYPE_RW
+#define VP_ISOL_ACTION_TBL_DEFAULT 0x0
+	/*[field] VP_PROFILE_ACTION*/
+	#define VP_ISOL_ACTION_TBL_VP_PROFILE_ACTION
+	#define VP_ISOL_ACTION_TBL_VP_PROFILE_ACTION_OFFSET  0
+	#define VP_ISOL_ACTION_TBL_VP_PROFILE_ACTION_LEN     128
+	#define VP_ISOL_ACTION_TBL_VP_PROFILE_ACTION_DEFAULT 0x0
+
+struct vp_isol_action_tbl {
+	a_uint32_t  vp_profile_action_0:32;
+	a_uint32_t  vp_profile_action_1:32;
+	a_uint32_t  vp_profile_action_2:32;
+	a_uint32_t  vp_profile_action_3:32;
+};
+
+union vp_isol_action_tbl_u {
+	a_uint32_t val[4];
+	struct vp_isol_action_tbl bf;
 };
 
 #endif

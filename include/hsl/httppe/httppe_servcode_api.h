@@ -4,299 +4,297 @@
  * SPDX-License-Identifier: ISC
  */
 
-#ifndef _HTTPPE_VSI_API_H_
-#define _HTTPPE_VSI_API_H_
+#ifndef _HTTPPE_SERVCODE_API_H_
+#define _HTTPPE_SERVCODE_API_H_
 
-#define VSI_TBL_MAX_ENTRY	VSI_TBL_NUM
+#define IN_L2_SERVICE_TBL_MAX_ENTRY	IN_L2_SERVICE_TBL_NUM
 
 sw_error_t
-httppe_vsi_tbl_get(
+httppe_in_l2_service_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union vsi_tbl_u *value);
+		union in_l2_service_tbl_u *value);
 
 sw_error_t
-httppe_vsi_tbl_set(
+httppe_in_l2_service_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union vsi_tbl_u *value);
+		union in_l2_service_tbl_u *value);
 
 sw_error_t
-httppe_vsi_tbl_bc_bitmap_get(
+httppe_in_l2_service_tbl_bypass_bitmap_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_bc_bitmap_set(
+httppe_in_l2_service_tbl_bypass_bitmap_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_ipmc_en_get(
+httppe_in_l2_service_tbl_bypass_bitmap_ext_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_ipmc_en_set(
+httppe_in_l2_service_tbl_bypass_bitmap_ext_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_member_port_bitmap_get(
+httppe_in_l2_service_tbl_bypass_bitmap_new_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_member_port_bitmap_set(
+httppe_in_l2_service_tbl_bypass_bitmap_new_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_new_addr_fwd_cmd_get(
+httppe_in_l2_service_tbl_direction_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_new_addr_fwd_cmd_set(
+httppe_in_l2_service_tbl_direction_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_new_addr_lrn_en_get(
+httppe_in_l2_service_tbl_dst_port_id_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_new_addr_lrn_en_set(
+httppe_in_l2_service_tbl_dst_port_id_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_station_move_fwd_cmd_get(
+httppe_in_l2_service_tbl_dst_port_id_valid_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_station_move_fwd_cmd_set(
+httppe_in_l2_service_tbl_dst_port_id_valid_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_station_move_lrn_en_get(
+httppe_in_l2_service_tbl_post_bypass_bitmap_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_station_move_lrn_en_set(
+httppe_in_l2_service_tbl_post_bypass_bitmap_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_umc_bitmap_get(
+httppe_in_l2_service_tbl_rx_cnt_en_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_umc_bitmap_set(
+httppe_in_l2_service_tbl_rx_cnt_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_tbl_uuc_bitmap_get(
+httppe_in_l2_service_tbl_tx_cnt_en_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_tbl_uuc_bitmap_set(
+httppe_in_l2_service_tbl_tx_cnt_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define VSI_REMAP_TBL_MAX_ENTRY	VSI_REMAP_TBL_NUM
+#define EG_SERVICE_TBL_MAX_ENTRY	EG_SERVICE_TBL_NUM
 
 sw_error_t
-httppe_vsi_remap_tbl_get(
+httppe_eg_service_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union vsi_remap_tbl_u *value);
+		union eg_service_tbl_u *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_set(
+httppe_eg_service_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
-		union vsi_remap_tbl_u *value);
+		union eg_service_tbl_u *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_br_vsi_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t *value);
-
-sw_error_t
-httppe_vsi_remap_tbl_br_vsi_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value);
-
-sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_0_get(
+httppe_eg_service_tbl_ath_disable_bit_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_0_set(
+httppe_eg_service_tbl_ath_disable_bit_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_1_get(
+httppe_eg_service_tbl_ath_from_cpu_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_1_set(
+httppe_eg_service_tbl_ath_from_cpu_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_2_get(
+httppe_eg_service_tbl_ath_hdr_insert_dis_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_2_set(
+httppe_eg_service_tbl_ath_hdr_insert_dis_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_3_get(
+httppe_eg_service_tbl_ath_hdr_type_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_3_set(
+httppe_eg_service_tbl_ath_hdr_type_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_4_get(
+httppe_eg_service_tbl_ath_port_bitmap_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_4_set(
+httppe_eg_service_tbl_ath_port_bitmap_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_5_get(
+httppe_eg_service_tbl_field_update_action_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_5_set(
+httppe_eg_service_tbl_field_update_action_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_6_get(
+httppe_eg_service_tbl_field_update_action_ext_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_6_set(
+httppe_eg_service_tbl_field_update_action_ext_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_7_get(
+httppe_eg_service_tbl_field_update_action_ext1_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_member_port_bitmap_7_set(
+httppe_eg_service_tbl_field_update_action_ext1_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
 sw_error_t
-httppe_vsi_remap_tbl_vsi_remap_en_get(
+httppe_eg_service_tbl_hw_services_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_vsi_remap_tbl_vsi_remap_en_set(
+httppe_eg_service_tbl_hw_services_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
 
-#define EG_VSI_COUNTER_TBL_MAX_ENTRY	EG_VSI_COUNTER_TBL_NUM
-
 sw_error_t
-httppe_eg_vsi_counter_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union eg_vsi_counter_tbl_u *value);
-
-sw_error_t
-httppe_eg_vsi_counter_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union eg_vsi_counter_tbl_u *value);
-
-sw_error_t
-httppe_eg_vsi_counter_tbl_tx_bytes_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t *value);
-
-sw_error_t
-httppe_eg_vsi_counter_tbl_tx_bytes_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint64_t value);
-
-sw_error_t
-httppe_eg_vsi_counter_tbl_tx_packets_get(
+httppe_eg_service_tbl_ip_length_update_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
 
 sw_error_t
-httppe_eg_vsi_counter_tbl_tx_packets_set(
+httppe_eg_service_tbl_ip_length_update_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_eg_service_tbl_next_service_code_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_eg_service_tbl_next_service_code_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_eg_service_tbl_offset_sel_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_eg_service_tbl_offset_sel_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_eg_service_tbl_tx_counting_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_eg_service_tbl_tx_counting_en_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);

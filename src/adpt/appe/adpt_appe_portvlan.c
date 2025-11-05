@@ -200,7 +200,7 @@ adpt_appe_port_isol_group_set(a_uint32_t dev_id,
 	ADPT_NULL_POINT_CHECK(isol_group_bmp);
 
 	rv = appe_vp_isol_tbl_vp_profile_map_set(dev_id,
-			isol_group_id, *isol_group_bmp);
+		isol_group_id, *isol_group_bmp);
 
 	return rv;
 }
@@ -215,7 +215,7 @@ adpt_appe_port_isol_group_get(a_uint32_t dev_id,
 	ADPT_NULL_POINT_CHECK(isol_group_bmp);
 
 	rv = appe_vp_isol_tbl_vp_profile_map_get(dev_id,
-			isol_group_id, isol_group_bmp);
+				isol_group_id, isol_group_bmp);
 
 	return rv;
 }

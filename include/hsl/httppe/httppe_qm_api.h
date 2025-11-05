@@ -7,6 +7,44 @@
 #ifndef _HTTPPE_QM_API_H_
 #define _HTTPPE_QM_API_H_
 
+#define PORT_VSI_ENQUEUE_MAP_MAX_ENTRY	PORT_VSI_ENQUEUE_MAP_NUM
+
+sw_error_t
+httppe_port_vsi_enqueue_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vsi_enqueue_map_u *value);
+
+sw_error_t
+httppe_port_vsi_enqueue_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vsi_enqueue_map_u *value);
+
+sw_error_t
+httppe_port_vsi_enqueue_map_enqueue_valid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vsi_enqueue_map_enqueue_valid_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vsi_enqueue_map_enqueue_vp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vsi_enqueue_map_enqueue_vp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 
 sw_error_t
 httppe_flush_cfg_get(

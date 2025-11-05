@@ -22,6 +22,12 @@
 #include "httppe/httppe_acl_api.h"
 #include "httppe/httppe_policer_reg.h"
 #include "httppe/httppe_policer_api.h"
+#include "httppe/httppe_portctrl_reg.h"
+#include "httppe/httppe_portctrl_api.h"
+#include "httppe/httppe_servcode_reg.h"
+#include "httppe/httppe_servcode_api.h"
+#include "httppe/httppe_fdb_reg.h"
+#include "httppe/httppe_fdb_api.h"
 
 sw_error_t hppe_reg_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t *val);
 sw_error_t hppe_reg_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t val);

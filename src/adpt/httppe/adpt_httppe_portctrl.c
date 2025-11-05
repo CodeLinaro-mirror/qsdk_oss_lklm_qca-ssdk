@@ -157,3 +157,79 @@ _adpt_httppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id,
 
 	return httppe_mac_tx_configuration_set(dev_id, mac_id, &mac_tx_configuration);
 }
+
+sw_error_t
+adpt_httppe_port_tx_counter_tbl_get(a_uint32_t dev_id, a_uint32_t port_id,
+	fal_port_cnt_t *port_cnt)
+{
+	sw_error_t rtn = SW_OK;
+	union port_tx_counter_tbl_reg_u phy_port_tx_cnt_tbl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(port_cnt);
+
+	aos_mem_zero(&phy_port_tx_cnt_tbl, sizeof(union port_tx_counter_tbl_reg_u));
+
+	rtn = httppe_port_tx_counter_tbl_reg_get(dev_id, port_id, &phy_port_tx_cnt_tbl);
+	SW_RTN_ON_ERROR(rtn);
+
+	port_cnt->tx_pkt_cnt = phy_port_tx_cnt_tbl.bf.tx_packets;
+	port_cnt->tx_byte_cnt = ((a_uint64_t)phy_port_tx_cnt_tbl.bf.tx_bytes_1 <<
+		SW_FIELD_OFFSET_IN_WORD(PORT_TX_COUNTER_TBL_REG_TX_BYTES_OFFSET)) |
+		phy_port_tx_cnt_tbl.bf.tx_bytes_0;
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_httppe_port_tx_counter_tbl_flush(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rtn = SW_OK;
+	union port_tx_counter_tbl_reg_u phy_port_tx_cnt_tbl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	aos_mem_zero(&phy_port_tx_cnt_tbl, sizeof(union port_tx_counter_tbl_reg_u));
+
+	rtn = httppe_port_tx_counter_tbl_reg_set(dev_id, port_id, &phy_port_tx_cnt_tbl);
+	return rtn;
+}
+
+sw_error_t
+adpt_httppe_vp_tx_counter_tbl_get(a_uint32_t dev_id, a_uint32_t port_id,
+	fal_port_cnt_t *port_cnt)
+{
+	sw_error_t rtn = SW_OK;
+	union vp_tx_counter_tbl_reg_u vport_tx_cnt_tbl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(port_cnt);
+
+	aos_mem_zero(&vport_tx_cnt_tbl, sizeof(union vp_tx_counter_tbl_reg_u));
+
+	rtn = httppe_vp_tx_counter_tbl_reg_get(dev_id, port_id, &vport_tx_cnt_tbl);
+	SW_RTN_ON_ERROR(rtn);
+
+	port_cnt->tx_pkt_cnt = vport_tx_cnt_tbl.bf.tx_packets;
+	port_cnt->tx_byte_cnt = ((a_uint64_t)vport_tx_cnt_tbl.bf.tx_bytes_1 <<
+		SW_FIELD_OFFSET_IN_WORD(VP_TX_COUNTER_TBL_REG_TX_BYTES_OFFSET)) |
+		vport_tx_cnt_tbl.bf.tx_bytes_0;
+
+	return rtn;
+}
+
+sw_error_t
+adpt_httppe_vp_tx_counter_tbl_flush(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	sw_error_t rtn = SW_OK;
+	union vp_tx_counter_tbl_reg_u vport_tx_cnt_tbl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	aos_mem_zero(&vport_tx_cnt_tbl, sizeof(union vp_tx_counter_tbl_reg_u));
+
+	rtn = httppe_vp_tx_counter_tbl_reg_set(dev_id, port_id, &vport_tx_cnt_tbl);
+	return rtn;
+}
+
+
