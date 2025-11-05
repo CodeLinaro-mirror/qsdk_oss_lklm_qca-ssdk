@@ -1075,7 +1075,11 @@ qca_appe_shaper_hw_init(a_uint32_t dev_id)
 	fal_shaper_config_t queue_shaper, flow_shaper;
 	fal_shaper_ctrl_t queue_shaper_ctrl, flow_shaper_ctrl;
 	a_uint32_t i = 0;
+	a_uint32_t port_timeslot = APPE_PORT_SHAPER_TIMESLOT_DFT;
+	a_uint32_t queue_timeslot = APPE_QUEUE_SHAPER_TIMESLOT_DFT;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
+	SW_RTN_ON_NULL(priv);
 	memset(&queue_shaper, 0, sizeof(queue_shaper));
 	memset(&flow_shaper, 0, sizeof(flow_shaper));
 
@@ -1090,7 +1094,7 @@ qca_appe_shaper_hw_init(a_uint32_t dev_id)
 	flow_token_number.e_token_number_negative_en = A_FALSE;
 	flow_token_number.e_token_number = APPE_MAX_E_TOKEN_NUM;
 
-	for (i = SSDK_PHYSICAL_PORT0; i <= SSDK_PHYSICAL_PORT7; i++) {
+	for (i = SSDK_PHYSICAL_PORT0; i < priv->ports_num; i++) {
 		fal_port_shaper_token_number_set(dev_id, i, &port_token_number);
 	}
 
@@ -1115,10 +1119,32 @@ qca_appe_shaper_hw_init(a_uint32_t dev_id)
 		flow_shaper.grp_end = A_TRUE;
 		fal_flow_shaper_set(dev_id, i, &flow_shaper);
 	}
+	switch (priv->version) {
+		case QCA_VER_APPE:
+		case QCA_VER_MRPPE:
+			port_timeslot = APPE_PORT_SHAPER_TIMESLOT_DFT;
+			queue_timeslot = APPE_QUEUE_SHAPER_TIMESLOT_DFT;
+			break;
+		case QCA_VER_JHPPE:
+			port_timeslot = JHPPE_PORT_SHAPER_TIMESLOT_DFT;
+			queue_timeslot = JHPPE_QUEUE_SHAPER_TIMESLOT_DFT;
+			break;
+		case QCA_VER_HMSPPE:
+			port_timeslot = HMSPPE_PORT_SHAPER_TIMESLOT_DFT;
+			queue_timeslot = HMSPPE_QUEUE_SHAPER_TIMESLOT_DFT;
+			break;
+		case QCA_VER_HTTPPE:
+			port_timeslot = HTTPPE_PORT_SHAPER_TIMESLOT_DFT;
+			queue_timeslot = HTTPPE_QUEUE_SHAPER_TIMESLOT_DFT;
+			break;
+		default:
+			SSDK_ERROR("Unsupported chip version: %d\n", priv->version);
+			return SW_OUT_OF_RANGE;
+	}
 
-	fal_port_shaper_timeslot_set(dev_id, APPE_PORT_SHAPER_TIMESLOT_DFT);
+	fal_port_shaper_timeslot_set(dev_id, port_timeslot);
 	fal_flow_shaper_timeslot_set(dev_id, APPE_FLOW_SHAPER_TIMESLOT_DFT);
-	fal_queue_shaper_timeslot_set(dev_id, APPE_QUEUE_SHAPER_TIMESLOT_DFT);
+	fal_queue_shaper_timeslot_set(dev_id, queue_timeslot);
 	fal_shaper_ipg_preamble_length_set(dev_id,
 				APPE_SHAPER_IPG_PREAMBLE_LEN_DFT);
 	queue_shaper_ctrl.head = APPE_QUEUE_SHAPER_HEAD;

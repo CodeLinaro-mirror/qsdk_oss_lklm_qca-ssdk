@@ -31,6 +31,7 @@
 #define BYTE_SHAPER_MIN_RATE          64
 #define FRAME_SHAPER_MAX_RATE         14881000
 #define FRAME_SHAPER_MIN_RATE         6
+#define ADPT_PORT_SHAPER_TIMESLOT_MIN       6
 
 static a_uint32_t appe_flow_shaper_type[SW_MAX_NR_DEV][APPE_SHAPER_FLOW_ID_MAX + 1] = {0};
 static a_uint32_t appe_queue_shaper_type[SW_MAX_NR_DEV][APPE_SHAPER_QUEUE_ID_MAX + 1] = {0};
@@ -158,6 +159,19 @@ hppe_shaper_burst_size[NR_ADPT_HPPE_SHAPER_METER_UNIT][NR_ADPT_HPPE_SHAPER_METER
 	},
 };
 
+static a_uint32_t
+__adpt_hppe_shaper_time_cycle_get(a_uint32_t dev_id, a_uint32_t time_slot)
+{
+	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
+
+	if ((ppe_type == CHIP_HTTPPE) || (ppe_type == CHIP_HMSPPE) ||
+		(ppe_type == CHIP_JHPPE)) {
+		return (time_slot * 4);
+	} else {
+		return (time_slot * 8);
+	}
+}
+
 static sw_error_t
 __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 {
@@ -167,7 +181,7 @@ __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t ppe_freq = adpt_chip_freq_get(dev_id);
 
 	/* time_cycle is ns*/
-	time_cycle = ( time_slot * 8);
+	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot);
 
 	for (j = 0; j < 8; j++)
 	{
@@ -218,7 +232,7 @@ __adpt_hppe_flow_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t ppe_freq = adpt_chip_freq_get(dev_id);
 
 	/* time_cycle is ns*/
-	time_cycle = ( time_slot * 8);
+	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot);
 
 	for (j = 0; j < 8; j++)
 	{
@@ -269,7 +283,7 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t ppe_freq = adpt_chip_freq_get(dev_id);
 
 	/* time_cycle is ns*/
-	time_cycle = ( time_slot * 8) / ppe_freq;
+	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot) / ppe_freq;
 
 	for (j = 0; j < 8; j++)
 	{
@@ -1236,7 +1250,7 @@ adpt_hppe_port_shaper_time_slot_set(a_uint32_t dev_id, a_uint32_t time_slot)
 	memset(&shp_slot_cfg_port, 0, sizeof(shp_slot_cfg_port));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if ((time_slot < 0x8) || (time_slot > 0xfff))
+	if ((time_slot < ADPT_PORT_SHAPER_TIMESLOT_MIN) || (time_slot > 0xfff))
 		return SW_BAD_PARAM;
 
 	rv = hppe_shp_slot_cfg_port_get(dev_id, &shp_slot_cfg_port);

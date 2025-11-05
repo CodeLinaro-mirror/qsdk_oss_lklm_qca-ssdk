@@ -2645,7 +2645,7 @@ adpt_forward_action_convert(fal_fwd_cmd_t *fwd_cmd, a_uint32_t *value, a_bool_t 
 #define ADPT_HPPE_FREQUENCY      300  /*MHZ*/
 #define ADPT_MRPPE_FREQUENCY     375  /*MHZ*/
 #define ADPT_JHPPE_FREQUENCY     462  /*MHZ*/
-#define ADPT_HMSPPE_FREQUENCY    428  /*MHZ*/
+#define ADPT_HMSPPE_FREQUENCY    429  /*MHZ*/
 #define ADPT_HTTPPE_FREQUENCY    250  /*MHZ*/
 
 adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id);
