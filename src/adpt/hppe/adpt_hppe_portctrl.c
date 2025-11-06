@@ -95,6 +95,9 @@
 #define PORT_LPI_WAKEUP_TIMER_2500M 32
 #define PORT_LPI_WAKEUP_TIMER_1000M 18
 #define PORT_LPI_WAKEUP_TIMER_100M 28
+/* the sleep timer unit is us */
+#define PORT_LPI_SLEEP_TIMER_10000M 10000
+#define PORT_LPI_SLEEP_TIMER_DEFAULT 100
 
 /* This register is used to adjust the write timing for reserving
  * some bandwidth of the memory to read operation.
@@ -3445,6 +3448,81 @@ adpt_ppe_port_mac_eee_timer_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 static sw_error_t
+adpt_ppe_port_mac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+
+	if (port_mac_type == PORT_XGMAC_TYPE)
+		return _adpt_hppe_port_xgmac_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+	else if (port_mac_type == PORT_GMAC_TYPE)
+		return _adpt_ppe_port_gmac_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+	else
+		return SW_BAD_VALUE;
+}
+
+static sw_error_t
+adpt_ppe_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	hsl_port_phy_eee_get(dev_id, port_id, port_eee_cfg);
+	return adpt_ppe_port_mac_eee_cfg_get(dev_id, port_id, port_eee_cfg);
+}
+
+static sw_error_t
+adpt_hppe_port_mac_eee_timer_adjust(a_uint32_t dev_id, fal_port_t port_id,
+	a_uint32_t speed, struct qca_phy_priv *priv)
+{
+	fal_port_eee_cfg_t port_eee_cfg = {0};
+	a_uint32_t wakeup_timer_val = 0, sleep_timer_val = PORT_LPI_SLEEP_TIMER_DEFAULT;
+	sw_error_t rv = SW_OK;
+	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+
+	if (port_mac_type != PORT_XGMAC_TYPE)
+		return SW_OK;
+
+	rv = adpt_ppe_port_mac_eee_cfg_get(dev_id, port_id, &port_eee_cfg);
+	SW_RTN_ON_ERROR(rv);
+
+	if (port_eee_cfg.lpi_tx_enable == A_FALSE ||
+		(priv->ports[port_id].lpi_wakeup_timer_force == A_TRUE &&
+		priv->ports[port_id].lpi_sleep_timer_force == A_TRUE))
+		return SW_OK;
+
+	switch (speed) {
+		case FAL_SPEED_10000:
+			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_10000M;
+			sleep_timer_val = PORT_LPI_SLEEP_TIMER_10000M;
+			break;
+		case FAL_SPEED_5000:
+			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_5000M;
+			break;
+		case FAL_SPEED_2500:
+			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_2500M;
+			break;
+		case FAL_SPEED_1000:
+			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_1000M;
+			break;
+		case FAL_SPEED_100:
+			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_100M;
+			break;
+		default:
+			/* No adjustments for other speeds */
+			return SW_OK;
+	}
+
+	if (priv->ports[port_id].lpi_wakeup_timer_force == A_FALSE)
+		port_eee_cfg.lpi_wakeup_timer = wakeup_timer_val;
+
+	if (priv->ports[port_id].lpi_sleep_timer_force == A_FALSE)
+		port_eee_cfg.lpi_sleep_timer = sleep_timer_val;
+
+	return adpt_ppe_port_mac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
+}
+
+static sw_error_t
 adpt_ppe_port_mac_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
 {
@@ -3463,21 +3541,15 @@ adpt_ppe_port_mac_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	else
 		priv->ports[port_id].lpi_wakeup_timer_force = A_FALSE;
 
-	return adpt_ppe_port_mac_eee_timer_set(dev_id, port_id, port_eee_cfg);
-}
-
-static sw_error_t
-adpt_ppe_port_mac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
-	fal_port_eee_cfg_t *port_eee_cfg)
-{
-	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
-
-	if (port_mac_type == PORT_XGMAC_TYPE)
-		return _adpt_hppe_port_xgmac_eee_cfg_get( dev_id, port_id, port_eee_cfg);
-	else if (port_mac_type == PORT_GMAC_TYPE)
-		return _adpt_ppe_port_gmac_eee_cfg_get( dev_id, port_id, port_eee_cfg);
+	if(port_eee_cfg->lpi_sleep_timer)
+		priv->ports[port_id].lpi_sleep_timer_force = A_TRUE;
 	else
-		return SW_BAD_VALUE;
+		priv->ports[port_id].lpi_sleep_timer_force = A_FALSE;
+
+	adpt_hppe_port_mac_eee_timer_adjust(dev_id, port_id,
+		priv->ports[port_id].port_old_speed, priv);
+
+	return adpt_ppe_port_mac_eee_timer_set(dev_id, port_id, port_eee_cfg);
 }
 
 static sw_error_t
@@ -3488,16 +3560,6 @@ adpt_ppe_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	hsl_port_phy_eee_set(dev_id, port_id, port_eee_cfg);
 	return adpt_ppe_port_mac_eee_cfg_set(dev_id, port_id, port_eee_cfg);
-}
-
-static sw_error_t
-adpt_ppe_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
-	fal_port_eee_cfg_t *port_eee_cfg)
-{
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	hsl_port_phy_eee_get(dev_id, port_id, port_eee_cfg);
-	return adpt_ppe_port_mac_eee_cfg_get(dev_id, port_id, port_eee_cfg);
 }
 
 static sw_error_t
@@ -4193,59 +4255,6 @@ adpt_hppe_port_mac_loopback_reset(a_uint32_t dev_id, a_uint32_t port_id)
 	return SW_OK;
 }
 
-static sw_error_t
-adpt_hppe_port_mac_eee_adjust(a_uint32_t dev_id, fal_port_t port_id,
-	a_uint32_t speed, struct qca_phy_priv *priv)
-{
-	fal_port_eee_cfg_t port_eee_cfg = {0};
-	sw_error_t rv = SW_OK;
-	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
-
-	rv = adpt_ppe_port_interface_eee_cfg_get(dev_id, port_id, &port_eee_cfg);
-	SW_RTN_ON_ERROR(rv);
-
-	/* if lpi_wakeup_timer_force is 0, then wakeup timer is set here,*/
-	/* else the wakeup timer is set by shell commands */
-	if (priv->ports[port_id].lpi_wakeup_timer_force == 0) {
-		/* only need to adjust the wakeup timer for XGMAC */
-		if (port_mac_type == PORT_XGMAC_TYPE) {
-			switch (speed) {
-				case FAL_SPEED_10000:
-					if(port_eee_cfg.eee_status & EEE_10000BASE_T)
-						port_eee_cfg.lpi_wakeup_timer =
-							PORT_LPI_WAKEUP_TIMER_10000M;
-					break;
-				case FAL_SPEED_5000:
-					if(port_eee_cfg.eee_status & EEE_5000BASE_T)
-						port_eee_cfg.lpi_wakeup_timer =
-							PORT_LPI_WAKEUP_TIMER_5000M;
-					break;
-				case FAL_SPEED_2500:
-					if(port_eee_cfg.eee_status & EEE_2500BASE_T)
-						port_eee_cfg.lpi_wakeup_timer =
-							PORT_LPI_WAKEUP_TIMER_2500M;
-					break;
-				case FAL_SPEED_1000:
-					if(port_eee_cfg.eee_status & EEE_1000BASE_T)
-						port_eee_cfg.lpi_wakeup_timer =
-							PORT_LPI_WAKEUP_TIMER_1000M;
-					break;
-				case FAL_SPEED_100:
-					if(port_eee_cfg.eee_status & EEE_100BASE_T)
-						port_eee_cfg.lpi_wakeup_timer =
-							PORT_LPI_WAKEUP_TIMER_100M;
-					break;
-				default:
-					break;
-			}
-			rv = _adpt_hppe_port_xgmac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
-			SW_RTN_ON_ERROR(rv);
-		}
-	}
-
-	return SW_OK;
-}
-
 sw_error_t
 qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 {
@@ -4356,6 +4365,8 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 					/* config mac speed */
 					adpt_hppe_port_mac_speed_set(priv->device_id, port_id,
 							phy_status.speed);
+					adpt_hppe_port_mac_eee_timer_adjust(priv->device_id, port_id,
+						phy_status.speed, priv);
 					priv->ports[port_id].port_old_speed =
 						(a_uint32_t)phy_status.speed;
 
@@ -4418,8 +4429,6 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 						port_id, A_TRUE);
 				adpt_hppe_uniphy_port_adapter_reset(priv->device_id, port_id);
 			}
-			adpt_hppe_port_mac_eee_adjust(priv->device_id, port_id,
-				phy_status.speed, priv);
 			/* enable mac and ppe txmac*/
 			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_TRUE);
