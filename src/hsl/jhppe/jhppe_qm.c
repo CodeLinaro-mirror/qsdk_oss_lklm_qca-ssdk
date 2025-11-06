@@ -137,6 +137,63 @@ jhppe_enq_ctrl_ext_set(
 }
 
 sw_error_t
+jhppe_uniq_flowctrl_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_flowctrl_status_u *value)
+{
+	if (index >= UNIQ_FLOWCTRL_STATUS_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + UNIQ_FLOWCTRL_STATUS_ADDRESS + \
+				index * UNIQ_FLOWCTRL_STATUS_INC,
+				&value->val);
+}
+
+sw_error_t
+jhppe_uniq_flowctrl_status_uniq_flowctrl_status_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union uniq_flowctrl_status_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = jhppe_uniq_flowctrl_status_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.uniq_flowctrl_status_status;
+	return ret;
+}
+
+sw_error_t
+jhppe_uniq_q_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_q_map_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + UNIQ_Q_MAP_TBL_ADDRESS + \
+				index * UNIQ_Q_MAP_TBL_INC,
+				value->val,
+				sizeof(union uniq_q_map_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+jhppe_uniq_q_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_q_map_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + UNIQ_Q_MAP_TBL_ADDRESS + \
+				index * UNIQ_Q_MAP_TBL_INC,
+				value->val,
+				sizeof(union uniq_q_map_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
 jhppe_enq_ctrl_get(
 		a_uint32_t dev_id,
 		union enq_ctrl_u *value)

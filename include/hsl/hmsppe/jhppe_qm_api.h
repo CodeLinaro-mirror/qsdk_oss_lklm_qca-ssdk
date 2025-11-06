@@ -108,6 +108,57 @@ jhppe_enq_ctrl_ext_rsv_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
+#define UNIQ_FLOWCTRL_STATUS_MAX_ENTRY	UNIQ_FLOWCTRL_STATUS_NUM
+
+sw_error_t
+jhppe_uniq_flowctrl_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_flowctrl_status_u *value);
+
+sw_error_t
+jhppe_uniq_flowctrl_status_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_flowctrl_status_u *value);
+
+sw_error_t
+jhppe_uniq_flowctrl_status_uniq_flowctrl_status_status_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+jhppe_uniq_flowctrl_status_uniq_flowctrl_status_status_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+#define UNIQ_Q_MAP_TBL_MAX_ENTRY	UNIQ_Q_MAP_TBL_NUM
+
+sw_error_t
+jhppe_uniq_q_map_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_q_map_tbl_u *value);
+
+sw_error_t
+jhppe_uniq_q_map_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union uniq_q_map_tbl_u *value);
+
+sw_error_t
+jhppe_uniq_q_map_tbl_queue_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+jhppe_uniq_q_map_tbl_queue_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
 
 sw_error_t
 jhppe_enq_ctrl_get(

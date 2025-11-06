@@ -87,6 +87,60 @@ union enq_ctrl_ext_u {
 	struct enq_ctrl_ext bf;
 };
 
+/*[register] UNIQ_FLOWCTRL_STATUS*/
+#define UNIQ_FLOWCTRL_STATUS
+#define UNIQ_FLOWCTRL_STATUS_ADDRESS 0x40
+#define UNIQ_FLOWCTRL_STATUS_NUM     8
+#define UNIQ_FLOWCTRL_STATUS_INC     0x4
+#define UNIQ_FLOWCTRL_STATUS_TYPE    REG_TYPE_RO
+#define UNIQ_FLOWCTRL_STATUS_DEFAULT 0x0
+	/*[field] UNIQ_FLOWCTRL_STATUS_STATUS*/
+	#define UNIQ_FLOWCTRL_STATUS_UNIQ_FLOWCTRL_STATUS_STATUS
+	#define UNIQ_FLOWCTRL_STATUS_UNIQ_FLOWCTRL_STATUS_STATUS_OFFSET  0
+	#define UNIQ_FLOWCTRL_STATUS_UNIQ_FLOWCTRL_STATUS_STATUS_LEN     32
+	#define UNIQ_FLOWCTRL_STATUS_UNIQ_FLOWCTRL_STATUS_STATUS_DEFAULT 0x0
+
+struct uniq_flowctrl_status {
+	a_uint32_t  uniq_flowctrl_status_status:32;
+};
+
+union uniq_flowctrl_status_u {
+	a_uint32_t val;
+	struct uniq_flowctrl_status bf;
+};
+
+/*[table] UNIQ_Q_MAP_TBL*/
+#define UNIQ_Q_MAP_TBL
+#define UNIQ_Q_MAP_TBL_ADDRESS 0x38000
+#define UNIQ_Q_MAP_TBL_NUM     300
+#define UNIQ_Q_MAP_TBL_INC     0x40
+#define UNIQ_Q_MAP_TBL_TYPE    REG_TYPE_RW
+#define UNIQ_Q_MAP_TBL_DEFAULT 0x0
+	/*[field] QUEUE_BITMAP*/
+	#define UNIQ_Q_MAP_TBL_QUEUE_BITMAP
+	#define UNIQ_Q_MAP_TBL_QUEUE_BITMAP_OFFSET  0
+	#define UNIQ_Q_MAP_TBL_QUEUE_BITMAP_LEN     300
+	#define UNIQ_Q_MAP_TBL_QUEUE_BITMAP_DEFAULT 0x0
+
+struct uniq_q_map_tbl {
+	a_uint32_t  queue_bitmap_0:32;
+	a_uint32_t  queue_bitmap_1:32;
+	a_uint32_t  queue_bitmap_2:32;
+	a_uint32_t  queue_bitmap_3:32;
+	a_uint32_t  queue_bitmap_4:32;
+	a_uint32_t  queue_bitmap_5:32;
+	a_uint32_t  queue_bitmap_6:32;
+	a_uint32_t  queue_bitmap_7:32;
+	a_uint32_t  queue_bitmap_8:32;
+	a_uint32_t  queue_bitmap_9:12;
+	a_uint32_t  _reserved0:20;
+};
+
+union uniq_q_map_tbl_u {
+	a_uint32_t val[10];
+	struct uniq_q_map_tbl bf;
+};
+
 /*[register] ENQ_CTRL*/
 #define ENQ_CTRL
 #define ENQ_CTRL_ADDRESS 0x90
