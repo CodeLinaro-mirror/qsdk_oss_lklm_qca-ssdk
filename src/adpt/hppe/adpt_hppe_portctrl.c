@@ -2998,6 +2998,10 @@ adpt_hppe_port_promisc_mode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 	{
 		a_uint32_t port_value = 0;
 		port_value = FAL_PORT_ID_VALUE(port_id);
+#if defined(HTTPPE)
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+			return adpt_httppe_vp_port_promisc_mode_get(dev_id, port_id, enable);
+#endif
 		return appe_l2_vp_port_tbl_promisc_en_get(dev_id, port_value,
 			enable);
 	}
@@ -3023,6 +3027,11 @@ adpt_hppe_port_promisc_mode_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 	{
 		a_uint32_t port_value = 0;
 		port_value = FAL_PORT_ID_VALUE(port_id);
+#if defined(HTTPPE)
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+			return adpt_httppe_vp_port_promisc_mode_set(dev_id, port_id,
+				enable);
+#endif
 		return appe_l2_vp_port_tbl_promisc_en_set(dev_id, port_value,
 			enable);
 	}

@@ -1,27 +1,43 @@
 /*
- * Copyright (c) 2016-2017, 2021, The Linux Foundation. All rights reserved.
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
  */
 
-/**
- * @defgroup
- * @{
- */
 #include "sw.h"
-#include "hsl_reg.h"
 #include "adpt.h"
-#include "adpt_appe_ctrlpkt.h"
-#if defined(HTTPPE)
-#include "adpt_httppe_ctrlpkt.h"
-#endif
+#include "hsl_htt_reg.h"
 
-a_uint32_t
-_get_mgmtctrl_ctrlpkt_profile_by_index(a_uint32_t dev_id, a_uint32_t index, fal_ctrlpkt_profile_t *ctrlpkt)
+sw_error_t
+adpt_httppe_mgmtctrl_vpgroup_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t vpgroup_id)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = httppe_l2_vp_port_tbl_app_ctrl_profile_set(dev_id,
+		FAL_PORT_ID_VALUE(port_id), vpgroup_id);
+
+	return rv;
+}
+
+sw_error_t
+adpt_httppe_mgmtctrl_vpgroup_get(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t *vpgroup_id)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = httppe_l2_vp_port_tbl_app_ctrl_profile_get(dev_id,
+		FAL_PORT_ID_VALUE(port_id), vpgroup_id);
+
+	return rv;
+}
+
+static a_uint32_t
+_adpt_httppe_ctrlpkt_profile_get_by_index(a_uint32_t dev_id, a_uint32_t index,
+	fal_ctrlpkt_profile_t *ctrlpkt)
 {
 	union app_ctrl_u entry;
 
-	SW_RTN_ON_ERROR(hppe_app_ctrl_get(dev_id, index, &entry));
+	SW_RTN_ON_ERROR(httppe_app_ctrl_get(dev_id, index, &entry));
 
 	ctrlpkt->action.action = entry.bf.cmd;
 	ctrlpkt->action.sg_bypass = entry.bf.sg_byp;
@@ -57,8 +73,8 @@ _get_mgmtctrl_ctrlpkt_profile_by_index(a_uint32_t dev_id, a_uint32_t index, fal_
 	return entry.bf.valid;
 }
 
-a_uint32_t
-_check_if_ctrlpkt_equal(fal_ctrlpkt_profile_t *ctrlpkt1, fal_ctrlpkt_profile_t *ctrlpkt2)
+static a_bool_t
+_adpt_httppe_ctrlpkt_equal_check(fal_ctrlpkt_profile_t *ctrlpkt1, fal_ctrlpkt_profile_t *ctrlpkt2)
 {
 	if (ctrlpkt1->action.action == ctrlpkt2->action.action &&
 		ctrlpkt1->action.sg_bypass == ctrlpkt2->action.sg_bypass &&
@@ -79,86 +95,13 @@ _check_if_ctrlpkt_equal(fal_ctrlpkt_profile_t *ctrlpkt1, fal_ctrlpkt_profile_t *
 		ctrlpkt1->protocol_types.mgt_na == ctrlpkt2->protocol_types.mgt_na &&
 		ctrlpkt1->protocol_types.mgt_dhcp6 == ctrlpkt2->protocol_types.mgt_dhcp6 &&
 		ctrlpkt1->protocol_types.mgt_8023ah_oam == ctrlpkt2->protocol_types.mgt_8023ah_oam)
-		return 1;
+		return A_TRUE;
 
-	return 0;
+	return A_FALSE;
 }
 
 sw_error_t
-adpt_hppe_mgmtctrl_ethtype_profile_set(a_uint32_t dev_id, a_uint32_t profile_id, a_uint32_t ethtype)
-{
-	sw_error_t rtn = SW_OK;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	SW_RTN_ON_ERROR(hppe_ethertype_ctrl_ethertype_set(dev_id, profile_id, ethtype));
-	SW_RTN_ON_ERROR(hppe_ethertype_ctrl_ethertype_en_set(dev_id, profile_id, A_TRUE));
-
-	return rtn;
-}
-
-sw_error_t
-adpt_hppe_mgmtctrl_ethtype_profile_get(a_uint32_t dev_id, a_uint32_t profile_id, a_uint32_t *ethtype)
-{
-	sw_error_t rtn = SW_OK;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(ethtype);
-
-	SW_RTN_ON_ERROR(hppe_ethertype_ctrl_ethertype_get(dev_id, profile_id, ethtype));
-
-	return rtn;
-}
-
-sw_error_t
-adpt_hppe_mgmtctrl_rfdb_profile_set(a_uint32_t dev_id, a_uint32_t profile_id, fal_mac_addr_t *addr)
-{
-	sw_error_t rtn = SW_OK;
-	a_uint64_t value = 0;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if (profile_id >= RFDB_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
-	value = ((((a_uint64_t)(addr->uc[5])) << 0) |
-			(((a_uint64_t)(addr->uc[4])) << 8) |
-			(((a_uint64_t)(addr->uc[3])) << 16) |
-			(((a_uint64_t)(addr->uc[2])) << 24) |
-			(((a_uint64_t)(addr->uc[1])) << 32) |
-			(((a_uint64_t)(addr->uc[0])) << 40));
-
-	SW_RTN_ON_ERROR(hppe_rfdb_tbl_mac_addr_set(dev_id, profile_id, value));
-	SW_RTN_ON_ERROR(hppe_rfdb_tbl_valid_set(dev_id, profile_id, A_TRUE));
-
-	return rtn;
-}
-
-sw_error_t
-adpt_hppe_mgmtctrl_rfdb_profile_get(a_uint32_t dev_id, a_uint32_t profile_id, fal_mac_addr_t *addr)
-{
-	sw_error_t rtn = SW_OK;
-	a_uint64_t value = 0;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(addr);
-
-	if (profile_id >= RFDB_TBL_MAX_ENTRY)
-		return SW_OUT_OF_RANGE;
-
-	SW_RTN_ON_ERROR(hppe_rfdb_tbl_mac_addr_get(dev_id, profile_id, &value));
-	addr->uc[0] = (a_uint8_t)((value >> 40)& 0xff);
-	addr->uc[1] = (a_uint8_t)((value >> 32) & 0xff);
-	addr->uc[2] = (a_uint8_t)((value >> 24) & 0xff);
-	addr->uc[3] = (a_uint8_t)((value >> 16) & 0xff);
-	addr->uc[4] = (a_uint8_t)((value >> 8) & 0xff);
-	addr->uc[5] = (a_uint8_t)((value >> 0) & 0xff);
-
-	return rtn;
-}
-
-sw_error_t
-adpt_hppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
+adpt_httppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
 {
 	union app_ctrl_u entry;
 	a_uint32_t index, ctrlpkt_valid, entry_sign, entry_index;
@@ -171,10 +114,10 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 	for (index = 0; index < APP_CTRL_MAX_ENTRY; index++)
 	{
 		memset(&ctrlpkt_temp, 0, sizeof(fal_ctrlpkt_profile_t));
-		ctrlpkt_valid = _get_mgmtctrl_ctrlpkt_profile_by_index(dev_id, index, &ctrlpkt_temp);
+		ctrlpkt_valid = _adpt_httppe_ctrlpkt_profile_get_by_index(dev_id, index, &ctrlpkt_temp);
 		if (ctrlpkt_valid == 1)
 		{
-			if (_check_if_ctrlpkt_equal(&ctrlpkt_temp, ctrlpkt))
+			if (_adpt_httppe_ctrlpkt_equal_check(&ctrlpkt_temp, ctrlpkt))
 				return SW_ALREADY_EXIST;
 		}
 		else
@@ -233,13 +176,13 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_add(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 	entry.bf.l2_sec_byp = ctrlpkt->action.l2_filter_bypass?1:0;
 	entry.bf.sg_byp = ctrlpkt->action.sg_bypass?1:0;
 	entry.bf.cmd = (a_uint32_t)ctrlpkt->action.action;
-	SW_RTN_ON_ERROR(hppe_app_ctrl_set(dev_id, entry_index, &entry));
+	SW_RTN_ON_ERROR(httppe_app_ctrl_set(dev_id, entry_index, &entry));
 
 	return SW_OK;
 }
 
 sw_error_t
-adpt_hppe_mgmtctrl_ctrlpkt_profile_del(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
+adpt_httppe_mgmtctrl_ctrlpkt_profile_del(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
 {
 	a_uint32_t index, ctrlpkt_valid;
 	union app_ctrl_u entry;
@@ -253,12 +196,12 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_del(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 	for (index = 0; index < APP_CTRL_MAX_ENTRY; index++)
 	{
 		memset(&ctrlpkt_temp, 0, sizeof(fal_ctrlpkt_profile_t));
-		ctrlpkt_valid = _get_mgmtctrl_ctrlpkt_profile_by_index(dev_id, index, &ctrlpkt_temp);
+		ctrlpkt_valid = _adpt_httppe_ctrlpkt_profile_get_by_index(dev_id, index, &ctrlpkt_temp);
 		if (ctrlpkt_valid == 1)
 		{
-			if (_check_if_ctrlpkt_equal(&ctrlpkt_temp, ctrlpkt))
+			if (_adpt_httppe_ctrlpkt_equal_check(&ctrlpkt_temp, ctrlpkt))
 			{
-				SW_RTN_ON_ERROR(hppe_app_ctrl_set(dev_id, index, &entry));
+				SW_RTN_ON_ERROR(httppe_app_ctrl_set(dev_id, index, &entry));
 				return SW_OK;
 			}
 		}
@@ -268,13 +211,13 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_del(a_uint32_t dev_id, fal_ctrlpkt_profile_t 
 }
 
 sw_error_t
-adpt_hppe_mgmtctrl_ctrlpkt_profile_getfirst(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
+adpt_httppe_mgmtctrl_ctrlpkt_profile_getfirst(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
 {
 	a_uint32_t index, ctrlpkt_valid;
 
 	for (index = 0; index < APP_CTRL_MAX_ENTRY; index++)
 	{
-		ctrlpkt_valid = _get_mgmtctrl_ctrlpkt_profile_by_index(dev_id, index, ctrlpkt);
+		ctrlpkt_valid = _adpt_httppe_ctrlpkt_profile_get_by_index(dev_id, index, ctrlpkt);
 		if (ctrlpkt_valid == 1)
 			return SW_OK;
 	}
@@ -283,7 +226,7 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_getfirst(a_uint32_t dev_id, fal_ctrlpkt_profi
 }
 
 sw_error_t
-adpt_hppe_mgmtctrl_ctrlpkt_profile_getnext(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
+adpt_httppe_mgmtctrl_ctrlpkt_profile_getnext(a_uint32_t dev_id, fal_ctrlpkt_profile_t *ctrlpkt)
 {
 	a_uint32_t index, ctrlpkt_valid, sign_tag;
 	fal_ctrlpkt_profile_t ctrlpkt_temp;
@@ -293,58 +236,20 @@ adpt_hppe_mgmtctrl_ctrlpkt_profile_getnext(a_uint32_t dev_id, fal_ctrlpkt_profil
 	for (index = 0; index < APP_CTRL_MAX_ENTRY; index++)
 	{
 		memset(&ctrlpkt_temp, 0, sizeof(fal_ctrlpkt_profile_t));
-		ctrlpkt_valid = _get_mgmtctrl_ctrlpkt_profile_by_index(dev_id, index, &ctrlpkt_temp);
+		ctrlpkt_valid = _adpt_httppe_ctrlpkt_profile_get_by_index(dev_id, index, &ctrlpkt_temp);
 		if (ctrlpkt_valid == 1)
 		{
 			if (sign_tag == 1) {
 				aos_mem_copy(ctrlpkt, &ctrlpkt_temp, sizeof(fal_ctrlpkt_profile_t));
 				return SW_OK;
 			}
-			if (_check_if_ctrlpkt_equal(&ctrlpkt_temp, ctrlpkt))
+			if (_adpt_httppe_ctrlpkt_equal_check(&ctrlpkt_temp, ctrlpkt))
 				sign_tag = 1;
 		}
 	}
 
 	return SW_NO_MORE;
 }
-
-sw_error_t adpt_hppe_ctrlpkt_init(a_uint32_t dev_id)
-{
-	adpt_api_t *p_adpt_api = NULL;
-
-	p_adpt_api = adpt_api_ptr_get(dev_id);
-
-	if(p_adpt_api == NULL)
-		return SW_FAIL;
-
-	p_adpt_api->adpt_mgmtctrl_ethtype_profile_set = adpt_hppe_mgmtctrl_ethtype_profile_set;
-	p_adpt_api->adpt_mgmtctrl_ethtype_profile_get = adpt_hppe_mgmtctrl_ethtype_profile_get;
-	p_adpt_api->adpt_mgmtctrl_rfdb_profile_set = adpt_hppe_mgmtctrl_rfdb_profile_set;
-	p_adpt_api->adpt_mgmtctrl_rfdb_profile_get = adpt_hppe_mgmtctrl_rfdb_profile_get;
-#if defined(HTTPPE)
-	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
-	{
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_add = adpt_httppe_mgmtctrl_ctrlpkt_profile_add;
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_del = adpt_httppe_mgmtctrl_ctrlpkt_profile_del;
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getfirst = adpt_httppe_mgmtctrl_ctrlpkt_profile_getfirst;
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getnext = adpt_httppe_mgmtctrl_ctrlpkt_profile_getnext;
-	}
-	else
-#endif
-	{
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_add = adpt_hppe_mgmtctrl_ctrlpkt_profile_add;
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_del = adpt_hppe_mgmtctrl_ctrlpkt_profile_del;
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getfirst = adpt_hppe_mgmtctrl_ctrlpkt_profile_getfirst;
-		p_adpt_api->adpt_mgmtctrl_ctrlpkt_profile_getnext = adpt_hppe_mgmtctrl_ctrlpkt_profile_getnext;
-	}
-	p_adpt_api->adpt_mgmtctrl_vpgroup_set = adpt_appe_mgmtctrl_vpgroup_set;
-	p_adpt_api->adpt_mgmtctrl_vpgroup_get = adpt_appe_mgmtctrl_vpgroup_get;
-	p_adpt_api->adpt_mgmtctrl_tunnel_decap_set = adpt_appe_mgmtctrl_tunnel_decap_set;
-	p_adpt_api->adpt_mgmtctrl_tunnel_decap_get = adpt_appe_mgmtctrl_tunnel_decap_get;
-	return SW_OK;
-}
-
 /**
  * @}
  */
-

@@ -232,4 +232,18 @@ adpt_httppe_vp_tx_counter_tbl_flush(a_uint32_t dev_id, a_uint32_t port_id)
 	return rtn;
 }
 
+sw_error_t
+adpt_httppe_vp_port_promisc_mode_get(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t *enable)
+{
+	return httppe_l2_vp_port_tbl_promisc_en_get(dev_id, port_id,
+		enable);
+}
 
+sw_error_t
+adpt_httppe_vp_port_promisc_mode_set(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t enable)
+{
+	return httppe_l2_vp_port_tbl_promisc_en_set(dev_id, port_id,
+		enable);
+}

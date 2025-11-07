@@ -20,6 +20,7 @@
 #include "sw.h"
 #include "adpt.h"
 #include "hsl_reg.h"
+#include "adpt_httppe_fdb.h"
 
 sw_error_t
 adpt_appe_fdb_vport_maclimit_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -31,6 +32,10 @@ adpt_appe_fdb_vport_maclimit_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	port_id = FAL_PORT_ID_VALUE(port_id);
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_maclimit_ctrl_set(dev_id, port_id, maclimit_ctrl);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -51,7 +56,10 @@ adpt_appe_fdb_vport_maclimit_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(maclimit_ctrl);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_maclimit_ctrl_get(dev_id, port_id, maclimit_ctrl);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -71,7 +79,10 @@ adpt_appe_vport_fdb_learn_limit_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_vport_fdb_learn_limit_set(dev_id, port_id, enable, cnt);
+#endif
 	rv = adpt_appe_fdb_vport_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -92,7 +103,10 @@ adpt_appe_vport_fdb_learn_limit_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(cnt);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_vport_fdb_learn_limit_get(dev_id, port_id, enable, cnt);
+#endif
 	rv = adpt_appe_fdb_vport_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -110,7 +124,10 @@ adpt_appe_fdb_vport_learn_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t en
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_learn_set(dev_id, port_id, enable);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 
 	SW_RTN_ON_ERROR(rv);
@@ -130,7 +147,10 @@ adpt_appe_fdb_vport_learn_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *e
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_learn_get(dev_id, port_id, enable);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -148,7 +168,10 @@ adpt_appe_fdb_vport_newaddr_lrn_set(a_uint32_t dev_id, fal_port_t port_id, a_boo
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_newaddr_lrn_set(dev_id, port_id, enable, cmd);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -169,7 +192,10 @@ adpt_appe_fdb_vport_newaddr_lrn_get(a_uint32_t dev_id, fal_port_t port_id, a_boo
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(cmd);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_newaddr_lrn_get(dev_id, port_id, enable, cmd);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -188,7 +214,10 @@ adpt_appe_fdb_vport_stamove_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_stamove_set(dev_id, port_id, enable, cmd);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -209,7 +238,10 @@ adpt_appe_fdb_vport_stamove_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t 
 	ADPT_NULL_POINT_CHECK(enable);
 	ADPT_NULL_POINT_CHECK(cmd);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_fdb_vport_stamove_get(dev_id, port_id, enable, cmd);
+#endif
 	rv = appe_l2_vp_port_tbl_get(dev_id, port_id, &l2_vp_port_tbl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -247,7 +279,10 @@ adpt_appe_vport_fdb_learn_exceed_cmd_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_vport_fdb_learn_exceed_cmd_set(dev_id, port_id, cmd);
+#endif
 	rv = adpt_appe_fdb_vport_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	SW_RTN_ON_ERROR(rv);
 
@@ -266,7 +301,10 @@ adpt_appe_vport_fdb_learn_exceed_cmd_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(cmd);
 	port_id = FAL_PORT_ID_VALUE(port_id);
-
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_vport_fdb_learn_exceed_cmd_get(dev_id, port_id, cmd);
+#endif
 	rv = adpt_appe_fdb_vport_maclimit_ctrl_get(dev_id, port_id, &maclimit_ctrl);
 	SW_RTN_ON_ERROR(rv);
 
