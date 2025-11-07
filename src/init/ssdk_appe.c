@@ -1171,25 +1171,56 @@ qca_appe_policer_hw_init(a_uint32_t dev_id)
 	fal_policer_ctrl_t policer_ctrl;
 	fal_policer_frame_type_t frame_type;
 	a_uint32_t chip_type = adpt_ppe_type_get(dev_id);
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	SW_RTN_ON_NULL(priv);
 
 	memset(&policer, 0, sizeof(policer));
 	memset(&action, 0, sizeof(action));
 	memset(&policer_ctrl, 0, sizeof(policer_ctrl));
 
-	if (chip_type == MRPPE_TYPE)
-		timeslot = MRPPE_POLICER_TIMESLOT_DFT;
-	else if (chip_type == MPPE_TYPE)
-		timeslot = MPPE_POLICER_TIMESLOT_DFT;
-	else
+	switch (chip_type) {
+	case APPE_TYPE:
 		timeslot = APPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_512;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_512);
+		break;
+	case MRPPE_TYPE:
+		timeslot = MRPPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_512;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_512);
+		break;
+	case MPPE_TYPE:
+		timeslot = MPPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_128;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_128);
+		break;
+	case JHPPE_TYPE:
+		timeslot = JHPPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_512;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_512);
+		break;
+	case HTTPPE_TYPE:
+		timeslot = HTTPPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_256;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_256);
+		break;
+	case HMSPPE_TYPE:
+		timeslot = HMSPPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_256;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_256);
+		break;
+	default:
+		SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
+			return SW_OUT_OF_RANGE;
+	}
 
 	fal_policer_timeslot_set(dev_id, timeslot);
 
-	for (i = SSDK_PHYSICAL_PORT0; i <= SSDK_PHYSICAL_PORT7; i++) {
+	for (i = SSDK_PHYSICAL_PORT0; i < priv->ports_num; i++) {
 		fal_port_policer_compensation_byte_set(dev_id, i, 4);
 	}
 
-	acl_policer_cfg_max = (chip_type == MPPE_TYPE)? MPPE_ACL_POLICER_CFG_MAX: APPE_ACL_POLICER_CFG_MAX;
 	for (i = 0; i < acl_policer_cfg_max; i++) {
 		policer.meter_type = FAL_POLICER_METER_MEF10_3;
 		policer.next_ptr = i + 1;
@@ -1200,8 +1231,7 @@ qca_appe_policer_hw_init(a_uint32_t dev_id)
 		fal_acl_policer_entry_set(dev_id, i, &policer, &action);
 	}
 
-	policer_ctrl.head = APPE_POLICER_HEAD;
-	policer_ctrl.tail = (chip_type == MPPE_TYPE)? MPPE_POLICER_TAIL: APPE_POLICER_TAIL;
+	policer_ctrl.head = POLICER_HEAD;
 	fal_policer_ctrl_set(dev_id, &policer_ctrl);
 
 	/* bypass policer for dropped frame */

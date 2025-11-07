@@ -27,16 +27,8 @@
 #define FRAME_POLICER_MAX_RATE 14881000
 #define FRAME_POLICER_MIN_RATE 6
 #define ADPT_HPPE_ACL_POLICER_MIN_ENTRY  0
-
-#if defined(MRPPE)
-#define ADPT_HPPE_ACL_POLICER_MAX_ENTRY 511
-#elif defined(MPPE)
-#define ADPT_HPPE_ACL_POLICER_MAX_ENTRY 127
-#else
-#define ADPT_HPPE_ACL_POLICER_MAX_ENTRY 511
-#endif
-
 #define ADPT_APPE_POLICER_MAX           0x3ffff
+#define ADPT_POLICER_TIME_SLOT_MAX	4095
 
 #define ADPT_1BIT_MAGNI_SCALE   1000    /*Improve accuracy rate*/
 
@@ -110,6 +102,31 @@ hppe_policer_burst_size[NR_ADPT_HPPE_POLICER_METER_UNIT][NR_ADPT_HPPE_POLICER_ME
 	},
 };
 
+static inline a_uint32_t __adpt_ppe_acl_policer_max_num_get(a_uint32_t dev_id)
+{
+	a_uint32_t num = 0;
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+
+	switch (ppe_type) {
+	case MPPE_TYPE:
+		num = 127;
+		break;
+	case HMSPPE_TYPE:
+	case HTTPPE_TYPE:
+		num = 255;
+		break;
+	case APPE_TYPE:
+	case MRPPE_TYPE:
+	case JHPPE_TYPE:
+		num = 511;
+		break;
+	default:
+		break;
+	}
+
+	return num;
+}
+
 sw_error_t
 adpt_hppe_acl_policer_counter_get(a_uint32_t dev_id, a_uint32_t index,
 		fal_policer_counter_t *counter)
@@ -121,7 +138,7 @@ adpt_hppe_acl_policer_counter_get(a_uint32_t dev_id, a_uint32_t index,
 	ADPT_NULL_POINT_CHECK(counter);
 
 	if ((index < ADPT_HPPE_ACL_POLICER_MIN_ENTRY) ||
-		(index > ADPT_HPPE_ACL_POLICER_MAX_ENTRY))
+		(index > __adpt_ppe_acl_policer_max_num_get(dev_id)))
 		return SW_BAD_PARAM;
 
 	hppe_in_acl_meter_cnt_tbl_get(dev_id, index * 3, &in_acl_meter_cnt_tbl);
@@ -512,7 +529,7 @@ adpt_hppe_acl_policer_entry_get(a_uint32_t dev_id, a_uint32_t index,
 	ADPT_NULL_POINT_CHECK(action);
 
 	if ((index < ADPT_HPPE_ACL_POLICER_MIN_ENTRY) ||
-		(index > ADPT_HPPE_ACL_POLICER_MAX_ENTRY))
+		(index > __adpt_ppe_acl_policer_max_num_get(dev_id)))
 		return SW_BAD_PARAM;
 
 	hppe_in_acl_meter_cfg_tbl_get(dev_id, index, &in_acl_meter_cfg_tbl);
@@ -615,7 +632,7 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 	ADPT_NULL_POINT_CHECK(action);
 
 	if (index < (ADPT_HPPE_ACL_POLICER_MIN_ENTRY) ||
-		(index > ADPT_HPPE_ACL_POLICER_MAX_ENTRY))
+		(index > __adpt_ppe_acl_policer_max_num_get(dev_id)))
 		return SW_BAD_PARAM;
 
 	if(ADPT_HPPE_POLICER_METER_UNIT_BYTE == policer->meter_unit)
@@ -1047,6 +1064,32 @@ adpt_hppe_port_compensation_byte_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	return SW_OK;
 }
+
+static inline a_uint32_t __adpt_ppe_policer_min_timeslot_get(a_uint32_t dev_id)
+{
+	a_uint32_t min = 0;
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+
+	switch (ppe_type) {
+	case MPPE_TYPE:
+		min = 256;
+		break;
+	case HMSPPE_TYPE:
+	case HTTPPE_TYPE:
+		min = 512;
+		break;
+	case APPE_TYPE:
+	case MRPPE_TYPE:
+	case JHPPE_TYPE:
+		min = 1024;
+		break;
+	default:
+		break;
+	}
+
+	return min;
+}
+
 sw_error_t
 adpt_hppe_policer_time_slot_set(a_uint32_t dev_id, a_uint32_t time_slot)
 {
@@ -1055,8 +1098,8 @@ adpt_hppe_policer_time_slot_set(a_uint32_t dev_id, a_uint32_t time_slot)
 	memset(&time_slot_reg, 0, sizeof(time_slot_reg));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if ((time_slot > APPE_POLICER_TIME_SLOT_MAX) ||
-		(time_slot < APPE_POLICER_TIME_SLOT_MIN))
+	if ((time_slot > ADPT_POLICER_TIME_SLOT_MAX) ||
+		(time_slot < __adpt_ppe_policer_min_timeslot_get(dev_id)))
 		return SW_BAD_PARAM;
 
 	time_slot_reg.bf.time_slot = time_slot;
