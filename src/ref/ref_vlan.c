@@ -446,9 +446,9 @@ qca_ar8327_sw_hw_apply(struct switch_dev *dev)
     fal_pbmp_t *portmask = NULL;
     int i, j;
 
-    if (priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE ||
-		priv->version == QCA_VER_MRPPE || priv->version == QCA_VER_JHPPE ||
-		priv->version == QCA_VER_HMSPPE) {
+    if ((priv->version != QCA_VER_AR8327) &&
+		(priv->version != QCA_VER_AR8337) &&
+		(priv->version != QCA_VER_MHT)) {
         return 0;
     }
 
