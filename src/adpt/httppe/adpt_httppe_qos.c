@@ -255,3 +255,152 @@ adpt_httppe_port_scheduler_cfg_get(a_uint32_t dev_id,
 	return SW_OK;
 }
 #endif
+
+#define HTTPPE_QOS_MAPPING_DSCP_TBL_MAX_ENTRY	256
+#define HTTPPE_QOS_MAPPING_PCP_TBL_MAX_ENTRY	16
+#define HTTPPE_QOS_MAPPING_TBL_MAX_GROUP	2
+
+static sw_error_t
+adpt_httppe_qos_mapping_get(a_uint32_t dev_id, a_uint32_t index,
+			fal_qos_cosmap_t *cosmap)
+{
+	sw_error_t rv = SW_OK;
+	union qos_mapping_tbl_u qos_mapping_tbl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cosmap);
+
+	rv = httppe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
+	if (rv != SW_OK)
+		return rv;
+
+	cosmap->internal_pcp = qos_mapping_tbl.bf.int_pcp;
+	cosmap->internal_dei = qos_mapping_tbl.bf.int_dei;
+	cosmap->internal_pri = qos_mapping_tbl.bf.int_pri;
+	cosmap->internal_dscp = qos_mapping_tbl.bf.int_dscp_tc;
+	cosmap->internal_dp = qos_mapping_tbl.bf.int_dp;
+	cosmap->dscp_mask = qos_mapping_tbl.bf.dscp_tc_mask;
+	cosmap->dscp_en = qos_mapping_tbl.bf.int_dscp_en;
+	cosmap->pcp_en = qos_mapping_tbl.bf.int_pcp_en;
+	cosmap->dei_en = qos_mapping_tbl.bf.int_dei_en;
+	cosmap->pri_en = qos_mapping_tbl.bf.int_pri_en;
+	cosmap->dp_en = qos_mapping_tbl.bf.int_dp_en;
+	cosmap->qos_prec = qos_mapping_tbl.bf.qos_res_prec_0 |
+			     qos_mapping_tbl.bf.qos_res_prec_1 << 1;
+
+	return SW_OK;
+}
+
+static sw_error_t
+adpt_httppe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
+			fal_qos_cosmap_t *cosmap)
+{
+	sw_error_t rv = SW_OK;
+	union qos_mapping_tbl_u qos_mapping_tbl;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cosmap);
+
+	memset(&qos_mapping_tbl, 0, sizeof(qos_mapping_tbl));
+	rv = httppe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
+	if (rv != SW_OK)
+		return rv;
+
+	qos_mapping_tbl.bf.int_pcp = cosmap->internal_pcp;
+	qos_mapping_tbl.bf.int_dei = cosmap->internal_dei;
+	qos_mapping_tbl.bf.int_pri = cosmap->internal_pri;
+	qos_mapping_tbl.bf.int_dscp_tc = cosmap->internal_dscp;
+	qos_mapping_tbl.bf.int_dp = cosmap->internal_dp;
+	qos_mapping_tbl.bf.dscp_tc_mask = cosmap->dscp_mask;
+	qos_mapping_tbl.bf.int_dscp_en = cosmap->dscp_en;
+	qos_mapping_tbl.bf.int_pcp_en = cosmap->pcp_en;
+	qos_mapping_tbl.bf.int_dei_en = cosmap->dei_en;
+	qos_mapping_tbl.bf.int_pri_en = cosmap->pri_en;
+	qos_mapping_tbl.bf.int_dp_en = cosmap->dp_en;
+	qos_mapping_tbl.bf.qos_res_prec_0 = cosmap->qos_prec & 1;
+	qos_mapping_tbl.bf.qos_res_prec_1 = (cosmap->qos_prec >> 1) & 3;
+
+	return httppe_qos_mapping_tbl_set(dev_id, index, &qos_mapping_tbl);
+}
+
+#ifndef IN_QOS_MINI
+sw_error_t
+adpt_httppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t pcp,
+			fal_qos_cosmap_t *cosmap)
+{
+	a_uint32_t index = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cosmap);
+
+	if (group_id >= HTTPPE_QOS_MAPPING_TBL_MAX_GROUP)
+		return SW_BAD_PARAM;
+
+	index = HTTPPE_QOS_MAPPING_TBL_MAX_GROUP * HTTPPE_QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
+		group_id * HTTPPE_QOS_MAPPING_PCP_TBL_MAX_ENTRY + pcp;
+
+	if (index >= QOS_MAPPING_TBL_NUM)
+		return SW_OUT_OF_RANGE;
+
+	return adpt_httppe_qos_mapping_get(dev_id, index, cosmap);
+}
+
+sw_error_t
+adpt_httppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t pcp,
+			fal_qos_cosmap_t *cosmap)
+{
+	a_uint32_t index = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cosmap);
+
+	if (group_id >= HTTPPE_QOS_MAPPING_TBL_MAX_GROUP)
+		return SW_BAD_PARAM;
+
+	index = HTTPPE_QOS_MAPPING_TBL_MAX_GROUP * HTTPPE_QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
+		group_id * HTTPPE_QOS_MAPPING_PCP_TBL_MAX_ENTRY + pcp;
+
+	if (index >= QOS_MAPPING_TBL_NUM)
+		return SW_OUT_OF_RANGE;
+
+	return adpt_httppe_qos_mapping_set(dev_id, index, cosmap);
+}
+#endif
+
+sw_error_t
+adpt_httppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t dscp,
+			fal_qos_cosmap_t *cosmap)
+{
+	a_uint32_t index = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cosmap);
+
+	if (group_id >= HTTPPE_QOS_MAPPING_TBL_MAX_GROUP)
+		return SW_BAD_PARAM;
+
+	index = group_id * HTTPPE_QOS_MAPPING_DSCP_TBL_MAX_ENTRY + dscp;
+
+	return adpt_httppe_qos_mapping_get(dev_id, index, cosmap);
+}
+
+sw_error_t
+adpt_httppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t dscp,
+			fal_qos_cosmap_t *cosmap)
+{
+	a_uint32_t index = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cosmap);
+
+	if (group_id >= HTTPPE_QOS_MAPPING_TBL_MAX_GROUP)
+		return SW_BAD_PARAM;
+
+	index = group_id * HTTPPE_QOS_MAPPING_DSCP_TBL_MAX_ENTRY + dscp;
+
+	return adpt_httppe_qos_mapping_set(dev_id, index, cosmap);
+}
