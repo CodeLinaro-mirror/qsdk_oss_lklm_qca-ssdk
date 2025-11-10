@@ -1008,6 +1008,59 @@ union eg_bridge_config_u {
 	struct eg_bridge_config bf;
 };
 
+/*[register] EG_GLOBAL_CTRL*/
+#define EG_GLOBAL_CTRL
+#define EG_GLOBAL_CTRL_ADDRESS 0x120
+#define EG_GLOBAL_CTRL_NUM     1
+#define EG_GLOBAL_CTRL_INC     0x4
+#define EG_GLOBAL_CTRL_TYPE    REG_TYPE_RW
+#define EG_GLOBAL_CTRL_DEFAULT 0x0
+	/*[field] PRIVATE_TAG_TPID*/
+	#define EG_GLOBAL_CTRL_PRIVATE_TAG_TPID
+	#define EG_GLOBAL_CTRL_PRIVATE_TAG_TPID_OFFSET  0
+	#define EG_GLOBAL_CTRL_PRIVATE_TAG_TPID_LEN     16
+	#define EG_GLOBAL_CTRL_PRIVATE_TAG_TPID_DEFAULT 0x0
+	/*[field] PREFIX_XLT_EN*/
+	#define EG_GLOBAL_CTRL_PREFIX_XLT_EN
+	#define EG_GLOBAL_CTRL_PREFIX_XLT_EN_OFFSET  16
+	#define EG_GLOBAL_CTRL_PREFIX_XLT_EN_LEN     1
+	#define EG_GLOBAL_CTRL_PREFIX_XLT_EN_DEFAULT 0x0
+	/*[field] VSI_CNT_BYP_XLT_DROP_EN*/
+	#define EG_GLOBAL_CTRL_VSI_CNT_BYP_XLT_DROP_EN
+	#define EG_GLOBAL_CTRL_VSI_CNT_BYP_XLT_DROP_EN_OFFSET  17
+	#define EG_GLOBAL_CTRL_VSI_CNT_BYP_XLT_DROP_EN_LEN     1
+	#define EG_GLOBAL_CTRL_VSI_CNT_BYP_XLT_DROP_EN_DEFAULT 0x0
+	/*[field] VP_CNT_BYP_XLT_DROP_EN*/
+	#define EG_GLOBAL_CTRL_VP_CNT_BYP_XLT_DROP_EN
+	#define EG_GLOBAL_CTRL_VP_CNT_BYP_XLT_DROP_EN_OFFSET  18
+	#define EG_GLOBAL_CTRL_VP_CNT_BYP_XLT_DROP_EN_LEN     1
+	#define EG_GLOBAL_CTRL_VP_CNT_BYP_XLT_DROP_EN_DEFAULT 0x0
+	/*[field] PORT_CNT_BYP_XLT_DROP_EN*/
+	#define EG_GLOBAL_CTRL_PORT_CNT_BYP_XLT_DROP_EN
+	#define EG_GLOBAL_CTRL_PORT_CNT_BYP_XLT_DROP_EN_OFFSET  19
+	#define EG_GLOBAL_CTRL_PORT_CNT_BYP_XLT_DROP_EN_LEN     1
+	#define EG_GLOBAL_CTRL_PORT_CNT_BYP_XLT_DROP_EN_DEFAULT 0x0
+	/*[field] PM_PORT_BITMAP_FOR_GEM*/
+	#define EG_GLOBAL_CTRL_PM_PORT_BITMAP_FOR_GEM
+	#define EG_GLOBAL_CTRL_PM_PORT_BITMAP_FOR_GEM_OFFSET  23
+	#define EG_GLOBAL_CTRL_PM_PORT_BITMAP_FOR_GEM_LEN     9
+	#define EG_GLOBAL_CTRL_PM_PORT_BITMAP_FOR_GEM_DEFAULT 0x0
+
+struct eg_global_ctrl {
+	a_uint32_t  private_tag_tpid:16;
+	a_uint32_t  prefix_xlt_en:1;
+	a_uint32_t  vsi_cnt_byp_xlt_drop_en:1;
+	a_uint32_t  vp_cnt_byp_xlt_drop_en:1;
+	a_uint32_t  port_cnt_byp_xlt_drop_en:1;
+	a_uint32_t  _reserved0:3;
+	a_uint32_t  pm_port_bitmap_for_gem:9;
+};
+
+union eg_global_ctrl_u {
+	a_uint32_t val;
+	struct eg_global_ctrl bf;
+};
+
 /*[register] EG_VLAN_TPID_EXT0*/
 #define EG_VLAN_TPID_EXT0
 #define EG_VLAN_TPID_EXT0_ADDRESS 0x130
@@ -1652,6 +1705,76 @@ struct dscp_pbit_map_tbl {
 union dscp_pbit_map_tbl_u {
 	a_uint32_t val;
 	struct dscp_pbit_map_tbl bf;
+};
+
+/*[register] VLAN_TO_PORT_MAPPING_CTRL*/
+#define VLAN_TO_PORT_MAPPING_CTRL
+#define VLAN_TO_PORT_MAPPING_CTRL_ADDRESS 0x104
+#define VLAN_TO_PORT_MAPPING_CTRL_NUM     8
+#define VLAN_TO_PORT_MAPPING_CTRL_INC     0x4
+#define VLAN_TO_PORT_MAPPING_CTRL_TYPE    REG_TYPE_RW
+#define VLAN_TO_PORT_MAPPING_CTRL_DEFAULT 0x0
+	/*[field] TPID*/
+	#define VLAN_TO_PORT_MAPPING_CTRL_TPID
+	#define VLAN_TO_PORT_MAPPING_CTRL_TPID_OFFSET  0
+	#define VLAN_TO_PORT_MAPPING_CTRL_TPID_LEN     16
+	#define VLAN_TO_PORT_MAPPING_CTRL_TPID_DEFAULT 0x0
+	/*[field] PRIVATE_TAG_EN*/
+	#define VLAN_TO_PORT_MAPPING_CTRL_PRIVATE_TAG_EN
+	#define VLAN_TO_PORT_MAPPING_CTRL_PRIVATE_TAG_EN_OFFSET  16
+	#define VLAN_TO_PORT_MAPPING_CTRL_PRIVATE_TAG_EN_LEN     1
+	#define VLAN_TO_PORT_MAPPING_CTRL_PRIVATE_TAG_EN_DEFAULT 0x0
+
+struct vlan_to_port_mapping_ctrl {
+	a_uint32_t  tpid:16;
+	a_uint32_t  private_tag_en:1;
+	a_uint32_t  _reserved0:15;
+};
+
+union vlan_to_port_mapping_ctrl_u {
+	a_uint32_t val;
+	struct vlan_to_port_mapping_ctrl bf;
+};
+
+/*[register] VLAN_TO_PORT_MAPPING_TBL*/
+#define VLAN_TO_PORT_MAPPING_TBL
+#define VLAN_TO_PORT_MAPPING_TBL_ADDRESS 0x200
+#define VLAN_TO_PORT_MAPPING_TBL_NUM     32
+#define VLAN_TO_PORT_MAPPING_TBL_INC     0x10
+#define VLAN_TO_PORT_MAPPING_TBL_TYPE    REG_TYPE_RW
+#define VLAN_TO_PORT_MAPPING_TBL_DEFAULT 0x0
+	/*[field] TCI_VALUE*/
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_VALUE
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_VALUE_OFFSET  0
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_VALUE_LEN     16
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_VALUE_DEFAULT 0x0
+	/*[field] TCI_MASK*/
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_MASK
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_MASK_OFFSET  16
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_MASK_LEN     16
+	#define VLAN_TO_PORT_MAPPING_TBL_TCI_MASK_DEFAULT 0x0
+	/*[field] PORT_VP*/
+	#define VLAN_TO_PORT_MAPPING_TBL_PORT_VP
+	#define VLAN_TO_PORT_MAPPING_TBL_PORT_VP_OFFSET  32
+	#define VLAN_TO_PORT_MAPPING_TBL_PORT_VP_LEN     8
+	#define VLAN_TO_PORT_MAPPING_TBL_PORT_VP_DEFAULT 0x0
+	/*[field] VALID*/
+	#define VLAN_TO_PORT_MAPPING_TBL_VALID
+	#define VLAN_TO_PORT_MAPPING_TBL_VALID_OFFSET  40
+	#define VLAN_TO_PORT_MAPPING_TBL_VALID_LEN     1
+	#define VLAN_TO_PORT_MAPPING_TBL_VALID_DEFAULT 0x0
+
+struct vlan_to_port_mapping_tbl {
+	a_uint32_t  tci_value:16;
+	a_uint32_t  tci_mask:16;
+	a_uint32_t  port_vp:8;
+	a_uint32_t  valid:1;
+	a_uint32_t  _reserved0:23;
+};
+
+union vlan_to_port_mapping_tbl_u {
+	a_uint32_t val[2];
+	struct vlan_to_port_mapping_tbl bf;
 };
 
 #endif

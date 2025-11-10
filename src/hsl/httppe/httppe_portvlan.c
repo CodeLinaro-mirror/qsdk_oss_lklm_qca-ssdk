@@ -1460,6 +1460,28 @@ httppe_eg_bridge_config_queue_cnt_en_set(
 }
 
 sw_error_t
+httppe_eg_global_ctrl_get(
+		a_uint32_t dev_id,
+		union eg_global_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + EG_GLOBAL_CTRL_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+httppe_eg_global_ctrl_set(
+		a_uint32_t dev_id,
+		union eg_global_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + EG_GLOBAL_CTRL_ADDRESS,
+				value->val);
+}
+
+sw_error_t
 httppe_eg_vlan_tpid_ext0_get(
 		a_uint32_t dev_id,
 		union eg_vlan_tpid_ext0_u *value)
@@ -2534,5 +2556,61 @@ httppe_dscp_pbit_map_tbl_pcp_1_set(
 	reg_val.bf.pcp_1 = value;
 	ret = httppe_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
 	return ret;
+}
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_ctrl_u *value)
+{
+	if (index >= VLAN_TO_PORT_MAPPING_CTRL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				PRX_BASE_ADDR + VLAN_TO_PORT_MAPPING_CTRL_ADDRESS + \
+				index * VLAN_TO_PORT_MAPPING_CTRL_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				PRX_BASE_ADDR + VLAN_TO_PORT_MAPPING_CTRL_ADDRESS + \
+				index * VLAN_TO_PORT_MAPPING_CTRL_INC,
+				value->val);
+}
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				PRX_BASE_ADDR + VLAN_TO_PORT_MAPPING_TBL_ADDRESS + \
+				index * VLAN_TO_PORT_MAPPING_TBL_INC,
+				value->val,
+				sizeof(union vlan_to_port_mapping_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				PRX_BASE_ADDR + VLAN_TO_PORT_MAPPING_TBL_ADDRESS + \
+				index * VLAN_TO_PORT_MAPPING_TBL_INC,
+				value->val,
+				sizeof(union vlan_to_port_mapping_tbl_u)/sizeof(a_uint32_t));
 }
 

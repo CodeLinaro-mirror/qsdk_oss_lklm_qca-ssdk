@@ -1358,16 +1358,64 @@ extern "C" {
 		    sizeof(fal_port_isol_act_t), SW_PARAM_PTR|SW_PARAM_OUT, "Isolation action member map"),
 
 #define SW_API_PT_ISOL_MEM_SET_DESC \
-		SW_PARAM_DEF(SW_API_PT_ISOL_MEM_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
-		SW_PARAM_DEF(SW_API_PT_ISOL_MEM_SET, SW_UINT32, 4, SW_PARAM_IN, "Port No."), \
-		SW_PARAM_DEF(SW_API_PT_ISOL_MEM_SET, SW_PBMP, sizeof(fal_pbmp_t), SW_PARAM_IN, \
-				  "Member Port Bitmap"),
+	SW_PARAM_DEF(SW_API_PT_ISOL_MEM_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
+	SW_PARAM_DEF(SW_API_PT_ISOL_MEM_SET, SW_UINT32, 4, SW_PARAM_IN, "Port No."), \
+	SW_PARAM_DEF(SW_API_PT_ISOL_MEM_SET, SW_PBMP, sizeof(fal_pbmp_t), SW_PARAM_IN, \
+			  "Member Port Bitmap"),
 
 #define SW_API_PT_ISOL_MEM_GET_DESC \
-		SW_PARAM_DEF(SW_API_PT_ISOL_MEM_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),	  \
-		SW_PARAM_DEF(SW_API_PT_ISOL_MEM_GET, SW_UINT32, 4, SW_PARAM_IN, "Port No."),  \
-		SW_PARAM_DEF(SW_API_PT_ISOL_MEM_GET, SW_PBMP, sizeof(fal_pbmp_t), SW_PARAM_PTR|SW_PARAM_OUT, \
-				  "Member Port Bitmap"),
+	SW_PARAM_DEF(SW_API_PT_ISOL_MEM_GET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),	  \
+	SW_PARAM_DEF(SW_API_PT_ISOL_MEM_GET, SW_UINT32, 4, SW_PARAM_IN, "Port No."),  \
+	SW_PARAM_DEF(SW_API_PT_ISOL_MEM_GET, SW_PBMP, sizeof(fal_pbmp_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+			  "Member Port Bitmap"),
+
+#define SW_API_PVLAN_RX_CFG_SET_DESC \
+	SW_PARAM_DEF(SW_API_PVLAN_RX_CFG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_RX_CFG_SET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_RX_CFG_SET, SW_PVLAN_RX, \
+		    sizeof(fal_pvtvlan_rx_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, \
+		    "private vlan rx cfg"),
+
+#define SW_API_PVLAN_RX_CFG_GET_DESC \
+	SW_PARAM_DEF(SW_API_PVLAN_RX_CFG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_RX_CFG_GET, SW_UINT32, 4, SW_PARAM_IN, "Port ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_RX_CFG_GET, SW_PVLAN_RX, \
+		    sizeof(fal_pvtvlan_rx_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+		    "private vlan rx cfg"),
+
+#define SW_API_PVLAN_MAP_SET_DESC \
+	SW_PARAM_DEF(SW_API_PVLAN_MAP_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_MAP_SET, SW_PT_VLAN_DIRECTION, \
+		    sizeof(fal_port_vlan_direction_t), SW_PARAM_IN, "vlan direction"), \
+    SW_PARAM_DEF(SW_API_PVLAN_MAP_SET, SW_PVLAN_MAP, \
+		    sizeof(fal_pvtvlan_map_t), SW_PARAM_PTR|SW_PARAM_IN, \
+		    "private vlan port mapping"),
+
+#define SW_API_PVLAN_MAP_GET_DESC \
+	SW_PARAM_DEF(SW_API_PVLAN_MAP_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_MAP_GET, SW_PT_VLAN_DIRECTION, \
+		    sizeof(fal_port_vlan_direction_t), SW_PARAM_IN, "vlan direction"), \
+    SW_PARAM_DEF(SW_API_PVLAN_MAP_GET, SW_PVLAN_MAP, \
+		    sizeof(fal_pvtvlan_map_t), SW_PARAM_PTR|SW_PARAM_IN|SW_PARAM_OUT, \
+		    "private vlan port mapping"),
+
+#define SW_API_PVLAN_TX_CFG_SET_DESC \
+	SW_PARAM_DEF(SW_API_PVLAN_TX_CFG_SET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_TX_CFG_SET, SW_PVLAN_TX, \
+		    sizeof(fal_pvtvlan_tx_cfg_t), SW_PARAM_PTR|SW_PARAM_IN, \
+		    "private vlan tx cfg"),
+
+#define SW_API_PVLAN_TX_CFG_GET_DESC \
+	SW_PARAM_DEF(SW_API_PVLAN_TX_CFG_GET, SW_UINT32, \
+			sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_PVLAN_TX_CFG_GET, SW_PVLAN_TX, \
+		    sizeof(fal_pvtvlan_tx_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, \
+		    "private vlan tx cfg"),
 
 #define SW_API_FDB_ADD_DESC \
     SW_PARAM_DEF(SW_API_FDB_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),\

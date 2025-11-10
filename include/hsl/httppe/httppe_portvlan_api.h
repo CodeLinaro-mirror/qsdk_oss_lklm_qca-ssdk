@@ -1468,6 +1468,77 @@ httppe_eg_bridge_config_queue_cnt_en_set(
 
 
 sw_error_t
+httppe_eg_global_ctrl_get(
+		a_uint32_t dev_id,
+		union eg_global_ctrl_u *value);
+
+sw_error_t
+httppe_eg_global_ctrl_set(
+		a_uint32_t dev_id,
+		union eg_global_ctrl_u *value);
+
+sw_error_t
+httppe_eg_global_ctrl_pm_port_bitmap_for_gem_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_eg_global_ctrl_pm_port_bitmap_for_gem_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+httppe_eg_global_ctrl_port_cnt_byp_xlt_drop_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_eg_global_ctrl_port_cnt_byp_xlt_drop_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+httppe_eg_global_ctrl_prefix_xlt_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_eg_global_ctrl_prefix_xlt_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+httppe_eg_global_ctrl_private_tag_tpid_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_eg_global_ctrl_private_tag_tpid_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+httppe_eg_global_ctrl_vp_cnt_byp_xlt_drop_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_eg_global_ctrl_vp_cnt_byp_xlt_drop_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+sw_error_t
+httppe_eg_global_ctrl_vsi_cnt_byp_xlt_drop_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_eg_global_ctrl_vsi_cnt_byp_xlt_drop_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+
+sw_error_t
 httppe_eg_vlan_tpid_ext0_get(
 		a_uint32_t dev_id,
 		union eg_vlan_tpid_ext0_u *value);
@@ -2590,6 +2661,106 @@ httppe_dscp_pbit_map_tbl_pcp_1_get(
 
 sw_error_t
 httppe_dscp_pbit_map_tbl_pcp_1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+#define VLAN_TO_PORT_MAPPING_CTRL_MAX_ENTRY	VLAN_TO_PORT_MAPPING_CTRL_NUM
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_ctrl_u *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_ctrl_u *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_private_tag_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_private_tag_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_tpid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_ctrl_tpid_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+#define VLAN_TO_PORT_MAPPING_TBL_MAX_ENTRY	VLAN_TO_PORT_MAPPING_TBL_NUM
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_tbl_u *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_to_port_mapping_tbl_u *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_port_vp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_port_vp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_tci_mask_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_tci_mask_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_tci_value_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_tci_value_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_valid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_to_port_mapping_tbl_valid_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);

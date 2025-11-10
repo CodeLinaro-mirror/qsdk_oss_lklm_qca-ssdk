@@ -947,6 +947,16 @@ typedef sw_error_t (*adpt_port_isol_action_set_func)(a_uint32_t dev_id,
 		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
 typedef sw_error_t (*adpt_port_isol_action_get_func)(a_uint32_t dev_id,
 		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
+typedef sw_error_t (*adpt_private_vlan_rx_cfg_set_func)(a_uint32_t dev_id,
+		fal_port_t port_id, fal_pvtvlan_rx_cfg_t *cfg);
+typedef sw_error_t (*adpt_private_vlan_rx_cfg_get_func)(a_uint32_t dev_id,
+		fal_port_t port_id, fal_pvtvlan_rx_cfg_t *cfg);
+typedef sw_error_t (*adpt_private_vlan_mapping_set_func)(a_uint32_t dev_id,
+		fal_direction_t direction, fal_pvtvlan_map_t *port_mapping);
+typedef sw_error_t (*adpt_private_vlan_mapping_get_func)(a_uint32_t dev_id,
+		fal_direction_t direction, fal_pvtvlan_map_t *port_mapping);
+typedef sw_error_t (*adpt_private_vlan_tx_cfg_set_func)(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg);
+typedef sw_error_t (*adpt_private_vlan_tx_cfg_get_func)(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg);
 /*portvlan module end*/
 
 /*ctrlpkt module end*/
@@ -2085,6 +2095,12 @@ typedef struct
 	adpt_port_isol_action_ctrl_get_func adpt_port_isol_action_ctrl_get;
 	adpt_port_isol_action_set_func adpt_port_isol_action_set;
 	adpt_port_isol_action_get_func adpt_port_isol_action_get;
+	adpt_private_vlan_rx_cfg_set_func adpt_private_vlan_rx_cfg_set;
+	adpt_private_vlan_rx_cfg_get_func adpt_private_vlan_rx_cfg_get;
+	adpt_private_vlan_mapping_set_func adpt_private_vlan_mapping_set;
+	adpt_private_vlan_mapping_get_func adpt_private_vlan_mapping_get;
+	adpt_private_vlan_tx_cfg_set_func adpt_private_vlan_tx_cfg_set;
+	adpt_private_vlan_tx_cfg_get_func adpt_private_vlan_tx_cfg_get;
 	/*portvlan module end*/
 
 	/*ctrlpkt module begin*/

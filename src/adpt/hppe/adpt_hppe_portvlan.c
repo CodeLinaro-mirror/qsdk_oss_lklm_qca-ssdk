@@ -3176,6 +3176,12 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_httppe_vlan_trans_dscp_pcp_mapping_set;
 		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
 			adpt_httppe_vlan_trans_dscp_pcp_mapping_get;
+		p_adpt_api->adpt_private_vlan_rx_cfg_set = adpt_httppe_private_vlan_rx_cfg_set;
+		p_adpt_api->adpt_private_vlan_rx_cfg_get = adpt_httppe_private_vlan_rx_cfg_get;
+		p_adpt_api->adpt_private_vlan_mapping_set = adpt_httppe_private_vlan_mapping_set;
+		p_adpt_api->adpt_private_vlan_mapping_get = adpt_httppe_private_vlan_mapping_get;
+		p_adpt_api->adpt_private_vlan_tx_cfg_set = adpt_httppe_private_vlan_tx_cfg_set;
+		p_adpt_api->adpt_private_vlan_tx_cfg_get = adpt_httppe_private_vlan_tx_cfg_get;
 #ifndef IN_PORTVLAN_MINI
 		p_adpt_api->adpt_port_egress_vlan_filter_set =
 			adpt_httppe_port_egress_vlan_filter_set;
@@ -3221,6 +3227,12 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
 		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
 			adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
+		p_adpt_api->adpt_private_vlan_rx_cfg_set = adpt_jhppe_private_vlan_rx_cfg_set;
+		p_adpt_api->adpt_private_vlan_rx_cfg_get = adpt_jhppe_private_vlan_rx_cfg_get;
+		p_adpt_api->adpt_private_vlan_mapping_set = adpt_jhppe_private_vlan_mapping_set;
+		p_adpt_api->adpt_private_vlan_mapping_get = adpt_jhppe_private_vlan_mapping_get;
+		p_adpt_api->adpt_private_vlan_tx_cfg_set = adpt_jhppe_private_vlan_tx_cfg_set;
+		p_adpt_api->adpt_private_vlan_tx_cfg_get = adpt_jhppe_private_vlan_tx_cfg_get;
 #ifndef IN_PORTVLAN_MINI
 		p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
 		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
