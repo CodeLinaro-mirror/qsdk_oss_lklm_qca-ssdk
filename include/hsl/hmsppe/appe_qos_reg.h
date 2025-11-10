@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: ISC
  */
 
-#ifndef _CPPE_QOS_REG_H_
-#define _CPPE_QOS_REG_H_
+#ifndef _APPE_QOS_REG_H_
+#define _APPE_QOS_REG_H_
 
 /*[table] QOS_MAPPING_TBL*/
 #define QOS_MAPPING_TBL

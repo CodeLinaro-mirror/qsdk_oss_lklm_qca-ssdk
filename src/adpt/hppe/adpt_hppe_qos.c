@@ -14,7 +14,7 @@
 #include "fal_qos.h"
 #include "adpt.h"
 #include "adpt_hppe.h"
-#include "adpt_cppe_qos.h"
+#include "adpt_appe_qos.h"
 #if defined(JHPPE)
 #include "adpt_jhppe_qos.h"
 #endif
@@ -84,7 +84,7 @@ adpt_ppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(pri);
 
-	return adpt_cppe_qos_port_pri_set(dev_id, port_id, pri);
+	return adpt_appe_qos_port_pri_set(dev_id, port_id, pri);
 }
 
 sw_error_t
@@ -94,7 +94,7 @@ adpt_ppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(pri);
 
-	return adpt_cppe_qos_port_pri_get(dev_id, port_id, pri);
+	return adpt_appe_qos_port_pri_get(dev_id, port_id, pri);
 }
 
 #ifndef IN_QOS_MINI
@@ -105,7 +105,7 @@ adpt_ppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(cosmap);
 
-	return adpt_cppe_qos_cosmap_pcp_get(dev_id, group_id,
+	return adpt_appe_qos_cosmap_pcp_get(dev_id, group_id,
 			pcp, cosmap);
 }
 #endif
@@ -237,7 +237,7 @@ adpt_ppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(cosmap);
 
-	return adpt_cppe_qos_cosmap_pcp_set(dev_id, group_id,
+	return adpt_appe_qos_cosmap_pcp_set(dev_id, group_id,
 			pcp, cosmap);
 }
 #endif
@@ -249,7 +249,7 @@ adpt_ppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(cosmap);
 
-	return adpt_cppe_qos_cosmap_dscp_get(dev_id, group_id,
+	return adpt_appe_qos_cosmap_dscp_get(dev_id, group_id,
 			dscp, cosmap);
 }
 
@@ -260,7 +260,7 @@ adpt_ppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(cosmap);
 
-	return adpt_cppe_qos_cosmap_flow_set(dev_id, group_id,
+	return adpt_appe_qos_cosmap_flow_set(dev_id, group_id,
 			flow, cosmap);
 }
 
@@ -271,7 +271,7 @@ adpt_ppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(group);
 
-	return adpt_cppe_qos_port_group_set(dev_id, port_id, group);
+	return adpt_appe_qos_port_group_set(dev_id, port_id, group);
 }
 
 sw_error_t
@@ -297,7 +297,7 @@ adpt_ppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 	ADPT_DEV_ID_CHECK(dev_id);
         ADPT_NULL_POINT_CHECK(cosmap);
 
-	return adpt_cppe_qos_cosmap_dscp_set(dev_id, group_id,
+	return adpt_appe_qos_cosmap_dscp_set(dev_id, group_id,
 			dscp, cosmap);
 }
 
@@ -420,7 +420,7 @@ adpt_ppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(cosmap);
 
-	return adpt_cppe_qos_cosmap_flow_get(dev_id, group_id,
+	return adpt_appe_qos_cosmap_flow_get(dev_id, group_id,
 			flow, cosmap);
 }
 
@@ -431,7 +431,7 @@ adpt_ppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(group);
 
-	return adpt_cppe_qos_port_group_get(dev_id, port_id, group);
+	return adpt_appe_qos_port_group_get(dev_id, port_id, group);
 }
 
 sw_error_t

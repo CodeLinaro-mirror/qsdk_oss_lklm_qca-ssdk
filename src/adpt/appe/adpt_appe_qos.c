@@ -23,7 +23,7 @@
 					  QOS_MAPPING_PCP_TBL_MAX_ENTRY))
 
 static sw_error_t
-adpt_cppe_qos_mapping_get(a_uint32_t dev_id, a_uint32_t index,
+adpt_appe_qos_mapping_get(a_uint32_t dev_id, a_uint32_t index,
 			fal_qos_cosmap_t *cosmap)
 {
 	sw_error_t rv = SW_OK;
@@ -32,7 +32,7 @@ adpt_cppe_qos_mapping_get(a_uint32_t dev_id, a_uint32_t index,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(cosmap);
 
-	rv = cppe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
+	rv = appe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
 	if (rv != SW_OK)
 		return rv;
 
@@ -54,7 +54,7 @@ adpt_cppe_qos_mapping_get(a_uint32_t dev_id, a_uint32_t index,
 }
 
 static sw_error_t
-adpt_cppe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
+adpt_appe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
 			fal_qos_cosmap_t *cosmap)
 {
 	sw_error_t rv = SW_OK;
@@ -64,7 +64,7 @@ adpt_cppe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
         ADPT_NULL_POINT_CHECK(cosmap);
 
 	memset(&qos_mapping_tbl, 0, sizeof(qos_mapping_tbl));
-	rv = cppe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
+	rv = appe_qos_mapping_tbl_get(dev_id, index, &qos_mapping_tbl);
 	if (rv != SW_OK)
 		return rv;
 
@@ -82,11 +82,11 @@ adpt_cppe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
 	qos_mapping_tbl.bf.qos_res_prec_0 = cosmap->qos_prec & 1;
 	qos_mapping_tbl.bf.qos_res_prec_1 = (cosmap->qos_prec >> 1) & 3;
 
-	return cppe_qos_mapping_tbl_set(dev_id, index, &qos_mapping_tbl);
+	return appe_qos_mapping_tbl_set(dev_id, index, &qos_mapping_tbl);
 }
 
 sw_error_t
-adpt_cppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
+adpt_appe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
 			fal_qos_pri_precedence_t *pri)
 {
 	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
@@ -114,7 +114,7 @@ adpt_cppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-adpt_cppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
+adpt_appe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 			fal_qos_pri_precedence_t *pri)
 {
 	sw_error_t rv = SW_OK;
@@ -146,7 +146,7 @@ adpt_cppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 
 #ifndef IN_QOS_MINI
 sw_error_t
-adpt_cppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
+adpt_appe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t pcp,
 			fal_qos_cosmap_t *cosmap)
 {
@@ -162,11 +162,11 @@ adpt_cppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 		QOS_MAPPING_TBL_MAX_GROUP * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
 		group_id * QOS_MAPPING_PCP_TBL_MAX_ENTRY + pcp;
 
-	return adpt_cppe_qos_mapping_get(dev_id, index, cosmap);
+	return adpt_appe_qos_mapping_get(dev_id, index, cosmap);
 }
 
 sw_error_t
-adpt_cppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
+adpt_appe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t pcp,
 			fal_qos_cosmap_t *cosmap)
 {
@@ -182,12 +182,12 @@ adpt_cppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 		QOS_MAPPING_TBL_MAX_GROUP * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
 		group_id * QOS_MAPPING_PCP_TBL_MAX_ENTRY + pcp;
 
-	return adpt_cppe_qos_mapping_set(dev_id, index, cosmap);
+	return adpt_appe_qos_mapping_set(dev_id, index, cosmap);
 }
 #endif
 
 sw_error_t
-adpt_cppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
+adpt_appe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t dscp,
 			fal_qos_cosmap_t *cosmap)
 {
@@ -203,11 +203,11 @@ adpt_cppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 		group_id * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
 		dscp;
 
-	return adpt_cppe_qos_mapping_get(dev_id, index, cosmap);
+	return adpt_appe_qos_mapping_get(dev_id, index, cosmap);
 }
 
 sw_error_t
-adpt_cppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
+adpt_appe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint16_t flow,
 			fal_qos_cosmap_t *cosmap)
 {
@@ -217,11 +217,11 @@ adpt_cppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
 	if (flow >= QOS_MAPPING_FLOW_TBL_MAX_ENTRY)
 		return SW_BAD_PARAM;
 
-	return adpt_cppe_qos_mapping_set(dev_id, flow, cosmap);
+	return adpt_appe_qos_mapping_set(dev_id, flow, cosmap);
 }
 
 sw_error_t
-adpt_cppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
+adpt_appe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
 			fal_qos_group_t *group)
 {
 	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
@@ -239,7 +239,7 @@ adpt_cppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 sw_error_t
-adpt_cppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
+adpt_appe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t dscp,
 			fal_qos_cosmap_t *cosmap)
 {
@@ -255,11 +255,11 @@ adpt_cppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 		group_id * QOS_MAPPING_DSCP_TBL_MAX_ENTRY +
 		dscp;
 
-	return adpt_cppe_qos_mapping_set(dev_id, index, cosmap);
+	return adpt_appe_qos_mapping_set(dev_id, index, cosmap);
 }
 
 sw_error_t
-adpt_cppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
+adpt_appe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint16_t flow,
 			fal_qos_cosmap_t *cosmap)
 {
@@ -269,11 +269,11 @@ adpt_cppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
 	if (flow >= QOS_MAPPING_FLOW_TBL_MAX_ENTRY)
 		return SW_BAD_PARAM;
 
-	return adpt_cppe_qos_mapping_get(dev_id, flow, cosmap);
+	return adpt_appe_qos_mapping_get(dev_id, flow, cosmap);
 }
 
 sw_error_t
-adpt_cppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
+adpt_appe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
 			fal_qos_group_t *group)
 {
 	sw_error_t rv = SW_OK;

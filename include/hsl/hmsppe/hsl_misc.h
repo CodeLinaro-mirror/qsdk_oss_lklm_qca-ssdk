@@ -1236,15 +1236,15 @@ appe_l2_vp_port_tbl_physical_port_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);
-//cppe_qos.h
+//appe_qos.h
 sw_error_t
-cppe_qos_mapping_tbl_get(
+appe_qos_mapping_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union qos_mapping_tbl_u *value);
 
 sw_error_t
-cppe_qos_mapping_tbl_set(
+appe_qos_mapping_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union qos_mapping_tbl_u *value);

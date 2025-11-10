@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: ISC
  */
 
-#ifndef _CPPE_QOS_API_H_
-#define _CPPE_QOS_API_H_
+#ifndef _APPE_QOS_API_H_
+#define _APPE_QOS_API_H_
 
 sw_error_t
 appe_qos_mapping_tbl_get(

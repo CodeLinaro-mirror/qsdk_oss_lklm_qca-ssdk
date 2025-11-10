@@ -86,8 +86,8 @@
 #include "hppe/hppe_acl.h"
 #include "hppe/hppe_reg_access.h"
 
-#include "cppe/cppe_qos_reg.h"
-#include "cppe/cppe_qos.h"
+#include "appe/appe_qos_reg.h"
+#include "appe/appe_qos.h"
 
 #include "mppe/mppe_athtag_reg.h"
 #include "mppe/mppe_servcode_reg.h"
