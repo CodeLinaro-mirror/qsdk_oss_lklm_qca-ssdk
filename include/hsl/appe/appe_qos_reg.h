@@ -4,12 +4,15 @@
  * SPDX-License-Identifier: ISC
  */
 
+#if defined(CONFIG_CPU_BIG_ENDIAN)
+#include "appe_qos_reg_be.h"
+#else
 /**
  * @defgroup
  * @{
  */
-#ifndef _CPPE_QOS_REG_H_
-#define _CPPE_QOS_REG_H_
+#ifndef _APPE_QOS_REG_H_
+#define _APPE_QOS_REG_H_
 
 /*[table] QOS_MAPPING_TBL*/
 #define QOS_MAPPING_TBL
@@ -98,30 +101,30 @@
 #endif
 
 struct qos_mapping_tbl {
-#if defined(MRPPE)
-	a_uint32_t	_reserved0:20;
-	a_uint32_t	flow_policy_id:9;
-	a_uint32_t	flow_policy_valid:1;
-#elif defined(MPPE)
-	a_uint32_t	_reserved0:22;
-	a_uint32_t	flow_policy_id:7;
-	a_uint32_t	flow_policy_valid:1;
-#else
-	a_uint32_t	_reserved0:30;
-#endif
-	a_uint32_t  qos_res_prec_1:2;
-	a_uint32_t  qos_res_prec_0:1;
-	a_uint32_t  int_dp:2;
-	a_uint32_t  int_dp_en:1;
-	a_uint32_t  int_pri:4;
-	a_uint32_t  int_pri_en:1;
-	a_uint32_t  int_dei:1;
-	a_uint32_t  int_dei_en:1;
-	a_uint32_t  int_pcp:3;
-	a_uint32_t  int_pcp_en:1;
-	a_uint32_t  int_dscp_en:1;
-	a_uint32_t  dscp_tc_mask:8;
 	a_uint32_t  int_dscp_tc:8;
+	a_uint32_t  dscp_tc_mask:8;
+	a_uint32_t  int_dscp_en:1;
+	a_uint32_t  int_pcp_en:1;
+	a_uint32_t  int_pcp:3;
+	a_uint32_t  int_dei_en:1;
+	a_uint32_t  int_dei:1;
+	a_uint32_t  int_pri_en:1;
+	a_uint32_t  int_pri:4;
+	a_uint32_t  int_dp_en:1;
+	a_uint32_t  int_dp:2;
+	a_uint32_t  qos_res_prec_0:1;
+	a_uint32_t  qos_res_prec_1:2;
+#if defined(MRPPE)
+	a_uint32_t  flow_policy_valid:1;
+	a_uint32_t  flow_policy_id:9;
+	a_uint32_t  _reserved0:20;
+#elif defined(MPPE)
+	a_uint32_t	flow_policy_valid:1;
+	a_uint32_t	flow_policy_id:7;
+	a_uint32_t	_reserved0:22;
+#else
+	a_uint32_t  _reserved0:30;
+#endif
 };
 
 union qos_mapping_tbl_u {
@@ -129,4 +132,5 @@ union qos_mapping_tbl_u {
 	struct qos_mapping_tbl bf;
 };
 
+#endif
 #endif

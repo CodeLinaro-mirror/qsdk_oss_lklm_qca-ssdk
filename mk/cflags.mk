@@ -368,14 +368,8 @@ ifneq (,$(findstring HPPE, $(SUPPORT_CHIP)))
   MODULE_CFLAG += -DHPPE
 endif
 
-ifneq (,$(findstring CPPE, $(SUPPORT_CHIP)))
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/cppe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/cppe
-  MODULE_CFLAG += -DCPPE
-endif
-
 ifneq (,$(findstring APPE, $(SUPPORT_CHIP)))
-#APPE depends on CPPE flow & qos feature
+#APPE depends on CPPE flow
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/cppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/cppe
 

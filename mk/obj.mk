@@ -126,8 +126,7 @@ ifeq (TRUE, $(IN_QOS))
 OBJ-COMMON += src/fal/fal_qos.o
 OBJ-ISISC  += src/hsl/isisc/isisc_qos.o
 OBJ-HPPE   += src/hsl/hppe/hppe_qos.o src/adpt/hppe/adpt_hppe_qos.o
-OBJ-CPPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o
-OBJ-APPE   += src/hsl/cppe/cppe_qos.o src/adpt/cppe/adpt_cppe_qos.o #to be fixed
+OBJ-APPE   += src/hsl/appe/appe_qos.o src/adpt/appe/adpt_appe_qos.o
 OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_qos.o
 OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_qos.o src/hsl/httppe/httppe_qos.o
 endif
@@ -478,7 +477,6 @@ OBJ-ISISC   += src/hsl/isisc/isisc_reg_access.o
 OBJ-HPPE    += src/hsl/hppe/hppe_global.o src/hsl/hppe/hppe_reg_access.o
 OBJ-APPE    += src/hsl/appe/appe_counter.o src/hsl/appe/appe_global.o \
                src/hsl/appe/appe_l2_vp.o src/hsl/appe/appe_misc.o
-OBJ-CPPE    += src/hsl/cppe/cppe_loopback.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_counter.o src/hsl/jhppe/jhppe_l2_vp.o
 OBJ-HMSPPE  += src/hsl/hmsppe/hmsppe_misc.o
 OBJ-HTTPPE  += src/hsl/httppe/httppe_l2_vp.o
