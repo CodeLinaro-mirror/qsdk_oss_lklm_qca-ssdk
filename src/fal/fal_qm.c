@@ -193,6 +193,15 @@ sw_error_t fal_qm_dequeue_drop_set(a_uint32_t dev_id, a_uint32_t queue_id, a_boo
 
 sw_error_t fal_qm_dequeue_drop_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qm_dequeue_drop_get, dev_id, queue_id, enable)
+
+sw_error_t fal_qm_crosschip_bp_qmap_set(a_uint32_t dev_id, a_uint32_t lp_qid, fal_bp_queue_bmp_t *queue_bmp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_crosschip_bp_qmap_set, dev_id, lp_qid, queue_bmp)
+
+sw_error_t fal_qm_crosschip_bp_qmap_get(a_uint32_t dev_id, a_uint32_t lp_qid, fal_bp_queue_bmp_t *queue_bmp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_crosschip_bp_qmap_get, dev_id, lp_qid, queue_bmp)
+
+sw_error_t fal_qm_crosschip_bp_status_get(a_uint32_t dev_id, fal_bp_queue_bmp_t *queue_bmp)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_crosschip_bp_status_get, dev_id, queue_bmp)
 #if !defined(IN_QM_MINI)
 sw_error_t fal_ucast_default_hash_get( a_uint32_t dev_id, a_uint8_t *hash_value)
     DEFINE_FAL_FUNC_ADPT_EXPORT(ucast_default_hash_get, dev_id, hash_value)

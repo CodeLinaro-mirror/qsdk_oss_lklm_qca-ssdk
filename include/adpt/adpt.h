@@ -848,6 +848,15 @@ typedef sw_error_t (*adpt_qm_dequeue_drop_set_func)(
 typedef sw_error_t (*adpt_qm_dequeue_drop_get_func)(
 		a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
 
+typedef sw_error_t (*adpt_qm_crosschip_bp_qmap_set_func)(
+		a_uint32_t dev_id, a_uint32_t lp_qid, fal_bp_queue_bmp_t *queue_bmp);
+
+typedef sw_error_t (*adpt_qm_crosschip_bp_qmap_get_func)(
+		a_uint32_t dev_id, a_uint32_t lp_qid, fal_bp_queue_bmp_t *queue_bmp);
+
+typedef sw_error_t (*adpt_qm_crosschip_bp_status_get_func)(
+		a_uint32_t dev_id, fal_bp_queue_bmp_t *queue_bmp);
+
 /*portvlan module begin*/
 typedef sw_error_t (*adpt_global_qinq_mode_set_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
 typedef sw_error_t (*adpt_global_qinq_mode_get_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
@@ -2014,6 +2023,9 @@ typedef struct
 	adpt_qm_passthrough_cpucode_en_get_func adpt_qm_passthrough_cpucode_en_get;
 	adpt_qm_dequeue_drop_set_func adpt_qm_dequeue_drop_set;
 	adpt_qm_dequeue_drop_get_func adpt_qm_dequeue_drop_get;
+	adpt_qm_crosschip_bp_qmap_set_func adpt_qm_crosschip_bp_qmap_set;
+	adpt_qm_crosschip_bp_qmap_get_func adpt_qm_crosschip_bp_qmap_get;
+	adpt_qm_crosschip_bp_status_get_func adpt_qm_crosschip_bp_status_get;
 	/*portvlan module begin*/
 	adpt_global_qinq_mode_set_func adpt_global_qinq_mode_set;
 	adpt_global_qinq_mode_get_func adpt_global_qinq_mode_get;

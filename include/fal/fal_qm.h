@@ -196,6 +196,10 @@ typedef struct {
 					 */
 } fal_ucast_queue_ddrq_en_t;
 
+typedef struct {
+	a_uint32_t bmp[10];
+} fal_bp_queue_bmp_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -501,6 +505,18 @@ fal_qm_dequeue_drop_set(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable)
 
 sw_error_t
 fal_qm_dequeue_drop_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
+
+sw_error_t
+fal_qm_crosschip_bp_qmap_set(a_uint32_t dev_id, a_uint32_t lp_qid,
+			     fal_bp_queue_bmp_t *queue_bmp);
+
+sw_error_t
+fal_qm_crosschip_bp_qmap_get(a_uint32_t dev_id, a_uint32_t lp_qid,
+			     fal_bp_queue_bmp_t *queue_bmp);
+
+sw_error_t
+fal_qm_crosschip_bp_status_get(a_uint32_t dev_id,
+			       fal_bp_queue_bmp_t *queue_bmp);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
@@ -508,4 +524,3 @@ fal_qm_dequeue_drop_get(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable
 /**
  * @}
  */
-

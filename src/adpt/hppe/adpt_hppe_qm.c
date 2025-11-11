@@ -1491,6 +1491,9 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_passthrough_cpucode_get = adpt_jhppe_qm_passthrough_cpucode_get;
 	p_adpt_api->adpt_qm_passthrough_cpucode_en_set = adpt_jhppe_qm_passthrough_cpucode_en_set;
 	p_adpt_api->adpt_qm_passthrough_cpucode_en_get = adpt_jhppe_qm_passthrough_cpucode_en_get;
+	p_adpt_api->adpt_qm_crosschip_bp_qmap_set = adpt_jhppe_qm_crosschip_bp_qmap_set;
+	p_adpt_api->adpt_qm_crosschip_bp_qmap_get = adpt_jhppe_qm_crosschip_bp_qmap_get;
+	p_adpt_api->adpt_qm_crosschip_bp_status_get = adpt_jhppe_qm_crosschip_bp_status_get;
 #endif
 	p_adpt_api->adpt_qm_dequeue_drop_set = adpt_hppe_qm_dequeue_drop_set;
 	p_adpt_api->adpt_qm_dequeue_drop_get = adpt_hppe_qm_dequeue_drop_get;
