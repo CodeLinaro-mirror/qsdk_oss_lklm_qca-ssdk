@@ -38,6 +38,12 @@ sw_error_t qca_appe_rss_hash_hw_init(a_uint32_t dev_id);
 #define APPE_ACL_POLICER_CFG_MAX            512
 #define MPPE_ACL_POLICER_CFG_MAX            128
 #define MRPPE_POLICER_TIMESLOT_DFT          375*4
+#define HMSPPE_PORT_SHAPER_TIMESLOT_DFT     8
+#define JHPPE_PORT_SHAPER_TIMESLOT_DFT      9
+#define HTTPPE_PORT_SHAPER_TIMESLOT_DFT     6
+#define HMSPPE_QUEUE_SHAPER_TIMESLOT_DFT    429*2
+#define JHPPE_QUEUE_SHAPER_TIMESLOT_DFT     462*2
+#define HTTPPE_QUEUE_SHAPER_TIMESLOT_DFT    250*2
 
 #ifdef __cplusplus
 }
