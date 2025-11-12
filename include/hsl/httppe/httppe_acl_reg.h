@@ -338,4 +338,32 @@ union ipo_action_u {
 	struct ipo_action bf;
 };
 
+/*[table] L2_DSCP_PBIT_MAP_TBL*/
+#define L2_DSCP_PBIT_MAP_TBL
+#define L2_DSCP_PBIT_MAP_TBL_ADDRESS 0x38000
+#define L2_DSCP_PBIT_MAP_TBL_NUM     256
+#define L2_DSCP_PBIT_MAP_TBL_INC     0x4
+#define L2_DSCP_PBIT_MAP_TBL_TYPE    REG_TYPE_RW
+#define L2_DSCP_PBIT_MAP_TBL_DEFAULT 0x0
+	/*[field] PCP_0*/
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_0
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_0_OFFSET  0
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_0_LEN     3
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_0_DEFAULT 0x0
+	/*[field] PCP_1*/
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_1
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_1_OFFSET  3
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_1_LEN     3
+	#define L2_DSCP_PBIT_MAP_TBL_PCP_1_DEFAULT 0x0
+
+struct l2_dscp_pbit_map_tbl {
+	a_uint32_t  pcp_0:3;
+	a_uint32_t  pcp_1:3;
+	a_uint32_t  _reserved0:26;
+};
+
+union l2_dscp_pbit_map_tbl_u {
+	a_uint32_t val;
+	struct l2_dscp_pbit_map_tbl bf;
+};
 #endif

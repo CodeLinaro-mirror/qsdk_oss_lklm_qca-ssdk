@@ -10,8 +10,6 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#define ADPT_ACL_JHPPE_EXT_VLAN_RULE 15
-
 typedef struct {
 	a_uint32_t  cvid:12;
 	a_uint32_t  cpcp:3;

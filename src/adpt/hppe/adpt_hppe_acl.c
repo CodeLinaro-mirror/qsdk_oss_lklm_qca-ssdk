@@ -36,6 +36,10 @@
 #define ADPT_ACL_HPPE_IPV6_SIP2_RULE 11
 #define ADPT_ACL_HPPE_IPMISC_RULE 12
 
+#if defined(JHPPE) || defined(HTTPPE)
+#define ADPT_ACL_JHPPE_EXT_VLAN_RULE 15
+#endif
+
 #define ADPT_ACL_RULE_NUM_PER_LIST 8 /* can change this MACRO to support more rules per ACL list */
 
 typedef struct{
@@ -2068,11 +2072,28 @@ _adpt_hppe_acl_rule_hw_2_sw(a_uint32_t dev_id, a_uint32_t rule_type,
 		_adpt_appe_pre_acl_tunnel_rule_hw_2_sw((ADPT_APPE_ACL_TUNNEL_RULE *)hw_rule,
 		(ADPT_APPE_ACL_TUNNEL_RULE_MASK *)hw_rule_mask, inverse_en, &rule->tunnel_info);
 	}
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	if(rule_type == ADPT_ACL_JHPPE_EXT_VLAN_RULE)
 	{
-		_adpt_jhppe_acl_ext_vlan_rule_hw_2_sw((ADPT_JHPPE_ACL_EXT_VLAN_RULE *)hw_rule,
-		(ADPT_JHPPE_ACL_EXT_VLAN_RULE_MASK *) hw_rule_mask, range_en, inverse_en, rule);
+		a_uint32_t ppe_type = adpt_ppe_type_get(dev_id);
+		if (ppe_type == HTTPPE_TYPE)
+		{
+#if defined(HTTPPE)
+			_adpt_httppe_acl_ext_vlan_rule_hw_2_sw(
+					(ADPT_HTTPPE_ACL_EXT_VLAN_RULE *)hw_rule,
+					(ADPT_HTTPPE_ACL_EXT_VLAN_RULE_MASK *) hw_rule_mask,
+					range_en, inverse_en, rule);
+#endif
+		}
+		else if (ppe_type == JHPPE_TYPE || ppe_type == HMSPPE_TYPE)
+		{
+#if defined(JHPPE)
+			_adpt_jhppe_acl_ext_vlan_rule_hw_2_sw(
+					(ADPT_JHPPE_ACL_EXT_VLAN_RULE *)hw_rule,
+					(ADPT_JHPPE_ACL_EXT_VLAN_RULE_MASK *) hw_rule_mask,
+					range_en, inverse_en, rule);
+#endif
+		}
 	}
 #endif
 	return SW_OK;
@@ -2567,12 +2588,13 @@ _adpt_hppe_acl_l2_fields_check(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t
 	{
 		l2_rule_type_map |= (1<<ADPT_ACL_HPPE_MAC_SA_RULE);
 	}
-#if defined (JHPPE)
-	if((FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_L2_PROTO)) ||
+#if defined (JHPPE) || defined(HTTPPE)
+	if((adpt_ppe_type_get(dev_id) >= JHPPE_TYPE) &&
+		((FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_L2_PROTO)) ||
 		(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_CTAG_TPID_INDEX)) ||
 		(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_STAG_TPID_INDEX)) ||
 		(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_DHCP_TYPE)) ||
-		(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_MC_TYPE)))
+		(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_MC_TYPE))))
 	{
 		l2_rule_type_map |= (1<<ADPT_ACL_JHPPE_EXT_VLAN_RULE);
 	}
@@ -2589,7 +2611,7 @@ _adpt_hppe_acl_l2_fields_check(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t
 	{
 		l2_rule_type_map |= (1<<ADPT_ACL_HPPE_VLAN_RULE);
 	}
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	}
 #endif
 	if ((FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_VSI)) ||
@@ -2609,14 +2631,14 @@ _adpt_hppe_acl_l2_fields_check(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t
 	if(!((l2_rule_type_map & (1<<ADPT_ACL_HPPE_VLAN_RULE))||
 		(l2_rule_type_map & (1<<ADPT_ACL_HPPE_L2_MISC_RULE))))
 	{
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 		if (!(l2_rule_type_map & (1<<ADPT_ACL_JHPPE_EXT_VLAN_RULE))) {
 #endif
 		if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_MAC_STAG_VID))
 		{
 			l2_rule_type_map |= (1<<ADPT_ACL_HPPE_VLAN_RULE);
 		}
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 		}
 #endif
 	}
@@ -2662,12 +2684,14 @@ _adpt_hppe_acl_l2_fields_check(a_uint32_t dev_id, a_uint32_t rule_id, a_uint32_t
 	if(FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_VSI))
 		rule_map->inverse_rule_type_count[ADPT_ACL_HPPE_VLAN_RULE] ++;
 
-#if defined(JHPPE)
-	/* inverse ext VLAN rule count */
-	if(FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_CTAG_TPID_INDEX))
-		rule_map->inverse_rule_type_count[ADPT_ACL_JHPPE_EXT_VLAN_RULE] ++;
-	if(FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_STAG_TPID_INDEX))
-		rule_map->inverse_rule_type_count[ADPT_ACL_JHPPE_EXT_VLAN_RULE] ++;
+#if defined(JHPPE) || defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) >= JHPPE_TYPE) {
+		/* inverse ext VLAN rule count */
+		if(FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_CTAG_TPID_INDEX))
+			rule_map->inverse_rule_type_count[ADPT_ACL_JHPPE_EXT_VLAN_RULE] ++;
+		if(FAL_FIELD_FLG_TST(rule->inverse_field_flg, FAL_ACL_FIELD_STAG_TPID_INDEX))
+			rule_map->inverse_rule_type_count[ADPT_ACL_JHPPE_EXT_VLAN_RULE] ++;
+	}
 #endif
 
 	return SW_OK;
@@ -4171,11 +4195,28 @@ _adpt_hppe_acl_rule_sw_2_hw(a_uint32_t dev_id, fal_acl_rule_t * rule, a_uint32_t
 		(ADPT_APPE_ACL_TUNNEL_RULE *)hw_rule,
 		(ADPT_APPE_ACL_TUNNEL_RULE_MASK *)hw_rule_mask, inverse_en);
 	}
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	else if(rule_type == ADPT_ACL_JHPPE_EXT_VLAN_RULE)
 	{
-		_adpt_jhppe_acl_ext_vlan_rule_sw_2_hw(rule, (ADPT_JHPPE_ACL_EXT_VLAN_RULE *)hw_rule,
-		(ADPT_JHPPE_ACL_EXT_VLAN_RULE_MASK *)hw_rule_mask, range_en, inverse_en);
+		a_uint32_t ppe_type = adpt_ppe_type_get(dev_id);
+		if (ppe_type == HTTPPE_TYPE)
+		{
+#if defined(HTTPPE)
+			_adpt_httppe_acl_ext_vlan_rule_sw_2_hw(rule,
+					(ADPT_HTTPPE_ACL_EXT_VLAN_RULE *)hw_rule,
+					(ADPT_HTTPPE_ACL_EXT_VLAN_RULE_MASK *)hw_rule_mask,
+					range_en, inverse_en);
+#endif
+		}
+		else if (ppe_type == JHPPE_TYPE || ppe_type == HMSPPE_TYPE)
+		{
+#if defined(JHPPE)
+			_adpt_jhppe_acl_ext_vlan_rule_sw_2_hw(rule,
+					(ADPT_JHPPE_ACL_EXT_VLAN_RULE *)hw_rule,
+					(ADPT_JHPPE_ACL_EXT_VLAN_RULE_MASK *)hw_rule_mask,
+					range_en, inverse_en);
+#endif
+		}
 	}
 #endif
 	if(*range_en == 0)
@@ -5637,11 +5678,25 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 				adpt_appe_acl_vpgroup_get;
 	p_adpt_api->adpt_acl_counter_get = adpt_hppe_acl_counter_get;
 
+#if defined(JHPPE) || defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+	{
+#if defined(HTTPPE)
+		p_adpt_api->adpt_acl_dscp_pcp_mapping_set =
+					adpt_httppe_acl_dscp_pcp_mapping_set;
+		p_adpt_api->adpt_acl_dscp_pcp_mapping_get =
+					adpt_httppe_acl_dscp_pcp_mapping_get;
+#endif
+	}
+	else
+	{
 #if defined(JHPPE)
-	p_adpt_api->adpt_acl_dscp_pcp_mapping_set =
-				adpt_jhppe_acl_dscp_pcp_mapping_set;
-	p_adpt_api->adpt_acl_dscp_pcp_mapping_get =
-				adpt_jhppe_acl_dscp_pcp_mapping_get;
+		p_adpt_api->adpt_acl_dscp_pcp_mapping_set =
+					adpt_jhppe_acl_dscp_pcp_mapping_set;
+		p_adpt_api->adpt_acl_dscp_pcp_mapping_get =
+					adpt_jhppe_acl_dscp_pcp_mapping_get;
+#endif
+	}
 #endif
 	aos_lock_init(&hppe_acl_lock[dev_id]);
 
