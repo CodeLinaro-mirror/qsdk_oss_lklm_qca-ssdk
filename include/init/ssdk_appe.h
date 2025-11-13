@@ -30,20 +30,23 @@ sw_error_t qca_appe_rss_hash_hw_init(a_uint32_t dev_id);
 #define APPE_QUEUE_SHAPER_TAIL              299
 #define APPE_FLOW_SHAPER_HEAD               0
 #define APPE_FLOW_SHAPER_TAIL               63
-#define APPE_POLICER_TIMESLOT_DFT           353*4
-#define APPE_POLICER_HEAD                   0
-#define APPE_POLICER_TAIL                   511
-#define MPPE_POLICER_TIMESLOT_DFT           200*2
-#define MPPE_POLICER_TAIL                   127
-#define APPE_ACL_POLICER_CFG_MAX            512
-#define MPPE_ACL_POLICER_CFG_MAX            128
-#define MRPPE_POLICER_TIMESLOT_DFT          375*4
 #define HMSPPE_PORT_SHAPER_TIMESLOT_DFT     8
 #define JHPPE_PORT_SHAPER_TIMESLOT_DFT      9
 #define HTTPPE_PORT_SHAPER_TIMESLOT_DFT     6
 #define HMSPPE_QUEUE_SHAPER_TIMESLOT_DFT    429*2
 #define JHPPE_QUEUE_SHAPER_TIMESLOT_DFT     462*2
 #define HTTPPE_QUEUE_SHAPER_TIMESLOT_DFT    250*2
+#define APPE_POLICER_TIMESLOT_DFT           353*4
+#define MPPE_POLICER_TIMESLOT_DFT           200*2
+#define MRPPE_POLICER_TIMESLOT_DFT          375*4
+#define HMSPPE_POLICER_TIMESLOT_DFT         429*2
+#define JHPPE_POLICER_TIMESLOT_DFT          462*3
+#define HTTPPE_POLICER_TIMESLOT_DFT         250*3
+#define POLICER_CFG_MAX_512                 512
+#define POLICER_CFG_MAX_256                 256
+#define POLICER_CFG_MAX_128                 128
+#define POLICER_HEAD                        0
+#define POLICER_TAIL(cfg_max) ((cfg_max) - 1)
 
 #ifdef __cplusplus
 }
