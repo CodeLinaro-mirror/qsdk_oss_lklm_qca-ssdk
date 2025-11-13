@@ -42,6 +42,16 @@ sw_error_t
 adpt_httppe_port_scheduler_cfg_set(a_uint32_t dev_id,
 				   a_uint32_t tick_index,
 				   fal_port_scheduler_cfg_t *cfg);
+
+sw_error_t
+adpt_httppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t dscp,
+			fal_qos_cosmap_t *cosmap);
+
+sw_error_t
+adpt_httppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t dscp,
+			fal_qos_cosmap_t *cosmap);
 #ifndef IN_QOS_MINI
 sw_error_t
 adpt_httppe_port_queues_get(a_uint32_t dev_id,
@@ -54,6 +64,16 @@ sw_error_t
 adpt_httppe_port_scheduler_cfg_get(a_uint32_t dev_id,
 				   a_uint32_t tick_index,
 				   fal_port_scheduler_cfg_t *cfg);
+
+sw_error_t
+adpt_httppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t pcp,
+			fal_qos_cosmap_t *cosmap);
+
+sw_error_t
+adpt_httppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
+			a_uint8_t pcp,
+			fal_qos_cosmap_t *cosmap);
 #endif
 #ifdef __cplusplus
 }

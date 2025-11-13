@@ -127,5 +127,17 @@ httppe_psch_tdm_cfg_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union psch_tdm_cfg_tbl_u *value);
+
+sw_error_t
+httppe_qos_mapping_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union qos_mapping_tbl_u *value);
+
+sw_error_t
+httppe_qos_mapping_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union qos_mapping_tbl_u *value);
 #endif
 
