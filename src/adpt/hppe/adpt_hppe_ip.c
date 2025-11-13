@@ -215,20 +215,27 @@ a_bool_t adpt_jhppe_l3_mac_entry_equal(fal_intf_macaddr_t vsi_mac_entry,
 	fal_mac_addr_t hsl_mac_addr;
 	a_uint32_t mac_0;
 	a_uint16_t mac_1;
-	a_bool_t ret = A_FALSE;
 
 	mac_0 = l3_mymac.bf.mac_0;
 	mac_1 = l3_mymac.bf.mac_1;
 	adpt_ip_macaddr_convert(&hsl_mac_addr, &mac_0, &mac_1, A_FALSE);
 
-	if (l3_mymac.bf.valid == 1 &&
-	    l3_mymac.bf.l3_if_index == l3_if &&
-	    l3_mymac.bf.vsi_valid == vsi_mac_entry.vsi_valid &&
-	    l3_mymac.bf.vsi == vsi_mac_entry.vsi &&
-	    ether_addr_equal(vsi_mac_entry.mac_addr.uc, hsl_mac_addr.uc))
-		ret = A_TRUE;
+	if (!l3_mymac.bf.valid)
+		return A_FALSE;
 
-	return ret;
+	if (l3_mymac.bf.l3_if_index != l3_if)
+		return A_FALSE;
+
+	if (l3_mymac.bf.vsi_valid != vsi_mac_entry.vsi_valid)
+		return A_FALSE;
+
+	if (l3_mymac.bf.vsi_valid == A_TRUE && l3_mymac.bf.vsi != vsi_mac_entry.vsi)
+		return A_FALSE;
+
+	if (!ether_addr_equal(vsi_mac_entry.mac_addr.uc, hsl_mac_addr.uc))
+		return A_FALSE;
+
+	return A_TRUE;
 }
 
 a_uint8_t adpt_jhppe_l3_mac_addr_check(a_uint32_t dev_id, a_uint32_t l3_if,
