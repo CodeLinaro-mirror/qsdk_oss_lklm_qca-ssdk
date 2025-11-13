@@ -313,6 +313,7 @@ OBJ-COMMON  += src/fal/fal_policer.o
 OBJ-HPPE    += src/hsl/hppe/hppe_policer.o src/adpt/hppe/adpt_hppe_policer.o
 OBJ-APPE    += src/hsl/appe/appe_policer.o src/adpt/appe/adpt_appe_policer.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_policer.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_policer.o
 endif
 
 

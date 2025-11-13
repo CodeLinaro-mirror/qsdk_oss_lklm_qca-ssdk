@@ -16,206 +16,312 @@
 #include "adpt_httppe_misc.h"
 #endif
 
+/* Reordered cpucode array - direct mapping: cpucode[cpu_code_value] */
+/* Array size: 256 (0-255) to cover all CPU codes */
 char *cpucode[] = {
-"Forwarding to CPU",
-"Unkown L2 protocol exception redirect/copy to CPU",
-"PPPoE wrong version or wrong type exception redirect/copy to CPU",
-"PPPoE wrong code exception redirect/copy to CPU",
-"PPPoE unsupported PPP protocol exception redirect/copy to CPU",
-"IPv4 wrong version exception redirect/copy to CPU",
-"IPv4 small IHL exception redirect/copy to CPU",
-"IPv4 with option exception redirect/copy to CPU",
-"IPv4 header incomplete exception redirect/copy to CPU",
-"IPv4 bad total length exception redirect/copy to CPU",
-"IPv4 data incomplete exception redirect/copy to CPU",
-"IPv4 fragment exception redirect/copy to CPU",
-"IPv4 ping of death exception redirect/copy to CPU",
-"IPv4 small TTL exception redirect/copy to CPU",
-"IPv4 unknown IP protocol exception redirect/copy to CPU",
-"IPv4 checksum error exception redirect/copy to CPU",
-"IPv4 invalid SIP exception redirect/copy to CPU",
-"IPv4 invalid DIP exception redirect/copy to CPU",
-"IPv4 LAND attack exception redirect/copy to CPU",
-"IPv4 AH header incomplete exception redirect/copy to CPU",
-"IPv4 AH header cross 128-byte exception redirect/copy to CPU",
-"IPv4 ESP header incomplete exception redirect/copy to CPU",
-"IPv6 wrong version exception redirect/copy to CPU",
-"IPv6 header incomplete exception redirect/copy to CPU",
-"IPv6 bad total length exception redirect/copy to CPU",
-"IPv6 data incomplete exception redirect/copy to CPU",
-"IPv6 with extension header exception redirect/copy to CPU",
-"IPv6 small hop limit exception redirect/copy to CPU",
-"IPv6 invalid SIP exception redirect/copy to CPU",
-"IPv6 invalid DIP exception redirect/copy to CPU",
-"IPv6 LAND attack exception redirect/copy to CPU",
-"IPv6 fragment exception redirect/copy to CPU",
-"IPv6 ping of death exception redirect/copy to CPU",
-"IPv6 with more than 2 extension headers exception redirect/copy to CPU",
-"IPv6 unknown last next header exception redirect/copy to CPU",
-"IPv6 mobility header incomplete exception redirect/copy to CPU",
-"IPv6 mobility header cross 128-byte exception redirect/copy to CPU",
-"IPv6 AH header incomplete exception redirect/copy to CPU",
-"IPv6 AH header cross 128-byte exception redirect/copy to CPU",
-"IPv6 ESP header incomplete exception redirect/copy to CPU",
-"IPv6 ESP header cross 128-byte exception redirect/copy to CPU",
-"IPv6 other extension header incomplete exception redirect/copy to CPU",
-"IPv6 other extension header cross 128-byte exception redirect/copy to CPU",
-"TCP header incomplete exception redirect/copy to CPU",
-"TCP header cross 128-byte exception redirect/copy to CPU",
-"TCP same SP and DP exception redirect/copy to CPU",
-"TCP small data offset redirect/copy to CPU",
-"TCP flags VALUE/MASK group 0 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 1 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 2 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 3 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 4 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 5 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 6 exception redirect/copy to CPU",
-"TCP flags VALUE/MASK group 7 exception redirect/copy to CPU",
-"TCP checksum error exception redirect/copy to CPU",
-"UDP header incomplete exception redirect/copy to CPU",
-"UDP header cross 128-byte exception redirect/copy to CPU",
-"UDP same SP and DP exception redirect/copy to CPU",
-"UDP bad length exception redirect/copy to CPU",
-"UDP data incomplete exception redirect/copy to CPU",
-"UDP checksum error exception redirect/copy to CPU",
-"UDP-Lite header incomplete exception redirect/copy to CPU",
-"UDP-Lite header cross 128-byte exception redirect/copy to CPU",
-"UDP-Lite same SP and DP exception redirect/copy to CPU",
-"UDP-Lite checksum coverage value 0-7 exception redirect/copy to CPU",
-"UDP-Lite checksum coverage value too big exception redirect/copy to CPU",
-"UDP-Lite checksum coverage value cross 128-byte exception redirect/copy to CPU",
-"UDP-Lite checksum error exception redirect/copy to CPU",
-"Fake L2 protocol packet redirect/copy to CPU",
-"Fake MAC header packet redirect/copy to CPU",
-"L2 MRU checking fail redirect/copy to CPU",
-"L2 MTU checking fail redirect/copy to CPU",
-"IP prefix broadcast redirect/copy to CPU",
-"L3 MTU checking fail redirect/copy to CPU",
-"L3 MRU checking fail redirect/copy to CPU",
-"ICMP redirect/copy to CPU",
-"IP to me routing TTL 1 redirect/copy to CPU",
-"IP to me routing TTL 0 redirect/copy to CPU",
-"Flow service code loop redirect/copy to CPU",
-"Flow de-accelearate redirect/copy to CPU",
-"Flow source interface check fail redirect/copy to CPU",
-"Flow sync toggle mismatch redirect/copy to CPU",
-"MTU check fail if DF set redirect/copy to CPU",
-"PPPoE multicast redirect/copy to CPU",
-"EAPoL packet redirect/copy to CPU",
-"PPPoE discovery packet redirect/copy to CPU",
-"IGMP packet redirect/copy to CPU",
-"ARP request packet redirect/copy to CPU",
-"ARP reply packet redirect/copy to CPU",
-"DHCPv4 packet redirect/copy to CPU",
-"MLD packet redirect/copy to CPU",
-"NS packet redirect/copy to CPU",
-"NA packet redirect/copy to CPU",
-"DHCPv6 packet redirect/copy to CPU",
-"PTP sync packet redirect/copy to CPU",
-"PTP follow up packet redirect/copy to CPU",
-"PTP delay request packet redirect/copy to CPU",
-"PTP delay response packet redirect/copy to CPU",
-"PTP pdelay request packet redirect/copy to CPU",
-"PTP pdelay response packet redirect/copy to CPU",
-"PTP pdelay response follow up packet redirect/copy to CPU",
-"PTP announce packet redirect/copy to CPU",
-"PTP management packet redirect/copy to CPU",
-"PTP signaling packet redirect/copy to CPU",
-"PTP message reserved type 0 packet redirect/copy to CPU",
-"PTP message reserved type 1 packet redirect/copy to CPU",
-"PTP message reserved type 2 packet redirect/copy to CPU",
-"PTP message reserved type 3 packet redirect/copy to CPU",
-"PTP message reserved type packet redirect/copy to CPU",
-"IPv4 source guard unknown packet redirect/copy to CPU",
-"IPv6 source guard unknown packet redirect/copy to CPU",
-"ARP source guard unknown packet redirect/copy to CPU",
-"ND source guard unknown packet redirect/copy to CPU",
-"IPv4 source guard violation packet redirect/copy to CPU",
-"IPv6 source guard violation packet redirect/copy to CPU",
-"ARP source guard violation packet redirect/copy to CPU",
-"ND source guard violation packet redirect/copy to CPU",
-"L3 route host mismatch action redirect/copy to CPU",
-"L3 flow SNAT action redirect/copy to CPU",
-"L3 flow DNAT action redirect/copy to CPU",
-"L3 flow routing action redirect/copy to CPU",
-"L3 flow bridging action redirect/copy to CPU",
-"L3 multicast bridging action redirect/copy to CPU",
-"L3 route Preheader routing action redirect/copy to CPU",
-"L3 route Preheader SNAPT action redirect/copy to CPU",
-"L3 route Preheader DNAPT action redirect/copy to CPU",
-"L3 route Preheader SNAT action redirect/copy to CPU",
-"L3 route Preheader DNAT action redirect/copy to CPU",
-"L3 no route preheader NAT action redirect/copy to CPU",
-"L3 no route preheader NAT error redirect/copy to CPU",
-"L3 route action redirect/copy to CPU",
-"L3 no route action redirect/copy to CPU",
-"L3 no route next hop invalid action redirect/copy to CPU",
-"L3 no route preheader action redirect/copy to CPU",
-"L3 bridge action redirect/copy to CPU",
-"L3 flow action redirect/copy to CPU",
-"L3 flow miss action redirect/copy to CPU",
-"L2 new MAC address redirect/copy to CPU",
-"L2 hash violation redirect/copy to CPU",
-"L2 station move redirect/copy to CPU",
-"L2 learn limit redirect/copy to CPU",
-"L2 SA lookup action redirect/copy to CPU",
-"L2 DA lookup action redirect/copy to CPU",
-"APP_CTRL action redirect/copy to CPU",
-"Pre-IPO action",
-"Post-IPO action",
-"Service code action",
-"Egress mirror to CPU",
-"Ingress mirror to CPU",
-"L3 FLOW MTU CHECK FAIL",/*index 150, cpu code 93*/
-"L3 FLOW MTU CHECK DF FAIL",
-"L3 UDP CHECKSUM EXP",/*index 152, cpu code 95*/
+	/* 0-70: Direct mapping */
+	[0] = "Forwarding to CPU",
+	[1] = "Unkown L2 protocol exception redirect/copy to CPU",
+	[2] = "PPPoE wrong version or wrong type exception redirect/copy to CPU",
+	[3] = "PPPoE wrong code exception redirect/copy to CPU",
+	[4] = "PPPoE unsupported PPP protocol exception redirect/copy to CPU",
+	[5] = "IPv4 wrong version exception redirect/copy to CPU",
+	[6] = "IPv4 small IHL exception redirect/copy to CPU",
+	[7] = "IPv4 with option exception redirect/copy to CPU",
+	[8] = "IPv4 header incomplete exception redirect/copy to CPU",
+	[9] = "IPv4 bad total length exception redirect/copy to CPU",
+	[10] = "IPv4 data incomplete exception redirect/copy to CPU",
+	[11] = "IPv4 fragment exception redirect/copy to CPU",
+	[12] = "IPv4 ping of death exception redirect/copy to CPU",
+	[13] = "IPv4 small TTL exception redirect/copy to CPU",
+	[14] = "IPv4 unknown IP protocol exception redirect/copy to CPU",
+	[15] = "IPv4 checksum error exception redirect/copy to CPU",
+	[16] = "IPv4 invalid SIP exception redirect/copy to CPU",
+	[17] = "IPv4 invalid DIP exception redirect/copy to CPU",
+	[18] = "IPv4 LAND attack exception redirect/copy to CPU",
+	[19] = "IPv4 AH header incomplete exception redirect/copy to CPU",
+	[20] = "IPv4 AH header cross 128-byte exception redirect/copy to CPU",
+	[21] = "IPv4 ESP header incomplete exception redirect/copy to CPU",
+	[22] = "IPv6 wrong version exception redirect/copy to CPU",
+	[23] = "IPv6 header incomplete exception redirect/copy to CPU",
+	[24] = "IPv6 bad total length exception redirect/copy to CPU",
+	[25] = "IPv6 data incomplete exception redirect/copy to CPU",
+	[26] = "IPv6 with extension header exception redirect/copy to CPU",
+	[27] = "IPv6 small hop limit exception redirect/copy to CPU",
+	[28] = "IPv6 invalid SIP exception redirect/copy to CPU",
+	[29] = "IPv6 invalid DIP exception redirect/copy to CPU",
+	[30] = "IPv6 LAND attack exception redirect/copy to CPU",
+	[31] = "IPv6 fragment exception redirect/copy to CPU",
+	[32] = "IPv6 ping of death exception redirect/copy to CPU",
+	[33] = "IPv6 with more than 2 extension headers exception redirect/copy to CPU",
+	[34] = "IPv6 unknown last next header exception redirect/copy to CPU",
+	[35] = "IPv6 mobility header incomplete exception redirect/copy to CPU",
+	[36] = "IPv6 mobility header cross 128-byte exception redirect/copy to CPU",
+	[37] = "IPv6 AH header incomplete exception redirect/copy to CPU",
+	[38] = "IPv6 AH header cross 128-byte exception redirect/copy to CPU",
+	[39] = "IPv6 ESP header incomplete exception redirect/copy to CPU",
+	[40] = "IPv6 ESP header cross 128-byte exception redirect/copy to CPU",
+	[41] = "IPv6 other extension header incomplete exception redirect/copy to CPU",
+	[42] = "IPv6 other extension header cross 128-byte exception redirect/copy to CPU",
+	[43] = "TCP header incomplete exception redirect/copy to CPU",
+	[44] = "TCP header cross 128-byte exception redirect/copy to CPU",
+	[45] = "TCP same SP and DP exception redirect/copy to CPU",
+	[46] = "TCP small data offset redirect/copy to CPU",
+	[47] = "TCP flags VALUE/MASK group 0 exception redirect/copy to CPU",
+	[48] = "TCP flags VALUE/MASK group 1 exception redirect/copy to CPU",
+	[49] = "TCP flags VALUE/MASK group 2 exception redirect/copy to CPU",
+	[50] = "TCP flags VALUE/MASK group 3 exception redirect/copy to CPU",
+	[51] = "TCP flags VALUE/MASK group 4 exception redirect/copy to CPU",
+	[52] = "TCP flags VALUE/MASK group 5 exception redirect/copy to CPU",
+	[53] = "TCP flags VALUE/MASK group 6 exception redirect/copy to CPU",
+	[54] = "TCP flags VALUE/MASK group 7 exception redirect/copy to CPU",
+	[55] = "TCP checksum error exception redirect/copy to CPU",
+	[56] = "UDP header incomplete exception redirect/copy to CPU",
+	[57] = "UDP header cross 128-byte exception redirect/copy to CPU",
+	[58] = "UDP same SP and DP exception redirect/copy to CPU",
+	[59] = "UDP bad length exception redirect/copy to CPU",
+	[60] = "UDP data incomplete exception redirect/copy to CPU",
+	[61] = "UDP checksum error exception redirect/copy to CPU",
+	[62] = "UDP-Lite header incomplete exception redirect/copy to CPU",
+	[63] = "UDP-Lite header cross 128-byte exception redirect/copy to CPU",
+	[64] = "UDP-Lite same SP and DP exception redirect/copy to CPU",
+	[65] = "UDP-Lite checksum coverage value 0-7 exception redirect/copy to CPU",
+	[66] = "UDP-Lite checksum coverage value too big exception redirect/copy to CPU",
+	[67] = "UDP-Lite checksum coverage value cross 128-byte exception redirect/copy to CPU",
+	[68] = "UDP-Lite checksum error exception redirect/copy to CPU",
+	[69] = "Fake L2 protocol packet redirect/copy to CPU",
+	[70] = "Fake MAC header packet redirect/copy to CPU",
 
-"8023ah OAM packet redirect/copy to CPU",/*index 153, cpu code 104*/
+	/* 71-78: Reserved */
+	[71] = "Reserved",
+	[72] = "Reserved",
+	[73] = "Reserved",
+	[74] = "Reserved",
+	[75] = "Reserved",
+	[76] = "Reserved",
+	[77] = "Reserved",
+	[78] = "Reserved",
 
-"L3 ROUTE PRE IPO ROUTE ACTION",/*index 154, cpu code 181*/
-"L3 ROUTE PRE IPO SNAPT ACTION",
-"L3 ROUTE PRE IPO DNAPT ACTION",
-"L3 ROUTE PRE IPO SNAT ACTION",
-"L3_ROUTE PRE IPO DNAT ACTION",/*index 158, cpu code 185*/
+	/* 79-92: L2/L3 exceptions */
+	[79] = "L2 MRU checking fail redirect/copy to CPU",
+	[80] = "L2 MTU checking fail redirect/copy to CPU",
+	[81] = "IP prefix broadcast redirect/copy to CPU",
+	[82] = "L3 MTU checking fail redirect/copy to CPU",
+	[83] = "L3 MRU checking fail redirect/copy to CPU",
+	[84] = "ICMP redirect/copy to CPU",
+	[85] = "IP to me routing TTL 1 redirect/copy to CPU",
+	[86] = "IP to me routing TTL 0 redirect/copy to CPU",
+	[87] = "Flow service code loop redirect/copy to CPU",
+	[88] = "Flow de-accelearate redirect/copy to CPU",
+	[89] = "Flow source interface check fail redirect/copy to CPU",
+	[90] = "Flow sync toggle mismatch redirect/copy to CPU",
+	[91] = "MTU check fail if DF set redirect/copy to CPU",
+	[92] = "PPPoE multicast redirect/copy to CPU",
 
-"TUNNEL interface check fail",/*index 159,cpu code 186*/
-"TUNNEL vlan check fail",
-"TUNNEL PPPOE multicast term",
-"TUNNEL de-accelate",
-"TUNNEL UDP checksum zero",
-"TUNNEL TTL exceed",
-"TUNNEL LPM interface check fail",
-"TUNNEL LPM vlan check fail",
-"TUNNEL MAP source check fail",
-"TUNNEL MAP destination check fail",
-"TUNNEL MAP UDP checksum zero",
-"TUNNEL MAP non TCP and UDP",
-"TUNNEL forward command",/*index 171, cpu code 198*/
+	/* 93-95: Flow MTU and UDP checksum */
+	[93] = "L3 FLOW MTU CHECK FAIL",
+	[94] = "L3 FLOW MTU CHECK DF FAIL",
+	[95] = "L3 UDP CHECKSUM EXP",
 
-"L2 PRE-ACL action",/*index 172, cpu code 210*/
-"TUNNEL L2 context invalid",
-"TUNNEL decap inner ipv4 padding",
-"TUNNEL decap inner ipv6 padding",
-"TUNNEL decap ECN",
-"TUNNEL inner packet too short",
-"TUNNEL VXLAN header",
-"TUNNEL VXLAN GPE header",
-"TUNNEL GENEVE header",
-"TUNNEL GRE header",
-"TUNNEL GRE checksum error",
-"TUNNEL unknow inner type",
-"TUNNEL VXLAN flag",
-"TUNNEL VXLAN GPE flag",
-"TUNNEL GRE flag",
-"TUNNEL GENEVE flag",
-"TUNNEL PROGRAM0",
-"TUNNEL PROGRAM1",
-"TUNNEL PROGRAM2",
-"TUNNEL PROGRAM3",
-"TUNNEL PROGRAM4",
-"TUNNEL PROGRAM5",/*index 193, cpu code 231*/
-"bypass l2 flooding and redirect to CPU",/*index 194, cpu code 232*/
+	/* 96: Reserved */
+	[96] = "Reserved",
+
+	/* 97-102: Management packets */
+	[97] = "EAPoL packet redirect/copy to CPU",
+	[98] = "PPPoE discovery packet redirect/copy to CPU",
+	[99] = "IGMP packet redirect/copy to CPU",
+	[100] = "ARP request packet redirect/copy to CPU",
+	[101] = "ARP reply packet redirect/copy to CPU",
+	[102] = "DHCPv4 packet redirect/copy to CPU",
+
+	/* 103-106: Reserved */
+	[103] = "Reserved",
+	[104] = "8023ah OAM packet redirect/copy to CPU",
+	[105] = "Reserved",
+	[106] = "Reserved",
+
+	/* 107-110: IPv6 management */
+	[107] = "MLD packet redirect/copy to CPU",
+	[108] = "NS packet redirect/copy to CPU",
+	[109] = "NA packet redirect/copy to CPU",
+	[110] = "DHCPv6 packet redirect/copy to CPU",
+
+	/* 111-112: Reserved */
+	[111] = "Reserved",
+	[112] = "Reserved",
+
+	/* 113-127: PTP packets */
+	[113] = "PTP sync packet redirect/copy to CPU",
+	[114] = "PTP follow up packet redirect/copy to CPU",
+	[115] = "PTP delay request packet redirect/copy to CPU",
+	[116] = "PTP delay response packet redirect/copy to CPU",
+	[117] = "PTP pdelay request packet redirect/copy to CPU",
+	[118] = "PTP pdelay response packet redirect/copy to CPU",
+	[119] = "PTP pdelay response follow up packet redirect/copy to CPU",
+	[120] = "PTP announce packet redirect/copy to CPU",
+	[121] = "PTP management packet redirect/copy to CPU",
+	[122] = "PTP signaling packet redirect/copy to CPU",
+	[123] = "PTP message reserved type 0 packet redirect/copy to CPU",
+	[124] = "PTP message reserved type 1 packet redirect/copy to CPU",
+	[125] = "PTP message reserved type 2 packet redirect/copy to CPU",
+	[126] = "PTP message reserved type 3 packet redirect/copy to CPU",
+	[127] = "PTP message reserved type packet redirect/copy to CPU",
+
+	/* 128-135: Reserved */
+	[128] = "Reserved",
+	[129] = "Reserved",
+	[130] = "Reserved",
+	[131] = "Reserved",
+	[132] = "Reserved",
+	[133] = "Reserved",
+	[134] = "Reserved",
+	[135] = "Reserved",
+
+	/* 136-143: Source guard */
+	[136] = "IPv4 source guard unknown packet redirect/copy to CPU",
+	[137] = "IPv6 source guard unknown packet redirect/copy to CPU",
+	[138] = "ARP source guard unknown packet redirect/copy to CPU",
+	[139] = "ND source guard unknown packet redirect/copy to CPU",
+	[140] = "IPv4 source guard violation packet redirect/copy to CPU",
+	[141] = "IPv6 source guard violation packet redirect/copy to CPU",
+	[142] = "ARP source guard violation packet redirect/copy to CPU",
+	[143] = "ND source guard violation packet redirect/copy to CPU",
+
+	/* 144: Reserved */
+	[144] = "Reserved",
+
+	/* 145: dot1p mapper */
+	[145] = "dot1p mapper action to CPU",
+
+	/* 146-147: Reserved */
+	[146] = "Reserved",
+	[147] = "Reserved",
+
+	/* 148-174: L3 routing and L2 actions */
+	[148] = "L3 route host mismatch action redirect/copy to CPU",
+	[149] = "L3 flow SNAT action redirect/copy to CPU",
+	[150] = "L3 flow DNAT action redirect/copy to CPU",
+	[151] = "L3 flow routing action redirect/copy to CPU",
+	[152] = "L3 flow bridging action redirect/copy to CPU",
+	[153] = "L3 multicast bridging action redirect/copy to CPU",
+	[154] = "L3 route Preheader routing action redirect/copy to CPU",
+	[155] = "L3 route Preheader SNAPT action redirect/copy to CPU",
+	[156] = "L3 route Preheader DNAPT action redirect/copy to CPU",
+	[157] = "L3 route Preheader SNAT action redirect/copy to CPU",
+	[158] = "L3 route Preheader DNAT action redirect/copy to CPU",
+	[159] = "L3 no route preheader NAT action redirect/copy to CPU",
+	[160] = "L3 no route preheader NAT error redirect/copy to CPU",
+	[161] = "L3 route action redirect/copy to CPU",
+	[162] = "L3 no route action redirect/copy to CPU",
+	[163] = "L3 no route next hop invalid action redirect/copy to CPU",
+	[164] = "L3 no route preheader action redirect/copy to CPU",
+	[165] = "L3 bridge action redirect/copy to CPU",
+	[166] = "L3 flow action redirect/copy to CPU",
+	[167] = "L3 flow miss action redirect/copy to CPU",
+	[168] = "L2 new MAC address redirect/copy to CPU",
+	[169] = "L2 hash violation redirect/copy to CPU",
+	[170] = "L2 station move redirect/copy to CPU",
+	[171] = "L2 learn limit redirect/copy to CPU",
+	[172] = "L2 SA lookup action redirect/copy to CPU",
+	[173] = "L2 DA lookup action redirect/copy to CPU",
+	[174] = "APP_CTRL action redirect/copy to CPU",
+
+	/* 175-177: Reserved */
+	[175] = "Reserved",
+	[176] = "Reserved",
+	[177] = "Reserved",
+
+	/* 178-180: ACL and Service */
+	[178] = "Pre-IPO action",
+	[179] = "Post-IPO action",
+	[180] = "Service code action",
+
+	/* 181-185: L3 route pre-IPO actions */
+	[181] = "L3 ROUTE PRE IPO ROUTE ACTION",
+	[182] = "L3 ROUTE PRE IPO SNAPT ACTION",
+	[183] = "L3 ROUTE PRE IPO DNAPT ACTION",
+	[184] = "L3 ROUTE PRE IPO SNAT ACTION",
+	[185] = "L3_ROUTE PRE IPO DNAT ACTION",
+
+	/* 186-198: Tunnel exceptions */
+	[186] = "TUNNEL interface check fail",
+	[187] = "TUNNEL vlan check fail",
+	[188] = "TUNNEL PPPOE multicast term",
+	[189] = "TUNNEL de-accelate",
+	[190] = "TUNNEL UDP checksum zero",
+	[191] = "TUNNEL TTL exceed",
+	[192] = "TUNNEL LPM interface check fail",
+	[193] = "TUNNEL LPM vlan check fail",
+	[194] = "TUNNEL MAP source check fail",
+	[195] = "TUNNEL MAP destination check fail",
+	[196] = "TUNNEL MAP UDP checksum zero",
+	[197] = "TUNNEL MAP non TCP and UDP",
+	[198] = "TUNNEL forward command",
+
+	/* 199-209: Reserved */
+	[199] = "Reserved",
+	[200] = "Reserved",
+	[201] = "Reserved",
+	[202] = "Reserved",
+	[203] = "Reserved",
+	[204] = "Reserved",
+	[205] = "Reserved",
+	[206] = "Reserved",
+	[207] = "Reserved",
+	[208] = "Reserved",
+	[209] = "Reserved",
+
+	/* 210-232: L2 pre-ACL and tunnel decap */
+	[210] = "L2 PRE-ACL action",
+	[211] = "TUNNEL L2 context invalid",
+	[212] = "TUNNEL decap inner ipv4 padding",
+	[213] = "TUNNEL decap inner ipv6 padding",
+	[214] = "TUNNEL decap ECN",
+	[215] = "TUNNEL inner packet too short",
+	[216] = "TUNNEL VXLAN header",
+	[217] = "TUNNEL VXLAN GPE header",
+	[218] = "TUNNEL GENEVE header",
+	[219] = "TUNNEL GRE header",
+	[220] = "TUNNEL GRE checksum error",
+	[221] = "TUNNEL unknow inner type",
+	[222] = "TUNNEL VXLAN flag",
+	[223] = "TUNNEL VXLAN GPE flag",
+	[224] = "TUNNEL GRE flag",
+	[225] = "TUNNEL GENEVE flag",
+	[226] = "TUNNEL PROGRAM0",
+	[227] = "TUNNEL PROGRAM1",
+	[228] = "TUNNEL PROGRAM2",
+	[229] = "TUNNEL PROGRAM3",
+	[230] = "TUNNEL PROGRAM4",
+	[231] = "TUNNEL PROGRAM5",
+	[232] = "Bypass l2 flooding and redirect to CPU",
+
+	/* 233-252: Reserved */
+	[233] = "Reserved",
+	[234] = "Reserved",
+	[235] = "Reserved",
+	[236] = "Reserved",
+	[237] = "Reserved",
+	[238] = "Reserved",
+	[239] = "Reserved",
+	[240] = "Reserved",
+	[241] = "Reserved",
+	[242] = "Reserved",
+	[243] = "Reserved",
+	[244] = "Reserved",
+	[245] = "Reserved",
+	[246] = "Reserved",
+	[247] = "Reserved",
+	[248] = "Reserved",
+	[249] = "Reserved",
+	[250] = "Reserved",
+	[251] = "Reserved",
+	[252] = "Reserved",
+
+	/* 253-255: Isolation and mirror */
+	[253] = "Isolation action to CPU",
+	[254] = "Egress mirror to CPU",
+	[255] = "Ingress mirror to CPU",
 };
 
 char *dropcode[] = {
@@ -284,7 +390,7 @@ char *dropcode[] = {
 "TUNNEL GENEVE header exception drop",
 "TUNNEL GRE header exception drop",
 "TUNNEL GRE checksum error exception drop",
-"TUNNEL unknow inner type exception drop",
+"TUNNEL unknown inner type exception drop",
 "TUNNEL flag exception drop",
 "TUNNEL PROGRAM exception drop",
 "TUNNEL forward command exception drop",
@@ -424,9 +530,15 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	for (i = 0; i < VP_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
 		hppe_vp_tx_drop_cnt_tbl_set(dev_id, i, &vp_tx_drop_cnt_tbl);
 
-	/* clear DROP_CPU_CNT_TBL */
-	for (i = 0; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
-		hppe_drop_cpu_cnt_tbl_set(dev_id, i, &drop_cpu_cnt_tbl);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		adpt_httppe_debug_drop_cpu_counter_set(dev_id);
+#endif
+	} else {
+		/* clear DROP_CPU_CNT_TBL */
+		for (i = 0; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
+			hppe_drop_cpu_cnt_tbl_set(dev_id, i, &drop_cpu_cnt_tbl);
+	}
 
 	/* clear VP_RX_COUNTER_TBL and VP_RX_DROP_CNT_TBL */
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
@@ -837,7 +949,8 @@ adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, ch
 }
 
 static void
-adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
+adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type,
+		char **buf, ssize_t *count, a_uint32_t sd_size)
 {
 	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl;
 	a_uint64_t value;
@@ -856,45 +969,23 @@ adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 		{
 			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
-			if (i >=0 && i <= 70)
+			if (i >= 0 && i < sd_size)
 				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i], i);
-			else if (i >= 79 && i <= 92)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 8], i);
-			else if (i >= 97 && i <= 102)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 12], i);
-			else if (i >= 107 && i <= 110)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 16], i);
-			else if (i >= 113 && i <= 127)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 18], i);
-			else if (i >= 136 && i <= 143)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 26], i);
-			else if (i >= 148 && i <= 174)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 30], i);
-			else if (i >= 178 && i <= 180)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 33], i);
-			else if (i >= 93 && i <= 95)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i + 57], i);
-			else if (i == 104)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i + 49], i);
-			else if (i >= 181 && i <= 198)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 27], i);
-			else if (i >= 210 && i <= 232)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 38], i);
-			else if (i >= 254 && i <= 255)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i - 106], i);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(Reserved),cpucode:%d", value, i);
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(Unknown),cpucode:%d", value, i);
 		}
 	}
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 }
 
 static void
-adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
+adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type,
+		char **buf, ssize_t *count, a_uint32_t sd_size)
 {
 	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl;
 	a_uint64_t value;
 	int i, tags, sign;
+	int drop_code_idx;
 
 	sign = tags = 0;
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "DROP_CPU_CNT_TBL:");
@@ -907,9 +998,18 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 			value = drop_cpu_cnt_tbl.bf.byte_cnt_0 | ((a_uint64_t)drop_cpu_cnt_tbl.bf.byte_cnt_1 << 32);
 		if (value > 0)
 		{
+			drop_code_idx = (i - CPU_CODE_CNT_TBL_MAX_ENTRY) / SSDK_MAX_PORT_NUM;
+
 			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
 			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d", value, (i - 256) % SSDK_MAX_PORT_NUM, dropcode[(i - 256) / SSDK_MAX_PORT_NUM], (i-256) / SSDK_MAX_PORT_NUM);
+
+			if (drop_code_idx >= 0 && drop_code_idx < sd_size)
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d", value,
+					(i - CPU_CODE_CNT_TBL_MAX_ENTRY) % SSDK_MAX_PORT_NUM,
+					dropcode[drop_code_idx], drop_code_idx);
+			else
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:Unknown),dropcode:%d", value,
+                    (i - CPU_CODE_CNT_TBL_MAX_ENTRY) % SSDK_MAX_PORT_NUM, drop_code_idx);
 		}
 	}
 	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
@@ -1094,10 +1194,19 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 	adpt_hppe_debug_vp_tx_drop_counter_get(dev_id, show_type, buf, count);
 
 	/* show CPU_CODE_CNT */
-	adpt_hppe_debug_cpu_code_counter_get(dev_id, show_type, buf, count);
+	adpt_hppe_debug_cpu_code_counter_get(dev_id, show_type,
+		buf, count, (sizeof(cpucode)/sizeof(cpucode[0])));
 
-	/* show DROP_CPU_CNT_TBL */
-	adpt_hppe_debug_drop_cpu_counter_get(dev_id, show_type, buf, count);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		adpt_httppe_debug_drop_cpu_counter_get(dev_id, show_type,
+			buf, count, (sizeof(dropcode)/sizeof(dropcode[0])));
+#endif
+	} else {
+		/* show DROP_CPU_CNT_TBL */
+		adpt_hppe_debug_drop_cpu_counter_get(dev_id, show_type,
+			buf, count, (sizeof(dropcode)/sizeof(dropcode[0])));
+	}
 
 	/* show VP_PORT_RX_COUNTER_TBL*/
 	adpt_appe_debug_vp_rx_counter_get(dev_id, show_type, buf, count);

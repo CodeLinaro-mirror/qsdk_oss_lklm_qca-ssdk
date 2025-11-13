@@ -13,6 +13,11 @@
 #include "adpt.h"
 
 #define QUEUE_TX_COUNTER_TBL_MAX_ENTRY	300
+#define CPU_CODE_CNT_TBL_MAX_ENTRY 256
+#define HTTPPE_MAX_PORT_NUM 9
+#define HTTPPE_DOT1P_MISS_DROP_CODE 126
+
+extern char *dropcode[];
 
 void
 adpt_httppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
@@ -55,6 +60,57 @@ adpt_httppe_queue_tx_counter_tbl_set(a_uint32_t dev_id)
 		httppe_queue_tx_counter_tbl_set(dev_id, i, &queue_tx_counter_tbl);
 }
 
+void
+adpt_httppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type,
+		char **buf, ssize_t *count, a_uint32_t sd_size)
+{
+	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl;
+	a_uint64_t value;
+	int i, tags, sign;
+	int drop_code_idx;
+
+	sign = tags = 0;
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "DROP_CPU_CNT_TBL:");
+	for (i = CPU_CODE_CNT_TBL_MAX_ENTRY; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
+	{
+		httppe_drop_cpu_cnt_tbl_get(dev_id, i, &drop_cpu_cnt_tbl);
+		if (show_type == A_FALSE)
+			value = (a_uint64_t)drop_cpu_cnt_tbl.bf.pkt_cnt;
+		else
+			value = drop_cpu_cnt_tbl.bf.byte_cnt_0 | ((a_uint64_t)drop_cpu_cnt_tbl.bf.byte_cnt_1 << 32);
+		if (value > 0)
+		{
+			drop_code_idx = (i - CPU_CODE_CNT_TBL_MAX_ENTRY) / HTTPPE_MAX_PORT_NUM;
+
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+
+			/* Special print without changing global arry */
+			if (drop_code_idx == HTTPPE_DOT1P_MISS_DROP_CODE)
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count,
+					"%15llu(port=%d:Dot1p miss action drop),dropcode:%d",
+					value, (i - CPU_CODE_CNT_TBL_MAX_ENTRY) % HTTPPE_MAX_PORT_NUM, drop_code_idx);
+			else if (drop_code_idx >= 0 && drop_code_idx < sd_size)
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d",
+					value, (i - CPU_CODE_CNT_TBL_MAX_ENTRY) % HTTPPE_MAX_PORT_NUM,
+					dropcode[drop_code_idx], drop_code_idx);
+			else
+				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:Unknown),dropcode:%d",
+					value, (i - CPU_CODE_CNT_TBL_MAX_ENTRY) % HTTPPE_MAX_PORT_NUM, drop_code_idx);
+		}
+	}
+	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+}
+
+void
+adpt_httppe_debug_drop_cpu_counter_set(a_uint32_t dev_id)
+{
+	union drop_cpu_cnt_tbl_u drop_cpu_cnt_tbl = {0};
+	a_uint32_t i;
+
+	for (i = 0; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
+		httppe_drop_cpu_cnt_tbl_set(dev_id, i, &drop_cpu_cnt_tbl);
+}
 /**
  * @}
  */
