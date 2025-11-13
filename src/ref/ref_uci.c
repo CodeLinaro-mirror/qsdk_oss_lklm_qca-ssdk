@@ -9527,6 +9527,8 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 	if(inner_rule == NULL)
 	{
 		SSDK_ERROR("inner rule allocate fail\n");
+		aos_mem_free(rule);
+		rule = NULL;
 		return SW_FAIL;
 	}
 	switch_ext_p = val->value.ext_val;

@@ -62,12 +62,18 @@ a_uint16_t ssdk_ucast_queue_start_get(a_uint32_t dev_id, a_uint32_t port)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
+	if (!cfg || port >= SSDK_MAX_PORT_NUM)
+		return 0;
+
 	return cfg->scheduler_cfg.pool[port].ucastq_start;
 }
 
 a_uint16_t ssdk_ucast_queue_num_get(a_uint32_t dev_id, a_uint32_t port)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	if (!cfg || port >= SSDK_MAX_PORT_NUM)
+		return 0;
 
 	return cfg->scheduler_cfg.pool[port].ucastq_end -
 		cfg->scheduler_cfg.pool[port].ucastq_start + 1;
@@ -77,6 +83,9 @@ a_uint16_t ssdk_ucast_l0_cdrr_num_get(a_uint32_t dev_id, a_uint32_t port)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
+	if (!cfg || port >= SSDK_MAX_PORT_NUM)
+		return 0;
+
 	return cfg->scheduler_cfg.pool[port].l0cdrr_end -
 		cfg->scheduler_cfg.pool[port].l0cdrr_start + 1;
 }
@@ -85,6 +94,9 @@ a_uint8_t ssdk_port_ucast_max_pri_get(a_uint32_t dev_id, a_uint32_t port)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
+	if (!cfg || port >= SSDK_MAX_PORT_NUM)
+		return 0;
+
 	return cfg->scheduler_cfg.pool[port].max_pri;
 }
 
@@ -92,6 +104,9 @@ void ssdk_port_ucast_max_pri_set(a_uint32_t dev_id, a_uint32_t port,
 				 a_uint8_t max_pri)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	if (!cfg || port >= SSDK_MAX_PORT_NUM)
+		return;
 
 	cfg->scheduler_cfg.pool[port].max_pri = max_pri;
 }
@@ -369,7 +384,7 @@ static void ssdk_softsku_uniphy_parse(a_uint32_t dev_id,
 		struct device_node *uniphy_node)
 {
 	char uniphy_name[][20] = {"uniphy0_disable", "uniphy1_disable", "uniphy2_disable"};
-	a_uint32_t i = 0, uniphy_id = sizeof(uniphy_name) / sizeof(uniphy_name[0]); 
+	a_uint32_t i = 0, uniphy_id = sizeof(uniphy_name) / sizeof(uniphy_name[0]);
 	struct nvmem_cell *uniphy_nvmem;
 	u8 *disable_status;
 	size_t uniphy_len;
@@ -379,19 +394,20 @@ static void ssdk_softsku_uniphy_parse(a_uint32_t dev_id,
 		if (IS_ERR(uniphy_nvmem)) {
 			if (PTR_ERR(uniphy_nvmem) == -EPROBE_DEFER)
 				SSDK_ERROR("mrppe uniphy%d nvmem cell probe fail!\n", i);
-		} else {
-			disable_status = nvmem_cell_read(uniphy_nvmem, &uniphy_len);
-			if (!IS_ERR(disable_status)) {
-				if (*disable_status == 1) {
-					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_FALSE;
-					SSDK_INFO("IPQ54xx uniphy%d is not available on this SKU!\n", i);
-				} else {
-					ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_TRUE;
-				}
-				kfree(disable_status);
-			}
-			nvmem_cell_put(uniphy_nvmem);
+			continue;
 		}
+
+		disable_status = nvmem_cell_read(uniphy_nvmem, &uniphy_len);
+		if (!IS_ERR(disable_status)) {
+			if (*disable_status == 1) {
+				ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_FALSE;
+				SSDK_INFO("IPQ54xx uniphy%d is not available on this SKU!\n", i);
+			} else {
+				ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_TRUE;
+			}
+			kfree(disable_status);
+		}
+		nvmem_cell_put(uniphy_nvmem);
 	}
 }
 #endif

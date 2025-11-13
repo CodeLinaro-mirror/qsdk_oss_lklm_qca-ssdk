@@ -1289,6 +1289,9 @@ sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
 
 	/* netdev info for PPE port */
 	port_id = ssdk_netdev_to_portid(dev);
+	if (port_id >= SW_MAX_NR_PORT)
+		return SW_BAD_VALUE;
+
 	if (A_TRUE != hsl_port_prop_check(dev_id, port_id, HSL_PP_EXCL_CPU))
 		return SW_BAD_VALUE;
 	phyinfo = hsl_phy_info_get(dev_id);

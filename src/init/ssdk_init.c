@@ -1421,6 +1421,9 @@ static int ssdk_probe(struct platform_device *pdev)
 		return of_platform_populate(np, NULL, NULL, &pdev->dev);
 
 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+	if (priv == NULL)
+		return -ENOMEM;
+
 	of_property_read_u32(np, "device_id", &(priv->dev_id));
 	platform_set_drvdata(pdev, priv);
 
@@ -1629,7 +1632,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 /*qca808x_start*/
 static void ssdk_cfg_default_init(ssdk_init_cfg *cfg)
 {
-	memset(cfg, 0, sizeof(ssdk_init_cfg));
+	memset(cfg, 0, sizeof(*cfg));
 	cfg->cpu_mode = HSL_CPU_1;
 	cfg->nl_prot = 30;
 /*qca808x_end*/
@@ -1811,7 +1814,7 @@ void ssdk_init_status_debug_state(a_uint32_t dev_id, ssdk_init_state_t state, in
 static int __init regi_init(void)
 {
 	a_uint32_t num = 0, dev_id = 0, dev_num = 1;
-	ssdk_init_cfg cfg;
+	ssdk_init_cfg cfg = {0};
 /*qca808x_end*/
 /*qca808x_start*/
 	int rv = 0;
