@@ -154,6 +154,8 @@ sfp_phy_probe(struct phy_device *pdev)
 	fal_port_t port;
 	struct qca_phy_priv *priv = pdev->priv;
 
+	pdev->port = PORT_FIBRE;
+
 	port = qca_ssdk_phydev_to_port(priv->device_id, pdev);
 	if (A_TRUE == hsl_port_feature_get(priv->device_id, port, PHY_F_SFP_SGMII)) {
 		pdev->autoneg = AUTONEG_ENABLE;
@@ -608,6 +610,7 @@ sfp_phy_i2c_read(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t i2c_slaver,
 }
 
 static struct phy_driver sfp_phy_driver = {
+	.flags		= PHY_IS_INTERNAL,
 	.name		= "QCA SFP",
 	.phy_id		= SFP_PHY,
 	.phy_id_mask = SFP_PHY_MASK,
