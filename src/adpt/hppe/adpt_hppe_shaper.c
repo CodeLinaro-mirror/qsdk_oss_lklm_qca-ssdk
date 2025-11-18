@@ -40,124 +40,15 @@ static a_uint32_t hppe_shaper_token_unit[NR_ADPT_HPPE_SHAPER_METER_UNIT]
 	512 * 8,128 * 8,32 * 8,8 * 8,2 * 8, 4, 1},
 	{2097152,524288,131072,32768,8192,2048,512,128}};
 
-typedef struct
+/* Helper function to get per-device shaper private data */
+static inline ssdk_ppe_shaper_priv_t *
+__adpt_ppe_shaper_priv_get(a_uint32_t dev_id)
 {
-    a_uint64_t rate_1bit;
-    a_uint64_t rate_max;
-} adpt_hppe_shaper_rate_t;
-
-typedef struct
-{
-    a_uint64_t burst_size_1bit;
-    a_uint64_t burst_size_max;
-} adpt_hppe_shaper_burst_size_t;
-
-static adpt_hppe_shaper_rate_t
-hppe_port_shaper_rate[NR_ADPT_HPPE_SHAPER_METER_UNIT][NR_ADPT_HPPE_SHAPER_METER_TOKEN_UNIT] =
-{
-	/* byte based*/
-	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-
-	/*frame based */
-	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-};
-
-static adpt_hppe_shaper_rate_t
-hppe_flow_shaper_rate[NR_ADPT_HPPE_SHAPER_METER_UNIT][NR_ADPT_HPPE_SHAPER_METER_TOKEN_UNIT] =
-{
-	/* byte based*/
-	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-
-	/*frame based */
-	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-};
-
-static adpt_hppe_shaper_rate_t
-hppe_queue_shaper_rate[NR_ADPT_HPPE_SHAPER_METER_UNIT][NR_ADPT_HPPE_SHAPER_METER_TOKEN_UNIT] =
-{
-	/* byte based*/
-	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-
-	/*frame based */
-	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-};
-
-static adpt_hppe_shaper_burst_size_t
-hppe_shaper_burst_size[NR_ADPT_HPPE_SHAPER_METER_UNIT][NR_ADPT_HPPE_SHAPER_METER_TOKEN_UNIT] =
-{
-	{	{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-	{	{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
-	},
-};
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv || !priv->shaper_priv)
+		return NULL;
+	return priv->shaper_priv;
+}
 
 static a_uint32_t
 __adpt_hppe_shaper_time_cycle_get(a_uint32_t dev_id, a_uint32_t time_slot)
@@ -179,6 +70,10 @@ __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t time_cycle;
 	a_uint64_t temp, temp1,temp2;
 	a_uint32_t ppe_freq = adpt_chip_freq_get(dev_id);
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	/* time_cycle is ns*/
 	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot);
@@ -191,14 +86,14 @@ __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		temp2 =  hppe_shaper_token_unit[i][j] * time_cycle;
 
 		do_div(temp1, temp2);
-		hppe_port_shaper_rate[i][j].rate_max = temp1;
+		shaper_priv->port_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
 		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
-		hppe_port_shaper_rate[i][j].rate_1bit = temp;
+		shaper_priv->port_shaper_rate[i][j].rate_1bit = temp;
 
-		//printk("port shaper hppe_max_rate generating =%llu\n", hppe_port_shaper_rate[i][j].rate_max);
-		//printk("port shaper byte step rate =%llu\n", hppe_port_shaper_rate[i][j].rate_1bit);
+		//printk("port shaper hppe_max_rate generating =%llu\n", shaper_priv->port_shaper_rate[i][j].rate_max);
+		//printk("port shaper byte step rate =%llu\n", shaper_priv->port_shaper_rate[i][j].rate_1bit);
 	}
 
 	i = i + 1;
@@ -210,14 +105,14 @@ __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
 		do_div(temp1, temp2);
-		hppe_port_shaper_rate[i][j].rate_max = temp1;
+		shaper_priv->port_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
 		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
-		hppe_port_shaper_rate[i][j].rate_1bit = temp;
+		shaper_priv->port_shaper_rate[i][j].rate_1bit = temp;
 
-		//printk("port shaper hppe_max_rate generating =%llu\n", hppe_port_shaper_rate[i][j].rate_max);
-		//printk("port shaper frame step rate =%llu\n", hppe_port_shaper_rate[i][j].rate_1bit);
+		//printk("port shaper hppe_max_rate generating =%llu\n", shaper_priv->port_shaper_rate[i][j].rate_max);
+		//printk("port shaper frame step rate =%llu\n", shaper_priv->port_shaper_rate[i][j].rate_1bit);
 	}
 
 	return SW_OK;
@@ -230,6 +125,10 @@ __adpt_hppe_flow_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t time_cycle;
 	a_uint64_t temp, temp1,temp2;
 	a_uint32_t ppe_freq = adpt_chip_freq_get(dev_id);
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	/* time_cycle is ns*/
 	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot);
@@ -242,14 +141,14 @@ __adpt_hppe_flow_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		temp2 =  hppe_shaper_token_unit[i][j] * time_cycle;
 
 		do_div(temp1, temp2);
-		hppe_flow_shaper_rate[i][j].rate_max = temp1;
+		shaper_priv->flow_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
 		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
-		hppe_flow_shaper_rate[i][j].rate_1bit = temp;
+		shaper_priv->flow_shaper_rate[i][j].rate_1bit = temp;
 
-		//printk("flow shaper hppe_max_rate generating =%llu\n", hppe_flow_shaper_rate[i][j].rate_max);
-		//printk("flow shaper byte step rate =%llu\n", hppe_flow_shaper_rate[i][j].rate_1bit);
+		//printk("flow shaper hppe_max_rate generating =%llu\n", shaper_priv->flow_shaper_rate[i][j].rate_max);
+		//printk("flow shaper byte step rate =%llu\n", shaper_priv->flow_shaper_rate[i][j].rate_1bit);
 	}
 
 	i = i + 1;
@@ -261,14 +160,14 @@ __adpt_hppe_flow_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
 		do_div(temp1, temp2);
-		hppe_flow_shaper_rate[i][j].rate_max = temp1;
+		shaper_priv->flow_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
 		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
-		hppe_flow_shaper_rate[i][j].rate_1bit = temp;
+		shaper_priv->flow_shaper_rate[i][j].rate_1bit = temp;
 
-		//printk("flow shaper hppe_max_rate generating =%llu\n", hppe_flow_shaper_rate[i][j].rate_max);
-		//printk("flow shaper frame step rate =%llu\n", hppe_flow_shaper_rate[i][j].rate_1bit);
+		//printk("flow shaper hppe_max_rate generating =%llu\n", shaper_priv->flow_shaper_rate[i][j].rate_max);
+		//printk("flow shaper frame step rate =%llu\n", shaper_priv->flow_shaper_rate[i][j].rate_1bit);
 	}
 
 	return SW_OK;
@@ -281,6 +180,10 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t time_cycle;
 	a_uint64_t temp, temp1,temp2;
 	a_uint32_t ppe_freq = adpt_chip_freq_get(dev_id);
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	/* time_cycle is ns*/
 	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot) / ppe_freq;
@@ -292,14 +195,14 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		temp2 =  hppe_shaper_token_unit[i][j] * time_cycle;
 
 		do_div(temp1, temp2);
-		hppe_queue_shaper_rate[i][j].rate_max = temp1;
+		shaper_priv->queue_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
 		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
-		hppe_queue_shaper_rate[i][j].rate_1bit = temp;
+		shaper_priv->queue_shaper_rate[i][j].rate_1bit = temp;
 
-		//printk("queue shaper hppe_max_rate generating =%llu\n", hppe_queue_shaper_rate[i][j].rate_max);
-		//printk("queue shaper byte step rate =%llu\n", hppe_queue_shaper_rate[i][j].rate_1bit);
+		//printk("queue shaper hppe_max_rate generating =%llu\n", shaper_priv->queue_shaper_rate[i][j].rate_max);
+		//printk("queue shaper byte step rate =%llu\n", shaper_priv->queue_shaper_rate[i][j].rate_1bit);
 	}
 
 	i = i + 1;
@@ -310,38 +213,42 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
 		do_div(temp1, temp2);
-		hppe_queue_shaper_rate[i][j].rate_max = temp1;
+		shaper_priv->queue_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
 		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
-		hppe_queue_shaper_rate[i][j].rate_1bit = temp;
+		shaper_priv->queue_shaper_rate[i][j].rate_1bit = temp;
 
-		//printk("queue shaper hppe_max_rate generating =%llu\n", hppe_queue_shaper_rate[i][j].rate_max);
-		//printk("queue shaper frame step rate =%llu\n", hppe_queue_shaper_rate[i][j].rate_1bit);
+		//printk("queue shaper hppe_max_rate generating =%llu\n", shaper_priv->queue_shaper_rate[i][j].rate_max);
+		//printk("queue shaper frame step rate =%llu\n", shaper_priv->queue_shaper_rate[i][j].rate_1bit);
 	}
 
 	return SW_OK;
 }
 
 static sw_error_t
-__adpt_hppe_shaper_max_burst_size(void)
+__adpt_hppe_shaper_max_burst_size(a_uint32_t dev_id)
 {
 	a_uint32_t i = 0, j = 0;
 	a_uint64_t temp = 0, temp1 = 0;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	for (j = 0; j < 8; j++)
 	{
 		/*max size unit is 1/1000 byte based*/
 		temp = (a_uint64_t)(ADPT_HPPE_SHAPER_BURST_SIZE_UNIT * ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
 		do_div(temp, hppe_shaper_token_unit[i][j]);
-		hppe_shaper_burst_size[i][j].burst_size_max = (a_uint64_t)(temp * 1000);
+		shaper_priv->shaper_burst_size[i][j].burst_size_max = (a_uint64_t)(temp * 1000);
 
-		temp1 = hppe_shaper_burst_size[i][j].burst_size_max;
+		temp1 = shaper_priv->shaper_burst_size[i][j].burst_size_max;
 		do_div(temp1, ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
-		hppe_shaper_burst_size[i][j].burst_size_1bit = temp1;
+		shaper_priv->shaper_burst_size[i][j].burst_size_1bit = temp1;
 
-		//printk("shpaer byte hppe_max_burst_size generating =%llu\n", hppe_shaper_burst_size[i][j].burst_size_max);
-		//printk("shpaer byte hppe_max_burst_size step  =%llu\n", hppe_shaper_burst_size[i][j].burst_size_1bit);
+		//printk("shpaer byte hppe_max_burst_size generating =%llu\n", shaper_priv->shaper_burst_size[i][j].burst_size_max);
+		//printk("shpaer byte hppe_max_burst_size step  =%llu\n", shaper_priv->shaper_burst_size[i][j].burst_size_1bit);
 	}
 
 	i = i + 1;
@@ -350,21 +257,22 @@ __adpt_hppe_shaper_max_burst_size(void)
 		/* max size unit is 1/1000 frame based */
 		temp = (a_uint64_t)(ADPT_HPPE_SHAPER_BURST_SIZE_UNIT * ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
 		do_div(temp, hppe_shaper_token_unit[i][j]);
-		hppe_shaper_burst_size[i][j].burst_size_max = (a_uint64_t)(temp * 1000);
+		shaper_priv->shaper_burst_size[i][j].burst_size_max = (a_uint64_t)(temp * 1000);
 
-		temp1 = hppe_shaper_burst_size[i][j].burst_size_max;
+		temp1 = shaper_priv->shaper_burst_size[i][j].burst_size_max;
 		do_div(temp1, ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
-		hppe_shaper_burst_size[i][j].burst_size_1bit = temp1;
+		shaper_priv->shaper_burst_size[i][j].burst_size_1bit = temp1;
 
-		//printk("shaper frame hppe_max_burst_size generating =%llu\n", hppe_shaper_burst_size[i][j].burst_size_max);
-		//printk("shpaer frame hppe_max_burst_size step  =%llu\n", hppe_shaper_burst_size[i][j].burst_size_1bit);
+		//printk("shaper frame hppe_max_burst_size generating =%llu\n", shaper_priv->shaper_burst_size[i][j].burst_size_max);
+		//printk("shpaer frame hppe_max_burst_size step  =%llu\n", shaper_priv->shaper_burst_size[i][j].burst_size_1bit);
 	}
 
 	return SW_OK;
 }
 
 static sw_error_t
-__adpt_hppe_shaper_one_bucket_parameter_select(a_uint32_t shaper_type,
+__adpt_hppe_shaper_one_bucket_parameter_select(a_uint32_t dev_id,
+						a_uint32_t shaper_type,
 						a_uint64_t c_rate,
 						a_uint64_t c_burst_size,
 						a_uint32_t meter_unit,
@@ -373,23 +281,27 @@ __adpt_hppe_shaper_one_bucket_parameter_select(a_uint32_t shaper_type,
 	a_uint32_t  temp_token_unit = 0;
 	a_uint32_t  match = A_FALSE;
 	a_uint64_t  max_rate =0;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	for (temp_token_unit = 0; temp_token_unit < 8; temp_token_unit++)
 	{
 		if (ADPT_HPPE_PORT_SHAPER == shaper_type)
-			max_rate = hppe_port_shaper_rate[meter_unit][temp_token_unit].rate_max;
+			max_rate = shaper_priv->port_shaper_rate[meter_unit][temp_token_unit].rate_max;
 
 		if (ADPT_HPPE_FLOW_SHAPER == shaper_type)
-			max_rate = hppe_flow_shaper_rate[meter_unit][temp_token_unit].rate_max;
+			max_rate = shaper_priv->flow_shaper_rate[meter_unit][temp_token_unit].rate_max;
 
 		if (ADPT_HPPE_QUEUE_SHAPER == shaper_type)
-			max_rate = hppe_queue_shaper_rate[meter_unit][temp_token_unit].rate_max;
+			max_rate = shaper_priv->queue_shaper_rate[meter_unit][temp_token_unit].rate_max;
 
 		if (c_rate > max_rate)
 		{
 			continue;
 		}
-		else if (c_burst_size <= hppe_shaper_burst_size[meter_unit][temp_token_unit].burst_size_max)
+		else if (c_burst_size <= shaper_priv->shaper_burst_size[meter_unit][temp_token_unit].burst_size_max)
 		{
 			*token_unit = temp_token_unit;
 			match = A_TRUE;
@@ -407,7 +319,8 @@ __adpt_hppe_shaper_one_bucket_parameter_select(a_uint32_t shaper_type,
 }
 
 static sw_error_t
-__adpt_hppe_shaper_two_bucket_parameter_select(a_uint32_t shaper_type,
+__adpt_hppe_shaper_two_bucket_parameter_select(a_uint32_t dev_id,
+						a_uint32_t shaper_type,
 						a_uint64_t c_rate,
 						a_uint64_t c_burst_size,
 						a_uint64_t e_rate,
@@ -418,6 +331,10 @@ __adpt_hppe_shaper_two_bucket_parameter_select(a_uint32_t shaper_type,
 	a_uint32_t  temp_token_unit;
 	a_uint32_t  match = A_FALSE;
 	a_uint64_t  max_rate = 0, temp_rate = 0, temp_burst_size = 0;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	if(c_rate > e_rate)
 		temp_rate = c_rate;
@@ -432,19 +349,19 @@ __adpt_hppe_shaper_two_bucket_parameter_select(a_uint32_t shaper_type,
 	for (temp_token_unit = 0; temp_token_unit < 8; temp_token_unit++)
 	{
 		if (ADPT_HPPE_PORT_SHAPER == shaper_type)
-			max_rate = hppe_port_shaper_rate[meter_unit][temp_token_unit].rate_max;
+			max_rate = shaper_priv->port_shaper_rate[meter_unit][temp_token_unit].rate_max;
 
 		if (ADPT_HPPE_FLOW_SHAPER == shaper_type)
-			max_rate = hppe_flow_shaper_rate[meter_unit][temp_token_unit].rate_max;
+			max_rate = shaper_priv->flow_shaper_rate[meter_unit][temp_token_unit].rate_max;
 
 		if (ADPT_HPPE_QUEUE_SHAPER == shaper_type)
-			max_rate = hppe_queue_shaper_rate[meter_unit][temp_token_unit].rate_max;
+			max_rate = shaper_priv->queue_shaper_rate[meter_unit][temp_token_unit].rate_max;
 
 		 if (temp_rate > max_rate)
 		 {
 		 	continue;
 		 }
-		 else if(temp_burst_size <= hppe_shaper_burst_size[meter_unit][temp_token_unit].burst_size_max)
+		 else if(temp_burst_size <= shaper_priv->shaper_burst_size[meter_unit][temp_token_unit].burst_size_max)
 		{
 			*token_unit = temp_token_unit;
 			match = A_TRUE;
@@ -462,7 +379,8 @@ __adpt_hppe_shaper_two_bucket_parameter_select(a_uint32_t shaper_type,
 }
 
 static sw_error_t
-__adpt_hppe_shaper_rate_to_refresh(a_uint32_t shaper_type,
+__adpt_hppe_shaper_rate_to_refresh(a_uint32_t dev_id,
+							a_uint32_t shaper_type,
 							a_uint32_t rate,
 							a_uint32_t *refresh,
 							a_bool_t meter_unit,
@@ -470,22 +388,26 @@ __adpt_hppe_shaper_rate_to_refresh(a_uint32_t shaper_type,
 {
 	a_uint32_t temp_refresh;
 	a_uint64_t temp_rate, temp_rate_1bit;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	temp_rate_1bit = 0;
 
 	if (ADPT_HPPE_PORT_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = hppe_port_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_1bit = shaper_priv->port_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
 	if (ADPT_HPPE_FLOW_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = hppe_flow_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_1bit = shaper_priv->flow_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
 	if (ADPT_HPPE_QUEUE_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = hppe_queue_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_1bit = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
 	if(temp_rate_1bit > 0)
@@ -510,18 +432,23 @@ __adpt_hppe_shaper_rate_to_refresh(a_uint32_t shaper_type,
 }
 
 static sw_error_t
-__adpt_hppe_shaper_burst_size_to_bucket_size(a_uint32_t burst_size,
+__adpt_hppe_shaper_burst_size_to_bucket_size(a_uint32_t dev_id,
+							a_uint32_t burst_size,
 							a_uint32_t *bucket_size,
 							a_bool_t meter_unit,
 							a_uint32_t  token_unit)
 {
 	a_uint32_t temp_bucket_size;
 	a_uint64_t temp_burst_size;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
 
-	if(hppe_shaper_burst_size[meter_unit][token_unit].burst_size_1bit > 0)
+	if (!shaper_priv)
+		return SW_FAIL;
+
+	if(shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit > 0)
 	{
 		temp_burst_size = ((a_uint64_t)burst_size) * 1000;
-		do_div(temp_burst_size, hppe_shaper_burst_size[meter_unit][token_unit].burst_size_1bit);
+		do_div(temp_burst_size, shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit);
 		temp_bucket_size = temp_burst_size;
 	}
 	else
@@ -544,7 +471,8 @@ __adpt_hppe_shaper_burst_size_to_bucket_size(a_uint32_t burst_size,
 }
 
 static sw_error_t
-__adpt_hppe_shaper_refresh_to_rate(a_uint32_t shaper_type,
+__adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
+							a_uint32_t shaper_type,
 							a_uint32_t refresh,
 							a_uint32_t *rate,
 							a_bool_t meter_unit,
@@ -552,22 +480,26 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t shaper_type,
 {
 	a_uint32_t temp_rate;
 	a_uint64_t temp_refresh, temp_rate_1bit;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
+
+	if (!shaper_priv)
+		return SW_FAIL;
 
 	temp_rate_1bit = 0;
 
 	if (ADPT_HPPE_PORT_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = hppe_port_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_1bit = shaper_priv->port_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
 	if (ADPT_HPPE_FLOW_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = hppe_flow_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_1bit = shaper_priv->flow_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
 	if (ADPT_HPPE_QUEUE_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = hppe_queue_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_1bit = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
 	if(temp_rate_1bit > 0)
@@ -586,17 +518,22 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t shaper_type,
 	return SW_OK;
 }
 static sw_error_t
-__adpt_hppe_shaper_bucket_size_to_burst_size(a_uint32_t bucket_size,
+__adpt_hppe_shaper_bucket_size_to_burst_size(a_uint32_t dev_id,
+							a_uint32_t bucket_size,
 							a_uint32_t *burst_size,
 							a_bool_t meter_unit,
 							a_uint32_t  token_unit)
 {
 	a_uint32_t temp_burst_size;
 	a_uint64_t temp_bucket_size;
+	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
 
-	if(hppe_shaper_burst_size[meter_unit][token_unit].burst_size_1bit > 0)
+	if (!shaper_priv)
+		return SW_FAIL;
+
+	if(shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit > 0)
 	{
-		temp_bucket_size = ((a_uint64_t)bucket_size) * hppe_shaper_burst_size[meter_unit][token_unit].burst_size_1bit;
+		temp_bucket_size = ((a_uint64_t)bucket_size) * shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit;
 		do_div(temp_bucket_size, 1000);
 		temp_burst_size = temp_bucket_size;
 	}
@@ -644,36 +581,42 @@ adpt_hppe_queue_shaper_get(a_uint32_t dev_id, a_uint32_t queue_id,
 				l0_shp_cfg_tbl.bf.cir_max_0;
 	hppe_eir_max = l0_shp_cfg_tbl.bf.eir_max;
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_QUEUE_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				hppe_cir,
 				&shaper->cir,
 				l0_shp_cfg_tbl.bf.meter_unit,
 				l0_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_QUEUE_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				hppe_eir,
 				&shaper->eir,
 				l0_shp_cfg_tbl.bf.meter_unit,
 				l0_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_QUEUE_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				hppe_cir_max,
 				&shaper->cir_max,
 				l0_shp_cfg_tbl.bf.meter_unit,
 				l0_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_QUEUE_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				hppe_eir_max,
 				&shaper->eir_max,
 				l0_shp_cfg_tbl.bf.meter_unit,
 				l0_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_bucket_size_to_burst_size(hppe_cbs,
+	__adpt_hppe_shaper_bucket_size_to_burst_size(dev_id,
+				hppe_cbs,
 				&shaper->cbs,
 				l0_shp_cfg_tbl.bf.meter_unit,
 				l0_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_bucket_size_to_burst_size(hppe_ebs,
+	__adpt_hppe_shaper_bucket_size_to_burst_size(dev_id,
+				hppe_ebs,
 				&shaper->ebs,
 				l0_shp_cfg_tbl.bf.meter_unit,
 				l0_shp_cfg_tbl.bf.token_unit);
@@ -742,14 +685,16 @@ adpt_hppe_port_shaper_get(a_uint32_t dev_id, fal_port_t port_id,
 	hppe_psch_comp_cfg_tbl_get(dev_id, port_id, &psch_comp_cfg_tbl);
 
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_PORT_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+								ADPT_HPPE_PORT_SHAPER,
 								hppe_cir,
 								&shaper->cir,
 								psch_shp_cfg_tbl.bf.meter_unit,
 								psch_shp_cfg_tbl.bf.token_unit);
 
 
-	__adpt_hppe_shaper_bucket_size_to_burst_size(hppe_cbs,
+	__adpt_hppe_shaper_bucket_size_to_burst_size(dev_id,
+								hppe_cbs,
 								&shaper->cbs,
 								psch_shp_cfg_tbl.bf.meter_unit,
 								psch_shp_cfg_tbl.bf.token_unit);
@@ -1061,7 +1006,8 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 			temp_eir = temp_eir_max;
 		}
 	}
-	rv = __adpt_hppe_shaper_two_bucket_parameter_select(ADPT_HPPE_FLOW_SHAPER,
+	rv = __adpt_hppe_shaper_two_bucket_parameter_select(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				temp_cir,
 				temp_cbs,
 				temp_eir,
@@ -1073,25 +1019,29 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	SSDK_DEBUG("flow shaper meter unit is = %d\n", shaper->meter_unit);
 	SSDK_DEBUG("flow shaper token unit is = %d\n", token_unit);
 
-	__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_FLOW_SHAPER,
+	__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				shaper->cir,
 				&hppe_cir,
 				shaper->meter_unit,
 				token_unit);
 
-	__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_FLOW_SHAPER,
+	__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				shaper->eir,
 				&hppe_eir,
 				shaper->meter_unit,
 				token_unit);
 	if (shaper->meter_type == FAL_SHAPER_METER_MEF10_3) {
-		__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_FLOW_SHAPER,
+		__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				shaper->cir_max,
 				&hppe_cir_max,
 				shaper->meter_unit,
 				token_unit);
 
-		__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_FLOW_SHAPER,
+		__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				shaper->eir_max,
 				&hppe_eir_max,
 				shaper->meter_unit,
@@ -1106,12 +1056,14 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 			hppe_eir_max = ADPT_HPPE_SHAPER_MAX;
 		}
 	}
-	__adpt_hppe_shaper_burst_size_to_bucket_size(shaper->cbs,
+	__adpt_hppe_shaper_burst_size_to_bucket_size(dev_id,
+				shaper->cbs,
 				&hppe_cbs,
 				shaper->meter_unit,
 				token_unit);
 
-	__adpt_hppe_shaper_burst_size_to_bucket_size(shaper->ebs,
+	__adpt_hppe_shaper_burst_size_to_bucket_size(dev_id,
+				shaper->ebs,
 				&hppe_ebs,
 				shaper->meter_unit,
 				token_unit);
@@ -1198,7 +1150,8 @@ adpt_hppe_port_shaper_set(a_uint32_t dev_id, fal_port_t port_id,
 	temp_cir = ((a_uint64_t)shaper->cir) * 1000;
 	temp_cbs = ((a_uint64_t)shaper->cbs) * 1000;
 
-	rv = __adpt_hppe_shaper_one_bucket_parameter_select(ADPT_HPPE_PORT_SHAPER,
+	rv = __adpt_hppe_shaper_one_bucket_parameter_select(dev_id,
+								ADPT_HPPE_PORT_SHAPER,
 								temp_cir,
 								temp_cbs,
 								shaper->meter_unit,
@@ -1209,13 +1162,15 @@ adpt_hppe_port_shaper_set(a_uint32_t dev_id, fal_port_t port_id,
 	// printk("current shaper meter unit is = %d\n", shaper->meter_unit);
 	// printk("current shaper token unit is = %d\n", token_unit);
 
-	__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_PORT_SHAPER,
+	__adpt_hppe_shaper_rate_to_refresh(dev_id,
+								ADPT_HPPE_PORT_SHAPER,
 								shaper->cir,
 								&hppe_cir,
 								shaper->meter_unit,
 								token_unit);
 
-	__adpt_hppe_shaper_burst_size_to_bucket_size(shaper->cbs,
+	__adpt_hppe_shaper_burst_size_to_bucket_size(dev_id,
+								shaper->cbs,
 								&hppe_cbs,
 								shaper->meter_unit,
 								token_unit);
@@ -1263,7 +1218,7 @@ adpt_hppe_port_shaper_time_slot_set(a_uint32_t dev_id, a_uint32_t time_slot)
 
 	__adpt_hppe_port_shaper_max_rate(dev_id, time_slot);
 
-	__adpt_hppe_shaper_max_burst_size();
+	__adpt_hppe_shaper_max_burst_size(dev_id);
 
 	return SW_OK;
 
@@ -1303,36 +1258,42 @@ adpt_hppe_flow_shaper_get(a_uint32_t dev_id, a_uint32_t flow_id,
 				l1_shp_cfg_tbl.bf.cir_max_0;
 	hppe_eir_max = l1_shp_cfg_tbl.bf.eir_max;
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_FLOW_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				hppe_cir,
 				&shaper->cir,
 				l1_shp_cfg_tbl.bf.meter_unit,
 				l1_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_FLOW_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				hppe_eir,
 				&shaper->eir,
 				l1_shp_cfg_tbl.bf.meter_unit,
 				l1_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_FLOW_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				hppe_cir_max,
 				&shaper->cir_max,
 				l1_shp_cfg_tbl.bf.meter_unit,
 				l1_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_refresh_to_rate(ADPT_HPPE_FLOW_SHAPER,
+	__adpt_hppe_shaper_refresh_to_rate(dev_id,
+				ADPT_HPPE_FLOW_SHAPER,
 				hppe_eir_max,
 				&shaper->eir_max,
 				l1_shp_cfg_tbl.bf.meter_unit,
 				l1_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_bucket_size_to_burst_size(hppe_cbs,
+	__adpt_hppe_shaper_bucket_size_to_burst_size(dev_id,
+				hppe_cbs,
 				&shaper->cbs,
 				l1_shp_cfg_tbl.bf.meter_unit,
 				l1_shp_cfg_tbl.bf.token_unit);
 
-	__adpt_hppe_shaper_bucket_size_to_burst_size(hppe_ebs,
+	__adpt_hppe_shaper_bucket_size_to_burst_size(dev_id,
+				hppe_ebs,
 				&shaper->ebs,
 				l1_shp_cfg_tbl.bf.meter_unit,
 				l1_shp_cfg_tbl.bf.token_unit);
@@ -1423,7 +1384,8 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 			temp_eir = temp_eir_max;
 		}
 	}
-	rv = __adpt_hppe_shaper_two_bucket_parameter_select(ADPT_HPPE_QUEUE_SHAPER,
+	rv = __adpt_hppe_shaper_two_bucket_parameter_select(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				temp_cir,
 				temp_cbs,
 				temp_eir,
@@ -1435,26 +1397,30 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	SSDK_DEBUG("queue shaper meter unit is = %d\n", shaper->meter_unit);
 	SSDK_DEBUG("queue shaper token unit is = %d\n", token_unit);
 
-	__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_QUEUE_SHAPER,
+	__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				shaper->cir,
 				&hppe_cir,
 				shaper->meter_unit,
 				token_unit);
 
-	__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_QUEUE_SHAPER,
+	__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				shaper->eir,
 				&hppe_eir,
 				shaper->meter_unit,
 				token_unit);
 
 	if (shaper->meter_type == FAL_SHAPER_METER_MEF10_3) {
-		__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_QUEUE_SHAPER,
+		__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				shaper->cir_max,
 				&hppe_cir_max,
 				shaper->meter_unit,
 				token_unit);
 
-		__adpt_hppe_shaper_rate_to_refresh(ADPT_HPPE_QUEUE_SHAPER,
+		__adpt_hppe_shaper_rate_to_refresh(dev_id,
+				ADPT_HPPE_QUEUE_SHAPER,
 				shaper->eir_max,
 				&hppe_eir_max,
 				shaper->meter_unit,
@@ -1469,12 +1435,14 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 			hppe_eir_max = ADPT_HPPE_SHAPER_MAX;
 		}
 	}
-	__adpt_hppe_shaper_burst_size_to_bucket_size(shaper->cbs,
+	__adpt_hppe_shaper_burst_size_to_bucket_size(dev_id,
+				shaper->cbs,
 				&hppe_cbs,
 				shaper->meter_unit,
 				token_unit);
 
-	__adpt_hppe_shaper_burst_size_to_bucket_size(shaper->ebs,
+	__adpt_hppe_shaper_burst_size_to_bucket_size(dev_id,
+				shaper->ebs,
 				&hppe_ebs,
 				shaper->meter_unit,
 				token_unit);

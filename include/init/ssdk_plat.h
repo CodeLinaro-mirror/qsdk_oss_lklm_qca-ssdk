@@ -332,6 +332,30 @@ typedef enum {
 	SSDK_INVALID_INIT_STATUS = 0xff,
 } ssdk_init_state_t;
 
+/* Shaper rate table structures for multi-device support */
+#define NR_SSDK_PPE_SHAPER_METER_UNIT         2
+#define NR_SSDK_PPE_SHAPER_METER_TOKEN_UNIT   8
+
+typedef struct
+{
+	a_uint64_t rate_1bit;
+	a_uint64_t rate_max;
+} ssdk_ppe_shaper_rate_t;
+
+typedef struct
+{
+	a_uint64_t burst_size_1bit;
+	a_uint64_t burst_size_max;
+} ssdk_ppe_shaper_burst_size_t;
+
+typedef struct
+{
+	ssdk_ppe_shaper_rate_t port_shaper_rate[NR_SSDK_PPE_SHAPER_METER_UNIT][NR_SSDK_PPE_SHAPER_METER_TOKEN_UNIT];
+	ssdk_ppe_shaper_rate_t flow_shaper_rate[NR_SSDK_PPE_SHAPER_METER_UNIT][NR_SSDK_PPE_SHAPER_METER_TOKEN_UNIT];
+	ssdk_ppe_shaper_rate_t queue_shaper_rate[NR_SSDK_PPE_SHAPER_METER_UNIT][NR_SSDK_PPE_SHAPER_METER_TOKEN_UNIT];
+	ssdk_ppe_shaper_burst_size_t shaper_burst_size[NR_SSDK_PPE_SHAPER_METER_UNIT][NR_SSDK_PPE_SHAPER_METER_TOKEN_UNIT];
+} ssdk_ppe_shaper_priv_t;
+
 struct ssdk_module_cnt_priv {
 	ssdk_init_state_t ssdk_init_state;
 	a_uint32_t polling_start_cnt;
@@ -416,6 +440,8 @@ struct qca_phy_priv {
 	a_uint32_t uniphy_clk_output[SSDK_UNIPHY_INSTANCE2];
 	struct ssdk_ppe_tunnel_priv tnl_priv;
 	struct ssdk_module_cnt_priv ssdk_module_cnt;
+	/* Shaper rate tables for multi-device support */
+	ssdk_ppe_shaper_priv_t *shaper_priv;
 /*qca808x_start*/
 };
 

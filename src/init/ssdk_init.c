@@ -1700,6 +1700,10 @@ static void ssdk_free_priv(void)
 /*qca808x_start*/
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		if (qca_phy_priv_global[dev_id]) {
+			/* Free shaper private data */
+			if (qca_phy_priv_global[dev_id]->shaper_priv) {
+				kfree(qca_phy_priv_global[dev_id]->shaper_priv);
+			}
 			kfree(qca_phy_priv_global[dev_id]);
 		}
 
@@ -1727,6 +1731,11 @@ static int ssdk_alloc_priv(a_uint32_t dev_num)
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		qca_phy_priv_global[dev_id] = kzalloc(sizeof(struct qca_phy_priv), GFP_KERNEL);
 		if (qca_phy_priv_global[dev_id] == NULL) {
+			return -ENOMEM;
+		}
+		/* Allocate shaper private data for multi-device support */
+		qca_phy_priv_global[dev_id]->shaper_priv = kzalloc(sizeof(ssdk_ppe_shaper_priv_t), GFP_KERNEL);
+		if (qca_phy_priv_global[dev_id]->shaper_priv == NULL) {
 			return -ENOMEM;
 		}
 /*qca808x_end*/
