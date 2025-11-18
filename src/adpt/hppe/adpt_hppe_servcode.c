@@ -19,6 +19,9 @@
 #if defined(JHPPE)
 #include "adpt_jhppe_servcode.h"
 #endif
+#if defined(HTTPPE)
+#include "adpt_httppe_servcode.h"
+#endif
 
 #define MAX_PHYSICAL_PORT 8
 
@@ -29,6 +32,8 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	union service_tbl_u service_tbl = {0};
 	union eg_service_tbl_u eg_service_tbl = {0};
 	a_uint32_t servcode_type = FAL_SERVCODE_TYPE(servcode_index);
+	a_uint32_t ppe_type = adpt_ppe_type_get(dev_id);
+	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
@@ -42,6 +47,20 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	if (servcode_type != FAL_SERVCODE_TYPE_NORMAL)
 		return SW_BAD_PARAM;
 
+	/* in service table configurations */
+	rv = hppe_service_tbl_get(dev_id, servcode_index, &service_tbl);
+	SW_RTN_ON_ERROR(rv);
+	service_tbl.bf.bypass_bitmap = entry->bypass_bitmap[0];
+	service_tbl.bf.rx_counting_en = entry->bypass_bitmap[2] & 0x1;
+	rv = hppe_service_tbl_set(dev_id, servcode_index, &service_tbl);
+	SW_RTN_ON_ERROR(rv);
+
+#if defined(HTTPPE)
+	if (ppe_type == HTTPPE_TYPE)
+		return adpt_httppe_servcode_config_set(dev_id, servcode_index, entry);
+#endif
+
+	/* in l2 service table configurations */
 	in_l2_service_tbl.bf.dst_port_id_valid = entry->dest_port_valid;
 	in_l2_service_tbl.bf.dst_port_id = entry->dest_port_id;
 	in_l2_service_tbl.bf.direction = entry->direction;
@@ -55,16 +74,14 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	in_l2_service_tbl.bf.bypass_bitmap_new = entry->bypass_bitmap[1] >> DOT1P_EG_PORT_OVERRIDE;
 	in_l2_service_tbl.bf.post_bypass_bitmap = entry->bypass_bitmap[1] >> QM_QID_MISMATCH_BYPASS;
 #endif
-	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_set(dev_id, servcode_index, &in_l2_service_tbl));
+	rv = hppe_in_l2_service_tbl_set(dev_id, servcode_index, &in_l2_service_tbl);
+	SW_RTN_ON_ERROR(rv);
 
-	SW_RTN_ON_ERROR(hppe_service_tbl_get(dev_id, servcode_index, &service_tbl));
-	service_tbl.bf.bypass_bitmap = entry->bypass_bitmap[0];
-	service_tbl.bf.rx_counting_en = entry->bypass_bitmap[2] & 0x1;
-	SW_RTN_ON_ERROR(hppe_service_tbl_set(dev_id, servcode_index, &service_tbl));
-
+	/* eg service table configurations */
 #if defined(MPPE)
 	/*do not touch the athtag configurations*/
-	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
+	rv = hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl);
+	SW_RTN_ON_ERROR(rv);
 	eg_service_tbl.bf.field_update_action &= ATHTAG_UPDATE;
 	eg_service_tbl.bf.field_update_action |= entry->field_update_bitmap[0];
 #if defined(JHPPE)
@@ -88,11 +105,11 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 	eg_service_tbl.bf.hw_services = entry->hw_services;
 	eg_service_tbl.bf.offset_sel = entry->offset_sel;
 	eg_service_tbl.bf.tx_counting_en = (entry->bypass_bitmap[2] >> 2) & 0x1;
-	SW_RTN_ON_ERROR(hppe_eg_service_tbl_set(dev_id, servcode_index, &eg_service_tbl));
+	rv = hppe_eg_service_tbl_set(dev_id, servcode_index, &eg_service_tbl);
+	SW_RTN_ON_ERROR(rv);
 
-	SW_RTN_ON_ERROR(adpt_appe_servcode_tl_config_set(dev_id, servcode_index, entry));
-
-	return SW_OK;
+	/* tl servcie table configurations */
+	return adpt_appe_servcode_tl_config_set(dev_id, servcode_index, entry);
 }
 
 sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_index,
@@ -102,6 +119,8 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	union service_tbl_u service_tbl;
 	union eg_service_tbl_u eg_service_tbl;
 	a_uint32_t servcode_type = FAL_SERVCODE_TYPE(servcode_index);
+	a_uint32_t ppe_type = adpt_ppe_type_get(dev_id);
+	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(entry);
@@ -116,7 +135,20 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	if (servcode_type != FAL_SERVCODE_TYPE_NORMAL)
 		return SW_BAD_PARAM;
 
-	SW_RTN_ON_ERROR(hppe_in_l2_service_tbl_get(dev_id, servcode_index, &in_l2_service_tbl));
+	/* in service table configurations */
+	rv = hppe_service_tbl_get(dev_id, servcode_index, &service_tbl);
+	SW_RTN_ON_ERROR(rv);
+	entry->bypass_bitmap[0] = service_tbl.bf.bypass_bitmap;
+	entry->bypass_bitmap[2] |= service_tbl.bf.rx_counting_en;
+
+#if defined(HTTPPE)
+	if (ppe_type == HTTPPE_TYPE)
+		return adpt_httppe_servcode_config_get(dev_id, servcode_index, entry);
+#endif
+
+	/* in l2 service table configurations */
+	rv = hppe_in_l2_service_tbl_get(dev_id, servcode_index, &in_l2_service_tbl);
+	SW_RTN_ON_ERROR(rv);
 	entry->dest_port_valid = in_l2_service_tbl.bf.dst_port_id_valid;
 	entry->dest_port_id = in_l2_service_tbl.bf.dst_port_id;
 	entry->direction = in_l2_service_tbl.bf.direction;
@@ -134,11 +166,9 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	entry->bypass_bitmap[2] |= in_l2_service_tbl.bf.rx_cnt_en << 1;
 	entry->bypass_bitmap[2] |= in_l2_service_tbl.bf.tx_cnt_en << 3;
 
-	SW_RTN_ON_ERROR(hppe_service_tbl_get(dev_id, servcode_index, &service_tbl));
-	entry->bypass_bitmap[0] = service_tbl.bf.bypass_bitmap;
-	entry->bypass_bitmap[2] |= service_tbl.bf.rx_counting_en;
-
-	SW_RTN_ON_ERROR(hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl));
+	/* eg service table configurations */
+	rv = hppe_eg_service_tbl_get(dev_id, servcode_index, &eg_service_tbl);
+	SW_RTN_ON_ERROR(rv);
 	entry->field_update_bitmap[0] = eg_service_tbl.bf.field_update_action;
 #if defined(JHPPE)
 	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext_0 |
@@ -157,9 +187,8 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	entry->offset_sel = eg_service_tbl.bf.offset_sel;
 	entry->bypass_bitmap[2] |= eg_service_tbl.bf.tx_counting_en << 2;
 
-	SW_RTN_ON_ERROR(adpt_appe_servcode_tl_config_get(dev_id, servcode_index, entry));
-
-	return SW_OK;
+	/* tl service table configurations */
+	return adpt_appe_servcode_tl_config_get(dev_id, servcode_index, entry);
 }
 
 sw_error_t adpt_hppe_servcode_loopcheck_en(a_uint32_t dev_id, a_bool_t enable)

@@ -102,6 +102,14 @@ enum {
 	FLD_UP_MAX = 72,
 };
 
+/* athtag bit location in field_update_bitmap */
+#define ATHTAG_INSERT_UPDATE		BIT(23)
+#define ATHTAG_ACTION_UPDATE		BIT(28)
+#define ATHTAG_BYPASS_FWD_EN_UPDATE	BIT(29)
+#define ATHTAG_DEST_PORT_UPDATE		BIT(30)
+#define ATHTAG_FIELD_DISABLE_UPDATE	BIT(31)
+#define ATHTAG_UPDATE			(GENMASK(31, 28) | BIT(23))
+
 /* athtag field update bitmap, new add for IPQ53xx */
 enum {
 	FLD_UPDATE_ATH_TAG_INSERT, /*update insert athtag or not*/

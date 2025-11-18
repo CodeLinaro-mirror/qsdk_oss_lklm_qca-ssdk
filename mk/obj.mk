@@ -282,7 +282,7 @@ OBJ-HPPE    += src/hsl/hppe/hppe_servcode.o src/adpt/hppe/adpt_hppe_servcode.o
 OBJ-APPE    += src/hsl/appe/appe_servcode.o src/adpt/appe/adpt_appe_servcode.o
 OBJ-MPPE    += src/hsl/mppe/mppe_servcode.o src/adpt/mppe/adpt_mppe_servcode.o
 OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_servcode.o src/adpt/jhppe/adpt_jhppe_servcode.o
-OBJ-HTTPPE  += src/hsl/httppe/httppe_servcode.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_servcode.o src/adpt/httppe/adpt_httppe_servcode.o
 endif
 
 
