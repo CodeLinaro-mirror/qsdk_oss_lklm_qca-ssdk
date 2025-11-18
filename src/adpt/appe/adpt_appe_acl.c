@@ -15,6 +15,9 @@
 #include "adpt_hppe.h"
 #include "adpt_hppe_acl.h"
 #include "adpt_appe_acl.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_acl.h"
+#endif
 
 #define NON_IP_PROFILE_ID 7
 #define IP4_PROFILE_ID 6
@@ -1734,26 +1737,46 @@ _adpt_appe_insert_udf_profile_entry_by_sort(a_uint32_t dev_id,
 	fal_acl_udf_profile_entry_t temp_entry = {0};
 	a_uint32_t temp_profile_id;
 	a_uint32_t idx, weight, temp_weight;
+	sw_error_t rv = SW_OK;
 
 	weight = _adpt_appe_udf_profile_entry_weight(entry);
 
 	for (idx = index; idx < IPR_UDF_CTRL_MAX_ENTRY-1; idx++)
 	{
 		aos_mem_zero(&temp_entry, sizeof (fal_acl_udf_profile_entry_t));
-		_adpt_appe_get_udf_profile_entry_by_index(dev_id, idx+1,
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			_adpt_httppe_get_udf_profile_entry_by_index(dev_id, idx+1,
+				&temp_entry, &temp_profile_id);
+		else
+#endif
+			_adpt_appe_get_udf_profile_entry_by_index(dev_id, idx+1,
 				&temp_entry, &temp_profile_id);
 		temp_weight = _adpt_appe_udf_profile_entry_weight(&temp_entry);
 		if (weight < temp_weight)
 		{
-			SW_RTN_ON_ERROR(_adpt_appe_insert_udf_profile_entry_by_index(dev_id, idx,
-								&temp_entry, temp_profile_id));
+#if defined(HTTPPE)
+			if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+				rv = _adpt_httppe_insert_udf_profile_entry_by_index(dev_id, idx,
+								&temp_entry, temp_profile_id);
+			else
+#endif
+				rv = _adpt_appe_insert_udf_profile_entry_by_index(dev_id, idx,
+								&temp_entry, temp_profile_id);
+			SW_RTN_ON_ERROR(rv);
 		}
 		else
 		{
 			break;
 		}
 	}
-	return _adpt_appe_insert_udf_profile_entry_by_index(dev_id, idx, entry, profile_id);
+
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+		return _adpt_httppe_insert_udf_profile_entry_by_index(dev_id, idx, entry, profile_id);
+	else
+#endif
+		return _adpt_appe_insert_udf_profile_entry_by_index(dev_id, idx, entry, profile_id);
 }
 
 static a_bool_t
@@ -1773,6 +1796,12 @@ _adpt_appe_is_udf_profile_entry_exist(a_uint32_t dev_id,
 	for (idx = 0; idx < IPR_UDF_CTRL_MAX_ENTRY; idx++)
 	{
 		aos_mem_zero(&temp_entry, sizeof (fal_acl_udf_profile_entry_t));
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			entry_valid = _adpt_httppe_get_udf_profile_entry_by_index(dev_id, idx,
+						&temp_entry, &temp_profile_id);
+		else
+#endif
 		entry_valid = _adpt_appe_get_udf_profile_entry_by_index(dev_id, idx,
 						&temp_entry, &temp_profile_id);
 		if (entry_valid == A_TRUE)
@@ -1808,6 +1837,12 @@ _adpt_appe_acl_udf_profile_entry_get(a_uint32_t dev_id, a_uint32_t profile_id,
 	for (idx = 0; idx < IPR_UDF_CTRL_MAX_ENTRY; idx++)
 	{
 		aos_mem_zero(&temp_entry, sizeof (fal_acl_udf_profile_entry_t));
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			entry_valid = _adpt_httppe_get_udf_profile_entry_by_index(dev_id, idx,
+						&temp_entry, &temp_profile_id);
+		else
+#endif
 		entry_valid = _adpt_appe_get_udf_profile_entry_by_index(dev_id, idx,
 						&temp_entry, &temp_profile_id);
 		if (entry_valid == A_TRUE)
@@ -1919,6 +1954,12 @@ adpt_appe_acl_udf_profile_entry_add(a_uint32_t dev_id, a_uint32_t profile_id,
 	for (idx = IPR_UDF_CTRL_MAX_ENTRY-1; idx >= 0; idx--)
 	{
 		aos_mem_zero(&temp_entry, sizeof (fal_acl_udf_profile_entry_t));
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			entry_valid = _adpt_httppe_get_udf_profile_entry_by_index(dev_id, idx,
+						&temp_entry, &temp_profile_id);
+		else
+#endif
 		entry_valid = _adpt_appe_get_udf_profile_entry_by_index(dev_id, idx,
 						&temp_entry, &temp_profile_id);
 		if (entry_valid == A_TRUE)
@@ -1934,7 +1975,13 @@ adpt_appe_acl_udf_profile_entry_add(a_uint32_t dev_id, a_uint32_t profile_id,
 				{
 					SSDK_DEBUG("original profile %d, updated profile %d\n",
 								temp_profile_id, profile_id);
-					return _adpt_appe_insert_udf_profile_entry_by_index(dev_id,
+#if defined(HTTPPE)
+					if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+						return _adpt_httppe_insert_udf_profile_entry_by_index(dev_id,
+								idx, entry, profile_id);
+					else
+#endif
+						return _adpt_appe_insert_udf_profile_entry_by_index(dev_id,
 								idx, entry, profile_id);
 				}
 			}
@@ -1962,6 +2009,7 @@ adpt_appe_acl_udf_profile_entry_del(a_uint32_t dev_id, a_uint32_t profile_id,
 	a_bool_t entry_valid;
 	fal_acl_udf_profile_entry_t temp_entry;
 	union ipr_udf_ctrl_u udf_ctrl_zero_entry = {0};
+	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
@@ -1973,6 +2021,12 @@ adpt_appe_acl_udf_profile_entry_del(a_uint32_t dev_id, a_uint32_t profile_id,
 	for (idx = 0; idx < IPR_UDF_CTRL_MAX_ENTRY; idx++)
 	{
 		aos_mem_zero(&temp_entry, sizeof (fal_acl_udf_profile_entry_t));
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			entry_valid = _adpt_httppe_get_udf_profile_entry_by_index(dev_id, idx,
+						&temp_entry, &temp_profile_id);
+		else
+#endif
 		entry_valid = _adpt_appe_get_udf_profile_entry_by_index(dev_id, idx,
 						&temp_entry, &temp_profile_id);
 		if (entry_valid == A_TRUE)
@@ -1998,19 +2052,38 @@ adpt_appe_acl_udf_profile_entry_del(a_uint32_t dev_id, a_uint32_t profile_id,
 	for (j = idx; j > 0; j --)
 	{
 		aos_mem_zero(&temp_entry, sizeof (fal_acl_udf_profile_entry_t));
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			entry_valid = _adpt_httppe_get_udf_profile_entry_by_index(dev_id, j-1,
+						&temp_entry, &temp_profile_id);
+		else
+#endif
 		entry_valid = _adpt_appe_get_udf_profile_entry_by_index(dev_id, j-1,
 						&temp_entry, &temp_profile_id);
 		if (entry_valid == A_TRUE)
 		{
-			SW_RTN_ON_ERROR(_adpt_appe_insert_udf_profile_entry_by_index(dev_id, j,
-						&temp_entry, temp_profile_id));
+#if defined(HTTPPE)
+			if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+				rv = _adpt_httppe_insert_udf_profile_entry_by_index(dev_id, j,
+						&temp_entry, temp_profile_id);
+			else
+#endif
+				rv = _adpt_appe_insert_udf_profile_entry_by_index(dev_id, j,
+						&temp_entry, temp_profile_id);
+			SW_RTN_ON_ERROR(rv);
 		}
 		else
 		{
 			break;
 		}
 	}
-	return appe_ipr_udf_ctrl_set(dev_id, j, &udf_ctrl_zero_entry);
+
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+		return _adpt_httppe_clear_udf_profile_entry(dev_id, j);
+	else
+#endif
+		return appe_ipr_udf_ctrl_set(dev_id, j, &udf_ctrl_zero_entry);
 }
 
 sw_error_t
@@ -2188,6 +2261,11 @@ adpt_appe_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type
 	{
 		return rv;
 	}
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+		return adpt_httppe_acl_udf_profile_cfg_set(dev_id, profile_id, udf_idx, udf_type, offset);
+	else
+#endif
 	return adpt_appe_acl_udf_profile_cfg_set(dev_id, profile_id, udf_idx, udf_type, offset);
 }
 
@@ -2241,7 +2319,12 @@ adpt_appe_acl_udf_profile_get(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type
 		SSDK_DEBUG("pkt type udf entry is not exist!\n");
 		return SW_NOT_FOUND;
 	}
-	return adpt_appe_acl_udf_profile_cfg_get(dev_id, profile_id, udf_idx, udf_type, offset);
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+		return adpt_httppe_acl_udf_profile_cfg_get(dev_id, profile_id, udf_idx, udf_type, offset);
+	else
+#endif
+		return adpt_appe_acl_udf_profile_cfg_get(dev_id, profile_id, udf_idx, udf_type, offset);
 }
 
 sw_error_t

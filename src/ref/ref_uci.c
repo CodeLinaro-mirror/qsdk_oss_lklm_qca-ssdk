@@ -8479,7 +8479,7 @@ acl_rule_field_convert(fal_acl_rule_t * rule,
 		rule_field->udf3_mask = rule->udf3_mask;
 		rule_field->udfprofile_val = rule->udfprofile_val;
 		rule_field->udfprofile_mask = rule->udfprofile_mask;
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 		/* ext vlan rule fields */
 		rule_field->stag_tpid_index_val = rule->stag_tpid_index_val;
 		rule_field->stag_tpid_index_mask = rule->stag_tpid_index_mask;
@@ -8610,7 +8610,7 @@ parse_acl_action_field(struct switch_ext *ext_value_p, fal_acl_rule_t *rule)
 				FAL_ACL_ACTION_REMARK_CTAG_CFI);
 		cmd_data_check_uint16((char*)ext_value_p->option_value,
 				(a_uint32_t *)&rule->ctag_cfi, 4);
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	} else if(!strcmp(ext_value_p->option_name, "stag_priority_change_cmd")) {
 		FAL_ACTION_FLG_SET(rule->action_flg,
 				FAL_ACL_ACTION_REMARK_STAG_PRI);
@@ -9028,7 +9028,7 @@ parse_acl_rule_field(struct switch_ext *ext_value_p, fal_acl_rule_t *rule, a_boo
 		rule->stag_dei_mask = 1;
 		FAL_FIELD_FLG_SET(rule->field_flg,
 				FAL_ACL_FIELD_MAC_STAG_DEI);
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	} else if((!is_inner && !strcmp(ext_value_p->option_name, "stag_tpid_index_val")) ||
 		(is_inner && !strcmp(ext_value_p->option_name, "inner_stag_tpid_index_val"))) {
 		cmd_data_check_uint8((char*)ext_value_p->option_value,

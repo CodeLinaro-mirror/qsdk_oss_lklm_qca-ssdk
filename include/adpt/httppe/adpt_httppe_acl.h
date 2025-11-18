@@ -95,6 +95,25 @@ _adpt_httppe_acl_rule_priority_set(a_uint32_t dev_id, a_uint32_t hw_list_id,
 sw_error_t
 _adpt_httppe_acl_rule_priority_get(a_uint32_t dev_id, a_uint32_t hw_list_id,
 		a_uint32_t hw_entries, a_uint32_t *priority);
+
+a_bool_t
+_adpt_httppe_get_udf_profile_entry_by_index(a_uint32_t dev_id,
+		a_uint32_t index, fal_acl_udf_profile_entry_t * entry, a_uint32_t * profile_id);
+
+sw_error_t
+_adpt_httppe_insert_udf_profile_entry_by_index(a_uint32_t dev_id,
+		a_uint32_t index, fal_acl_udf_profile_entry_t * entry, a_uint32_t profile_id);
+
+sw_error_t
+_adpt_httppe_clear_udf_profile_entry(a_uint32_t dev_id, a_uint32_t index);
+
+sw_error_t
+adpt_httppe_acl_udf_profile_cfg_set(a_uint32_t dev_id, a_uint32_t profile_id,
+		a_uint32_t udf_idx, fal_acl_udf_type_t udf_type, a_uint32_t offset);
+
+sw_error_t
+adpt_httppe_acl_udf_profile_cfg_get(a_uint32_t dev_id, a_uint32_t profile_id,
+		a_uint32_t udf_idx, fal_acl_udf_type_t * udf_type, a_uint32_t * offset);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
