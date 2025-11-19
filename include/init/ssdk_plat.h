@@ -291,11 +291,13 @@ typedef enum {
 } fdb_sync_t;
 
 struct ssdk_port_priv {
+	a_uint32_t dev_id;
 	a_uint32_t port_id;
 	phy_interface_t interface;
 	struct device_node *np;
 	struct phylink *phylink;
 	struct phylink_config phylink_config;
+	struct phylink_pcs phylink_pcs;
 	a_uint32_t port_mac_type;
 	a_uint32_t port_link_up;
 	a_uint32_t port_old_link;
