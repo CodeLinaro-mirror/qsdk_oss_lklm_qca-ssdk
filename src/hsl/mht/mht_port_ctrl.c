@@ -709,7 +709,12 @@ _mht_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
 		}
 		else if (2 == field)
 		{
-			*pspeed = FAL_SPEED_1000;
+			/* For SGMII Plus mode, speed mode field 2 indicates 2.5G instead of 1G */
+			phy_info_t *phy_info = hsl_phy_info_get(dev_id);
+			if (phy_info && (phy_info->port_mode[port_id] == PORT_SGMII_PLUS))
+				*pspeed = FAL_SPEED_2500;
+			else
+				*pspeed = FAL_SPEED_1000;
 		}
 	}
 	else
