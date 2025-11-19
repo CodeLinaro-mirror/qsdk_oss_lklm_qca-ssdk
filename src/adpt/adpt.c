@@ -575,8 +575,13 @@ sw_error_t adpt_deinit(a_uint32_t dev_id)
 	case CHIP_HTTPPE:
 #if defined(IN_ACL)
 		rv = adpt_hppe_acl_deinit(dev_id);
-		break;
+		SW_RTN_ON_ERROR(rv);
 #endif
+#if defined(IN_POLICER)
+		rv = adpt_hppe_policer_deinit(dev_id);
+		SW_RTN_ON_ERROR(rv);
+#endif
+		break;
 	default:
 		/* do not need adpt API */
 		break;

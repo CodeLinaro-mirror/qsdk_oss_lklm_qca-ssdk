@@ -1202,13 +1202,13 @@ qca_appe_policer_hw_init(a_uint32_t dev_id)
 		break;
 	case HTTPPE_TYPE:
 		timeslot = HTTPPE_POLICER_TIMESLOT_DFT;
-		acl_policer_cfg_max = POLICER_CFG_MAX_256;
-		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_256);
+		acl_policer_cfg_max = POLICER_CFG_MAX_128;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_128);
 		break;
 	case HMSPPE_TYPE:
 		timeslot = HMSPPE_POLICER_TIMESLOT_DFT;
-		acl_policer_cfg_max = POLICER_CFG_MAX_256;
-		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_256);
+		acl_policer_cfg_max = POLICER_CFG_MAX_128;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_128);
 		break;
 	default:
 		SSDK_ERROR("Unsupported chip type: %d\n", chip_type);

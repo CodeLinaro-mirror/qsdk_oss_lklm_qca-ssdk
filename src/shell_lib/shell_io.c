@@ -207,6 +207,15 @@ const struct attr_des_t g_attr_des[] =
 			{NULL, INVALID_ARRT_VALUE}
 		}
 	},
+	{
+		"policer_length_mode",
+		(struct sub_attr_des_t[]){
+			{"original_len", FAL_FRAME_LEN_ORIGINAL},
+			{"decap_len", FAL_FRAME_LEN_DECAP},
+			{"output_len", FAL_FRAME_LEN_OUTPUT},
+			{NULL, INVALID_ARRT_VALUE}
+		}
+	},
 #endif
 #ifdef IN_SHAPER
 	{
@@ -10684,6 +10693,11 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
 			sizeof (a_bool_t));
 	}
 	while (talk_mode && (SW_OK != rv));
+
+    	cmd_data_check_element("length_mode", "original_len",
+			    "usage:length_mode:original_len/decap_len/output_len, etc\n",
+			    cmd_data_check_attr, ("policer_length_mode", cmd,
+			    &(entry.length_mode), sizeof(entry.length_mode)));
 
     *(fal_policer_config_t *)val = entry;
     return SW_OK;
