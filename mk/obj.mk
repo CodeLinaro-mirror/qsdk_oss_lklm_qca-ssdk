@@ -210,6 +210,7 @@ OBJ-ISISC   += src/hsl/isisc/isisc_sec.o src/fal/fal_sec_legacy.o
 OBJ-HPPE    += src/hsl/hppe/hppe_sec.o src/adpt/hppe/adpt_hppe_sec.o
 OBJ-APPE    += src/hsl/appe/appe_sec.o src/adpt/appe/adpt_appe_sec.o
 OBJ-MHT     += src/hsl/mht/mht_sec_ctrl.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_sec.o
 endif
 
 ###############################################################################
@@ -265,6 +266,7 @@ OBJ-COMMON  += src/fal/fal_ctrlpkt.o
 OBJ-HPPE    += src/hsl/hppe/hppe_ctrlpkt.o src/adpt/hppe/adpt_hppe_ctrlpkt.o
 OBJ-APPE    += src/adpt/appe/adpt_appe_ctrlpkt.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_ctrlpkt.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_ctrlpkt.o
 endif
 
 ###############################################################################
