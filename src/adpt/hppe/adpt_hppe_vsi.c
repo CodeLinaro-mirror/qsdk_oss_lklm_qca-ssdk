@@ -627,8 +627,6 @@ sw_error_t adpt_hppe_vsi_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_vsi_counter_get = adpt_hppe_vsi_counter_get;
 	p_adpt_api->adpt_vsi_counter_cleanup = adpt_hppe_vsi_counter_cleanup;
 #endif
-	p_adpt_api->adpt_port_vlan_vsi_set = adpt_hppe_port_vlan_vsi_set;
-	p_adpt_api->adpt_port_vlan_vsi_get = adpt_hppe_port_vlan_vsi_get;
 	p_adpt_api->adpt_port_vsi_set = adpt_hppe_port_vsi_set;
 #if defined(HTTPPE)
 	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
@@ -638,6 +636,12 @@ sw_error_t adpt_hppe_vsi_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_vsi_newaddr_lrn_set = adpt_httppe_vsi_newaddr_lrn_set;
 		p_adpt_api->adpt_vsi_member_set = adpt_httppe_vsi_member_set;
 		p_adpt_api->adpt_vsi_member_get = adpt_httppe_vsi_member_get;
+		p_adpt_api->adpt_port_vlan_vsi_set = adpt_httppe_port_vlan_vsi_set;
+		p_adpt_api->adpt_port_vlan_vsi_get = adpt_httppe_port_vlan_vsi_get;
+		p_adpt_api->adpt_vsi_bridge_vsi_get = adpt_httppe_vsi_bridge_vsi_get;
+		p_adpt_api->adpt_vsi_bridge_vsi_set = adpt_httppe_vsi_bridge_vsi_set;
+		p_adpt_api->adpt_vsi_invalidvsi_ctrl_get = adpt_httppe_vsi_invalidvsi_ctrl_get;
+		p_adpt_api->adpt_vsi_invalidvsi_ctrl_set = adpt_httppe_vsi_invalidvsi_ctrl_set;
 	}
 	else
 #endif
@@ -648,11 +652,13 @@ sw_error_t adpt_hppe_vsi_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_vsi_newaddr_lrn_set = adpt_hppe_vsi_newaddr_lrn_set;
 		p_adpt_api->adpt_vsi_member_set = adpt_hppe_vsi_member_set;
 		p_adpt_api->adpt_vsi_member_get = adpt_hppe_vsi_member_get;
+		p_adpt_api->adpt_port_vlan_vsi_set = adpt_hppe_port_vlan_vsi_set;
+		p_adpt_api->adpt_port_vlan_vsi_get = adpt_hppe_port_vlan_vsi_get;
+		p_adpt_api->adpt_vsi_bridge_vsi_get = adpt_appe_vsi_bridge_vsi_get;
+		p_adpt_api->adpt_vsi_bridge_vsi_set = adpt_appe_vsi_bridge_vsi_set;
+		p_adpt_api->adpt_vsi_invalidvsi_ctrl_get = adpt_appe_vsi_invalidvsi_ctrl_get;
+		p_adpt_api->adpt_vsi_invalidvsi_ctrl_set = adpt_appe_vsi_invalidvsi_ctrl_set;
 	}
-	p_adpt_api->adpt_vsi_bridge_vsi_get = adpt_appe_vsi_bridge_vsi_get;
-	p_adpt_api->adpt_vsi_bridge_vsi_set = adpt_appe_vsi_bridge_vsi_set;
-	p_adpt_api->adpt_vsi_invalidvsi_ctrl_get = adpt_appe_vsi_invalidvsi_ctrl_get;
-	p_adpt_api->adpt_vsi_invalidvsi_ctrl_set = adpt_appe_vsi_invalidvsi_ctrl_set;
 
 	return SW_OK;
 }

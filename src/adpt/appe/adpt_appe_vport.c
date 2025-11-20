@@ -26,6 +26,9 @@
 #include "fal_qm.h"
 #endif
 #include "adpt.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_vport.h"
+#endif
 
 sw_error_t
 adpt_appe_vport_physical_port_id_get(a_uint32_t dev_id,
@@ -64,8 +67,15 @@ adpt_appe_vport_physical_port_id_set(a_uint32_t dev_id,
 	vport_value = FAL_PORT_ID_VALUE(vport_id);
 	pport_id = FAL_PORT_ID_VALUE(phyport_id);
 
-	rv = appe_l2_vp_port_tbl_physical_port_set(dev_id, vport_value, pport_id);
-	SW_RTN_ON_ERROR(rv);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rv = adpt_httppe_vport_physical_port_id_set(dev_id, vport_id, phyport_id);
+		SW_RTN_ON_ERROR(rv);
+#endif
+	} else {
+		rv = appe_l2_vp_port_tbl_physical_port_set(dev_id, vport_value, pport_id);
+		SW_RTN_ON_ERROR(rv);
+	}
 
 #if defined(IN_QM)
 	p_adpt_api = adpt_api_ptr_get(dev_id);
@@ -167,14 +177,19 @@ adpt_appe_vport_init(a_uint32_t dev_id)
 
 	ADPT_NULL_POINT_CHECK(p_adpt_api);
 
-		p_adpt_api->adpt_vport_physical_port_id_set =
-			adpt_appe_vport_physical_port_id_set;
-		p_adpt_api->adpt_vport_physical_port_id_get =
-			adpt_appe_vport_physical_port_id_get;
-		p_adpt_api->adpt_vport_state_check_set =
-			adpt_appe_vport_state_check_set;
-		p_adpt_api->adpt_vport_state_check_get =
-			adpt_appe_vport_state_check_get;
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		p_adpt_api->adpt_vport_physical_port_id_get = adpt_httppe_vport_physical_port_id_get;
+		p_adpt_api->adpt_vport_state_check_set = adpt_httppe_vport_state_check_set;
+		p_adpt_api->adpt_vport_state_check_get = adpt_httppe_vport_state_check_get;
+#endif
+	} else {
+		p_adpt_api->adpt_vport_physical_port_id_get = adpt_appe_vport_physical_port_id_get;
+		p_adpt_api->adpt_vport_state_check_set = adpt_appe_vport_state_check_set;
+		p_adpt_api->adpt_vport_state_check_get = adpt_appe_vport_state_check_get;
+	}
+
+	p_adpt_api->adpt_vport_physical_port_id_set = adpt_appe_vport_physical_port_id_set;
 
 	return SW_OK;
 }

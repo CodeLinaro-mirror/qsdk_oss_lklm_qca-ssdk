@@ -14,6 +14,7 @@
 #include "adpt.h"
 #if defined(HTTPPE)
 #include "adpt_httppe_misc.h"
+#include "adpt_httppe_portctrl.h"
 #endif
 
 /* Reordered cpucode array - direct mapping: cpucode[cpu_code_value] */
@@ -508,20 +509,22 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	for (i = 0; i < EG_VSI_COUNTER_TBL_MAX_ENTRY; i++)
 		hppe_eg_vsi_counter_tbl_set(dev_id, i, &eg_vsi_counter_tbl);
 
-	/* clear PORT_TX_COUNTER_TBL */
-	for (i = 0; i < PORT_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
-		hppe_port_tx_counter_tbl_reg_set(dev_id, i, &port_tx_counter_tbl);
-
-	/* clear VP_TX_COUNTER_TBL */
-	for (i = 0; i < VP_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
-		hppe_vp_tx_counter_tbl_reg_set(dev_id, i, &vp_tx_counter_tbl);
-
-	/* clear QUEUE_TX_COUNTER_TBL */
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
+		adpt_httppe_port_tx_counter_tbl_set(dev_id);
+		adpt_httppe_vp_tx_counter_tbl_set(dev_id);
 		adpt_httppe_queue_tx_counter_tbl_set(dev_id);
 #endif
 	} else {
+		/* clear PORT_TX_COUNTER_TBL */
+		for (i = 0; i < PORT_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
+			hppe_port_tx_counter_tbl_reg_set(dev_id, i, &port_tx_counter_tbl);
+
+		/* clear VP_TX_COUNTER_TBL */
+		for (i = 0; i < VP_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
+			hppe_vp_tx_counter_tbl_reg_set(dev_id, i, &vp_tx_counter_tbl);
+
+		/* clear QUEUE_TX_COUNTER_TBL */
 		for (i = 0; i < QUEUE_TX_COUNTER_TBL_MAX_ENTRY; i++)
 			hppe_queue_tx_counter_tbl_set(dev_id, i, &queue_tx_counter_tbl);
 	}
@@ -1175,17 +1178,21 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 	/* show EG_VSI_COUNTER_TBL */
 	adpt_hppe_debug_eg_vsi_counter_get(dev_id, show_type, buf, count);
 
-	/* show PORT_TX_COUNTER_TBL */
-	adpt_hppe_debug_port_tx_counter_get(dev_id, show_type, buf, count);
-
-	/* show VP_TX_COUNTER_TBL */
-	adpt_hppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
-
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
+		adpt_httppe_debug_port_tx_counter_get(dev_id, show_type, buf, count);
+
+		adpt_httppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
+
 		adpt_httppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
 #endif
 	} else {
+		/* show PORT_TX_COUNTER_TBL */
+		adpt_hppe_debug_port_tx_counter_get(dev_id, show_type, buf, count);
+
+		/* show VP_TX_COUNTER_TBL */
+		adpt_hppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
+
 		/* show QUEUE_TX_COUNTER_TBL */
 		adpt_hppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
 	}

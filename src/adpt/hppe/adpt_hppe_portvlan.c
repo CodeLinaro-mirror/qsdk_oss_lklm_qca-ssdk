@@ -646,16 +646,24 @@ adpt_hppe_global_qinq_mode_set(a_uint32_t dev_id, fal_global_qinq_mode_t *mode)
 		SW_RTN_ON_ERROR(rtn);
 	}
 
-	if (FAL_FLG_TST(mode->mask, FAL_GLOBAL_QINQ_MODE_EGRESS_EN)) {
-		rtn = hppe_eg_bridge_config_bridge_type_set(dev_id,
-				(a_uint32_t)mode->egress_mode);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_global_qinq_mode_set(dev_id, mode);
 		SW_RTN_ON_ERROR(rtn);
+#endif
+	} else {
+		if (FAL_FLG_TST(mode->mask, FAL_GLOBAL_QINQ_MODE_EGRESS_EN)) {
+			rtn = hppe_eg_bridge_config_bridge_type_set(dev_id,
+					(a_uint32_t)mode->egress_mode);
+			SW_RTN_ON_ERROR(rtn);
+		}
+
+		if (FAL_FLG_TST(mode->mask, FAL_GLOBAL_QINQ_MODE_EGRESS_UNTOUCHED_FOR_CPU_CODE)) {
+			SW_RTN_ON_ERROR(hppe_eg_bridge_config_pkt_l2_edit_en_set(dev_id,
+						(a_uint32_t)!mode->untouched_for_cpucode));
+		}
 	}
 
-	if (FAL_FLG_TST(mode->mask, FAL_GLOBAL_QINQ_MODE_EGRESS_UNTOUCHED_FOR_CPU_CODE)) {
-		SW_RTN_ON_ERROR(hppe_eg_bridge_config_pkt_l2_edit_en_set(dev_id,
-					(a_uint32_t)!mode->untouched_for_cpucode));
-	}
 	return rtn;
 }
 
@@ -672,12 +680,19 @@ adpt_hppe_global_qinq_mode_get(a_uint32_t dev_id, fal_global_qinq_mode_t *mode)
 			(a_uint32_t *)&mode->ingress_mode);
 	SW_RTN_ON_ERROR(rtn);
 
-	rtn = hppe_eg_bridge_config_bridge_type_get(dev_id,
-			(a_uint32_t *)&mode->egress_mode);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_global_qinq_mode_get(dev_id, mode);
+		SW_RTN_ON_ERROR(rtn);
+#endif
+	} else {
+		rtn = hppe_eg_bridge_config_bridge_type_get(dev_id,
+				(a_uint32_t *)&mode->egress_mode);
 
-	SW_RTN_ON_ERROR(hppe_eg_bridge_config_pkt_l2_edit_en_get(dev_id, &l2_edit_en));
+		SW_RTN_ON_ERROR(hppe_eg_bridge_config_pkt_l2_edit_en_get(dev_id, &l2_edit_en));
 
-	mode->untouched_for_cpucode = !l2_edit_en;
+		mode->untouched_for_cpucode = !l2_edit_en;
+	}
 
 	return rtn;
 }
@@ -1122,11 +1137,17 @@ adpt_hppe_port_vlantag_egmode_set(a_uint32_t dev_id, fal_port_t port_id,
 			rtn = appe_eg_vp_tbl_port_eg_vlan_ctag_mode_set(dev_id,
 					port_value, value);
 			SW_RTN_ON_ERROR(rtn);
-		} else
-		{
-			rtn = hppe_port_eg_vlan_port_eg_vlan_ctag_mode_set(dev_id,
+		} else {
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_vlantag_egmode_set(dev_id, port_id, 0, value, FAL_EGRESSMODE_CTAG_EN);
+				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				rtn = hppe_port_eg_vlan_port_eg_vlan_ctag_mode_set(dev_id,
 					port_value, value);
-			SW_RTN_ON_ERROR(rtn);
+				SW_RTN_ON_ERROR(rtn);
+			}
 		}
 	}
 
@@ -1138,11 +1159,17 @@ adpt_hppe_port_vlantag_egmode_set(a_uint32_t dev_id, fal_port_t port_id,
 			rtn = appe_eg_vp_tbl_port_eg_vlan_stag_mode_set(dev_id,
 					port_value, value);
 			SW_RTN_ON_ERROR(rtn);
-		} else
-		{
-			rtn = hppe_port_eg_vlan_port_eg_vlan_stag_mode_set(dev_id,
-					port_value, value);
-			SW_RTN_ON_ERROR(rtn);
+		} else {
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_vlantag_egmode_set(dev_id, port_id, value, 0, FAL_EGRESSMODE_STAG_EN);
+				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				rtn = hppe_port_eg_vlan_port_eg_vlan_stag_mode_set(dev_id,
+						port_value, value);
+				SW_RTN_ON_ERROR(rtn);
+			}
 		}
 	}
 
@@ -1154,7 +1181,7 @@ adpt_hppe_port_vlantag_egmode_get(a_uint32_t dev_id, fal_port_t port_id,
                             fal_vlantag_egress_mode_t *port_egvlanmode)
 {
 	sw_error_t rtn = SW_OK;
-	a_uint32_t value = 0;
+	a_uint32_t stag_mode = 0, ctag_mode = 0;
 	a_uint32_t port_value = FAL_PORT_ID_VALUE(port_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -1162,30 +1189,33 @@ adpt_hppe_port_vlantag_egmode_get(a_uint32_t dev_id, fal_port_t port_id,
 
 	if (ADPT_IS_VPORT(port_id)) {
 		rtn = appe_eg_vp_tbl_port_eg_vlan_ctag_mode_get(dev_id,
-				port_value, &value);
+				port_value, &ctag_mode);
 		SW_RTN_ON_ERROR(rtn);
-	} else
-	{
-		rtn = hppe_port_eg_vlan_port_eg_vlan_ctag_mode_get(dev_id,
-				port_value, &value);
+
+		rtn = appe_eg_vp_tbl_port_eg_vlan_stag_mode_get(dev_id,
+				port_value, &stag_mode);
 		SW_RTN_ON_ERROR(rtn);
+	} else {
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_vlantag_egmode_get(dev_id, port_id, &stag_mode, &ctag_mode);
+			SW_RTN_ON_ERROR(rtn);
+#endif
+		} else {
+			rtn = hppe_port_eg_vlan_port_eg_vlan_ctag_mode_get(dev_id,
+					port_value, &ctag_mode);
+			SW_RTN_ON_ERROR(rtn);
+
+			rtn = hppe_port_eg_vlan_port_eg_vlan_stag_mode_get(dev_id,
+					port_value, &stag_mode);
+			SW_RTN_ON_ERROR(rtn);
+		}
 	}
 
-	rtn = adpt_portvlan_egmode_convert(&port_egvlanmode->ctag_mode, &value, A_FALSE);
+	rtn = adpt_portvlan_egmode_convert(&port_egvlanmode->stag_mode, &stag_mode, A_FALSE);
 	SW_RTN_ON_ERROR(rtn);
 
-	if (ADPT_IS_VPORT(port_id)) {
-		rtn = appe_eg_vp_tbl_port_eg_vlan_stag_mode_get(dev_id,
-				port_value, &value);
-		SW_RTN_ON_ERROR(rtn);
-	} else
-	{
-		rtn = hppe_port_eg_vlan_port_eg_vlan_stag_mode_get(dev_id,
-				port_value, &value);
-		SW_RTN_ON_ERROR(rtn);
-	}
-
-	rtn = adpt_portvlan_egmode_convert(&port_egvlanmode->stag_mode, &value, A_FALSE);
+	rtn = adpt_portvlan_egmode_convert(&port_egvlanmode->ctag_mode, &ctag_mode, A_FALSE);
 	SW_RTN_ON_ERROR(rtn);
 
 	return rtn;
@@ -1208,10 +1238,15 @@ adpt_hppe_port_vlan_xlt_miss_cmd_set(a_uint32_t dev_id, fal_port_t port_id,
 		rtn = appe_vlan_port_vp_tbl_port_vlan_xlt_miss_fwd_cmd_set(dev_id,
 				port_value, value);
 		SW_RTN_ON_ERROR(rtn);
-	} else
-	{
-		rtn = hppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_set(dev_id,
-				port_value, value);
+	} else {
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_vlan_xlt_miss_fwd_cmd_set(dev_id, port_id, value);
+#endif
+		} else {
+			rtn = hppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_set(dev_id,
+					port_value, value);
+		}
 		SW_RTN_ON_ERROR(rtn);
 	}
 
@@ -1234,10 +1269,15 @@ adpt_hppe_port_vlan_xlt_miss_cmd_get(a_uint32_t dev_id, fal_port_t port_id,
 		rtn = appe_vlan_port_vp_tbl_port_vlan_xlt_miss_fwd_cmd_get(dev_id,
 				port_value, &value);
 		SW_RTN_ON_ERROR(rtn);
-	} else
-	{
-		rtn = hppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_get(dev_id,
+	} else {
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_vlan_xlt_miss_fwd_cmd_get(dev_id, port_id, &value);
+#endif
+		} else {
+			rtn = hppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_get(dev_id,
 					port_value, &value);
+		}
 		SW_RTN_ON_ERROR(rtn);
 	}
 
@@ -1333,10 +1373,14 @@ adpt_hppe_port_vlantag_vsi_egmode_enable_set(a_uint32_t dev_id,
 	if (ADPT_IS_VPORT(port_id)) {
 		rtn = appe_eg_vp_tbl_vsi_tag_mode_en_set(dev_id, port_value, enable);
 		SW_RTN_ON_ERROR(rtn);
-	} else
-	{
-		rtn = hppe_port_eg_vlan_vsi_tag_mode_en_set(dev_id, port_value, enable);
-		SW_RTN_ON_ERROR(rtn);
+	} else {
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_vlantag_vsi_egmode_enable_set(dev_id, port_id, enable);
+#endif
+		} else {
+			rtn = hppe_port_eg_vlan_vsi_tag_mode_en_set(dev_id, port_value, enable);
+		}
 	}
 
 	return rtn;
@@ -1357,8 +1401,13 @@ adpt_hppe_port_vlantag_vsi_egmode_enable_get(a_uint32_t dev_id,
 		SW_RTN_ON_ERROR(rtn);
 	} else
 	{
-		rtn = hppe_port_eg_vlan_vsi_tag_mode_en_get(dev_id, port_value, enable);
-		SW_RTN_ON_ERROR(rtn);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_vlantag_vsi_egmode_enable_get(dev_id, port_id, enable);
+#endif
+		} else {
+			rtn = hppe_port_eg_vlan_vsi_tag_mode_en_get(dev_id, port_value, enable);
+		}
 	}
 
 	return rtn;
@@ -1704,7 +1753,12 @@ adpt_hppe_portvlan_member_update(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp
 
 	if(ADPT_IS_VPORT(port_id))
 	{
-		return adpt_appe_portvlan_vpmember_update(dev_id, port_id, mem_port_map);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+#if defined(HTTPPE)
+			return adpt_httppe_portvlan_vpmember_update(dev_id, port_id, mem_port_map);
+#endif
+		else
+			return adpt_appe_portvlan_vpmember_update(dev_id, port_id, mem_port_map);
 	}
 	port_id = FAL_PORT_ID_VALUE(port_id);
 
@@ -1728,7 +1782,12 @@ adpt_hppe_portvlan_member_get(a_uint32_t dev_id, fal_port_t port_id, fal_pbmp_t 
 
 	if(ADPT_IS_VPORT(port_id))
 	{
-		return adpt_appe_portvlan_vpmember_get(dev_id, port_id, mem_port_map);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+#if defined(HTTPPE)
+			return adpt_httppe_portvlan_vpmember_get(dev_id, port_id, mem_port_map);
+#endif
+		else
+			return adpt_appe_portvlan_vpmember_get(dev_id, port_id, mem_port_map);
 	}
 	port_id = FAL_PORT_ID_VALUE(port_id);
 
@@ -1753,7 +1812,14 @@ adpt_hppe_qinq_mode_set(a_uint32_t dev_id, fal_qinq_mode_t mode)
 	global_mode.mask = 0x3;
 	global_mode.ingress_mode = mode;
 	global_mode.egress_mode = mode;
-	adpt_hppe_global_qinq_mode_set(dev_id, &global_mode);
+
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_global_qinq_mode_set(dev_id, &global_mode);
+#endif
+	} else {
+		rtn = adpt_hppe_global_qinq_mode_set(dev_id, &global_mode);
+	}
 
 	return rtn;
 }
@@ -1766,7 +1832,15 @@ adpt_hppe_qinq_mode_get(a_uint32_t dev_id, fal_qinq_mode_t * mode)
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	adpt_hppe_global_qinq_mode_get(dev_id, &global_mode);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_global_qinq_mode_get(dev_id, &global_mode);
+		SW_RTN_ON_ERROR(rtn);
+#endif
+	} else {
+		rtn = adpt_hppe_global_qinq_mode_get(dev_id, &global_mode);
+		SW_RTN_ON_ERROR(rtn);
+	}
 
 	if (global_mode.ingress_mode == global_mode.egress_mode)
 		*mode = global_mode.ingress_mode;
@@ -1787,7 +1861,14 @@ adpt_hppe_port_qinq_role_set(a_uint32_t dev_id, fal_port_t port_id, fal_qinq_por
 	port_role.mask = 0x3;
 	port_role.ingress_port_role = role;
 	port_role.egress_port_role = role;
-	adpt_hppe_port_qinq_mode_set(dev_id, port_id, &port_role);
+
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_port_qinq_mode_set(dev_id, port_id, &port_role);
+#endif
+	} else {
+		rtn = adpt_hppe_port_qinq_mode_set(dev_id, port_id, &port_role);
+	}
 
 	return rtn;
 }
@@ -1800,7 +1881,15 @@ adpt_hppe_port_qinq_role_get(a_uint32_t dev_id, fal_port_t port_id, fal_qinq_por
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	adpt_hppe_port_qinq_mode_get(dev_id, port_id, &port_role);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_port_qinq_mode_get(dev_id, port_id, &port_role);
+		SW_RTN_ON_ERROR(rtn);
+#endif
+	} else {
+		rtn = adpt_hppe_port_qinq_mode_get(dev_id, port_id, &port_role);
+		SW_RTN_ON_ERROR(rtn);
+	}
 
 	if (port_role.ingress_port_role == port_role.egress_port_role)
 		*role = port_role.ingress_port_role;
@@ -1879,28 +1968,35 @@ adpt_hppe_port_default_vlantag_set(a_uint32_t dev_id,
 				SW_RTN_ON_ERROR(rtn);
 			}
 
-			if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_CPCP_EN)) {
-				rtn = hppe_port_def_pcp_port_def_cpcp_set(dev_id, port_value,
-						(a_uint32_t)default_tag->cpri);
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_default_pcp_set(dev_id, port_id, default_tag);
 				SW_RTN_ON_ERROR(rtn);
-			}
+#endif
+			} else {
+				if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_CPCP_EN)) {
+					rtn = hppe_port_def_pcp_port_def_cpcp_set(dev_id, port_value,
+							(a_uint32_t)default_tag->cpri);
+					SW_RTN_ON_ERROR(rtn);
+				}
 
-			if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_SPCP_EN)) {
-				rtn = hppe_port_def_pcp_port_def_spcp_set(dev_id, port_value,
-						(a_uint32_t)default_tag->spri);
-				SW_RTN_ON_ERROR(rtn);
-			}
+				if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_SPCP_EN)) {
+					rtn = hppe_port_def_pcp_port_def_spcp_set(dev_id, port_value,
+							(a_uint32_t)default_tag->spri);
+					SW_RTN_ON_ERROR(rtn);
+				}
 
-			if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_CDEI_EN)) {
-				rtn = hppe_port_def_pcp_port_def_cdei_set(dev_id, port_value,
-						(a_uint32_t)default_tag->cdei);
-				SW_RTN_ON_ERROR(rtn);
-			}
+				if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_CDEI_EN)) {
+					rtn = hppe_port_def_pcp_port_def_cdei_set(dev_id, port_value,
+							(a_uint32_t)default_tag->cdei);
+					SW_RTN_ON_ERROR(rtn);
+				}
 
-			if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_SDEI_EN)) {
-				rtn = hppe_port_def_pcp_port_def_sdei_set(dev_id, port_value,
-						(a_uint32_t)default_tag->sdei);
-				SW_RTN_ON_ERROR(rtn);
+				if (FAL_FLG_TST(default_tag->mask, FAL_PORT_VLAN_TAG_SDEI_EN)) {
+					rtn = hppe_port_def_pcp_port_def_sdei_set(dev_id, port_value,
+							(a_uint32_t)default_tag->sdei);
+					SW_RTN_ON_ERROR(rtn);
+				}
 			}
 		}
 	}
@@ -2000,21 +2096,28 @@ adpt_hppe_port_default_vlantag_get(a_uint32_t dev_id,
 			SW_RTN_ON_ERROR(rtn);
 			default_tag->svid = tmp;
 
-			rtn = hppe_port_def_pcp_port_def_cpcp_get(dev_id, port_value, &tmp);
-			SW_RTN_ON_ERROR(rtn);
-			default_tag->cpri = tmp;
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_default_pcp_get(dev_id, port_id, default_tag);
+				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				rtn = hppe_port_def_pcp_port_def_cpcp_get(dev_id, port_value, &tmp);
+				SW_RTN_ON_ERROR(rtn);
+				default_tag->cpri = tmp;
 
-			rtn = hppe_port_def_pcp_port_def_spcp_get(dev_id, port_value, &tmp);
-			SW_RTN_ON_ERROR(rtn);
-			default_tag->spri = tmp;
+				rtn = hppe_port_def_pcp_port_def_spcp_get(dev_id, port_value, &tmp);
+				SW_RTN_ON_ERROR(rtn);
+				default_tag->spri = tmp;
 
-			rtn = hppe_port_def_pcp_port_def_cdei_get(dev_id, port_value, &tmp);
-			SW_RTN_ON_ERROR(rtn);
-			default_tag->cdei = tmp;
+				rtn = hppe_port_def_pcp_port_def_cdei_get(dev_id, port_value, &tmp);
+				SW_RTN_ON_ERROR(rtn);
+				default_tag->cdei = tmp;
 
-			rtn = hppe_port_def_pcp_port_def_sdei_get(dev_id, port_value, &tmp);
-			SW_RTN_ON_ERROR(rtn);
-			default_tag->sdei = tmp;
+				rtn = hppe_port_def_pcp_port_def_sdei_get(dev_id, port_value, &tmp);
+				SW_RTN_ON_ERROR(rtn);
+				default_tag->sdei = tmp;
+			}
 		}
 	}
 	else if (direction == FAL_PORT_VLAN_EGRESS) {
@@ -2065,7 +2168,12 @@ adpt_hppe_portvlan_member_add(a_uint32_t dev_id, fal_port_t port_id, fal_port_t 
 
 	if(ADPT_IS_VPORT(port_id))
 	{
-		return adpt_appe_portvlan_vpmember_add(dev_id, port_id, mem_port_id);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+#if defined(HTTPPE)
+			return adpt_httppe_portvlan_vpmember_add(dev_id, port_id, mem_port_id);
+#endif
+		else
+			return adpt_appe_portvlan_vpmember_add(dev_id, port_id, mem_port_id);
 	}
 
 	port_id = FAL_PORT_ID_VALUE(port_id);
@@ -2092,7 +2200,12 @@ adpt_hppe_portvlan_member_del(a_uint32_t dev_id, fal_port_t port_id, fal_port_t 
 
 	if(ADPT_IS_VPORT(port_id))
 	{
-		return adpt_appe_portvlan_vpmember_del(dev_id, port_id, mem_port_id);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+#if defined(HTTPPE)
+			return adpt_httppe_portvlan_vpmember_del(dev_id, port_id, mem_port_id);
+#endif
+		else
+			return adpt_appe_portvlan_vpmember_del(dev_id, port_id, mem_port_id);
 	}
 
 	port_id = FAL_PORT_ID_VALUE(port_id);
@@ -2135,18 +2248,25 @@ adpt_hppe_port_ingress_vlan_filter_set(a_uint32_t dev_id, fal_port_t port_id,
 		rtn = appe_vlan_port_vp_tbl_set(dev_id, port_value, &vlan_vp);
 		SW_RTN_ON_ERROR(rtn);
 	} else {
-		rtn = hppe_port_vlan_config_port_in_vlan_fltr_cmd_set(dev_id,
-				port_value, (a_uint32_t)filter->membership_filter);
-		SW_RTN_ON_ERROR(rtn);
-		rtn = hppe_port_vlan_config_port_untag_fltr_cmd_set(dev_id,
-				port_value, (a_uint32_t)filter->untagged_filter);
-		SW_RTN_ON_ERROR(rtn);
-		rtn = hppe_port_vlan_config_port_tag_fltr_cmd_set(dev_id,
-				port_value, (a_uint32_t)filter->tagged_filter);
-		SW_RTN_ON_ERROR(rtn);
-		rtn = hppe_port_vlan_config_port_pri_tag_fltr_cmd_set(dev_id,
-				port_value, (a_uint32_t)filter->priority_filter);
-		SW_RTN_ON_ERROR(rtn);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_ingress_vlan_filter_set(dev_id, port_id, filter);
+			SW_RTN_ON_ERROR(rtn);
+#endif
+		} else {
+			rtn = hppe_port_vlan_config_port_in_vlan_fltr_cmd_set(dev_id,
+					port_value, (a_uint32_t)filter->membership_filter);
+			SW_RTN_ON_ERROR(rtn);
+			rtn = hppe_port_vlan_config_port_untag_fltr_cmd_set(dev_id,
+					port_value, (a_uint32_t)filter->untagged_filter);
+			SW_RTN_ON_ERROR(rtn);
+			rtn = hppe_port_vlan_config_port_tag_fltr_cmd_set(dev_id,
+					port_value, (a_uint32_t)filter->tagged_filter);
+			SW_RTN_ON_ERROR(rtn);
+			rtn = hppe_port_vlan_config_port_pri_tag_fltr_cmd_set(dev_id,
+					port_value, (a_uint32_t)filter->priority_filter);
+			SW_RTN_ON_ERROR(rtn);
+		}
 	}
 
 	return rtn;
@@ -2178,18 +2298,25 @@ adpt_hppe_port_ingress_vlan_filter_get(a_uint32_t dev_id, fal_port_t port_id,
 		filter->ctag_priority_filter = vlan_vp.bf.port_cvlan_pri_tag_fltr_cmd;
 		filter->ctag_tagged_filter = vlan_vp.bf.port_cvlan_tag_fltr_cmd;
 	} else {
-		rtn = hppe_port_vlan_config_port_in_vlan_fltr_cmd_get(dev_id,
-				port_value, (a_uint32_t *)&filter->membership_filter);
-		SW_RTN_ON_ERROR(rtn);
-		rtn = hppe_port_vlan_config_port_untag_fltr_cmd_get(dev_id,
-				port_value, (a_uint32_t *)&filter->untagged_filter);
-		SW_RTN_ON_ERROR(rtn);
-		rtn = hppe_port_vlan_config_port_tag_fltr_cmd_get(dev_id,
-				port_value, (a_uint32_t *)&filter->tagged_filter);
-		SW_RTN_ON_ERROR(rtn);
-		rtn = hppe_port_vlan_config_port_pri_tag_fltr_cmd_get(dev_id,
-				port_value, (a_uint32_t *)&filter->priority_filter);
-		SW_RTN_ON_ERROR(rtn);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rtn = adpt_httppe_port_ingress_vlan_filter_get(dev_id, port_id, filter);
+			SW_RTN_ON_ERROR(rtn);
+#endif
+		} else {
+			rtn = hppe_port_vlan_config_port_in_vlan_fltr_cmd_get(dev_id,
+					port_value, (a_uint32_t *)&filter->membership_filter);
+			SW_RTN_ON_ERROR(rtn);
+			rtn = hppe_port_vlan_config_port_untag_fltr_cmd_get(dev_id,
+					port_value, (a_uint32_t *)&filter->untagged_filter);
+			SW_RTN_ON_ERROR(rtn);
+			rtn = hppe_port_vlan_config_port_tag_fltr_cmd_get(dev_id,
+					port_value, (a_uint32_t *)&filter->tagged_filter);
+			SW_RTN_ON_ERROR(rtn);
+			rtn = hppe_port_vlan_config_port_pri_tag_fltr_cmd_get(dev_id,
+					port_value, (a_uint32_t *)&filter->priority_filter);
+			SW_RTN_ON_ERROR(rtn);
+		}
 	}
 
 	return rtn;
@@ -2329,15 +2456,23 @@ adpt_hppe_port_tag_propagation_set(a_uint32_t dev_id,
 			rtn = appe_vlan_port_vp_tbl_set(dev_id, port_value, &vlan_vp);
 			SW_RTN_ON_ERROR(rtn);
 		} else {
-			if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_PCP_EN)) {
-				rtn = hppe_port_vlan_config_port_in_pcp_prop_cmd_set(dev_id,
-						port_value, value_pcp);
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_tag_propagation_set(dev_id, port_id, prop->mask,
+					FAL_PORT_VLAN_INGRESS, value_pcp, value_dei);
 				SW_RTN_ON_ERROR(rtn);
-			}
-			if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_DEI_EN)) {
-				rtn = hppe_port_vlan_config_port_in_dei_prop_cmd_set(dev_id,
-						port_value, value_dei);
-				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_PCP_EN)) {
+					rtn = hppe_port_vlan_config_port_in_pcp_prop_cmd_set(dev_id,
+							port_value, value_pcp);
+					SW_RTN_ON_ERROR(rtn);
+				}
+				if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_DEI_EN)) {
+					rtn = hppe_port_vlan_config_port_in_dei_prop_cmd_set(dev_id,
+							port_value, value_dei);
+					SW_RTN_ON_ERROR(rtn);
+				}
 			}
 		}
 	}
@@ -2358,15 +2493,23 @@ adpt_hppe_port_tag_propagation_set(a_uint32_t dev_id,
 			rtn = appe_egress_vp_tbl_set(dev_id, port_value, &eg_vlan_vp);
 			SW_RTN_ON_ERROR(rtn);
 		} else {
-			if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_PCP_EN)) {
-				rtn = hppe_port_eg_vlan_port_eg_pcp_prop_cmd_set(dev_id,
-						port_value, value_pcp);
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_tag_propagation_set(dev_id, port_id, prop->mask,
+					FAL_PORT_VLAN_EGRESS, value_pcp, value_dei);
 				SW_RTN_ON_ERROR(rtn);
-			}
-			if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_DEI_EN)) {
-				rtn = hppe_port_eg_vlan_port_eg_dei_prop_cmd_set(dev_id,
-						port_value, value_dei);
-				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_PCP_EN)) {
+					rtn = hppe_port_eg_vlan_port_eg_pcp_prop_cmd_set(dev_id,
+							port_value, value_pcp);
+					SW_RTN_ON_ERROR(rtn);
+				}
+				if (FAL_FLG_TST(prop->mask, FAL_PORT_PROPAGATION_DEI_EN)) {
+					rtn = hppe_port_eg_vlan_port_eg_dei_prop_cmd_set(dev_id,
+							port_value, value_dei);
+					SW_RTN_ON_ERROR(rtn);
+				}
 			}
 		}
 	}
@@ -2398,12 +2541,21 @@ adpt_hppe_port_tag_propagation_get(a_uint32_t dev_id,
 			value_pcp = vlan_vp.bf.port_in_pcp_prop_cmd;
 			value_dei = vlan_vp.bf.port_in_dei_prop_cmd;
 		} else {
-			rtn = hppe_port_vlan_config_port_in_pcp_prop_cmd_get(dev_id,
-					port_value, &value_pcp);
-			SW_RTN_ON_ERROR(rtn);
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_tag_propagation_get(dev_id, port_id,
+					FAL_PORT_VLAN_INGRESS, &value_pcp, &value_dei);
+				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				rtn = hppe_port_vlan_config_port_in_pcp_prop_cmd_get(dev_id,
+						port_value, &value_pcp);
+				SW_RTN_ON_ERROR(rtn);
 
-			rtn = hppe_port_vlan_config_port_in_dei_prop_cmd_get(dev_id,
-					port_value, &value_dei);
+				rtn = hppe_port_vlan_config_port_in_dei_prop_cmd_get(dev_id,
+						port_value, &value_dei);
+				SW_RTN_ON_ERROR(rtn);
+			}
 		}
 	}
 	else if (direction == FAL_PORT_VLAN_EGRESS) {
@@ -2415,13 +2567,21 @@ adpt_hppe_port_tag_propagation_get(a_uint32_t dev_id,
 			value_pcp = eg_vlan_vp.bf.port_eg_pcp_prop_cmd;
 			value_dei = eg_vlan_vp.bf.port_eg_dei_prop_cmd;
 		} else {
-			rtn = hppe_port_eg_vlan_port_eg_pcp_prop_cmd_get(dev_id,
-					port_value, &value_pcp);
-			SW_RTN_ON_ERROR(rtn);
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+				rtn = adpt_httppe_port_tag_propagation_get(dev_id, port_id,
+					FAL_PORT_VLAN_EGRESS, &value_pcp, &value_dei);
+				SW_RTN_ON_ERROR(rtn);
+#endif
+			} else {
+				rtn = hppe_port_eg_vlan_port_eg_pcp_prop_cmd_get(dev_id,
+						port_value, &value_pcp);
+				SW_RTN_ON_ERROR(rtn);
 
-			rtn = hppe_port_eg_vlan_port_eg_dei_prop_cmd_get(dev_id,
-					port_value, &value_dei);
-			SW_RTN_ON_ERROR(rtn);
+				rtn = hppe_port_eg_vlan_port_eg_dei_prop_cmd_get(dev_id,
+						port_value, &value_dei);
+				SW_RTN_ON_ERROR(rtn);
+			}
 		}
 	}
 	else
@@ -2935,21 +3095,28 @@ adpt_hppe_port_vlan_counter_get(a_uint32_t dev_id,
 		a_uint32_t cnt_index, fal_port_vlan_counter_t * counter)
 {
 	union vlan_dev_cnt_tbl_u vlan_dev_cnt_tbl;
-	union vlan_dev_tx_counter_tbl_u vlan_dev_tx_counter_tbl;
 	sw_error_t rtn = SW_OK;
 
 	rtn = hppe_vlan_dev_cnt_tbl_get(dev_id, cnt_index, &vlan_dev_cnt_tbl);
 	SW_RTN_ON_ERROR(rtn);
 
-	rtn = hppe_vlan_dev_tx_counter_tbl_get(dev_id, cnt_index, &vlan_dev_tx_counter_tbl);
-	SW_RTN_ON_ERROR(rtn);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_port_vlan_counter_get(dev_id, cnt_index, counter);
+#endif
+	} else {
+		union vlan_dev_tx_counter_tbl_u vlan_dev_tx_counter_tbl;
+		rtn = hppe_vlan_dev_tx_counter_tbl_get(dev_id, cnt_index, &vlan_dev_tx_counter_tbl);
+		SW_RTN_ON_ERROR(rtn);
+
+		counter->tx_packet_counter = vlan_dev_tx_counter_tbl.bf.tx_packets;
+		counter->tx_byte_counter = ((a_uint64_t)vlan_dev_tx_counter_tbl.bf.tx_bytes_1 << 32) |
+			vlan_dev_tx_counter_tbl.bf.tx_bytes_0;
+	}
 
 	counter->rx_packet_counter = vlan_dev_cnt_tbl.bf.rx_pkt_cnt;
 	counter->rx_byte_counter = ((a_uint64_t)vlan_dev_cnt_tbl.bf.rx_byte_cnt_1 << 32) |
 		vlan_dev_cnt_tbl.bf.rx_byte_cnt_0;
-	counter->tx_packet_counter = vlan_dev_tx_counter_tbl.bf.tx_packets;
-	counter->tx_byte_counter = ((a_uint64_t)vlan_dev_tx_counter_tbl.bf.tx_bytes_1 << 32) |
-		vlan_dev_tx_counter_tbl.bf.tx_bytes_0;
 
 	return rtn;
 }
@@ -2958,16 +3125,23 @@ sw_error_t
 adpt_hppe_port_vlan_counter_cleanup(a_uint32_t dev_id, a_uint32_t cnt_index)
 {
 	union vlan_dev_cnt_tbl_u vlan_dev_cnt_tbl;
-	union vlan_dev_tx_counter_tbl_u vlan_dev_tx_counter_tbl;
 	sw_error_t rtn = SW_OK;
 
 	memset(&vlan_dev_cnt_tbl, 0, sizeof(union vlan_dev_cnt_tbl_u));
-	memset(&vlan_dev_tx_counter_tbl, 0, sizeof(union vlan_dev_tx_counter_tbl_u));
 
 	rtn = hppe_vlan_dev_cnt_tbl_set(dev_id, cnt_index, &vlan_dev_cnt_tbl);
 	SW_RTN_ON_ERROR(rtn);
 
-	rtn = hppe_vlan_dev_tx_counter_tbl_set(dev_id, cnt_index, &vlan_dev_tx_counter_tbl);
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		rtn = adpt_httppe_port_vlan_counter_cleanup(dev_id, cnt_index);
+#endif
+	} else {
+		union vlan_dev_tx_counter_tbl_u vlan_dev_tx_counter_tbl;
+		memset(&vlan_dev_tx_counter_tbl, 0, sizeof(union vlan_dev_tx_counter_tbl_u));
+
+		rtn = hppe_vlan_dev_tx_counter_tbl_set(dev_id, cnt_index, &vlan_dev_tx_counter_tbl);
+	}
 
 	return rtn;
 }
@@ -2998,6 +3172,24 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_httppe_port_vlan_trans_adv_getfirst;
 		p_adpt_api->adpt_port_vlan_trans_adv_getnext =
 			adpt_httppe_port_vlan_trans_adv_getnext;
+		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
+			adpt_httppe_vlan_trans_dscp_pcp_mapping_set;
+		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
+			adpt_httppe_vlan_trans_dscp_pcp_mapping_get;
+#ifndef IN_PORTVLAN_MINI
+		p_adpt_api->adpt_port_egress_vlan_filter_set =
+			adpt_httppe_port_egress_vlan_filter_set;
+		p_adpt_api->adpt_port_egress_vlan_filter_get =
+			adpt_httppe_port_egress_vlan_filter_get;
+		p_adpt_api->adpt_port_isol_ctrl_set = adpt_httppe_port_isol_ctrl_set;
+		p_adpt_api->adpt_port_isol_ctrl_get = adpt_httppe_port_isol_ctrl_get;
+		p_adpt_api->adpt_port_isol_group_set = adpt_httppe_port_isol_group_set;
+		p_adpt_api->adpt_port_isol_group_get = adpt_httppe_port_isol_group_get;
+		p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_httppe_port_isol_action_ctrl_set;
+		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_httppe_port_isol_action_ctrl_get;
+		p_adpt_api->adpt_port_isol_action_set = adpt_httppe_port_isol_action_set;
+		p_adpt_api->adpt_port_isol_action_get = adpt_httppe_port_isol_action_get;
+#endif
 #endif
 	} else {
 		p_adpt_api->adpt_port_qinq_mode_set = adpt_hppe_port_qinq_mode_set;
@@ -3014,6 +3206,28 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_hppe_port_vlan_trans_adv_getfirst;
 		p_adpt_api->adpt_port_vlan_trans_adv_getnext =
 			adpt_hppe_port_vlan_trans_adv_getnext;
+#ifndef IN_PORTVLAN_MINI
+		p_adpt_api->adpt_port_egress_vlan_filter_set =
+			adpt_appe_port_egress_vlan_filter_set;
+		p_adpt_api->adpt_port_egress_vlan_filter_get =
+			adpt_appe_port_egress_vlan_filter_get;
+		p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
+		p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
+		p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
+		p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
+#endif
+#if defined(JHPPE)
+		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
+			adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
+		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
+			adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
+#ifndef IN_PORTVLAN_MINI
+		p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
+		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
+		p_adpt_api->adpt_port_isol_action_set = adpt_jhppe_port_isol_action_set;
+		p_adpt_api->adpt_port_isol_action_get = adpt_jhppe_port_isol_action_get;
+#endif
+#endif
 	}
 
 #ifndef IN_PORTVLAN_MINI
@@ -3029,24 +3243,6 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
 	p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;
 	p_adpt_api->adpt_port_vlan_vpgroup_get = adpt_appe_port_vlan_vpgroup_get;
-	p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
-	p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
-	p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
-	p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
-	p_adpt_api->adpt_port_egress_vlan_filter_set =
-		adpt_appe_port_egress_vlan_filter_set;
-	p_adpt_api->adpt_port_egress_vlan_filter_get =
-		adpt_appe_port_egress_vlan_filter_get;
-#if defined(JHPPE)
-	p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
-		adpt_jhppe_vlan_trans_dscp_pcp_mapping_set;
-	p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_get =
-		adpt_jhppe_vlan_trans_dscp_pcp_mapping_get;
-	p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
-	p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
-	p_adpt_api->adpt_port_isol_action_set = adpt_jhppe_port_isol_action_set;
-	p_adpt_api->adpt_port_isol_action_get = adpt_jhppe_port_isol_action_get;
-#endif
 #endif
 	p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;
 	p_adpt_api->adpt_global_qinq_mode_get = adpt_hppe_global_qinq_mode_get;
@@ -3056,10 +3252,10 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_vlan_xlt_miss_cmd_get = adpt_hppe_port_vlan_xlt_miss_cmd_get;
 	p_adpt_api->adpt_port_vsi_egmode_set = adpt_hppe_port_vsi_egmode_set;
 	p_adpt_api->adpt_port_vsi_egmode_get = adpt_hppe_port_vsi_egmode_get;
-	p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_set =
-		adpt_hppe_port_vlantag_vsi_egmode_enable_set;
-	p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_get =
-		adpt_hppe_port_vlantag_vsi_egmode_enable_get;
+		p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_set =
+			adpt_hppe_port_vlantag_vsi_egmode_enable_set;
+		p_adpt_api->adpt_port_vlantag_vsi_egmode_enable_get =
+			adpt_hppe_port_vlantag_vsi_egmode_enable_get;
 	p_adpt_api->adpt_portvlan_member_update = adpt_hppe_portvlan_member_update;
 	p_adpt_api->adpt_portvlan_member_get = adpt_hppe_portvlan_member_get;
 	p_adpt_api->adpt_qinq_mode_set = adpt_hppe_qinq_mode_set;

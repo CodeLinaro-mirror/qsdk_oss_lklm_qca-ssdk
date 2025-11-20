@@ -6,6 +6,34 @@
 #include "hsl_htt_reg.h"
 
 sw_error_t
+httppe_port_vsi_enqueue_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vsi_enqueue_map_u *value)
+{
+	if (index >= PORT_VSI_ENQUEUE_MAP_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + PORT_VSI_ENQUEUE_MAP_ADDRESS + \
+				index * PORT_VSI_ENQUEUE_MAP_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_port_vsi_enqueue_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vsi_enqueue_map_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + PORT_VSI_ENQUEUE_MAP_ADDRESS + \
+				index * PORT_VSI_ENQUEUE_MAP_INC,
+				value->val);
+}
+
+sw_error_t
 httppe_flush_cfg_get(
 		a_uint32_t dev_id,
 		union flush_cfg_u *value)

@@ -7,6 +7,32 @@
 #ifndef _HTTPPE_L2_VP_API_H_
 #define _HTTPPE_L2_VP_API_H_
 
+#define PORT_ISOL_ACTION_MAX_ENTRY	PORT_ISOL_ACTION_NUM
+
+sw_error_t
+httppe_port_isol_action_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_isol_action_u *value);
+
+sw_error_t
+httppe_port_isol_action_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_isol_action_u *value);
+
+sw_error_t
+httppe_port_isol_action_action_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_isol_action_action_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define L2_VP_PORT_TBL_MAX_ENTRY	L2_VP_PORT_TBL_NUM
 
 sw_error_t
@@ -491,4 +517,29 @@ httppe_l2_vp_port_post_tbl_vp_type_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+#define VP_ISOL_ACTION_TBL_MAX_ENTRY	VP_ISOL_ACTION_TBL_NUM
+
+sw_error_t
+httppe_vp_isol_action_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vp_isol_action_tbl_u *value);
+
+sw_error_t
+httppe_vp_isol_action_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vp_isol_action_tbl_u *value);
+
+sw_error_t
+httppe_vp_isol_action_tbl_vp_profile_action_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+httppe_vp_isol_action_tbl_vp_profile_action_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
 #endif

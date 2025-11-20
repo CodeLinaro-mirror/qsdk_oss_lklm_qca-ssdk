@@ -59,6 +59,7 @@
 #include "hmsppe/jhppe_pktedit_reg.h"
 #include "hmsppe/jhppe_acl_reg.h"
 #include "hmsppe/jhppe_loopback_reg.h"
+#include "hmsppe/jhppe_athtag_reg.h"
 #include "hmsppe/hmsppe_prx_pon_reg.h"
 
 #include "hmsppe/hmsppe_prx_pon_api.h"
@@ -115,6 +116,7 @@
 #include "hmsppe/jhppe_tunnel_api.h"
 #include "hmsppe/jhppe_tunnel_program_api.h"
 #include "hmsppe/jhppe_loopback_api.h"
+#include "hmsppe/jhppe_athtag_api.h"
 #include "hmsppe/mppe_athtag_api.h"
 #include "hmsppe/mppe_servcode_api.h"
 #include "hmsppe/mrppe_pktedit_api.h"

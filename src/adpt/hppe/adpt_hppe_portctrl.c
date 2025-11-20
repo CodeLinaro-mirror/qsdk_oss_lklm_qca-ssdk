@@ -36,6 +36,7 @@
 #include "ref_port_ctrl.h"
 #if defined(HTTPPE)
 #include "adpt_httppe_portctrl.h"
+#include "adpt_httppe_portvlan.h"
 #endif
 
 #define PORT4_PCS_SEL_GMII_FROM_PCS0 1
@@ -4473,20 +4474,25 @@ _adpt_hppe_port_cnt_enable_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_c
 		SW_RTN_ON_ERROR(rv);
 		rv = hppe_mc_mtu_ctrl_tbl_get(dev_id, port_value, &mc_mtu_ctrl_tbl);
 		SW_RTN_ON_ERROR(rv);
-		rv = hppe_port_eg_vlan_get(dev_id, port_value, &port_eg_vlan);
-		SW_RTN_ON_ERROR(rv);
 
 		mru_mtu_ctrl_tbl.bf.rx_cnt_en = cnt_cfg->rx_cnt_en;
 		mru_mtu_ctrl_tbl.bf.tx_cnt_en = cnt_cfg->uc_tx_cnt_en;
 		mc_mtu_ctrl_tbl.bf.tx_cnt_en = cnt_cfg->mc_tx_cnt_en;
-		port_eg_vlan.bf.tx_counting_en = cnt_cfg->uc_tx_cnt_en;
 
 		rv = hppe_mru_mtu_ctrl_tbl_set(dev_id, port_value, &mru_mtu_ctrl_tbl);
 		SW_RTN_ON_ERROR(rv);
 		rv = hppe_mc_mtu_ctrl_tbl_set(dev_id, port_value, &mc_mtu_ctrl_tbl);
 		SW_RTN_ON_ERROR(rv);
-		rv = hppe_port_eg_vlan_set(dev_id, port_value, &port_eg_vlan);
-		SW_RTN_ON_ERROR(rv);
+
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_port_eg_vlan_tx_counting_en_set(dev_id, port_id, cnt_cfg->uc_tx_cnt_en);
+			SW_RTN_ON_ERROR(rv);
+#endif
+		} else {
+			rv = hppe_port_eg_vlan_tx_counting_en_set(dev_id, port_value, cnt_cfg->uc_tx_cnt_en);
+			SW_RTN_ON_ERROR(rv);
+		}
 	}
 	else
 	{
@@ -4538,14 +4544,23 @@ _adpt_hppe_port_cnt_enable_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_c
 		SW_RTN_ON_ERROR(rv);
 		rv = hppe_mc_mtu_ctrl_tbl_get(dev_id, port_value, &mc_mtu_ctrl_tbl);
 		SW_RTN_ON_ERROR(rv);
-		rv = hppe_port_eg_vlan_get(dev_id, port_value, &port_eg_vlan);
-		SW_RTN_ON_ERROR(rv);
+
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_port_eg_vlan_tx_counting_en_get(dev_id, port_value, &cnt_cfg->uc_tx_cnt_en);
+			SW_RTN_ON_ERROR(rv);
+#endif
+		} else {
+			rv = hppe_port_eg_vlan_get(dev_id, port_value, &port_eg_vlan);
+			SW_RTN_ON_ERROR(rv);
+
+			/*when it's physical port,mru_mtu_ctrl.tx_cnt_en enabled with port_eg_vlan.tx_counting_en in the same time*/
+			cnt_cfg->uc_tx_cnt_en = port_eg_vlan.bf.tx_counting_en;
+		}
 
 		cnt_cfg->rx_cnt_en = mru_mtu_ctrl_tbl.bf.rx_cnt_en;
 		cnt_cfg->mc_tx_cnt_en = mc_mtu_ctrl_tbl.bf.tx_cnt_en;
 
-		/*when it's physical port,mru_mtu_ctrl.tx_cnt_en enabled with port_eg_vlan.tx_counting_en in the same time*/
-		cnt_cfg->uc_tx_cnt_en = port_eg_vlan.bf.tx_counting_en;
 	}
 	else
 	{
@@ -4693,12 +4708,19 @@ _adpt_hppe_port_tx_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t
 
 	if(ADPT_IS_PPORT(port_id))
 	{
-		rv = hppe_port_tx_counter_tbl_reg_get(dev_id, port_value, &phy_port_tx_cnt_tbl);
-		SW_RTN_ON_ERROR(rv);
-		port_cnt->tx_pkt_cnt = phy_port_tx_cnt_tbl.bf.tx_packets;
-		port_cnt->tx_byte_cnt = ((a_uint64_t)phy_port_tx_cnt_tbl.bf.tx_bytes_1 <<
-			SW_FIELD_OFFSET_IN_WORD(PORT_TX_COUNTER_TBL_REG_TX_BYTES_OFFSET)) |
-			phy_port_tx_cnt_tbl.bf.tx_bytes_0;
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_port_tx_counter_tbl_get(dev_id, port_value, port_cnt);
+			SW_RTN_ON_ERROR(rv);
+#endif
+		} else {
+			rv = hppe_port_tx_counter_tbl_reg_get(dev_id, port_value, &phy_port_tx_cnt_tbl);
+			SW_RTN_ON_ERROR(rv);
+			port_cnt->tx_pkt_cnt = phy_port_tx_cnt_tbl.bf.tx_packets;
+			port_cnt->tx_byte_cnt = ((a_uint64_t)phy_port_tx_cnt_tbl.bf.tx_bytes_1 <<
+				SW_FIELD_OFFSET_IN_WORD(PORT_TX_COUNTER_TBL_REG_TX_BYTES_OFFSET)) |
+				phy_port_tx_cnt_tbl.bf.tx_bytes_0;
+		}
 
 		rv = hppe_port_tx_drop_cnt_tbl_get(dev_id, port_value, &phy_port_tx_drop_cnt);
 		SW_RTN_ON_ERROR(rv);
@@ -4713,12 +4735,19 @@ _adpt_hppe_port_tx_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t
 	}
 	else
 	{
-		rv = hppe_vp_tx_counter_tbl_reg_get(dev_id, port_value, &vport_tx_cnt_tbl);
-		SW_RTN_ON_ERROR(rv);
-		port_cnt->tx_pkt_cnt = vport_tx_cnt_tbl.bf.tx_packets;
-		port_cnt->tx_byte_cnt = ((a_uint64_t)vport_tx_cnt_tbl.bf.tx_bytes_1 <<
-			SW_FIELD_OFFSET_IN_WORD(VP_TX_COUNTER_TBL_REG_TX_BYTES_OFFSET)) |
-			vport_tx_cnt_tbl.bf.tx_bytes_0;
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_vp_tx_counter_tbl_get(dev_id, port_value, port_cnt);
+			SW_RTN_ON_ERROR(rv);
+#endif
+		} else {
+			rv = hppe_vp_tx_counter_tbl_reg_get(dev_id, port_value, &vport_tx_cnt_tbl);
+			SW_RTN_ON_ERROR(rv);
+			port_cnt->tx_pkt_cnt = vport_tx_cnt_tbl.bf.tx_packets;
+			port_cnt->tx_byte_cnt = ((a_uint64_t)vport_tx_cnt_tbl.bf.tx_bytes_1 <<
+				SW_FIELD_OFFSET_IN_WORD(VP_TX_COUNTER_TBL_REG_TX_BYTES_OFFSET)) |
+				vport_tx_cnt_tbl.bf.tx_bytes_0;
+		}
 
 		rv = hppe_vp_tx_drop_cnt_tbl_get(dev_id, port_value, &vport_tx_drop_cnt);
 		SW_RTN_ON_ERROR(rv);
@@ -4750,7 +4779,13 @@ _adpt_hppe_port_tx_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 
 	if(ADPT_IS_PPORT(port_id))
 	{
-		rv = hppe_port_tx_counter_tbl_reg_set(dev_id, port_value, &phy_port_tx_cnt_tbl);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_port_tx_counter_tbl_flush(dev_id, port_value);
+#endif
+		} else {
+			rv = hppe_port_tx_counter_tbl_reg_set(dev_id, port_value, &phy_port_tx_cnt_tbl);
+		}
 		SW_RTN_ON_ERROR(rv);
 
 		rv = hppe_port_tx_drop_cnt_tbl_set(dev_id, port_value, &phy_port_tx_drop_cnt);
@@ -4762,7 +4797,13 @@ _adpt_hppe_port_tx_cnt_flush(a_uint32_t dev_id, fal_port_t port_id)
 	}
 	else
 	{
-		rv = hppe_vp_tx_counter_tbl_reg_set(dev_id, port_value, &vport_tx_cnt_tbl);
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+			rv = adpt_httppe_vp_tx_counter_tbl_flush(dev_id, port_value);
+#endif
+		} else {
+			rv = hppe_vp_tx_counter_tbl_reg_set(dev_id, port_value, &vport_tx_cnt_tbl);
+		}
 		SW_RTN_ON_ERROR(rv);
 
 		rv = hppe_vp_tx_drop_cnt_tbl_set(dev_id, port_value, &vport_tx_drop_cnt);

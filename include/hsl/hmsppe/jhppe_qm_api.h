@@ -160,6 +160,7 @@ jhppe_uniq_q_map_tbl_queue_bitmap_set(
 		a_uint32_t index,
 		a_uint64_t value);
 
+
 sw_error_t
 jhppe_enq_ctrl_get(
 		a_uint32_t dev_id,

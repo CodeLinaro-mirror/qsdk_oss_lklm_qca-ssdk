@@ -302,6 +302,464 @@ httppe_vlan_tpid_reg_ext1_stag_tpid_map_set(
 }
 
 sw_error_t
+httppe_vp_isol_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vp_isol_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + VP_ISOL_TBL_ADDRESS + \
+				index * VP_ISOL_TBL_INC,
+				value->val,
+				sizeof(union vp_isol_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_vp_isol_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vp_isol_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + VP_ISOL_TBL_ADDRESS + \
+				index * VP_ISOL_TBL_INC,
+				value->val,
+				sizeof(union vp_isol_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_vp_isol_tbl_vp_profile_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value)
+{
+	union vp_isol_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_vp_isol_tbl_get(dev_id, index, &reg_val);
+	*value = (a_uint64_t)reg_val.bf.vp_profile_map_1 << 32 | \
+		reg_val.bf.vp_profile_map_0;
+	return ret;
+}
+
+sw_error_t
+httppe_vp_isol_tbl_vp_profile_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value)
+{
+	union vp_isol_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_vp_isol_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.vp_profile_map_1 = value >> 32;
+	reg_val.bf.vp_profile_map_0 = value & (((a_uint64_t)1<<32)-1);
+	ret = httppe_vp_isol_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_def_pcp_u *value)
+{
+	if (index >= PORT_DEF_PCP_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				INGRESS_VLAN_BASE_ADDR + PORT_DEF_PCP_ADDRESS + \
+				index * PORT_DEF_PCP_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_port_def_pcp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_def_pcp_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				INGRESS_VLAN_BASE_ADDR + PORT_DEF_PCP_ADDRESS + \
+				index * PORT_DEF_PCP_INC,
+				value->val);
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_cdei_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_def_cdei;
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_cdei_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_def_cdei = value;
+	ret = httppe_port_def_pcp_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_cpcp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_def_cpcp;
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_cpcp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_def_cpcp = value;
+	ret = httppe_port_def_pcp_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_sdei_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_def_sdei;
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_sdei_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_def_sdei = value;
+	ret = httppe_port_def_pcp_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_spcp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_def_spcp;
+	return ret;
+}
+
+sw_error_t
+httppe_port_def_pcp_port_def_spcp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_def_pcp_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_def_pcp_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_def_spcp = value;
+	ret = httppe_port_def_pcp_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vlan_config_u *value)
+{
+	if (index >= PORT_VLAN_CONFIG_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				INGRESS_VLAN_BASE_ADDR + PORT_VLAN_CONFIG_ADDRESS + \
+				index * PORT_VLAN_CONFIG_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_port_vlan_config_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vlan_config_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				INGRESS_VLAN_BASE_ADDR + PORT_VLAN_CONFIG_ADDRESS + \
+				index * PORT_VLAN_CONFIG_INC,
+				value->val);
+}
+
+sw_error_t
+httppe_port_vlan_config_port_in_dei_prop_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_in_dei_prop_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_in_dei_prop_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_in_dei_prop_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_in_pcp_prop_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_in_pcp_prop_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_in_pcp_prop_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_in_pcp_prop_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_in_vlan_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_in_vlan_fltr_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_in_vlan_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_in_vlan_fltr_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_pri_tag_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_pri_tag_fltr_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_pri_tag_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_pri_tag_fltr_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_tag_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_tag_fltr_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_tag_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_tag_fltr_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_untag_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_untag_fltr_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_untag_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_untag_fltr_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_vlan_xlt_miss_fwd_cmd;
+	return ret;
+}
+
+sw_error_t
+httppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union port_vlan_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_port_vlan_config_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_vlan_xlt_miss_fwd_cmd = value;
+	ret = httppe_port_vlan_config_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
 httppe_xlt_rule_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -327,6 +785,68 @@ httppe_xlt_rule_tbl_set(
 				index * XLT_RULE_TBL_INC,
 				value->val,
 				sizeof(union xlt_rule_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_xlt_rule_tbl_port_bitmap_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union xlt_rule_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_xlt_rule_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.port_bitmap;
+	return ret;
+}
+
+sw_error_t
+httppe_xlt_rule_tbl_port_bitmap_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union xlt_rule_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_xlt_rule_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.port_bitmap = value;
+	ret = httppe_xlt_rule_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_xlt_rule_tbl_valid_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union xlt_rule_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_xlt_rule_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.valid;
+	return ret;
+}
+
+sw_error_t
+httppe_xlt_rule_tbl_valid_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union xlt_rule_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_xlt_rule_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.valid = value;
+	ret = httppe_xlt_rule_tbl_set(dev_id, index, &reg_val);
+	return ret;
 }
 
 sw_error_t
@@ -383,6 +903,68 @@ httppe_in_vlan_dscp_pbit_map_tbl_set(
 				INGRESS_VLAN_BASE_ADDR + IN_VLAN_DSCP_PBIT_MAP_TBL_ADDRESS + \
 				index * IN_VLAN_DSCP_PBIT_MAP_TBL_INC,
 				value->val);
+}
+
+sw_error_t
+httppe_in_vlan_dscp_pbit_map_tbl_pcp_0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union in_vlan_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_in_vlan_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_0;
+	return ret;
+}
+
+sw_error_t
+httppe_in_vlan_dscp_pbit_map_tbl_pcp_0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union in_vlan_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_in_vlan_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_0 = value;
+	ret = httppe_in_vlan_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_in_vlan_dscp_pbit_map_tbl_pcp_1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union in_vlan_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_in_vlan_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_1;
+	return ret;
+}
+
+sw_error_t
+httppe_in_vlan_dscp_pbit_map_tbl_pcp_1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union in_vlan_dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_in_vlan_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_1 = value;
+	ret = httppe_in_vlan_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
+	return ret;
 }
 
 sw_error_t
@@ -730,6 +1312,151 @@ httppe_eg_bridge_config_set(
 				dev_id,
 				NSS_PTX_CSR_BASE_ADDR + EG_BRIDGE_CONFIG_ADDRESS,
 				value->val);
+}
+
+sw_error_t
+httppe_eg_bridge_config_bridge_type_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.bridge_type;
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_bridge_type_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.bridge_type = value;
+	ret = httppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_passthrough_cpu_code0_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.passthrough_cpu_code0;
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_passthrough_cpu_code0_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.passthrough_cpu_code0 = value;
+	ret = httppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_passthrough_cpu_code1_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.passthrough_cpu_code1;
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_passthrough_cpu_code1_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.passthrough_cpu_code1 = value;
+	ret = httppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_pkt_l2_edit_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.pkt_l2_edit_en;
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_pkt_l2_edit_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pkt_l2_edit_en = value;
+	ret = httppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_queue_cnt_en_get(
+		a_uint32_t dev_id,
+		a_uint32_t *value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	*value = reg_val.bf.queue_cnt_en;
+	return ret;
+}
+
+sw_error_t
+httppe_eg_bridge_config_queue_cnt_en_set(
+		a_uint32_t dev_id,
+		a_uint32_t value)
+{
+	union eg_bridge_config_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_eg_bridge_config_get(dev_id, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.queue_cnt_en = value;
+	ret = httppe_eg_bridge_config_set(dev_id, &reg_val);
+	return ret;
 }
 
 sw_error_t
@@ -1692,6 +2419,34 @@ httppe_eg_vlan_xlt_rule_set(
 }
 
 sw_error_t
+httppe_vlan_dev_tx_counter_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_dev_tx_counter_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + VLAN_DEV_TX_COUNTER_TBL_ADDRESS + \
+				index * VLAN_DEV_TX_COUNTER_TBL_INC,
+				value->val,
+				sizeof(union vlan_dev_tx_counter_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_dev_tx_counter_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + VLAN_DEV_TX_COUNTER_TBL_ADDRESS + \
+				index * VLAN_DEV_TX_COUNTER_TBL_INC,
+				value->val,
+				sizeof(union vlan_dev_tx_counter_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
 httppe_dscp_pbit_map_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1717,5 +2472,67 @@ httppe_dscp_pbit_map_tbl_set(
 				NSS_PTX_CSR_BASE_ADDR + DSCP_PBIT_MAP_TBL_ADDRESS + \
 				index * DSCP_PBIT_MAP_TBL_INC,
 				value->val);
+}
+
+sw_error_t
+httppe_dscp_pbit_map_tbl_pcp_0_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_0;
+	return ret;
+}
+
+sw_error_t
+httppe_dscp_pbit_map_tbl_pcp_0_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_0 = value;
+	ret = httppe_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
+	return ret;
+}
+
+sw_error_t
+httppe_dscp_pbit_map_tbl_pcp_1_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value)
+{
+	union dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	*value = reg_val.bf.pcp_1;
+	return ret;
+}
+
+sw_error_t
+httppe_dscp_pbit_map_tbl_pcp_1_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union dscp_pbit_map_tbl_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = httppe_dscp_pbit_map_tbl_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.pcp_1 = value;
+	ret = httppe_dscp_pbit_map_tbl_set(dev_id, index, &reg_val);
+	return ret;
 }
 

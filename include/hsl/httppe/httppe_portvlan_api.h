@@ -200,6 +200,192 @@ httppe_vlan_tpid_reg_ext1_stag_tpid_map_set(
 		a_uint32_t dev_id,
 		unsigned int value);
 
+#define VP_ISOL_TBL_MAX_ENTRY	VP_ISOL_TBL_NUM
+
+sw_error_t
+httppe_vp_isol_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vp_isol_tbl_u *value);
+
+sw_error_t
+httppe_vp_isol_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vp_isol_tbl_u *value);
+
+sw_error_t
+httppe_vp_isol_tbl_vp_profile_map_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+httppe_vp_isol_tbl_vp_profile_map_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+
+#define PORT_DEF_PCP_MAX_ENTRY	PORT_DEF_PCP_NUM
+
+sw_error_t
+httppe_port_def_pcp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_def_pcp_u *value);
+
+sw_error_t
+httppe_port_def_pcp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_def_pcp_u *value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_cdei_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_cdei_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_cpcp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_cpcp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_sdei_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_sdei_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_spcp_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_def_pcp_port_def_spcp_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+#define PORT_VLAN_CONFIG_MAX_ENTRY	PORT_VLAN_CONFIG_NUM
+
+sw_error_t
+httppe_port_vlan_config_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vlan_config_u *value);
+
+sw_error_t
+httppe_port_vlan_config_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union port_vlan_config_u *value);
+
+sw_error_t
+httppe_port_vlan_config_port_in_dei_prop_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_in_dei_prop_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vlan_config_port_in_pcp_prop_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_in_pcp_prop_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vlan_config_port_in_vlan_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_in_vlan_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vlan_config_port_pri_tag_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_pri_tag_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vlan_config_port_tag_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_tag_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vlan_config_port_untag_fltr_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_untag_fltr_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_port_vlan_config_port_vlan_xlt_miss_fwd_cmd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define XLT_RULE_TBL_MAX_ENTRY	XLT_RULE_TBL_NUM
 
 sw_error_t
@@ -2304,6 +2490,68 @@ httppe_eg_vlan_xlt_rule_vsi_valid_get(
 
 sw_error_t
 httppe_eg_vlan_xlt_rule_vsi_valid_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+#define VLAN_DEV_TX_COUNTER_TBL_MAX_ENTRY	VLAN_DEV_TX_COUNTER_TBL_NUM
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_dev_tx_counter_tbl_u *value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union vlan_dev_tx_counter_tbl_u *value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_drop_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_drop_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_drop_packets_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_drop_packets_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_tx_bytes_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t *value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_tx_bytes_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint64_t value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_tx_packets_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+httppe_vlan_dev_tx_counter_tbl_tx_packets_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value);

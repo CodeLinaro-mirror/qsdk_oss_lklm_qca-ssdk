@@ -162,6 +162,129 @@ union vlan_tpid_reg_ext1_u {
 	struct vlan_tpid_reg_ext1 bf;
 };
 
+/*[table] VP_ISOL_TBL*/
+#define VP_ISOL_TBL
+#define VP_ISOL_TBL_ADDRESS 0x28000
+#define VP_ISOL_TBL_NUM     64
+#define VP_ISOL_TBL_INC     0x10
+#define VP_ISOL_TBL_TYPE    REG_TYPE_RW
+#define VP_ISOL_TBL_DEFAULT 0x0
+	/*[field] VP_PROFILE_MAP*/
+	#define VP_ISOL_TBL_VP_PROFILE_MAP
+	#define VP_ISOL_TBL_VP_PROFILE_MAP_OFFSET  0
+	#define VP_ISOL_TBL_VP_PROFILE_MAP_LEN     64
+	#define VP_ISOL_TBL_VP_PROFILE_MAP_DEFAULT 0x0
+
+struct vp_isol_tbl {
+	a_uint32_t  vp_profile_map_0:32;
+	a_uint32_t  vp_profile_map_1:32;
+};
+
+union vp_isol_tbl_u {
+	a_uint32_t val[2];
+	struct vp_isol_tbl bf;
+};
+
+/*[register] PORT_DEF_PCP*/
+#define PORT_DEF_PCP
+#define PORT_DEF_PCP_ADDRESS 0x50
+#define PORT_DEF_PCP_NUM     9
+#define PORT_DEF_PCP_INC     0x4
+#define PORT_DEF_PCP_TYPE    REG_TYPE_RW
+#define PORT_DEF_PCP_DEFAULT 0x0
+	/*[field] PORT_DEF_SPCP*/
+	#define PORT_DEF_PCP_PORT_DEF_SPCP
+	#define PORT_DEF_PCP_PORT_DEF_SPCP_OFFSET  0
+	#define PORT_DEF_PCP_PORT_DEF_SPCP_LEN     3
+	#define PORT_DEF_PCP_PORT_DEF_SPCP_DEFAULT 0x0
+	/*[field] PORT_DEF_SDEI*/
+	#define PORT_DEF_PCP_PORT_DEF_SDEI
+	#define PORT_DEF_PCP_PORT_DEF_SDEI_OFFSET  3
+	#define PORT_DEF_PCP_PORT_DEF_SDEI_LEN     1
+	#define PORT_DEF_PCP_PORT_DEF_SDEI_DEFAULT 0x0
+	/*[field] PORT_DEF_CPCP*/
+	#define PORT_DEF_PCP_PORT_DEF_CPCP
+	#define PORT_DEF_PCP_PORT_DEF_CPCP_OFFSET  4
+	#define PORT_DEF_PCP_PORT_DEF_CPCP_LEN     3
+	#define PORT_DEF_PCP_PORT_DEF_CPCP_DEFAULT 0x0
+	/*[field] PORT_DEF_CDEI*/
+	#define PORT_DEF_PCP_PORT_DEF_CDEI
+	#define PORT_DEF_PCP_PORT_DEF_CDEI_OFFSET  7
+	#define PORT_DEF_PCP_PORT_DEF_CDEI_LEN     1
+	#define PORT_DEF_PCP_PORT_DEF_CDEI_DEFAULT 0x0
+
+struct port_def_pcp {
+	a_uint32_t  port_def_spcp:3;
+	a_uint32_t  port_def_sdei:1;
+	a_uint32_t  port_def_cpcp:3;
+	a_uint32_t  port_def_cdei:1;
+	a_uint32_t  _reserved0:24;
+};
+
+union port_def_pcp_u {
+	a_uint32_t val;
+	struct port_def_pcp bf;
+};
+
+/*[register] PORT_VLAN_CONFIG*/
+#define PORT_VLAN_CONFIG
+#define PORT_VLAN_CONFIG_ADDRESS 0x90
+#define PORT_VLAN_CONFIG_NUM     9
+#define PORT_VLAN_CONFIG_INC     0x4
+#define PORT_VLAN_CONFIG_TYPE    REG_TYPE_RW
+#define PORT_VLAN_CONFIG_DEFAULT 0x0
+	/*[field] PORT_IN_PCP_PROP_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_IN_PCP_PROP_CMD
+	#define PORT_VLAN_CONFIG_PORT_IN_PCP_PROP_CMD_OFFSET  0
+	#define PORT_VLAN_CONFIG_PORT_IN_PCP_PROP_CMD_LEN     1
+	#define PORT_VLAN_CONFIG_PORT_IN_PCP_PROP_CMD_DEFAULT 0x0
+	/*[field] PORT_IN_DEI_PROP_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_IN_DEI_PROP_CMD
+	#define PORT_VLAN_CONFIG_PORT_IN_DEI_PROP_CMD_OFFSET  1
+	#define PORT_VLAN_CONFIG_PORT_IN_DEI_PROP_CMD_LEN     1
+	#define PORT_VLAN_CONFIG_PORT_IN_DEI_PROP_CMD_DEFAULT 0x0
+	/*[field] PORT_UNTAG_FLTR_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_UNTAG_FLTR_CMD
+	#define PORT_VLAN_CONFIG_PORT_UNTAG_FLTR_CMD_OFFSET  2
+	#define PORT_VLAN_CONFIG_PORT_UNTAG_FLTR_CMD_LEN     1
+	#define PORT_VLAN_CONFIG_PORT_UNTAG_FLTR_CMD_DEFAULT 0x0
+	/*[field] PORT_PRI_TAG_FLTR_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_PRI_TAG_FLTR_CMD
+	#define PORT_VLAN_CONFIG_PORT_PRI_TAG_FLTR_CMD_OFFSET  3
+	#define PORT_VLAN_CONFIG_PORT_PRI_TAG_FLTR_CMD_LEN     1
+	#define PORT_VLAN_CONFIG_PORT_PRI_TAG_FLTR_CMD_DEFAULT 0x0
+	/*[field] PORT_TAG_FLTR_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_TAG_FLTR_CMD
+	#define PORT_VLAN_CONFIG_PORT_TAG_FLTR_CMD_OFFSET  4
+	#define PORT_VLAN_CONFIG_PORT_TAG_FLTR_CMD_LEN     1
+	#define PORT_VLAN_CONFIG_PORT_TAG_FLTR_CMD_DEFAULT 0x0
+	/*[field] PORT_VLAN_XLT_MISS_FWD_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_VLAN_XLT_MISS_FWD_CMD
+	#define PORT_VLAN_CONFIG_PORT_VLAN_XLT_MISS_FWD_CMD_OFFSET  5
+	#define PORT_VLAN_CONFIG_PORT_VLAN_XLT_MISS_FWD_CMD_LEN     2
+	#define PORT_VLAN_CONFIG_PORT_VLAN_XLT_MISS_FWD_CMD_DEFAULT 0x0
+	/*[field] PORT_IN_VLAN_FLTR_CMD*/
+	#define PORT_VLAN_CONFIG_PORT_IN_VLAN_FLTR_CMD
+	#define PORT_VLAN_CONFIG_PORT_IN_VLAN_FLTR_CMD_OFFSET  7
+	#define PORT_VLAN_CONFIG_PORT_IN_VLAN_FLTR_CMD_LEN     1
+	#define PORT_VLAN_CONFIG_PORT_IN_VLAN_FLTR_CMD_DEFAULT 0x0
+
+struct port_vlan_config {
+	a_uint32_t  port_in_pcp_prop_cmd:1;
+	a_uint32_t  port_in_dei_prop_cmd:1;
+	a_uint32_t  port_untag_fltr_cmd:1;
+	a_uint32_t  port_pri_tag_fltr_cmd:1;
+	a_uint32_t  port_tag_fltr_cmd:1;
+	a_uint32_t  port_vlan_xlt_miss_fwd_cmd:2;
+	a_uint32_t  port_in_vlan_fltr_cmd:1;
+	a_uint32_t  _reserved0:24;
+};
+
+union port_vlan_config_u {
+	a_uint32_t val;
+	struct port_vlan_config bf;
+};
+
 /*[table] XLT_RULE_TBL*/
 #define XLT_RULE_TBL
 #define XLT_RULE_TBL_ADDRESS 0x2000
@@ -1456,6 +1579,50 @@ struct eg_vlan_xlt_rule {
 union eg_vlan_xlt_rule_u {
 	a_uint32_t val[3];
 	struct eg_vlan_xlt_rule bf;
+};
+
+/*[table] VLAN_DEV_TX_COUNTER_TBL*/
+#define VLAN_DEV_TX_COUNTER_TBL
+#define VLAN_DEV_TX_COUNTER_TBL_ADDRESS 0x18000
+#define VLAN_DEV_TX_COUNTER_TBL_NUM     128
+#define VLAN_DEV_TX_COUNTER_TBL_INC     0x20
+#define VLAN_DEV_TX_COUNTER_TBL_TYPE    REG_TYPE_RW
+#define VLAN_DEV_TX_COUNTER_TBL_DEFAULT 0x0
+	/*[field] TX_PACKETS*/
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_PACKETS
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_PACKETS_OFFSET  0
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_PACKETS_LEN     32
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_PACKETS_DEFAULT 0x0
+	/*[field] TX_BYTES*/
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_BYTES
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_BYTES_OFFSET  32
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_BYTES_LEN     40
+	#define VLAN_DEV_TX_COUNTER_TBL_TX_BYTES_DEFAULT 0x0
+	/*[field] DROP_PACKETS*/
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_PACKETS
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_PACKETS_OFFSET  72
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_PACKETS_LEN     32
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_PACKETS_DEFAULT 0x0
+	/*[field] DROP_BYTES*/
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_BYTES
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_BYTES_OFFSET  104
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_BYTES_LEN     40
+	#define VLAN_DEV_TX_COUNTER_TBL_DROP_BYTES_DEFAULT 0x0
+
+struct vlan_dev_tx_counter_tbl {
+	a_uint32_t  tx_packets:32;
+	a_uint32_t  tx_bytes_0:32;
+	a_uint32_t  tx_bytes_1:8;
+	a_uint32_t  drop_packets_0:24;
+	a_uint32_t  drop_packets_1:8;
+	a_uint32_t  drop_bytes_0:24;
+	a_uint32_t  drop_bytes_1:16;
+	a_uint32_t  _reserved0:16;
+};
+
+union vlan_dev_tx_counter_tbl_u {
+	a_uint32_t val[5];
+	struct vlan_dev_tx_counter_tbl bf;
 };
 
 /*[table] DSCP_PBIT_MAP_TBL*/

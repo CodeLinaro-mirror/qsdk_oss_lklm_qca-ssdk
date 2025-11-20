@@ -35,6 +35,7 @@ OBJ-COMMON += src/ref/ref_fdb.o src/fal/fal_fdb.o
 OBJ-ISISC  += src/hsl/isisc/isisc_fdb.o
 OBJ-HPPE   += src/hsl/hppe/hppe_fdb.o src/adpt/hppe/adpt_hppe_fdb.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_fdb.o
+OBJ-HTTPPE += src/hsl/httppe/httppe_fdb.o
 endif
 
 ###############################################################################
@@ -104,7 +105,8 @@ OBJ-APPE   += src/adpt/appe/adpt_appe_portctrl.o
 OBJ-CPPE   += src/hsl/cppe/cppe_portctrl.o
 OBJ-MHT    += src/hsl/mht/mht_port_ctrl.o
 OBJ-JHPPE  += src/hsl/jhppe/jhppe_loopback.o src/adpt/jhppe/adpt_jhppe_loopback.o
-OBJ-HTTPPE += src/adpt/httppe/adpt_httppe_portctrl.o src/hsl/httppe/httppe_xgportctrl.o
+OBJ-HTTPPE += src/hsl/httppe/httppe_portctrl.o src/adpt/httppe/adpt_httppe_portctrl.o \
+              src/hsl/httppe/httppe_xgportctrl.o
 endif
 
 ###############################################################################
@@ -282,6 +284,7 @@ OBJ-HPPE    += src/hsl/hppe/hppe_servcode.o src/adpt/hppe/adpt_hppe_servcode.o
 OBJ-APPE    += src/hsl/appe/appe_servcode.o src/adpt/appe/adpt_appe_servcode.o
 OBJ-MPPE    += src/hsl/mppe/mppe_servcode.o src/adpt/mppe/adpt_mppe_servcode.o
 OBJ-JHPPE   +=  src/hsl/jhppe/jhppe_servcode.o src/adpt/jhppe/adpt_jhppe_servcode.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_servcode.o
 endif
 
 
@@ -352,6 +355,7 @@ endif
 ifeq (TRUE, $(IN_VPORT))
 OBJ-COMMON  += src/ref/ref_vport.o src/fal/fal_vport.o
 OBJ-APPE    += src/adpt/appe/adpt_appe_vport.o
+OBJ-HTTPPE  += src/adpt/httppe/adpt_httppe_vport.o
 endif
 
 ###############################################################################
@@ -400,6 +404,7 @@ endif
 ifeq (TRUE, $(IN_ATHTAG))
 OBJ-COMMON  += src/fal/fal_athtag.o src/ref/ref_athtag.o
 OBJ-MPPE    += src/hsl/mppe/mppe_athtag.o src/adpt/mppe/adpt_mppe_athtag.o
+OBJ-JHPPE   += src/hsl/jhppe/jhppe_athtag.o
 endif
 
 ###############################################################################

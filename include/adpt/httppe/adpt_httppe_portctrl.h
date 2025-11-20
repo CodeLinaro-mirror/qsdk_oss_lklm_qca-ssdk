@@ -24,6 +24,19 @@ adpt_httppe_port_mtu_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 adpt_httppe_port_mtu_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	fal_mtu_cfg_t *mtu_cfg);
+
+sw_error_t
+adpt_httppe_port_tx_counter_tbl_get(a_uint32_t dev_id, a_uint32_t port_id,
+	fal_port_cnt_t *port_cnt);
+sw_error_t
+adpt_httppe_port_tx_counter_tbl_flush(a_uint32_t dev_id, a_uint32_t port_id);
+
+sw_error_t
+adpt_httppe_vp_tx_counter_tbl_get(a_uint32_t dev_id, a_uint32_t port_id,
+	fal_port_cnt_t *port_cnt);
+sw_error_t
+adpt_httppe_vp_tx_counter_tbl_flush(a_uint32_t dev_id, a_uint32_t port_id);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
