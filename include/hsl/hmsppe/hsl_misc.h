@@ -200,7 +200,9 @@ union hmsppe_pon_mode_u {
 /*[table] DROP_STAT*/
 #define DROP_STAT
 #define DROP_STAT_ADDRESS 0x3000
-#if defined(JHPPE)
+#if defined(HMSPPE)
+#define DROP_STAT_NUM     78
+#elif defined(JHPPE)
 #define DROP_STAT_NUM     80
 #elif defined(MRPPE)
 #define DROP_STAT_NUM     38
