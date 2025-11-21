@@ -5668,10 +5668,20 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 				adpt_appe_acl_udf_profile_entry_getfirst;
 	p_adpt_api->adpt_acl_udf_profile_entry_getnext =
 				adpt_appe_acl_udf_profile_entry_getnext;
-	p_adpt_api->adpt_acl_udf_profile_cfg_set =
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		p_adpt_api->adpt_acl_udf_profile_cfg_set =
+				adpt_httppe_acl_udf_profile_cfg_set;
+		p_adpt_api->adpt_acl_udf_profile_cfg_get =
+				adpt_httppe_acl_udf_profile_cfg_get;
+	} else
+#endif
+	{
+		p_adpt_api->adpt_acl_udf_profile_cfg_set =
 				adpt_appe_acl_udf_profile_cfg_set;
-	p_adpt_api->adpt_acl_udf_profile_cfg_get =
+		p_adpt_api->adpt_acl_udf_profile_cfg_get =
 				adpt_appe_acl_udf_profile_cfg_get;
+	}
 	p_adpt_api->adpt_acl_vpgroup_set =
 				adpt_appe_acl_vpgroup_set;
 	p_adpt_api->adpt_acl_vpgroup_get =

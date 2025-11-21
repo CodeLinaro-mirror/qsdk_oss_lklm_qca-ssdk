@@ -6,6 +6,90 @@
 #include "hsl_htt_reg.h"
 
 sw_error_t
+httppe_ipr_udf_ctrl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipr_udf_ctrl_u *value)
+{
+	if (index >= IPR_UDF_CTRL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				IPR_CSR_BASE_ADDR + IPR_UDF_CTRL_ADDRESS + \
+				index * IPR_UDF_CTRL_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_ipr_udf_ctrl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipr_udf_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPR_CSR_BASE_ADDR + IPR_UDF_CTRL_ADDRESS + \
+				index * IPR_UDF_CTRL_INC,
+				value->val);
+}
+
+sw_error_t
+httppe_ipr_udf_profile_base_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipr_udf_profile_base_u *value)
+{
+	if (index >= IPR_UDF_PROFILE_BASE_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				IPR_CSR_BASE_ADDR + IPR_UDF_PROFILE_BASE_ADDRESS + \
+				index * IPR_UDF_PROFILE_BASE_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_ipr_udf_profile_base_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipr_udf_profile_base_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPR_CSR_BASE_ADDR + IPR_UDF_PROFILE_BASE_ADDRESS + \
+				index * IPR_UDF_PROFILE_BASE_INC,
+				value->val);
+}
+
+sw_error_t
+httppe_ipr_udf_profile_offset_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipr_udf_profile_offset_u *value)
+{
+	if (index >= IPR_UDF_PROFILE_OFFSET_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				IPR_CSR_BASE_ADDR + IPR_UDF_PROFILE_OFFSET_ADDRESS + \
+				index * IPR_UDF_PROFILE_OFFSET_INC,
+				&value->val);
+}
+
+sw_error_t
+httppe_ipr_udf_profile_offset_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ipr_udf_profile_offset_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPR_CSR_BASE_ADDR + IPR_UDF_PROFILE_OFFSET_ADDRESS + \
+				index * IPR_UDF_PROFILE_OFFSET_INC,
+				value->val);
+}
+
+sw_error_t
 httppe_ipo_rule_reg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

@@ -1011,6 +1011,187 @@ sw_error_t _adpt_httppe_acl_ext_vlan_rule_hw_2_sw(ADPT_HTTPPE_ACL_EXT_VLAN_RULE 
 	return SW_OK;
 }
 
+a_bool_t
+_adpt_httppe_get_udf_profile_entry_by_index(a_uint32_t dev_id,
+		a_uint32_t index, fal_acl_udf_profile_entry_t * entry, a_uint32_t * profile_id)
+{
+	union ipr_udf_ctrl_u udf_ctrl = {0};
+	sw_error_t rv = SW_OK;
+
+	rv = httppe_ipr_udf_ctrl_get(dev_id, index, &udf_ctrl);
+	if (rv != SW_OK)
+		return A_FALSE;
+
+	if (!udf_ctrl.bf.valid)
+	{
+		aos_mem_zero(&udf_ctrl, sizeof (udf_ctrl));
+	}
+	entry->l3_type = udf_ctrl.bf.l3_type;
+	entry->l4_type = udf_ctrl.bf.l4_type;
+	*profile_id = udf_ctrl.bf.udf_profile;
+
+	if (udf_ctrl.bf.l3_type_incl)
+	{
+		FAL_FIELD_FLG_SET(entry->field_flag, FAL_ACL_UDF_PROFILE_ENTRY_FIELD_L3_TYPE);
+	}
+	else
+	{
+		FAL_FIELD_FLG_CLR(entry->field_flag, FAL_ACL_UDF_PROFILE_ENTRY_FIELD_L3_TYPE);
+	}
+	if (udf_ctrl.bf.l4_type_incl)
+	{
+		FAL_FIELD_FLG_SET(entry->field_flag, FAL_ACL_UDF_PROFILE_ENTRY_FIELD_L4_TYPE);
+	}
+	else
+	{
+		FAL_FIELD_FLG_CLR(entry->field_flag, FAL_ACL_UDF_PROFILE_ENTRY_FIELD_L4_TYPE);
+	}
+	return udf_ctrl.bf.valid;
+}
+
+sw_error_t
+_adpt_httppe_insert_udf_profile_entry_by_index(a_uint32_t dev_id,
+		a_uint32_t index, fal_acl_udf_profile_entry_t * entry, a_uint32_t profile_id)
+{
+	union ipr_udf_ctrl_u udf_ctrl = {0};
+
+	udf_ctrl.bf.valid = A_TRUE;
+	udf_ctrl.bf.l3_type = entry->l3_type;
+	udf_ctrl.bf.l4_type = entry->l4_type;
+	udf_ctrl.bf.udf_profile = profile_id;
+
+	if (FAL_FIELD_FLG_TST(entry->field_flag, FAL_ACL_UDF_PROFILE_ENTRY_FIELD_L3_TYPE))
+	{
+		udf_ctrl.bf.l3_type_incl = A_TRUE;
+	}
+	if (FAL_FIELD_FLG_TST(entry->field_flag, FAL_ACL_UDF_PROFILE_ENTRY_FIELD_L4_TYPE))
+	{
+		udf_ctrl.bf.l4_type_incl = A_TRUE;
+	}
+	return httppe_ipr_udf_ctrl_set(dev_id, index, &udf_ctrl);
+}
+
+sw_error_t
+_adpt_httppe_clear_udf_profile_entry(a_uint32_t dev_id, a_uint32_t index)
+{
+		union ipr_udf_ctrl_u udf_ctrl_zero_entry = {0};
+		return httppe_ipr_udf_ctrl_set(dev_id, index, &udf_ctrl_zero_entry);
+}
+
+sw_error_t
+adpt_httppe_acl_udf_profile_cfg_set(a_uint32_t dev_id, a_uint32_t profile_id,
+		a_uint32_t udf_idx, fal_acl_udf_type_t udf_type, a_uint32_t offset)
+{
+	a_uint8_t udf_base = 0;
+	union ipr_udf_profile_base_u udf_profile_base = {0};
+	union ipr_udf_profile_offset_u udf_profile_offset = {0};
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (offset % 2)
+	{ /*only support even data*/
+		return SW_BAD_VALUE;
+	}
+
+	switch(udf_type)
+	{
+		case FAL_ACL_UDF_TYPE_L2:
+			udf_base = 0;
+			break;
+		case FAL_ACL_UDF_TYPE_L3:
+			udf_base = 1;
+			break;
+		case FAL_ACL_UDF_TYPE_L4:
+			udf_base = 2;
+			break;
+		default:
+			return SW_NOT_SUPPORTED;
+	}
+
+	SW_RTN_ON_ERROR(httppe_ipr_udf_profile_base_get(dev_id, profile_id, &udf_profile_base));
+	SW_RTN_ON_ERROR(httppe_ipr_udf_profile_offset_get(dev_id, profile_id, &udf_profile_offset));
+
+	switch(udf_idx)
+	{
+		case 0:
+			udf_profile_base.bf.udf0_base = udf_base;
+			udf_profile_offset.bf.udf0_offset = offset/2;
+			break;
+		case 1:
+			udf_profile_base.bf.udf1_base = udf_base;
+			udf_profile_offset.bf.udf1_offset = offset/2;
+			break;
+		case 2:
+			udf_profile_base.bf.udf2_base = udf_base;
+			udf_profile_offset.bf.udf2_offset = offset/2;
+			break;
+		case 3:
+			udf_profile_base.bf.udf3_base = udf_base;
+			udf_profile_offset.bf.udf3_offset = offset/2;
+			break;
+		default:
+			return SW_OUT_OF_RANGE;
+	}
+
+	SW_RTN_ON_ERROR(httppe_ipr_udf_profile_base_set(dev_id, profile_id, &udf_profile_base));
+	return httppe_ipr_udf_profile_offset_set(dev_id, profile_id, &udf_profile_offset);
+}
+
+sw_error_t
+adpt_httppe_acl_udf_profile_cfg_get(a_uint32_t dev_id, a_uint32_t profile_id,
+		a_uint32_t udf_idx, fal_acl_udf_type_t * udf_type, a_uint32_t * offset)
+{
+	a_uint8_t udf_base = 0;
+	union ipr_udf_profile_base_u udf_profile_base = {0};
+	union ipr_udf_profile_offset_u udf_profile_offset = {0};
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(udf_type);
+	ADPT_NULL_POINT_CHECK(offset);
+
+	SW_RTN_ON_ERROR(httppe_ipr_udf_profile_base_get(dev_id, profile_id, &udf_profile_base));
+	SW_RTN_ON_ERROR(httppe_ipr_udf_profile_offset_get(dev_id, profile_id, &udf_profile_offset));
+
+	switch(udf_idx)
+	{
+		case 0:
+			udf_base = udf_profile_base.bf.udf0_base;
+			*offset = udf_profile_offset.bf.udf0_offset*2;
+			break;
+		case 1:
+			udf_base = udf_profile_base.bf.udf1_base;
+			*offset = udf_profile_offset.bf.udf1_offset*2;
+			break;
+		case 2:
+			udf_base = udf_profile_base.bf.udf2_base;
+			*offset = udf_profile_offset.bf.udf2_offset*2;
+			break;
+		case 3:
+			udf_base = udf_profile_base.bf.udf3_base;
+			*offset = udf_profile_offset.bf.udf3_offset*2;
+			break;
+		default:
+			return SW_OUT_OF_RANGE;
+	}
+
+	switch(udf_base)
+	{
+		case 0:
+			*udf_type = FAL_ACL_UDF_TYPE_L2;
+			break;
+		case 1:
+			*udf_type = FAL_ACL_UDF_TYPE_L3;
+			break;
+		case 2:
+			*udf_type = FAL_ACL_UDF_TYPE_L4;
+			break;
+		default:
+			return SW_NOT_SUPPORTED;
+	}
+
+	return SW_OK;
+}
+
 sw_error_t
 adpt_httppe_acl_dscp_pcp_mapping_set(a_uint32_t dev_id,
 		a_uint8_t group_id, a_uint8_t dscp, a_uint8_t pcp)
