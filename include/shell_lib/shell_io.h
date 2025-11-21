@@ -48,6 +48,7 @@ sw_error_t cmd_data_check_pbmp(char *cmd_str, a_uint32_t * arg_val,
                                  a_uint32_t size);
 sw_error_t cmd_data_check_attr(char * attr_name, char *cmd_str,
                                  a_uint32_t *arg_val, a_uint32_t size);
+sw_error_t cmd_data_check_dest_info(char *cmd_str, void *val, a_uint32_t size);
 #ifdef IN_PORTCONTROL
 sw_error_t cmd_data_check_duplex(char *cmd_str, a_uint32_t * arg_val,
                                  a_uint32_t size);

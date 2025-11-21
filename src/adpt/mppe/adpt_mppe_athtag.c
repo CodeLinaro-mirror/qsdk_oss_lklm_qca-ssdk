@@ -1,17 +1,6 @@
 /*
- * Copyright (c) 2022-2025, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -25,7 +14,9 @@
 #include "hsl_dev.h"
 #include "hsl_port_prop.h"
 #include "ssdk_dts.h"
-
+#if defined(JHPPE)
+#include "adpt_jhppe_athtag.h"
+#endif
 sw_error_t
 adpt_mppe_athtag_pri_mapping_set(a_uint32_t dev_id,
 		fal_direction_t direction, fal_athtag_pri_mapping_t * pri_mapping)
@@ -139,6 +130,9 @@ adpt_mppe_port_athtag_rx_set(a_uint32_t dev_id,
 				port_id, &prx_port_to_vp_map));
 	prx_port_to_vp_map.bf.atheros_hdr_en = cfg->athtag_en;
 	prx_port_to_vp_map.bf.atheros_hdr_type = cfg->athtag_type;
+#if defined(JHPPE)
+	prx_port_to_vp_map.bf.atheros_hdr_ver = cfg->version;
+#endif
 	return mppe_prx_port_to_vp_mapping_set(dev_id,
 				port_id, &prx_port_to_vp_map);
 }
@@ -156,7 +150,9 @@ adpt_mppe_port_athtag_rx_get(a_uint32_t dev_id,
 				port_id, &prx_port_to_vp_map));
 	cfg->athtag_en = prx_port_to_vp_map.bf.atheros_hdr_en;
 	cfg->athtag_type = prx_port_to_vp_map.bf.atheros_hdr_type;
-
+#if defined(JHPPE)
+	cfg->version = prx_port_to_vp_map.bf.atheros_hdr_ver;
+#endif
 	return SW_OK;
 }
 
@@ -183,14 +179,8 @@ adpt_mppe_port_athtag_tx_set(a_uint32_t dev_id,
 	eg_vp_tbl.bf.ath_hdr_disable_bit = cfg->field_disable;
 
 	SW_RTN_ON_ERROR(_adpt_mppe_fix_athtag_ver(dev_id, FAL_PORT_ID_VALUE(port_id), &cfg->version));
-	if (cfg->version == FAL_ATHTAG_VER2)
-	{
-		eg_vp_tbl.bf.ath_hdr_ver = 2;
-	}
-	else if (cfg->version == FAL_ATHTAG_VER3)
-	{
-		eg_vp_tbl.bf.ath_hdr_ver = 3;
-	}
+
+	eg_vp_tbl.bf.ath_hdr_ver = cfg->version;
 
 	return appe_egress_vp_tbl_set(dev_id,
 				FAL_PORT_ID_VALUE(port_id), &eg_vp_tbl);
@@ -217,14 +207,7 @@ adpt_mppe_port_athtag_tx_get(a_uint32_t dev_id,
 	cfg->action = eg_vp_tbl.bf.ath_hdr_default_type;
 	cfg->bypass_fwd_en = eg_vp_tbl.bf.ath_hdr_from_cpu;
 	cfg->field_disable = eg_vp_tbl.bf.ath_hdr_disable_bit;
-	if (eg_vp_tbl.bf.ath_hdr_ver == 2)
-	{
-		cfg->version = FAL_ATHTAG_VER2;
-	}
-	else if (eg_vp_tbl.bf.ath_hdr_ver == 3)
-	{
-		cfg->version = FAL_ATHTAG_VER3;
-	}
+	cfg->version = eg_vp_tbl.bf.ath_hdr_ver;
 
 	return SW_OK;
 }
@@ -409,6 +392,18 @@ sw_error_t adpt_mppe_athtag_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_athtag_tx_set = adpt_mppe_port_athtag_tx_set;
 	p_adpt_api->adpt_port_athtag_tx_get = adpt_mppe_port_athtag_tx_get;
 
+#if defined(JHPPE)
+	p_adpt_api->adpt_athtag_rx_src_port_mapping_set = adpt_jhppe_athtag_rx_src_port_mapping_set;
+	p_adpt_api->adpt_athtag_rx_src_port_mapping_get = adpt_jhppe_athtag_rx_src_port_mapping_get;
+	p_adpt_api->adpt_athtag_rx_dest_port_mapping_set =
+		adpt_jhppe_athtag_rx_dest_port_mapping_set;
+	p_adpt_api->adpt_athtag_rx_dest_port_mapping_get =
+		adpt_jhppe_athtag_rx_dest_port_mapping_get;
+	p_adpt_api->adpt_athtag_rx_servcode_mapping_set = adpt_jhppe_athtag_rx_servcode_mapping_set;
+	p_adpt_api->adpt_athtag_rx_servcode_mapping_get = adpt_jhppe_athtag_rx_servcode_mapping_get;
+	p_adpt_api->adpt_athtag_tx_src_port_mapping_set = adpt_jhppe_athtag_tx_src_port_mapping_set;
+	p_adpt_api->adpt_athtag_tx_src_port_mapping_get = adpt_jhppe_athtag_tx_src_port_mapping_get;
+#endif
 	return SW_OK;
 }
 

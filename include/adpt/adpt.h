@@ -1571,6 +1571,22 @@ typedef sw_error_t (*adpt_port_athtag_tx_set_func)(a_uint32_t dev_id,
 		fal_port_t port_id, fal_athtag_tx_cfg_t *cfg);
 typedef sw_error_t (*adpt_port_athtag_tx_get_func)(a_uint32_t dev_id,
 		fal_port_t port_id, fal_athtag_tx_cfg_t *cfg);
+typedef sw_error_t (*adpt_athtag_rx_src_port_mapping_set_func)(a_uint32_t dev_id,
+		fal_port_t ath_src_port, fal_dest_info_t *int_dest_info);
+typedef sw_error_t (*adpt_athtag_rx_src_port_mapping_get_func)(a_uint32_t dev_id,
+		fal_port_t ath_src_port, fal_dest_info_t *int_dest_info);
+typedef sw_error_t (*adpt_athtag_rx_dest_port_mapping_set_func)(a_uint32_t dev_id,
+		fal_port_t ath_dest_port, fal_dest_info_t *int_dest_info);
+typedef sw_error_t (*adpt_athtag_rx_dest_port_mapping_get_func)(a_uint32_t dev_id,
+		fal_port_t ath_dest_port, fal_dest_info_t *int_dest_info);
+typedef sw_error_t (*adpt_athtag_rx_servcode_mapping_set_func)(a_uint32_t dev_id,
+		a_uint32_t ath_servcode, a_uint32_t int_servcode);
+typedef sw_error_t (*adpt_athtag_rx_servcode_mapping_get_func)(a_uint32_t dev_id,
+		a_uint32_t ath_servcode, a_uint32_t *int_servcode);
+typedef sw_error_t (*adpt_athtag_tx_src_port_mapping_set_func)(a_uint32_t dev_id,
+		fal_port_t int_src_port, fal_port_t ath_src_port);
+typedef sw_error_t (*adpt_athtag_tx_src_port_mapping_get_func)(a_uint32_t dev_id,
+		fal_port_t int_src_port, fal_port_t *ath_src_port);
 
 /* toeplitz hash */
 typedef sw_error_t (*adpt_toeplitz_hash_secret_key_set_func)(a_uint32_t dev_id,
@@ -2434,6 +2450,15 @@ typedef struct
 	adpt_port_athtag_rx_get_func adpt_port_athtag_rx_get;
 	adpt_port_athtag_tx_set_func adpt_port_athtag_tx_set;
 	adpt_port_athtag_tx_get_func adpt_port_athtag_tx_get;
+	adpt_athtag_rx_src_port_mapping_set_func adpt_athtag_rx_src_port_mapping_set;
+	adpt_athtag_rx_src_port_mapping_get_func adpt_athtag_rx_src_port_mapping_get;
+	adpt_athtag_rx_dest_port_mapping_set_func adpt_athtag_rx_dest_port_mapping_set;
+	adpt_athtag_rx_dest_port_mapping_get_func adpt_athtag_rx_dest_port_mapping_get;
+	adpt_athtag_rx_servcode_mapping_set_func adpt_athtag_rx_servcode_mapping_set;
+	adpt_athtag_rx_servcode_mapping_get_func adpt_athtag_rx_servcode_mapping_get;
+	adpt_athtag_tx_src_port_mapping_set_func adpt_athtag_tx_src_port_mapping_set;
+	adpt_athtag_tx_src_port_mapping_get_func adpt_athtag_tx_src_port_mapping_get;
+
 	/* toeplitz hash */
 	adpt_toeplitz_hash_secret_key_set_func adpt_toeplitz_hash_secret_key_set;
 	adpt_toeplitz_hash_secret_key_get_func adpt_toeplitz_hash_secret_key_get;

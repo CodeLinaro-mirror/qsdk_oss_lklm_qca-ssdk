@@ -55,6 +55,7 @@ const struct attr_des_t g_attr_des[] =
 		(struct sub_attr_des_t[]){
 			{"port_bmp", FAL_DEST_INFO_PORT_BMP},
 			{"port_id", FAL_DEST_INFO_PORT_ID},
+			{"invalid", FAL_DEST_INFO_INVALID},
 			{NULL, INVALID_ARRT_VALUE}
 		}
 	},
@@ -466,6 +467,8 @@ const struct attr_des_t g_attr_des[] =
 	{
 		"athtag_version",
 		(struct sub_attr_des_t[]){
+			{"v0", FAL_ATHTAG_VER0},
+			{"v1", FAL_ATHTAG_VER1},
 			{"v2", FAL_ATHTAG_VER2},
 			{"v3", FAL_ATHTAG_VER3},
 			{NULL, INVALID_ARRT_VALUE}
@@ -1007,6 +1010,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_IPMC_ENTRY, (param_check_t)cmd_data_check_ipmc_entry, NULL),
     SW_TYPE_DEF(SW_IPMC_UCAST_FWD, (param_check_t)cmd_data_check_ipmc_ucast_fwd, NULL),
 #endif
+    SW_TYPE_DEF(SW_DEST_INFO, (param_check_t)cmd_data_check_dest_info, NULL),
 };
 
 sw_error_t
@@ -14134,6 +14138,14 @@ cmd_data_check_athtag_rx_cfg(char * cmd_str, void * val, a_uint32_t size)
                                0x0));
     entry.athtag_type = tmpdata & 0xffff;
 
+#if defined(JHPPE)
+    cmd_data_check_element("athtag version", "v0",
+                     "usage: v0 or v1\n",
+                     cmd_data_check_attr, ("athtag_version", cmd,
+                             &tmpdata, sizeof(tmpdata)));
+    entry.version = tmpdata & 0x3;
+#endif
+
     *(fal_athtag_rx_cfg_t *) val = entry;
     return SW_OK;
 }
@@ -14479,3 +14491,27 @@ sw_error_t cmd_data_check_ipmc_ucast_fwd(char *cmd_str, void *val, a_uint32_t si
 	return SW_OK;
 }
 #endif
+
+sw_error_t
+cmd_data_check_dest_info(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_dest_info_t entry;
+
+	aos_mem_zero(&entry, sizeof(fal_dest_info_t));
+
+	cmd_data_check_element("dest_info_type", "port_id",
+		"usage:dest_info_type:port_id\n",
+		cmd_data_check_attr, ("dest_info_type", cmd,
+			&(entry.dest_info_type),
+			sizeof(entry.dest_info_type)));
+
+	cmd_data_check_element("dest_info_value", "0",
+		"usage:dest_info_value:port_id\n",
+		cmd_data_check_uint32, (cmd, &(entry.dest_info_value),
+			sizeof (entry.dest_info_value)));
+
+	*(fal_dest_info_t *)val = entry;
+
+	return SW_OK;
+}
