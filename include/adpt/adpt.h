@@ -2755,7 +2755,7 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id);
 sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capacity);
 a_uint32_t ppe_port_to_gmac_id(a_uint32_t dev_id, fal_port_t port_id);
 a_uint32_t ppe_port_to_xgmac_id(a_uint32_t dev_id, fal_port_t port_id);
-
+void adpt_ppe_mac_num_get(a_uint32_t dev_id, a_uint32_t *gmac_num, a_uint32_t *xgmac_num);
 #ifdef SCOMPHY
 a_uint32_t adapt_scomphy_revision_get(a_uint32_t dev_id);
 #endif
