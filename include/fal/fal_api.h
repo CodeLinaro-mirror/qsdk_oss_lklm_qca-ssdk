@@ -2009,7 +2009,9 @@ extern "C" {
     SW_API_DEF(SW_API_FLOW_GRO_EN_GET, fal_flow_gro_en_get), \
     SW_API_DEF(SW_API_FLOW_GRO_EN_SET, fal_flow_gro_en_set), \
     SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_GET, fal_flow_eip_lookup_mode_get), \
-    SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, fal_flow_eip_lookup_mode_set),
+    SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, fal_flow_eip_lookup_mode_set), \
+    SW_API_DEF(SW_API_FLOW_FWD_TYPE_SET, fal_flow_fwd_type_set), \
+    SW_API_DEF(SW_API_FLOW_FWD_TYPE_GET, fal_flow_fwd_type_get),
 
 #define FLOW_API_PARAM \
     SW_API_DESC(SW_API_FLOW_STATUS_SET) \
@@ -2049,7 +2051,9 @@ extern "C" {
     SW_API_DESC(SW_API_FLOW_GRO_EN_GET) \
     SW_API_DESC(SW_API_FLOW_GRO_EN_SET) \
     SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_GET) \
-    SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_SET)
+    SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_SET) \
+    SW_API_DESC(SW_API_FLOW_FWD_TYPE_SET) \
+    SW_API_DESC(SW_API_FLOW_FWD_TYPE_GET)
 
 #else
 #define FLOW_API \
@@ -2088,7 +2092,9 @@ extern "C" {
     SW_API_DEF(SW_API_FLOW_GRO_EN_GET, fal_flow_gro_en_get), \
     SW_API_DEF(SW_API_FLOW_GRO_EN_SET, fal_flow_gro_en_set), \
     SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_GET, fal_flow_eip_lookup_mode_get), \
-    SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, fal_flow_eip_lookup_mode_set),
+    SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, fal_flow_eip_lookup_mode_set), \
+    SW_API_DEF(SW_API_FLOW_FWD_TYPE_SET, fal_flow_fwd_type_set), \
+    SW_API_DEF(SW_API_FLOW_FWD_TYPE_GET, fal_flow_fwd_type_get),
 
 #define FLOW_API_PARAM \
     SW_API_DESC(SW_API_FLOW_STATUS_SET) \
@@ -2126,7 +2132,9 @@ extern "C" {
     SW_API_DESC(SW_API_FLOW_GRO_EN_GET) \
     SW_API_DESC(SW_API_FLOW_GRO_EN_SET) \
     SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_GET) \
-    SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_SET)
+    SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_SET) \
+    SW_API_DESC(SW_API_FLOW_FWD_TYPE_SET) \
+    SW_API_DESC(SW_API_FLOW_FWD_TYPE_GET)
 #endif
 #else
 #define FLOW_API
