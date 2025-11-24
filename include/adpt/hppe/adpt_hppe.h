@@ -73,7 +73,11 @@ sw_error_t adpt_hppe_uniphy_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_ptp_init(a_uint32_t dev_id);
 
 /*BM*/
-#if defined(JHPPE)
+#if defined(HMSPPE)
+#define PPE_BM_PORT_NUM		39
+#define PPE_BM_PHY_PORT_MAX	38
+#define PPE_BM_PHY_PORT_OFFSET  32
+#elif defined(JHPPE)
 #define PPE_BM_PORT_NUM		40
 #define PPE_BM_PHY_PORT_MAX	39
 #define PPE_BM_PHY_PORT_OFFSET  32
