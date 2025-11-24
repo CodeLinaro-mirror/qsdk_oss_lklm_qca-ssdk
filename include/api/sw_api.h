@@ -345,6 +345,9 @@ typedef enum
 	SW_PASSTHROUGH_CPUCODE,
 	SW_DDRQ_EN,
 	SW_BP_QUEUEBMP,
+	SW_PVLAN_RX,
+	SW_PVLAN_MAP,
+	SW_PVLAN_TX,
 /* auto_insert_flag */
 } sw_data_type_e;
 

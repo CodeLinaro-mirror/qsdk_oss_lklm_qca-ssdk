@@ -250,6 +250,30 @@ sw_error_t fal_port_isol_member_get(a_uint32_t dev_id, fal_port_t port_id, fal_p
     DEFINE_FAL_FUNC_ADPT(portvlan_member_get, dev_id, port_id, mem_port_map)
     EXPORT_SYMBOL(fal_port_isol_member_get);
 
+sw_error_t
+fal_private_vlan_rx_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_pvtvlan_rx_cfg_t *cfg)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_rx_cfg_set, dev_id, port_id, cfg)
+
+sw_error_t
+fal_private_vlan_rx_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_pvtvlan_rx_cfg_t *cfg)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_rx_cfg_get, dev_id, port_id, cfg)
+
+sw_error_t
+fal_private_vlan_mapping_set(a_uint32_t dev_id, fal_direction_t direction, fal_pvtvlan_map_t *port_mapping)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_mapping_set, dev_id, direction, port_mapping)
+
+sw_error_t
+fal_private_vlan_mapping_get(a_uint32_t dev_id, fal_direction_t direction, fal_pvtvlan_map_t *port_mapping)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_mapping_get, dev_id, direction, port_mapping)
+
+sw_error_t
+fal_private_vlan_tx_cfg_set(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_tx_cfg_set, dev_id, cfg)
+
+sw_error_t
+fal_private_vlan_tx_cfg_get(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg)
+	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_tx_cfg_get, dev_id, cfg)
+
 #ifndef IN_PORTVLAN_MINI
 sw_error_t fal_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_trans_entry_t *entry)
     DEFINE_FAL_FUNC_EXPORT(port_vlan_trans_add, dev_id, port_id, entry)

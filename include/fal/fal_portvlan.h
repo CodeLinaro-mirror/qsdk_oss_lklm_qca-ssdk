@@ -555,6 +555,46 @@ typedef struct {
 	};
 } fal_port_isol_act_idx_t;
 
+typedef struct {
+	a_bool_t map_en; /* enable parsing private vlan */
+	a_uint16_t tpid; /* private vlan TPID */
+} fal_pvtvlan_rx_cfg_t;
+
+typedef struct {
+	a_bool_t ptmap_en; /* enable translate between private vlan and internal port,
+			* parsing and remove private vlan to internal port at ingress, inserting
+			* private vlan when egress on the internal port. */
+
+	a_uint16_t vlan_tci; /* tag control info */
+	a_uint16_t vlan_tci_mask; /* tag control info mask, effective for ingress parsing only */
+
+	a_uint8_t int_port;/* internal port, pp or vp */
+} fal_pvtvlan_map_t;
+
+typedef struct {
+	a_uint16_t tpid; /* private vlan TPID */
+} fal_pvtvlan_tx_cfg_t;
+
+sw_error_t
+fal_private_vlan_rx_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_pvtvlan_rx_cfg_t *cfg);
+
+sw_error_t
+fal_private_vlan_rx_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_pvtvlan_rx_cfg_t *cfg);
+
+sw_error_t
+fal_private_vlan_mapping_set(a_uint32_t dev_id,
+		fal_direction_t direction, fal_pvtvlan_map_t *port_mapping);
+
+sw_error_t
+fal_private_vlan_mapping_get(a_uint32_t dev_id,
+		fal_direction_t direction, fal_pvtvlan_map_t *port_mapping);
+
+sw_error_t
+fal_private_vlan_tx_cfg_set(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg);
+
+sw_error_t
+fal_private_vlan_tx_cfg_get(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg);
+
 sw_error_t
 fal_port_isol_ctrl_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
