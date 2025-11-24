@@ -1,18 +1,8 @@
 /*
  * Copyright (c) 2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -25,7 +15,7 @@
 #include "adpt.h"
 
 sw_error_t
-adpt_cppe_flow_copy_escape_set(a_uint32_t dev_id, a_bool_t enable)
+adpt_appe_flow_copy_escape_set(a_uint32_t dev_id, a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
 	union l2_global_conf_u l2_global_conf;
@@ -49,7 +39,7 @@ adpt_cppe_flow_copy_escape_set(a_uint32_t dev_id, a_bool_t enable)
 }
 
 sw_error_t
-adpt_cppe_flow_copy_escape_get(a_uint32_t dev_id, a_bool_t *enable)
+adpt_appe_flow_copy_escape_get(a_uint32_t dev_id, a_bool_t *enable)
 {
 
 	sw_error_t rv = SW_OK;

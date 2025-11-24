@@ -11,7 +11,7 @@
 #include "hsl_reg.h"
 #include "adpt_hppe.h"
 #include "adpt.h"
-#include "adpt_cppe_flow.h"
+#include "adpt_appe_flow.h"
 #if defined(JHPPE)
 #include "adpt_jhppe_flow.h"
 #endif
@@ -2056,7 +2056,7 @@ adpt_hppe_flow_global_cfg_get(
 	if (ppe_type != MAX_PPE_TYPE && ppe_type != HPPE_TYPE) {
 		a_bool_t flow_cpy_escape = A_FALSE;
 
-		rv = adpt_cppe_flow_copy_escape_get(dev_id, &flow_cpy_escape);
+		rv = adpt_appe_flow_copy_escape_get(dev_id, &flow_cpy_escape);
 		SW_RTN_ON_ERROR(rv);
 
 		cfg->flow_mismatch_copy_escape_en = flow_cpy_escape;
@@ -2172,7 +2172,7 @@ adpt_hppe_flow_global_cfg_set(
 	SW_RTN_ON_ERROR(rv);
 
 	if (ppe_type != MAX_PPE_TYPE && ppe_type != HPPE_TYPE) {
-		rv = adpt_cppe_flow_copy_escape_set(dev_id,
+		rv = adpt_appe_flow_copy_escape_set(dev_id,
 				cfg->flow_mismatch_copy_escape_en);
 		SW_RTN_ON_ERROR(rv);
 	}
