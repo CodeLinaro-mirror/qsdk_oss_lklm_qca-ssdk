@@ -25,7 +25,10 @@ typedef struct {
 } fal_athtag_pri_mapping_t;
 
 typedef struct {
-	fal_pbmp_t ath_port; /*athtag portmap*/
+	fal_pbmp_t ath_port; /* athtag portmap.
+			      * port type 0 phy port bitmap for v2/v3 atheros header.
+			      * port type 2 vp port for v1 atheros header.
+			      */
 	fal_port_t int_port; /*internal port*/
 } fal_athtag_port_mapping_t;
 

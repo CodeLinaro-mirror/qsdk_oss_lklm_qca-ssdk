@@ -106,12 +106,9 @@ static sw_error_t _adpt_mppe_fix_athtag_ver(a_uint32_t dev_id,
 	}
 
 	netdev_switch = ssdk_dts_netdev_switch_find(pp_id);
-	if (!netdev_switch) {
-		return SW_NOT_INITIALIZED;
-	}
 
 	/* s17c only supports v2 atherose header */
-	if (hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_ISISC)
+	if (netdev_switch && hsl_get_current_chip_type(netdev_switch->switch_dev_id) == CHIP_ISISC)
 		*athtag_ver = FAL_ATHTAG_VER2;
 
 	return SW_OK;
@@ -176,7 +173,13 @@ adpt_mppe_port_athtag_tx_set(a_uint32_t dev_id,
 	eg_vp_tbl.bf.ath_hdr_insert = cfg->athtag_en;
 	eg_vp_tbl.bf.ath_hdr_default_type = cfg->action;
 	eg_vp_tbl.bf.ath_hdr_from_cpu = cfg->bypass_fwd_en;
-	eg_vp_tbl.bf.ath_hdr_disable_bit = cfg->field_disable;
+
+	/* For ver1 athtag, the disable_bit field is act as the highest bit of
+	 * the 8bit destination port, which is programed by port mapping set
+	 * function.
+	 */
+	if (cfg->version != FAL_ATHTAG_VER1)
+		eg_vp_tbl.bf.ath_hdr_disable_bit = cfg->field_disable;
 
 	SW_RTN_ON_ERROR(_adpt_mppe_fix_athtag_ver(dev_id, FAL_PORT_ID_VALUE(port_id), &cfg->version));
 
@@ -227,6 +230,14 @@ adpt_mppe_athtag_port_mapping_set(a_uint32_t dev_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
 	SW_RTN_ON_NULL(p_api->adpt_port_bridge_txmac_set);
+
+#if defined(JHPPE)
+	/* if ath_port is port/vport ID instead of port bitmap, then
+	 * v1 atheros header is used.
+	 */
+	if (FAL_PORT_ID_TYPE(port_mapping->ath_port) ==  FAL_PORT_TYPE_VPORT)
+		return adpt_jhppe_v1_athtag_port_mapping_set(dev_id, direction, port_mapping);
+#endif
 
 	if (direction == FAL_DIR_INGRESS || direction == FAL_DIR_BOTH)
 	{
@@ -342,6 +353,10 @@ adpt_mppe_athtag_port_mapping_get(a_uint32_t dev_id,
 
 	if (direction == FAL_DIR_INGRESS)
 	{
+#if defined(JHPPE)
+		if (FAL_PORT_ID_TYPE(port_mapping->ath_port) ==  FAL_PORT_TYPE_VPORT)
+			return adpt_jhppe_v1_athtag_ingress_port_mapping_get(dev_id, port_mapping);
+#endif
 		/*get the first port id in the port bitmap*/
 		port_id = _adpt_mppe_athtag_bit_index(port_mapping->ath_port);
 		SW_RTN_ON_ERROR(mppe_prx_port_to_vp_mapping_get(dev_id,
@@ -353,18 +368,30 @@ adpt_mppe_athtag_port_mapping_get(a_uint32_t dev_id,
 		SW_RTN_ON_ERROR(appe_egress_vp_tbl_get(dev_id,
 					FAL_PORT_ID_VALUE(port_mapping->int_port), &eg_vp_tbl));
 
-		if (eg_vp_tbl.bf.ath_hdr_ver == 2)
+		if (eg_vp_tbl.bf.ath_hdr_ver == FAL_ATHTAG_VER2)
 		{
 			/*for version2 the ath_port_bitmap in eg_vp_tbl is the port bitmap*/
 			port_mapping->ath_port =
 			(eg_vp_tbl.bf.ath_port_bitmap_1 << 6) | eg_vp_tbl.bf.ath_port_bitmap_0;
 		}
-		else
+		else if (eg_vp_tbl.bf.ath_hdr_ver == FAL_ATHTAG_VER3)
 		{
 			/*for version3 the ath_port_bitmap in eg_vp_tbl is the port id*/
 			port_mapping->ath_port =
 			BIT((eg_vp_tbl.bf.ath_port_bitmap_1 << 6) | eg_vp_tbl.bf.ath_port_bitmap_0);
 		}
+#if defined(JHPPE)
+		else if (eg_vp_tbl.bf.ath_hdr_ver == FAL_ATHTAG_VER1)
+		{
+			/* 8bit port for v1 header */
+			a_uint32_t port = (eg_vp_tbl.bf.ath_hdr_disable_bit << 7) |
+					  (eg_vp_tbl.bf.ath_port_bitmap_1 << 6) |
+					  eg_vp_tbl.bf.ath_port_bitmap_0;
+			port_mapping->ath_port = FAL_PORT_ID(FAL_PORT_TYPE_VPORT, port);
+		}
+#endif
+		else
+			return SW_BAD_PARAM;
 	}
 	else
 	{
