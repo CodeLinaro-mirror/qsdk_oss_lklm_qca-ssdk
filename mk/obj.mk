@@ -403,6 +403,7 @@ ifeq (TRUE, $(IN_ATHTAG))
 OBJ-COMMON  += src/fal/fal_athtag.o src/ref/ref_athtag.o
 OBJ-MPPE    += src/hsl/mppe/mppe_athtag.o src/adpt/mppe/adpt_mppe_athtag.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_athtag.o src/adpt/jhppe/adpt_jhppe_athtag.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_athtag.o src/adpt/httppe/adpt_httppe_athtag.o
 endif
 
 ###############################################################################

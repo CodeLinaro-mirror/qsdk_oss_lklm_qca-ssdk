@@ -30,6 +30,8 @@
 #include "httppe/httppe_fdb_api.h"
 #include "httppe/httppe_crosschip_reg.h"
 #include "httppe/httppe_crosschip_api.h"
+#include "httppe/httppe_athtag_reg.h"
+#include "httppe/httppe_athtag_api.h"
 
 sw_error_t hppe_reg_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t *val);
 sw_error_t hppe_reg_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint32_t val);
