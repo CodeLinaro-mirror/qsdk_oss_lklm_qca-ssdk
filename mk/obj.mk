@@ -507,6 +507,13 @@ ifeq (TRUE, $(IN_IPMC))
 OBJ-COMMON  += src/fal/fal_ipmc.o src/ref/ref_ipmc.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_ipmc.o src/adpt/jhppe/adpt_jhppe_ipmc.o
 endif
+################################################################################
+#                             IN_CROSSCHIP
+#################################################################################
+ifeq (TRUE, $(IN_CROSSCHIP))
+OBJ-COMMON  += src/fal/fal_crosschip.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_crosschip.o src/adpt/httppe/adpt_httppe_crosschip.o
+endif
 ###############################################################################
 #                              Collect OBJ
 ###############################################################################

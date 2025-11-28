@@ -54,6 +54,7 @@ extern "C" {
 #include "fal_pon.h"
 #include "fal_pon_pm.h"
 #include "fal_ipmc.h"
+#include "fal_crosschip.h"
 #include "ssdk_plat.h"
 #include "hsl_api.h"
 #include "hsl_phy.h"
@@ -1693,6 +1694,20 @@ typedef sw_error_t (*adpt_ipmc_ucast_fwd_set_func)(a_uint32_t dev_id,
 typedef sw_error_t (*adpt_ipmc_ucast_fwd_get_func)(a_uint32_t dev_id,
 		fal_ipmc_ucast_fwd_t *ucast_fwd);
 /* auto_insert_flag */
+
+/* crosschip */
+typedef sw_error_t (*adpt_crosschip_bp_mode_set_func)(a_uint32_t dev_id, fal_crosschip_bp_mode_t mode);
+typedef sw_error_t (*adpt_crosschip_bp_mode_get_func)(a_uint32_t dev_id, fal_crosschip_bp_mode_t *mode);
+typedef sw_error_t (*adpt_crosschip_bp_en_set_func)(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t enable);
+typedef sw_error_t (*adpt_crosschip_bp_en_get_func)(a_uint32_t dev_id, a_uint32_t queue_id, a_bool_t *enable);
+typedef sw_error_t (*adpt_vch_bp_config_set_func)(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t status);
+typedef sw_error_t (*adpt_vch_bp_config_get_func)(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t *status);
+typedef sw_error_t (*adpt_vch_bp_thres_set_func)(a_uint32_t dev_id, a_uint32_t vch_id,
+		a_uint16_t on_thres, a_uint16_t off_thres);
+typedef sw_error_t (*adpt_vch_bp_thres_get_func)(a_uint32_t dev_id, a_uint32_t vch_id,
+		a_uint16_t *on_thres, a_uint16_t *off_thres);
+typedef sw_error_t (*adpt_vch_bp_stats_get_func)(a_uint32_t dev_id, a_uint32_t vch_id, a_uint32_t *stats);
+
 typedef struct
 {
 	ssdk_chip_type chip_type;
@@ -2485,6 +2500,18 @@ typedef struct
 	adpt_ipmc_entry_flush_func adpt_ipmc_entry_flush;
 	adpt_ipmc_ucast_fwd_set_func adpt_ipmc_ucast_fwd_set;
 	adpt_ipmc_ucast_fwd_get_func adpt_ipmc_ucast_fwd_get;
+
+	/* CROSSCHIP */
+	adpt_crosschip_bp_mode_set_func adpt_crosschip_bp_mode_set;
+	adpt_crosschip_bp_mode_get_func adpt_crosschip_bp_mode_get;
+	adpt_crosschip_bp_en_set_func adpt_crosschip_bp_en_set;
+	adpt_crosschip_bp_en_get_func adpt_crosschip_bp_en_get;
+	adpt_vch_bp_config_set_func adpt_vch_bp_config_set;
+	adpt_vch_bp_config_get_func adpt_vch_bp_config_get;
+	adpt_vch_bp_thres_set_func adpt_vch_bp_thres_set;
+	adpt_vch_bp_thres_get_func adpt_vch_bp_thres_get;
+	adpt_vch_bp_stats_get_func adpt_vch_bp_stats_get;
+
 /* auto_insert_flag_1 */
 }adpt_api_t;
 

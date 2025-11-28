@@ -62,6 +62,7 @@ extern "C" {
 #include "fal_pon.h"
 #include "fal_pon_pm.h"
 #include "fal_ipmc.h"
+#include "fal_crosschip.h"
 /* auto_insert_flag */
 
 /*qca808x_start*/

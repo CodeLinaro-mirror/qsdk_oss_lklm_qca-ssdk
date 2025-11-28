@@ -281,4 +281,8 @@ endif
 ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
 	IN_IPMC=TRUE
 endif
+
+ifeq ($(HTTPPE_ENABLE), enable)
+	IN_CROSSCHIP=TRUE
+endif
 #auto_insert_flag

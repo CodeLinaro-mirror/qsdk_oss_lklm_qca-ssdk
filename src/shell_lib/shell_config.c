@@ -1457,6 +1457,15 @@ struct sub_cmd_des_t g_ipmc_des[] =
 #endif
 #endif
 
+#ifdef IN_CROSSCHIP
+struct sub_cmd_des_t g_crosschip_des[] =
+{
+    {"bpmode", "set", SW_API_CROSSCHIP_BP_MODE_SET, NULL},
+    {"bpen", "set", SW_API_CROSSCHIP_BP_EN_SET, NULL},
+    {NULL, NULL, 0, NULL},/*end of desc*/
+};
+#endif
+
 struct cmd_des_t gcmd_des[] =
 {
     /*port ctrl*/
@@ -1704,6 +1713,11 @@ struct cmd_des_t gcmd_des[] =
    {
 	   "ipmc", g_ipmc_des,
    },
+#endif
+#ifdef IN_CROSSCHIP
+	{
+		"crosschip", g_crosschip_des,
+	},
 #endif
     {NULL, NULL} /*end of desc*/
 };
