@@ -405,6 +405,12 @@ fal_flow_eip_lookup_mode_set(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t mode)
 sw_error_t
 fal_flow_eip_lookup_mode_get(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t *mode);
 
+sw_error_t
+fal_flow_fwd_type_set(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_fwd_type_t fwd_type);
+
+sw_error_t
+fal_flow_fwd_type_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_fwd_type_t *fwd_type);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

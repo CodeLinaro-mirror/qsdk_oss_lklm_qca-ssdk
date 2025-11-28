@@ -348,6 +348,7 @@ typedef enum
 	SW_PVLAN_RX,
 	SW_PVLAN_MAP,
 	SW_PVLAN_TX,
+	SW_FWD_TYPE,
 /* auto_insert_flag */
 } sw_data_type_e;
 

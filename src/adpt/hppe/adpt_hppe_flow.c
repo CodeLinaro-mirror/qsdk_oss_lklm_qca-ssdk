@@ -1970,6 +1970,58 @@ adpt_hppe_flow_counter_cleanup(a_uint32_t dev_id, a_uint32_t flow_index)
 }
 
 sw_error_t
+adpt_ppe_flow_fwd_type_set(a_uint32_t dev_id, a_uint32_t flow_index,
+			   fal_flow_fwd_type_t fwd_type)
+{
+	sw_error_t rv = SW_OK;
+	union in_flow_tbl_u entry;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	if (flow_index >= IN_FLOW_CNT_TBL_NUM)
+		return SW_OUT_OF_RANGE;
+
+	aos_mem_zero(&entry, sizeof(entry));
+
+	rv = hppe_in_flow_tbl_get(dev_id, flow_index, &entry);
+	SW_RTN_ON_ERROR(rv);
+
+#if defined(JHPPE)
+	entry.bf.fwd_type_0 = fwd_type;
+	entry.bf.fwd_type_1 = fwd_type >> SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_FWD_TYPE_OFFSET);
+#else
+	entry.bf.fwd_type = fwd_type;
+#endif
+
+	return hppe_in_flow_tbl_set(dev_id, flow_index, &entry);
+}
+
+sw_error_t
+adpt_ppe_flow_fwd_type_get(a_uint32_t dev_id, a_uint32_t flow_index,
+			   fal_flow_fwd_type_t *fwd_type)
+{
+	sw_error_t rv = SW_OK;
+	union in_flow_tbl_u entry;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	if (flow_index >= IN_FLOW_CNT_TBL_NUM)
+		return SW_OUT_OF_RANGE;
+
+	aos_mem_zero(&entry, sizeof(entry));
+
+	rv = hppe_in_flow_tbl_get(dev_id, flow_index, &entry);
+	SW_RTN_ON_ERROR(rv);
+
+#if defined(JHPPE)
+	*fwd_type = entry.bf.fwd_type_0;
+	*fwd_type |= entry.bf.fwd_type_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_FWD_TYPE_OFFSET);
+#else
+	*fwd_type = entry.bf.fwd_type;
+#endif
+
+	return SW_OK;
+}
+
+sw_error_t
 adpt_hppe_flow_entry_en_set(a_uint32_t dev_id, a_uint32_t flow_index, a_bool_t enable)
 {
 	sw_error_t rv = SW_OK;
@@ -2571,6 +2623,8 @@ sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_flow_npt66_status_get = adpt_hppe_flow_npt66_status_get;
 	p_adpt_api->adpt_flow_eip_lookup_mode_set = adpt_ppe_flow_eip_lookup_mode_set;
 	p_adpt_api->adpt_flow_eip_lookup_mode_get = adpt_ppe_flow_eip_lookup_mode_get;
+	p_adpt_api->adpt_flow_fwd_type_set = adpt_ppe_flow_fwd_type_set;
+	p_adpt_api->adpt_flow_fwd_type_get = adpt_ppe_flow_fwd_type_get;
 #if defined(JHPPE)
 	p_adpt_api->adpt_flow_key_get = adpt_jhppe_flow_key_get;
 	p_adpt_api->adpt_flow_key_set = adpt_jhppe_flow_key_set;

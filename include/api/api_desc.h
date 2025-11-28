@@ -4304,6 +4304,22 @@ extern "C" {
     SW_PARAM_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, SW_EIP_LOOKUP_MODE, \
 		    sizeof(fal_flow_eip_lookup_mode_t), SW_PARAM_IN, "EIP lookup mode"),
 
+#define SW_API_FLOW_FWD_TYPE_SET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
+    SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_SET, SW_FWD_TYPE, \
+		    sizeof(fal_flow_fwd_type_t), SW_PARAM_IN, "flow forward type"),
+
+#define SW_API_FLOW_FWD_TYPE_GET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "flow index"),  \
+    SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_GET, SW_FWD_TYPE, \
+		    sizeof(fal_flow_fwd_type_t), SW_PARAM_PTR|SW_PARAM_OUT, "flow forward type"),
+
 #define SW_API_NAT_ADD_DESC \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),   \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_NATENTRY, \
