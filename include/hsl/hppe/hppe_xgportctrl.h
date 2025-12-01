@@ -213,6 +213,17 @@ hppe_mac_1us_tic_counter_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union mac_1us_tic_counter_u *value);
+sw_error_t
+hppe_mac_snps_scs_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_snps_scs_u *value);
+
+sw_error_t
+hppe_mac_snps_scs_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mac_snps_scs_u *value);
 #if 0
 sw_error_t
 hppe_mac_address0_high_get(

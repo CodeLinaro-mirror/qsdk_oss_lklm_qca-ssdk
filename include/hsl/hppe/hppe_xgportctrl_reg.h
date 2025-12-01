@@ -911,6 +911,30 @@ union mac_1us_tic_counter_u {
 	a_uint32_t val;
 	struct mac_1us_tic_counter bf;
 };
+
+/*[register] MAC_SNPS_SCS*/
+#define MAC_SNPS_SCS
+#define MAC_SNPS_SCS_ADDRESS 0x160
+#define MAC_SNPS_SCS_NUM     6
+#define MAC_SNPS_SCS_INC     0x4000
+#define MAC_SNPS_SCS_TYPE    REG_TYPE_RW
+#define MAC_SNPS_SCS_DEFAULT 0x0
+	/*[field] MTL_SCS1*/
+	#define MAC_SNPS_SCS_MTL_SCS1
+	#define MAC_SNPS_SCS_MTL_SCS1_OFFSET  31
+	#define MAC_SNPS_SCS_MTL_SCS1_LEN     1
+	#define MAC_SNPS_SCS_MTL_SCS1_DEFAULT 0x0
+
+struct mac_snps_scs {
+	a_uint32_t  _reserved0:31;
+	a_uint32_t  mtl_scs1:1;
+};
+
+union mac_snps_scs_u {
+	a_uint32_t val;
+	struct mac_snps_scs bf;
+};
+
 #if 0
 /*[register] MAC_ADDRESS0_HIGH*/
 #define MAC_ADDRESS0_HIGH
