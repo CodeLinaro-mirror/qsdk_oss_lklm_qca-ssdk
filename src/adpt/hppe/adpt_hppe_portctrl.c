@@ -1623,15 +1623,21 @@ static sw_error_t
 _adpt_jhppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mode, fal_port_speed_t speed)
 {
 	union mac_tx_configuration_u mac_tx_configuration = {0};
+	union mac_snps_scs_u mac_snps_scs = {0};
+	a_bool_t update_dis = A_FALSE;
 	a_uint32_t ss = 0;
 	sw_error_t rv;
 
 	rv = hppe_mac_tx_configuration_get(dev_id, mac_id, &mac_tx_configuration);
-	SW_RTN_ON_ERROR (rv);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = hppe_mac_snps_scs_get(dev_id, mac_id, &mac_snps_scs);
+	SW_RTN_ON_ERROR(rv);
 
 	switch (speed) {
 	case FAL_SPEED_25000:
 		ss = XGMAC_SPEED_XGMII_25000M;
+		update_dis = A_TRUE;
 		break;
 	case FAL_SPEED_10000:
 		ss = XGMAC_SPEED_XGMII_10000M;
@@ -1657,7 +1663,12 @@ _adpt_jhppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mod
 	default:
 		return SW_BAD_PARAM;
 	}
+
 	mac_tx_configuration.bf.ss = ss;
+	mac_snps_scs.bf.mtl_scs1 = update_dis;
+
+	rv = hppe_mac_snps_scs_set(dev_id, mac_id, &mac_snps_scs);
+	SW_RTN_ON_ERROR(rv);
 
 	return hppe_mac_tx_configuration_set(dev_id, mac_id, &mac_tx_configuration);
 }
