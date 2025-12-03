@@ -171,7 +171,7 @@ typedef enum
 {
 	FAL_DEST_INFO_PORT_BMP = 0,
 	FAL_DEST_INFO_PORT_ID,
-	FAL_DEST_INFO_BUTT
+	FAL_DEST_INFO_INVALID
 } fal_dest_info_type_t;
 
 typedef struct

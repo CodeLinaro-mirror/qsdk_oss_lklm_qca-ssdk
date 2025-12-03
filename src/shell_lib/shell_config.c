@@ -1422,6 +1422,12 @@ struct sub_cmd_des_t g_athtag_des[] =
     {"portmapping", "set", SW_API_ATHTAG_PORT_MAPPING_SET, NULL},
     {"rx", "set", SW_API_PORT_ATHTAG_RX_SET, NULL},
     {"tx", "set", SW_API_PORT_ATHTAG_TX_SET, NULL},
+#if defined(JHPPE)
+    {"rxsrcportmapping", "set", SW_API_ATHTAG_RX_SRC_PORT_MAPPING_SET, NULL},
+    {"rxdestportmapping", "set", SW_API_ATHTAG_RX_DEST_PORT_MAPPING_SET, NULL},
+    {"rxservcodemapping", "set", SW_API_ATHTAG_RX_SERVCODE_MAPPING_SET, NULL},
+    {"txsrcportmapping", "set", SW_API_ATHTAG_TX_SRC_PORT_MAPPING_SET, NULL},
+#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif

@@ -1,17 +1,6 @@
 /*
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -39,6 +28,9 @@ static const char *athtag_rx[] = {
 	"port_id",
 	"athtag_en",
 	"athtag_type",
+#if defined(JHPPE)
+	"athtag_version",
+#endif
 };
 
 static const char *athtag_tx[] = {
@@ -50,6 +42,30 @@ static const char *athtag_tx[] = {
 	"athtag_bypass_fwd_en",
 	"athtag_field_disable",
 };
+
+#if defined(JHPPE)
+static const char *athtag_rx_src_port_mapping[] = {
+	"ath_src_port",
+	"int_dest_info_type",
+	"int_dest_info_value",
+};
+
+static const char *athtag_rx_dest_port_mapping[] = {
+	"ath_dest_port",
+	"int_dest_info_type",
+	"int_dest_info_value",
+};
+
+static const char *athtag_rx_servcode_mapping[] = {
+	"ath_servcode",
+	"int_servcode",
+};
+
+static const char *athtag_tx_src_port_mapping[] = {
+	"int_src_port",
+	"ath_src_port",
+};
+#endif
 
 int parse_athtag(const char *command_name, struct switch_val *val)
 {
@@ -67,6 +83,20 @@ int parse_athtag(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "Tx")) {
 		rv = parse_uci_option(val, athtag_tx,
 				sizeof(athtag_tx)/sizeof(char *));
+#if defined(JHPPE)
+	} else if (!strcmp(command_name, "Rxsrcportmapping")) {
+		rv = parse_uci_option(val, athtag_rx_src_port_mapping,
+				sizeof(athtag_rx_src_port_mapping)/sizeof(char *));
+	} else if (!strcmp(command_name, "Rxdestportmapping")) {
+		rv = parse_uci_option(val, athtag_rx_dest_port_mapping,
+				sizeof(athtag_rx_dest_port_mapping)/sizeof(char *));
+	} else if (!strcmp(command_name, "Rxservcodemapping")) {
+		rv = parse_uci_option(val, athtag_rx_servcode_mapping,
+				sizeof(athtag_rx_servcode_mapping)/sizeof(char *));
+	} else if (!strcmp(command_name, "Txsrcportmapping")) {
+		rv = parse_uci_option(val, athtag_tx_src_port_mapping,
+				sizeof(athtag_tx_src_port_mapping)/sizeof(char *));
+#endif
 	}
 
 	return rv;
