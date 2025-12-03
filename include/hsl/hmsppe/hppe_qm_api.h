@@ -1237,6 +1237,92 @@ hppe_ac_mul_queue_drop_state_tbl_yel_resume_thrd_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+#define AC_GRP_DROP_STATE_TBL_MAX_ENTRY	AC_GRP_DROP_STATE_TBL_NUM
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_drop_state_tbl_u *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_drop_state_tbl_u *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_grn_drop_state_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_grn_drop_state_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_grn_resume_thrd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_grn_resume_thrd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_red_drop_state_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_red_drop_state_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_red_resume_thrd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_red_resume_thrd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_yel_drop_state_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_yel_drop_state_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_yel_resume_thrd_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t *value);
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_yel_resume_thrd_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value);
+
 #define OQ_ENQ_OPR_TBL_MAX_ENTRY	OQ_ENQ_OPR_TBL_NUM
 
 sw_error_t

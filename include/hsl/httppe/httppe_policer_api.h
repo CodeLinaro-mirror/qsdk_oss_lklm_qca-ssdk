@@ -7,6 +7,48 @@
 #ifndef _HTTPPE_POLICER_API_H_
 #define _HTTPPE_POLICER_API_H_
 
+
+sw_error_t
+httppe_pc_drop_bypass_reg_get(
+		a_uint32_t dev_id,
+		union pc_drop_bypass_reg_u *value);
+
+sw_error_t
+httppe_pc_drop_bypass_reg_set(
+		a_uint32_t dev_id,
+		union pc_drop_bypass_reg_u *value);
+
+sw_error_t
+httppe_pc_drop_bypass_reg_drop_bypass_en_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_pc_drop_bypass_reg_drop_bypass_en_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
+
+sw_error_t
+httppe_time_slot_reg_get(
+		a_uint32_t dev_id,
+		union time_slot_reg_u *value);
+
+sw_error_t
+httppe_time_slot_reg_set(
+		a_uint32_t dev_id,
+		union time_slot_reg_u *value);
+
+sw_error_t
+httppe_time_slot_reg_time_slot_get(
+		a_uint32_t dev_id,
+		unsigned int *value);
+
+sw_error_t
+httppe_time_slot_reg_time_slot_set(
+		a_uint32_t dev_id,
+		unsigned int value);
+
 #define IN_ACL_METER_CFG_TBL_MAX_ENTRY	IN_ACL_METER_CFG_TBL_NUM
 
 sw_error_t

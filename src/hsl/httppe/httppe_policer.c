@@ -6,6 +6,50 @@
 #include "hsl_htt_reg.h"
 
 sw_error_t
+httppe_pc_drop_bypass_reg_get(
+		a_uint32_t dev_id,
+		union pc_drop_bypass_reg_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + PC_DROP_BYPASS_REG_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+httppe_pc_drop_bypass_reg_set(
+		a_uint32_t dev_id,
+		union pc_drop_bypass_reg_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + PC_DROP_BYPASS_REG_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+httppe_time_slot_reg_get(
+		a_uint32_t dev_id,
+		union time_slot_reg_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + TIME_SLOT_REG_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+httppe_time_slot_reg_set(
+		a_uint32_t dev_id,
+		union time_slot_reg_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				INGRESS_POLICER_BASE_ADDR + TIME_SLOT_REG_ADDRESS,
+				value->val);
+}
+
+sw_error_t
 httppe_in_acl_meter_cfg_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
