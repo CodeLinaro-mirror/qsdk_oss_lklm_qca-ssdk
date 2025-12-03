@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2015-2019, The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /*qca808x_start*/
@@ -44,20 +33,6 @@ sw_error_t fal_port_duplex_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_
 sw_error_t fal_port_speed_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_speed_t * pspeed)
     DEFINE_FAL_FUNC_EXPORT(port_speed_get, dev_id, port_id, pspeed)
 
-sw_error_t fal_port_hdr_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_hdr_status_set, dev_id, port_id, enable)
-
-sw_error_t fal_port_hdr_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_hdr_status_get, dev_id, port_id, enable)
-
-sw_error_t fal_port_rxhdr_mode_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_header_mode_t * mode)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_rxhdr_mode_get, dev_id, port_id, mode)
-
-sw_error_t fal_port_txhdr_mode_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_header_mode_t * mode)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_txhdr_mode_get, dev_id, port_id, mode)
-
-sw_error_t fal_header_type_get (a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * type)
-    DEFINE_FAL_FUNC_HSL_EXPORT(header_type_get, dev_id, enable, type)
 
 sw_error_t fal_port_flowctrl_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_EXPORT(port_flowctrl_get, dev_id, port_id, enable)
@@ -71,14 +46,6 @@ sw_error_t fal_port_flowctrl_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_
 sw_error_t fal_port_flowctrl_forcemode_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
     DEFINE_FAL_FUNC_EXPORT(port_flowctrl_forcemode_set, dev_id, port_id, enable)
 
-sw_error_t fal_port_rxhdr_mode_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_header_mode_t mode)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_rxhdr_mode_set, dev_id, port_id, mode)
-
-sw_error_t fal_port_txhdr_mode_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_header_mode_t mode)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_txhdr_mode_set, dev_id, port_id, mode)
-
-sw_error_t fal_header_type_set (a_uint32_t dev_id, a_bool_t enable, a_uint32_t type)
-    DEFINE_FAL_FUNC_HSL_EXPORT(header_type_set, dev_id, enable, type)
 
 sw_error_t fal_port_txmac_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
     DEFINE_FAL_FUNC_EXPORT(port_txmac_status_set, dev_id, port_id, enable)
@@ -101,11 +68,6 @@ sw_error_t fal_port_txfc_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bo
 sw_error_t fal_port_link_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status)
     DEFINE_FAL_FUNC_EXPORT(port_link_status_get, dev_id, port_id, status)
 
-sw_error_t fal_port_link_forcemode_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_link_forcemode_set, dev_id, port_id, enable)
-
-sw_error_t fal_port_link_forcemode_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_link_forcemode_get, dev_id, port_id, enable)
 
 sw_error_t fal_port_combo_prefer_medium_set (a_uint32_t dev_id, a_uint32_t port_id, fal_port_medium_t medium)
     DEFINE_FAL_FUNC_EXPORT(port_combo_prefer_medium_set, dev_id, port_id, medium)
@@ -249,17 +211,8 @@ sw_error_t fal_port_txmac_status_get (a_uint32_t dev_id, fal_port_t port_id, a_b
 sw_error_t fal_port_rxmac_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_EXPORT(port_rxmac_status_get, dev_id, port_id, enable)
 
-sw_error_t fal_port_congestion_drop_set (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t queue_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_congestion_drop_set, dev_id, port_id, queue_id, enable)
-
 sw_error_t fal_vch_bp_thres_set (a_uint32_t dev_id, a_uint32_t vch_id, a_uint16_t on_thres, a_uint16_t off_thres)
     DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(vch_bp_thres_set, ring_flow_ctrl_thres_set,dev_id, vch_id, on_thres, off_thres)
-
-sw_error_t fal_port_bp_status_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_bp_status_set, dev_id, port_id, enable)
-
-sw_error_t fal_port_bp_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_bp_status_get, dev_id, port_id, enable)
 
 sw_error_t fal_ports_link_status_get (a_uint32_t dev_id, a_uint32_t * status)
     DEFINE_FAL_FUNC_EXPORT(ports_link_status_get, dev_id, status)
@@ -269,9 +222,6 @@ sw_error_t fal_port_mac_loopback_set (a_uint32_t dev_id, fal_port_t port_id, a_b
 
 sw_error_t fal_port_mac_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_EXPORT(port_mac_loopback_get, dev_id, port_id, enable)
-
-sw_error_t fal_port_congestion_drop_get (a_uint32_t dev_id, fal_port_t port_id, a_uint32_t queue_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(port_congestion_drop_get, dev_id, port_id, queue_id, enable)
 
 sw_error_t fal_vch_bp_thres_get (a_uint32_t dev_id, a_uint32_t vch_id, a_uint16_t * on_thres, a_uint16_t * off_thres)
     DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(vch_bp_thres_get, ring_flow_ctrl_thres_get, dev_id, vch_id, on_thres, off_thres)
@@ -293,16 +243,6 @@ sw_error_t fal_port_8023ah_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_8
 
 sw_error_t fal_port_8023ah_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_8023ah_ctrl_t *port_8023ah_ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_8023ah_get, dev_id, port_id, port_8023ah_ctrl)
-
-sw_error_t fal_vch_bp_status_get(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t *status)
-    DEFINE_FAL_FUNC_HSL(ring_flow_ctrl_status_get, dev_id, vch_id, status)
-	EXPORT_SYMBOL(fal_vch_bp_status_get);
-
-sw_error_t fal_ring_union_set(a_uint32_t dev_id, a_bool_t en)
-    DEFINE_FAL_FUNC_HSL_EXPORT(ring_union_set, dev_id, en)
-
-sw_error_t fal_ring_union_get(a_uint32_t dev_id, a_bool_t *en)
-    DEFINE_FAL_FUNC_HSL_EXPORT(ring_union_get, dev_id, en)
 
 sw_error_t fal_port_rx_fifo_thres_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint16_t *thres)
     DEFINE_FAL_FUNC_ADPT(port_rx_buff_thresh_get, dev_id, port_id, thres)

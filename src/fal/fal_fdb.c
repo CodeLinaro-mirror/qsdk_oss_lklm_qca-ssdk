@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -192,14 +181,6 @@ sw_error_t fal_fdb_aging_ctrl_set(a_uint32_t dev_id, fal_fdb_age_ctrl_t ctrl)
     DEFINE_FAL_FUNC_ADPT_HSL(fdb_age_ctrl_set, age_ctrl_set, dev_id, ctrl)
     EXPORT_SYMBOL(fal_fdb_aging_ctrl_set);
 
-sw_error_t fal_fdb_vlan_ivl_svl_set(a_uint32_t dev_id, fal_fdb_smode smode)
-    DEFINE_FAL_FUNC_HSL(vlan_ivl_svl_set, dev_id, smode)
-    EXPORT_SYMBOL(fal_fdb_vlan_ivl_svl_set);
-
-sw_error_t fal_fdb_vlan_ivl_svl_get(a_uint32_t dev_id, fal_fdb_smode* smode)
-    DEFINE_FAL_FUNC_HSL(vlan_ivl_svl_get, dev_id, smode)
-    EXPORT_SYMBOL(fal_fdb_vlan_ivl_svl_get);
-
 sw_error_t fal_fdb_aging_time_set(a_uint32_t dev_id, a_uint32_t * time)
     DEFINE_FAL_FUNC_ADPT_HSL(fdb_age_time_set, age_time_set, dev_id, time)
     EXPORT_SYMBOL(fal_fdb_aging_time_set);
@@ -219,43 +200,6 @@ sw_error_t fal_port_fdb_learn_exceed_cmd_set(a_uint32_t dev_id, fal_port_t port_
 
 sw_error_t fal_port_fdb_learn_exceed_cmd_get(a_uint32_t dev_id, fal_port_t port_id, fal_fwd_cmd_t * cmd)
     DEFINE_FAL_FUNC_EXPORT(port_fdb_learn_exceed_cmd_get, dev_id, port_id, cmd)
-
-sw_error_t fal_fdb_learn_limit_set(a_uint32_t dev_id, a_bool_t enable, a_uint32_t cnt)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_learn_limit_set, dev_id, enable, cnt)
-
-sw_error_t fal_fdb_learn_limit_get(a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * cnt)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_learn_limit_get, dev_id, enable, cnt)
-
-sw_error_t fal_fdb_learn_exceed_cmd_set(a_uint32_t dev_id, fal_fwd_cmd_t cmd)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_learn_exceed_cmd_set, dev_id, cmd)
-
-sw_error_t fal_fdb_learn_exceed_cmd_get(a_uint32_t dev_id, fal_fwd_cmd_t * cmd)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_learn_exceed_cmd_get, dev_id, cmd)
-
-sw_error_t fal_fdb_resv_add(a_uint32_t dev_id, fal_fdb_entry_t * entry)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_resv_add, dev_id, entry)
-
-sw_error_t fal_fdb_resv_del(a_uint32_t dev_id, fal_fdb_entry_t * entry)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_resv_del, dev_id, entry)
-
-sw_error_t fal_fdb_resv_find(a_uint32_t dev_id, fal_fdb_entry_t * entry)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_resv_find, dev_id, entry)
-
-sw_error_t fal_fdb_resv_iterate(a_uint32_t dev_id, a_uint32_t * iterator, fal_fdb_entry_t * entry)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_resv_iterate, dev_id, iterator, entry)
-
-sw_error_t fal_fdb_port_learn_static_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_ENDFUNC(fdb_port_learn_static_set, _fal_fdb_sw_sync, dev_id, port_id, enable)
-    EXPORT_SYMBOL(fal_fdb_port_learn_static_set);
-
-sw_error_t fal_fdb_port_learn_static_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_port_learn_static_get, dev_id, port_id, enable)
-
-sw_error_t fal_fdb_rfs_set(a_uint32_t dev_id, const fal_fdb_rfs_t * entry)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_rfs_set, dev_id, entry)
-
-sw_error_t fal_fdb_rfs_del(a_uint32_t dev_id, const fal_fdb_rfs_t * entry)
-    DEFINE_FAL_FUNC_HSL_EXPORT(fdb_rfs_del, dev_id, entry)
 
 sw_error_t fal_fdb_learning_ctrl_set(a_uint32_t dev_id, fal_fdb_learning_ctrl ctrl)
     DEFINE_FAL_FUNC_ADPT(fdb_learn_ctrl_set, dev_id, ctrl)

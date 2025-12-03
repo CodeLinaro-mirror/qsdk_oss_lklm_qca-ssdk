@@ -20,7 +20,9 @@ extern "c" {
 #include "sw.h"
 #include "fal/fal_type.h"
 #include <linux/phy.h>
-
+#ifdef ISISC
+#include "fal_port_ctrl_legacy.h"
+#endif
 	typedef enum {
 		FAL_HALF_DUPLEX = 0,
 		FAL_FULL_DUPLEX,
@@ -130,12 +132,6 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 	FAL_PHY_EEE_2500BASE_T | FAL_PHY_EEE_5000BASE_T |FAL_PHY_EEE_10000BASE_T)
 
 #define FAL_SFP_PHY_ADDR 29
-
-	typedef enum {
-		FAL_NO_HEADER_EN = 0,
-		FAL_ONLY_MANAGE_FRAME_EN,
-		FAL_ALL_TYPE_FRAME_EN
-	} fal_port_header_mode_t;
 
 	typedef struct {
 		a_uint16_t pair_a_status;
@@ -429,15 +425,6 @@ sw_error_t
 fal_port_autoneg_adv_get(a_uint32_t dev_id, fal_port_t port_id,
 				     a_uint32_t * autoadv);
 /*qca808x_end*/
-#ifndef IN_PORTCONTROL_MINI
-sw_error_t
-fal_port_hdr_status_set(a_uint32_t dev_id, fal_port_t port_id,
-				    a_bool_t enable);
-
-sw_error_t
-fal_port_hdr_status_get(a_uint32_t dev_id, fal_port_t port_id,
-				    a_bool_t * enable);
-#endif
 sw_error_t
 fal_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 				  a_bool_t enable);
@@ -461,28 +448,6 @@ sw_error_t
 fal_port_flowctrl_forcemode_get(a_uint32_t dev_id,
 					    fal_port_t port_id,
 					    a_bool_t * enable);
-sw_error_t
-fal_port_rxhdr_mode_set(a_uint32_t dev_id, fal_port_t port_id,
-				    fal_port_header_mode_t mode);
-#ifndef IN_PORTCONTROL_MINI
-sw_error_t
-fal_port_rxhdr_mode_get(a_uint32_t dev_id, fal_port_t port_id,
-				    fal_port_header_mode_t * mode);
-#endif
-sw_error_t
-fal_port_txhdr_mode_set(a_uint32_t dev_id, fal_port_t port_id,
-				    fal_port_header_mode_t mode);
-#ifndef IN_PORTCONTROL_MINI
-sw_error_t
-fal_port_txhdr_mode_get(a_uint32_t dev_id, fal_port_t port_id,
-				    fal_port_header_mode_t * mode);
-#endif
-sw_error_t
-fal_header_type_set(a_uint32_t dev_id, a_bool_t enable,
-				a_uint32_t type);
-sw_error_t
-fal_header_type_get(a_uint32_t dev_id, a_bool_t * enable,
-				a_uint32_t * type);
 sw_error_t
 fal_port_txmac_status_set(a_uint32_t dev_id, fal_port_t port_id,
 				      a_bool_t enable);
@@ -514,22 +479,6 @@ fal_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_rxfc_status_get(a_uint32_t dev_id, fal_port_t port_id,
 				     a_bool_t * enable);
-#ifndef IN_PORTCONTROL_MINI
-sw_error_t
-fal_port_bp_status_set(a_uint32_t dev_id, fal_port_t port_id,
-				   a_bool_t enable);
-
-sw_error_t
-fal_port_bp_status_get(a_uint32_t dev_id, fal_port_t port_id,
-				   a_bool_t * enable);
-#endif
-sw_error_t
-fal_port_link_forcemode_set(a_uint32_t dev_id, fal_port_t port_id,
-					a_bool_t enable);
-
-sw_error_t
-fal_port_link_forcemode_get(a_uint32_t dev_id, fal_port_t port_id,
-					a_bool_t * enable);
 /*qca808x_start*/
 sw_error_t
 fal_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id,
@@ -539,10 +488,6 @@ sw_error_t
 fal_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status);
 /*qca808x_end*/
 
-sw_error_t
-fal_port_congestion_drop_get(a_uint32_t dev_id, fal_port_t port_id,
-					 a_uint32_t queue_id,
-					 a_bool_t * enable);
 
 sw_error_t
 fal_vch_bp_thres_get(a_uint32_t dev_id, a_uint32_t vch_id,
@@ -763,12 +708,6 @@ fal_port_rx_fifo_thres_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint16_t thr
 sw_error_t
 fal_port_rx_fifo_thres_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint16_t *thres);
 sw_error_t
-fal_vch_bp_status_get(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t *status);
-sw_error_t
-fal_ring_union_set(a_uint32_t dev_id, a_bool_t en);
-sw_error_t
-fal_ring_union_get(a_uint32_t dev_id, a_bool_t *en);
-sw_error_t
 fal_vch_bp_config_get(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t *status);
 sw_error_t
 fal_vch_bp_config_set(a_uint32_t dev_id, a_uint32_t vch_id, a_bool_t status);
@@ -787,9 +726,6 @@ fal_port_cnt_get(a_uint32_t dev_id, fal_port_t port_id, fal_port_cnt_t *port_cnt
 sw_error_t
 fal_port_cnt_flush(a_uint32_t dev_id, fal_port_t port_id);
 #ifndef IN_PORTCONTROL_MINI
-sw_error_t
-fal_port_congestion_drop_set(a_uint32_t dev_id, fal_port_t port_id,
-		a_uint32_t queue_id, a_bool_t enable);
 sw_error_t
 fal_vch_bp_thres_set(a_uint32_t dev_id, a_uint32_t vch_id,
 		a_uint16_t on_thres, a_uint16_t off_thres);

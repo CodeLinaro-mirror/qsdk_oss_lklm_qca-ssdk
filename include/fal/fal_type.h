@@ -214,6 +214,110 @@ typedef enum
 	FAL_PCP_MATCH_INT_PRI = 1,
 } fal_pcp_match_mode_t;
 
+typedef enum
+{
+	FAL_ACL_UDF_TYPE_L2 = 0, /*start from L2 */
+	FAL_ACL_UDF_TYPE_L3,	 /*start from L3 */
+	FAL_ACL_UDF_TYPE_L4,	/*start from L4 */
+	FAL_ACL_UDF_TYPE_L2_SNAP, /*start from SNAP L2 */
+	FAL_ACL_UDF_TYPE_L3_PLUS, /*start from SNAP L3 */
+	FAL_ACL_UDF_TYPE_BUTT,
+} fal_acl_udf_type_t;
+
+/**
+	@details  Fields description:
+	portmap_en - If value of portmap_en is A_TRUE then port.map is valid
+	otherwise port.id is valid.
+
+	leaky_en - If value of leaky_en is A_TRUE then packets which
+	destination address equals addr in this entry would be leaky.
+	mirror_en - If value of mirror_en is A_TRUE then packets which
+	destination address equals addr in this entry would be mirrored.
+	clone_en - If value of clone_en is A_TRUE which means this address is
+	a mac clone address.
+	@brief This structure defines the Fdb entry.
+*/
+typedef enum
+{
+	HW_ENTRY = 0,
+	SW_ENTRY,
+} fal_fdb_entry_type_t;
+
+typedef enum
+{
+	ENTRY_VER0 = 0,/*the fields from load_balance_en are invalid*/
+	ENTRY_VER1 = 1,
+} fal_fdb_entry_ver_t;
+
+typedef struct
+{
+	fal_mac_addr_t addr; /* mac address of fdb entry */
+	a_uint16_t    fid; /* vlan_id/vsi value of fdb entry */
+	fal_fwd_cmd_t dacmd; /* source address command */
+	fal_fwd_cmd_t sacmd; /* dest address command */
+	union
+	{
+		fal_port_t id; /* union value is port id value */
+		fal_pbmp_t map; /* union value is bitmap value */
+	} port;
+	a_bool_t portmap_en; /* use port bitmap or not */
+	a_bool_t is_multicast; /* if it is a multicast mac fdb entry */
+	a_bool_t static_en; /* enable static or not */
+	a_bool_t leaky_en; /* enable leaky or not */
+	a_bool_t mirror_en; /* enable mirror or not */
+	fal_fdb_entry_ver_t entry_ver; /* entry version*/
+	a_bool_t cross_pt_state; /* cross port state */
+	a_bool_t da_pri_en; /* enable da pri or not */
+	a_uint8_t da_queue; /* da queue value */
+	a_bool_t white_list_en; /* enable white list or not */
+	a_bool_t load_balance_en; /* enable load balance value or not */
+	a_uint8_t age_value; /* age value, can be 0/1/2/3 */
+	a_bool_t entry_valid; /* check if entry is value */
+	a_bool_t lookup_valid; /* check if entry is lookup */
+	fal_fdb_entry_type_t type;/*sortware entry or hardware entry*/
+} fal_fdb_entry_t;
+
+/**
+	@brief This enum defines 802.1q mode type.
+*/
+typedef enum {
+	FAL_1Q_DISABLE = 0, /* 802.1q mode disbale, port based vlan */
+	FAL_1Q_SECURE,		/* secure mode, packets which vid isn't in vlan table or
+				 * source port isn't in vlan port member will be discarded.
+				 */
+	FAL_1Q_CHECK,		/* check mode, packets which vid isn't in vlan table will be
+				 * discarded, packets which source port isn't in vlan port member
+				 * will forward base on vlan port member
+				 */
+	FAL_1Q_FALLBACK,	/* fallback mode, packets which vid isn't in vlan table will
+				 * forwarded base on port vlan, packet's which source port isn't
+				 * in vlan port member will forward base on vlan port member.
+				 */
+	FAL_1Q_MODE_BUTT
+} fal_pt_1qmode_t;
+
+/**
+	@brief This enum defines receive packets tagged mode.
+*/
+typedef enum
+{
+	FAL_INVLAN_ADMIT_ALL = 0,  /**<  receive all packets include tagged and untagged */
+	FAL_INVLAN_ADMIT_TAGGED,   /**<  only receive tagged packets*/
+	FAL_INVLAN_ADMIT_UNTAGGED, /**<  only receive untagged packets include priority tagged */
+	FAL_INVLAN_MODE_BUTT
+} fal_pt_invlan_mode_t;
+
+/**
+	@brief This enum defines vlan propagation mode.
+ */
+typedef enum
+{
+	FAL_VLAN_PROPAGATION_DISABLE = 0, /**<	vlan propagation disable */
+	FAL_VLAN_PROPAGATION_CLONE, 	  /**<	vlan paopagation mode is clone */
+	FAL_VLAN_PROPAGATION_REPLACE,	  /**<	vlan paopagation mode is repalce */
+	FAL_VLAN_PROPAGATION_MODE_BUTT
+} fal_vlan_propagation_mode_t;
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

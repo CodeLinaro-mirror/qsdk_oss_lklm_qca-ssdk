@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -44,29 +34,6 @@ sw_error_t fal_acl_list_bind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_dire
 sw_error_t fal_acl_list_unbind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t direc, fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
     DEFINE_FAL_FUNC_EXPORT(acl_list_unbind, dev_id, list_id, direc, obj_t, obj_idx)
 
-sw_error_t fal_acl_status_set(a_uint32_t dev_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_status_set, dev_id, enable)
-
-sw_error_t fal_acl_status_get(a_uint32_t dev_id, a_bool_t * enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_status_get, dev_id, enable)
-
-sw_error_t fal_acl_port_udf_profile_set(a_uint32_t dev_id, fal_port_t port_id, fal_acl_udf_type_t udf_type, a_uint32_t offset, a_uint32_t length)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_port_udf_profile_set, dev_id, port_id, udf_type, offset, length)
-
-sw_error_t fal_acl_port_udf_profile_get(a_uint32_t dev_id, fal_port_t port_id, fal_acl_udf_type_t udf_type, a_uint32_t * offset, a_uint32_t * length)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_port_udf_profile_get, dev_id, port_id, udf_type, offset, length)
-
-sw_error_t fal_acl_rule_active(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t rule_nr)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_rule_active, dev_id, list_id, rule_id, rule_nr)
-
-sw_error_t fal_acl_rule_deactive(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t rule_nr)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_rule_deactive, dev_id, list_id, rule_id, rule_nr)
-
-sw_error_t fal_acl_rule_src_filter_sts_set(a_uint32_t dev_id, a_uint32_t rule_id, a_bool_t enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_rule_src_filter_sts_set, dev_id, rule_id, enable)
-
-sw_error_t fal_acl_rule_src_filter_sts_get(a_uint32_t dev_id, a_uint32_t rule_id, a_bool_t* enable)
-    DEFINE_FAL_FUNC_HSL_EXPORT(acl_rule_src_filter_sts_get, dev_id, rule_id, enable)
 
 sw_error_t fal_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,a_uint32_t udf_idx, fal_acl_udf_type_t udf_type, a_uint32_t offset)
     DEFINE_FAL_FUNC_ADPT_EXPORT(acl_udf_profile_set, dev_id, pkt_type, udf_idx, udf_type, offset)
@@ -113,8 +80,6 @@ sw_error_t fal_acl_dscp_pcp_mapping_set(a_uint32_t dev_id, a_uint8_t group_id, a
 sw_error_t fal_acl_dscp_pcp_mapping_get(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t dscp, a_uint8_t *pcp)
     DEFINE_FAL_FUNC_ADPT_EXPORT(acl_dscp_pcp_mapping_get, dev_id, group_id, dscp, pcp)
 
-sw_error_t fal_acl_list_dump(a_uint32_t dev_id)
-	DEFINE_FAL_FUNC_HSL_EXPORT(acl_list_dump, dev_id)
 
 sw_error_t fal_acl_rule_dump(a_uint32_t dev_id)
 	DEFINE_FAL_FUNC_EXPORT(acl_rule_dump, dev_id)

@@ -17,66 +17,9 @@ extern "C" {
 
 #include "sw.h"
 #include "fal/fal_type.h"
-
-    /**
-      @details  Fields description:
-
-        portmap_en - If value of portmap_en is A_TRUE then port.map is valid
-        otherwise port.id is valid.
-
-
-        leaky_en - If value of leaky_en is A_TRUE then packets which
-        destination address equals addr in this entry would be leaky.
-
-
-        mirror_en - If value of mirror_en is A_TRUE then packets which
-        destination address equals addr in this entry would be mirrored.
-
-
-        clone_en - If value of clone_en is A_TRUE which means this address is
-        a mac clone address.
-    @brief This structure defines the Fdb entry.
-
-    */
-    typedef enum
-    {
-        HW_ENTRY = 0,
-        SW_ENTRY,
-    } fal_fdb_entry_type_t;
-
-    typedef enum
-    {
-        ENTRY_VER0 = 0,/*the fields from load_balance_en are invalid*/
-        ENTRY_VER1 = 1,
-    } fal_fdb_entry_ver_t;
-
-    typedef struct
-    {
-        fal_mac_addr_t addr; /* mac address of fdb entry */
-        a_uint16_t    fid; /* vlan_id/vsi value of fdb entry */
-        fal_fwd_cmd_t dacmd; /* source address command */
-        fal_fwd_cmd_t sacmd; /* dest address command */
-        union
-        {
-            fal_port_t id; /* union value is port id value */
-            fal_pbmp_t map; /* union value is bitmap value */
-        } port;
-        a_bool_t portmap_en; /* use port bitmap or not */
-        a_bool_t is_multicast; /* if it is a multicast mac fdb entry */
-        a_bool_t static_en; /* enable static or not */
-        a_bool_t leaky_en; /* enable leaky or not */
-        a_bool_t mirror_en; /* enable mirror or not */
-        fal_fdb_entry_ver_t entry_ver; /* entry version*/
-        a_bool_t cross_pt_state; /* cross port state */
-        a_bool_t da_pri_en; /* enable da pri or not */
-        a_uint8_t da_queue; /* da queue value */
-        a_bool_t white_list_en; /* enable white list or not */
-        a_bool_t load_balance_en; /* enable load balance value or not */
-        a_uint8_t age_value; /* age value, can be 0/1/2/3 */
-        a_bool_t entry_valid; /* check if entry is value */
-        a_bool_t lookup_valid; /* check if entry is lookup */
-        fal_fdb_entry_type_t type;/*sortware entry or hardware entry*/
-    } fal_fdb_entry_t;
+#ifdef ISISC
+#include "fal_fdb_legacy.h"
+#endif
 
     typedef struct
     {
@@ -101,11 +44,6 @@ extern "C" {
         a_bool_t multicast_en; /* enable multicast value matching or not */
     } fal_fdb_op_t;
 
-    typedef enum
-    {
-        INVALID_VLAN_SVL=0,
-        INVALID_VLAN_IVL
-    } fal_fdb_smode;
 
     typedef enum
     {
@@ -123,13 +61,6 @@ extern "C" {
 
     sw_error_t
     fal_fdb_entry_add(a_uint32_t dev_id, const fal_fdb_entry_t * entry);
-#if defined(IN_RFS)
-    sw_error_t
-    fal_fdb_rfs_set(a_uint32_t dev_id, const fal_fdb_rfs_t * entry);
-
-    sw_error_t
-    fal_fdb_rfs_del(a_uint32_t dev_id, const fal_fdb_rfs_t * entry);
-#endif
 
     sw_error_t
     fal_fdb_entry_flush(a_uint32_t dev_id, a_uint32_t flag);
@@ -193,11 +124,6 @@ sw_error_t
     sw_error_t
     fal_fdb_learning_ctrl_get(a_uint32_t dev_id, fal_fdb_learning_ctrl *ctrl);
 
-    sw_error_t
-    fal_fdb_vlan_ivl_svl_set(a_uint32_t dev_id, fal_fdb_smode smode);
-
-    sw_error_t
-    fal_fdb_vlan_ivl_svl_get(a_uint32_t dev_id, fal_fdb_smode * smode);
 #endif
     sw_error_t
     fal_fdb_aging_time_set(a_uint32_t dev_id, a_uint32_t * time);
@@ -242,38 +168,6 @@ sw_error_t
     sw_error_t
     fal_fdb_port_learned_mac_counter_get(a_uint32_t dev_id, fal_port_t port_id,
                                   a_uint32_t * cnt);
-
-    sw_error_t
-    fal_fdb_learn_limit_set(a_uint32_t dev_id, a_bool_t enable, a_uint32_t cnt);
-
-    sw_error_t
-    fal_fdb_learn_limit_get(a_uint32_t dev_id, a_bool_t * enable, a_uint32_t * cnt);
-
-    sw_error_t
-    fal_fdb_learn_exceed_cmd_set(a_uint32_t dev_id, fal_fwd_cmd_t cmd);
-
-    sw_error_t
-    fal_fdb_learn_exceed_cmd_get(a_uint32_t dev_id, fal_fwd_cmd_t * cmd);
-
-    sw_error_t
-    fal_fdb_resv_add(a_uint32_t dev_id, fal_fdb_entry_t * entry);
-
-    sw_error_t
-    fal_fdb_resv_del(a_uint32_t dev_id, fal_fdb_entry_t * entry);
-
-    sw_error_t
-    fal_fdb_resv_find(a_uint32_t dev_id, fal_fdb_entry_t * entry);
-
-    sw_error_t
-    fal_fdb_resv_iterate(a_uint32_t dev_id, a_uint32_t * iterator, fal_fdb_entry_t * entry);
-
-    sw_error_t
-    fal_fdb_port_learn_static_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
-
-
-    sw_error_t
-    fal_fdb_port_learn_static_get(a_uint32_t dev_id, fal_port_t port_id,
-                                  a_bool_t * enable);
 
     sw_error_t
     fal_fdb_port_add(a_uint32_t dev_id, a_uint32_t fid, fal_mac_addr_t * addr, fal_port_t port_id);

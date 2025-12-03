@@ -20,7 +20,7 @@ OBJ-HTTPPE  :=
 ifeq (TRUE, $(IN_ACL))
 OBJ-COMMON += src/fal/fal_acl.o src/ref/ref_acl.o
 OBJ-ISISC  += src/hsl/isisc/isisc_acl.o src/hsl/isisc/isisc_acl_parse.o \
-              src/hsl/isisc/isisc_multicast_acl.o
+              src/hsl/isisc/isisc_multicast_acl.o src/fal/fal_acl_legacy.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_acl.o src/hsl/hppe/hppe_acl.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_acl.o src/hsl/appe/appe_acl.o
 OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_acl.o src/hsl/jhppe/jhppe_acl.o
@@ -32,7 +32,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_FDB))
 OBJ-COMMON += src/ref/ref_fdb.o src/fal/fal_fdb.o
-OBJ-ISISC  += src/hsl/isisc/isisc_fdb.o
+OBJ-ISISC  += src/hsl/isisc/isisc_fdb.o src/fal/fal_fdb_legacy.o
 OBJ-HPPE   += src/hsl/hppe/hppe_fdb.o src/adpt/hppe/adpt_hppe_fdb.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_fdb.o
 OBJ-HTTPPE += src/hsl/httppe/httppe_fdb.o
@@ -42,16 +42,14 @@ endif
 #                                IN_IGMP
 ###############################################################################
 ifeq (TRUE, $(IN_IGMP))
-OBJ-COMMON += src/fal/fal_igmp.o
-OBJ-ISISC  += src/hsl/isisc/isisc_igmp.o
+OBJ-ISISC  += src/hsl/isisc/isisc_igmp.o src/fal/fal_igmp.o
 endif
 
 ###############################################################################
-#                                IN_IGMP
+#                                IN_LEAKY
 ###############################################################################
 ifeq (TRUE, $(IN_LEAKY))
-OBJ-COMMON += src/fal/fal_leaky.o
-OBJ-ISISC  += src/hsl/isisc/isisc_leaky.o
+OBJ-ISISC  += src/hsl/isisc/isisc_leaky.o src/fal/fal_leaky.o
 endif
 
 ###############################################################################
@@ -89,7 +87,7 @@ endif
 ifeq (TRUE, $(IN_MISC))
 OBJ-COMMON += src/adpt/hppe/adpt_hppe_misc.o src/ref/ref_misc.o \
               src/fal/fal_misc.o
-OBJ-ISISC  += src/hsl/isisc/isisc_misc.o
+OBJ-ISISC  += src/hsl/isisc/isisc_misc.o src/fal/fal_misc_legacy.o
 OBJ-HTTPPE  += src/adpt/httppe/adpt_httppe_misc.o
 endif
 
@@ -98,7 +96,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_PORTCONTROL))
 OBJ-COMMON += src/fal/fal_port_ctrl.o src/ref/ref_port_ctrl.o
-OBJ-ISISC  += src/hsl/isisc/isisc_port_ctrl.o
+OBJ-ISISC  += src/hsl/isisc/isisc_port_ctrl.o src/fal/fal_port_ctrl_legacy.o
 OBJ-HPPE   += src/adpt/hppe/adpt_hppe_portctrl.o src/hsl/hppe/hppe_portctrl.o \
               src/hsl/hppe/hppe_xgportctrl.o
 OBJ-APPE   += src/adpt/appe/adpt_appe_portctrl.o
@@ -113,7 +111,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_PORTVLAN))
 OBJ-COMMON += src/fal/fal_portvlan.o
-OBJ-ISISC  += src/hsl/isisc/isisc_portvlan.o
+OBJ-ISISC  += src/hsl/isisc/isisc_portvlan.o src/fal/fal_portvlan_legacy.o
 OBJ-HPPE   += src/hsl/hppe/hppe_portvlan.o src/adpt/hppe/adpt_hppe_portvlan.o
 OBJ-APPE   += src/hsl/appe/appe_portvlan.o src/adpt/appe/adpt_appe_portvlan.o
 OBJ-JHPPE  += src/hsl/jhppe/jhppe_portvlan.o src/adpt/jhppe/adpt_jhppe_portvlan.o
@@ -125,7 +123,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_QOS))
 OBJ-COMMON += src/fal/fal_qos.o
-OBJ-ISISC  += src/hsl/isisc/isisc_qos.o
+OBJ-ISISC  += src/hsl/isisc/isisc_qos.o src/fal/fal_qos_legacy.o
 OBJ-HPPE   += src/hsl/hppe/hppe_qos.o src/adpt/hppe/adpt_hppe_qos.o
 OBJ-APPE   += src/hsl/appe/appe_qos.o src/adpt/appe/adpt_appe_qos.o
 OBJ-JHPPE  += src/adpt/jhppe/adpt_jhppe_qos.o
@@ -136,8 +134,7 @@ endif
 #                             IN_RATE
 ###############################################################################
 ifeq (TRUE, $(IN_RATE))
-OBJ-COMMON += src/fal/fal_rate.o
-OBJ-ISISC  += src/hsl/isisc/isisc_rate.o
+OBJ-ISISC  += src/hsl/isisc/isisc_rate.o src/fal/fal_rate.o
 endif
 
 ###############################################################################
@@ -161,8 +158,7 @@ endif
 #                             IN_COSMAP
 ###############################################################################
 ifeq (TRUE, $(IN_COSMAP))
-OBJ-COMMON += src/fal/fal_cosmap.o
-OBJ-ISISC  += src/hsl/isisc/isisc_cosmap.o
+OBJ-ISISC  += src/hsl/isisc/isisc_cosmap.o src/fal/fal_cosmap.o
 OBJ-MHT    += src/hsl/mht/mht_cosmap.o
 endif
 
@@ -171,7 +167,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_IP))
 OBJ-COMMON  += src/fal/fal_ip.o
-OBJ-ISISC   += src/hsl/isisc/isisc_ip.o
+OBJ-ISISC   += src/hsl/isisc/isisc_ip.o src/fal/fal_ip_legacy.o
 OBJ-MHT     += src/hsl/mht/mht_ip.o
 OBJ-HPPE    += src/hsl/hppe/hppe_ip.o src/adpt/hppe/adpt_hppe_ip.o
 OBJ-JHPPE   += src/adpt/jhppe/adpt_jhppe_ip.o
@@ -192,8 +188,7 @@ endif
 #                              IN_NAT
 ###############################################################################
 ifeq (TRUE, $(IN_NAT))
-OBJ-COMMON  += src/fal/fal_nat.o
-OBJ-ISISC   += src/hsl/isisc/isisc_nat.o
+OBJ-ISISC   += src/hsl/isisc/isisc_nat.o src/fal/fal_nat.o
 OBJ-MHT     += src/hsl/mht/mht_nat.o
 endif
 
@@ -202,7 +197,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_TRUNK))
 OBJ-COMMON  += src/fal/fal_trunk.o
-OBJ-ISISC   += src/hsl/isisc/isisc_trunk.o
+OBJ-ISISC   += src/hsl/isisc/isisc_trunk.o src/fal/fal_trunk_legacy.o
 OBJ-HPPE    += src/hsl/hppe/hppe_trunk.o src/adpt/hppe/adpt_hppe_trunk.o
 endif
 
@@ -211,7 +206,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_SEC))
 OBJ-COMMON  += src/fal/fal_sec.o
-OBJ-ISISC   += src/hsl/isisc/isisc_sec.o
+OBJ-ISISC   += src/hsl/isisc/isisc_sec.o src/fal/fal_sec_legacy.o
 OBJ-HPPE    += src/hsl/hppe/hppe_sec.o src/adpt/hppe/adpt_hppe_sec.o
 OBJ-APPE    += src/hsl/appe/appe_sec.o src/adpt/appe/adpt_appe_sec.o
 OBJ-MHT     += src/hsl/mht/mht_sec_ctrl.o
@@ -222,7 +217,7 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_PPPOE))
 OBJ-COMMON  += src/fal/fal_pppoe.o
-OBJ-HPPE    += src/adpt/hppe/adpt_hppe_pppoe.o
+OBJ-HPPE    += src/adpt/hppe/adpt_hppe_pppoe.o src/fal/fal_pppoe_legacy.o
 OBJ-APPE    += src/hsl/appe/appe_pppoe.o src/adpt/appe/adpt_appe_pppoe.o
 endif
 
@@ -230,8 +225,7 @@ endif
 #                     IN_INTERFACECONTROL
 ###############################################################################
 ifeq (TRUE, $(IN_INTERFACECONTROL))
-OBJ-COMMON  += src/fal/fal_interface_ctrl.o
-OBJ-ISISC   += src/hsl/isisc/isisc_interface_ctrl.o
+OBJ-ISISC   += src/hsl/isisc/isisc_interface_ctrl.o src/fal/fal_interface_ctrl.o
 endif
 
 ###############################################################################

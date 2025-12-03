@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
 /*qca808x_start*/
 #ifndef _FAL_H
 #define _FAL_H
@@ -20,10 +19,7 @@ extern "C" {
 #include "fal_portvlan.h"
 #include "fal_qos.h"
 #include "fal_stp.h"
-#include "fal_rate.h"
 #include "fal_mirror.h"
-#include "fal_leaky.h"
-#include "fal_igmp.h"
 #include "fal_mib.h"
 #include "fal_acl.h"
 #include "fal_led.h"
@@ -31,14 +27,11 @@ extern "C" {
 #include "fal_reg_access.h"
 #include "fal_init.h"
 /*qca808x_end*/
-#include "fal_cosmap.h"
 #include "fal_ip.h"
-#include "fal_nat.h"
 #include "fal_flow.h"
 #include "fal_qm.h"
 #include "fal_sec.h"
 #include "fal_trunk.h"
-#include "fal_interface_ctrl.h"
 #include "fal_multi.h"
 #include "fal_ctrlpkt.h"
 #include "fal_servcode.h"
@@ -63,6 +56,15 @@ extern "C" {
 #include "fal_pon_pm.h"
 #include "fal_ipmc.h"
 #include "fal_crosschip.h"
+#ifdef ISISC
+#include "fal_leaky.h"
+#include "fal_igmp.h"
+#include "fal_rate.h"
+#include "fal_cosmap.h"
+#include "fal_nat.h"
+#include "fal_interface_ctrl.h"
+#endif
+
 /* auto_insert_flag */
 
 /*qca808x_start*/

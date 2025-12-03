@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
 /**
  * @defgroup fal_acl FAL_ACL
  * @{
@@ -20,7 +19,9 @@ extern "C" {
 #include "fal/fal_type.h"
 #include "fal_tunnel.h"
 #include "fal_vport.h"
-
+#ifdef ISISC
+#include "fal_acl_legacy.h"
+#endif
     /**
     @brief This enum defines the ACL rule type.
     */
@@ -69,19 +70,6 @@ extern "C" {
         FAL_ACL_COMBINED_CONTINUE,
         FAL_ACL_COMBINED_END,
     } fal_combined_t;
-
-    /**
-    @brief This enum defines the ACL field operation type.
-    */
-    typedef enum
-    {
-        FAL_ACL_UDF_TYPE_L2 = 0, /*start from L2 */
-        FAL_ACL_UDF_TYPE_L3,     /*start from L3 */
-        FAL_ACL_UDF_TYPE_L4,    /*start from L4 */
-        FAL_ACL_UDF_TYPE_L2_SNAP, /*start from SNAP L2 */
-        FAL_ACL_UDF_TYPE_L3_PLUS, /*start from SNAP L3 */
-        FAL_ACL_UDF_TYPE_BUTT,
-    } fal_acl_udf_type_t;
 
     /**
     @brief This enum defines the ACL rule type.
@@ -913,36 +901,13 @@ sw_error_t
 fal_acl_list_unbind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t direc, fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx);
 
 sw_error_t
-fal_acl_status_set(a_uint32_t dev_id, a_bool_t enable);
-
-sw_error_t
-fal_acl_status_get(a_uint32_t dev_id, a_bool_t * enable);
-
-sw_error_t
-fal_acl_list_dump(a_uint32_t dev_id);
-
-sw_error_t
 fal_acl_rule_dump(a_uint32_t dev_id);
-
-sw_error_t
-fal_acl_port_udf_profile_set(a_uint32_t dev_id, fal_port_t port_id, fal_acl_udf_type_t udf_type, a_uint32_t offset, a_uint32_t length);
-sw_error_t
-fal_acl_port_udf_profile_get(a_uint32_t dev_id, fal_port_t port_id, fal_acl_udf_type_t udf_type, a_uint32_t * offset, a_uint32_t * length);
 
 sw_error_t
 fal_acl_udf_profile_set(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,a_uint32_t udf_idx, fal_acl_udf_type_t udf_type, a_uint32_t offset);
 
 sw_error_t
 fal_acl_udf_profile_get(a_uint32_t dev_id, fal_acl_udf_pkt_type_t pkt_type,a_uint32_t udf_idx, fal_acl_udf_type_t *udf_type, a_uint32_t *offset);
-
-sw_error_t
-fal_acl_rule_active(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t rule_nr);
-sw_error_t
-fal_acl_rule_deactive(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t rule_nr);
-sw_error_t
-fal_acl_rule_src_filter_sts_set(a_uint32_t dev_id, a_uint32_t rule_id, a_bool_t enable);
-sw_error_t
-fal_acl_rule_src_filter_sts_get(a_uint32_t dev_id, a_uint32_t rule_id, a_bool_t* enable);
 
 sw_error_t
 fal_acl_udf_profile_entry_add(a_uint32_t dev_id, a_uint32_t profile_id,
