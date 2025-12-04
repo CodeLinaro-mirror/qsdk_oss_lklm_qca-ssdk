@@ -14098,16 +14098,32 @@ cmd_data_check_athtag_pri_mapping(char * cmd_str, void * val, a_uint32_t size)
 sw_error_t
 cmd_data_check_athtag_port_mapping(char * cmd_str, void * val, a_uint32_t size)
 {
-    char *cmd;
+    char *cmd, *cmd_find;
     fal_athtag_port_mapping_t entry;
     a_uint32_t tmpdata = 0;
+    sw_error_t rv;
 
     memset(&entry, 0, sizeof (fal_athtag_port_mapping_t));
 
-    cmd_data_check_element("ath port", "0",
-                       "usage: input port number such as 1,2\n",
-                       cmd_data_check_portmap, (cmd, &entry.ath_port,
-                       sizeof(fal_pbmp_t)));
+    do
+    {
+        cmd = get_sub_cmd("ath port", "0");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        cmd_find = strstr(cmd, ",");
+        if (cmd_find == NULL)
+        {
+            rv = cmd_data_check_uint32(cmd, &entry.ath_port, sizeof (fal_pbmp_t));
+            if(entry.ath_port <= SW_MAX_NR_PORT)
+            {
+                entry.ath_port = 1<<(entry.ath_port);
+            }
+        }
+        else
+        {
+            rv = cmd_data_check_portmap(cmd, &entry.ath_port, sizeof (fal_pbmp_t));
+        }
+    }while (talk_mode && (SW_OK != rv));
 
     cmd_data_check_element("int port", "0",
                        "usage: port or vport number\n",

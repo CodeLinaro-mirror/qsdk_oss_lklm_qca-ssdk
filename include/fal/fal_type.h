@@ -26,6 +26,7 @@ extern "C" {
 #define FAL_PORT_TYPE_VPORT 2
 #define FAL_PORT_TYPE_VP_GROUP 3
 #define FAL_PORT_TYPE_GEM_PORT 4
+#define FAL_PORT_TYPE_INVALID  0xff
 
 #define FAL_PORT_ID_TYPE(port_id) (((port_id)>>24)&0xff)
 #define FAL_PORT_ID_VALUE(port_id) ((port_id)&0xffffff)
