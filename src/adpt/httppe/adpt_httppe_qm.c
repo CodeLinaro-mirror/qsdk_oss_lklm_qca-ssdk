@@ -760,3 +760,44 @@ adpt_httppe_queue_counter_cleanup(a_uint32_t dev_id, a_uint32_t queue_id)
 
 	return SW_OK;
 }
+
+sw_error_t
+adpt_httppe_qm_port_source_profile_set(
+		a_uint32_t dev_id, fal_port_t port, a_uint32_t src_profile)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl_tbl;
+	a_uint32_t index = FAL_PORT_ID_VALUE(port);
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	memset(&mru_mtu_ctrl_tbl, 0, sizeof(mru_mtu_ctrl_tbl));
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, index, &mru_mtu_ctrl_tbl);
+	if (rv != SW_OK)
+		return rv;
+
+	mru_mtu_ctrl_tbl.bf.src_profile = src_profile;
+	return httppe_mru_mtu_ctrl_tbl_set(dev_id, index, &mru_mtu_ctrl_tbl);
+}
+
+sw_error_t
+adpt_httppe_qm_port_source_profile_get(
+		a_uint32_t dev_id, fal_port_t port, a_uint32_t *src_profile)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl_tbl;
+	a_uint32_t index = FAL_PORT_ID_VALUE(port);
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(src_profile);
+	memset(&mru_mtu_ctrl_tbl, 0, sizeof(mru_mtu_ctrl_tbl));
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, index, &mru_mtu_ctrl_tbl);
+	if (rv != SW_OK)
+		return rv;
+
+	*src_profile = mru_mtu_ctrl_tbl.bf.src_profile;
+
+	return SW_OK;
+}
+

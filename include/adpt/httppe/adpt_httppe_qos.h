@@ -75,6 +75,30 @@ adpt_httppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t pcp,
 			fal_qos_cosmap_t *cosmap);
 #endif
+sw_error_t
+adpt_httppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pri_precedence_t *pri);
+
+sw_error_t
+adpt_httppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pri_precedence_t *pri);
+
+sw_error_t
+adpt_httppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_group_t *group);
+
+sw_error_t
+adpt_httppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_group_t *group);
+
+sw_error_t
+adpt_httppe_qos_port_pcp_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pcp_cfg_t *pcp_cfg);
+
+sw_error_t
+adpt_httppe_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+		fal_qos_pcp_cfg_t *pcp_cfg);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

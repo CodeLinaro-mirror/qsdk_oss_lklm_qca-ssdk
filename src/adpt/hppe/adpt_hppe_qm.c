@@ -1545,6 +1545,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_queue_counter_ctrl_get = adpt_httppe_queue_counter_ctrl_get;
 		p_adpt_api->adpt_queue_counter_ctrl_set = adpt_httppe_queue_counter_ctrl_set;
 		p_adpt_api->adpt_queue_counter_cleanup = adpt_httppe_queue_counter_cleanup;
+		p_adpt_api->adpt_qm_port_source_profile_get = adpt_httppe_qm_port_source_profile_get;
+		p_adpt_api->adpt_qm_port_source_profile_set = adpt_httppe_qm_port_source_profile_set;
 #endif
 	} else {
 		p_adpt_api->adpt_queue_flush = adpt_hppe_queue_flush;
@@ -1565,6 +1567,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_queue_counter_ctrl_get = adpt_hppe_queue_counter_ctrl_get;
 		p_adpt_api->adpt_queue_counter_ctrl_set = adpt_hppe_queue_counter_ctrl_set;
 		p_adpt_api->adpt_queue_counter_cleanup = adpt_hppe_queue_counter_cleanup;
+		p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
+		p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
 	}
 	p_adpt_api->adpt_ucast_queue_base_profile_set =
 		adpt_hppe_ucast_queue_base_profile_set;
@@ -1586,8 +1590,6 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_ucast_priority_class_get = adpt_hppe_ucast_priority_class_get;
 	p_adpt_api->adpt_ucast_priority_class_set = adpt_hppe_ucast_priority_class_set;
 	p_adpt_api->adpt_qm_enqueue_ctrl_get = adpt_hppe_qm_enqueue_ctrl_get;
-	p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
-	p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
 #if defined(JHPPE)

@@ -68,6 +68,13 @@ adpt_httppe_queue_counter_ctrl_set(a_uint32_t dev_id, a_bool_t cnt_en);
 sw_error_t
 adpt_httppe_queue_counter_cleanup(a_uint32_t dev_id, a_uint32_t queue_id);
 
+sw_error_t
+adpt_httppe_qm_port_source_profile_set(a_uint32_t dev_id, fal_port_t port,
+		a_uint32_t src_profile);
+
+sw_error_t
+adpt_httppe_qm_port_source_profile_get(a_uint32_t dev_id, fal_port_t port,
+		a_uint32_t *src_profile);
  #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

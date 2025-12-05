@@ -404,3 +404,151 @@ adpt_httppe_qos_cosmap_dscp_set(a_uint32_t dev_id, a_uint8_t group_id,
 
 	return adpt_httppe_qos_mapping_set(dev_id, index, cosmap);
 }
+
+sw_error_t
+adpt_httppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_pri_precedence_t *pri)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
+
+	memset(&mru_mtu_ctrl, 0, sizeof(mru_mtu_ctrl));
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(pri);
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, port_id, &mru_mtu_ctrl);
+	if (rv != SW_OK)
+		return rv;
+
+	mru_mtu_ctrl.bf.pcp_res_prec = pri->pcp_pri;
+	mru_mtu_ctrl.bf.dscp_res_prec = pri->dscp_pri;
+	mru_mtu_ctrl.bf.preheader_res_prec = pri->preheader_pri;
+	mru_mtu_ctrl.bf.flow_res_prec = pri->flow_pri;
+	mru_mtu_ctrl.bf.pre_acl_res_prec = pri->acl_pri;
+	mru_mtu_ctrl.bf.post_acl_res_prec = pri->post_acl_pri;
+	mru_mtu_ctrl.bf.pcp_res_prec_force = pri->pcp_pri_force;
+	mru_mtu_ctrl.bf.dscp_res_prec_force = pri->dscp_pri_force;
+	mru_mtu_ctrl.bf.pre_ipo_outer_res_prec = pri->pre_acl_outer_pri;
+	mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_1 = pri->pre_acl_inner_pri >>
+		SW_FIELD_OFFSET_IN_WORD(MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_OFFSET);
+	mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_0 = pri->pre_acl_inner_pri;
+
+	return httppe_mru_mtu_ctrl_tbl_set(dev_id, port_id, &mru_mtu_ctrl);
+}
+
+sw_error_t
+adpt_httppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
+					fal_qos_pri_precedence_t *pri)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
+
+	memset(&mru_mtu_ctrl, 0, sizeof(mru_mtu_ctrl));
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(pri);
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, port_id, &mru_mtu_ctrl);
+	if( rv != SW_OK )
+		return rv;
+
+	pri->pcp_pri = mru_mtu_ctrl.bf.pcp_res_prec;
+	pri->dscp_pri = mru_mtu_ctrl.bf.dscp_res_prec;
+	pri->preheader_pri = mru_mtu_ctrl.bf.preheader_res_prec;
+	pri->flow_pri = mru_mtu_ctrl.bf.flow_res_prec;
+	pri->acl_pri = mru_mtu_ctrl.bf.pre_acl_res_prec;
+	pri->post_acl_pri = mru_mtu_ctrl.bf.post_acl_res_prec;
+	pri->pcp_pri_force = mru_mtu_ctrl.bf.pcp_res_prec_force;
+	pri->dscp_pri_force = mru_mtu_ctrl.bf.dscp_res_prec_force;
+	pri->pre_acl_outer_pri = mru_mtu_ctrl.bf.pre_ipo_outer_res_prec;
+	pri->pre_acl_inner_pri = mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_1 <<
+		SW_FIELD_OFFSET_IN_WORD(MRU_MTU_CTRL_TBL_PRE_IPO_INNER_RES_PREC_OFFSET) |
+		mru_mtu_ctrl.bf.pre_ipo_inner_res_prec_0;
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_httppe_qos_port_group_set(a_uint32_t dev_id, fal_port_t port_id,
+			fal_qos_group_t *group)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
+
+	memset(&mru_mtu_ctrl, 0, sizeof(mru_mtu_ctrl));
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(group);
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, port_id, &mru_mtu_ctrl);
+	if( rv != SW_OK )
+		return rv;
+
+	mru_mtu_ctrl.bf.pcp_qos_group_id = group->pcp_group;
+	mru_mtu_ctrl.bf.dscp_qos_group_id = group->dscp_group;
+
+	return httppe_mru_mtu_ctrl_tbl_set(dev_id, port_id, &mru_mtu_ctrl);
+}
+
+sw_error_t
+adpt_httppe_qos_port_group_get(a_uint32_t dev_id, fal_port_t port_id,
+			fal_qos_group_t *group)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
+
+	memset(&mru_mtu_ctrl, 0, sizeof(mru_mtu_ctrl));
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(group);
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, port_id, &mru_mtu_ctrl);
+	if( rv != SW_OK )
+		return rv;
+
+	group->pcp_group = mru_mtu_ctrl.bf.pcp_qos_group_id;
+	group->dscp_group = mru_mtu_ctrl.bf.dscp_qos_group_id;
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_httppe_qos_port_pcp_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+			fal_qos_pcp_cfg_t *pcp_cfg)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
+
+	memset(&mru_mtu_ctrl, 0, sizeof(mru_mtu_ctrl));
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(pcp_cfg);
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, port_id, &mru_mtu_ctrl);
+	if( rv != SW_OK )
+		return rv;
+
+	mru_mtu_ctrl.bf.pcp_qos_mode = pcp_cfg->pcp_mode;
+	mru_mtu_ctrl.bf.default_pcp_dei = pcp_cfg->default_pcp_dei;
+
+	return httppe_mru_mtu_ctrl_tbl_set(dev_id, port_id, &mru_mtu_ctrl);
+}
+
+sw_error_t
+adpt_httppe_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+			fal_qos_pcp_cfg_t *pcp_cfg)
+{
+	sw_error_t rv = SW_OK;
+	union mru_mtu_ctrl_tbl_u mru_mtu_ctrl;
+
+	memset(&mru_mtu_ctrl, 0, sizeof(mru_mtu_ctrl));
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(pcp_cfg);
+
+	rv = httppe_mru_mtu_ctrl_tbl_get(dev_id, port_id, &mru_mtu_ctrl);
+	if( rv != SW_OK )
+		return rv;
+
+	pcp_cfg->pcp_mode = mru_mtu_ctrl.bf.pcp_qos_mode;
+	pcp_cfg->default_pcp_dei = mru_mtu_ctrl.bf.default_pcp_dei;
+
+	return SW_OK;
+}
+
+
