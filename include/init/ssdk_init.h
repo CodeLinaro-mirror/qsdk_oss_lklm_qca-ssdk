@@ -354,6 +354,10 @@ struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id);
 sw_error_t qca_switch_init(a_uint32_t dev_id);
 sw_error_t ssdk_mac_sw_sync_work_stop(a_uint32_t dev_id);
 sw_error_t ssdk_mac_sw_sync_work_start(a_uint32_t dev_id);
+struct net_device;
+struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
+					a_uint32_t port_id, struct net_device *netdev);
+void ssdk_port_phylink_destroy(a_uint32_t dev_id, a_uint32_t port_id);
 void qm_err_check_work_start(struct qca_phy_priv *priv);
 void qm_err_check_work_stop(struct qca_phy_priv *priv);
 int qca_mac_sw_sync_work_init(struct qca_phy_priv *priv);

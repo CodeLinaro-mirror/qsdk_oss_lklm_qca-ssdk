@@ -799,6 +799,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	struct device_node *i2c_node = NULL;
 	struct mii_bus *mdio_i2c = NULL;
 #endif
+	phy_interface_t phy_mode;
+	int ret;
 
 	phy_info_node = of_get_child_by_name(switch_node, "qcom,port_phyinfo");
 	if (!phy_info_node) {
@@ -806,13 +808,26 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	}
 
 	for_each_available_child_of_node(phy_info_node, port_node) {
-		if (of_property_read_u32(port_node, "port_id", &port_id))
+		if (of_property_read_u32(port_node, "port_id", &port_id)) {
+			of_node_put(port_node);
+			of_node_put(phy_info_node);
 			return SW_BAD_VALUE;
+		}
+
 		if (!cfg->port_cfg.wan_bmp) {
 			cfg->port_cfg.wan_bmp = BIT(port_id);
 		} else {
 			cfg->port_cfg.lan_bmp |= BIT(port_id);
 		}
+
+		/* parse and save port info for phylink */
+		priv->ports[port_id].port_id = port_id;
+		priv->ports[port_id].np = port_node;
+		ret = of_get_phy_mode(port_node, &phy_mode);
+		if (ret)
+			priv->ports[port_id].interface = PHY_INTERFACE_MODE_NA;
+		else
+			priv->ports[port_id].interface = phy_mode;
 
 		/* initialize phy_addr in case of undefined dts field */
 		mdio_node = ssdk_dt_parse_mdio_node(switch_node, port_node, dev_id);
@@ -955,6 +970,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				netdev_switch->switch_cpu_port = switch_cpu_port;
 		}
 	}
+
+	of_node_put(phy_info_node);
 
 	return rv;
 }
