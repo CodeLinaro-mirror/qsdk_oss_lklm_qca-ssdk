@@ -200,6 +200,15 @@ typedef struct {
 	a_uint32_t bmp[10];
 } fal_bp_queue_bmp_t;
 
+typedef struct {
+	a_uint16_t green_resume_thrd; /* green resume threshold */
+	a_uint16_t yel_resume_thrd; /* yellow resume threshold */
+	a_uint16_t red_resume_thrd; /* red resume threshold */
+	a_uint8_t green_drop; /* green drop state */
+	a_uint8_t yel_drop; /* green drop state */
+	a_uint8_t red_drop; /* red drop state */
+} fal_ac_drop_state_t;
+
 sw_error_t
 fal_qm_tcont_set(a_uint32_t dev_id,
 		 a_uint32_t queue_id,
@@ -517,6 +526,10 @@ fal_qm_crosschip_bp_qmap_get(a_uint32_t dev_id, a_uint32_t lp_qid,
 sw_error_t
 fal_qm_crosschip_bp_status_get(a_uint32_t dev_id,
 			       fal_bp_queue_bmp_t *queue_bmp);
+sw_error_t fal_qm_ac_drop_state_set(a_uint32_t dev_id, fal_ac_obj_t *obj,
+				    fal_ac_drop_state_t *cfg);
+sw_error_t fal_qm_ac_drop_state_get(a_uint32_t dev_id, fal_ac_obj_t *obj,
+				    fal_ac_drop_state_t *cfg);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

@@ -699,6 +699,129 @@ adpt_hppe_mcast_cpu_code_class_get(
 #endif
 
 sw_error_t
+adpt_ppe_qm_ac_drop_state_set(a_uint32_t dev_id, fal_ac_obj_t *obj, fal_ac_drop_state_t *cfg)
+{
+	sw_error_t rv = SW_OK;
+
+	if (obj->type == FAL_AC_GROUP) {
+		union ac_grp_drop_state_tbl_u grp_drop_stat;
+		memset(&grp_drop_stat, 0, sizeof(grp_drop_stat));
+
+		rv = hppe_ac_grp_drop_state_tbl_get(dev_id, obj->obj_id, &grp_drop_stat);
+		SW_RTN_ON_ERROR(rv);
+
+		grp_drop_stat.bf.grn_drop_state = cfg->green_drop;
+		grp_drop_stat.bf.yel_drop_state = cfg->yel_drop;
+		grp_drop_stat.bf.red_drop_state = cfg->red_drop;
+		grp_drop_stat.bf.yel_resume_thrd = cfg->yel_resume_thrd;
+		grp_drop_stat.bf.red_resume_thrd = cfg->red_resume_thrd;
+		grp_drop_stat.bf.grn_resume_thrd_0 = cfg->green_resume_thrd;
+		grp_drop_stat.bf.grn_resume_thrd_1 = cfg->green_resume_thrd >>
+			SW_FIELD_OFFSET_IN_WORD(AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+
+		rv = hppe_ac_grp_drop_state_tbl_set(dev_id, obj->obj_id, &grp_drop_stat);
+		SW_RTN_ON_ERROR(rv);
+	} else {
+		if (obj->obj_id < UCAST_QUEUE_ID_MAX) {
+			union ac_uni_queue_drop_state_tbl_u uni_drop_stat;
+			memset(&uni_drop_stat, 0, sizeof(uni_drop_stat));
+
+			rv = hppe_ac_uni_queue_drop_state_tbl_get(dev_id, obj->obj_id, &uni_drop_stat);
+			SW_RTN_ON_ERROR(rv);
+
+			uni_drop_stat.bf.grn_drop_state = cfg->green_drop;
+			uni_drop_stat.bf.yel_drop_state = cfg->yel_drop;
+			uni_drop_stat.bf.red_drop_state = cfg->red_drop;
+			uni_drop_stat.bf.yel_resume_thrd = cfg->yel_resume_thrd;
+			uni_drop_stat.bf.red_resume_thrd = cfg->red_resume_thrd;
+			uni_drop_stat.bf.grn_resume_thrd_0 = cfg->green_resume_thrd;
+			uni_drop_stat.bf.grn_resume_thrd_1 = cfg->green_resume_thrd >>
+				SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+
+			rv = hppe_ac_uni_queue_drop_state_tbl_set(dev_id, obj->obj_id, &uni_drop_stat);
+			SW_RTN_ON_ERROR(rv);
+		} else {
+			union ac_mul_queue_drop_state_tbl_u mul_drop_stat;
+			memset(&mul_drop_stat, 0, sizeof(mul_drop_stat));
+
+			rv = hppe_ac_mul_queue_drop_state_tbl_get(dev_id, obj->obj_id, &mul_drop_stat);
+			SW_RTN_ON_ERROR(rv);
+
+			mul_drop_stat.bf.grn_drop_state = cfg->green_drop;
+			mul_drop_stat.bf.yel_drop_state = cfg->yel_drop;
+			mul_drop_stat.bf.red_drop_state = cfg->red_drop;
+			mul_drop_stat.bf.yel_resume_thrd = cfg->yel_resume_thrd;
+			mul_drop_stat.bf.red_resume_thrd = cfg->red_resume_thrd;
+			mul_drop_stat.bf.grn_resume_thrd_0 = cfg->green_resume_thrd;
+			mul_drop_stat.bf.grn_resume_thrd_1 = cfg->green_resume_thrd >>
+				SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+
+			rv = hppe_ac_mul_queue_drop_state_tbl_set(dev_id, obj->obj_id, &mul_drop_stat);
+			SW_RTN_ON_ERROR(rv);
+		}
+	}
+
+	return rv;
+}
+
+sw_error_t
+adpt_ppe_qm_ac_drop_state_get(a_uint32_t dev_id, fal_ac_obj_t *obj, fal_ac_drop_state_t *cfg)
+{
+	sw_error_t rv = SW_OK;
+
+	if (obj->type == FAL_AC_GROUP) {
+		union ac_grp_drop_state_tbl_u grp_drop_stat;
+		memset(&grp_drop_stat, 0, sizeof(grp_drop_stat));
+
+		rv = hppe_ac_grp_drop_state_tbl_get(dev_id, obj->obj_id, &grp_drop_stat);
+		SW_RTN_ON_ERROR(rv);
+
+		cfg->green_drop = grp_drop_stat.bf.grn_drop_state;
+		cfg->yel_drop = grp_drop_stat.bf.yel_drop_state;
+		cfg->red_drop = grp_drop_stat.bf.red_drop_state;
+		cfg->yel_resume_thrd = grp_drop_stat.bf.yel_resume_thrd;
+		cfg->red_resume_thrd = grp_drop_stat.bf.red_resume_thrd;
+		cfg->green_resume_thrd = grp_drop_stat.bf.grn_resume_thrd_0 |
+					 grp_drop_stat.bf.grn_resume_thrd_1 <<
+					 SW_FIELD_OFFSET_IN_WORD(AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+	} else {
+		if (obj->obj_id < UCAST_QUEUE_ID_MAX) {
+			union ac_uni_queue_drop_state_tbl_u uni_drop_stat;
+			memset(&uni_drop_stat, 0, sizeof(uni_drop_stat));
+
+			rv = hppe_ac_uni_queue_drop_state_tbl_get(dev_id, obj->obj_id, &uni_drop_stat);
+			SW_RTN_ON_ERROR(rv);
+
+			cfg->green_drop = uni_drop_stat.bf.grn_drop_state;
+			cfg->yel_drop = uni_drop_stat.bf.yel_drop_state;
+			cfg->red_drop = uni_drop_stat.bf.red_drop_state;
+			cfg->yel_resume_thrd = uni_drop_stat.bf.yel_resume_thrd;
+			cfg->red_resume_thrd = uni_drop_stat.bf.red_resume_thrd;
+			cfg->green_resume_thrd = uni_drop_stat.bf.grn_resume_thrd_0 |
+						 uni_drop_stat.bf.grn_resume_thrd_1 <<
+						 SW_FIELD_OFFSET_IN_WORD(AC_UNI_QUEUE_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+		} else {
+			union ac_mul_queue_drop_state_tbl_u mul_drop_stat;
+			memset(&mul_drop_stat, 0, sizeof(mul_drop_stat));
+
+			rv = hppe_ac_mul_queue_drop_state_tbl_get(dev_id, obj->obj_id, &mul_drop_stat);
+			SW_RTN_ON_ERROR(rv);
+
+			cfg->green_drop = mul_drop_stat.bf.grn_drop_state;
+			cfg->yel_drop = mul_drop_stat.bf.yel_drop_state;
+			cfg->red_drop = mul_drop_stat.bf.red_drop_state;
+			cfg->yel_resume_thrd = mul_drop_stat.bf.yel_resume_thrd;
+			cfg->red_resume_thrd = mul_drop_stat.bf.red_resume_thrd;
+			cfg->green_resume_thrd = mul_drop_stat.bf.grn_resume_thrd_0 |
+						 mul_drop_stat.bf.grn_resume_thrd_1 <<
+						 SW_FIELD_OFFSET_IN_WORD(AC_MUL_QUEUE_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET);
+		}
+	}
+
+	return rv;
+}
+
+sw_error_t
 adpt_hppe_ac_ctrl_set(
 		a_uint32_t dev_id,
 		fal_ac_obj_t *obj,
@@ -1497,6 +1620,8 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 #endif
 	p_adpt_api->adpt_qm_dequeue_drop_set = adpt_hppe_qm_dequeue_drop_set;
 	p_adpt_api->adpt_qm_dequeue_drop_get = adpt_hppe_qm_dequeue_drop_get;
+	p_adpt_api->adpt_qm_ac_drop_state_set = adpt_ppe_qm_ac_drop_state_set;
+	p_adpt_api->adpt_qm_ac_drop_state_get = adpt_ppe_qm_ac_drop_state_get;
 
 	return SW_OK;
 }
