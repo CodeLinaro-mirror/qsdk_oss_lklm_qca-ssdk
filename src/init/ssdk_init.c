@@ -1117,10 +1117,57 @@ static void ssdk_phylink_mac_link_down(struct phylink_config *config,
 			port_priv->port_id, phy_modes(interface));
 }
 
+static struct phylink_pcs *ssdk_phylink_mac_select_pcs(struct phylink_config *config,
+	phy_interface_t interface)
+{
+	struct ssdk_port_priv *port_priv = container_of(config, struct ssdk_port_priv,
+		phylink_config);
+
+	return &(port_priv->phylink_pcs);
+}
+
 static const struct phylink_mac_ops ssdk_phylink_ops = {
 	.mac_config = ssdk_phylink_mac_config,
 	.mac_link_up = ssdk_phylink_mac_link_up,
 	.mac_link_down = ssdk_phylink_mac_link_down,
+	.mac_select_pcs = ssdk_phylink_mac_select_pcs,
+};
+
+static int ssdk_pcs_config(struct phylink_pcs *pcs, unsigned int mode,
+	phy_interface_t interface, const unsigned long *advertising, bool permitted)
+{
+	/* pcs no need to be configured here as pcs is configured in SSDK polling task */
+
+	return 0;
+}
+
+static void ssdk_pcs_an_restart(struct phylink_pcs *pcs)
+{
+	/* pcs no need to restart autoneg here as pcs is configured in SSDK polling task */
+}
+
+static void ssdk_pcs_get_state(struct phylink_pcs *pcs, struct phylink_link_state *state)
+{
+	struct qca_phy_priv *priv = NULL;
+	struct ssdk_port_priv *port_priv = container_of(pcs, struct ssdk_port_priv,
+		phylink_pcs);
+
+	if (!port_priv || port_priv->port_id >= SW_MAX_NR_PORT || !state)
+		return;
+	priv = ssdk_phy_priv_data_get(port_priv->dev_id);
+	if (!priv)
+		return;
+	mutex_lock(&priv->mac_sw_sync_lock);
+	state->speed = port_priv->port_old_speed;
+	state->duplex = port_priv->port_old_duplex;
+	state->link = port_priv->port_old_link;
+	mutex_unlock(&priv->mac_sw_sync_lock);
+}
+
+static const struct phylink_pcs_ops ssdk_phylink_pcs_ops = {
+	.pcs_get_state = ssdk_pcs_get_state,
+	.pcs_config = ssdk_pcs_config,
+	.pcs_an_restart = ssdk_pcs_an_restart,
 };
 
 struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
@@ -1128,6 +1175,11 @@ struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 {
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	struct ssdk_port_priv *port_priv = NULL;
+	struct device_node *sfp_np = NULL;
+	struct device_node *fixed_link = NULL;
+	struct phy_device *phydev = NULL;
+	struct fwnode_handle *fwnode = NULL;
+	bool is_i2c_phy = false;
 	int i, ret;
 
 	if (!priv || port_id >= SW_MAX_NR_PORT)
@@ -1150,28 +1202,91 @@ struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 		__set_bit(mac_interfaces[i],
 			  port_priv->phylink_config.supported_interfaces);
 
+	/* PCS configuration */
+	port_priv->phylink_pcs.ops = &ssdk_phylink_pcs_ops;
+	port_priv->phylink_pcs.poll = true;
+	port_priv->phylink_pcs.neg_mode = true;
+
+	fwnode = of_fwnode_handle(port_priv->np);
+
+	/* Check if this is i2c based qca81xx */
+	if (of_find_property(port_priv->np, "i2c-bus", NULL)) {
+		hsl_port_phydev_get(dev_id, port_id, &phydev);
+		if (phydev && phydev->is_c45 &&
+			phydev->c45_ids.device_ids[__ffs(phydev->c45_ids.mmds_present)]
+			== QCA8111_PHY) {
+				is_i2c_phy = true;
+				fwnode = NULL;
+			}
+	}
 	/* Create phylink */
 	port_priv->phylink = phylink_create(&port_priv->phylink_config,
-					   of_fwnode_handle(port_priv->np),
-					   port_priv->interface,
-					   &ssdk_phylink_ops);
+		fwnode, port_priv->interface, &ssdk_phylink_ops);
 	if (IS_ERR(port_priv->phylink)) {
 		SSDK_ERROR("PPE port %d failed to create phylink, ret %d\n",
 			port_priv->port_id, PTR_ERR(port_priv->phylink));
 		port_priv->phylink = NULL;
 		return NULL;
 	}
-	/* Connect phylink */
+
+	/* for i2c based qca81xx */
+	if (is_i2c_phy) {
+		ret = phylink_connect_phy(port_priv->phylink, phydev);
+		if (ret) {
+			SSDK_ERROR("PPE port %d failed to connect i2c PHY, ret %d\n",
+				port_id, ret);
+			goto err_free_phylink;
+		}
+		return port_priv->phylink;
+	}
+
+	/* for SFP port */
+	sfp_np = of_parse_phandle(port_priv->np, "sfp", 0);
+	if (sfp_np) {
+		of_node_put(sfp_np);
+		ret = phylink_fwnode_phy_connect(port_priv->phylink, fwnode, 0);
+		if (ret && ret != -ENODEV) {
+			SSDK_ERROR("PPE port %d SFP fwnode connect failed, ret %d\n",
+				port_id, ret);
+			goto err_free_phylink;
+		}
+		return port_priv->phylink;
+	}
+
+	/* for fixed-link port */
+	fixed_link = of_get_child_by_name(port_priv->np, "fixed-link");
+	if (fixed_link) {
+		of_node_put(fixed_link);
+		return port_priv->phylink;
+	}
+
+	/* for normal PHY port */
 	ret = phylink_of_phy_connect(port_priv->phylink, port_priv->np, 0);
 	if (ret) {
-		SSDK_ERROR("PPE port %d failed to connect phylink, ret %d\n",
-			port_priv->port_id, ret);
+		SSDK_ERROR("PPE port %d failed to connect PHY, ret %d\n",
+			port_id, ret);
 		goto err_free_phylink;
 	}
 	return port_priv->phylink;
+
 err_free_phylink:
+	/* Disconnect PHY if it was connected */
+	if (port_priv->phylink) {
+		if (!sfp_np && !fixed_link && !is_i2c_phy) {
+			rtnl_lock();
+			phylink_disconnect_phy(port_priv->phylink);
+			rtnl_unlock();
+		}
+	}
 	phylink_destroy(port_priv->phylink);
 	port_priv->phylink = NULL;
+
+	if (sfp_np)
+		of_node_put(sfp_np);
+
+	if (fixed_link)
+		of_node_put(fixed_link);
+
 	return NULL;
 }
 EXPORT_SYMBOL(ssdk_port_phylink_setup);
@@ -1188,7 +1303,8 @@ void ssdk_port_phylink_destroy(a_uint32_t dev_id, a_uint32_t port_id)
 
 	if (port_priv->phylink) {
 		rtnl_lock();
-		phylink_disconnect_phy(port_priv->phylink);
+		if (hsl_port_phy_connected(dev_id, port_id))
+			phylink_disconnect_phy(port_priv->phylink);
 		rtnl_unlock();
 		phylink_destroy(port_priv->phylink);
 		port_priv->phylink = NULL;

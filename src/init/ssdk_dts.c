@@ -821,6 +821,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		}
 
 		/* parse and save port info for phylink */
+		priv->ports[port_id].dev_id = dev_id;
 		priv->ports[port_id].port_id = port_id;
 		priv->ports[port_id].np = port_node;
 		ret = of_get_phy_mode(port_node, &phy_mode);
