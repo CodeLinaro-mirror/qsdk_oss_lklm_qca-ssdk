@@ -890,6 +890,60 @@ union ac_mul_queue_drop_state_tbl_u {
 	struct ac_mul_queue_drop_state_tbl bf;
 };
 
+/*[table] AC_GRP_DROP_STATE_TBL*/
+#define AC_GRP_DROP_STATE_TBL
+#define AC_GRP_DROP_STATE_TBL_ADDRESS 0x5a000
+#define AC_GRP_DROP_STATE_TBL_NUM     4
+#define AC_GRP_DROP_STATE_TBL_INC     0x10
+#define AC_GRP_DROP_STATE_TBL_TYPE    REG_TYPE_RW
+#define AC_GRP_DROP_STATE_TBL_DEFAULT 0x0
+	/*[field] RED_RESUME_THRD*/
+	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD
+	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD_OFFSET  0
+	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD_LEN     12
+	#define AC_GRP_DROP_STATE_TBL_RED_RESUME_THRD_DEFAULT 0x0
+	/*[field] YEL_RESUME_THRD*/
+	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD
+	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD_OFFSET  12
+	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD_LEN     12
+	#define AC_GRP_DROP_STATE_TBL_YEL_RESUME_THRD_DEFAULT 0x0
+	/*[field] GRN_RESUME_THRD*/
+	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD
+	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_OFFSET  24
+	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_LEN     12
+	#define AC_GRP_DROP_STATE_TBL_GRN_RESUME_THRD_DEFAULT 0x0
+	/*[field] RED_DROP_STATE*/
+	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE
+	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE_OFFSET  36
+	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE_LEN     1
+	#define AC_GRP_DROP_STATE_TBL_RED_DROP_STATE_DEFAULT 0x0
+	/*[field] YEL_DROP_STATE*/
+	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE
+	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE_OFFSET  37
+	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE_LEN     1
+	#define AC_GRP_DROP_STATE_TBL_YEL_DROP_STATE_DEFAULT 0x0
+	/*[field] GRN_DROP_STATE*/
+	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE
+	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE_OFFSET  38
+	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE_LEN     1
+	#define AC_GRP_DROP_STATE_TBL_GRN_DROP_STATE_DEFAULT 0x0
+
+struct ac_grp_drop_state_tbl {
+	a_uint32_t  red_resume_thrd:12;
+	a_uint32_t  yel_resume_thrd:12;
+	a_uint32_t  grn_resume_thrd_0:8;
+	a_uint32_t  grn_resume_thrd_1:4;
+	a_uint32_t  red_drop_state:1;
+	a_uint32_t  yel_drop_state:1;
+	a_uint32_t  grn_drop_state:1;
+	a_uint32_t  _reserved0:25;
+};
+
+union ac_grp_drop_state_tbl_u {
+	a_uint32_t val[2];
+	struct ac_grp_drop_state_tbl bf;
+};
+
 /*[table] OQ_ENQ_OPR_TBL*/
 #define OQ_ENQ_OPR_TBL
 #define OQ_ENQ_OPR_TBL_ADDRESS 0x5c000

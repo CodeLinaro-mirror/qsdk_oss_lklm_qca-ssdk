@@ -6,6 +6,34 @@
 #include "hsl_htt_reg.h"
 
 sw_error_t
+httppe_mru_mtu_ctrl_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mru_mtu_ctrl_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + MRU_MTU_CTRL_TBL_ADDRESS + \
+				index * MRU_MTU_CTRL_TBL_INC,
+				value->val,
+				sizeof(union mru_mtu_ctrl_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+httppe_mru_mtu_ctrl_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union mru_mtu_ctrl_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + MRU_MTU_CTRL_TBL_ADDRESS + \
+				index * MRU_MTU_CTRL_TBL_INC,
+				value->val,
+				sizeof(union mru_mtu_ctrl_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
 httppe_port_tx_counter_tbl_reg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

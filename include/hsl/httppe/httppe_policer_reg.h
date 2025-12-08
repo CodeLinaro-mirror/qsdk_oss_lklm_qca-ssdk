@@ -7,6 +7,52 @@
 #ifndef _HTTPPE_POLICER_REG_H_
 #define _HTTPPE_POLICER_REG_H_
 
+/*[register] PC_DROP_BYPASS_REG*/
+#define PC_DROP_BYPASS_REG
+#define PC_DROP_BYPASS_REG_ADDRESS 0x40
+#define PC_DROP_BYPASS_REG_NUM     1
+#define PC_DROP_BYPASS_REG_INC     0x4
+#define PC_DROP_BYPASS_REG_TYPE    REG_TYPE_RW
+#define PC_DROP_BYPASS_REG_DEFAULT 0x0
+	/*[field] DROP_BYPASS_EN*/
+	#define PC_DROP_BYPASS_REG_DROP_BYPASS_EN
+	#define PC_DROP_BYPASS_REG_DROP_BYPASS_EN_OFFSET  0
+	#define PC_DROP_BYPASS_REG_DROP_BYPASS_EN_LEN     1
+	#define PC_DROP_BYPASS_REG_DROP_BYPASS_EN_DEFAULT 0x0
+
+struct pc_drop_bypass_reg {
+	a_uint32_t  drop_bypass_en:1;
+	a_uint32_t  _reserved0:31;
+};
+
+union pc_drop_bypass_reg_u {
+	a_uint32_t val;
+	struct pc_drop_bypass_reg bf;
+};
+
+/*[register] TIME_SLOT_REG*/
+#define TIME_SLOT_REG
+#define TIME_SLOT_REG_ADDRESS 0x48
+#define TIME_SLOT_REG_NUM     1
+#define TIME_SLOT_REG_INC     0x4
+#define TIME_SLOT_REG_TYPE    REG_TYPE_RW
+#define TIME_SLOT_REG_DEFAULT 0x0
+	/*[field] TIME_SLOT*/
+	#define TIME_SLOT_REG_TIME_SLOT
+	#define TIME_SLOT_REG_TIME_SLOT_OFFSET  0
+	#define TIME_SLOT_REG_TIME_SLOT_LEN     12
+	#define TIME_SLOT_REG_TIME_SLOT_DEFAULT 0x0
+
+struct time_slot_reg {
+	a_uint32_t  time_slot:12;
+	a_uint32_t  _reserved0:20;
+};
+
+union time_slot_reg_u {
+	a_uint32_t val;
+	struct time_slot_reg bf;
+};
+
 /*[table] IN_ACL_METER_CFG_TBL*/
 #define IN_ACL_METER_CFG_TBL
 #define IN_ACL_METER_CFG_TBL_ADDRESS 0x4000

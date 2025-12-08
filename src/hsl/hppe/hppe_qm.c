@@ -670,6 +670,34 @@ hppe_ac_mul_queue_drop_state_tbl_set(
 }
 
 sw_error_t
+hppe_ac_grp_drop_state_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_drop_state_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AC_GRP_DROP_STATE_TBL_ADDRESS + \
+				index * AC_GRP_DROP_STATE_TBL_INC,
+				value->val,
+				sizeof(union ac_grp_drop_state_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+hppe_ac_grp_drop_state_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_drop_state_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AC_GRP_DROP_STATE_TBL_ADDRESS + \
+				index * AC_GRP_DROP_STATE_TBL_INC,
+				value->val,
+				sizeof(union ac_grp_drop_state_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
 hppe_oq_enq_opr_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
