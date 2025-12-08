@@ -1302,12 +1302,22 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
 
 	switch (chip_type) {
+		case JHPPE_TYPE:
+		case HTTPPE_TYPE:
+			ceiling = 2200;
+			weight = 7;
+			resume_offset = 36;
+			green_max = 250;
+			break;
+		case HMSPPE_TYPE:
+			ceiling = 2200;
+			weight = 7;
+			resume_offset = 36;
+			green_max = 250;
+			break;
 		case HPPE_TYPE:
 		case MRPPE_TYPE:
 		case APPE_TYPE:
-		case JHPPE_TYPE:
-		case HMSPPE_TYPE:
-		case HTTPPE_TYPE:
 			ceiling = 1200;
 			weight = 7;
 			resume_offset = 36;

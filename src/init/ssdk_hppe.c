@@ -257,9 +257,13 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 			break;
 		case APPE_TYPE:
 		case MRPPE_TYPE:
-		case JHPPE_TYPE:
-		case HMSPPE_TYPE:
 			group_buf = 1550;
+			break;
+		case JHPPE_TYPE:
+			group_buf = 3550;
+			break;
+		case HMSPPE_TYPE:
+			group_buf = 2550;
 			break;
 		case MPPE_TYPE:
 			group_buf = 360;
@@ -275,10 +279,18 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 	for (i = 0; i < PPE_BM_PORT_NUM; i++) {
 		a_uint16_t prealloc_buf = 0, react_buf = 0;
 		switch (chip_type) {
-			case HPPE_TYPE:
-			case APPE_TYPE:
 			case JHPPE_TYPE:
 			case HMSPPE_TYPE:
+				if (i < PPE_BM_PHY_PORT_OFFSET) {
+					prealloc_buf = 0;
+					react_buf = 200;
+				} else {
+					prealloc_buf = 0;
+					react_buf = 228;
+				}
+				break;
+			case HPPE_TYPE:
+			case APPE_TYPE:
 				if (i < PPE_BM_PHY_PORT_OFFSET) {
 					prealloc_buf = 0;
 					react_buf = 100;
@@ -347,10 +359,24 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 				cfg.resume_off = 36;
 				cfg.weight= 4;
 				break;
-			case APPE_TYPE:
-			case MRPPE_TYPE:
 			case JHPPE_TYPE:
 			case HMSPPE_TYPE:
+				if (i == PPE_BM_PHY_PORT_OFFSET + 4 ||
+						i == PPE_BM_PHY_PORT_OFFSET + 5) {
+					share_ceiling = 1200;
+					cfg.resume_min_thresh = 0;
+					cfg.resume_off = 8;
+					cfg.weight= 7;
+				} else {
+					share_ceiling = 650;
+					phyport_share_ceiling = 650;
+					cfg.resume_min_thresh = 0;
+					cfg.resume_off = 36;
+					cfg.weight= 7;
+				}
+				break;
+			case APPE_TYPE:
+			case MRPPE_TYPE:
 				if (i == PPE_BM_PORT_MIN) {
 					share_ceiling = 1146;
 					cfg.resume_min_thresh = 0;
@@ -653,11 +679,15 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	}
 
 	switch (chip_type) {
-		case MRPPE_TYPE:
 		case JHPPE_TYPE:
-		case HMSPPE_TYPE:
-		case APPE_TYPE:
 		case HTTPPE_TYPE:
+			total_buf = 4000;
+			break;
+		case HMSPPE_TYPE:
+			total_buf = 3000;
+			break;
+		case MRPPE_TYPE:
+		case APPE_TYPE:
 			total_buf = 2000;
 			break;
 		case MPPE_TYPE:
