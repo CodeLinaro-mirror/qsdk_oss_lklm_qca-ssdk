@@ -210,7 +210,7 @@ OBJ-ISISC   += src/hsl/isisc/isisc_sec.o src/fal/fal_sec_legacy.o
 OBJ-HPPE    += src/hsl/hppe/hppe_sec.o src/adpt/hppe/adpt_hppe_sec.o
 OBJ-APPE    += src/hsl/appe/appe_sec.o src/adpt/appe/adpt_appe_sec.o
 OBJ-MHT     += src/hsl/mht/mht_sec_ctrl.o
-OBJ-HTTPPE  += src/hsl/httppe/httppe_sec.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_sec.o src/adpt/httppe/adpt_httppe_sec.o
 endif
 
 ###############################################################################
