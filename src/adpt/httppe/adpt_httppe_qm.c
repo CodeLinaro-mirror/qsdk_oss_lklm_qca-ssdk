@@ -728,3 +728,35 @@ adpt_httppe_queue_counter_ctrl_set(a_uint32_t dev_id, a_bool_t cnt_en)
 	return httppe_eg_bridge_config_set(dev_id, &eg_bridge_config);
 }
 
+sw_error_t
+adpt_httppe_queue_counter_cleanup(a_uint32_t dev_id, a_uint32_t queue_id)
+{
+	union queue_tx_counter_tbl_u tx_cnt = {0};
+	a_uint32_t i = 0;
+	a_uint32_t val[3] = {0};
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (queue_id >= ALL_QUEUE_ID_MAX)
+		return SW_BAD_VALUE;
+
+	httppe_queue_tx_counter_tbl_set(dev_id, queue_id, &tx_cnt);
+
+	if (queue_id >= UCAST_QUEUE_ID_MAX) {
+		a_uint32_t start_addr = 0;
+
+		start_addr = adpt_hppe_mcast_queue_dropcnt_start_addr_get(dev_id, queue_id);
+		for (i = 0; i < MCAST_QUEUE_ITEMS; i++) {
+			hppe_reg_tbl_set(dev_id, start_addr + i*DROP_INC, val, 3);
+		}
+	} else {
+		union uni_drop_cnt_tbl_u uni_drop_cnt;
+
+		memset(&uni_drop_cnt, 0, sizeof(uni_drop_cnt));
+		for (i = 0; i < UCAST_QUEUE_ITEMS; i++) {
+			httppe_uni_drop_cnt_tbl_set(dev_id, queue_id*UCAST_QUEUE_ITEMS+i, &uni_drop_cnt);
+		}
+	}
+
+	return SW_OK;
+}
