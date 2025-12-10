@@ -14,6 +14,9 @@
 #include "hsl_dev.h"
 #include "hsl_port_prop.h"
 #include "ssdk_dts.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_athtag.h"
+#endif
 #if defined(JHPPE)
 #include "adpt_jhppe_athtag.h"
 #endif
@@ -37,6 +40,10 @@ adpt_mppe_athtag_pri_mapping_set(a_uint32_t dev_id,
 	}
 	if (direction == FAL_DIR_EGRESS || direction == FAL_DIR_BOTH)
 	{
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			return adpt_httppe_athtag_egress_pri_mapping_set(dev_id, pri_mapping);
+#endif
 		/*egress priority mapping*/
 		SW_RTN_ON_ERROR(mppe_eg_hdr_xmit_pri_mapping_get(dev_id,
 					pri_mapping->int_pri, &ptx_pri_map));
@@ -65,6 +72,10 @@ adpt_mppe_athtag_pri_mapping_get(a_uint32_t dev_id,
 	}
 	else if (direction == FAL_DIR_EGRESS)
 	{
+#if defined(HTTPPE)
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			return adpt_httppe_athtag_egress_pri_mapping_get(dev_id, pri_mapping);
+#endif
 		SW_RTN_ON_ERROR(mppe_eg_hdr_xmit_pri_mapping_get(dev_id,
 					pri_mapping->int_pri, &ptx_pri_map));
 		pri_mapping->ath_pri = ptx_pri_map.bf.pri;
@@ -419,15 +430,20 @@ sw_error_t adpt_mppe_athtag_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_athtag_tx_set = adpt_mppe_port_athtag_tx_set;
 	p_adpt_api->adpt_port_athtag_tx_get = adpt_mppe_port_athtag_tx_get;
 
+#if defined(HTTPPE)
+	p_adpt_api->adpt_athtag_rx_dest_port_mapping_set =
+		adpt_httppe_athtag_rx_dest_port_mapping_set;
+	p_adpt_api->adpt_athtag_rx_dest_port_mapping_get =
+		adpt_httppe_athtag_rx_dest_port_mapping_get;
+	p_adpt_api->adpt_athtag_rx_servcode_mapping_set =
+		adpt_httppe_athtag_rx_servcode_mapping_set;
+	p_adpt_api->adpt_athtag_rx_servcode_mapping_get =
+		adpt_httppe_athtag_rx_servcode_mapping_get;
+#endif
+
 #if defined(JHPPE)
 	p_adpt_api->adpt_athtag_rx_src_port_mapping_set = adpt_jhppe_athtag_rx_src_port_mapping_set;
 	p_adpt_api->adpt_athtag_rx_src_port_mapping_get = adpt_jhppe_athtag_rx_src_port_mapping_get;
-	p_adpt_api->adpt_athtag_rx_dest_port_mapping_set =
-		adpt_jhppe_athtag_rx_dest_port_mapping_set;
-	p_adpt_api->adpt_athtag_rx_dest_port_mapping_get =
-		adpt_jhppe_athtag_rx_dest_port_mapping_get;
-	p_adpt_api->adpt_athtag_rx_servcode_mapping_set = adpt_jhppe_athtag_rx_servcode_mapping_set;
-	p_adpt_api->adpt_athtag_rx_servcode_mapping_get = adpt_jhppe_athtag_rx_servcode_mapping_get;
 	p_adpt_api->adpt_athtag_tx_src_port_mapping_set = adpt_jhppe_athtag_tx_src_port_mapping_set;
 	p_adpt_api->adpt_athtag_tx_src_port_mapping_get = adpt_jhppe_athtag_tx_src_port_mapping_get;
 #endif

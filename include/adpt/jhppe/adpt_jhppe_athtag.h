@@ -26,18 +26,6 @@ sw_error_t adpt_jhppe_athtag_rx_src_port_mapping_set(a_uint32_t dev_id,
 sw_error_t adpt_jhppe_athtag_rx_src_port_mapping_get(a_uint32_t dev_id,
 		fal_port_t ath_src_port, fal_dest_info_t *int_dest_info);
 
-sw_error_t adpt_jhppe_athtag_rx_dest_port_mapping_set(a_uint32_t dev_id,
-		fal_port_t ath_dest_port, fal_dest_info_t *int_dest_info);
-
-sw_error_t adpt_jhppe_athtag_rx_dest_port_mapping_get(a_uint32_t dev_id,
-		fal_port_t ath_dest_port, fal_dest_info_t *int_dest_info);
-
-sw_error_t adpt_jhppe_athtag_rx_servcode_mapping_set(a_uint32_t dev_id,
-		a_uint32_t ath_servcode, a_uint32_t int_servcode);
-
-sw_error_t adpt_jhppe_athtag_rx_servcode_mapping_get(a_uint32_t dev_id,
-		a_uint32_t ath_servcode, a_uint32_t *int_servcode);
-
 sw_error_t adpt_jhppe_athtag_tx_src_port_mapping_set(a_uint32_t dev_id,
 		fal_port_t int_src_port, fal_port_t ath_src_port);
 
