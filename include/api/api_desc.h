@@ -5156,6 +5156,22 @@ extern "C" {
     SW_PARAM_DEF(SW_API_QM_CROSSCHIP_BP_STATUS_GET, SW_BP_QUEUEBMP, \
 		    sizeof(fal_bp_queue_bmp_t), SW_PARAM_PTR|SW_PARAM_OUT, "Queue bmp"),
 
+#define SW_API_AC_DROP_STATE_SET_DESC \
+    SW_PARAM_DEF(SW_API_AC_DROP_STATE_SET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_AC_DROP_STATE_SET, SW_AC_OBJ, \
+		    sizeof(fal_ac_obj_t), SW_PARAM_PTR|SW_PARAM_IN, "ac obj"), \
+    SW_PARAM_DEF(SW_API_AC_DROP_STATE_SET, SW_AC_DROP_STATE, \
+		    sizeof(fal_ac_drop_state_t), SW_PARAM_PTR|SW_PARAM_IN, "ac drop state"),
+
+#define SW_API_AC_DROP_STATE_GET_DESC \
+    SW_PARAM_DEF(SW_API_AC_DROP_STATE_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"), \
+    SW_PARAM_DEF(SW_API_AC_DROP_STATE_GET, SW_AC_OBJ, \
+		    sizeof(fal_ac_obj_t), SW_PARAM_PTR|SW_PARAM_IN, "ac obj"), \
+    SW_PARAM_DEF(SW_API_AC_DROP_STATE_GET, SW_AC_DROP_STATE, \
+		    sizeof(fal_ac_drop_state_t), SW_PARAM_PTR|SW_PARAM_OUT, "ac drop state"),
+
 #define SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET_DESC \
     SW_PARAM_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, SW_UINT32, 4, SW_PARAM_IN, "Profile ID"), \
