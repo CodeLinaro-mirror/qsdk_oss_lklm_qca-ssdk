@@ -29,6 +29,7 @@
 
 #define UCAST_QUEUE_ID_MAX	256
 #define ALL_QUEUE_ID_MAX	300
+#define MCAST_QUEUE_PORT8_START	298
 #define MCAST_QUEUE_PORT7_START	296
 #define MCAST_QUEUE_PORT6_START	292
 #define MCAST_QUEUE_PORT5_START	288
@@ -1217,6 +1218,14 @@ adpt_hppe_mcast_queue_dropcnt_start_addr_get(a_uint32_t dev_id, a_uint32_t queue
 {
 	a_uint32_t start_addr = QUEUE_MANAGER_BASE_ADDR;
 
+#if defined(JHPPE)
+	if (queue_id >= MCAST_QUEUE_PORT8_START) {
+		start_addr += MUL_P8_DROP_CNT_TBL_ADDRESS;
+		start_addr += (queue_id - MCAST_QUEUE_PORT8_START)*MCAST_QUEUE_OFFSET;
+
+		return start_addr;
+	}
+#endif
 	if (queue_id >= MCAST_QUEUE_PORT7_START) {
 		start_addr += MUL_P7_DROP_CNT_TBL_ADDRESS;
 		start_addr += (queue_id - MCAST_QUEUE_PORT7_START)*MCAST_QUEUE_OFFSET;
@@ -1249,7 +1258,7 @@ adpt_hppe_mcast_queue_dropcnt_start_addr_get(a_uint32_t dev_id, a_uint32_t queue
 sw_error_t
 adpt_hppe_queue_counter_cleanup(a_uint32_t dev_id, a_uint32_t queue_id)
 {
-	union queue_tx_counter_tbl_u tx_cnt;
+	union queue_tx_counter_tbl_u tx_cnt = {0};
 	a_uint32_t i = 0;
 	a_uint32_t val[3] = {0};
 
@@ -1257,10 +1266,6 @@ adpt_hppe_queue_counter_cleanup(a_uint32_t dev_id, a_uint32_t queue_id)
 
 	if (queue_id >= ALL_QUEUE_ID_MAX)
 		return SW_BAD_VALUE;
-
-	tx_cnt.bf.tx_packets = 0;
-	tx_cnt.bf.tx_bytes_0 = 0;
-	tx_cnt.bf.tx_bytes_1 = 0;
 
 	hppe_queue_tx_counter_tbl_set(dev_id, queue_id, &tx_cnt);
 
@@ -1539,6 +1544,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_qm_threshold_reset = adpt_httppe_qm_threshold_reset;
 		p_adpt_api->adpt_queue_counter_ctrl_get = adpt_httppe_queue_counter_ctrl_get;
 		p_adpt_api->adpt_queue_counter_ctrl_set = adpt_httppe_queue_counter_ctrl_set;
+		p_adpt_api->adpt_queue_counter_cleanup = adpt_httppe_queue_counter_cleanup;
 #endif
 	} else {
 		p_adpt_api->adpt_queue_flush = adpt_hppe_queue_flush;
@@ -1558,6 +1564,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_qm_threshold_reset = adpt_ppe_qm_threshold_reset;
 		p_adpt_api->adpt_queue_counter_ctrl_get = adpt_hppe_queue_counter_ctrl_get;
 		p_adpt_api->adpt_queue_counter_ctrl_set = adpt_hppe_queue_counter_ctrl_set;
+		p_adpt_api->adpt_queue_counter_cleanup = adpt_hppe_queue_counter_cleanup;
 	}
 	p_adpt_api->adpt_ucast_queue_base_profile_set =
 		adpt_hppe_ucast_queue_base_profile_set;
@@ -1578,7 +1585,6 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_ucast_hash_map_get = adpt_hppe_ucast_hash_map_get;
 	p_adpt_api->adpt_ucast_priority_class_get = adpt_hppe_ucast_priority_class_get;
 	p_adpt_api->adpt_ucast_priority_class_set = adpt_hppe_ucast_priority_class_set;
-	p_adpt_api->adpt_queue_counter_cleanup = adpt_hppe_queue_counter_cleanup;
 	p_adpt_api->adpt_qm_enqueue_ctrl_get = adpt_hppe_qm_enqueue_ctrl_get;
 	p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
 	p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
