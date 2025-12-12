@@ -50,16 +50,15 @@ adpt_hppe_mib_cpukeep_get(a_uint32_t dev_id, a_bool_t *enable)
 sw_error_t
 adpt_ppe_mib_cpukeep_set(a_uint32_t dev_id, a_bool_t enable)
 {
-	a_uint32_t port_id = 0, g_port_id = 0;
+	a_uint32_t mac_id = 0, gmac_num = 0, xgmac_num = 0;
 	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT6; port_id++)
-	{
-		g_port_id = ppe_port_to_gmac_id(dev_id, port_id);
-		hppe_mac_mib_ctrl_mib_rd_clr_set(dev_id, g_port_id, (a_uint32_t)(!enable));
-	}
+	adpt_ppe_mac_num_get(dev_id, &gmac_num, &xgmac_num);
+
+	for (mac_id = 0; mac_id < gmac_num; mac_id++)
+		hppe_mac_mib_ctrl_mib_rd_clr_set(dev_id, mac_id, (a_uint32_t)(!enable));
 #ifdef JHPPE
 	if ((adpt_ppe_type_get(dev_id) == JHPPE_TYPE) ||
 		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)) {
@@ -219,10 +218,8 @@ adpt_hppe_get_tx_mib_info(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 {
-	a_uint32_t port_id = 0, xg_port_id = 0, g_port_id = 0;
-	a_uint32_t port_num = SSDK_PHYSICAL_PORT6;
+	a_uint32_t gmac_num = 0, xgmac_num = 0, mac_id = 0;
 	union mmc_control_u mmc_control;
-	a_uint32_t xg_port_index = SSDK_PHYSICAL_PORT5;
 	sw_error_t rv = SW_OK;
 
 	memset(&mmc_control, 0, sizeof(mmc_control));
@@ -235,22 +232,15 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 		SW_RTN_ON_ERROR(rv);
 	}
 #endif
-	for (port_id = SSDK_PHYSICAL_PORT1; port_id <= port_num; port_id++) {
-		g_port_id = ppe_port_to_gmac_id(dev_id, port_id);
-		hppe_mac_mib_ctrl_mib_en_set(dev_id, g_port_id, (a_uint32_t)enable);
-	}
+	adpt_ppe_mac_num_get(dev_id, &gmac_num, &xgmac_num);
 
-	xg_port_index = SSDK_PHYSICAL_PORT1;
-	for (port_id = xg_port_index; port_id <= port_num; port_id++) {
-		xg_port_id = ppe_port_to_xgmac_id(dev_id, port_id);
-		hppe_mmc_control_get(dev_id, xg_port_id, &mmc_control);
+	for (mac_id = 0; mac_id < gmac_num; mac_id++)
+		hppe_mac_mib_ctrl_mib_en_set(dev_id, mac_id, (a_uint32_t)enable);
 
-		if(A_TRUE == enable)
-			mmc_control.bf.mcf = 0;
-		else
-			mmc_control.bf.mcf = 1;
-
-		hppe_mmc_control_set(dev_id, xg_port_id, &mmc_control);
+	for (mac_id = 0; mac_id < xgmac_num; mac_id++) {
+		hppe_mmc_control_get(dev_id, mac_id, &mmc_control);
+		mmc_control.bf.mcf = !enable;
+		hppe_mmc_control_set(dev_id, mac_id, &mmc_control);
 	}
 
 	return rv;
@@ -259,15 +249,20 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 sw_error_t
 adpt_hppe_mib_port_flush_counters(a_uint32_t dev_id, fal_port_t port_id)
 {
+	a_uint32_t mac_type = 0;
 	union mmc_control_u mmc_control;
 
 	memset(&mmc_control, 0, sizeof(mmc_control));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if(port_id < SSDK_PHYSICAL_PORT1 || port_id > SSDK_PHYSICAL_PORT6)
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_INCL_CPU))
+		return SW_BAD_PARAM;
+
+	mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+	if(mac_type != PORT_XGMAC_TYPE && mac_type != PORT_GMAC_TYPE)
 		return SW_BAD_PARAM;
 	/*GMAC*/
-	if(!hppe_xgmac_port_check(dev_id, port_id))
+	if(mac_type == PORT_GMAC_TYPE)
 	{
 		port_id = ppe_port_to_gmac_id(dev_id, port_id);
 		hppe_mac_mib_ctrl_mib_reset_set(dev_id, port_id, A_TRUE);

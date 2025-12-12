@@ -132,6 +132,37 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 	return ppe_freq;
 }
 
+void adpt_ppe_mac_num_get(a_uint32_t dev_id, a_uint32_t *gmac_num, a_uint32_t *xgmac_num)
+{
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+
+	switch (ppe_type) {
+		case APPE_TYPE:
+		case JHPPE_TYPE:
+			*gmac_num = 6;
+			*xgmac_num = 6;
+			break;
+		case MPPE_TYPE:
+			*gmac_num = 2;
+			*xgmac_num = 2;
+			break;
+		case MRPPE_TYPE:
+			*gmac_num = 3;
+			*xgmac_num = 3;
+			break;
+		case HMSPPE_TYPE:
+			*gmac_num = 6;
+			*xgmac_num = 3;
+			break;
+		case HTTPPE_TYPE:
+			*gmac_num = 6;
+			*xgmac_num = 2;
+			break;
+		default:
+			break;
+	}
+}
+
 a_uint32_t ppe_port_to_gmac_id(a_uint32_t dev_id, fal_port_t port_id)
 {
 	a_uint32_t gmac_id = 0;
