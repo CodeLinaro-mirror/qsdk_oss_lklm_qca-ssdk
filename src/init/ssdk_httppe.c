@@ -389,6 +389,9 @@ sw_error_t qca_httppe_hw_init(a_uint32_t dev_id)
 #if defined(IN_QM)
 	rv = qca_hppe_qm_hw_init(dev_id);
 	SW_RTN_ON_ERROR(rv);
+	/* disable ucast enqueue for mcast traffic */
+	rv = fal_qm_mcast_enqueue_ctrl_set(dev_id, SSDK_PHYSICAL_PORT0, A_FALSE);
+	SW_RTN_ON_ERROR(rv);
 #endif
 
 #if defined(IN_QOS)

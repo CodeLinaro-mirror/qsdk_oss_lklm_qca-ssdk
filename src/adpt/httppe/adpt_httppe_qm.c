@@ -15,6 +15,9 @@
 #define UCAST_QUEUE_ITEMS	6
 #define MCAST_QUEUE_ITEMS	3
 #define DROP_INC	0x10
+
+static aos_lock_t httppe_qm_lock[SW_MAX_NR_DEV];
+
 extern sw_error_t adpt_hppe_qm_enqueue_ctrl_get(a_uint32_t dev_id, a_uint32_t queue_id,
 		a_bool_t *enable);
 
@@ -801,3 +804,102 @@ adpt_httppe_qm_port_source_profile_get(
 	return SW_OK;
 }
 
+sw_error_t
+adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
+		a_bool_t ucast_enqueue_en)
+{
+	union mc_enq_ctrl_u reg_val;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
+		return SW_OUT_OF_RANGE;
+
+	aos_lock_bh(&httppe_qm_lock[dev_id]);
+
+	rv = httppe_mc_enq_ctrl_get(dev_id, &reg_val);
+	if (rv != SW_OK) {
+		aos_unlock_bh(&httppe_qm_lock[dev_id]);
+		return rv;
+	}
+
+	if (ucast_enqueue_en == A_TRUE) {
+		/* nothing to do if mc_enq_ctrl is enabled on the same port */
+		if (reg_val.bf.uc_enq_en == A_TRUE &&
+				reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id)) {
+			aos_unlock_bh(&httppe_qm_lock[dev_id]);
+			return SW_OK;
+		} else {
+			reg_val.bf.uc_enq_en = A_TRUE;
+			reg_val.bf.uc_port_id = FAL_PORT_ID_VALUE(port_id);
+		}
+
+	} else {
+		/* only need to disable if mc_enq_ctrl is enabled on the same port,
+		 * nothing to do if mc_enq_ctrl is disabled or enabled on another port.
+		 */
+		if (reg_val.bf.uc_enq_en == A_TRUE &&
+				reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id))
+			reg_val.bf.uc_enq_en = A_FALSE;
+		else {
+			aos_unlock_bh(&httppe_qm_lock[dev_id]);
+			return SW_OK;
+		}
+
+	}
+
+	rv = httppe_mc_enq_ctrl_set(dev_id, &reg_val);
+	aos_unlock_bh(&httppe_qm_lock[dev_id]);
+
+	return rv;
+}
+
+sw_error_t
+adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
+		a_bool_t *ucast_enqueue_en)
+{
+	union mc_enq_ctrl_u reg_val;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(ucast_enqueue_en);
+
+	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
+		return SW_OUT_OF_RANGE;
+
+	aos_lock_bh(&httppe_qm_lock[dev_id]);
+
+	rv = httppe_mc_enq_ctrl_get(dev_id, &reg_val);
+	if (rv != SW_OK) {
+		aos_unlock_bh(&httppe_qm_lock[dev_id]);
+		return rv;
+	}
+
+	if (reg_val.bf.uc_enq_en == A_TRUE && reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id))
+		*ucast_enqueue_en = A_TRUE;
+	else
+		*ucast_enqueue_en = A_FALSE;
+
+	aos_unlock_bh(&httppe_qm_lock[dev_id]);
+
+	return SW_OK;
+}
+
+sw_error_t adpt_httppe_qm_init(a_uint32_t dev_id)
+{
+	adpt_api_t *p_adpt_api = NULL;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	aos_lock_init(&httppe_qm_lock[dev_id]);
+
+	p_adpt_api = adpt_api_ptr_get(dev_id);
+	if(p_adpt_api == NULL)
+		return SW_FAIL;
+
+	p_adpt_api->adpt_qm_mcast_enqueue_ctrl_set = adpt_httppe_qm_mcast_enqueue_ctrl_set;
+	p_adpt_api->adpt_qm_mcast_enqueue_ctrl_get = adpt_httppe_qm_mcast_enqueue_ctrl_get;
+
+	return SW_OK;
+}

@@ -1641,6 +1641,15 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_qm_ac_drop_state_set = adpt_ppe_qm_ac_drop_state_set;
 	p_adpt_api->adpt_qm_ac_drop_state_get = adpt_ppe_qm_ac_drop_state_get;
 
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		sw_error_t rv;
+		rv = adpt_httppe_qm_init(dev_id);
+		SW_RTN_ON_ERROR(rv);
+	}
+#endif
 	return SW_OK;
 }
 

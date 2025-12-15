@@ -6,6 +6,28 @@
 #include "hsl_htt_reg.h"
 
 sw_error_t
+httppe_mc_enq_ctrl_get(
+		a_uint32_t dev_id,
+		union mc_enq_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				IPE_L2_BASE_ADDR + MC_ENQ_CTRL_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
+httppe_mc_enq_ctrl_set(
+		a_uint32_t dev_id,
+		union mc_enq_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				IPE_L2_BASE_ADDR + MC_ENQ_CTRL_ADDRESS,
+				value->val);
+}
+
+sw_error_t
 httppe_port_vsi_enqueue_map_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

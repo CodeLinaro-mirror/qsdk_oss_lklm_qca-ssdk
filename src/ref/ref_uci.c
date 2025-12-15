@@ -13061,6 +13061,13 @@ static const char *passthrough_cpucode_en[] = {
 };
 #endif
 
+#if defined(HTTPPE)
+static const char *mcast_enqueue_ctrl[] = {
+	"port_id",
+	"ucast_enqueue_en",
+};
+#endif
+
 static int
 parse_qm(const char *command_name, struct switch_val *val)
 {
@@ -13127,6 +13134,11 @@ parse_qm(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "PassthroughCpucodeen")) {
 		rv = parse_uci_option(val, passthrough_cpucode_en,
 				sizeof(passthrough_cpucode_en)/sizeof(char *));
+#endif
+#if defined(HTTPPE)
+	} else if (!strcmp(command_name, "Mcastenqueuectrl")) {
+		rv = parse_uci_option(val, mcast_enqueue_ctrl,
+				sizeof(mcast_enqueue_ctrl)/sizeof(char *));
 #endif
 	}
 #if !defined(IN_QM_MINI)

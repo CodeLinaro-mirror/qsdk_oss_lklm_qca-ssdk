@@ -1269,6 +1269,9 @@ struct sub_cmd_des_t g_qm_des[] =
     {"passthroughcpucode", "set", SW_API_QM_PASSTHROUGH_CPUCODE_SET, NULL},
     {"passthroughcpucodeen", "set", SW_API_QM_PASSTHROUGH_CPUCODE_EN_SET, NULL},
 #endif
+#if defined(HTTPPE)
+    {"mcastenqueuectrl", "set", SW_API_QM_MCAST_ENQUEUE_CTRL_SET, NULL},
+#endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 
 };
