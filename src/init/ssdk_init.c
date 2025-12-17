@@ -2162,15 +2162,22 @@ static int __init regi_init(void)
 				SSDK_INFO("Initializing %s Done!!\n", PPE_STR);
 				break;
 #if defined(HTTPPE)
-			case CHIP_HTTPPE:
-				qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
-				rv = qca_httppe_hw_init(dev_id);
-				ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
-				rv = ssdk_switch_register(dev_id, cfg.chip_type);
-				ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
-				SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-				SSDK_INFO("Initializing HTTPPE Done!!\n");
+			case CHIP_HTTPPE: {
+				struct device_node *dsa_node = of_find_compatible_node(NULL, NULL, "qcom,qce2204");
+				if (dsa_node) {
+					of_node_put(dsa_node);
+					SSDK_INFO("Skipping HTTPPE Initializing for QCE DSA enabled!!\n");
+				} else {
+					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
+					rv = qca_httppe_hw_init(dev_id);
+					ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
+					rv = ssdk_switch_register(dev_id, cfg.chip_type);
+					ssdk_init_status_debug_state(dev_id, SSDK_SWITCH_REGISTER_FAILURE, rv);
+					SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
+					SSDK_INFO("Initializing HTTPPE Done!!\n");
+				}
 				break;
+			}
 #endif
 			case CHIP_UNSPECIFIED:
 				break;
