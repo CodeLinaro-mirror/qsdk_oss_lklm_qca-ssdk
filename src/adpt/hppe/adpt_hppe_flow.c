@@ -444,6 +444,7 @@ sw_error_t adpt_ppe_flow_key_ipv4_5tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->dst_port = entry->bf.l4_dport_0;
 		flow_entry->dst_port |= entry->bf.l4_dport_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_TBL_L4_DPORT_OFFSET);
 		flow_entry->vpn_id = entry->bf.vpn_id;
+		flow_entry->entry_type = FAL_FLOW_IP4_5TUPLE_ADDR;
 #if defined(JHPPE)
 		flow_entry->route_en = entry->bf.routing;
 #endif
@@ -505,6 +506,7 @@ sw_error_t adpt_ppe_flow_key_ipv6_5tuple_convert(fal_flow_entry_t *flow_entry,
 		flow_entry->flow_ip.ipv6.ul[0] = entry->bf.ip_addr_3 >> (32 - SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_IP_ADDR_OFFSET)) |\
 						 entry->bf.ip_addr_4 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_IP_ADDR_OFFSET);
 		flow_entry->vpn_id = entry->bf.vpn_id;
+		flow_entry->entry_type = FAL_FLOW_IP6_5TUPLE_ADDR;
 	}
 
 	return SW_OK;
@@ -545,6 +547,7 @@ sw_error_t adpt_ppe_flow_key_ipv4_3tuple_convert(fal_flow_entry_t *flow_entry,
 #else
 		flow_entry->vpn_id = entry->bf.vpn_id;
 #endif
+		flow_entry->entry_type = FAL_FLOW_IP4_3TUPLE_ADDR;
 	}
 
 	return SW_OK;
@@ -587,6 +590,7 @@ sw_error_t adpt_ppe_flow_key_ipv6_3tuple_convert(fal_flow_entry_t *flow_entry,
 						 entry->bf.ip_addr_4 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_IP_ADDR_OFFSET);
 		flow_entry->ip_type = entry->bf.ip_protocol;
 		flow_entry->vpn_id = entry->bf.vpn_id;
+		flow_entry->entry_type = FAL_FLOW_IP6_3TUPLE_ADDR;
 #if defined(JHPPE)
 		flow_entry->route_en = entry->bf.routing;
 #endif
@@ -645,9 +649,11 @@ sw_error_t adpt_ppe_flow_key_ip_6tuple_convert(fal_flow_entry_t *flow_entry,
 							 entry->bf.ip_addr_3 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_6TUPLE_TBL_IP_ADDR_OFFSET);
 			flow_entry->flow_ip.ipv6.ul[0] = entry->bf.ip_addr_3 >> (32 - SW_FIELD_OFFSET_IN_WORD(IN_FLOW_6TUPLE_TBL_IP_ADDR_OFFSET)) |\
 							 entry->bf.ip_addr_4 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_6TUPLE_TBL_IP_ADDR_OFFSET);
+			flow_entry->entry_type = FAL_FLOW_IP6_6TUPLE_ADDR;
 		} else {
 			flow_entry->flow_ip.ipv4 = entry->bf.ip_addr_0;
 			flow_entry->flow_ip.ipv4 |= entry->bf.ip_addr_1 << SW_FIELD_OFFSET_IN_WORD(IN_FLOW_6TUPLE_TBL_IP_ADDR_OFFSET);
+			flow_entry->entry_type = FAL_FLOW_IP4_6TUPLE_ADDR;
 		}
 
 		flow_entry->protocol = entry->bf.protocol_type;

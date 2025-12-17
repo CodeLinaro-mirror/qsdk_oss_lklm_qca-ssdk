@@ -44,12 +44,25 @@ typedef enum {
 } fal_flow_fwd_type_t;
 
 /* FLOW entry type field */
-#define FAL_FLOW_IP4_5TUPLE_ADDR        0x1
-#define FAL_FLOW_IP6_5TUPLE_ADDR        0x2
-#define FAL_FLOW_IP4_3TUPLE_ADDR        0x4
-#define FAL_FLOW_IP6_3TUPLE_ADDR        0x8
-#define FAL_FLOW_IP4_6TUPLE_ADDR       	0x10
-#define FAL_FLOW_IP6_6TUPLE_ADDR       	0x20
+typedef enum {
+	FAL_FLOW_IP4_5TUPLE_ADDR =	0x1,
+	FAL_FLOW_IP6_5TUPLE_ADDR =	0x2,
+	FAL_FLOW_IP4_3TUPLE_ADDR =	0x4,
+	FAL_FLOW_IP6_3TUPLE_ADDR =	0x8,
+	FAL_FLOW_IP4_6TUPLE_ADDR =	0x10,
+	FAL_FLOW_IP6_6TUPLE_ADDR =	0x20,
+} fal_flow_entry_type_t;
+
+typedef enum {
+	FAL_FLOW_3TUPLE = 0,
+	FAL_FLOW_TCP,
+	FAL_FLOW_UDP,
+	FAL_FLOW_UDP_LITE,
+	FAL_FLOW_IPSEC,
+	FAL_FLOW_NATT,
+	FAL_FLOW_KEY_GEN0,
+	FAL_FLOW_KEY_GEN1,
+} fal_flow_protocol_type_t;
 
 #define FAL_FLOW_OP_MODE_KEY         0x0
 #define FAL_FLOW_OP_MODE_INDEX     0x1
@@ -97,13 +110,13 @@ typedef struct {
 
 typedef struct {
 	a_uint32_t entry_id; /*entry index*/ 
-	a_uint8_t entry_type; /*1:ipv4 5 tuple, 2:ipv6 5 tuple, 4:ipv4 3 tuple, 8:ipv6 3 tuple*/
-	a_uint8_t host_addr_type; /*0:souce ip index, 1:destination ip index*/
+	fal_flow_entry_type_t entry_type; /*1:ipv4 5 tuple, 2:ipv6 5 tuple, 4:ipv4 3 tuple, 8:ipv6 3 tuple*/
+	a_uint8_t host_addr_type; /*0:source ip index, 1:destination ip index*/
 	a_uint16_t host_addr_index; /*host table entry index*/
-	a_uint8_t protocol; /*1:tcp, 2:udp, 3:udp-lite, 0:other*/
+	fal_flow_protocol_type_t protocol; /*1:tcp, 2:udp, 3:udp-lite, 0:other*/
 	a_uint8_t age; /*aging value*/
 	a_bool_t src_intf_valid; /*source interface check valid*/
-	a_uint8_t src_intf_index; /*souce l3 interface*/
+	a_uint8_t src_intf_index; /*source l3 interface*/
 	fal_flow_fwd_type_t fwd_type; /*forward type*/
 	a_uint16_t snat_nexthop; /*nexthop index for snat*/
 	a_uint16_t snat_srcport; /*new source l4 port*/
@@ -211,17 +224,6 @@ typedef struct {
 	a_uint32_t iid;
 	a_bool_t   is_dnat;
 } fal_flow_npt66_iid_t;
-
-typedef enum {
-	FAL_FLOW_3TUPLE = 0,
-	FAL_FLOW_TCP,
-	FAL_FLOW_UDP,
-	FAL_FLOW_UDP_LITE,
-	FAL_FLOW_IPSEC,
-	FAL_FLOW_NATT,
-	FAL_FLOW_KEY_GEN0,
-	FAL_FLOW_KEY_GEN1,
-} fal_flow_protocol_type_t;
 
 enum {
 	FAL_FLOW_KEY_L3_TYPE,
