@@ -41,9 +41,8 @@ sw_error_t qca_appe_rss_hash_hw_init(a_uint32_t dev_id);
 #define MRPPE_POLICER_TIMESLOT_DFT          375*4
 #define HMSPPE_POLICER_TIMESLOT_DFT         429*2
 #define JHPPE_POLICER_TIMESLOT_DFT          462*3
-#define HTTPPE_POLICER_TIMESLOT_DFT         250*3
+#define HTTPPE_POLICER_TIMESLOT_DFT         250*2
 #define POLICER_CFG_MAX_512                 512
-#define POLICER_CFG_MAX_256                 256
 #define POLICER_CFG_MAX_128                 128
 #define POLICER_HEAD                        0
 #define POLICER_TAIL(cfg_max) ((cfg_max) - 1)

@@ -26,10 +26,11 @@
 	#define IN_METER_HEAD_REG_METER_LL_TAIL_DEFAULT 0x0
 
 struct in_meter_head_reg {
+	a_uint32_t  _reserved0:7;
 	a_uint32_t  meter_ll_head:9;
-	a_uint32_t  _reserved0:6;
+	a_uint32_t  _reserved1:6;
 	a_uint32_t  meter_ll_tail:9;
-	a_uint32_t  _reserved1:1;
+	a_uint32_t  _reserved2:1;
 };
 
 union in_meter_head_reg_u {
