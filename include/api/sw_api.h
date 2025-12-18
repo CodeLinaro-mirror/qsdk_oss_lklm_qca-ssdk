@@ -351,6 +351,7 @@ typedef enum
 	SW_FWD_TYPE,
 	SW_DEST_INFO,
 	SW_AC_DROP_STATE,
+	SW_PT_PPS_CTRL,
 /* auto_insert_flag */
 } sw_data_type_e;
 

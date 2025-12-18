@@ -204,6 +204,12 @@ sw_error_t fal_port_combo_link_status_get (a_uint32_t dev_id, fal_port_t port_id
     DEFINE_FAL_FUNC_HSL_DIRECT(port_combo_phy_link_status_get, dev_id, port_id, status)
     EXPORT_SYMBOL(fal_port_combo_link_status_get);
 
+sw_error_t fal_port_pps_ctrl_set(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_pps_ctrl_set, dev_id, pps_ctrl)
+
+sw_error_t fal_port_pps_ctrl_get(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctrl)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_pps_ctrl_get, dev_id, pps_ctrl)
+
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t fal_port_txmac_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_EXPORT(port_txmac_status_get, dev_id, port_id, enable)
@@ -524,4 +530,3 @@ fal_erp_standby_exit (a_uint32_t dev_id)
 EXPORT_SYMBOL(fal_port_erp_power_mode_get);
 EXPORT_SYMBOL(fal_erp_standby_enter);
 EXPORT_SYMBOL(fal_erp_standby_exit);
-
