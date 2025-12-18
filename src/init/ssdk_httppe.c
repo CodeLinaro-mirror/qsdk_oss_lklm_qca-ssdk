@@ -243,7 +243,7 @@ qca_httppe_bm_hw_init(a_uint32_t dev_id)
 {
 	a_uint32_t i = 0;
 	fal_bm_dynamic_cfg_t cfg;
-	a_uint16_t group_buf = 1550, share_ceiling = 0, phyport_share_ceiling = 0;
+	a_uint16_t group_buf = 3550, share_ceiling = 0, phyport_share_ceiling = 0;
 	a_uint16_t prealloc_buf = 0, react_buf = 0;
 
 	for (i = 0; i < HTTPPE_BM_PORT_NUM; i++) {
@@ -259,10 +259,10 @@ qca_httppe_bm_hw_init(a_uint32_t dev_id)
 	for (i = 0; i < HTTPPE_BM_PORT_NUM; i++) {
 		if (i < HTTPPE_BM_PHY_PORT_OFFSET) {
 			prealloc_buf = 0;
-			react_buf = 100;
+			react_buf = 200;
 		} else {
 			prealloc_buf = 0;
-			react_buf = 128;
+			react_buf = 228;
 		}
 		fal_bm_port_reserved_buffer_set(dev_id, i, prealloc_buf, react_buf);
 	}
@@ -271,16 +271,16 @@ qca_httppe_bm_hw_init(a_uint32_t dev_id)
 	memset(&cfg, 0, sizeof(cfg));
 	for (i = 0; i < HTTPPE_BM_PORT_NUM; i++) {
 		if (i == HTTPPE_BM_PORT_MIN) {
-			share_ceiling = 1146;
+			share_ceiling = 1200;
 			cfg.resume_min_thresh = 0;
 			cfg.resume_off = 8;
 			cfg.weight= 7;
 		} else {
-			share_ceiling = 250;
-			phyport_share_ceiling = 250;
+			share_ceiling = 650;
+			phyport_share_ceiling = 650;
 			cfg.resume_min_thresh = 0;
 			cfg.resume_off = 36;
-			cfg.weight= 4;
+			cfg.weight= 7;
 		}
 		if (i < HTTPPE_BM_PHY_PORT_OFFSET)
 			cfg.shared_ceiling = share_ceiling;
