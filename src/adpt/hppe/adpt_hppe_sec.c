@@ -13,6 +13,9 @@
 #include "fal_sec.h"
 #include "adpt.h"
 #include "adpt_appe_sec.h"
+#if defined(HTTPPE)
+#include "adpt_httppe_sec.h"
+#endif
 
 #ifndef IN_SEC_MINI
 sw_error_t
@@ -292,6 +295,20 @@ sw_error_t adpt_hppe_sec_init(a_uint32_t dev_id)
 
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
+
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		p_adpt_api->adpt_sec_l4_excep_parser_ctrl_set = adpt_httppe_sec_l4_excep_parser_ctrl_set;
+		p_adpt_api->adpt_sec_l4_excep_parser_ctrl_get = adpt_httppe_sec_l4_excep_parser_ctrl_get;
+		p_adpt_api->adpt_sec_l3_excep_ctrl_set = adpt_httppe_sec_l3_excep_ctrl_set;
+		p_adpt_api->adpt_sec_l3_excep_ctrl_get = adpt_httppe_sec_l3_excep_ctrl_get;
+#ifndef IN_SEC_MINI
+		p_adpt_api->adpt_sec_l3_excep_parser_ctrl_set = adpt_httppe_sec_l3_excep_parser_ctrl_set;
+		p_adpt_api->adpt_sec_l3_excep_parser_ctrl_get = adpt_httppe_sec_l3_excep_parser_ctrl_get;
+#endif
+		return SW_OK;
+	}
+#endif
 
 	p_adpt_api->adpt_sec_l4_excep_parser_ctrl_set = adpt_hppe_sec_l4_excep_parser_ctrl_set;
 	p_adpt_api->adpt_sec_l4_excep_parser_ctrl_get = adpt_hppe_sec_l4_excep_parser_ctrl_get;
