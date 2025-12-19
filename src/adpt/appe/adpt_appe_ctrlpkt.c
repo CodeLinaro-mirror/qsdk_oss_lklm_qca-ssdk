@@ -19,12 +19,18 @@
 #include "sw.h"
 #include "adpt.h"
 #include "hsl_reg.h"
+#include "adpt_httppe_ctrlpkt.h"
 
 sw_error_t
 adpt_appe_mgmtctrl_vpgroup_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t vpgroup_id)
 {
 	sw_error_t rv = SW_OK;
+
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_mgmtctrl_vpgroup_set(dev_id, port_id, vpgroup_id);
+#endif
 
 	rv = appe_l2_vp_port_tbl_app_ctrl_profile_set(dev_id,
 		FAL_PORT_ID_VALUE(port_id), vpgroup_id);
@@ -37,6 +43,11 @@ adpt_appe_mgmtctrl_vpgroup_get(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t *vpgroup_id)
 {
 	sw_error_t rv = SW_OK;
+
+#if defined(HTTPPE)
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+		return adpt_httppe_mgmtctrl_vpgroup_get(dev_id, port_id, vpgroup_id);
+#endif
 
 	rv = appe_l2_vp_port_tbl_app_ctrl_profile_get(dev_id,
 		FAL_PORT_ID_VALUE(port_id), vpgroup_id);
