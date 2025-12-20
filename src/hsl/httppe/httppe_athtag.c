@@ -34,6 +34,28 @@ httppe_eg_hdr_xmit_pri_mapping_set(
 }
 
 sw_error_t
+httppe_eg_gen_ctrl_set(
+		a_uint32_t dev_id,
+		union eg_gen_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + EG_GEN_CTRL_ADDRESS,
+				value->val);
+}
+
+sw_error_t
+httppe_eg_gen_ctrl_get(
+		a_uint32_t dev_id,
+		union eg_gen_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				NSS_PTX_CSR_BASE_ADDR + EG_GEN_CTRL_ADDRESS,
+				&value->val);
+}
+
+sw_error_t
 httppe_service_code_mapping_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

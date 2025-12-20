@@ -47,6 +47,38 @@ sw_error_t adpt_httppe_athtag_egress_pri_mapping_get(a_uint32_t dev_id,
 	return SW_OK;
 }
 
+sw_error_t adpt_httppe_athtag_tx_ath_hdr_type_set(a_uint32_t dev_id,
+		fal_athtag_tx_cfg_t *cfg)
+{
+	union eg_gen_ctrl_u eg_gen_ctrl = {0};
+	sw_error_t rv;
+
+	ADPT_NULL_POINT_CHECK(cfg);
+
+	rv = httppe_eg_gen_ctrl_get(dev_id, &eg_gen_ctrl);
+	SW_RTN_ON_ERROR(rv);
+
+	eg_gen_ctrl.bf.ath_hdr_type = cfg->athtag_type;
+
+	return httppe_eg_gen_ctrl_set(dev_id, &eg_gen_ctrl);
+}
+
+sw_error_t adpt_httppe_athtag_tx_ath_hdr_type_get(a_uint32_t dev_id,
+		fal_athtag_tx_cfg_t *cfg)
+{
+	union eg_gen_ctrl_u eg_gen_ctrl = {0};
+	sw_error_t rv;
+
+	ADPT_NULL_POINT_CHECK(cfg);
+
+	rv = httppe_eg_gen_ctrl_get(dev_id, &eg_gen_ctrl);
+	SW_RTN_ON_ERROR(rv);
+
+	cfg->athtag_type = eg_gen_ctrl.bf.ath_hdr_type;
+
+	return SW_OK;
+}
+
 sw_error_t adpt_httppe_athtag_rx_dest_port_mapping_set(a_uint32_t dev_id,
 		fal_port_t ath_dest_port, fal_dest_info_t *dest_info)
 {

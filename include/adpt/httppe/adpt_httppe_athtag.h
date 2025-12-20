@@ -20,6 +20,12 @@ sw_error_t adpt_httppe_athtag_egress_pri_mapping_set(a_uint32_t dev_id,
 sw_error_t adpt_httppe_athtag_egress_pri_mapping_get(a_uint32_t dev_id,
 		fal_athtag_pri_mapping_t * pri_mapping);
 
+sw_error_t adpt_httppe_athtag_tx_ath_hdr_type_set(a_uint32_t dev_id,
+		fal_athtag_tx_cfg_t *cfg);
+
+sw_error_t adpt_httppe_athtag_tx_ath_hdr_type_get(a_uint32_t dev_id,
+		fal_athtag_tx_cfg_t *cfg);
+
 sw_error_t adpt_httppe_athtag_rx_dest_port_mapping_set(a_uint32_t dev_id,
 		fal_port_t ath_dest_port, fal_dest_info_t *dest_info);
 

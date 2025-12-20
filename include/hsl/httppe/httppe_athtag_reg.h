@@ -29,6 +29,106 @@ union eg_hdr_xmit_pri_mapping_u {
 	struct eg_hdr_xmit_pri_mapping bf;
 };
 
+/*[register] EG_GEN_CTRL*/
+#define EG_GEN_CTRL
+#define EG_GEN_CTRL_ADDRESS 0x110
+#define EG_GEN_CTRL_NUM     1
+#define EG_GEN_CTRL_INC     0x4
+#define EG_GEN_CTRL_TYPE    REG_TYPE_RW
+#define EG_GEN_CTRL_DEFAULT 0xe00000
+	/*[field] ATH_HDR_TYPE*/
+	#define EG_GEN_CTRL_ATH_HDR_TYPE
+	#define EG_GEN_CTRL_ATH_HDR_TYPE_OFFSET  0
+	#define EG_GEN_CTRL_ATH_HDR_TYPE_LEN     16
+	#define EG_GEN_CTRL_ATH_HDR_TYPE_DEFAULT 0x0
+	/*[field] FLOW_COOKIE_PRI*/
+	#define EG_GEN_CTRL_FLOW_COOKIE_PRI
+	#define EG_GEN_CTRL_FLOW_COOKIE_PRI_OFFSET  16
+	#define EG_GEN_CTRL_FLOW_COOKIE_PRI_LEN     4
+	#define EG_GEN_CTRL_FLOW_COOKIE_PRI_DEFAULT 0x0
+	/*[field] STRIP_PADDING_EN*/
+	#define EG_GEN_CTRL_STRIP_PADDING_EN
+	#define EG_GEN_CTRL_STRIP_PADDING_EN_OFFSET  20
+	#define EG_GEN_CTRL_STRIP_PADDING_EN_LEN     1
+	#define EG_GEN_CTRL_STRIP_PADDING_EN_DEFAULT 0x0
+	/*[field] STRIP_PADDING_ROUTE_EN*/
+	#define EG_GEN_CTRL_STRIP_PADDING_ROUTE_EN
+	#define EG_GEN_CTRL_STRIP_PADDING_ROUTE_EN_OFFSET  21
+	#define EG_GEN_CTRL_STRIP_PADDING_ROUTE_EN_LEN     1
+	#define EG_GEN_CTRL_STRIP_PADDING_ROUTE_EN_DEFAULT 0x1
+	/*[field] STRIP_PADDING_BRIDGE_EN*/
+	#define EG_GEN_CTRL_STRIP_PADDING_BRIDGE_EN
+	#define EG_GEN_CTRL_STRIP_PADDING_BRIDGE_EN_OFFSET  22
+	#define EG_GEN_CTRL_STRIP_PADDING_BRIDGE_EN_LEN     1
+	#define EG_GEN_CTRL_STRIP_PADDING_BRIDGE_EN_DEFAULT 0x1
+	/*[field] STRIP_INNER_PADDING_EN*/
+	#define EG_GEN_CTRL_STRIP_INNER_PADDING_EN
+	#define EG_GEN_CTRL_STRIP_INNER_PADDING_EN_OFFSET  23
+	#define EG_GEN_CTRL_STRIP_INNER_PADDING_EN_LEN     1
+	#define EG_GEN_CTRL_STRIP_INNER_PADDING_EN_DEFAULT 0x1
+	/*[field] SNAP_LEN_UPDATE_EN*/
+	#define EG_GEN_CTRL_SNAP_LEN_UPDATE_EN
+	#define EG_GEN_CTRL_SNAP_LEN_UPDATE_EN_OFFSET  24
+	#define EG_GEN_CTRL_SNAP_LEN_UPDATE_EN_LEN     1
+	#define EG_GEN_CTRL_SNAP_LEN_UPDATE_EN_DEFAULT 0x0
+	/*[field] STRIP_PADDING_DATA_EN*/
+	#define EG_GEN_CTRL_STRIP_PADDING_DATA_EN
+	#define EG_GEN_CTRL_STRIP_PADDING_DATA_EN_OFFSET  25
+	#define EG_GEN_CTRL_STRIP_PADDING_DATA_EN_LEN     1
+	#define EG_GEN_CTRL_STRIP_PADDING_DATA_EN_DEFAULT 0x0
+	/*[field] SPARE_BIT0*/
+	#define EG_GEN_CTRL_SPARE_BIT0
+	#define EG_GEN_CTRL_SPARE_BIT0_OFFSET  26
+	#define EG_GEN_CTRL_SPARE_BIT0_LEN     1
+	#define EG_GEN_CTRL_SPARE_BIT0_DEFAULT 0x0
+	/*[field] SPARE_BIT1*/
+	#define EG_GEN_CTRL_SPARE_BIT1
+	#define EG_GEN_CTRL_SPARE_BIT1_OFFSET  27
+	#define EG_GEN_CTRL_SPARE_BIT1_LEN     1
+	#define EG_GEN_CTRL_SPARE_BIT1_DEFAULT 0x0
+	/*[field] SPARE_BIT2*/
+	#define EG_GEN_CTRL_SPARE_BIT2
+	#define EG_GEN_CTRL_SPARE_BIT2_OFFSET  28
+	#define EG_GEN_CTRL_SPARE_BIT2_LEN     1
+	#define EG_GEN_CTRL_SPARE_BIT2_DEFAULT 0x0
+	/*[field] SPARE_BIT3*/
+	#define EG_GEN_CTRL_SPARE_BIT3
+	#define EG_GEN_CTRL_SPARE_BIT3_OFFSET  29
+	#define EG_GEN_CTRL_SPARE_BIT3_LEN     1
+	#define EG_GEN_CTRL_SPARE_BIT3_DEFAULT 0x0
+	/*[field] SPARE_BIT4*/
+	#define EG_GEN_CTRL_SPARE_BIT4
+	#define EG_GEN_CTRL_SPARE_BIT4_OFFSET  30
+	#define EG_GEN_CTRL_SPARE_BIT4_LEN     1
+	#define EG_GEN_CTRL_SPARE_BIT4_DEFAULT 0x0
+	/*[field] SPARE_BIT5*/
+	#define EG_GEN_CTRL_SPARE_BIT5
+	#define EG_GEN_CTRL_SPARE_BIT5_OFFSET  31
+	#define EG_GEN_CTRL_SPARE_BIT5_LEN     1
+	#define EG_GEN_CTRL_SPARE_BIT5_DEFAULT 0x0
+
+struct eg_gen_ctrl {
+	a_uint32_t  ath_hdr_type:16;
+	a_uint32_t  flow_cookie_pri:4;
+	a_uint32_t  strip_padding_en:1;
+	a_uint32_t  strip_padding_route_en:1;
+	a_uint32_t  strip_padding_bridge_en:1;
+	a_uint32_t  strip_inner_padding_en:1;
+	a_uint32_t  snap_len_update_en:1;
+	a_uint32_t  strip_padding_data_en:1;
+	a_uint32_t  spare_bit0:1;
+	a_uint32_t  spare_bit1:1;
+	a_uint32_t  spare_bit2:1;
+	a_uint32_t  spare_bit3:1;
+	a_uint32_t  spare_bit4:1;
+	a_uint32_t  spare_bit5:1;
+};
+
+union eg_gen_ctrl_u {
+	a_uint32_t val;
+	struct eg_gen_ctrl bf;
+};
+
 /*[register] SERVICE_CODE_MAPPING*/
 #define SERVICE_CODE_MAPPING
 #define SERVICE_CODE_MAPPING_ADDRESS 0x400

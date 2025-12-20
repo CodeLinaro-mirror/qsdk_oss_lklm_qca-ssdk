@@ -170,17 +170,31 @@ adpt_mppe_port_athtag_tx_set(a_uint32_t dev_id,
 {
 	union eg_vp_tbl_u eg_vp_tbl = {0};
 	union eg_gen_ctrl_u eg_gen_ctrl = {0};
+	sw_error_t rv;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	/*set tx athtag type*/
-	SW_RTN_ON_ERROR(mppe_eg_gen_ctrl_get(dev_id, &eg_gen_ctrl));
-	eg_gen_ctrl.bf.ath_hdr_type = cfg->athtag_type;
-	SW_RTN_ON_ERROR(mppe_eg_gen_ctrl_set(dev_id, &eg_gen_ctrl));
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+	{
+		rv = adpt_httppe_athtag_tx_ath_hdr_type_set(dev_id, cfg);
+		SW_RTN_ON_ERROR(rv);
+	}
+	else
+#endif
+	{
+		rv = mppe_eg_gen_ctrl_get(dev_id, &eg_gen_ctrl);
+		SW_RTN_ON_ERROR(rv);
+		eg_gen_ctrl.bf.ath_hdr_type = cfg->athtag_type;
+		rv = mppe_eg_gen_ctrl_set(dev_id, &eg_gen_ctrl);
+		SW_RTN_ON_ERROR(rv);
+	}
 
 	/*set tx athtag enable and other configurations*/
-	SW_RTN_ON_ERROR(appe_egress_vp_tbl_get(dev_id,
-				FAL_PORT_ID_VALUE(port_id), &eg_vp_tbl));
+	rv = appe_egress_vp_tbl_get(dev_id, FAL_PORT_ID_VALUE(port_id), &eg_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
+
 	eg_vp_tbl.bf.ath_hdr_insert = cfg->athtag_en;
 	eg_vp_tbl.bf.ath_hdr_default_type = cfg->action;
 	eg_vp_tbl.bf.ath_hdr_from_cpu = cfg->bypass_fwd_en;
@@ -192,7 +206,8 @@ adpt_mppe_port_athtag_tx_set(a_uint32_t dev_id,
 	if (cfg->version != FAL_ATHTAG_VER1)
 		eg_vp_tbl.bf.ath_hdr_disable_bit = cfg->field_disable;
 
-	SW_RTN_ON_ERROR(_adpt_mppe_fix_athtag_ver(dev_id, FAL_PORT_ID_VALUE(port_id), &cfg->version));
+	rv = _adpt_mppe_fix_athtag_ver(dev_id, FAL_PORT_ID_VALUE(port_id), &cfg->version);
+	SW_RTN_ON_ERROR(rv);
 
 	eg_vp_tbl.bf.ath_hdr_ver = cfg->version;
 
@@ -206,17 +221,30 @@ adpt_mppe_port_athtag_tx_get(a_uint32_t dev_id,
 {
 	union eg_vp_tbl_u eg_vp_tbl = {0};
 	union eg_gen_ctrl_u eg_gen_ctrl = {0};
+	sw_error_t rv;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(cfg);
 
 	/*get tx athtag type*/
-	SW_RTN_ON_ERROR(mppe_eg_gen_ctrl_get(dev_id, &eg_gen_ctrl));
-	cfg->athtag_type = eg_gen_ctrl.bf.ath_hdr_type;
+#if defined(HTTPPE)
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+	{
+		rv = adpt_httppe_athtag_tx_ath_hdr_type_get(dev_id, cfg);
+		SW_RTN_ON_ERROR(rv);
+	}
+	else
+#endif
+	{
+		rv = mppe_eg_gen_ctrl_get(dev_id, &eg_gen_ctrl);
+		SW_RTN_ON_ERROR(rv);
+		cfg->athtag_type = eg_gen_ctrl.bf.ath_hdr_type;
+	}
 
 	/*get tx athtag enable and other configurations*/
-	SW_RTN_ON_ERROR(appe_egress_vp_tbl_get(dev_id,
-				FAL_PORT_ID_VALUE(port_id), &eg_vp_tbl));
+	rv = appe_egress_vp_tbl_get(dev_id, FAL_PORT_ID_VALUE(port_id), &eg_vp_tbl);
+	SW_RTN_ON_ERROR(rv);
+
 	cfg->athtag_en = eg_vp_tbl.bf.ath_hdr_insert;
 	cfg->action = eg_vp_tbl.bf.ath_hdr_default_type;
 	cfg->bypass_fwd_en = eg_vp_tbl.bf.ath_hdr_from_cpu;
