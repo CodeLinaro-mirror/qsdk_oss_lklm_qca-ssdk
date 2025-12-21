@@ -15,6 +15,7 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 sw_error_t adpt_httppe_crosschip_init(a_uint32_t dev_id);
+sw_error_t adpt_httppe_ipmc_init(a_uint32_t dev_id);
 
 #ifdef __cplusplus
 }

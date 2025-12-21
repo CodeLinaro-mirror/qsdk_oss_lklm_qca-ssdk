@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: ISC
  */
 
-#ifndef _JHPPE_IPMC_REG_H_
-#define _JHPPE_IPMC_REG_H_
+#ifndef _HTTPPE_IPMC_REG_H_
+#define _HTTPPE_IPMC_REG_H_
 
 /*[register] IPMC_TBL_OP*/
 #define IPMC_TBL_OP

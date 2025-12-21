@@ -1445,6 +1445,7 @@ struct sub_cmd_des_t g_pktedit_des[] =
 #endif
 	{NULL, NULL, 0, NULL},/*end of desc*/
 };
+#endif
 
 #ifdef IN_PON_PM
 struct sub_cmd_des_t g_ponpm_des[] =
@@ -1463,7 +1464,6 @@ struct sub_cmd_des_t g_ipmc_des[] =
 	{"Ucastfwd", "set", SW_API_IPMC_UCAST_FWD_SET, NULL},
 	{NULL, NULL, 0, NULL},/*end of desc*/
 };
-#endif
 #endif
 
 #ifdef IN_CROSSCHIP

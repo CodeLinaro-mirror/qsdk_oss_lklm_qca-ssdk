@@ -8,7 +8,7 @@
  * @{
  */
 #include "sw.h"
-#include "hsl_reg.h"
+#include "hsl_htt_reg.h"
 #include "fal_ipmc.h"
 #include "adpt.h"
 
@@ -39,7 +39,7 @@ enum {
 };
 
 static sw_error_t
-adpt_jhppe_ipmc_common_fields_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
+adpt_httppe_ipmc_common_fields_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 		union ipmc_gipv4_tbl_u *tbl_entry, a_bool_t to_hsl)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -119,7 +119,7 @@ adpt_jhppe_ipmc_common_fields_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry
 }
 
 static sw_error_t
-adpt_jhppe_ipmc_gipv4_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
+adpt_httppe_ipmc_gipv4_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 		union ipmc_gipv4_tbl_u *tbl_entry, a_bool_t to_hsl)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -142,7 +142,7 @@ adpt_jhppe_ipmc_gipv4_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 }
 
 static sw_error_t
-adpt_jhppe_ipmc_sgipv4_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
+adpt_httppe_ipmc_sgipv4_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 		union ipmc_sipv4_gipv4_tbl_u *tbl_entry, a_bool_t to_hsl)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -170,7 +170,7 @@ adpt_jhppe_ipmc_sgipv4_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 }
 
 static sw_error_t
-adpt_jhppe_ipmc_gipv6_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
+adpt_httppe_ipmc_gipv6_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 		union ipmc_gipv6_tbl_u *tbl_entry, a_bool_t to_hsl)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -227,7 +227,7 @@ adpt_jhppe_ipmc_gipv6_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 }
 
 static sw_error_t
-adpt_jhppe_ipmc_sgipv6_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
+adpt_httppe_ipmc_sgipv6_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 		union ipmc_sipv6_gipv6_tbl_u *tbl_entry, a_bool_t to_hsl)
 {
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -323,33 +323,33 @@ adpt_jhppe_ipmc_sgipv6_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 }
 
 sw_error_t
-adpt_jhppe_ipmc_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
+adpt_httppe_ipmc_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 		a_uint32_t *data, a_uint32_t *data_size, a_bool_t to_hsl)
 {
 	sw_error_t rv;
 
-	rv = adpt_jhppe_ipmc_common_fields_convert(dev_id, entry,
+	rv = adpt_httppe_ipmc_common_fields_convert(dev_id, entry,
 			(union ipmc_gipv4_tbl_u *)data, to_hsl);
 	SW_RTN_ON_ERROR(rv);
 
 	switch(entry->key_type) {
 	case FAL_IPMC_KEY_TYPE_GIP:
-		rv = adpt_jhppe_ipmc_gipv4_entry_convert(dev_id, entry,
+		rv = adpt_httppe_ipmc_gipv4_entry_convert(dev_id, entry,
 				(union ipmc_gipv4_tbl_u *)data, to_hsl);
 		*data_size = sizeof(union ipmc_gipv4_tbl_u)/sizeof(a_uint32_t);
 		break;
 	case FAL_IPMC_KEY_TYPE_SIP_GIP:
-		rv = adpt_jhppe_ipmc_sgipv4_entry_convert(dev_id, entry,
+		rv = adpt_httppe_ipmc_sgipv4_entry_convert(dev_id, entry,
 				(union ipmc_sipv4_gipv4_tbl_u *)data, to_hsl);
 		*data_size = sizeof(union ipmc_sipv4_gipv4_tbl_u)/sizeof(a_uint32_t);
 		break;
 	case FAL_IPMC_KEY_TYPE_GIPV6:
-		rv = adpt_jhppe_ipmc_gipv6_entry_convert(dev_id, entry,
+		rv = adpt_httppe_ipmc_gipv6_entry_convert(dev_id, entry,
 				(union ipmc_gipv6_tbl_u *)data, to_hsl);
 		*data_size = sizeof(union ipmc_gipv6_tbl_u)/sizeof(a_uint32_t);
 		break;
 	case FAL_IPMC_KEY_TYPE_SIPV6_GIPV6:
-		rv = adpt_jhppe_ipmc_sgipv6_entry_convert(dev_id, entry,
+		rv = adpt_httppe_ipmc_sgipv6_entry_convert(dev_id, entry,
 				(union ipmc_sipv6_gipv6_tbl_u *)data, to_hsl);
 		*data_size = sizeof(union ipmc_sipv6_gipv6_tbl_u)/sizeof(a_uint32_t);
 		break;
@@ -362,7 +362,7 @@ adpt_jhppe_ipmc_entry_convert(a_uint32_t dev_id, fal_ipmc_entry_t *entry,
 }
 
 static sw_error_t
-jhppe_ipmc_op_common(a_uint32_t dev_id,
+httppe_ipmc_op_common(a_uint32_t dev_id,
 		fal_ipmc_op_type_t op_type,
 		fal_ipmc_op_mode_t op_mode,
 		a_uint32_t *index)
@@ -384,11 +384,11 @@ jhppe_ipmc_op_common(a_uint32_t dev_id,
 	op.bf.op_mode = op_mode;
 	op.bf.entry_index = *index;
 
-	rv = jhppe_ipmc_tbl_op_set(dev_id, &op);
+	rv = httppe_ipmc_tbl_op_set(dev_id, &op);
 	SW_RTN_ON_ERROR(rv);
 
 	while (loop > 0) {
-		rv = jhppe_ipmc_tbl_op_rslt_get(dev_id, &op_rslt);
+		rv = httppe_ipmc_tbl_op_rslt_get(dev_id, &op_rslt);
 		SW_RTN_ON_ERROR(rv);
 
 		if (op_rslt.bf.valid_cnt) {
@@ -410,7 +410,7 @@ jhppe_ipmc_op_common(a_uint32_t dev_id,
 }
 
 static sw_error_t
-jhppe_ipmc_rd_op_common(
+httppe_ipmc_rd_op_common(
 		a_uint32_t dev_id,
 		fal_ipmc_op_type_t op_type,
 		fal_ipmc_op_mode_t op_mode,
@@ -433,11 +433,11 @@ jhppe_ipmc_rd_op_common(
 	rd_op.bf.op_mode = op_mode;
 	rd_op.bf.entry_index = *index;
 
-	rv = jhppe_ipmc_tbl_rd_op_set(dev_id, &rd_op);
+	rv = httppe_ipmc_tbl_rd_op_set(dev_id, &rd_op);
 	SW_RTN_ON_ERROR(rv);
 
 	while (loop > 0) {
-		rv = jhppe_ipmc_tbl_rd_op_rslt_get(dev_id, &rd_op_rslt);
+		rv = httppe_ipmc_tbl_rd_op_rslt_get(dev_id, &rd_op_rslt);
 		SW_RTN_ON_ERROR(rv);
 
 		if (rd_op_rslt.bf.valid_cnt) {
@@ -458,7 +458,7 @@ jhppe_ipmc_rd_op_common(
 	return rv;
 }
 
-static sw_error_t jhppe_ipmc_entry_op(a_uint32_t dev_id,
+static sw_error_t httppe_ipmc_entry_op(a_uint32_t dev_id,
 	fal_ipmc_op_type_t op_type,
 	fal_ipmc_op_mode_t op_mode,
 	a_uint32_t *data,
@@ -474,30 +474,30 @@ static sw_error_t jhppe_ipmc_entry_op(a_uint32_t dev_id,
 		if (op_type == FAL_IPMC_OP_TYPE_ADD ||
 			FAL_IPMC_OP_MODE_HASH == op_mode) {
 			for (i = 0; i < data_size; i++) {
-				rv = jhppe_ipmc_tbl_op_data_set(dev_id, i, data[i]);
+				rv = httppe_ipmc_tbl_op_data_set(dev_id, i, data[i]);
 				SW_RTN_ON_ERROR(rv);
 			}
 		}
 
-		rv = jhppe_ipmc_op_common(dev_id, op_type, op_mode, index);
+		rv = httppe_ipmc_op_common(dev_id, op_type, op_mode, index);
 		SW_RTN_ON_ERROR(rv);
 		break;
 	case FAL_IPMC_OP_TYPE_FLUSH:
-		rv = jhppe_ipmc_op_common(dev_id, op_type, op_mode, index);
+		rv = httppe_ipmc_op_common(dev_id, op_type, op_mode, index);
 		SW_RTN_ON_ERROR(rv);
 		break;
 	case FAL_IPMC_OP_TYPE_GET:
 		if (FAL_IPMC_OP_MODE_HASH == op_mode) {
 			for (i = 0; i < data_size; i++) {
-				rv = jhppe_ipmc_tbl_rd_op_data_set(dev_id, i, data[i]);
+				rv = httppe_ipmc_tbl_rd_op_data_set(dev_id, i, data[i]);
 				SW_RTN_ON_ERROR(rv);
 			}
 		}
 
-		ret = jhppe_ipmc_rd_op_common(dev_id, op_type, op_mode, index);
+		ret = httppe_ipmc_rd_op_common(dev_id, op_type, op_mode, index);
 
 		for (i = 0; i < data_size; i++) {
-			rv = jhppe_ipmc_tbl_rd_rslt_data_get(dev_id, i, &data[i]);
+			rv = httppe_ipmc_tbl_rd_rslt_data_get(dev_id, i, &data[i]);
 			SW_RTN_ON_ERROR(rv);
 		}
 
@@ -506,7 +506,7 @@ static sw_error_t jhppe_ipmc_entry_op(a_uint32_t dev_id,
 		 * the data number. OR next GET operation will be failed.
 		 */
 		for (i = data_size; i < ADPT_IPMC_RD_RSLT_DATA_NUM; i++) {
-			rv = jhppe_ipmc_tbl_rd_rslt_data_get(dev_id, i, &tmp_data);
+			rv = httppe_ipmc_tbl_rd_rslt_data_get(dev_id, i, &tmp_data);
 			SW_RTN_ON_ERROR(rv);
 		}
 		SW_RTN_ON_ERROR(ret);
@@ -519,7 +519,7 @@ static sw_error_t jhppe_ipmc_entry_op(a_uint32_t dev_id,
 	return SW_OK;
 }
 
-sw_error_t adpt_jhppe_ipmc_entry_get(a_uint32_t dev_id, fal_ipmc_op_mode_t get_mode,
+sw_error_t adpt_httppe_ipmc_entry_get(a_uint32_t dev_id, fal_ipmc_op_mode_t get_mode,
 		fal_ipmc_entry_t *ipmc_entry)
 {
 	union ipmc_sipv6_gipv6_tbl_u tbl_entry = {0};
@@ -534,20 +534,20 @@ sw_error_t adpt_jhppe_ipmc_entry_get(a_uint32_t dev_id, fal_ipmc_op_mode_t get_m
 	}
 
 	if (get_mode == FAL_IPMC_OP_MODE_HASH) {
-		rv = adpt_jhppe_ipmc_entry_convert(dev_id, ipmc_entry,
+		rv = adpt_httppe_ipmc_entry_convert(dev_id, ipmc_entry,
 				tbl_entry.val, &data_size, A_TRUE);
 		SW_RTN_ON_ERROR(rv);
 	}
 
-	rv = jhppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_GET,
+	rv = httppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_GET,
 				get_mode, tbl_entry.val, data_size, &ipmc_entry->entry_id);
 	SW_RTN_ON_ERROR(rv);
 
-	return adpt_jhppe_ipmc_entry_convert(dev_id, ipmc_entry,
+	return adpt_httppe_ipmc_entry_convert(dev_id, ipmc_entry,
 			tbl_entry.val, &data_size, A_FALSE);
 }
 
-sw_error_t adpt_jhppe_ipmc_entry_add(a_uint32_t dev_id, fal_ipmc_op_mode_t add_mode,
+sw_error_t adpt_httppe_ipmc_entry_add(a_uint32_t dev_id, fal_ipmc_op_mode_t add_mode,
 		fal_ipmc_entry_t *ipmc_entry)
 {
 	union ipmc_sipv6_gipv6_tbl_u tbl_entry = {0};
@@ -561,17 +561,17 @@ sw_error_t adpt_jhppe_ipmc_entry_add(a_uint32_t dev_id, fal_ipmc_op_mode_t add_m
 		IPMC_ENTRY_ID_CHECK(ipmc_entry->entry_id);
 	}
 
-	rv = adpt_jhppe_ipmc_entry_convert(dev_id, ipmc_entry, tbl_entry.val, &data_size, A_TRUE);
+	rv = adpt_httppe_ipmc_entry_convert(dev_id, ipmc_entry, tbl_entry.val, &data_size, A_TRUE);
 	SW_RTN_ON_ERROR(rv);
 
-	rv = jhppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_ADD,
+	rv = httppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_ADD,
 			add_mode, tbl_entry.val, data_size, &ipmc_entry->entry_id);
 	SW_RTN_ON_ERROR(rv);
 
-	return adpt_jhppe_ipmc_entry_get(dev_id, FAL_IPMC_OP_MODE_INDEX, ipmc_entry);
+	return adpt_httppe_ipmc_entry_get(dev_id, FAL_IPMC_OP_MODE_INDEX, ipmc_entry);
 }
 
-sw_error_t adpt_jhppe_ipmc_entry_del(a_uint32_t dev_id, fal_ipmc_op_mode_t del_mode,
+sw_error_t adpt_httppe_ipmc_entry_del(a_uint32_t dev_id, fal_ipmc_op_mode_t del_mode,
 		fal_ipmc_entry_t *ipmc_entry)
 {
 	union ipmc_sipv6_gipv6_tbl_u tbl_entry = {0};
@@ -586,26 +586,26 @@ sw_error_t adpt_jhppe_ipmc_entry_del(a_uint32_t dev_id, fal_ipmc_op_mode_t del_m
 	}
 
 	if (del_mode == FAL_IPMC_OP_MODE_HASH) {
-		rv = adpt_jhppe_ipmc_entry_convert(dev_id, ipmc_entry,
+		rv = adpt_httppe_ipmc_entry_convert(dev_id, ipmc_entry,
 				tbl_entry.val, &data_size, A_TRUE);
 		SW_RTN_ON_ERROR(rv);
 	}
 
-	return jhppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_DEL,
+	return httppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_DEL,
 			del_mode, tbl_entry.val, data_size, &ipmc_entry->entry_id);
 }
 
-sw_error_t adpt_jhppe_ipmc_entry_flush(a_uint32_t dev_id)
+sw_error_t adpt_httppe_ipmc_entry_flush(a_uint32_t dev_id)
 {
 	a_uint32_t index = 0;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	return jhppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_FLUSH,
+	return httppe_ipmc_entry_op(dev_id, FAL_IPMC_OP_TYPE_FLUSH,
 			FAL_IPMC_OP_MODE_HASH, NULL, 0, &index);
 }
 
-sw_error_t adpt_jhppe_ipmc_entry_getnext(a_uint32_t dev_id, fal_ipmc_next_mode_t next_mode,
+sw_error_t adpt_httppe_ipmc_entry_getnext(a_uint32_t dev_id, fal_ipmc_next_mode_t next_mode,
 		fal_ipmc_entry_t *ipmc_entry)
 {
 	a_uint32_t index = 0, step = 0;
@@ -638,7 +638,7 @@ sw_error_t adpt_jhppe_ipmc_entry_getnext(a_uint32_t dev_id, fal_ipmc_next_mode_t
 
 	while (index < IPMC_GIPV4_TBL_NUM) {
 		ipmc_entry->entry_id = index;
-		rv = adpt_jhppe_ipmc_entry_get(dev_id, FAL_IPMC_OP_MODE_INDEX, ipmc_entry);
+		rv = adpt_httppe_ipmc_entry_get(dev_id, FAL_IPMC_OP_MODE_INDEX, ipmc_entry);
 		if (rv == SW_OK) {
 			if (next_mode != FAL_IPMC_NEXT_MODE_ALL) {
 				fal_ipmc_key_type_t key_type = (fal_ipmc_key_type_t)next_mode;
@@ -666,22 +666,36 @@ sw_error_t adpt_jhppe_ipmc_entry_getnext(a_uint32_t dev_id, fal_ipmc_next_mode_t
 	return SW_FAIL;
 }
 
-sw_error_t adpt_jhppe_ipmc_status_set(a_uint32_t dev_id, a_bool_t enable)
-{
-	return hppe_l2_global_conf_ipmc_en_set(dev_id, enable);
-}
-
-sw_error_t adpt_jhppe_ipmc_status_get(a_uint32_t dev_id, a_bool_t *enable)
-{
-	return hppe_l2_global_conf_ipmc_en_get(dev_id, enable);
-}
-
-sw_error_t adpt_jhppe_ipmc_global_cfg_set(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg)
+sw_error_t adpt_httppe_ipmc_status_set(a_uint32_t dev_id, a_bool_t enable)
 {
 	union l2_global_conf_u reg_val;
 	sw_error_t rv;
 
-	rv = hppe_l2_global_conf_get(dev_id, &reg_val);
+	rv = httppe_l2_global_conf_get(dev_id, &reg_val);
+	SW_RTN_ON_ERROR(rv);
+
+	reg_val.bf.ipmc_en = enable;
+	return httppe_l2_global_conf_set(dev_id, &reg_val);
+}
+
+sw_error_t adpt_httppe_ipmc_status_get(a_uint32_t dev_id, a_bool_t *enable)
+{
+	union l2_global_conf_u reg_val;
+	sw_error_t rv;
+
+	rv = httppe_l2_global_conf_get(dev_id, &reg_val);
+	SW_RTN_ON_ERROR(rv);
+
+	*enable = reg_val.bf.ipmc_en;
+	return SW_OK;
+}
+
+sw_error_t adpt_httppe_ipmc_global_cfg_set(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg)
+{
+	union l2_global_conf_u reg_val;
+	sw_error_t rv;
+
+	rv = httppe_l2_global_conf_get(dev_id, &reg_val);
 	SW_RTN_ON_ERROR(rv);
 
 	reg_val.bf.mc_dmac_check_en = cfg->mc_dmac_check_en;
@@ -690,15 +704,15 @@ sw_error_t adpt_jhppe_ipmc_global_cfg_set(a_uint32_t dev_id, fal_ipmc_global_cfg
 	reg_val.bf.ipmc_hash_mode_0 = cfg->hash_mode[0];
 	reg_val.bf.ipmc_hash_mode_1 = cfg->hash_mode[1];
 
-	return hppe_l2_global_conf_set(dev_id, &reg_val);
+	return httppe_l2_global_conf_set(dev_id, &reg_val);
 }
 
-sw_error_t adpt_jhppe_ipmc_global_cfg_get(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg)
+sw_error_t adpt_httppe_ipmc_global_cfg_get(a_uint32_t dev_id, fal_ipmc_global_cfg_t *cfg)
 {
 	union l2_global_conf_u reg_val;
 	sw_error_t rv;
 
-	rv = hppe_l2_global_conf_get(dev_id, &reg_val);
+	rv = httppe_l2_global_conf_get(dev_id, &reg_val);
 	SW_RTN_ON_ERROR(rv);
 
 	cfg->mc_dmac_check_en = reg_val.bf.mc_dmac_check_en;
@@ -710,7 +724,7 @@ sw_error_t adpt_jhppe_ipmc_global_cfg_get(a_uint32_t dev_id, fal_ipmc_global_cfg
 	return SW_OK;
 }
 
-sw_error_t adpt_jhppe_ipmc_ucast_fwd_set(a_uint32_t dev_id, fal_ipmc_ucast_fwd_t *ucast_fwd)
+sw_error_t adpt_httppe_ipmc_ucast_fwd_set(a_uint32_t dev_id, fal_ipmc_ucast_fwd_t *ucast_fwd)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 
@@ -719,15 +733,15 @@ sw_error_t adpt_jhppe_ipmc_ucast_fwd_set(a_uint32_t dev_id, fal_ipmc_ucast_fwd_t
 	reg_val.bf.service_code = ucast_fwd->service_code;
 	reg_val.bf.post_bypass_bitmap = ucast_fwd->bypass_bitmap;
 
-	return jhppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
+	return httppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
 }
 
-sw_error_t adpt_jhppe_ipmc_ucast_fwd_get(a_uint32_t dev_id, fal_ipmc_ucast_fwd_t *ucast_fwd)
+sw_error_t adpt_httppe_ipmc_ucast_fwd_get(a_uint32_t dev_id, fal_ipmc_ucast_fwd_t *ucast_fwd)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t rv;
 
-	rv = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	rv = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	SW_RTN_ON_ERROR(rv);
 
 	ucast_fwd->ucast_fwd_en_port = reg_val.bf.enable_port_num;
@@ -738,24 +752,24 @@ sw_error_t adpt_jhppe_ipmc_ucast_fwd_get(a_uint32_t dev_id, fal_ipmc_ucast_fwd_t
 	return SW_OK;
 }
 
-sw_error_t adpt_jhppe_ipmc_init(a_uint32_t dev_id)
+sw_error_t adpt_httppe_ipmc_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
 
 	p_adpt_api = adpt_api_ptr_get(dev_id);
 	ADPT_NULL_POINT_CHECK(p_adpt_api);
 
-	p_adpt_api->adpt_ipmc_status_set = adpt_jhppe_ipmc_status_set;
-	p_adpt_api->adpt_ipmc_status_get = adpt_jhppe_ipmc_status_get;
-	p_adpt_api->adpt_ipmc_global_cfg_set = adpt_jhppe_ipmc_global_cfg_set;
-	p_adpt_api->adpt_ipmc_global_cfg_get = adpt_jhppe_ipmc_global_cfg_get;
-	p_adpt_api->adpt_ipmc_entry_add = adpt_jhppe_ipmc_entry_add;
-	p_adpt_api->adpt_ipmc_entry_del = adpt_jhppe_ipmc_entry_del;
-	p_adpt_api->adpt_ipmc_entry_get = adpt_jhppe_ipmc_entry_get;
-	p_adpt_api->adpt_ipmc_entry_getnext = adpt_jhppe_ipmc_entry_getnext;
-	p_adpt_api->adpt_ipmc_entry_flush = adpt_jhppe_ipmc_entry_flush;
-	p_adpt_api->adpt_ipmc_ucast_fwd_set = adpt_jhppe_ipmc_ucast_fwd_set;
-	p_adpt_api->adpt_ipmc_ucast_fwd_get = adpt_jhppe_ipmc_ucast_fwd_get;
+	p_adpt_api->adpt_ipmc_status_set = adpt_httppe_ipmc_status_set;
+	p_adpt_api->adpt_ipmc_status_get = adpt_httppe_ipmc_status_get;
+	p_adpt_api->adpt_ipmc_global_cfg_set = adpt_httppe_ipmc_global_cfg_set;
+	p_adpt_api->adpt_ipmc_global_cfg_get = adpt_httppe_ipmc_global_cfg_get;
+	p_adpt_api->adpt_ipmc_entry_add = adpt_httppe_ipmc_entry_add;
+	p_adpt_api->adpt_ipmc_entry_del = adpt_httppe_ipmc_entry_del;
+	p_adpt_api->adpt_ipmc_entry_get = adpt_httppe_ipmc_entry_get;
+	p_adpt_api->adpt_ipmc_entry_getnext = adpt_httppe_ipmc_entry_getnext;
+	p_adpt_api->adpt_ipmc_entry_flush = adpt_httppe_ipmc_entry_flush;
+	p_adpt_api->adpt_ipmc_ucast_fwd_set = adpt_httppe_ipmc_ucast_fwd_set;
+	p_adpt_api->adpt_ipmc_ucast_fwd_get = adpt_httppe_ipmc_ucast_fwd_get;
 	return SW_OK;
 }
 

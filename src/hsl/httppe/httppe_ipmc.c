@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: ISC
  */
 
-#include "hsl_reg.h"
+#include "hsl_htt_reg.h"
 
 sw_error_t
-jhppe_ipmc_tbl_op_get(
+httppe_ipmc_tbl_op_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_u *value)
 {
@@ -17,7 +17,7 @@ jhppe_ipmc_tbl_op_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_set(
+httppe_ipmc_tbl_op_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_u *value)
 {
@@ -28,7 +28,7 @@ jhppe_ipmc_tbl_op_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data_set(
+httppe_ipmc_tbl_op_data_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value)
@@ -41,7 +41,7 @@ jhppe_ipmc_tbl_op_data_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data0_get(
+httppe_ipmc_tbl_op_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data0_u *value)
 {
@@ -52,7 +52,7 @@ jhppe_ipmc_tbl_op_data0_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data0_set(
+httppe_ipmc_tbl_op_data0_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data0_u *value)
 {
@@ -63,7 +63,7 @@ jhppe_ipmc_tbl_op_data0_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data1_get(
+httppe_ipmc_tbl_op_data1_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data1_u *value)
 {
@@ -74,7 +74,7 @@ jhppe_ipmc_tbl_op_data1_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data1_set(
+httppe_ipmc_tbl_op_data1_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data1_u *value)
 {
@@ -85,7 +85,7 @@ jhppe_ipmc_tbl_op_data1_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data2_get(
+httppe_ipmc_tbl_op_data2_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data2_u *value)
 {
@@ -96,7 +96,7 @@ jhppe_ipmc_tbl_op_data2_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data2_set(
+httppe_ipmc_tbl_op_data2_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data2_u *value)
 {
@@ -107,7 +107,7 @@ jhppe_ipmc_tbl_op_data2_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data3_get(
+httppe_ipmc_tbl_op_data3_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data3_u *value)
 {
@@ -118,7 +118,7 @@ jhppe_ipmc_tbl_op_data3_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data3_set(
+httppe_ipmc_tbl_op_data3_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data3_u *value)
 {
@@ -129,7 +129,7 @@ jhppe_ipmc_tbl_op_data3_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data4_get(
+httppe_ipmc_tbl_op_data4_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data4_u *value)
 {
@@ -140,7 +140,7 @@ jhppe_ipmc_tbl_op_data4_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data4_set(
+httppe_ipmc_tbl_op_data4_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data4_u *value)
 {
@@ -151,7 +151,7 @@ jhppe_ipmc_tbl_op_data4_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data5_get(
+httppe_ipmc_tbl_op_data5_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data5_u *value)
 {
@@ -162,7 +162,7 @@ jhppe_ipmc_tbl_op_data5_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data5_set(
+httppe_ipmc_tbl_op_data5_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data5_u *value)
 {
@@ -173,7 +173,7 @@ jhppe_ipmc_tbl_op_data5_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data6_get(
+httppe_ipmc_tbl_op_data6_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data6_u *value)
 {
@@ -184,7 +184,7 @@ jhppe_ipmc_tbl_op_data6_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data6_set(
+httppe_ipmc_tbl_op_data6_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data6_u *value)
 {
@@ -195,7 +195,7 @@ jhppe_ipmc_tbl_op_data6_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data7_get(
+httppe_ipmc_tbl_op_data7_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data7_u *value)
 {
@@ -206,7 +206,7 @@ jhppe_ipmc_tbl_op_data7_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data7_set(
+httppe_ipmc_tbl_op_data7_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data7_u *value)
 {
@@ -217,7 +217,7 @@ jhppe_ipmc_tbl_op_data7_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data8_get(
+httppe_ipmc_tbl_op_data8_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data8_u *value)
 {
@@ -228,7 +228,7 @@ jhppe_ipmc_tbl_op_data8_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data8_set(
+httppe_ipmc_tbl_op_data8_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data8_u *value)
 {
@@ -239,7 +239,7 @@ jhppe_ipmc_tbl_op_data8_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data9_get(
+httppe_ipmc_tbl_op_data9_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data9_u *value)
 {
@@ -250,7 +250,7 @@ jhppe_ipmc_tbl_op_data9_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data9_set(
+httppe_ipmc_tbl_op_data9_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data9_u *value)
 {
@@ -261,7 +261,7 @@ jhppe_ipmc_tbl_op_data9_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data10_get(
+httppe_ipmc_tbl_op_data10_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data10_u *value)
 {
@@ -272,7 +272,7 @@ jhppe_ipmc_tbl_op_data10_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_data10_set(
+httppe_ipmc_tbl_op_data10_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_data10_u *value)
 {
@@ -283,7 +283,7 @@ jhppe_ipmc_tbl_op_data10_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_op_rslt_get(
+httppe_ipmc_tbl_op_rslt_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_op_rslt_u *value)
 {
@@ -294,7 +294,7 @@ jhppe_ipmc_tbl_op_rslt_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_get(
+httppe_ipmc_tbl_rd_op_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_u *value)
 {
@@ -305,7 +305,7 @@ jhppe_ipmc_tbl_rd_op_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_set(
+httppe_ipmc_tbl_rd_op_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_u *value)
 {
@@ -316,7 +316,7 @@ jhppe_ipmc_tbl_rd_op_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data_set(
+httppe_ipmc_tbl_rd_op_data_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t value)
@@ -329,7 +329,7 @@ jhppe_ipmc_tbl_rd_op_data_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data0_get(
+httppe_ipmc_tbl_rd_op_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data0_u *value)
 {
@@ -340,7 +340,7 @@ jhppe_ipmc_tbl_rd_op_data0_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data0_set(
+httppe_ipmc_tbl_rd_op_data0_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data0_u *value)
 {
@@ -351,7 +351,7 @@ jhppe_ipmc_tbl_rd_op_data0_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data1_get(
+httppe_ipmc_tbl_rd_op_data1_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data1_u *value)
 {
@@ -362,7 +362,7 @@ jhppe_ipmc_tbl_rd_op_data1_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data1_set(
+httppe_ipmc_tbl_rd_op_data1_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data1_u *value)
 {
@@ -373,7 +373,7 @@ jhppe_ipmc_tbl_rd_op_data1_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data2_get(
+httppe_ipmc_tbl_rd_op_data2_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data2_u *value)
 {
@@ -384,7 +384,7 @@ jhppe_ipmc_tbl_rd_op_data2_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data2_set(
+httppe_ipmc_tbl_rd_op_data2_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data2_u *value)
 {
@@ -395,7 +395,7 @@ jhppe_ipmc_tbl_rd_op_data2_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data3_get(
+httppe_ipmc_tbl_rd_op_data3_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data3_u *value)
 {
@@ -406,7 +406,7 @@ jhppe_ipmc_tbl_rd_op_data3_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data3_set(
+httppe_ipmc_tbl_rd_op_data3_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data3_u *value)
 {
@@ -417,7 +417,7 @@ jhppe_ipmc_tbl_rd_op_data3_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data4_get(
+httppe_ipmc_tbl_rd_op_data4_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data4_u *value)
 {
@@ -428,7 +428,7 @@ jhppe_ipmc_tbl_rd_op_data4_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data4_set(
+httppe_ipmc_tbl_rd_op_data4_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data4_u *value)
 {
@@ -439,7 +439,7 @@ jhppe_ipmc_tbl_rd_op_data4_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data5_get(
+httppe_ipmc_tbl_rd_op_data5_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data5_u *value)
 {
@@ -450,7 +450,7 @@ jhppe_ipmc_tbl_rd_op_data5_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data5_set(
+httppe_ipmc_tbl_rd_op_data5_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data5_u *value)
 {
@@ -461,7 +461,7 @@ jhppe_ipmc_tbl_rd_op_data5_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data6_get(
+httppe_ipmc_tbl_rd_op_data6_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data6_u *value)
 {
@@ -472,7 +472,7 @@ jhppe_ipmc_tbl_rd_op_data6_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data6_set(
+httppe_ipmc_tbl_rd_op_data6_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data6_u *value)
 {
@@ -483,7 +483,7 @@ jhppe_ipmc_tbl_rd_op_data6_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data7_get(
+httppe_ipmc_tbl_rd_op_data7_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data7_u *value)
 {
@@ -494,7 +494,7 @@ jhppe_ipmc_tbl_rd_op_data7_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data7_set(
+httppe_ipmc_tbl_rd_op_data7_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data7_u *value)
 {
@@ -505,7 +505,7 @@ jhppe_ipmc_tbl_rd_op_data7_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data8_get(
+httppe_ipmc_tbl_rd_op_data8_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data8_u *value)
 {
@@ -516,7 +516,7 @@ jhppe_ipmc_tbl_rd_op_data8_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data8_set(
+httppe_ipmc_tbl_rd_op_data8_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data8_u *value)
 {
@@ -527,7 +527,7 @@ jhppe_ipmc_tbl_rd_op_data8_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data9_get(
+httppe_ipmc_tbl_rd_op_data9_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data9_u *value)
 {
@@ -538,7 +538,7 @@ jhppe_ipmc_tbl_rd_op_data9_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data9_set(
+httppe_ipmc_tbl_rd_op_data9_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data9_u *value)
 {
@@ -549,7 +549,7 @@ jhppe_ipmc_tbl_rd_op_data9_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data10_get(
+httppe_ipmc_tbl_rd_op_data10_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data10_u *value)
 {
@@ -560,7 +560,7 @@ jhppe_ipmc_tbl_rd_op_data10_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_data10_set(
+httppe_ipmc_tbl_rd_op_data10_set(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_data10_u *value)
 {
@@ -571,7 +571,7 @@ jhppe_ipmc_tbl_rd_op_data10_set(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_op_rslt_get(
+httppe_ipmc_tbl_rd_op_rslt_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_op_rslt_u *value)
 {
@@ -582,7 +582,7 @@ jhppe_ipmc_tbl_rd_op_rslt_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data_get(
+httppe_ipmc_tbl_rd_rslt_data_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value)
@@ -595,7 +595,7 @@ jhppe_ipmc_tbl_rd_rslt_data_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data0_get(
+httppe_ipmc_tbl_rd_rslt_data0_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data0_u *value)
 {
@@ -606,7 +606,7 @@ jhppe_ipmc_tbl_rd_rslt_data0_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data1_get(
+httppe_ipmc_tbl_rd_rslt_data1_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data1_u *value)
 {
@@ -617,7 +617,7 @@ jhppe_ipmc_tbl_rd_rslt_data1_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data2_get(
+httppe_ipmc_tbl_rd_rslt_data2_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data2_u *value)
 {
@@ -628,7 +628,7 @@ jhppe_ipmc_tbl_rd_rslt_data2_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data3_get(
+httppe_ipmc_tbl_rd_rslt_data3_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data3_u *value)
 {
@@ -639,7 +639,7 @@ jhppe_ipmc_tbl_rd_rslt_data3_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data4_get(
+httppe_ipmc_tbl_rd_rslt_data4_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data4_u *value)
 {
@@ -650,7 +650,7 @@ jhppe_ipmc_tbl_rd_rslt_data4_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data5_get(
+httppe_ipmc_tbl_rd_rslt_data5_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data5_u *value)
 {
@@ -661,7 +661,7 @@ jhppe_ipmc_tbl_rd_rslt_data5_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data6_get(
+httppe_ipmc_tbl_rd_rslt_data6_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data6_u *value)
 {
@@ -672,7 +672,7 @@ jhppe_ipmc_tbl_rd_rslt_data6_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data7_get(
+httppe_ipmc_tbl_rd_rslt_data7_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data7_u *value)
 {
@@ -683,7 +683,7 @@ jhppe_ipmc_tbl_rd_rslt_data7_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data8_get(
+httppe_ipmc_tbl_rd_rslt_data8_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data8_u *value)
 {
@@ -694,7 +694,7 @@ jhppe_ipmc_tbl_rd_rslt_data8_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data9_get(
+httppe_ipmc_tbl_rd_rslt_data9_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data9_u *value)
 {
@@ -705,7 +705,7 @@ jhppe_ipmc_tbl_rd_rslt_data9_get(
 }
 
 sw_error_t
-jhppe_ipmc_tbl_rd_rslt_data10_get(
+httppe_ipmc_tbl_rd_rslt_data10_get(
 		a_uint32_t dev_id,
 		union ipmc_tbl_rd_rslt_data10_u *value)
 {
@@ -716,7 +716,7 @@ jhppe_ipmc_tbl_rd_rslt_data10_get(
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_get(
+httppe_ipmc_convert_uc_ctrl_get(
 		a_uint32_t dev_id,
 		union ipmc_convert_uc_ctrl_u *value)
 {
@@ -727,7 +727,7 @@ jhppe_ipmc_convert_uc_ctrl_get(
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_set(
+httppe_ipmc_convert_uc_ctrl_set(
 		a_uint32_t dev_id,
 		union ipmc_convert_uc_ctrl_u *value)
 {
@@ -738,123 +738,123 @@ jhppe_ipmc_convert_uc_ctrl_set(
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_convert_port_vp_get(
+httppe_ipmc_convert_uc_ctrl_convert_port_vp_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	*value = reg_val.bf.convert_port_vp;
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_convert_port_vp_set(
+httppe_ipmc_convert_uc_ctrl_convert_port_vp_set(
 		a_uint32_t dev_id,
 		a_uint32_t value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.convert_port_vp = value;
-	ret = jhppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_enable_port_num_get(
+httppe_ipmc_convert_uc_ctrl_enable_port_num_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	*value = reg_val.bf.enable_port_num;
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_enable_port_num_set(
+httppe_ipmc_convert_uc_ctrl_enable_port_num_set(
 		a_uint32_t dev_id,
 		a_uint32_t value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.enable_port_num = value;
-	ret = jhppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_post_bypass_bitmap_get(
+httppe_ipmc_convert_uc_ctrl_post_bypass_bitmap_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	*value = reg_val.bf.post_bypass_bitmap;
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_post_bypass_bitmap_set(
+httppe_ipmc_convert_uc_ctrl_post_bypass_bitmap_set(
 		a_uint32_t dev_id,
 		a_uint32_t value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.post_bypass_bitmap = value;
-	ret = jhppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_service_code_get(
+httppe_ipmc_convert_uc_ctrl_service_code_get(
 		a_uint32_t dev_id,
 		a_uint32_t *value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	*value = reg_val.bf.service_code;
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_convert_uc_ctrl_service_code_set(
+httppe_ipmc_convert_uc_ctrl_service_code_set(
 		a_uint32_t dev_id,
 		a_uint32_t value)
 {
 	union ipmc_convert_uc_ctrl_u reg_val;
 	sw_error_t ret = SW_OK;
 
-	ret = jhppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_get(dev_id, &reg_val);
 	if (SW_OK != ret)
 		return ret;
 	reg_val.bf.service_code = value;
-	ret = jhppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
+	ret = httppe_ipmc_convert_uc_ctrl_set(dev_id, &reg_val);
 	return ret;
 }
 
 sw_error_t
-jhppe_ipmc_gipv4_tbl_get(
+httppe_ipmc_gipv4_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_gipv4_tbl_u *value)
@@ -868,7 +868,7 @@ jhppe_ipmc_gipv4_tbl_get(
 }
 
 sw_error_t
-jhppe_ipmc_gipv4_tbl_set(
+httppe_ipmc_gipv4_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_gipv4_tbl_u *value)
@@ -882,7 +882,7 @@ jhppe_ipmc_gipv4_tbl_set(
 }
 
 sw_error_t
-jhppe_ipmc_gipv6_tbl_get(
+httppe_ipmc_gipv6_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_gipv6_tbl_u *value)
@@ -896,7 +896,7 @@ jhppe_ipmc_gipv6_tbl_get(
 }
 
 sw_error_t
-jhppe_ipmc_gipv6_tbl_set(
+httppe_ipmc_gipv6_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_gipv6_tbl_u *value)
@@ -910,7 +910,7 @@ jhppe_ipmc_gipv6_tbl_set(
 }
 
 sw_error_t
-jhppe_ipmc_sipv4_gipv4_tbl_get(
+httppe_ipmc_sipv4_gipv4_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_sipv4_gipv4_tbl_u *value)
@@ -924,7 +924,7 @@ jhppe_ipmc_sipv4_gipv4_tbl_get(
 }
 
 sw_error_t
-jhppe_ipmc_sipv4_gipv4_tbl_set(
+httppe_ipmc_sipv4_gipv4_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_sipv4_gipv4_tbl_u *value)
@@ -938,7 +938,7 @@ jhppe_ipmc_sipv4_gipv4_tbl_set(
 }
 
 sw_error_t
-jhppe_ipmc_sipv6_gipv6_tbl_get(
+httppe_ipmc_sipv6_gipv6_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_sipv6_gipv6_tbl_u *value)
@@ -952,7 +952,7 @@ jhppe_ipmc_sipv6_gipv6_tbl_get(
 }
 
 sw_error_t
-jhppe_ipmc_sipv6_gipv6_tbl_set(
+httppe_ipmc_sipv6_gipv6_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union ipmc_sipv6_gipv6_tbl_u *value)

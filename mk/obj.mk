@@ -503,7 +503,7 @@ endif
 #################################################################################
 ifeq (TRUE, $(IN_IPMC))
 OBJ-COMMON  += src/fal/fal_ipmc.o src/ref/ref_ipmc.o
-OBJ-JHPPE   += src/hsl/jhppe/jhppe_ipmc.o src/adpt/jhppe/adpt_jhppe_ipmc.o
+OBJ-HTTPPE  += src/hsl/httppe/httppe_ipmc.o src/adpt/httppe/adpt_httppe_ipmc.o
 endif
 ################################################################################
 #                             IN_CROSSCHIP

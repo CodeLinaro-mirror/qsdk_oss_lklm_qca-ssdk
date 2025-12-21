@@ -262,7 +262,7 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 #endif
 #if defined(IN_IPMC)
 		case FAL_MODULE_IPMC:
-			rv = adpt_jhppe_ipmc_init(dev_id);
+			rv = adpt_httppe_ipmc_init(dev_id);
 			break;
 #endif
 #if defined(IN_CROSSCHIP)
@@ -467,8 +467,6 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 			SW_RTN_ON_ERROR(rv);
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON_PM);
 			SW_RTN_ON_ERROR(rv);
-			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_IPMC);
-			SW_RTN_ON_ERROR(rv);
 #endif
 			fallthrough;
 		case CHIP_MRPPE:
@@ -551,6 +549,9 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 				rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_CROSSCHIP);
 				SW_RTN_ON_ERROR(rv);
 			}
+
+			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_IPMC);
+			SW_RTN_ON_ERROR(rv);
 #endif
 			/* uniphy */
 			rv = adpt_hppe_uniphy_init(dev_id);

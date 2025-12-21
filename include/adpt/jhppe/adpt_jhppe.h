@@ -17,7 +17,6 @@ extern "C" {
 
 sw_error_t adpt_jhppe_sampling_init(a_uint32_t dev_id);
 sw_error_t adpt_jhppe_pon_pm_init(a_uint32_t dev_id);
-sw_error_t adpt_jhppe_ipmc_init(a_uint32_t dev_id);
 
 #ifdef __cplusplus
 }
