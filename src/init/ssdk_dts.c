@@ -1494,16 +1494,26 @@ int ssdk_switch_device_num_init(void)
 		struct platform_device *pdev = of_find_device_by_node(switch_instance);
 		int ret;
 
+		if (!pdev) {
+			SSDK_ERROR("ess-instance device not found\n");
+			of_node_put(switch_instance);
+			return -ENODEV;
+		}
+
 		ret = of_platform_populate(switch_instance, NULL, NULL, &pdev->dev);
 		if (ret) {
 			dev_err(&pdev->dev, "Failed to populate child devices: %d\n", ret);
 			put_device(&pdev->dev);
+			of_node_put(switch_instance);
 			return ret;
 		}
 
 		num_devices = of_get_property(switch_instance, "num_devices", &len);
 		if (num_devices)
 			dev_num = be32_to_cpup(num_devices);
+
+		put_device(&pdev->dev);
+		of_node_put(switch_instance);
 	}
 
 	ssdk_dt_global.ssdk_dt_switch_nodes = kzalloc(dev_num * sizeof(ssdk_dt_cfg *), GFP_KERNEL);
@@ -1556,4 +1566,3 @@ a_uint32_t ssdk_emu_chip_ver_get(a_uint32_t dev_id)
 {
 	return ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->emu_chip_ver;
 }
-
