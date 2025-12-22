@@ -359,6 +359,10 @@ typedef sw_error_t (*adpt_port_erp_power_mode_set_func)(a_uint32_t dev_id,
 		a_uint32_t port, fal_port_erp_power_mode_t power_mode);
 typedef sw_error_t (*adpt_switch_loopback_port_get_func)(a_uint32_t dev_id,
 			fal_port_t *port_id);
+typedef sw_error_t (*adpt_port_pps_ctrl_set_func)(a_uint32_t dev_id,
+		fal_port_pps_ctrl_t *pps_ctrl);
+typedef sw_error_t (*adpt_port_pps_ctrl_get_func)(a_uint32_t dev_id,
+		fal_port_pps_ctrl_t *pps_ctrl);
 
 // mirror
 typedef sw_error_t (*adpt_mirr_port_in_set_func)(a_uint32_t dev_id, fal_port_t port_id,
@@ -1909,6 +1913,8 @@ typedef struct
 	adpt_port_rx_buff_thresh_get_func adpt_port_rx_buff_thresh_get;
 	adpt_port_erp_power_mode_set_func adpt_port_erp_power_mode_set;
 	adpt_switch_loopback_port_get_func adpt_switch_loopback_port_get;
+	adpt_port_pps_ctrl_set_func adpt_port_pps_ctrl_set;
+	adpt_port_pps_ctrl_get_func adpt_port_pps_ctrl_get;
 // mirror
 	adpt_mirr_port_in_set_func adpt_mirr_port_in_set;
 	adpt_mirr_port_in_get_func adpt_mirr_port_in_get;
