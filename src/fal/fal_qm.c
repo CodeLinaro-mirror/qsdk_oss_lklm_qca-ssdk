@@ -228,3 +228,8 @@ sw_error_t fal_port_mcast_priority_class_get( a_uint32_t dev_id, fal_port_t port
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_mcast_priority_class_get, dev_id, port, priority, queue_class)
 #endif
 
+sw_error_t fal_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t ucast_enqueue_en)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_mcast_enqueue_ctrl_set, dev_id, port_id, ucast_enqueue_en)
+
+sw_error_t fal_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *ucast_enqueue_en)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(qm_mcast_enqueue_ctrl_get, dev_id, port_id, ucast_enqueue_en)

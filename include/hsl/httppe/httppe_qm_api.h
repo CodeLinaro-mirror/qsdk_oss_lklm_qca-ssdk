@@ -7,6 +7,16 @@
 #ifndef _HTTPPE_QM_API_H_
 #define _HTTPPE_QM_API_H_
 
+sw_error_t
+httppe_mc_enq_ctrl_get(
+		a_uint32_t dev_id,
+		union mc_enq_ctrl_u *value);
+
+sw_error_t
+httppe_mc_enq_ctrl_set(
+		a_uint32_t dev_id,
+		union mc_enq_ctrl_u *value);
+
 #define PORT_VSI_ENQUEUE_MAP_MAX_ENTRY	PORT_VSI_ENQUEUE_MAP_NUM
 
 sw_error_t

@@ -1325,9 +1325,17 @@ qca_hmsppe_gemgen_rule_hw_init(a_uint32_t dev_id)
 	glb_cfg.gen_miss_pon_port = PON_PORT_ID;
 	rv = fal_pon_gemport_global_set(dev_id, &glb_cfg);
 	if (rv != SW_OK) {
-		SSDK_ERROR("gemport rule mismatch check pon port set failed.");
+		SSDK_ERROR("gemport rule mismatch check pon port set failed.\n");
 		return rv;
 	}
+
+#if defined(IN_QM)
+	rv = fal_qm_mcast_enqueue_ctrl_set(dev_id, PON_PORT_ID, A_TRUE);
+	if (rv != SW_OK) {
+		SSDK_ERROR("Pon port enable ucast enqueue for mcast traffic failed.\n");
+		return rv;
+	}
+#endif
 
 	gempt_rule.dest_info_valid = A_TRUE;
 	gempt_rule.dest_info.dest_info_type = FAL_DEST_INFO_PORT_ID;

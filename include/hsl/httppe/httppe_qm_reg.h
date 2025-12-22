@@ -7,6 +7,41 @@
 #ifndef _HTTPPE_QM_REG_H_
 #define _HTTPPE_QM_REG_H_
 
+/*[register] MC_ENQ_CTRL*/
+#define MC_ENQ_CTRL
+#define MC_ENQ_CTRL_ADDRESS 0xa80
+#define MC_ENQ_CTRL_NUM     1
+#define MC_ENQ_CTRL_INC     0x4
+#define MC_ENQ_CTRL_TYPE    REG_TYPE_RW
+#define MC_ENQ_CTRL_DEFAULT 0x10
+	/*[field] UC_PORT_ID*/
+	#define MC_ENQ_CTRL_UC_PORT_ID
+	#define MC_ENQ_CTRL_UC_PORT_ID_OFFSET  0
+	#define MC_ENQ_CTRL_UC_PORT_ID_LEN     4
+	#define MC_ENQ_CTRL_UC_PORT_ID_DEFAULT 0x0
+	/*[field] UC_ENQ_EN*/
+	#define MC_ENQ_CTRL_UC_ENQ_EN
+	#define MC_ENQ_CTRL_UC_ENQ_EN_OFFSET  4
+	#define MC_ENQ_CTRL_UC_ENQ_EN_LEN     1
+	#define MC_ENQ_CTRL_UC_ENQ_EN_DEFAULT 0x1
+	/*[field] DOT1P_PON_VP*/
+	#define MC_ENQ_CTRL_DOT1P_PON_VP
+	#define MC_ENQ_CTRL_DOT1P_PON_VP_OFFSET  5
+	#define MC_ENQ_CTRL_DOT1P_PON_VP_LEN     8
+	#define MC_ENQ_CTRL_DOT1P_PON_VP_DEFAULT 0x0
+
+struct mc_enq_ctrl {
+	a_uint32_t  uc_port_id:4;
+	a_uint32_t  uc_enq_en:1;
+	a_uint32_t  dot1p_pon_vp:8;
+	a_uint32_t  _reserved0:19;
+};
+
+union mc_enq_ctrl_u {
+	a_uint32_t val;
+	struct mc_enq_ctrl bf;
+};
+
 /*[table] PORT_VSI_ENQUEUE_MAP*/
 #define PORT_VSI_ENQUEUE_MAP
 #define PORT_VSI_ENQUEUE_MAP_ADDRESS 0x29000

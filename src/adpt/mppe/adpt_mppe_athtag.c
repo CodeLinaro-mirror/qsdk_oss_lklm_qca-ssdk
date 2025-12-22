@@ -431,14 +431,16 @@ sw_error_t adpt_mppe_athtag_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_athtag_tx_get = adpt_mppe_port_athtag_tx_get;
 
 #if defined(HTTPPE)
-	p_adpt_api->adpt_athtag_rx_dest_port_mapping_set =
-		adpt_httppe_athtag_rx_dest_port_mapping_set;
-	p_adpt_api->adpt_athtag_rx_dest_port_mapping_get =
-		adpt_httppe_athtag_rx_dest_port_mapping_get;
-	p_adpt_api->adpt_athtag_rx_servcode_mapping_set =
-		adpt_httppe_athtag_rx_servcode_mapping_set;
-	p_adpt_api->adpt_athtag_rx_servcode_mapping_get =
-		adpt_httppe_athtag_rx_servcode_mapping_get;
+	if (adpt_ppe_type_get(dev_id) >= JHPPE_TYPE) {
+		p_adpt_api->adpt_athtag_rx_dest_port_mapping_set =
+			adpt_httppe_athtag_rx_dest_port_mapping_set;
+		p_adpt_api->adpt_athtag_rx_dest_port_mapping_get =
+			adpt_httppe_athtag_rx_dest_port_mapping_get;
+		p_adpt_api->adpt_athtag_rx_servcode_mapping_set =
+			adpt_httppe_athtag_rx_servcode_mapping_set;
+		p_adpt_api->adpt_athtag_rx_servcode_mapping_get =
+			adpt_httppe_athtag_rx_servcode_mapping_get;
+	}
 #endif
 
 #if defined(JHPPE)

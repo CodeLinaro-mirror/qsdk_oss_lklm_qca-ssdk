@@ -869,6 +869,11 @@ typedef sw_error_t (*adpt_qm_ac_drop_state_set_func)(a_uint32_t dev_id,
 
 typedef sw_error_t (*adpt_qm_ac_drop_state_get_func)(a_uint32_t dev_id,
 		fal_ac_obj_t *obj, fal_ac_drop_state_t *cfg);
+typedef sw_error_t (*adpt_qm_mcast_enqueue_ctrl_set_func)(a_uint32_t dev_id, fal_port_t port_id,
+		a_bool_t ucast_enqueue_en);
+
+typedef sw_error_t (*adpt_qm_mcast_enqueue_ctrl_get_func)(a_uint32_t dev_id, fal_port_t port_id,
+		a_bool_t *ucast_enqueue_en);
 
 /*portvlan module begin*/
 typedef sw_error_t (*adpt_global_qinq_mode_set_func)(a_uint32_t dev_id, fal_global_qinq_mode_t *mode);
@@ -2084,6 +2089,8 @@ typedef struct
 	adpt_qm_crosschip_bp_status_get_func adpt_qm_crosschip_bp_status_get;
 	adpt_qm_ac_drop_state_set_func adpt_qm_ac_drop_state_set;
 	adpt_qm_ac_drop_state_get_func adpt_qm_ac_drop_state_get;
+	adpt_qm_mcast_enqueue_ctrl_set_func adpt_qm_mcast_enqueue_ctrl_set;
+	adpt_qm_mcast_enqueue_ctrl_get_func adpt_qm_mcast_enqueue_ctrl_get;
 	/*portvlan module begin*/
 	adpt_global_qinq_mode_set_func adpt_global_qinq_mode_set;
 	adpt_global_qinq_mode_get_func adpt_global_qinq_mode_get;
