@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2016-2017,  The Linux Foundation. All rights reserved.
- * Copyright (c) 2023-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #include "sw.h"
@@ -39,11 +28,7 @@
 #include <linux/types.h>
 //#include <asm/mach-types.h>
 #include <generated/autoconf.h>
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/reset.h>
-#else
-#include <linux/ar8216_platform.h>
-#endif
 #include <linux/delay.h>
 #include <linux/phy.h>
 #include <linux/netdevice.h>
@@ -52,16 +37,9 @@
 #include <linux/time.h>
 #include "ref_port_ctrl.h"
 
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
-#ifdef DESS
-extern struct reset_control *ess_mac_clock_disable[5];
-#endif
-#endif
-
 #if defined(IN_SWCONFIG)
-int
-qca_ar8327_sw_get_port_link(struct switch_dev *dev, int port,
-			                        struct switch_port_link *link)
+int qca_ar8327_sw_get_port_link(struct switch_dev *dev, int port,
+	struct switch_port_link *link)
 {
 	struct qca_phy_priv *priv = qca_phy_priv_get(dev);
 
@@ -137,161 +115,122 @@ qca_ar8327_sw_get_port_link(struct switch_dev *dev, int port,
 
 	return 0;
 }
+
+int qca_ar8327_sw_set_eee(struct switch_dev *dev,
+	const struct switch_attr *attr, struct switch_val *val)
+{
+	sw_error_t rv = SW_OK;
+	struct qca_phy_priv *priv = qca_phy_priv_get(dev);
+	fal_port_eee_cfg_t port_eee_cfg;
+
+	SSDK_DEBUG("configure EEE for dev_id: %d, port %d as %d\n",
+		priv->device_id, val->port_vlan, val->value.i);
+	rv = fal_port_interface_eee_cfg_get(priv->device_id, val->port_vlan, &port_eee_cfg);
+	if(rv != SW_OK)
+	{
+		return -1;
+	}
+	port_eee_cfg.enable = val->value.i;
+	port_eee_cfg.lpi_tx_enable = val->value.i;
+
+	if(port_eee_cfg.enable)
+	{
+		port_eee_cfg.advertisement = FAL_PHY_EEE_ALL_ADV;
+	}
+	rv = fal_port_interface_eee_cfg_set(priv->device_id, val->port_vlan, &port_eee_cfg);
+	if(rv != SW_OK)
+	{
+		return -1;
+	}
+
+	return 0;
+}
+
+int qca_ar8327_sw_get_eee(struct switch_dev *dev,
+	const struct switch_attr *attr, struct switch_val *val)
+{
+	sw_error_t rv = SW_OK;
+	struct qca_phy_priv *priv = qca_phy_priv_get(dev);
+	fal_port_eee_cfg_t port_eee_cfg;
+
+	SSDK_DEBUG("get EEE for dev_id: %d, port %d\n",
+		priv->device_id, val->port_vlan);
+	rv = fal_port_interface_eee_cfg_get(priv->device_id, val->port_vlan, &port_eee_cfg);
+	if(rv != SW_OK)
+	{
+		return -1;
+	}
+	val->value.i = port_eee_cfg.enable;
+
+	return 0;
+}
 #endif
 
-static int qca_switch_get_qm_status(struct qca_phy_priv *priv, a_uint32_t port_id, a_uint32_t *qm_buffer_err)
+/* Initialize notifier list for QCA SSDK */
+static BLOCKING_NOTIFIER_HEAD(ssdk_port_link_notifier_list);
+
+unsigned char
+ssdk_to_link_notify_speed(fal_port_speed_t speed)
 {
-	a_uint32_t reg = 0;
-	a_uint32_t qm_val = 0;
+	unsigned char link_notify_speed = 0;
 
-	if (port_id < 0 || port_id > 6) {
-		*qm_buffer_err = 0;
-		return -1;
-	}
-	if (priv->version == 0x14)
-	{
-		if (port_id < 4) {
-			reg = 0x1D;
-			qca_switch_reg_write(priv->device_id, 0x820, (a_uint8_t *)&reg, 4);
-			qca_switch_reg_read(priv->device_id, 0x824, (a_uint8_t *)&qm_val, 4);
-			*qm_buffer_err = (qm_val >> (port_id * 8)) & 0xFF;
-		} else {
-			reg = 0x1E;
-			qca_switch_reg_write(priv->device_id, 0x820, (a_uint8_t *)&reg, 4);
-			qca_switch_reg_read(priv->device_id, 0x824, (a_uint8_t *)&qm_val, 4);
-			*qm_buffer_err = (qm_val >> ((port_id-4) * 8)) & 0xFF;
-		}
-	}
-	if (priv->version == QCA_VER_AR8337 ||
-		priv->version == QCA_VER_AR8327)
-	{
-		if (port_id < 4) {
-			reg = 0x1D;
-			priv->mii_write(priv->device_id, 0x820, reg);
-			qm_val = priv->mii_read(priv->device_id, 0x824);
-			*qm_buffer_err = (qm_val >> (port_id * 8)) & 0xFF;
-		} else {
-			reg = 0x1E;
-			priv->mii_write(priv->device_id, 0x820, reg);
-			qm_val = priv->mii_read(priv->device_id, 0x824);
-			*qm_buffer_err = (qm_val >> ((port_id-4) * 8)) & 0xFF;
-		}
+	switch(speed) {
+		case FAL_SPEED_10:
+			link_notify_speed = 0;
+			break;
+		case FAL_SPEED_100:
+			link_notify_speed = 1;
+			break;
+		case FAL_SPEED_1000:
+			link_notify_speed = 2;
+			break;
+		case FAL_SPEED_2500:
+			link_notify_speed = 3;
+			break;
+		case FAL_SPEED_5000:
+			link_notify_speed = 4;
+			break;
+		case FAL_SPEED_10000:
+			link_notify_speed = 5;
+			break;
+		default:
+			link_notify_speed = 0xff;
+			break;
 	}
 
-	return 0;
+	return link_notify_speed;
 }
 
-static int qca_switch_force_mac_1000M_full(struct qca_phy_priv *priv, a_uint32_t port_id)
+int ssdk_port_link_notify(unsigned char port_id,
+            unsigned char link, unsigned char speed, unsigned char duplex)
 {
-	a_uint32_t reg, value = 0;
+    ssdk_port_status port_status;
 
-	if (port_id < 0 || port_id > 6)
-		return -1;
-	if (priv->version == 0x14)
-	{
-		reg = AR8327_REG_PORT_STATUS(port_id);
-		qca_switch_reg_read(priv->device_id, reg, (a_uint8_t *)&value, 4);
-		value &= ~(BIT(6) | BITS(0,2));
-		value |= AR8327_PORT_SPEED_1000M | BIT(6);
-		qca_switch_reg_write(priv->device_id, reg, (a_uint8_t *)&value, 4);
-	}
-	if (priv->version == QCA_VER_AR8337 ||
-		priv->version == QCA_VER_AR8327)
-	{
-		reg = AR8327_REG_PORT_STATUS(port_id);
-		value = priv->mii_read(priv->device_id, reg);
-		value &= ~(BIT(6) | BITS(0,2));
-		value |= AR8327_PORT_SPEED_1000M | BIT(6);
-		priv->mii_write(priv->device_id, reg, value);
-	}
-	return 0;
+    port_status.port_id = port_id;
+    port_status.port_link = link;
+    port_status.speed = speed;
+    port_status.duplex = duplex;
+
+    return blocking_notifier_call_chain(&ssdk_port_link_notifier_list,	0, &port_status);
 }
 
-static int qca_switch_force_mac_status(struct qca_phy_priv *priv, a_uint32_t port_id,a_uint32_t speed,a_uint32_t duplex)
+int ssdk_port_link_notify_register(struct notifier_block *nb)
 {
-	a_uint32_t reg, value = 0;
-
-	if (port_id < 1 || port_id > 5)
-		return -1;
-	if (priv->version == 0x14)
-	{
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
-#ifdef DESS
-		/*disable mac clock*/
-		reset_control_assert(ess_mac_clock_disable[port_id -1]);
-		udelay(10);
-		reg = AR8327_REG_PORT_STATUS(port_id);
-		qca_switch_reg_read(priv->device_id,reg,(a_uint8_t*)&value,4);
-		value &= ~(BIT(6) | BITS(0,2));
-		value |= speed | (duplex?BIT(6):0);
-		qca_switch_reg_write(priv->device_id,reg,(a_uint8_t*)&value,4);
-		/*enable mac clock*/
-		reset_control_deassert(ess_mac_clock_disable[port_id -1]);
-#endif
-#endif
-	}
-	if (priv->version == QCA_VER_AR8337 ||
-	priv->version == QCA_VER_AR8327)
-	{
-		reg = AR8327_REG_PORT_STATUS(port_id);
-		value = priv->mii_read(priv->device_id, reg);
-		value &= ~(BIT(6) | BITS(0,2));
-		value |= speed | (duplex?BIT(6):0);
-		priv->mii_write(priv->device_id, reg,value);
-	}
-
-	return 0;
+	return blocking_notifier_chain_register(&ssdk_port_link_notifier_list, nb);
 }
+EXPORT_SYMBOL(ssdk_port_link_notify_register);
 
-a_bool_t
-qca_ar8327_sw_rgmii_mode_valid(a_uint32_t dev_id, a_uint32_t port_id)
+int ssdk_port_link_notify_unregister(struct notifier_block *nb)
 {
-	a_uint32_t rgmii_mode;
-
-	rgmii_mode = ssdk_dt_global_get_mac_mode(dev_id, 0);
-
-	if(((rgmii_mode == PORT_WRAPPER_SGMII0_RGMII5) ||
-		(rgmii_mode == PORT_WRAPPER_SGMII1_RGMII5)) && (port_id == 5))
-		return A_TRUE;
-
-	if(((rgmii_mode == PORT_WRAPPER_SGMII0_RGMII4) ||
-		(rgmii_mode == PORT_WRAPPER_SGMII1_RGMII4) ||
-		(rgmii_mode == PORT_WRAPPER_SGMII4_RGMII4)) && (port_id == 4))
-		return A_TRUE;
-
-	return A_FALSE;
+	return blocking_notifier_chain_unregister(&ssdk_port_link_notifier_list, nb);
 }
+EXPORT_SYMBOL(ssdk_port_link_notify_unregister);
 
-static int
-qca_switch_get_mac_link(struct qca_phy_priv *priv, a_uint32_t port_id, a_uint32_t *link)
-{
-	a_uint32_t reg, value = 0;
-
-	if (port_id < 0 || port_id > 6)
-		return -1;
-	if (priv->version == 0x14)
-	{
-		reg = AR8327_REG_PORT_STATUS(port_id);
-		qca_switch_reg_read(priv->device_id,reg,(a_uint8_t*)&value,4);
-		*link = (value>>8)&0x1;
-	}
-	if (priv->version == QCA_VER_AR8337 ||
-	priv->version == QCA_VER_AR8327)
-	{
-		reg = AR8327_REG_PORT_STATUS(port_id);
-		value = priv->mii_read(priv->device_id, reg);
-		*link = (value>>8)&0x1;
-	}
-
-	return 0;
-}
-
-
+#ifdef ISISC
 #define MDI_FROM_PHY_STATUS 1
 #define MDI_FROM_MANUAL 0
 #define PORT_LINK_UP 1
 #define PORT_LINK_DOWN 0
-
 #define QM_NOT_EMPTY  1
 #define QM_EMPTY  0
 
@@ -406,66 +345,6 @@ int qca_ar8327_vlan_recovery(struct qca_phy_priv *priv)
 }
 #endif
 
-int qca_qm_error_check(struct qca_phy_priv *priv)
-{
-	a_uint32_t value = 0, qm_err_int=0;
-
-	if (priv->version == QCA_VER_AR8337 ||
-		priv->version == QCA_VER_AR8327)
-	{
-		value = priv->mii_read(priv->device_id, 0x24);
-		qm_err_int = value & BIT(14);	// b14-QM_ERR_INT
-
-		if(qm_err_int)
-			return 1;
-
-		priv->mii_write(priv->device_id, 0x820, 0x0);
-		value = priv->mii_read(priv->device_id, 0x824);
-	}
-	if(priv->version==0x14)
-	{
-		qca_switch_reg_read(priv->device_id, 0x24, (a_uint8_t*)&value, 4);
-		qm_err_int = value & BIT(14);	// b14-QM_ERR_INT
-
-		if(qm_err_int)
-			return 1;
-		value = 0;
-		qca_switch_reg_write(priv->device_id, 0x820, (a_uint8_t*)&value, 4);
-		qca_switch_reg_read(priv->device_id, 0x824, (a_uint8_t*)&value, 4);
-	}
-	return value;
-}
-
-void qca_ar8327_phy_linkdown(a_uint32_t dev_id);
-int qca_ar8327_hw_init(struct qca_phy_priv *priv);
-
-int qca_qm_err_recovery(struct qca_phy_priv *priv)
-{
-	int i;
-
-	for (i = 0; i < SW_MAX_NR_PORT; i ++) {
-		priv->ports[i].port_link_up = 0;
-		priv->ports[i].port_old_link = 0;
-		priv->ports[i].port_old_speed = 0;
-		priv->ports[i].port_old_duplex = 0;
-		priv->ports[i].port_old_phy_status = 0;
-		priv->ports[i].port_qm_buf = 0;
-	}
-
-	/* in soft reset recovery procedure */
-	qca_ar8327_phy_linkdown(priv->device_id);
-
-	qca_ar8327_hw_init(priv);
-
-#if defined(IN_VLAN)
-	qca_ar8327_vlan_recovery(priv);
-#endif
-
-	/*To add customerized recovery codes*/
-
-	return 1;
-}
-
 a_bool_t
 qca_ar8327_sw_mac_polling_port_valid(struct qca_phy_priv *priv, a_uint32_t port_id)
 {
@@ -498,69 +377,197 @@ qca_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t *speed_stat
 	*duplex_status = phy_status.duplex;
 }
 
-/* Initialize notifier list for QCA SSDK */
-static BLOCKING_NOTIFIER_HEAD(ssdk_port_link_notifier_list);
-
-unsigned char
-ssdk_to_link_notify_speed(fal_port_speed_t speed)
+void qca_ar8327_phy_linkdown(a_uint32_t dev_id);
+int qca_ar8327_hw_init(struct qca_phy_priv *priv);
+int qca_qm_err_recovery(struct qca_phy_priv *priv)
 {
-	unsigned char link_notify_speed = 0;
+	int i;
 
-	switch(speed) {
-		case FAL_SPEED_10:
-			link_notify_speed = 0;
-			break;
-		case FAL_SPEED_100:
-			link_notify_speed = 1;
-			break;
-		case FAL_SPEED_1000:
-			link_notify_speed = 2;
-			break;
-		case FAL_SPEED_2500:
-			link_notify_speed = 3;
-			break;
-		case FAL_SPEED_5000:
-			link_notify_speed = 4;
-			break;
-		case FAL_SPEED_10000:
-			link_notify_speed = 5;
-			break;
-		default:
-			link_notify_speed = 0xff;
-			break;
+	for (i = 0; i < SW_MAX_NR_PORT; i ++) {
+		priv->ports[i].port_link_up = 0;
+		priv->ports[i].port_old_link = 0;
+		priv->ports[i].port_old_speed = 0;
+		priv->ports[i].port_old_duplex = 0;
+		priv->ports[i].port_old_phy_status = 0;
+		priv->ports[i].port_qm_buf = 0;
 	}
 
-	return link_notify_speed;
+	/* in soft reset recovery procedure */
+	qca_ar8327_phy_linkdown(priv->device_id);
+
+	qca_ar8327_hw_init(priv);
+
+#if defined(IN_VLAN)
+	qca_ar8327_vlan_recovery(priv);
+#endif
+
+	/*To add customerized recovery codes*/
+
+	return 1;
 }
 
-int ssdk_port_link_notify(unsigned char port_id,
-            unsigned char link, unsigned char speed, unsigned char duplex)
+int qca_qm_error_check(struct qca_phy_priv *priv)
 {
-    ssdk_port_status port_status;
+	a_uint32_t value = 0, qm_err_int=0;
 
-    port_status.port_id = port_id;
-    port_status.port_link = link;
-    port_status.speed = speed;
-    port_status.duplex = duplex;
+	if (priv->version == QCA_VER_AR8337 ||
+		priv->version == QCA_VER_AR8327)
+	{
+		value = priv->mii_read(priv->device_id, 0x24);
+		qm_err_int = value & BIT(14);	// b14-QM_ERR_INT
 
-    return blocking_notifier_call_chain(&ssdk_port_link_notifier_list,	0, &port_status);
+		if(qm_err_int)
+			return 1;
+
+		priv->mii_write(priv->device_id, 0x820, 0x0);
+		value = priv->mii_read(priv->device_id, 0x824);
+	}
+	if(priv->version==0x14)
+	{
+		qca_switch_reg_read(priv->device_id, 0x24, (a_uint8_t*)&value, 4);
+		qm_err_int = value & BIT(14);	// b14-QM_ERR_INT
+
+		if(qm_err_int)
+			return 1;
+		value = 0;
+		qca_switch_reg_write(priv->device_id, 0x820, (a_uint8_t*)&value, 4);
+		qca_switch_reg_read(priv->device_id, 0x824, (a_uint8_t*)&value, 4);
+	}
+	return value;
 }
 
-int ssdk_port_link_notify_register(struct notifier_block *nb)
+static int qca_switch_get_qm_status(struct qca_phy_priv *priv, a_uint32_t port_id, a_uint32_t *qm_buffer_err)
 {
-	return blocking_notifier_chain_register(&ssdk_port_link_notifier_list, nb);
-}
-EXPORT_SYMBOL(ssdk_port_link_notify_register);
+	a_uint32_t reg = 0;
+	a_uint32_t qm_val = 0;
 
-int ssdk_port_link_notify_unregister(struct notifier_block *nb)
+	if (port_id < 0 || port_id > 6) {
+		*qm_buffer_err = 0;
+		return -1;
+	}
+	if (priv->version == 0x14)
+	{
+		if (port_id < 4) {
+			reg = 0x1D;
+			qca_switch_reg_write(priv->device_id, 0x820, (a_uint8_t *)&reg, 4);
+			qca_switch_reg_read(priv->device_id, 0x824, (a_uint8_t *)&qm_val, 4);
+			*qm_buffer_err = (qm_val >> (port_id * 8)) & 0xFF;
+		} else {
+			reg = 0x1E;
+			qca_switch_reg_write(priv->device_id, 0x820, (a_uint8_t *)&reg, 4);
+			qca_switch_reg_read(priv->device_id, 0x824, (a_uint8_t *)&qm_val, 4);
+			*qm_buffer_err = (qm_val >> ((port_id-4) * 8)) & 0xFF;
+		}
+	}
+	if (priv->version == QCA_VER_AR8337 ||
+		priv->version == QCA_VER_AR8327)
+	{
+		if (port_id < 4) {
+			reg = 0x1D;
+			priv->mii_write(priv->device_id, 0x820, reg);
+			qm_val = priv->mii_read(priv->device_id, 0x824);
+			*qm_buffer_err = (qm_val >> (port_id * 8)) & 0xFF;
+		} else {
+			reg = 0x1E;
+			priv->mii_write(priv->device_id, 0x820, reg);
+			qm_val = priv->mii_read(priv->device_id, 0x824);
+			*qm_buffer_err = (qm_val >> ((port_id-4) * 8)) & 0xFF;
+		}
+	}
+
+	return 0;
+}
+
+static int qca_switch_force_mac_1000M_full(struct qca_phy_priv *priv, a_uint32_t port_id)
 {
-	return blocking_notifier_chain_unregister(&ssdk_port_link_notifier_list, nb);
+	a_uint32_t reg, value = 0;
+
+	if (port_id < 0 || port_id > 6)
+		return -1;
+	if (priv->version == 0x14)
+	{
+		reg = AR8327_REG_PORT_STATUS(port_id);
+		qca_switch_reg_read(priv->device_id, reg, (a_uint8_t *)&value, 4);
+		value &= ~(BIT(6) | BITS(0,2));
+		value |= AR8327_PORT_SPEED_1000M | BIT(6);
+		qca_switch_reg_write(priv->device_id, reg, (a_uint8_t *)&value, 4);
+	}
+	if (priv->version == QCA_VER_AR8337 ||
+		priv->version == QCA_VER_AR8327)
+	{
+		reg = AR8327_REG_PORT_STATUS(port_id);
+		value = priv->mii_read(priv->device_id, reg);
+		value &= ~(BIT(6) | BITS(0,2));
+		value |= AR8327_PORT_SPEED_1000M | BIT(6);
+		priv->mii_write(priv->device_id, reg, value);
+	}
+	return 0;
 }
-EXPORT_SYMBOL(ssdk_port_link_notify_unregister);
 
+static int qca_switch_force_mac_status(struct qca_phy_priv *priv, a_uint32_t port_id,a_uint32_t speed,a_uint32_t duplex)
+{
+	a_uint32_t reg, value = 0;
 
-void
-qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
+	if (port_id < 1 || port_id > 5)
+		return -1;
+
+	if (priv->version == QCA_VER_AR8337 ||
+	priv->version == QCA_VER_AR8327)
+	{
+		reg = AR8327_REG_PORT_STATUS(port_id);
+		value = priv->mii_read(priv->device_id, reg);
+		value &= ~(BIT(6) | BITS(0,2));
+		value |= speed | (duplex?BIT(6):0);
+		priv->mii_write(priv->device_id, reg,value);
+	}
+
+	return 0;
+}
+
+a_bool_t
+qca_ar8327_sw_rgmii_mode_valid(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	a_uint32_t rgmii_mode;
+
+	rgmii_mode = ssdk_dt_global_get_mac_mode(dev_id, 0);
+
+	if(((rgmii_mode == PORT_WRAPPER_SGMII0_RGMII5) ||
+		(rgmii_mode == PORT_WRAPPER_SGMII1_RGMII5)) && (port_id == 5))
+		return A_TRUE;
+
+	if(((rgmii_mode == PORT_WRAPPER_SGMII0_RGMII4) ||
+		(rgmii_mode == PORT_WRAPPER_SGMII1_RGMII4) ||
+		(rgmii_mode == PORT_WRAPPER_SGMII4_RGMII4)) && (port_id == 4))
+		return A_TRUE;
+
+	return A_FALSE;
+}
+
+static int
+qca_switch_get_mac_link(struct qca_phy_priv *priv, a_uint32_t port_id, a_uint32_t *link)
+{
+	a_uint32_t reg, value = 0;
+
+	if (port_id < 0 || port_id > 6)
+		return -1;
+	if (priv->version == 0x14)
+	{
+		reg = AR8327_REG_PORT_STATUS(port_id);
+		qca_switch_reg_read(priv->device_id,reg,(a_uint8_t*)&value,4);
+		*link = (value>>8)&0x1;
+	}
+	if (priv->version == QCA_VER_AR8337 ||
+	priv->version == QCA_VER_AR8327)
+	{
+		reg = AR8327_REG_PORT_STATUS(port_id);
+		value = priv->mii_read(priv->device_id, reg);
+		*link = (value>>8)&0x1;
+	}
+
+	return 0;
+}
+
+void qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 {
 	a_uint32_t i, dev_id = 0;
 	a_uint32_t value;
@@ -700,54 +707,5 @@ qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv)
 	}
 	return ;
 }
-
-#ifdef IN_SWCONFIG
-int qca_ar8327_sw_set_eee(struct switch_dev *dev,
-	const struct switch_attr *attr, struct switch_val *val)
-{
-	sw_error_t rv = SW_OK;
-	struct qca_phy_priv *priv = qca_phy_priv_get(dev);
-	fal_port_eee_cfg_t port_eee_cfg;
-
-	SSDK_DEBUG("configure EEE for dev_id: %d, port %d as %d\n",
-		priv->device_id, val->port_vlan, val->value.i);
-	rv = fal_port_interface_eee_cfg_get(priv->device_id, val->port_vlan, &port_eee_cfg);
-	if(rv != SW_OK)
-	{
-		return -1;
-	}
-	port_eee_cfg.enable = val->value.i;
-	port_eee_cfg.lpi_tx_enable = val->value.i;
-
-	if(port_eee_cfg.enable)
-	{
-		port_eee_cfg.advertisement = FAL_PHY_EEE_ALL_ADV;
-	}
-	rv = fal_port_interface_eee_cfg_set(priv->device_id, val->port_vlan, &port_eee_cfg);
-	if(rv != SW_OK)
-	{
-		return -1;
-	}
-
-	return 0;
-}
-
-int qca_ar8327_sw_get_eee(struct switch_dev *dev,
-	const struct switch_attr *attr, struct switch_val *val)
-{
-	sw_error_t rv = SW_OK;
-	struct qca_phy_priv *priv = qca_phy_priv_get(dev);
-	fal_port_eee_cfg_t port_eee_cfg;
-
-	SSDK_DEBUG("get EEE for dev_id: %d, port %d\n",
-		priv->device_id, val->port_vlan);
-	rv = fal_port_interface_eee_cfg_get(priv->device_id, val->port_vlan, &port_eee_cfg);
-	if(rv != SW_OK)
-	{
-		return -1;
-	}
-	val->value.i = port_eee_cfg.enable;
-
-	return 0;
-}
 #endif
+

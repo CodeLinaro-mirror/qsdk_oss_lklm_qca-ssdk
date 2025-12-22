@@ -91,6 +91,7 @@ a_uint16_t ssdk_ucast_l0_cdrr_num_get(a_uint32_t dev_id, a_uint32_t port)
 		cfg->scheduler_cfg.pool[port].l0cdrr_start + 1;
 }
 
+#ifdef IN_QOS
 a_uint8_t ssdk_port_ucast_max_pri_get(a_uint32_t dev_id, a_uint32_t port)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
@@ -111,7 +112,7 @@ void ssdk_port_ucast_max_pri_set(a_uint32_t dev_id, a_uint32_t port,
 
 	cfg->scheduler_cfg.pool[port].max_pri = max_pri;
 }
-
+#endif
 #endif
 a_uint32_t ssdk_intf_mac_num_get(void)
 {

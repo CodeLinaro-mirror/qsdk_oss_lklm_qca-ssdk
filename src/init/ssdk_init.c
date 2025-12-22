@@ -85,7 +85,6 @@ struct notifier_block ssdk_dev_notifier;
 #include "ssdk_httppe.h"
 #endif
 
-extern void qca_ar8327_sw_mac_polling_task(struct qca_phy_priv *priv);
 extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
 
 //#define PSGMII_DEBUG
@@ -294,7 +293,7 @@ void ssdk_portvlan_init(a_uint32_t dev_id)
 sw_error_t
 qca_switch_init(a_uint32_t dev_id)
 {
-#if (defined(DESS) || defined(ISISC) || defined(ISIS)) && defined(IN_QOS)
+#if (defined(DESS) || defined(ISISC)) && defined(IN_QOS)
 	a_uint32_t nr = 0, react_nr = 0;
 #endif
 #if defined(MHT)
@@ -309,10 +308,15 @@ qca_switch_init(a_uint32_t dev_id)
 
 	/*fal_reset(dev_id);*/
 	/*enable cpu and disable mirror*/
+#ifdef ISISC
 #ifdef IN_MISC
 	fal_cpu_port_status_set(dev_id, A_TRUE);
 	/* setup MTU */
 	fal_frame_max_size_set(dev_id, 9216);
+#endif
+#ifdef IN_IGMP
+	fal_igmp_mld_rp_set(dev_id, 0);
+#endif
 #endif
 #ifdef IN_MIB
 	/* Enable MIB counters */
@@ -322,9 +326,6 @@ qca_switch_init(a_uint32_t dev_id)
 	/*set mirror analysis port as 0xf in default*/
 #ifdef IN_MIRROR
 	fal_mirr_analysis_port_set(dev_id, 0xf);
-#endif
-#ifdef IN_IGMP
-	fal_igmp_mld_rp_set(dev_id, 0);
 #endif
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
@@ -342,8 +343,9 @@ qca_switch_init(a_uint32_t dev_id)
 	i = 0;
 	while (port_bmp) {
 		if (port_bmp & 1) {
-			/* forward multicast and broadcast frames to CPU */
+#if defined(ISISC)
 #ifdef IN_MISC
+        		/* forward multicast and broadcast frames to CPU */
 			fal_port_unk_uc_filter_set(dev_id, i, A_FALSE);
 			fal_port_unk_mc_filter_set(dev_id, i, A_FALSE);
 			fal_port_bc_filter_set(dev_id, i, A_FALSE);
@@ -353,15 +355,6 @@ qca_switch_init(a_uint32_t dev_id)
 			fal_port_default_cvid_set(dev_id, i, 0);
 			fal_port_1qmode_set(dev_id, i, FAL_1Q_DISABLE);
 			fal_port_egvlanmode_set(dev_id, i, FAL_EG_UNTOUCHED);
-#endif
-
-#ifdef IN_FDB
-			fal_fdb_port_learn_set(dev_id, i, A_TRUE);
-#endif
-#ifdef IN_STP
-			fal_stp_port_state_set(dev_id, 0, i, FAL_STP_FARWARDING);
-#endif
-#ifdef IN_PORTVLAN
 			fal_port_vlan_propagation_set(dev_id, i, FAL_VLAN_PROPAGATION_REPLACE);
 #endif
 #ifdef IN_IGMP
@@ -370,6 +363,13 @@ qca_switch_init(a_uint32_t dev_id)
 			fal_port_igmp_mld_leave_set(dev_id, i, A_FALSE);
 			fal_igmp_mld_entry_creat_set(dev_id, A_FALSE);
 			fal_igmp_mld_entry_v3_set(dev_id, A_FALSE);
+#endif
+#endif
+#ifdef IN_FDB
+			fal_fdb_port_learn_set(dev_id, i, A_TRUE);
+#endif
+#ifdef IN_STP
+			fal_stp_port_state_set(dev_id, 0, i, FAL_STP_FARWARDING);
 #endif
 #ifdef IN_PORTCONTROL
 			fal_port_interface_eee_cfg_get(dev_id, i, &port_eee_cfg);
@@ -381,7 +381,7 @@ qca_switch_init(a_uint32_t dev_id)
 			switch (chip_type) {
 				case CHIP_ISISC:
 				case CHIP_ISIS:
-#if defined(ISISC) || defined(ISIS)
+#if defined(ISISC)
 #ifdef IN_PORTCONTROL
 					fal_port_flowctrl_forcemode_set(dev_id, i, A_TRUE);
 					fal_port_flowctrl_set(dev_id, i, A_FALSE);
@@ -691,6 +691,7 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 #if defined(IN_SWCONFIG)
 static struct switch_attr qca_ar8327_globals[] = {
 #if defined(IN_VLAN)
+#ifdef ISISC
 	{
 		.name = "enable_vlan",
 		.description = "Enable 8021q VLAN",
@@ -699,6 +700,7 @@ static struct switch_attr qca_ar8327_globals[] = {
 		.get = qca_ar8327_sw_get_vlan,
 		.max = 1
 	},
+#endif
 #endif
 #if defined(IN_MISC)
 	{
@@ -769,6 +771,7 @@ static struct switch_attr qca_ar8327_port[] = {
 };
 
 #if defined(IN_VLAN)
+#ifdef ISISC
 static struct switch_attr qca_ar8327_vlan[] = {
 	{
 		.name = "vid",
@@ -779,6 +782,7 @@ static struct switch_attr qca_ar8327_vlan[] = {
 		.max = 4094,
 	},
 };
+#endif
 #endif
 
 const struct switch_dev_ops qca_ar8327_sw_ops = {
@@ -791,6 +795,7 @@ const struct switch_dev_ops qca_ar8327_sw_ops = {
 		.n_attr = ARRAY_SIZE(qca_ar8327_port),
 	},
 #if defined(IN_VLAN)
+#ifdef ISISC
 	.attr_vlan = {
 		.attr = qca_ar8327_vlan,
 		.n_attr = ARRAY_SIZE(qca_ar8327_vlan),
@@ -800,6 +805,7 @@ const struct switch_dev_ops qca_ar8327_sw_ops = {
 	.get_vlan_ports = qca_ar8327_sw_get_ports,
 	.set_vlan_ports = qca_ar8327_sw_set_ports,
 	.apply_config = qca_ar8327_sw_hw_apply,
+#endif
 #endif
 #if defined(IN_MISC)
 	.reset_switch = qca_ar8327_sw_reset_switch,
@@ -1902,6 +1908,7 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 		return NOTIFY_DONE;
 	}
 	switch (event) {
+#ifdef ISISC
 		case NETDEV_CHANGEMTU:
 			if(dev->type == ARPHRD_ETHER) {
 				if (cfg.chip_type == CHIP_DESS ||
@@ -1928,6 +1935,7 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 				}
 			}
 			break;
+#endif
 		case NETDEV_REGISTER:
 			if (strstr(dev->name, "eth") && !(dev->priv_flags & IFF_802_1Q_VLAN))
 				ssdk_netdev_switch_init(dev);

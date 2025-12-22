@@ -56,14 +56,12 @@ extern "C" {
 #include "fal_pon_pm.h"
 #include "fal_ipmc.h"
 #include "fal_crosschip.h"
-#ifdef ISISC
 #include "fal_leaky.h"
 #include "fal_igmp.h"
 #include "fal_rate.h"
 #include "fal_cosmap.h"
 #include "fal_nat.h"
 #include "fal_interface_ctrl.h"
-#endif
 
 /* auto_insert_flag */
 

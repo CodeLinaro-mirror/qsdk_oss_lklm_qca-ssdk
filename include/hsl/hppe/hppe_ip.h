@@ -245,17 +245,7 @@ sw_error_t
 hppe_l3_dbg_rd_data_set(
 		a_uint32_t dev_id,
 		union l3_dbg_rd_data_u *value);
-sw_error_t
-hppe_l3_vp_port_tbl_get(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l3_vp_port_tbl_u *value);
 
-sw_error_t
-hppe_l3_vp_port_tbl_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		union l3_vp_port_tbl_u *value);
 sw_error_t
 hppe_in_l3_if_tbl_get(
 		a_uint32_t dev_id,
@@ -267,6 +257,7 @@ hppe_in_l3_if_tbl_set(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		union in_l3_if_tbl_u *value);
+
 sw_error_t
 hppe_host_ipv6_mcast_tbl_get(
 		a_uint32_t dev_id,

@@ -17,9 +17,7 @@ extern "C" {
 
 #include "sw.h"
 #include "fal/fal_type.h"
-#ifdef ISISC
 #include "fal_qos_legacy.h"
-#endif
 
 typedef struct {
 	a_uint8_t pcp_group; /* 0: group 0 1: group 1 */

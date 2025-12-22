@@ -17,9 +17,7 @@ extern "C" {
 
 #include "sw.h"
 #include "fal/fal_type.h"
-#ifdef ISISC
 #include "fal_trunk_legacy.h"
-#endif
 
 #define FAL_TRUNK_HASH_KEY_DA              0x1
 #define FAL_TRUNK_HASH_KEY_SA              0x2

@@ -17,9 +17,7 @@ extern "C" {
 
 #include "sw.h"
 #include "fal/fal_type.h"
-#ifdef ISISC
 #include "fal_pppoe_legacy.h"
-#endif
 
 typedef struct
 {

@@ -18,9 +18,7 @@ extern "C" {
 
 #include "sw.h"
 #include "fal_type.h"
-#ifdef ISISC
 #include "fal_portvlan_legacy.h"
-#endif
 
 #if defined(SW_API_LOCK) && (!defined(HSL_STANDALONG))
 #define FAL_PORTVLAN_API_LOCK FAL_API_LOCK

@@ -96,7 +96,9 @@ static char *lb_dflt_str = "0";
 static char *cookie_dflt_str = "0";
 static char *priority_dflt_str = "no";
 #endif
+#if defined(IN_IP) || defined(IN_NAT)
 static char *param_dflt_str = " ";
+#endif
 
 int parse_uci_option(struct switch_val *val, const char *option_names[], const int length)
 {
@@ -9636,7 +9638,9 @@ parse_acl_rule(a_uint32_t dev_id, struct switch_val *val)
 			SSDK_ERROR("uci set acl fail %d\n", rv);
 		}
 	}
+#ifdef ISISC
 	fal_acl_status_set(dev_id, A_TRUE);
+#endif
 
 	return rv;
 }

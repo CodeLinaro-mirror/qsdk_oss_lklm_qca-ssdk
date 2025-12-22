@@ -1353,6 +1353,7 @@ a_bool_t ssdk_switch_enable_dsa(a_uint32_t dev_id)
 }
 #endif
 
+#ifdef ISISC
 static ssize_t ssdk_eth_switch_get(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -1408,7 +1409,7 @@ static ssize_t ssdk_eth_switch_get(struct device *dev,
 
 	return len;
 }
-
+#endif
 static ssize_t ssdk_mac_polling_set(struct device *dev,
 				    struct device_attribute *attr,
 				    const char *buf, size_t count)
@@ -1505,8 +1506,10 @@ static const struct device_attribute ssdk_phy_write_reg_attr =
 	__ATTR(phy_write_reg, 0660, NULL, ssdk_phy_write_reg_set);
 static const struct device_attribute ssdk_phy_read_reg_attr =
 	__ATTR(phy_read_reg, 0660, ssdk_phy_read_reg_get, ssdk_phy_read_reg_set);
+#ifdef ISISC
 static const struct device_attribute ssdk_eth_switch_attr =
 	__ATTR(eth_switch, 0660, ssdk_eth_switch_get, NULL);
+#endif
 static const struct device_attribute ssdk_mac_polling_attr =
 	__ATTR(mac_polling, 0660, NULL, ssdk_mac_polling_set);
 static const struct device_attribute ssdk_module_debug_stats_attr =
@@ -1573,14 +1576,14 @@ int ssdk_sysfs_init (void)
 		printk("Failed to register SSDK phy read reg file\n");
 		goto CLEANUP_7;
 	}
-
+#ifdef ISISC
 	/* create /sys/ssdk/switch_external*/
 	ret = sysfs_create_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 	if (ret) {
 		printk("Failed to register switch_external file\n");
 		goto CLEANUP_8;
 	}
-
+#endif
 	/* create /sys/ssdk/mac_polling */
 	ret = sysfs_create_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 	if (ret) {
@@ -1600,8 +1603,10 @@ int ssdk_sysfs_init (void)
 CLEANUP_10:
 	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 CLEANUP_9:
+#ifdef ISISC
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 CLEANUP_8:
+#endif
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_read_reg_attr.attr);
 CLEANUP_7:
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_write_reg_attr.attr);
@@ -1630,7 +1635,9 @@ void ssdk_sysfs_exit (void)
 	sysfs_remove_file(ssdk_sys, &ssdk_packet_counter_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_log_level_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dev_id_attr.attr);
+#ifdef ISISC
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
+#endif
 	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_module_debug_stats_attr.attr);
 	kobject_put(ssdk_sys);

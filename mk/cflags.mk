@@ -359,27 +359,15 @@ MODULE_INC += -I$(PRJ_PATH)/include \
                    -I$(PRJ_PATH)/include/sal/os/linux \
                    -I$(PRJ_PATH)/include/sal/sd \
                    -I$(PRJ_PATH)/include/sal/sd/linux/uk_interface \
-                   -I$(PRJ_PATH)/include/init
+                   -I$(PRJ_PATH)/include/init \
+                   -I$(PRJ_PATH)/include/hsl/hppe \
+                   -I$(PRJ_PATH)/include/adpt/hppe \
+                   -I$(PRJ_PATH)/include/hsl/appe \
+                   -I$(PRJ_PATH)/include/adpt/appe
 
 ifneq (,$(findstring ISISC, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/isisc
   MODULE_CFLAG += -DISISC
-endif
-
-ifneq (,$(findstring HPPE, $(SUPPORT_CHIP)))
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/hppe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/hppe
-  MODULE_CFLAG += -DHPPE
-endif
-
-ifneq (,$(findstring APPE, $(SUPPORT_CHIP)))
-#APPE depends on CPPE flow
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/cppe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/cppe
-
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/appe
-  MODULE_INC   += -I$(PRJ_PATH)/include/adpt/appe
-  MODULE_CFLAG += -DAPPE
 endif
 
 ifneq (,$(findstring MPPE, $(SUPPORT_CHIP)))
@@ -411,11 +399,6 @@ ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
   ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
   MODULE_CFLAG += -DSSDK_RAW_CLOCK
   endif
-endif
-
-ifneq (,$(findstring SCOMPHY, $(SUPPORT_CHIP)))
-  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/scomphy
-  MODULE_CFLAG += -DSCOMPHY
 endif
 
 ifneq (,$(findstring MHT, $(SUPPORT_CHIP)))

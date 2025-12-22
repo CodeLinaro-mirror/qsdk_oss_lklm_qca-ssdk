@@ -14,6 +14,36 @@ OBJ-MHT     :=
 OBJ-SCOMPHY :=
 OBJ-HTTPPE  :=
 
+################################################################################
+#                             SWCONFIG
+#################################################################################
+ifeq (TRUE, $(SWCONFIG))
+OBJ-COMMON  += src/ref/ref_uci.o
+ifeq (TRUE, $(IN_MISC))
+OBJ-COMMON  += src/ref/ref_misc.o
+endif
+ifeq (TRUE, $(IN_VPORT))
+OBJ-COMMON  += src/ref/ref_vport.o
+endif
+ifeq (TRUE, $(IN_TUNNEL))
+OBJ-COMMON  += src/ref/ref_tunnel.o
+endif
+ifeq (TRUE, $(IN_MAPT))
+OBJ-COMMON  += src/ref/ref_mapt.o
+endif
+ifeq (TRUE, $(IN_ATHTAG))
+OBJ-COMMON  += src/ref/ref_athtag.o
+endif
+ifeq (TRUE, $(IN_PKTEDIT))
+OBJ-COMMON  += src/ref/ref_pktedit.o
+endif
+ifeq (TRUE, $(IN_PON_PM))
+OBJ-COMMON  += src/ref/ref_pon_pm.o
+endif
+ifeq (TRUE, $(IN_IPMC))
+OBJ-COMMON  += src/ref/ref_ipmc.o
+endif
+endif
 ###############################################################################
 #                                 IN_ACL
 ###############################################################################
@@ -85,7 +115,7 @@ endif
 #                              IN_MISC
 ###############################################################################
 ifeq (TRUE, $(IN_MISC))
-OBJ-COMMON += src/adpt/hppe/adpt_hppe_misc.o src/ref/ref_misc.o \
+OBJ-COMMON += src/adpt/hppe/adpt_hppe_misc.o \
               src/fal/fal_misc.o
 OBJ-ISISC  += src/hsl/isisc/isisc_misc.o src/fal/fal_misc_legacy.o
 OBJ-HTTPPE  += src/adpt/httppe/adpt_httppe_misc.o
@@ -151,8 +181,8 @@ endif
 #                             IN_VLAN
 ###############################################################################
 ifeq (TRUE, $(IN_VLAN))
-OBJ-COMMON += src/ref/ref_vlan.o src/fal/fal_vlan.o
-OBJ-ISISC  += src/hsl/isisc/isisc_vlan.o
+OBJ-COMMON += src/fal/fal_vlan.o
+OBJ-ISISC  += src/hsl/isisc/isisc_vlan.o src/ref/ref_vlan.o
 endif
 
 ###############################################################################
@@ -219,7 +249,8 @@ endif
 ###############################################################################
 ifeq (TRUE, $(IN_PPPOE))
 OBJ-COMMON  += src/fal/fal_pppoe.o
-OBJ-HPPE    += src/adpt/hppe/adpt_hppe_pppoe.o src/fal/fal_pppoe_legacy.o
+OBJ-ISISC   += src/fal/fal_pppoe_legacy.o
+OBJ-HPPE    += src/adpt/hppe/adpt_hppe_pppoe.o
 OBJ-APPE    += src/hsl/appe/appe_pppoe.o src/adpt/appe/adpt_appe_pppoe.o
 endif
 
@@ -333,7 +364,7 @@ endif
 #                             IN_SFP
 ###############################################################################
 ifeq (TRUE, $(IN_SFP))
-OBJ-COMMON  += src/hsl/sfp/sfp_access.o src/hsl/sfp/sfp.o \
+OBJ-COMMON  += src/hsl/sfp/sfp_access.o src/hsl/sfp/sfp.o src/init/ssdk_phy_i2c.o \
                src/adpt/sfp/adpt_sfp.o src/fal/fal_sfp.o
 endif
 
@@ -348,7 +379,7 @@ endif
 #                              IN_VPORT
 ###############################################################################
 ifeq (TRUE, $(IN_VPORT))
-OBJ-COMMON  += src/ref/ref_vport.o src/fal/fal_vport.o
+OBJ-COMMON  += src/fal/fal_vport.o
 OBJ-APPE    += src/adpt/appe/adpt_appe_vport.o
 OBJ-HTTPPE  += src/adpt/httppe/adpt_httppe_vport.o
 endif
@@ -357,7 +388,7 @@ endif
 #                              IN_TUNNEL
 ###############################################################################
 ifeq (TRUE, $(IN_TUNNEL))
-OBJ-COMMON  += src/ref/ref_tunnel.o src/fal/fal_tunnel.o
+OBJ-COMMON  += src/fal/fal_tunnel.o
 OBJ-APPE    += src/hsl/appe/appe_tunnel.o src/hsl/appe/appe_tunnel_map.o \
                src/adpt/appe/adpt_appe_tunnel.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_tunnel.o src/adpt/jhppe/adpt_jhppe_tunnel.o
@@ -381,7 +412,7 @@ endif
 #                              IN_MAPT
 ###############################################################################
 ifeq (TRUE, $(IN_MAPT))
-OBJ-COMMON  += src/ref/ref_mapt.o src/fal/fal_mapt.o
+OBJ-COMMON  += src/fal/fal_mapt.o
 OBJ-APPE    += src/adpt/appe/adpt_appe_mapt.o
 endif
 
@@ -397,7 +428,7 @@ endif
 #                             IN_ATHTAG
 ###############################################################################
 ifeq (TRUE, $(IN_ATHTAG))
-OBJ-COMMON  += src/fal/fal_athtag.o src/ref/ref_athtag.o
+OBJ-COMMON  += src/fal/fal_athtag.o
 OBJ-MPPE    += src/hsl/mppe/mppe_athtag.o src/adpt/mppe/adpt_mppe_athtag.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_athtag.o src/adpt/jhppe/adpt_jhppe_athtag.o
 OBJ-HTTPPE  += src/hsl/httppe/httppe_athtag.o src/adpt/httppe/adpt_httppe_athtag.o
@@ -407,7 +438,7 @@ endif
 #                             IN_PKTEDIT
 ###############################################################################
 ifeq (TRUE, $(IN_PKTEDIT))
-OBJ-COMMON  += src/fal/fal_pktedit.o src/ref/ref_pktedit.o
+OBJ-COMMON  += src/fal/fal_pktedit.o
 OBJ-MRPPE   += src/hsl/mrppe/mrppe_pktedit.o src/adpt/mrppe/adpt_mrppe_pktedit.o
 OBJ-JHPPE   += src/hsl/jhppe/jhppe_pktedit.o src/adpt/jhppe/adpt_jhppe_pktedit.o
 endif
@@ -430,7 +461,7 @@ OBJ-COMMON  += src/hsl/phy/aquantia_phy.o
 endif
 
 ifeq (TRUE, $(IN_SFP_PHY))
-OBJ-COMMON  += src/hsl/phy/sfp_phy.o
+OBJ-COMMON  += src/hsl/phy/sfp_phy.o src/init/ssdk_phy_i2c.o
 endif
 
 ifeq (TRUE, $(IN_PTP))
@@ -453,7 +484,7 @@ endif
 #                                  INIT
 ###############################################################################
 OBJ-COMMON  += src/init/ssdk_init.o src/init/ssdk_plat.o src/init/ssdk_interrupt.o \
-               src/init/ssdk_dts.o src/init/ssdk_phy_i2c.o src/init/ssdk_clk.o
+               src/init/ssdk_dts.o src/init/ssdk_clk.o
 OBJ-ISISC   += src/hsl/isisc/isisc_init.o
 OBJ-HPPE    += src/init/ssdk_hppe.o  src/hsl/hppe/hppe_init.o
 OBJ-APPE    += src/init/ssdk_appe.o
@@ -464,14 +495,16 @@ OBJ-HTTPPE    += src/init/ssdk_httppe.o
 ###############################################################################
 #                                 SHELL_LIB
 ###############################################################################
+ifeq (TRUE, $(SWCONFIG))
 OBJ-COMMON  += src/shell_lib/shell.o src/shell_lib/shell_config.o \
               src/shell_lib/shell_io.o src/shell_lib/shell_sw.o
+endif
 
 ###############################################################################
 #                                 COMMON
 ###############################################################################
 OBJ-COMMON  += src/fal/fal_init.o src/fal/fal_reg_access.o src/adpt/adpt.o \
-               src/ref/ref_uci.o src/hsl/hsl_dev.o src/hsl/hsl_api.o \
+               src/hsl/hsl_dev.o src/hsl/hsl_api.o \
                src/hsl/hsl_port_prop.o src/util/util.o src/sal/sd/sd.o \
                src/sal/sd/linux/uk_interface/sw_api_ks_ioctl.o \
                src/api/api_access.o
@@ -495,14 +528,14 @@ endif
 #                             IN_PON_PM
 ################################################################################
 ifeq (TRUE, $(IN_PON_PM))
-OBJ-COMMON  += src/fal/fal_pon_pm.o src/ref/ref_pon_pm.o
+OBJ-COMMON  += src/fal/fal_pon_pm.o
 OBJ-JHPPE += src/hsl/jhppe/jhppe_pm.o src/adpt/jhppe/adpt_jhppe_pon_pm.o
 endif
 ################################################################################
 #                             IN_IPMC
 #################################################################################
 ifeq (TRUE, $(IN_IPMC))
-OBJ-COMMON  += src/fal/fal_ipmc.o src/ref/ref_ipmc.o
+OBJ-COMMON  += src/fal/fal_ipmc.o
 OBJ-HTTPPE  += src/hsl/httppe/httppe_ipmc.o src/adpt/httppe/adpt_httppe_ipmc.o
 endif
 ################################################################################
@@ -515,22 +548,10 @@ endif
 ###############################################################################
 #                              Collect OBJ
 ###############################################################################
-OBJ := $(OBJ-COMMON)
+OBJ := $(OBJ-COMMON) $(OBJ-HPPE) $(OBJ-APPE)
 
 ifneq (,$(findstring ISISC, $(SUPPORT_CHIP)))
 OBJ += $(OBJ-ISISC)
-endif
-
-ifneq (,$(findstring HPPE, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-HPPE)
-endif
-
-ifneq (,$(findstring APPE, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-APPE)
-endif
-
-ifneq (,$(findstring CPPE, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-CPPE)
 endif
 
 ifneq (,$(findstring MPPE, $(SUPPORT_CHIP)))
@@ -543,10 +564,6 @@ endif
 
 ifneq (,$(findstring MHT, $(SUPPORT_CHIP)))
 OBJ += $(OBJ-MHT)
-endif
-
-ifneq (,$(findstring SCOMPHY, $(SUPPORT_CHIP)))
-OBJ += $(OBJ-SCOMPHY)
 endif
 
 ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
