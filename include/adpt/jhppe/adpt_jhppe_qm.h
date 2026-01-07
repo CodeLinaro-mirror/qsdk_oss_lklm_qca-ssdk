@@ -15,6 +15,10 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 sw_error_t
+adpt_jhppe_qm_ddrq_counter_get(a_uint32_t dev_id,
+			       a_uint32_t queue_id, fal_queue_stats_t *info);
+
+sw_error_t
 adpt_jhppe_qm_tcont_get(a_uint32_t dev_id,
 			a_uint32_t queue_id,
 			fal_queue_tcont_cfg_t *cfg);
