@@ -504,18 +504,18 @@ adpt_hppe_debug_counter_set(a_uint32_t dev_id)
 	/* clear PORT_TX_DROP_CNT_TBL */
 	for (i = 0; i < PORT_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
 		hppe_port_tx_drop_cnt_tbl_set(dev_id, i, &port_tx_drop_cnt_tbl);
-
-	/* clear EG_VSI_COUNTER_TBL */
-	for (i = 0; i < EG_VSI_COUNTER_TBL_MAX_ENTRY; i++)
-		hppe_eg_vsi_counter_tbl_set(dev_id, i, &eg_vsi_counter_tbl);
-
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
+		adpt_httppe_eg_vsi_counter_tbl_set(dev_id);
 		adpt_httppe_port_tx_counter_tbl_set(dev_id);
 		adpt_httppe_vp_tx_counter_tbl_set(dev_id);
 		adpt_httppe_queue_tx_counter_tbl_set(dev_id);
 #endif
 	} else {
+		/* clear EG_VSI_COUNTER_TBL */
+		for (i = 0; i < EG_VSI_COUNTER_TBL_MAX_ENTRY; i++)
+			hppe_eg_vsi_counter_tbl_set(dev_id, i, &eg_vsi_counter_tbl);
+
 		/* clear PORT_TX_COUNTER_TBL */
 		for (i = 0; i < PORT_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
 			hppe_port_tx_counter_tbl_reg_set(dev_id, i, &port_tx_counter_tbl);
@@ -1175,11 +1175,10 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 	/* show PORT_TX_DROP_CNT_TBL */
 	adpt_hppe_debug_port_tx_drop_counter_get(dev_id, show_type, buf, count);
 
-	/* show EG_VSI_COUNTER_TBL */
-	adpt_hppe_debug_eg_vsi_counter_get(dev_id, show_type, buf, count);
-
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
+		adpt_httppe_debug_eg_vsi_counter_get(dev_id, show_type, buf, count);
+
 		adpt_httppe_debug_port_tx_counter_get(dev_id, show_type, buf, count);
 
 		adpt_httppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
@@ -1187,6 +1186,9 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 		adpt_httppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
 #endif
 	} else {
+		/* show EG_VSI_COUNTER_TBL */
+		adpt_hppe_debug_eg_vsi_counter_get(dev_id, show_type, buf, count);
+
 		/* show PORT_TX_COUNTER_TBL */
 		adpt_hppe_debug_port_tx_counter_get(dev_id, show_type, buf, count);
 
