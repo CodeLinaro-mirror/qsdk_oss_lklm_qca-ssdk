@@ -267,6 +267,35 @@ typedef struct {
 	a_uint16_t udf1_mask;
 } fal_flow_key_t;
 
+/* APP entry IP version */
+enum {
+	FAL_FLOW_IP_VER_V4 = 1,
+	FAL_FLOW_IP_VER_V6,
+	FAL_FLOW_IP_VER_V4_OR_V6,
+};
+
+/* APP entry UDP type */
+enum {
+	FAL_FLOW_L4_TYPE_UDP = 1,
+	FAL_FLOW_L4_TYPE_UDP_LITE,
+	FAL_FLOW_L4_TYPE_UDP_OR_UDP_LITE,
+};
+
+/* APP entry port type */
+enum {
+	FAL_FLOW_L4_PORT_TYPE_DST = 1,
+	FAL_FLOW_L4_PORT_TYPE_SRC,
+	FAL_FLOW_L4_PORT_TYPE_DST_OR_SRC,
+};
+
+/* APP entry */
+typedef struct {
+	a_uint8_t ip_ver;        /* 1 ipv4, 2 ipv6, 3 ipv4 or ipv6 */
+	a_uint8_t udp_type;      /* 1 udp, 2 udp-lite, 3 udp or udp-lite*/
+	a_uint8_t l4_port_type;  /* 1 dst port, 2 src port, 3 dst or src port*/
+	a_uint16_t l4_port;      /* l4 port value*/
+} fal_flow_app_entry_t;
+
 typedef enum {
 	FAL_FLOW_EIP_LOOKUP_MODE_TRANSFORM = 0,
 	FAL_FLOW_EIP_LOOKUP_MODE_FLOW,
@@ -419,6 +448,9 @@ fal_flow_fwd_type_set(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_fwd_typ
 sw_error_t
 fal_flow_fwd_type_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_fwd_type_t *fwd_type);
 
+sw_error_t fal_flow_app_entry_add(a_uint32_t dev_id, fal_flow_app_entry_t *entry);
+sw_error_t fal_flow_app_entry_get(a_uint32_t dev_id, fal_flow_app_entry_t *entry);
+sw_error_t fal_flow_app_entry_del(a_uint32_t dev_id, fal_flow_app_entry_t *entry);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

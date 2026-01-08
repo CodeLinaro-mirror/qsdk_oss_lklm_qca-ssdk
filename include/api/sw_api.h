@@ -352,6 +352,7 @@ typedef enum
 	SW_DEST_INFO,
 	SW_AC_DROP_STATE,
 	SW_PT_PPS_CTRL,
+	SW_FLOW_APP,
 /* auto_insert_flag */
 } sw_data_type_e;
 

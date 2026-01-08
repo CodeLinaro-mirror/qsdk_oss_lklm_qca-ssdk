@@ -4337,6 +4337,22 @@ extern "C" {
     SW_PARAM_DEF(SW_API_FLOW_FWD_TYPE_GET, SW_FWD_TYPE, \
 		    sizeof(fal_flow_fwd_type_t), SW_PARAM_PTR|SW_PARAM_OUT, "flow forward type"),
 
+#define SW_API_FLOW_APP_ADD_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_APP_ADD, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_APP_ADD, SW_FLOW_APP, \
+		    sizeof(fal_flow_app_entry_t), SW_PARAM_PTR|SW_PARAM_IN, "Flow APP entry"),
+
+#define SW_API_FLOW_APP_GET_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_APP_GET, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),  \
+    SW_PARAM_DEF(SW_API_FLOW_APP_GET, SW_FLOW_APP, \
+		    sizeof(fal_flow_app_entry_t), SW_PARAM_PTR|SW_PARAM_OUT, "Flow APP entry"),
+
+#define SW_API_FLOW_APP_DEL_DESC \
+    SW_PARAM_DEF(SW_API_FLOW_APP_DEL, SW_UINT32, \
+		    sizeof(a_uint32_t), SW_PARAM_IN, "Dev ID"),
+
 #define SW_API_NAT_ADD_DESC \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),   \
     SW_PARAM_DEF(SW_API_NAT_ADD, SW_NATENTRY, \
