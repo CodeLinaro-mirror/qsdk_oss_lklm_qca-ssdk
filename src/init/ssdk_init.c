@@ -1080,6 +1080,7 @@ static const phy_interface_t mac_interfaces[] = {
 	PHY_INTERFACE_MODE_USXGMII,
 	PHY_INTERFACE_MODE_10GBASER,
 	PHY_INTERFACE_MODE_QUSGMII,
+	PHY_INTERFACE_MODE_25GBASER,
 };
 
 static void ssdk_phylink_mac_config(struct phylink_config *config,
@@ -1196,7 +1197,7 @@ struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 	port_priv->phylink_config.type = PHYLINK_NETDEV;
 	port_priv->phylink_config.mac_capabilities = MAC_ASYM_PAUSE |
 		MAC_SYM_PAUSE | MAC_10 | MAC_100 | MAC_1000 |
-		MAC_2500FD | MAC_5000FD | MAC_10000FD;
+		MAC_2500FD | MAC_5000FD | MAC_10000FD | MAC_25000FD;
 
 	for (i = 0; i < ARRAY_SIZE(mac_interfaces); i++)
 		__set_bit(mac_interfaces[i],
