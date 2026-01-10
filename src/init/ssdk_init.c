@@ -1180,7 +1180,7 @@ struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 	struct device_node *fixed_link = NULL;
 	struct phy_device *phydev = NULL;
 	struct fwnode_handle *fwnode = NULL;
-	bool is_i2c_phy = false;
+	bool is_i2c_phy = false, using_mdio_ahb_bus = false, is_mdio_ahb_phy = false;
 	int i, ret;
 
 	if (!priv || port_id >= SW_MAX_NR_PORT)
@@ -1210,15 +1210,23 @@ struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 
 	fwnode = of_fwnode_handle(port_priv->np);
 
-	/* Check if this is i2c based qca81xx */
-	if (of_find_property(port_priv->np, "i2c-bus", NULL)) {
+	/* Check if this is i2c based qca81xx or mdio ahb phy*/
+	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_AHB_ACCESS)
+		using_mdio_ahb_bus = A_TRUE;
+	if (of_find_property(port_priv->np, "i2c-bus", NULL) || using_mdio_ahb_bus) {
 		hsl_port_phydev_get(dev_id, port_id, &phydev);
-		if (phydev && phydev->is_c45 &&
-			phydev->c45_ids.device_ids[__ffs(phydev->c45_ids.mmds_present)]
-			== QCA8111_PHY) {
+		if (phydev && phydev->is_c45) {
+			fwnode = NULL;
+			if (phydev->c45_ids.device_ids[__ffs(phydev->c45_ids.mmds_present)]
+			== QCA8111_PHY)
 				is_i2c_phy = true;
-				fwnode = NULL;
+			if (using_mdio_ahb_bus) {
+				is_mdio_ahb_phy = true;
+				mutex_lock(&phydev->lock);
+				phydev->interface = port_priv->interface;
+				mutex_unlock(&phydev->lock);
 			}
+		}
 	}
 	/* Create phylink */
 	port_priv->phylink = phylink_create(&port_priv->phylink_config,
@@ -1230,11 +1238,11 @@ struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 		return NULL;
 	}
 
-	/* for i2c based qca81xx */
-	if (is_i2c_phy) {
+	/* for i2c based qca81xx and mdio ahb phy*/
+	if (is_i2c_phy || is_mdio_ahb_phy) {
 		ret = phylink_connect_phy(port_priv->phylink, phydev);
 		if (ret) {
-			SSDK_ERROR("PPE port %d failed to connect i2c PHY, ret %d\n",
+			SSDK_ERROR("PPE port %d failed to connect i2c PHY or ahb PHY, ret %d\n",
 				port_id, ret);
 			goto err_free_phylink;
 		}

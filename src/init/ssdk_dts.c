@@ -32,6 +32,7 @@
 #ifdef MRPPE
 #include <linux/nvmem-consumer.h>
 #endif
+#include "qca-nss-phy/mdio-ahb.h"
 
 static ssdk_dt_global_t ssdk_dt_global = {0};
 #ifdef IN_QOS
@@ -857,6 +858,21 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		phy_addr = 0xff;
 		phy_features = 0;
 		of_property_read_u32(port_node, "phy_address", &phy_addr);
+		if (phy_mode == PHY_INTERFACE_MODE_INTERNAL &&
+			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx")) {
+			struct mii_bus *mdio_ahb_bus = NULL;
+
+			mdio_ahb_bus = mdio_find_bus(MDIO_AHB_BUS_NAME);
+			if (mdio_ahb_bus) {
+				ssdk_miibus_add(dev_id, mdio_ahb_bus, &miibus_index);
+				hsl_port_phy_access_type_set(dev_id, port_id, PHY_AHB_ACCESS);
+				phy_addr = MDIO_AHB_PHY_ADDR;
+				phy_c45 = A_TRUE;
+			} else {
+				SSDK_INFO("IPQ52XX internal PHY on port %d: using default MDIO access\n",
+					port_id);
+			}
+		}
 		hsl_phy_address_init(dev_id, port_id, TO_PHY_ADDR_E(phy_addr, miibus_index));
 		if (!of_property_read_u32(port_node, "forced-speed", &forced_speed) &&
 			!of_property_read_u32(port_node, "forced-duplex", &forced_duplex)) {
@@ -869,8 +885,9 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 			hsl_phy_address_init(dev_id, port_id,
 				TO_PHY_ADDR_E(phy_addr, miibus_index));
 		}
-
-		phy_c45 = of_property_read_bool(port_node, "ethernet-phy-ieee802.3-c45");
+		/* if phy_c45 is A_FALSE, need to get the phy c45 from DTS */
+		if (phy_c45 == A_FALSE)
+			phy_c45 = of_property_read_bool(port_node, "ethernet-phy-ieee802.3-c45");
 		hsl_port_phy_c45_capability_set(dev_id, port_id, phy_c45);
 		phy_combo = of_property_read_bool(port_node, "ethernet-phy-combo");
 		hsl_port_phy_combo_capability_set(dev_id, port_id, phy_combo);

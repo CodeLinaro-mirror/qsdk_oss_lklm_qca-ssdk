@@ -320,6 +320,8 @@ hsl_port_phy_access_type_get(a_uint32_t dev_id, a_uint32_t port_id)
 		return 0;
 	if(hsl_port_feature_get(dev_id, port_id, PHY_F_I2C))
 		return PHY_I2C_ACCESS;
+	if(hsl_port_feature_get(dev_id, port_id, PHY_F_AHB))
+		return PHY_AHB_ACCESS;
 
 	return PHY_MDIO_ACCESS;
 }
@@ -333,8 +335,13 @@ hsl_port_phy_access_type_set(a_uint32_t dev_id, a_uint32_t port_id,
 
 	if(access_type == PHY_I2C_ACCESS)
 		hsl_port_feature_set(dev_id, port_id, PHY_F_I2C);
+	else if (access_type == PHY_AHB_ACCESS)
+		hsl_port_feature_set(dev_id, port_id, PHY_F_AHB);
 	else
-		hsl_port_feature_clear(dev_id, port_id, PHY_F_I2C);
+		/* Clear both I2C and AHB flags as only one PHY access type
+		 * should be active at a time (MDIO, I2C, or AHB).
+		 */
+		hsl_port_feature_clear(dev_id, port_id, PHY_F_I2C | PHY_F_AHB);
 
 	return;
 }

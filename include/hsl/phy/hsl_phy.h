@@ -72,6 +72,7 @@ typedef struct {
 /*qca808x_start*/
 #define PHY_MDIO_ACCESS         0
 #define PHY_I2C_ACCESS          1
+#define PHY_AHB_ACCESS          2
 
 #define INVALID_PHY_ADDR        0xfff
 #define MAX_PHY_ADDR            0xf1f
