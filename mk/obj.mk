@@ -352,6 +352,7 @@ endif
 ifeq (TRUE, $(IN_UNIPHY))
 OBJ-HPPE    += src/hsl/hppe/hppe_uniphy.o src/adpt/hppe/adpt_hppe_uniphy.o
 OBJ-HMSPPE   += src/hsl/hmsppe/hmsppe_uniphy.o src/adpt/hmsppe/adpt_hmsppe_uniphy.o
+OBJ-JHPPE   += src/hsl/jhppe/jhppe_uniphy.o src/adpt/jhppe/adpt_jhppe_uniphy.o
 endif
 
 ###############################################################################

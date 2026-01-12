@@ -104,7 +104,7 @@ void
 adpt_mp_gcc_uniphy_port_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_bool_t enable)
 {
-	enum unphy_rst_type rst_type;
+	enum uniphy_rst_type rst_type;
 
 	if (port_id == SSDK_PHYSICAL_PORT2) {
 		rst_type = UNIPHY1_SOFT_RESET_E;

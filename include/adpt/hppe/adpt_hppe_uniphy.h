@@ -44,6 +44,8 @@ adpt_hppe_port_get_by_uniphy(a_uint32_t dev_id, a_uint32_t uniphy_index,
 a_bool_t
 adpt_hppe_uniphy_usxgmii_port_check(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		a_uint32_t port_id);
+void
+__adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id, a_uint32_t uniphy_index);
 sw_error_t
 __adpt_hppe_uniphy_calibrate(a_uint32_t dev_id, a_uint32_t uniphy_index);
 #ifdef __cplusplus

@@ -44,6 +44,8 @@ extern "C" {
 #define UNIPHY_PORT6_RX_RESET_ID	"uniphy_port6_rx_rst"
 #define UNIPHY_PORT6_TX_RESET_ID	"uniphy_port6_tx_rst"
 #define PON_RESET_ID			"pon_rst"
+#define UNIPHY1_XLGPCS_RESET_ID		"uniphy1_xlgpcs_rst"
+#define UNIPHY2_XLGPCS_RESET_ID		"uniphy2_xlgpcs_rst"
 
 #define SSDK_PORT1_RESET_ID	"nss_port1_rst"
 #define SSDK_PORT2_RESET_ID	"nss_port2_rst"
@@ -82,7 +84,7 @@ enum ssdk_rst_action {
         SSDK_RESET_ASSERT        = 1
 };
 
-enum unphy_rst_type {
+enum uniphy_rst_type {
 	UNIPHY0_SOFT_RESET_E = 0,
 	UNIPHY0_XPCS_RESET_E,
 	UNIPHY1_SOFT_RESET_E,
@@ -115,6 +117,8 @@ enum unphy_rst_type {
 	UNIPHY_PORT6_RX_RESET_E,
 	UNIPHY_PORT6_TX_RESET_E,
 	PON_RESET_E,
+	UNIPHY1_XLGPCS_RESET_E,
+	UNIPHY2_XLGPCS_RESET_E,
 	UNIPHY_RST_MAX
 };
 
@@ -333,6 +337,7 @@ enum mp_bcr_rst_type {
 #define UNIPHY_CLK_RATE_50M         50000000
 #define UNIPHY_CLK_RATE_125M        125000000
 #define UNIPHY_CLK_RATE_312M        312500000
+#define UNIPHY_CLK_RATE_781P25M     781250000
 #define UNIPHY_DEFAULT_RATE         UNIPHY_CLK_RATE_125M
 
 #define PQSGMII_SPEED_10M_CLK       2500000
@@ -367,7 +372,7 @@ enum {
 
 void ssdk_uniphy_reset(
 	a_uint32_t dev_id,
-	enum unphy_rst_type rst_type,
+	enum uniphy_rst_type rst_type,
 	a_uint32_t action);
 
 void ssdk_port_reset(

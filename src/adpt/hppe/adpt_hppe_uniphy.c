@@ -28,6 +28,9 @@
 #if defined(HMSPPE)
 #include "adpt_hmsppe_uniphy.h"
 #endif
+#if defined(JHPPE)
+#include "adpt_jhppe_uniphy.h"
+#endif
 extern void adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id,
 				a_uint32_t port_id, fal_port_speed_t phy_speed);
 
@@ -226,7 +229,11 @@ __adpt_hppe_uniphy_calibrate(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	memset(&uniphy_offset_calib_4, 0, sizeof(uniphy_offset_calib_4));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	/* wait calibration done to uniphy */
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		return adpt_jhppe_uniphy_calibrate(dev_id, uniphy_index);
+#endif
+
 	while (calibration_done != UNIPHY_CALIBRATION_DONE) {
 		mdelay(1);
 		if (retries-- == 0)
@@ -247,7 +254,7 @@ __adpt_hppe_uniphy_calibrate(a_uint32_t dev_id, a_uint32_t uniphy_index)
 void
 __adpt_hppe_gcc_uniphy_xpcs_reset(a_uint32_t dev_id, a_uint32_t uniphy_index, a_bool_t enable)
 {
-	enum unphy_rst_type rst_type;
+	enum uniphy_rst_type rst_type;
 	enum ssdk_rst_action rst_action;
 
 	if (uniphy_index == SSDK_UNIPHY_INSTANCE0)
@@ -394,8 +401,9 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_ENABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -420,6 +428,11 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 
 	/* wait 10g base_r link up */
 	__adpt_hppe_uniphy_10g_r_linkup(dev_id, uniphy_index);
+
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_rxeq_status_check(dev_id, uniphy_index);
+#endif
 
 	/* enable uniphy usxgmii */
 	hppe_vr_xs_pcs_dig_ctrl1_get(dev_id, uniphy_index, &vr_xs_pcs_dig_ctrl1);
@@ -531,8 +544,9 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_ENABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -562,6 +576,10 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	/* wait 10g base_r link up */
 	__adpt_hppe_uniphy_10g_r_linkup(dev_id, uniphy_index);
 
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_rxeq_status_check(dev_id, uniphy_index);
+#endif
 	/* enable uniphy usxgmii */
 	hppe_vr_xs_pcs_dig_ctrl1_get(dev_id, uniphy_index, &vr_xs_pcs_dig_ctrl1);
 	vr_xs_pcs_dig_ctrl1.bf.usxg_en = 1;
@@ -669,8 +687,9 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_ENABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 	if(__adpt_hppe_uniphy_rxlos_check(dev_id, uniphy_index))
@@ -803,8 +822,9 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 	}
 
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -928,8 +948,9 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 	}
 
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -1033,8 +1054,9 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -1093,8 +1115,9 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
@@ -1335,6 +1358,12 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 		case PORT_WRAPPER_XGPON:
 		case PORT_WRAPPER_XGSPON:
 			return adpt_hmsppe_uniphy_pon_mode_set(dev_id, index, mode);
+#endif
+#if defined(JHPPE)
+		case PORT_WRAPPER_25GBASE_R:
+			rv = adpt_jhppe_uniphy_25g_r_mode_set(dev_id, index);
+			clock = UNIPHY_CLK_RATE_781P25M;
+			break;
 #endif
 		default:
 			rv = SW_FAIL;

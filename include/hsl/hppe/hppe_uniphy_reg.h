@@ -149,7 +149,7 @@ struct uniphy_mode_ctrl {
 	a_uint32_t  newaddedfromhere_ch4_ch1_0_sgmii:1;
 	a_uint32_t  newaddedfromhere_sgmii_even_low:1;
 	a_uint32_t  newaddedfromhere_ch0_mode_ctrl_25m:3;
-#if defined(HMSPPE)
+#if defined(JHPPE)
 	a_uint32_t  newaddedfromhere_xpcs_mode_12p5g:1;
 #else
 	a_uint32_t  _reserved0:1;
@@ -160,7 +160,11 @@ struct uniphy_mode_ctrl {
 	a_uint32_t  newaddedfromhere_sgplus_mode:1;
 	a_uint32_t  newaddedfromhere_xpcs_mode:1;
 	a_uint32_t  newaddedfromhere_usxg_en:1;
+#if defined(JHPPE)
+	a_uint32_t  newaddedfromhere_xlgpcs_en:1;
+#else
 	a_uint32_t  _reserved1:1;
+#endif
 	a_uint32_t  newaddedfromhere_sw_v17_v18:1;
 	a_uint32_t  _reserved2:16;
 };
