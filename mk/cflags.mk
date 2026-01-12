@@ -391,6 +391,7 @@ endif
 ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/hmsppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/hmsppe
+  MODULE_INC   += -I$(PRJ_PATH)/include/hsl/jhppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/jhppe
   MODULE_CFLAG += -DJHPPE
   ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
@@ -498,4 +499,3 @@ endif
 #            combine all cflags
 #############################################
 ccflags-y += ${MODULE_INC} ${MODULE_CFLAG} -DFALLTHROUGH -Werror -Wall
-

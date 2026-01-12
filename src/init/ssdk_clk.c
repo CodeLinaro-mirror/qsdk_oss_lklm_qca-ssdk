@@ -1320,7 +1320,7 @@ void ssdk_gcc_reset(struct reset_control *rst, a_uint32_t action)
 
 void ssdk_uniphy_reset(
 	a_uint32_t dev_id,
-	enum unphy_rst_type rst_type,
+	enum uniphy_rst_type rst_type,
 	a_uint32_t action)
 {
 	struct reset_control *rst;
@@ -1541,8 +1541,10 @@ uniphy_clks_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
 	/* add logic for checking the current mode */
 	if (req->rate <= UNIPHY_CLK_RATE_125M)
 		req->rate = UNIPHY_CLK_RATE_125M;
-	else
+	else if (req->rate <= UNIPHY_CLK_RATE_312M)
 		req->rate = UNIPHY_CLK_RATE_312M;
+	else
+		req->rate = UNIPHY_CLK_RATE_781P25M;
 
 	return 0;
 }
@@ -1553,7 +1555,9 @@ uniphy_clks_set_rate(struct clk_hw *hw, unsigned long rate,
 {
 	struct clk_uniphy *uniphy = to_clk_uniphy(hw);
 
-	if (rate != UNIPHY_CLK_RATE_125M && rate != UNIPHY_CLK_RATE_312M)
+	if (rate != UNIPHY_CLK_RATE_125M &&
+		rate != UNIPHY_CLK_RATE_312M &&
+		rate != UNIPHY_CLK_RATE_781P25M)
 		return -1;
 
 	uniphy->rate = rate;
@@ -2006,7 +2010,8 @@ void ssdk_uniphy_raw_clock_set(
 	if ((uniphy_index >= SSDK_MAX_UNIPHY_INSTANCE) ||
 	     ((direction != UNIPHY_TX) && (direction != UNIPHY_RX)) ||
 	     (clock != UNIPHY_CLK_RATE_125M &&
-	      clock != UNIPHY_CLK_RATE_312M)) {
+	      clock != UNIPHY_CLK_RATE_312M &&
+	      clock != UNIPHY_CLK_RATE_781P25M)) {
 		SSDK_ERROR("invalid uniphy: %d or clock: %d\n", uniphy_index, clock);
 		return;
 	}
@@ -2467,6 +2472,8 @@ static char *ppe_rst_ids[UNIPHY_RST_MAX] = {
 	UNIPHY_PORT6_RX_RESET_ID,
 	UNIPHY_PORT6_TX_RESET_ID,
 	PON_RESET_ID,
+	UNIPHY1_XLGPCS_RESET_ID,
+	UNIPHY2_XLGPCS_RESET_ID,
 };
 
 #if defined(HMSPPE)
@@ -2562,14 +2569,14 @@ static void ssdk_gcc_reset_ids_init(struct ssdk_clk_private *priv)
 		priv->port_mac_rsts[i] = devm_reset_control_get_exclusive(priv->dev, port_mac_rst_ids[i]);
 }
 
-enum unphy_rst_type uniphy_sys_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
+enum uniphy_rst_type uniphy_sys_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
 	UNIPHY0_SYS_RESET_E,
 	UNIPHY1_SYS_RESET_E,
 	UNIPHY2_SYS_RESET_E
 };
 
 #if defined(MRPPE)
-enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
+enum uniphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
 	UNIPHY_PORT1_RX_RESET_E,
 	UNIPHY_PORT1_TX_RESET_E,
 	UNIPHY_PORT2_RX_RESET_E,
@@ -2578,14 +2585,14 @@ enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
 	UNIPHY_PORT3_TX_RESET_E
 };
 #elif defined(MPPE)
-enum unphy_rst_type uniphy_soft_rst[SSDK_UNIPHY_INSTANCE2 * 2] = {
+enum uniphy_rst_type uniphy_soft_rst[SSDK_UNIPHY_INSTANCE2 * 2] = {
 	UNIPHY_PORT1_RX_RESET_E,
 	UNIPHY_PORT1_TX_RESET_E,
 	UNIPHY_PORT2_RX_RESET_E,
 	UNIPHY_PORT2_TX_RESET_E
 };
 #else
-enum unphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
+enum uniphy_rst_type uniphy_soft_rst[SSDK_MAX_UNIPHY_INSTANCE] = {
 	UNIPHY0_SOFT_RESET_E,
 	UNIPHY1_SOFT_RESET_E,
 	UNIPHY2_SOFT_RESET_E
@@ -2597,7 +2604,7 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 {
 	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 	a_uint32_t index = 0, uniphy_max = SSDK_UNIPHY_INSTANCE2;
-	enum unphy_rst_type rst_type[SSDK_PHYSICAL_PORT6 * 2] = {UNIPHY_RST_MAX};
+	enum uniphy_rst_type rst_type[SSDK_PHYSICAL_PORT6 * 2] = {UNIPHY_RST_MAX};
 
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq60xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
