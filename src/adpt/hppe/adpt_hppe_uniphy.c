@@ -268,118 +268,12 @@ __adpt_hppe_gcc_uniphy_xpcs_reset(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 }
 
 void
-__adpt_hppe_gcc_uniphy_software_reset(a_uint32_t dev_id, a_uint32_t uniphy_index)
-{
-
-	enum unphy_rst_type rst_type;
-
-	if (uniphy_index == SSDK_UNIPHY_INSTANCE0)
-		rst_type = UNIPHY0_SOFT_RESET_E;
-	else if (uniphy_index == SSDK_UNIPHY_INSTANCE1)
-		rst_type = UNIPHY1_SOFT_RESET_E;
-	else
-		rst_type = UNIPHY2_SOFT_RESET_E;
-
-	ssdk_uniphy_reset(dev_id, rst_type, SSDK_RESET_ASSERT);
-
-	msleep(100);
-
-	ssdk_uniphy_reset(dev_id, rst_type, SSDK_RESET_DEASSERT);
-
-	return;
-}
-
-void
-__adpt_appe_gcc_uniphy_software_reset(a_uint32_t dev_id,
-		a_uint32_t uniphy_index)
-{
-	enum unphy_rst_type rst_type;
-	enum unphy_rst_type sys_type;
-
-	if (uniphy_index == SSDK_UNIPHY_INSTANCE0) {
-		rst_type = UNIPHY0_SOFT_RESET_E;
-		sys_type = UNIPHY0_SYS_RESET_E;
-	} else if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
-		rst_type = UNIPHY1_SOFT_RESET_E;
-		sys_type = UNIPHY1_SYS_RESET_E;
-	} else {
-		rst_type = UNIPHY2_SOFT_RESET_E;
-		sys_type = UNIPHY2_SYS_RESET_E;
-	}
-	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_ASSERT);
-	ssdk_uniphy_reset(dev_id, rst_type, SSDK_RESET_ASSERT);
-	msleep(1);
-	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_DEASSERT);
-	ssdk_uniphy_reset(dev_id, rst_type, SSDK_RESET_DEASSERT);
-
-	return;
-}
-
-#if defined(MPPE)
-void
-__adpt_mppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
-		a_uint32_t uniphy_index)
-{
-	enum unphy_rst_type port_rx_rst_type, port_tx_rst_type;
-	enum unphy_rst_type sys_type;
-
-	switch (uniphy_index) {
-	case SSDK_UNIPHY_INSTANCE0:
-		port_rx_rst_type = UNIPHY_PORT1_RX_RESET_E;
-		port_tx_rst_type = UNIPHY_PORT1_TX_RESET_E;
-		sys_type = UNIPHY0_SYS_RESET_E;
-		break;
-	case SSDK_UNIPHY_INSTANCE1:
-		port_rx_rst_type = UNIPHY_PORT2_RX_RESET_E;
-		port_tx_rst_type = UNIPHY_PORT2_TX_RESET_E;
-		sys_type = UNIPHY1_SYS_RESET_E;
-		break;
-#if defined(MRPPE)
-	case SSDK_UNIPHY_INSTANCE2:
-		port_rx_rst_type = UNIPHY_PORT3_RX_RESET_E;
-		port_tx_rst_type = UNIPHY_PORT3_TX_RESET_E;
-		sys_type = UNIPHY2_SYS_RESET_E;
-		break;
-#endif
-	default:
-		SSDK_ERROR("invalid uniphy index %d\n", uniphy_index);
-		return;
-	}
-
-	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_ASSERT);
-	ssdk_uniphy_reset(dev_id, port_rx_rst_type, SSDK_RESET_ASSERT);
-	ssdk_uniphy_reset(dev_id, port_tx_rst_type, SSDK_RESET_ASSERT);
-	msleep(1);
-	ssdk_uniphy_reset(dev_id, sys_type, SSDK_RESET_DEASSERT);
-	ssdk_uniphy_reset(dev_id, port_rx_rst_type, SSDK_RESET_DEASSERT);
-	ssdk_uniphy_reset(dev_id, port_tx_rst_type, SSDK_RESET_DEASSERT);
-
-	return;
-}
-#endif
-
-void
 __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 		a_uint32_t uniphy_index)
 {
-	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
-
-	switch (ppe_type) {
-	case HPPE_TYPE:
-		__adpt_hppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-		break;
-	case APPE_TYPE:
-		__adpt_appe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-		break;
-#if defined(MPPE)
-	case MPPE_TYPE:
-	case MRPPE_TYPE:
-		__adpt_mppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
-		break;
-#endif
-	default:
-		break;
-	}
+	ssdk_gcc_uniphy_sys_set(dev_id, uniphy_index, A_FALSE);
+	msleep(1);
+	ssdk_gcc_uniphy_sys_set(dev_id, uniphy_index, A_TRUE);
 }
 
 static sw_error_t
