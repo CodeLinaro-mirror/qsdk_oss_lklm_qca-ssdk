@@ -259,6 +259,91 @@ sw_error_t adpt_jhppe_flow_gro_en_set(a_uint32_t dev_id,
 
 	return hppe_eg_flow_tree_map_tbl_set(dev_id, flow_index, &entry);
 }
+
+sw_error_t adpt_jhppe_flow_app_entry_add(a_uint32_t dev_id,
+					 fal_flow_app_entry_t *entry)
+{
+	union app_udp_port_cfg_u udp_config;
+	union nat_t_cfg_u natt_cfg;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(entry);
+
+	aos_mem_zero(&udp_config, sizeof(udp_config));
+	aos_mem_zero(&natt_cfg, sizeof(natt_cfg));
+
+	rv = jhppe_app_udp_port_cfg_get(dev_id, &udp_config);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = jhppe_nat_t_cfg_get(dev_id, &natt_cfg);
+	SW_RTN_ON_ERROR(rv);
+
+	udp_config.bf.ip_ver = entry->ip_ver;
+	udp_config.bf.udp_type = entry->udp_type;
+	udp_config.bf.port_type = entry->l4_port_type;
+	udp_config.bf.port_value = entry->l4_port;
+
+	natt_cfg.bf.app_udp_port_map = 1;
+
+	rv = jhppe_app_udp_port_cfg_set(dev_id, &udp_config);
+	SW_RTN_ON_ERROR(rv);
+
+	return jhppe_nat_t_cfg_set(dev_id, &natt_cfg);
+}
+
+sw_error_t adpt_jhppe_flow_app_entry_get(a_uint32_t dev_id,
+					 fal_flow_app_entry_t *entry)
+{
+	union app_udp_port_cfg_u udp_config;
+	union nat_t_cfg_u natt_cfg;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(entry);
+
+	aos_mem_zero(&udp_config, sizeof(udp_config));
+	aos_mem_zero(&natt_cfg, sizeof(natt_cfg));
+
+	rv = jhppe_app_udp_port_cfg_get(dev_id, &udp_config);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = jhppe_nat_t_cfg_get(dev_id, &natt_cfg);
+	SW_RTN_ON_ERROR(rv);
+
+	if (natt_cfg.bf.app_udp_port_map == 1) {
+		entry->ip_ver = udp_config.bf.ip_ver;
+		entry->udp_type = udp_config.bf.udp_type;
+		entry->l4_port_type = udp_config.bf.port_type;
+		entry->l4_port = udp_config.bf.port_value;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t adpt_jhppe_flow_app_entry_del(a_uint32_t dev_id,
+					 fal_flow_app_entry_t *entry)
+{
+	union app_udp_port_cfg_u udp_config;
+	union nat_t_cfg_u natt_cfg;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(entry);
+
+	aos_mem_zero(&udp_config, sizeof(udp_config));
+	aos_mem_zero(&natt_cfg, sizeof(natt_cfg));
+
+	rv = jhppe_nat_t_cfg_get(dev_id, &natt_cfg);
+	SW_RTN_ON_ERROR(rv);
+
+	natt_cfg.bf.app_udp_port_map = 0;
+
+	rv = jhppe_app_udp_port_cfg_set(dev_id, &udp_config);
+	SW_RTN_ON_ERROR(rv);
+
+	return jhppe_nat_t_cfg_set(dev_id, &natt_cfg);
+}
 /**
  * @}
  */

@@ -2638,6 +2638,9 @@ sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_flow_sampling_id_set = adpt_jhppe_flow_sampling_id_set;
 	p_adpt_api->adpt_flow_gro_en_get = adpt_jhppe_flow_gro_en_get;
 	p_adpt_api->adpt_flow_gro_en_set = adpt_jhppe_flow_gro_en_set;
+	p_adpt_api->adpt_flow_app_entry_add = adpt_jhppe_flow_app_entry_add;
+	p_adpt_api->adpt_flow_app_entry_get = adpt_jhppe_flow_app_entry_get;
+	p_adpt_api->adpt_flow_app_entry_del = adpt_jhppe_flow_app_entry_del;
 #endif
 
 #if defined(MRPPE)

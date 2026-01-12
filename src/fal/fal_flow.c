@@ -130,6 +130,15 @@ sw_error_t fal_flow_fwd_type_set(a_uint32_t dev_id, a_uint32_t flow_index, fal_f
 sw_error_t fal_flow_fwd_type_get(a_uint32_t dev_id, a_uint32_t flow_index, fal_flow_fwd_type_t *fwd_type)
     DEFINE_FAL_FUNC_ADPT_EXPORT(flow_fwd_type_get, dev_id, flow_index, fwd_type)
 
+sw_error_t fal_flow_app_entry_add(a_uint32_t dev_id, fal_flow_app_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_app_entry_add, dev_id, entry)
+
+sw_error_t fal_flow_app_entry_get(a_uint32_t dev_id, fal_flow_app_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_app_entry_get, dev_id, entry)
+
+sw_error_t fal_flow_app_entry_del(a_uint32_t dev_id, fal_flow_app_entry_t *entry)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(flow_app_entry_del, dev_id, entry)
+
 #if !defined(IN_FLOW_MINI)
 sw_error_t fal_flow_age_timer_set(a_uint32_t dev_id, fal_flow_age_timer_t *age_timer)
     DEFINE_FAL_FUNC_ADPT_EXPORT(flow_age_timer_set, dev_id, age_timer)
