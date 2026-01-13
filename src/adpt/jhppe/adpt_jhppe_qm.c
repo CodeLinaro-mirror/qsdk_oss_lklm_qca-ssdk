@@ -22,6 +22,36 @@
 #define ADPT_PPE_MULTIQ_ID_MAPPING_MAX_OFFSET     16
 
 sw_error_t
+adpt_jhppe_qm_ddrq_counter_get(a_uint32_t dev_id,
+			       a_uint32_t queue_id, fal_queue_stats_t *info)
+{
+	union ddrq_byte_cnt_tbl_u byte_reg = {0};
+	union ddrq_pkt_cnt_tbl_u pkt_reg = {0};
+	sw_error_t rv;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(info);
+
+	/* ddrq counter only exist for esram ucast queue id 0~159 */
+	if (queue_id > DDRQ_PKT_CNT_TBL_MAX_ENTRY) {
+		info->ddrq_packets = 0;
+		info->ddrq_bytes = 0;
+		return SW_OK;
+	}
+
+	rv = jhppe_ddrq_pkt_cnt_tbl_get(dev_id, queue_id, &pkt_reg);
+	SW_RTN_ON_ERROR(rv);
+	rv = jhppe_ddrq_byte_cnt_tbl_get(dev_id, queue_id, &byte_reg);
+	SW_RTN_ON_ERROR(rv);
+
+	info->ddrq_packets = pkt_reg.bf.ddrq_pkt_cnt;
+	info->ddrq_bytes =  (a_uint64_t)byte_reg.bf.ddrq_byte_cnt_1 << 32 |
+				(a_uint64_t)byte_reg.bf.ddrq_byte_cnt_0;
+
+	return SW_OK;
+}
+
+sw_error_t
 adpt_jhppe_qm_tcont_set(a_uint32_t dev_id,
 			a_uint32_t queue_id,
 			fal_queue_tcont_cfg_t *cfg)
