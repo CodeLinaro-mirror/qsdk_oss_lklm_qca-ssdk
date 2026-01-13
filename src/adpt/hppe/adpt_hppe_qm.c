@@ -1529,11 +1529,17 @@ adpt_hppe_qm_dequeue_drop_get(
 sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
+	struct qca_phy_priv *priv;
 
 	p_adpt_api = adpt_api_ptr_get(dev_id);
 
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	aos_lock_init(&priv->ppe_qm_lock);
 
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
@@ -1643,11 +1649,15 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 
 #if defined(HTTPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
-		adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
-		adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
-		sw_error_t rv;
-		rv = adpt_httppe_qm_init(dev_id);
-		SW_RTN_ON_ERROR(rv);
+	    adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+	    adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		p_adpt_api->adpt_qm_mcast_enqueue_ctrl_get = adpt_httppe_qm_mcast_enqueue_ctrl_get;
+		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)
+			p_adpt_api->adpt_qm_mcast_enqueue_ctrl_set = adpt_httppe_qm_mcast_enqueue_ctrl_set;
+#if defined(JHPPE)
+		else
+			p_adpt_api->adpt_qm_mcast_enqueue_ctrl_set = adpt_jhppe_qm_mcast_enqueue_ctrl_set;
+#endif
 	}
 #endif
 	return SW_OK;

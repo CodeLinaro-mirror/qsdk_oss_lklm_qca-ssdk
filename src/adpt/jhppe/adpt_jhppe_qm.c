@@ -838,6 +838,86 @@ adpt_jhppe_qm_crosschip_bp_status_get(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+
+sw_error_t
+adpt_jhppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
+				     a_bool_t ucast_enqueue_en)
+{
+	union mc_enq_ctrl_u reg_val, orig_reg_val;
+	union enq_ctrl_u enq_ctrl;
+	struct qca_phy_priv *priv;
+	sw_error_t rv = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
+		return SW_OUT_OF_RANGE;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	aos_lock_bh(&priv->ppe_qm_lock);
+
+	rv = jhppe_mc_enq_ctrl_get(dev_id, &reg_val);
+	if (rv != SW_OK)
+		goto unlock_and_exit;
+
+	/* Save original register value for potential rollback */
+	orig_reg_val = reg_val;
+
+	if (ucast_enqueue_en == A_TRUE) {
+		/* nothing to do if mc_enq_ctrl is enabled on the same port */
+		if (reg_val.bf.uc_enq_en == A_TRUE &&
+		    reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id)) {
+			rv = SW_OK;
+			goto unlock_and_exit;
+		} else {
+			reg_val.bf.uc_enq_en = A_TRUE;
+			reg_val.bf.uc_port_id = FAL_PORT_ID_VALUE(port_id);
+		}
+	} else {
+		/* only need to disable if mc_enq_ctrl is enabled on the same port,
+		 * nothing to do if mc_enq_ctrl is disabled or enabled on another port.
+		 */
+		if (reg_val.bf.uc_enq_en == A_TRUE &&
+		    reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id)) {
+			reg_val.bf.uc_enq_en = A_FALSE;
+		} else {
+			rv = SW_OK;
+			goto unlock_and_exit;
+		}
+	}
+
+	rv = jhppe_enq_ctrl_get(dev_id, &enq_ctrl);
+	if (rv != SW_OK)
+		goto unlock_and_exit;
+
+	if (reg_val.bf.uc_enq_en == A_TRUE &&
+	    reg_val.bf.uc_port_id == SSDK_PHYSICAL_PORT0)
+		enq_ctrl.bf.uc_enq_en = A_TRUE;
+	else
+		enq_ctrl.bf.uc_enq_en = A_FALSE;
+
+	rv = jhppe_mc_enq_ctrl_set(dev_id, &reg_val);
+	if (rv != SW_OK)
+		goto unlock_and_exit;
+
+	rv = jhppe_enq_ctrl_set(dev_id, &enq_ctrl);
+	if (rv != SW_OK) {
+		/* Rollback the first register operation on failure */
+		sw_error_t rollback_rv = jhppe_mc_enq_ctrl_set(dev_id, &orig_reg_val);
+		if (rollback_rv != SW_OK) {
+			/* Log rollback failure - system may be in inconsistent state */
+			SSDK_ERROR("Failed to rollback mc_enq_ctrl register (error: %d), "
+				   "system may be in inconsistent state\n", rollback_rv);
+		}
+		goto unlock_and_exit;
+	}
+
+unlock_and_exit:
+	aos_unlock_bh(&priv->ppe_qm_lock);
+	return rv;
+}
 /**
  * @}
  */
