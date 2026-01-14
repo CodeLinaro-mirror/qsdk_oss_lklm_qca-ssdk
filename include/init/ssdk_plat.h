@@ -450,6 +450,8 @@ struct qca_phy_priv {
 	struct ssdk_module_cnt_priv ssdk_module_cnt;
 	/* Shaper rate tables for multi-device support */
 	ssdk_ppe_shaper_priv_t *shaper_priv;
+	/* PPE qm lock */
+	aos_lock_t ppe_qm_lock;
 /*qca808x_start*/
 };
 

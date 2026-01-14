@@ -77,9 +77,6 @@ adpt_httppe_qm_port_source_profile_get(a_uint32_t dev_id, fal_port_t port,
 		a_uint32_t *src_profile);
 
 sw_error_t
-adpt_httppe_qm_init(a_uint32_t dev_id);
-
-sw_error_t
 adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t ucast_enqueue_en);
 
