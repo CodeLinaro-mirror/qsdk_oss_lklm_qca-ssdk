@@ -22,7 +22,7 @@ extern "C" {
 #define FAL_VPN_ID_FROM_INTF(vpn_id)	(0x20 | (vpn_id))
 #define FAL_VPN_ID_FROM_VSI(vsi)	(0x40 | (vsi))
 #define FAL_VPN_ID_FROM_CASCADE(data)	(0x80 | (data))
-#define FAL_VPN_ID_FROM_VLAN(vid)	(0x100 | (vid))
+#define FAL_VPN_ID_FROM_VLAN(vid)	(0x1000 | (vid))
 #define FAL_VPN_ID_FROM_VLAN_UNTAG	4095
 
 typedef enum {
