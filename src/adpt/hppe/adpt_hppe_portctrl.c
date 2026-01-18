@@ -2099,9 +2099,17 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 			qca_ppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
 			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_25GBASE_R);
 			break;
-		case PORT_WRAPPER_PON_SERDES:
+		case PORT_WRAPPER_GPON:
 			qca_ppe_port_mac_type_set(dev_id, port_id, PORT_PON_MAC_TYPE);
-			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_PON_SERDES);
+			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_GPON);
+			break;
+		case PORT_WRAPPER_XGPON:
+			qca_ppe_port_mac_type_set(dev_id, port_id, PORT_PON_MAC_TYPE);
+			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_XGPON);
+			break;
+		case PORT_WRAPPER_XGSPON:
+			qca_ppe_port_mac_type_set(dev_id, port_id, PORT_PON_MAC_TYPE);
+			_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_XGSPON);
 			break;
 		default:
 			break;
@@ -2372,6 +2380,15 @@ _adpt_hppe_instance1_mode_get(a_uint32_t dev_id, a_uint32_t port_id,  a_uint32_t
 				return SW_NOT_SUPPORTED;
 			}
 			*mode = PORT_WRAPPER_MAX;
+			break;
+		case PORT_GPON:
+			*mode = PORT_WRAPPER_GPON;
+			break;
+		case PORT_XGPON:
+			*mode = PORT_WRAPPER_XGPON;
+			break;
+		case PORT_XGSPON:
+			*mode = PORT_WRAPPER_XGSPON;
 			break;
 		case PORT_INTERFACE_MODE_MAX:
 			*mode = PORT_WRAPPER_MAX;

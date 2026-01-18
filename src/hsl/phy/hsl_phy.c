@@ -784,6 +784,15 @@ a_uint32_t hsl_port_mode_to_uniphy_mode(a_uint32_t dev_id,
 		case PHY_PSGMII_BASET:
 			uniphy_mode = PORT_WRAPPER_PSGMII;
 			break;
+		case PORT_GPON:
+			uniphy_mode = PORT_WRAPPER_GPON;
+			break;
+		case PORT_XGPON:
+			uniphy_mode = PORT_WRAPPER_XGPON;
+			break;
+		case PORT_XGSPON:
+			uniphy_mode = PORT_WRAPPER_XGSPON;
+			break;
 		default:
 			break;
 	}
@@ -830,6 +839,15 @@ a_uint32_t hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
 		case PORT_WRAPPER_UQXGMII:
 		case PORT_WRAPPER_UDXGMII:
 			port_mode = PORT_UQXGMII;
+			break;
+		case PORT_WRAPPER_GPON:
+			port_mode = PORT_GPON;
+			break;
+		case PORT_WRAPPER_XGPON:
+			port_mode = PORT_XGPON;
+			break;
+		case PORT_WRAPPER_XGSPON:
+			port_mode = PORT_XGSPON;
 			break;
 		case PORT_WRAPPER_MAX:
 			port_mode = PORT_INTERFACE_MODE_MAX;

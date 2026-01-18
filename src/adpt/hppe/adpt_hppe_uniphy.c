@@ -2,7 +2,7 @@
  * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
- */ 
+ */
 
 /**
  * @defgroup
@@ -24,6 +24,9 @@
 #include <linux/mdio-bitbang.h>
 #ifdef MHT
 #include "qca-nss-phy/qcom_phy_lib.h"
+#endif
+#if defined(HMSPPE)
+#include "adpt_hmsppe_uniphy.h"
 #endif
 extern void adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id,
 				a_uint32_t port_id, fal_port_speed_t phy_speed);
@@ -1298,6 +1301,12 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 			rv = __adpt_hppe_uniphy_uxgmii_mode_set(dev_id, index, mode);
 			clock = UNIPHY_CLK_RATE_312M;
 			break;
+#if defined(HMSPPE)
+		case PORT_WRAPPER_GPON:
+		case PORT_WRAPPER_XGPON:
+		case PORT_WRAPPER_XGSPON:
+			return adpt_hmsppe_uniphy_pon_mode_set(dev_id, index, mode);
+#endif
 		default:
 			rv = SW_FAIL;
 	}

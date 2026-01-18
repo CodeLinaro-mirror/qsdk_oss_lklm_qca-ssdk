@@ -151,7 +151,9 @@ enum ssdk_port_wrapper_cfg {
 	PORT_WRAPPER_UDXGMII,
 	PORT_WRAPPER_UQXGMII_3CHANNELS, /* for three channels manhattan phy mode*/
 	PORT_WRAPPER_25GBASE_R,
-	PORT_WRAPPER_PON_SERDES, /* PON serdes */
+	PORT_WRAPPER_GPON, /* GPON mode */
+	PORT_WRAPPER_XGPON, /* XGPON mode */
+	PORT_WRAPPER_XGSPON, /* XGSPON mode */
 	PORT_WRAPPER_MAX = 0xFF
 };
 
