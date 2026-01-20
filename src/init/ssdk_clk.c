@@ -2068,7 +2068,7 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 {
 	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 	a_uint32_t index = 0, uniphy_max = SSDK_UNIPHY_INSTANCE2;
-	enum unphy_rst_type rst_type[SSDK_MAX_UNIPHY_INSTANCE * 2] = {UNIPHY_RST_MAX};
+	enum unphy_rst_type rst_type[SSDK_PHYSICAL_PORT6 * 2] = {UNIPHY_RST_MAX};
 
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq60xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx")) {
@@ -2080,6 +2080,34 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		return;
 	}
 
+#if defined(JHPPE)
+	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx") ||
+	    of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx")) {
+		a_uint32_t mode0, mode1;
+		mode0 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE0);
+		mode1 = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE1);
+		if (uniphy_index == SSDK_UNIPHY_INSTANCE0) {
+			int i;
+			for (i = UNIPHY_PORT1_RX_RESET_E; i <= UNIPHY_PORT4_TX_RESET_E; i++)
+				rst_type[index++] = i;
+
+			if (mode1 == PORT_WRAPPER_MAX) {
+				/* uniphy1 is not used, port5 can be reset by uniphy0 */
+				rst_type[index++] = UNIPHY_PORT5_RX_RESET_E;
+				rst_type[index++] = UNIPHY_PORT5_TX_RESET_E;
+			}
+		} else if (uniphy_index == SSDK_UNIPHY_INSTANCE1) {
+			if (mode1 != PORT_WRAPPER_MAX) {
+				/* uniphy1 is used, reset port5 */
+				rst_type[index++] = UNIPHY_PORT5_RX_RESET_E;
+				rst_type[index++] = UNIPHY_PORT5_TX_RESET_E;
+			}
+		} else if (uniphy_index == SSDK_UNIPHY_INSTANCE2) {
+			rst_type[index++] = UNIPHY_PORT6_RX_RESET_E;
+			rst_type[index++] = UNIPHY_PORT6_TX_RESET_E;
+		}
+	} else
+#endif
 #if defined(MPPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
@@ -2115,8 +2143,10 @@ void ssdk_gcc_uniphy_sys_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	}
 
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") ||
-			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
-			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx")) {
+	    of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
+	    of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
+	    of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx") ||
+	    of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx")) {
 		rst_type[index++] = uniphy_sys_rst[uniphy_index];
 	}
 
