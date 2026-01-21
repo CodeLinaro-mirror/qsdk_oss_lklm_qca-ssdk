@@ -134,6 +134,8 @@ typedef struct {
 	a_uint32_t pending_buff_num;
 	a_uint32_t drop_packets[FAL_QM_DROP_ITEMS];
 	a_uint64_t drop_bytes[FAL_QM_DROP_ITEMS];
+	a_uint32_t ddrq_packets;
+	a_uint64_t ddrq_bytes;
 } fal_queue_stats_t;
 
 typedef enum {

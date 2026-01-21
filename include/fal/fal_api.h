@@ -2021,7 +2021,10 @@ extern "C" {
     SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_GET, fal_flow_eip_lookup_mode_get), \
     SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, fal_flow_eip_lookup_mode_set), \
     SW_API_DEF(SW_API_FLOW_FWD_TYPE_SET, fal_flow_fwd_type_set), \
-    SW_API_DEF(SW_API_FLOW_FWD_TYPE_GET, fal_flow_fwd_type_get),
+    SW_API_DEF(SW_API_FLOW_FWD_TYPE_GET, fal_flow_fwd_type_get), \
+    SW_API_DEF(SW_API_FLOW_APP_ADD, fal_flow_app_entry_add), \
+    SW_API_DEF(SW_API_FLOW_APP_GET, fal_flow_app_entry_get), \
+    SW_API_DEF(SW_API_FLOW_APP_DEL, fal_flow_app_entry_del),
 
 #define FLOW_API_PARAM \
     SW_API_DESC(SW_API_FLOW_STATUS_SET) \
@@ -2063,7 +2066,10 @@ extern "C" {
     SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_GET) \
     SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_SET) \
     SW_API_DESC(SW_API_FLOW_FWD_TYPE_SET) \
-    SW_API_DESC(SW_API_FLOW_FWD_TYPE_GET)
+    SW_API_DESC(SW_API_FLOW_FWD_TYPE_GET) \
+    SW_API_DESC(SW_API_FLOW_APP_ADD) \
+    SW_API_DESC(SW_API_FLOW_APP_GET) \
+    SW_API_DESC(SW_API_FLOW_APP_DEL)
 
 #else
 #define FLOW_API \
@@ -2104,7 +2110,10 @@ extern "C" {
     SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_GET, fal_flow_eip_lookup_mode_get), \
     SW_API_DEF(SW_API_FLOW_EIP_LOOKUP_MODE_SET, fal_flow_eip_lookup_mode_set), \
     SW_API_DEF(SW_API_FLOW_FWD_TYPE_SET, fal_flow_fwd_type_set), \
-    SW_API_DEF(SW_API_FLOW_FWD_TYPE_GET, fal_flow_fwd_type_get),
+    SW_API_DEF(SW_API_FLOW_FWD_TYPE_GET, fal_flow_fwd_type_get), \
+    SW_API_DEF(SW_API_FLOW_APP_ADD, fal_flow_app_entry_add), \
+    SW_API_DEF(SW_API_FLOW_APP_GET, fal_flow_app_entry_get), \
+    SW_API_DEF(SW_API_FLOW_APP_DEL, fal_flow_app_entry_del),
 
 #define FLOW_API_PARAM \
     SW_API_DESC(SW_API_FLOW_STATUS_SET) \
@@ -2144,7 +2153,10 @@ extern "C" {
     SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_GET) \
     SW_API_DESC(SW_API_FLOW_EIP_LOOKUP_MODE_SET) \
     SW_API_DESC(SW_API_FLOW_FWD_TYPE_SET) \
-    SW_API_DESC(SW_API_FLOW_FWD_TYPE_GET)
+    SW_API_DESC(SW_API_FLOW_FWD_TYPE_GET) \
+    SW_API_DESC(SW_API_FLOW_APP_ADD) \
+    SW_API_DESC(SW_API_FLOW_APP_GET) \
+    SW_API_DESC(SW_API_FLOW_APP_DEL)
 #endif
 #else
 #define FLOW_API

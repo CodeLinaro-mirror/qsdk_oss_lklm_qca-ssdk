@@ -222,6 +222,7 @@ enum {
 	QCA_PHY_F_SFP_SGMII_BIT,
 	QCA_PHY_F_FORCE_INTERFACE_MODE_BIT,
 	QCA_PHY_F_ERP_LOW_POWER_BIT,
+	QCA_PHY_F_AHB_BIT,
 	QCA_PHY_FEATURE_MAX
 };
 
@@ -240,6 +241,7 @@ enum {
 #define PHY_F_SFP_SGMII               _PHY_F(SFP_SGMII)
 #define PHY_F_FORCE_INTERFACE_MODE    _PHY_F(FORCE_INTERFACE_MODE)
 #define PHY_F_ERP_LOW_POWER           _PHY_F(ERP_LOW_POWER)
+#define PHY_F_AHB                     _PHY_F(AHB)
 
 typedef struct
 {

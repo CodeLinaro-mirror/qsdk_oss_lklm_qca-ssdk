@@ -1334,6 +1334,10 @@ adpt_hppe_queue_counter_get(a_uint32_t dev_id, a_uint32_t queue_id, fal_queue_st
 			info->drop_bytes[i] = (a_uint64_t)uni_drop_cnt.bf.uni_drop_byte_0 |
 					(a_uint64_t)uni_drop_cnt.bf.uni_drop_byte_1 <<32;
 		}
+#if defined(JHPPE)
+		rv = adpt_jhppe_qm_ddrq_counter_get(dev_id, queue_id, info);
+		SW_RTN_ON_ERROR(rv);
+#endif
 	}
 	info->tx_packets = tx_cnt.bf.tx_packets;
 	info->tx_bytes = (a_uint64_t)tx_cnt.bf.tx_bytes_0 | (a_uint64_t)tx_cnt.bf.tx_bytes_1 << 32;

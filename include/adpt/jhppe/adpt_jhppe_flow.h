@@ -37,6 +37,15 @@ sw_error_t adpt_jhppe_flow_gro_en_get(a_uint32_t dev_id,
 sw_error_t adpt_jhppe_flow_gro_en_set(a_uint32_t dev_id,
 				      a_uint32_t flow_index,
 				      a_bool_t enable);
+
+sw_error_t adpt_jhppe_flow_app_entry_add(a_uint32_t dev_id,
+					 fal_flow_app_entry_t *entry);
+
+sw_error_t adpt_jhppe_flow_app_entry_get(a_uint32_t dev_id,
+					 fal_flow_app_entry_t *entry);
+
+sw_error_t adpt_jhppe_flow_app_entry_del(a_uint32_t dev_id,
+					 fal_flow_app_entry_t *entry);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
