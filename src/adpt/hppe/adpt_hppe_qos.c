@@ -649,6 +649,7 @@ adpt_hppe_port_scheduler_resource_get(a_uint32_t dev_id,
 	cfg->l1cdrr_num = port_resource->l1cdrr_end - port_resource->l1cdrr_start + 1;
 	cfg->l1edrr_start = port_resource->l1edrr_start;
 	cfg->l1edrr_num = port_resource->l1edrr_end - port_resource->l1edrr_start + 1;
+	cfg->max_pri = port_resource->max_pri;
 
 	return SW_OK;
 }
