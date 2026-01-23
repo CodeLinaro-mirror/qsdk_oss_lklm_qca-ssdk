@@ -1256,6 +1256,9 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 				ssdk_dt_priv->pcie_hw_base);
 	} else {
 		ssdk_dt_priv->switch_reg_access_mode = HSL_REG_MDIO;
+		reg_cfg = of_get_property(switch_node, "reg", &len);
+		if(reg_cfg)
+			ssdk_dt_priv->switchreg_base_addr = be32_to_cpup(reg_cfg);
 	}
 
 	return SW_OK;
