@@ -1836,7 +1836,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 				chip_ver = QCA_VER_MHT;
 				break;
 			case QCE1204_PHY:
-				chip_ver = CHIP_HTTPPE;
+				chip_ver = QCA_VER_HTTPPE;
 				break;
 			case QCA8337_PHY_V4:
 				chip_ver = QCA_VER_AR8337;

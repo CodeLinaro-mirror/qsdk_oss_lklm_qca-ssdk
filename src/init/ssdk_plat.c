@@ -439,53 +439,6 @@ int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint3
 	return 0;
 }
 
-a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
-{
-	a_uint32_t val = 0xffffffff;
-	struct mii_bus *bus = NULL;
-
-	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
-	if (!bus)
-		return val;
-
-	mutex_lock(&bus->mdio_lock);
-	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
-		qca_mii_raw_read(bus, reg, &val);
-	mutex_unlock(&bus->mdio_lock);
-
-	return val;
-}
-
-void qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
-{
-	struct mii_bus *bus = NULL;
-
-	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
-	if (!bus)
-		return;
-
-	mutex_lock(&bus->mdio_lock);
-	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
-		qca_mii_raw_write(bus, reg, val);
-	mutex_unlock(&bus->mdio_lock);
-}
-
-int qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_t val)
-{
-	struct mii_bus *bus = NULL;
-
-	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
-	if (!bus)
-		return -1;
-
-	mutex_lock(&bus->mdio_lock);
-	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
-		qca_mii_raw_update(bus, reg, mask, val);
-	mutex_unlock(&bus->mdio_lock);
-
-	return 0;
-}
-
 /* QCE2204 MDIO access functions - reuse from DSA driver pattern */
 static inline void qce2204_split_addr(u32 regaddr, u16 *reg_low, u16 *reg_mid,
 				       u16 *reg_high)
@@ -551,6 +504,72 @@ static int qce2204_ahb_write(struct mii_bus *bus, int addr, u32 reg, u32 val)
 	mutex_unlock(&bus->mdio_lock);
 
 	return ret;
+}
+
+a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
+{
+	a_uint32_t val = 0xffffffff;
+	struct mii_bus *bus = NULL;
+
+	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+	if (!bus)
+		return val;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
+		ssdk_reg_map_info map;
+
+		ssdk_switch_reg_map_info_get(dev_id, &map);
+		qce2204_ahb_read(bus, map.base_addr, reg, &val);
+
+		return val;
+	}
+
+	mutex_lock(&bus->mdio_lock);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_read(bus, reg, &val);
+	mutex_unlock(&bus->mdio_lock);
+
+	return val;
+}
+
+void qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
+{
+	struct mii_bus *bus = NULL;
+
+	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+	if (!bus)
+		return;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
+		ssdk_reg_map_info map;
+
+		ssdk_switch_reg_map_info_get(dev_id, &map);
+		qce2204_ahb_write(bus, map.base_addr, reg, val);
+
+		return;
+	}
+
+	mutex_lock(&bus->mdio_lock);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_write(bus, reg, val);
+
+	mutex_unlock(&bus->mdio_lock);
+}
+
+int qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_t val)
+{
+	struct mii_bus *bus = NULL;
+
+	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
+	if (!bus)
+		return -1;
+
+	mutex_lock(&bus->mdio_lock);
+	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
+		qca_mii_raw_update(bus, reg, mask, val);
+	mutex_unlock(&bus->mdio_lock);
+
+	return 0;
 }
 
 #if defined(SSDK_PCIE_BUS)
