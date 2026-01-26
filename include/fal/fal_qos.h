@@ -109,6 +109,7 @@ typedef struct {
 	a_uint16_t l1cdrr_num;
 	a_uint16_t l1edrr_start;
 	a_uint16_t l1edrr_num;
+	a_uint16_t max_pri;
 } fal_portscheduler_resource_t;
 
 typedef struct {
