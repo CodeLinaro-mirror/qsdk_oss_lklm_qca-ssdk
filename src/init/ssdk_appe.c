@@ -1023,9 +1023,9 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 	}
 #endif
 	for(i = SSDK_PHYSICAL_PORT1; i < priv->ports_num; i++) {
-		mac_type_org = qca_hppe_port_mac_type_get(dev_id, i);
+		mac_type_org = qca_ppe_port_mac_type_get(dev_id, i);
 		for(mac_type = PORT_GMAC_TYPE; mac_type <= PORT_XGMAC_TYPE; mac_type++) {
-			qca_hppe_port_mac_type_set(dev_id, i, mac_type);
+			qca_ppe_port_mac_type_set(dev_id, i, mac_type);
 			fal_port_txmac_status_set(dev_id, i, A_FALSE);
 			fal_port_rxmac_status_set(dev_id, i, A_FALSE);
 			fal_port_rxfc_status_set(dev_id, i, A_TRUE);
@@ -1033,7 +1033,7 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 			fal_port_max_frame_size_set(dev_id, i, SSDK_MAX_FRAME_SIZE_12K);
 			ssdk_port_eee_init(dev_id, i);
 		}
-		qca_hppe_port_mac_type_set(dev_id, i, mac_type_org);
+		qca_ppe_port_mac_type_set(dev_id, i, mac_type_org);
 		qca_mac_port_status_init(dev_id, i);
 #ifdef IN_LED
 		ssdk_led_init(dev_id, i);
