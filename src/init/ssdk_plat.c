@@ -516,10 +516,9 @@ a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
 		return val;
 
 	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
-		ssdk_reg_map_info map;
+		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
 
-		ssdk_switch_reg_map_info_get(dev_id, &map);
-		qce2204_ahb_read(bus, map.base_addr, reg, &val);
+		qce2204_ahb_read(bus, addr, reg, &val);
 
 		return val;
 	}
@@ -541,10 +540,9 @@ void qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
 		return;
 
 	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
-		ssdk_reg_map_info map;
+		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
 
-		ssdk_switch_reg_map_info_get(dev_id, &map);
-		qce2204_ahb_write(bus, map.base_addr, reg, val);
+		qce2204_ahb_write(bus, addr, reg, val);
 
 		return;
 	}
