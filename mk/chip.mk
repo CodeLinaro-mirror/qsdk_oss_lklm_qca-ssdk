@@ -42,7 +42,13 @@ ifeq ($(MHT_ENABLE), enable)
     SUPPORT_CHIP += MHT ISISC
 endif
 
+#SoC platform plus HTTPPE combination compiling
 ifeq ($(HTTPPE_ENABLE), enable)
+    SUPPORT_CHIP += HTTPPE
+endif
+
+#standalone HTTPPE compiling
+ifeq (HTTPPE, $(CHIP_TYPE))
     SUPPORT_CHIP += HTTPPE
 endif
 

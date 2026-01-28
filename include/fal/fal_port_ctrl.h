@@ -20,9 +20,8 @@ extern "c" {
 #include "sw.h"
 #include "fal/fal_type.h"
 #include <linux/phy.h>
-#ifdef ISISC
 #include "fal_port_ctrl_legacy.h"
-#endif
+
 	typedef enum {
 		FAL_HALF_DUPLEX = 0,
 		FAL_FULL_DUPLEX,

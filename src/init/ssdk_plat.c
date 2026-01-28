@@ -439,6 +439,73 @@ int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint3
 	return 0;
 }
 
+/* QCE2204 MDIO access functions - reuse from DSA driver pattern */
+static inline void qce2204_split_addr(u32 regaddr, u16 *reg_low, u16 *reg_mid,
+				       u16 *reg_high)
+{
+	/* bit2 is 1 for writing/reading high byte data[31, 16],
+	 * bit2 is 0 for writing/reading low byte data[15, 0].
+	 */
+	*reg_low = FIELD_GET(GENMASK(3, 0), regaddr);
+	*reg_low &= 0xc;
+	*reg_low <<= 1;
+
+	*reg_mid = FIELD_GET(GENMASK(19, 4), regaddr);
+
+	*reg_high = FIELD_GET(GENMASK(23, 20), regaddr);
+	*reg_high <<= 1;
+	*reg_high |= BIT(0);
+}
+
+static int qce2204_ahb_read(struct mii_bus *bus, int addr, u32 reg, u32 *val)
+{
+	u16 reg_low, reg_mid, reg_high;
+	int ret, data;
+
+	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
+
+	mutex_lock(&bus->mdio_lock);
+	/* write ahb address bit4~bit23 */
+	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
+	usleep_range(100, 200);
+
+	/* write ahb address bit0~bit3 and read low 16bit data */
+	ret = __mdiobus_read(bus, addr, reg_low);
+	if (ret >= 0) {
+		data = ret;
+		/* write ahb address bit0~bit3 and read high 16 bit data */
+		ret = __mdiobus_read(bus, addr, (reg_low | BIT(2)));
+		if (ret >= 0)
+			*val = data | ret << 16;
+	}
+	mutex_unlock(&bus->mdio_lock);
+
+	return ret < 0 ? ret : 0;
+}
+
+static int qce2204_ahb_write(struct mii_bus *bus, int addr, u32 reg, u32 val)
+{
+	u16 reg_low, reg_mid, reg_high;
+	int ret;
+
+	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
+
+	mutex_lock(&bus->mdio_lock);
+	/* write ahb address bit4~bit23 */
+	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
+	usleep_range(100, 200);
+
+	/* write ahb address bit0~bit3 and write low 16 bit data */
+	ret = __mdiobus_write(bus, addr, reg_low, lower_16_bits(val));
+	/* write ahb address bit0~bit3 and write high 16 bit data */
+	if (!ret)
+		ret = __mdiobus_write(bus, addr, (reg_low | BIT(2)), upper_16_bits(val));
+
+	mutex_unlock(&bus->mdio_lock);
+
+	return ret;
+}
+
 a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
 {
 	a_uint32_t val = 0xffffffff;
@@ -447,6 +514,15 @@ a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
 	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
 	if (!bus)
 		return val;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
+		ssdk_reg_map_info map;
+
+		ssdk_switch_reg_map_info_get(dev_id, &map);
+		qce2204_ahb_read(bus, map.base_addr, reg, &val);
+
+		return val;
+	}
 
 	mutex_lock(&bus->mdio_lock);
 	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
@@ -464,9 +540,19 @@ void qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
 	if (!bus)
 		return;
 
+	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
+		ssdk_reg_map_info map;
+
+		ssdk_switch_reg_map_info_get(dev_id, &map);
+		qce2204_ahb_write(bus, map.base_addr, reg, val);
+
+		return;
+	}
+
 	mutex_lock(&bus->mdio_lock);
 	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
 		qca_mii_raw_write(bus, reg, val);
+
 	mutex_unlock(&bus->mdio_lock);
 }
 
@@ -512,7 +598,14 @@ qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data
 #endif
 	} else
 #endif
-		reg_val = readl(qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+		if (HSL_REG_MDIO == ssdk_switch_reg_access_mode_get(dev_id)) {
+			struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
+			ssdk_reg_map_info map;
+
+			ssdk_switch_reg_map_info_get(dev_id, &map);
+			qce2204_ahb_read(bus, map.base_addr, reg_addr, &reg_val);
+		} else
+			reg_val = readl(qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
 
 	aos_mem_copy(reg_data, &reg_val, sizeof (a_uint32_t));
 	return 0;
@@ -540,7 +633,15 @@ qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_dat
 #endif
 	} else
 #endif
-		writel(reg_val, qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+		if (HSL_REG_MDIO == ssdk_switch_reg_access_mode_get(dev_id)) {
+			struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
+			ssdk_reg_map_info map;
+
+			ssdk_switch_reg_map_info_get(dev_id, &map);
+			qce2204_ahb_write(bus, map.base_addr, reg_addr, reg_val);
+		} else
+			writel(reg_val, qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+
 	return 0;
 }
 
@@ -1353,6 +1454,7 @@ a_bool_t ssdk_switch_enable_dsa(a_uint32_t dev_id)
 }
 #endif
 
+#ifdef ISISC
 static ssize_t ssdk_eth_switch_get(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -1408,7 +1510,7 @@ static ssize_t ssdk_eth_switch_get(struct device *dev,
 
 	return len;
 }
-
+#endif
 static ssize_t ssdk_mac_polling_set(struct device *dev,
 				    struct device_attribute *attr,
 				    const char *buf, size_t count)
@@ -1505,8 +1607,10 @@ static const struct device_attribute ssdk_phy_write_reg_attr =
 	__ATTR(phy_write_reg, 0660, NULL, ssdk_phy_write_reg_set);
 static const struct device_attribute ssdk_phy_read_reg_attr =
 	__ATTR(phy_read_reg, 0660, ssdk_phy_read_reg_get, ssdk_phy_read_reg_set);
+#ifdef ISISC
 static const struct device_attribute ssdk_eth_switch_attr =
 	__ATTR(eth_switch, 0660, ssdk_eth_switch_get, NULL);
+#endif
 static const struct device_attribute ssdk_mac_polling_attr =
 	__ATTR(mac_polling, 0660, NULL, ssdk_mac_polling_set);
 static const struct device_attribute ssdk_module_debug_stats_attr =
@@ -1573,14 +1677,14 @@ int ssdk_sysfs_init (void)
 		printk("Failed to register SSDK phy read reg file\n");
 		goto CLEANUP_7;
 	}
-
+#ifdef ISISC
 	/* create /sys/ssdk/switch_external*/
 	ret = sysfs_create_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 	if (ret) {
 		printk("Failed to register switch_external file\n");
 		goto CLEANUP_8;
 	}
-
+#endif
 	/* create /sys/ssdk/mac_polling */
 	ret = sysfs_create_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 	if (ret) {
@@ -1600,8 +1704,10 @@ int ssdk_sysfs_init (void)
 CLEANUP_10:
 	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 CLEANUP_9:
+#ifdef ISISC
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
 CLEANUP_8:
+#endif
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_read_reg_attr.attr);
 CLEANUP_7:
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_write_reg_attr.attr);
@@ -1630,7 +1736,9 @@ void ssdk_sysfs_exit (void)
 	sysfs_remove_file(ssdk_sys, &ssdk_packet_counter_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_log_level_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dev_id_attr.attr);
+#ifdef ISISC
 	sysfs_remove_file(ssdk_sys, &ssdk_eth_switch_attr.attr);
+#endif
 	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_module_debug_stats_attr.attr);
 	kobject_put(ssdk_sys);

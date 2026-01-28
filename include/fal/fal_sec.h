@@ -18,9 +18,7 @@ extern "C" {
 #include "sw.h"
 #include "fal/fal_type.h"
 #include "fal_tunnel.h"
-#ifdef ISISC
 #include "fal_sec_legacy.h"
-#endif
 
 /* Exception: L2 */
 #define FAL_SEC_EXP_UNKNOWN_L2_PROT                  0

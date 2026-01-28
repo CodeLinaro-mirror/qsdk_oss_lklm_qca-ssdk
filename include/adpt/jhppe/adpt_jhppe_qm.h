@@ -135,6 +135,9 @@ adpt_jhppe_qm_crosschip_bp_qmap_get(a_uint32_t dev_id, a_uint32_t lp_qid,
 sw_error_t
 adpt_jhppe_qm_crosschip_bp_status_get(a_uint32_t dev_id,
 			       fal_bp_queue_bmp_t *queue_bmp);
+sw_error_t
+adpt_jhppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
+				     a_bool_t ucast_enqueue_en);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

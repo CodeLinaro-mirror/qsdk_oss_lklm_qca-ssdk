@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: ISC
  */
 
-
 /*qca808x_start*/
 #ifndef _FAL_API_H_
 #define _FAL_API_H_
@@ -27,8 +26,6 @@ extern "C" {
     SW_API_DEF(SW_API_PT_AN_ADV_GET, fal_port_autoneg_adv_get), \
     SW_API_DEF(SW_API_PT_AN_ADV_SET, fal_port_autoneg_adv_set), \
 /*qca808x_end*/\
-    SW_API_DEF(SW_API_PT_HDR_SET, fal_port_hdr_status_set), \
-    SW_API_DEF(SW_API_PT_HDR_GET, fal_port_hdr_status_get), \
     SW_API_DEF(SW_API_PT_FLOWCTRL_SET, fal_port_flowctrl_set), \
     SW_API_DEF(SW_API_PT_FLOWCTRL_GET, fal_port_flowctrl_get), \
     SW_API_DEF(SW_API_PT_FLOWCTRL_MODE_SET, fal_port_flowctrl_forcemode_set), \
@@ -40,12 +37,6 @@ extern "C" {
     SW_API_DEF(SW_API_PT_HIBERNATE_GET, fal_port_hibernate_get), \
     SW_API_DEF(SW_API_PT_CDT, fal_port_cdt),  \
 /*qca808x_end*/\
-    SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
-    SW_API_DEF(SW_API_PT_TXHDR_GET, fal_port_txhdr_mode_get), \
-    SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
-    SW_API_DEF(SW_API_PT_RXHDR_GET, fal_port_rxhdr_mode_get), \
-    SW_API_DEF(SW_API_HEADER_TYPE_SET, fal_header_type_set),  \
-    SW_API_DEF(SW_API_HEADER_TYPE_GET, fal_header_type_get),  \
     SW_API_DEF(SW_API_TXMAC_STATUS_SET, fal_port_txmac_status_set), \
     SW_API_DEF(SW_API_TXMAC_STATUS_GET, fal_port_txmac_status_get), \
     SW_API_DEF(SW_API_RXMAC_STATUS_SET, fal_port_rxmac_status_set), \
@@ -54,23 +45,14 @@ extern "C" {
     SW_API_DEF(SW_API_TXFC_STATUS_GET, fal_port_txfc_status_get),   \
     SW_API_DEF(SW_API_RXFC_STATUS_SET, fal_port_rxfc_status_set),   \
     SW_API_DEF(SW_API_RXFC_STATUS_GET, fal_port_rxfc_status_get),   \
-    SW_API_DEF(SW_API_BP_STATUS_SET, fal_port_bp_status_set),   \
-    SW_API_DEF(SW_API_BP_STATUS_GET, fal_port_bp_status_get),   \
-    SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set),   \
-    SW_API_DEF(SW_API_PT_LINK_MODE_GET, fal_port_link_forcemode_get), \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_PT_LINK_STATUS_GET, fal_port_link_status_get), \
 /*qca808x_end*/\
     SW_API_DEF(SW_API_PT_MAC_LOOPBACK_SET, fal_port_mac_loopback_set), \
     SW_API_DEF(SW_API_PT_MAC_LOOPBACK_GET, fal_port_mac_loopback_get), \
     SW_API_DEF(SW_API_PTS_LINK_STATUS_GET, fal_ports_link_status_get), \
-    SW_API_DEF(SW_API_PT_CONGESTION_DROP_SET, fal_port_congestion_drop_set), \
-    SW_API_DEF(SW_API_PT_CONGESTION_DROP_GET, fal_port_congestion_drop_get), \
     SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_SET, fal_vch_bp_thres_set), \
     SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_GET, fal_vch_bp_thres_get), \
-    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_STATUS_GET, fal_vch_bp_status_get), \
-    SW_API_DEF(SW_API_PT_RING_UNION_SET, fal_ring_union_set), \
-    SW_API_DEF(SW_API_PT_RING_UNION_GET, fal_ring_union_get), \
     SW_API_DEF(SW_API_PT_FLOW_CTRL_THRES_SET, fal_port_flow_ctrl_thres_set), \
     SW_API_DEF(SW_API_PT_FLOW_CTRL_THRES_GET, fal_port_flow_ctrl_thres_get), \
     SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_SET, fal_vch_bp_config_set), \
@@ -160,8 +142,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_AN_ADV_GET) \
     SW_API_DESC(SW_API_PT_AN_ADV_SET) \
 /*qca808x_end*/\
-    SW_API_DESC(SW_API_PT_HDR_SET) \
-    SW_API_DESC(SW_API_PT_HDR_GET) \
     SW_API_DESC(SW_API_PT_FLOWCTRL_SET) \
     SW_API_DESC(SW_API_PT_FLOWCTRL_GET) \
     SW_API_DESC(SW_API_PT_FLOWCTRL_MODE_SET) \
@@ -173,12 +153,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_HIBERNATE_GET) \
     SW_API_DESC(SW_API_PT_CDT) \
 /*qca808x_end*/\
-    SW_API_DESC(SW_API_PT_TXHDR_SET) \
-    SW_API_DESC(SW_API_PT_TXHDR_GET) \
-    SW_API_DESC(SW_API_PT_RXHDR_SET) \
-    SW_API_DESC(SW_API_PT_RXHDR_GET) \
-    SW_API_DESC(SW_API_HEADER_TYPE_SET) \
-    SW_API_DESC(SW_API_HEADER_TYPE_GET) \
     SW_API_DESC(SW_API_TXMAC_STATUS_SET) \
     SW_API_DESC(SW_API_TXMAC_STATUS_GET) \
     SW_API_DESC(SW_API_RXMAC_STATUS_SET) \
@@ -187,23 +161,14 @@ extern "C" {
     SW_API_DESC(SW_API_TXFC_STATUS_GET) \
     SW_API_DESC(SW_API_RXFC_STATUS_SET) \
     SW_API_DESC(SW_API_RXFC_STATUS_GET) \
-    SW_API_DESC(SW_API_BP_STATUS_SET) \
-    SW_API_DESC(SW_API_BP_STATUS_GET) \
-    SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
-    SW_API_DESC(SW_API_PT_LINK_MODE_GET) \
 /*qca808x_start*/\
     SW_API_DESC(SW_API_PT_LINK_STATUS_GET) \
 /*qca808x_end*/\
     SW_API_DESC(SW_API_PT_MAC_LOOPBACK_SET) \
     SW_API_DESC(SW_API_PT_MAC_LOOPBACK_GET) \
     SW_API_DESC(SW_API_PTS_LINK_STATUS_GET) \
-    SW_API_DESC(SW_API_PT_CONGESTION_DROP_SET) \
-    SW_API_DESC(SW_API_PT_CONGESTION_DROP_GET) \
     SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_THRES_SET) \
     SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_THRES_GET) \
-    SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_STATUS_GET) \
-    SW_API_DESC(SW_API_PT_RING_UNION_SET) \
-    SW_API_DESC(SW_API_PT_RING_UNION_GET) \
     SW_API_DESC(SW_API_PT_FLOW_CTRL_THRES_SET) \
     SW_API_DESC(SW_API_PT_FLOW_CTRL_THRES_GET) \
     SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_SET) \
@@ -298,10 +263,6 @@ extern "C" {
     SW_API_DEF(SW_API_PT_FLOWCTRL_GET, fal_port_flowctrl_get), \
     SW_API_DEF(SW_API_PT_FLOWCTRL_MODE_SET, fal_port_flowctrl_forcemode_set), \
     SW_API_DEF(SW_API_PT_FLOWCTRL_MODE_GET, fal_port_flowctrl_forcemode_get), \
-    SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set), \
-    SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
-    SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
-    SW_API_DEF(SW_API_HEADER_TYPE_SET, fal_header_type_set), \
     SW_API_DEF(SW_API_TXMAC_STATUS_SET, fal_port_txmac_status_set), \
     SW_API_DEF(SW_API_RXMAC_STATUS_SET, fal_port_rxmac_status_set), \
     SW_API_DEF(SW_API_PT_POWER_OFF, fal_port_power_off), \
@@ -359,10 +320,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_FLOWCTRL_GET) \
     SW_API_DESC(SW_API_PT_FLOWCTRL_MODE_SET) \
     SW_API_DESC(SW_API_PT_FLOWCTRL_MODE_GET) \
-    SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
-    SW_API_DESC(SW_API_PT_TXHDR_SET) \
-    SW_API_DESC(SW_API_PT_RXHDR_SET) \
-    SW_API_DESC(SW_API_HEADER_TYPE_SET) \
     SW_API_DESC(SW_API_TXMAC_STATUS_SET) \
     SW_API_DESC(SW_API_RXMAC_STATUS_SET) \
     SW_API_DESC(SW_API_PT_POWER_OFF) \
@@ -407,11 +364,11 @@ extern "C" {
     SW_API_DESC(SW_API_PT_PPS_CTRL_GET)
 /*end of PORTCONTROL_API_PARAM*/
 #endif
-
 #else
 #define PORTCONTROL_API
 #define PORTCONTROL_API_PARAM
 #endif
+
 #ifdef IN_VLAN
 #define VLAN_API \
     SW_API_DEF(SW_API_VLAN_ADD, fal_vlan_create), \
@@ -450,32 +407,12 @@ extern "C" {
 #ifdef IN_PORTVLAN
 #ifndef IN_PORTVLAN_MINI
 #define PORTVLAN_API \
-    SW_API_DEF(SW_API_PT_ING_MODE_GET, fal_port_1qmode_get), \
-    SW_API_DEF(SW_API_PT_ING_MODE_SET, fal_port_1qmode_set), \
-    SW_API_DEF(SW_API_PT_EG_MODE_GET, fal_port_egvlanmode_get), \
-    SW_API_DEF(SW_API_PT_EG_MODE_SET, fal_port_egvlanmode_set), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_ADD, fal_portvlan_member_add), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_DEL, fal_portvlan_member_del), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_UPDATE, fal_portvlan_member_update), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_GET, fal_portvlan_member_get), \
-    SW_API_DEF(SW_API_PT_FORCE_DEF_VID_SET, fal_port_force_default_vid_set), \
-    SW_API_DEF(SW_API_PT_FORCE_DEF_VID_GET, fal_port_force_default_vid_get), \
-    SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_SET, fal_port_force_portvlan_set), \
-    SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_GET, fal_port_force_portvlan_get), \
-    SW_API_DEF(SW_API_NESTVLAN_TPID_SET, fal_nestvlan_tpid_set), \
-    SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_SET, fal_port_invlan_mode_set), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_GET, fal_port_invlan_mode_get), \
-    SW_API_DEF(SW_API_PT_TLS_SET, fal_port_tls_set), \
-    SW_API_DEF(SW_API_PT_TLS_GET, fal_port_tls_get), \
-    SW_API_DEF(SW_API_PT_PRI_PROPAGATION_SET, fal_port_pri_propagation_set), \
-    SW_API_DEF(SW_API_PT_PRI_PROPAGATION_GET, fal_port_pri_propagation_get), \
-    SW_API_DEF(SW_API_PT_DEF_SVID_SET, fal_port_default_svid_set), \
-    SW_API_DEF(SW_API_PT_DEF_SVID_GET, fal_port_default_svid_get), \
-    SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set), \
-    SW_API_DEF(SW_API_PT_DEF_CVID_GET, fal_port_default_cvid_get), \
-    SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_SET, fal_port_vlan_propagation_set), \
-    SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_GET, fal_port_vlan_propagation_get), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADD, fal_port_vlan_trans_add), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_DEL, fal_port_vlan_trans_del), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_GET, fal_port_vlan_trans_get), \
@@ -484,14 +421,6 @@ extern "C" {
     SW_API_DEF(SW_API_PT_QINQ_ROLE_SET, fal_port_qinq_role_set), \
     SW_API_DEF(SW_API_PT_QINQ_ROLE_GET, fal_port_qinq_role_get), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ITERATE, fal_port_vlan_trans_iterate), \
-    SW_API_DEF(SW_API_PT_MAC_VLAN_XLT_SET, fal_port_mac_vlan_xlt_set), \
-    SW_API_DEF(SW_API_PT_MAC_VLAN_XLT_GET, fal_port_mac_vlan_xlt_get), \
-    SW_API_DEF(SW_API_NETISOLATE_SET, fal_netisolate_set), \
-    SW_API_DEF(SW_API_NETISOLATE_GET, fal_netisolate_get), \
-    SW_API_DEF(SW_API_EG_FLTR_BYPASS_EN_SET, fal_eg_trans_filter_bypass_en_set), \
-    SW_API_DEF(SW_API_EG_FLTR_BYPASS_EN_GET, fal_eg_trans_filter_bypass_en_get), \
-    SW_API_DEF(SW_API_PT_VRF_ID_SET, fal_port_vrf_id_set), \
-    SW_API_DEF(SW_API_PT_VRF_ID_GET, fal_port_vrf_id_get), \
     SW_API_DEF(SW_API_GLOBAL_QINQ_MODE_SET, fal_global_qinq_mode_set), \
     SW_API_DEF(SW_API_GLOBAL_QINQ_MODE_GET, fal_global_qinq_mode_get), \
     SW_API_DEF(SW_API_PORT_QINQ_MODE_SET, fal_port_qinq_mode_set), \
@@ -546,32 +475,12 @@ extern "C" {
     SW_API_DEF(SW_API_PVLAN_TX_CFG_GET, fal_private_vlan_tx_cfg_get),
 
 #define PORTVLAN_API_PARAM \
-    SW_API_DESC(SW_API_PT_ING_MODE_GET) \
-    SW_API_DESC(SW_API_PT_ING_MODE_SET) \
-    SW_API_DESC(SW_API_PT_EG_MODE_GET) \
-    SW_API_DESC(SW_API_PT_EG_MODE_SET) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_ADD) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_UPDATE) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_GET)    \
-    SW_API_DESC(SW_API_PT_FORCE_DEF_VID_SET)    \
-    SW_API_DESC(SW_API_PT_FORCE_DEF_VID_GET)    \
-    SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_SET)    \
-    SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_GET)    \
-    SW_API_DESC(SW_API_NESTVLAN_TPID_SET)    \
-    SW_API_DESC(SW_API_NESTVLAN_TPID_GET)    \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_SET)   \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_GET)   \
-    SW_API_DESC(SW_API_PT_TLS_SET)   \
-    SW_API_DESC(SW_API_PT_TLS_GET)   \
-    SW_API_DESC(SW_API_PT_PRI_PROPAGATION_SET)    \
-    SW_API_DESC(SW_API_PT_PRI_PROPAGATION_GET)   \
-    SW_API_DESC(SW_API_PT_DEF_SVID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_SVID_GET)    \
-    SW_API_DESC(SW_API_PT_DEF_CVID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_CVID_GET)    \
-    SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_SET)   \
-    SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_GET)   \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADD) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_GET) \
@@ -580,14 +489,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_QINQ_ROLE_SET) \
     SW_API_DESC(SW_API_PT_QINQ_ROLE_GET) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ITERATE) \
-    SW_API_DESC(SW_API_PT_MAC_VLAN_XLT_SET)   \
-    SW_API_DESC(SW_API_PT_MAC_VLAN_XLT_GET)  \
-    SW_API_DESC(SW_API_NETISOLATE_SET)   \
-    SW_API_DESC(SW_API_NETISOLATE_GET)   \
-    SW_API_DESC(SW_API_EG_FLTR_BYPASS_EN_SET)   \
-    SW_API_DESC(SW_API_EG_FLTR_BYPASS_EN_GET)   \
-    SW_API_DESC(SW_API_PT_VRF_ID_SET)  \
-    SW_API_DESC(SW_API_PT_VRF_ID_GET) \
     SW_API_DESC(SW_API_GLOBAL_QINQ_MODE_SET)  \
     SW_API_DESC(SW_API_GLOBAL_QINQ_MODE_GET) \
     SW_API_DESC(SW_API_PORT_QINQ_MODE_SET)  \
@@ -670,24 +571,12 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_DEL, fal_port_vlan_trans_adv_del), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETFIRST, fal_port_vlan_trans_adv_getfirst), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETNEXT, fal_port_vlan_trans_adv_getnext), \
-    SW_API_DEF(SW_API_PT_ING_MODE_SET, fal_port_1qmode_set), \
-    SW_API_DEF(SW_API_PT_ING_MODE_GET, fal_port_1qmode_get), \
-    SW_API_DEF(SW_API_PT_EG_MODE_SET, fal_port_egvlanmode_set), \
-    SW_API_DEF(SW_API_PT_EG_MODE_GET, fal_port_egvlanmode_get), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_ADD, fal_portvlan_member_add), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_DEL, fal_portvlan_member_del), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_UPDATE, fal_portvlan_member_update), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_GET, fal_portvlan_member_get), \
-    SW_API_DEF(SW_API_NESTVLAN_TPID_SET, fal_nestvlan_tpid_set), \
-    SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_SET, fal_port_invlan_mode_set), \
     SW_API_DEF(SW_API_PT_IN_VLAN_MODE_GET, fal_port_invlan_mode_get), \
-    SW_API_DEF(SW_API_PT_TLS_SET, fal_port_tls_set), \
-    SW_API_DEF(SW_API_PT_DEF_SVID_SET, fal_port_default_svid_set), \
-    SW_API_DEF(SW_API_PT_DEF_SVID_GET, fal_port_default_svid_get), \
-    SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set), \
-    SW_API_DEF(SW_API_PT_DEF_CVID_GET, fal_port_default_cvid_get), \
-    SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_SET, fal_port_vlan_propagation_set), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_SET, fal_port_vlan_trans_adv_set),  \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GET, fal_port_vlan_trans_adv_get), \
     SW_API_DEF(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, fal_vlan_trans_dscp_pcp_mapping_set), \
@@ -734,24 +623,12 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETFIRST) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETNEXT) \
-    SW_API_DESC(SW_API_PT_ING_MODE_SET) \
-    SW_API_DESC(SW_API_PT_ING_MODE_GET) \
-    SW_API_DESC(SW_API_PT_EG_MODE_SET) \
-    SW_API_DESC(SW_API_PT_EG_MODE_GET) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_ADD) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_UPDATE) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_GET)    \
-    SW_API_DESC(SW_API_NESTVLAN_TPID_SET)    \
-    SW_API_DESC(SW_API_NESTVLAN_TPID_GET)    \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_SET)   \
     SW_API_DESC(SW_API_PT_IN_VLAN_MODE_GET)   \
-    SW_API_DESC(SW_API_PT_TLS_SET)   \
-    SW_API_DESC(SW_API_PT_DEF_SVID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_SVID_GET)    \
-    SW_API_DESC(SW_API_PT_DEF_CVID_SET)    \
-    SW_API_DESC(SW_API_PT_DEF_CVID_GET)    \
-    SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_SET) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_SET) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GET) \
     SW_API_DESC(SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET) \
@@ -794,8 +671,6 @@ extern "C" {
     SW_API_DEF(SW_API_FDB_AGE_CTRL_GET,   fal_fdb_aging_ctrl_get), \
     SW_API_DEF(SW_API_FDB_LEARN_CTRL_SET,  fal_fdb_learning_ctrl_set), \
     SW_API_DEF(SW_API_FDB_LEARN_CTRL_GET,  fal_fdb_learning_ctrl_get), \
-    SW_API_DEF(SW_API_FDB_VLAN_IVL_SVL_SET, fal_fdb_vlan_ivl_svl_set),\
-    SW_API_DEF(SW_API_FDB_VLAN_IVL_SVL_GET, fal_fdb_vlan_ivl_svl_get),\
     SW_API_DEF(SW_API_FDB_AGE_TIME_SET,   fal_fdb_aging_time_set), \
     SW_API_DEF(SW_API_FDB_AGE_TIME_GET,   fal_fdb_aging_time_get), \
     SW_API_DEF(SW_API_FDB_ITERATE,        fal_fdb_entry_getnext_byindex), \
@@ -807,22 +682,11 @@ extern "C" {
     SW_API_DEF(SW_API_PT_FDB_LEARN_LIMIT_GET,    fal_port_fdb_learn_limit_get),  \
     SW_API_DEF(SW_API_PT_FDB_LEARN_EXCEED_CMD_SET,    fal_port_fdb_learn_exceed_cmd_set),  \
     SW_API_DEF(SW_API_PT_FDB_LEARN_EXCEED_CMD_GET,    fal_port_fdb_learn_exceed_cmd_get), \
-    SW_API_DEF(SW_API_FDB_LEARN_LIMIT_SET,    fal_fdb_learn_limit_set),  \
-    SW_API_DEF(SW_API_FDB_LEARN_LIMIT_GET,    fal_fdb_learn_limit_get),  \
-    SW_API_DEF(SW_API_FDB_LEARN_EXCEED_CMD_SET,    fal_fdb_learn_exceed_cmd_set),  \
-    SW_API_DEF(SW_API_FDB_LEARN_EXCEED_CMD_GET,    fal_fdb_learn_exceed_cmd_get),  \
-    SW_API_DEF(SW_API_FDB_RESV_ADD, fal_fdb_resv_add), \
-    SW_API_DEF(SW_API_FDB_RESV_DEL, fal_fdb_resv_del), \
-    SW_API_DEF(SW_API_FDB_RESV_FIND, fal_fdb_resv_find), \
-    SW_API_DEF(SW_API_FDB_RESV_ITERATE, fal_fdb_resv_iterate), \
-    SW_API_DEF(SW_API_FDB_PT_LEARN_STATIC_SET,   fal_fdb_port_learn_static_set), \
-    SW_API_DEF(SW_API_FDB_PT_LEARN_STATIC_GET,   fal_fdb_port_learn_static_get), \
     SW_API_DEF(SW_API_FDB_PORT_ADD,   fal_fdb_port_add), \
     SW_API_DEF(SW_API_FDB_PORT_DEL,   fal_fdb_port_del), \
     SW_API_DEF(SW_API_FDB_PT_MACLIMIT_CTRL_SET, fal_fdb_port_maclimit_ctrl_set), \
     SW_API_DEF(SW_API_FDB_PT_MACLIMIT_CTRL_GET, fal_fdb_port_maclimit_ctrl_get), \
     SW_API_DEF(SW_API_FDB_DEL_BY_FID, fal_fdb_entry_del_byfid),
-
 #define FDB_API_PARAM \
     SW_API_DESC(SW_API_FDB_ADD) \
     SW_API_DESC(SW_API_FDB_DELALL) \
@@ -841,8 +705,6 @@ extern "C" {
     SW_API_DESC(SW_API_FDB_AGE_CTRL_GET) \
     SW_API_DESC(SW_API_FDB_LEARN_CTRL_SET) \
     SW_API_DESC(SW_API_FDB_LEARN_CTRL_GET) \
-    SW_API_DESC(SW_API_FDB_VLAN_IVL_SVL_SET) \
-    SW_API_DESC(SW_API_FDB_VLAN_IVL_SVL_GET) \
     SW_API_DESC(SW_API_FDB_AGE_TIME_SET) \
     SW_API_DESC(SW_API_FDB_AGE_TIME_GET) \
     SW_API_DESC(SW_API_FDB_ITERATE) \
@@ -854,16 +716,6 @@ extern "C" {
     SW_API_DESC(SW_API_PT_FDB_LEARN_LIMIT_GET)  \
     SW_API_DESC(SW_API_PT_FDB_LEARN_EXCEED_CMD_SET)  \
     SW_API_DESC(SW_API_PT_FDB_LEARN_EXCEED_CMD_GET)  \
-    SW_API_DESC(SW_API_FDB_LEARN_LIMIT_SET)  \
-    SW_API_DESC(SW_API_FDB_LEARN_LIMIT_GET)  \
-    SW_API_DESC(SW_API_FDB_LEARN_EXCEED_CMD_SET)  \
-    SW_API_DESC(SW_API_FDB_LEARN_EXCEED_CMD_GET)  \
-    SW_API_DESC(SW_API_FDB_RESV_ADD)  \
-    SW_API_DESC(SW_API_FDB_RESV_DEL)  \
-    SW_API_DESC(SW_API_FDB_RESV_FIND) \
-    SW_API_DESC(SW_API_FDB_RESV_ITERATE) \
-    SW_API_DESC(SW_API_FDB_PT_LEARN_STATIC_SET) \
-    SW_API_DESC(SW_API_FDB_PT_LEARN_STATIC_GET) \
     SW_API_DESC(SW_API_FDB_PORT_ADD)  \
     SW_API_DESC(SW_API_FDB_PORT_DEL)  \
     SW_API_DESC(SW_API_FDB_PT_MACLIMIT_CTRL_SET) \
@@ -941,16 +793,7 @@ extern "C" {
     SW_API_DEF(SW_API_ACL_RULE_QUERY, fal_acl_rule_query), \
     SW_API_DEF(SW_API_ACL_LIST_BIND, fal_acl_list_bind), \
     SW_API_DEF(SW_API_ACL_LIST_UNBIND, fal_acl_list_unbind), \
-    SW_API_DEF(SW_API_ACL_STATUS_SET, fal_acl_status_set), \
-    SW_API_DEF(SW_API_ACL_STATUS_GET, fal_acl_status_get), \
-    SW_API_DEF(SW_API_ACL_LIST_DUMP, fal_acl_list_dump), \
     SW_API_DEF(SW_API_ACL_RULE_DUMP, fal_acl_rule_dump), \
-    SW_API_DEF(SW_API_ACL_PT_UDF_PROFILE_SET, fal_acl_port_udf_profile_set), \
-    SW_API_DEF(SW_API_ACL_PT_UDF_PROFILE_GET, fal_acl_port_udf_profile_get), \
-    SW_API_DEF(SW_API_ACL_RULE_ACTIVE, fal_acl_rule_active), \
-    SW_API_DEF(SW_API_ACL_RULE_DEACTIVE, fal_acl_rule_deactive),\
-    SW_API_DEF(SW_API_ACL_RULE_SRC_FILTER_STS_SET, fal_acl_rule_src_filter_sts_set),\
-    SW_API_DEF(SW_API_ACL_RULE_SRC_FILTER_STS_GET, fal_acl_rule_src_filter_sts_get),\
     SW_API_DEF(SW_API_ACL_UDF_SET, fal_acl_udf_profile_set),\
     SW_API_DEF(SW_API_ACL_UDF_GET, fal_acl_udf_profile_get),\
     SW_API_DEF(SW_API_ACL_UDF_PROFILE_ENTRY_ADD, fal_acl_udf_profile_entry_add),\
@@ -968,7 +811,6 @@ extern "C" {
     SW_API_DEF(SW_API_ACL_RULE_PRIORITY_GET, fal_acl_rule_priority_get), \
     SW_API_DEF(SW_API_ACL_DSCP_PCP_MAPPING_SET, fal_acl_dscp_pcp_mapping_set), \
     SW_API_DEF(SW_API_ACL_DSCP_PCP_MAPPING_GET, fal_acl_dscp_pcp_mapping_get),
-
 #define ACL_API_PARAM \
     SW_API_DESC(SW_API_ACL_LIST_CREAT) \
     SW_API_DESC(SW_API_ACL_LIST_DESTROY) \
@@ -977,16 +819,7 @@ extern "C" {
     SW_API_DESC(SW_API_ACL_RULE_QUERY) \
     SW_API_DESC(SW_API_ACL_LIST_BIND) \
     SW_API_DESC(SW_API_ACL_LIST_UNBIND) \
-    SW_API_DESC(SW_API_ACL_STATUS_SET) \
-    SW_API_DESC(SW_API_ACL_STATUS_GET) \
-    SW_API_DESC(SW_API_ACL_LIST_DUMP) \
     SW_API_DESC(SW_API_ACL_RULE_DUMP) \
-    SW_API_DESC(SW_API_ACL_PT_UDF_PROFILE_SET)    \
-    SW_API_DESC(SW_API_ACL_PT_UDF_PROFILE_GET)    \
-    SW_API_DESC(SW_API_ACL_RULE_ACTIVE)    \
-    SW_API_DESC(SW_API_ACL_RULE_DEACTIVE) \
-    SW_API_DESC(SW_API_ACL_RULE_SRC_FILTER_STS_SET)\
-    SW_API_DESC(SW_API_ACL_RULE_SRC_FILTER_STS_GET)\
     SW_API_DESC(SW_API_ACL_UDF_SET)    \
     SW_API_DESC(SW_API_ACL_UDF_GET)    \
     SW_API_DESC(SW_API_ACL_UDF_PROFILE_ENTRY_ADD)    \
@@ -1012,42 +845,6 @@ extern "C" {
 #ifdef IN_QOS
 #ifndef IN_QOS_MINI
 #define QOS_API \
-    SW_API_DEF(SW_API_QOS_SCH_MODE_SET, fal_qos_sch_mode_set), \
-    SW_API_DEF(SW_API_QOS_SCH_MODE_GET, fal_qos_sch_mode_get), \
-    SW_API_DEF(SW_API_QOS_QU_TX_BUF_ST_SET, fal_qos_queue_tx_buf_status_set), \
-    SW_API_DEF(SW_API_QOS_QU_TX_BUF_ST_GET, fal_qos_queue_tx_buf_status_get), \
-    SW_API_DEF(SW_API_QOS_QU_TX_BUF_NR_SET, fal_qos_queue_tx_buf_nr_set), \
-    SW_API_DEF(SW_API_QOS_QU_TX_BUF_NR_GET, fal_qos_queue_tx_buf_nr_get), \
-    SW_API_DEF(SW_API_QOS_PT_TX_BUF_ST_SET, fal_qos_port_tx_buf_status_set), \
-    SW_API_DEF(SW_API_QOS_PT_TX_BUF_ST_GET, fal_qos_port_tx_buf_status_get), \
-    SW_API_DEF(SW_API_QOS_PT_RED_EN_SET, fal_qos_port_red_en_set), \
-    SW_API_DEF(SW_API_QOS_PT_RED_EN_GET, fal_qos_port_red_en_get), \
-    SW_API_DEF(SW_API_QOS_PT_TX_BUF_NR_SET, fal_qos_port_tx_buf_nr_set), \
-    SW_API_DEF(SW_API_QOS_PT_TX_BUF_NR_GET, fal_qos_port_tx_buf_nr_get), \
-    SW_API_DEF(SW_API_QOS_PT_RX_BUF_NR_SET, fal_qos_port_rx_buf_nr_set), \
-    SW_API_DEF(SW_API_QOS_PT_RX_BUF_NR_GET, fal_qos_port_rx_buf_nr_get), \
-    SW_API_DEF(SW_API_COSMAP_UP_QU_SET, fal_cosmap_up_queue_set), \
-    SW_API_DEF(SW_API_COSMAP_UP_QU_GET, fal_cosmap_up_queue_get), \
-    SW_API_DEF(SW_API_COSMAP_DSCP_QU_SET, fal_cosmap_dscp_queue_set), \
-    SW_API_DEF(SW_API_COSMAP_DSCP_QU_GET, fal_cosmap_dscp_queue_get), \
-    SW_API_DEF(SW_API_QOS_PT_MODE_SET, fal_qos_port_mode_set), \
-    SW_API_DEF(SW_API_QOS_PT_MODE_GET, fal_qos_port_mode_get), \
-    SW_API_DEF(SW_API_QOS_PT_MODE_PRI_SET, fal_qos_port_mode_pri_set), \
-    SW_API_DEF(SW_API_QOS_PT_MODE_PRI_GET, fal_qos_port_mode_pri_get), \
-    SW_API_DEF(SW_API_QOS_PORT_DEF_UP_SET, fal_qos_port_default_up_set), \
-    SW_API_DEF(SW_API_QOS_PORT_DEF_UP_GET, fal_qos_port_default_up_get), \
-    SW_API_DEF(SW_API_QOS_PORT_SCH_MODE_SET, fal_qos_port_sch_mode_set), \
-    SW_API_DEF(SW_API_QOS_PORT_SCH_MODE_GET, fal_qos_port_sch_mode_get), \
-    SW_API_DEF(SW_API_QOS_PT_DEF_SPRI_SET, fal_qos_port_default_spri_set), \
-    SW_API_DEF(SW_API_QOS_PT_DEF_SPRI_GET, fal_qos_port_default_spri_get), \
-    SW_API_DEF(SW_API_QOS_PT_DEF_CPRI_SET, fal_qos_port_default_cpri_set), \
-    SW_API_DEF(SW_API_QOS_PT_DEF_CPRI_GET, fal_qos_port_default_cpri_get), \
-    SW_API_DEF(SW_API_QOS_PT_FORCE_SPRI_ST_SET, fal_qos_port_force_spri_status_set), \
-    SW_API_DEF(SW_API_QOS_PT_FORCE_SPRI_ST_GET, fal_qos_port_force_spri_status_get), \
-    SW_API_DEF(SW_API_QOS_PT_FORCE_CPRI_ST_SET, fal_qos_port_force_cpri_status_set), \
-    SW_API_DEF(SW_API_QOS_PT_FORCE_CPRI_ST_GET, fal_qos_port_force_cpri_status_get), \
-    SW_API_DEF(SW_API_QOS_QUEUE_REMARK_SET, fal_qos_queue_remark_table_set), \
-    SW_API_DEF(SW_API_QOS_QUEUE_REMARK_GET, fal_qos_queue_remark_table_get), \
     SW_API_DEF(SW_API_QOS_PORT_GROUP_GET, fal_qos_port_group_get), \
     SW_API_DEF(SW_API_QOS_PORT_GROUP_SET, fal_qos_port_group_set), \
     SW_API_DEF(SW_API_QOS_PORT_PRI_GET, fal_qos_port_pri_precedence_get), \
@@ -1069,44 +866,7 @@ extern "C" {
     SW_API_DEF(SW_API_QOS_PORT_SCHEDULER_RESOURCE_GET, fal_port_scheduler_resource_get),\
     SW_API_DEF(SW_API_QOS_PORT_PCP_CFG_GET, fal_qos_port_pcp_cfg_get), \
     SW_API_DEF(SW_API_QOS_PORT_PCP_CFG_SET, fal_qos_port_pcp_cfg_set),
-
 #define QOS_API_PARAM \
-    SW_API_DESC(SW_API_QOS_SCH_MODE_SET) \
-    SW_API_DESC(SW_API_QOS_SCH_MODE_GET) \
-    SW_API_DESC(SW_API_QOS_QU_TX_BUF_ST_SET) \
-    SW_API_DESC(SW_API_QOS_QU_TX_BUF_ST_GET) \
-    SW_API_DESC(SW_API_QOS_QU_TX_BUF_NR_SET) \
-    SW_API_DESC(SW_API_QOS_QU_TX_BUF_NR_GET) \
-    SW_API_DESC(SW_API_QOS_PT_TX_BUF_ST_SET) \
-    SW_API_DESC(SW_API_QOS_PT_TX_BUF_ST_GET) \
-    SW_API_DESC(SW_API_QOS_PT_RED_EN_SET)\
-    SW_API_DESC(SW_API_QOS_PT_RED_EN_GET)\
-    SW_API_DESC(SW_API_QOS_PT_TX_BUF_NR_SET) \
-    SW_API_DESC(SW_API_QOS_PT_TX_BUF_NR_GET) \
-    SW_API_DESC(SW_API_QOS_PT_RX_BUF_NR_SET) \
-    SW_API_DESC(SW_API_QOS_PT_RX_BUF_NR_GET) \
-    SW_API_DESC(SW_API_COSMAP_UP_QU_SET) \
-    SW_API_DESC(SW_API_COSMAP_UP_QU_GET) \
-    SW_API_DESC(SW_API_COSMAP_DSCP_QU_SET) \
-    SW_API_DESC(SW_API_COSMAP_DSCP_QU_GET) \
-    SW_API_DESC(SW_API_QOS_PT_MODE_SET) \
-    SW_API_DESC(SW_API_QOS_PT_MODE_GET) \
-    SW_API_DESC(SW_API_QOS_PT_MODE_PRI_SET) \
-    SW_API_DESC(SW_API_QOS_PT_MODE_PRI_GET) \
-    SW_API_DESC(SW_API_QOS_PORT_DEF_UP_SET) \
-    SW_API_DESC(SW_API_QOS_PORT_DEF_UP_GET) \
-    SW_API_DESC(SW_API_QOS_PORT_SCH_MODE_SET) \
-    SW_API_DESC(SW_API_QOS_PORT_SCH_MODE_GET) \
-    SW_API_DESC(SW_API_QOS_PT_DEF_SPRI_SET)  \
-    SW_API_DESC(SW_API_QOS_PT_DEF_SPRI_GET)  \
-    SW_API_DESC(SW_API_QOS_PT_DEF_CPRI_SET)  \
-    SW_API_DESC(SW_API_QOS_PT_DEF_CPRI_GET)  \
-    SW_API_DESC(SW_API_QOS_PT_FORCE_SPRI_ST_SET)  \
-    SW_API_DESC(SW_API_QOS_PT_FORCE_SPRI_ST_GET)  \
-    SW_API_DESC(SW_API_QOS_PT_FORCE_CPRI_ST_SET)  \
-    SW_API_DESC(SW_API_QOS_PT_FORCE_CPRI_ST_GET)  \
-    SW_API_DESC(SW_API_QOS_QUEUE_REMARK_SET) \
-    SW_API_DESC(SW_API_QOS_QUEUE_REMARK_GET) \
     SW_API_DESC(SW_API_QOS_PORT_GROUP_GET) \
     SW_API_DESC(SW_API_QOS_PORT_GROUP_SET) \
     SW_API_DESC(SW_API_QOS_PORT_PRI_GET) \
@@ -1130,7 +890,6 @@ extern "C" {
     SW_API_DESC(SW_API_QOS_PORT_PCP_CFG_SET)
 #else
 #define QOS_API \
-    SW_API_DEF(SW_API_QOS_PT_MODE_SET, fal_qos_port_mode_set), \
     SW_API_DEF(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET, fal_scheduler_dequeue_ctrl_get), \
     SW_API_DEF(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, fal_scheduler_dequeue_ctrl_set), \
     SW_API_DEF(SW_API_QOS_QUEUE_SCHEDULER_GET, fal_queue_scheduler_get), \
@@ -1150,7 +909,6 @@ extern "C" {
     SW_API_DEF(SW_API_QOS_PORT_PCP_CFG_GET, fal_qos_port_pcp_cfg_get), \
     SW_API_DEF(SW_API_QOS_PORT_PCP_CFG_SET, fal_qos_port_pcp_cfg_set),
 #define QOS_API_PARAM \
-    SW_API_DESC(SW_API_QOS_PT_MODE_SET) \
     SW_API_DESC(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET) \
     SW_API_DESC(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET) \
     SW_API_DESC(SW_API_QOS_QUEUE_SCHEDULER_GET) \
@@ -1389,128 +1147,17 @@ extern "C" {
 #ifdef IN_MISC
 #ifndef IN_MISC_MINI
 #define MISC_API \
-    SW_API_DEF(SW_API_ARP_STATUS_SET, fal_arp_status_set), \
-    SW_API_DEF(SW_API_ARP_STATUS_GET, fal_arp_status_get), \
-    SW_API_DEF(SW_API_FRAME_MAX_SIZE_SET, fal_frame_max_size_set), \
-    SW_API_DEF(SW_API_FRAME_MAX_SIZE_GET, fal_frame_max_size_get), \
-    SW_API_DEF(SW_API_PT_UNK_SA_CMD_SET, fal_port_unk_sa_cmd_set), \
-    SW_API_DEF(SW_API_PT_UNK_SA_CMD_GET, fal_port_unk_sa_cmd_get), \
-    SW_API_DEF(SW_API_PT_UNK_UC_FILTER_SET, fal_port_unk_uc_filter_set), \
-    SW_API_DEF(SW_API_PT_UNK_UC_FILTER_GET, fal_port_unk_uc_filter_get), \
-    SW_API_DEF(SW_API_PT_UNK_MC_FILTER_SET, fal_port_unk_mc_filter_set), \
-    SW_API_DEF(SW_API_PT_UNK_MC_FILTER_GET, fal_port_unk_mc_filter_get), \
-    SW_API_DEF(SW_API_PT_BC_FILTER_SET, fal_port_bc_filter_set), \
-    SW_API_DEF(SW_API_PT_BC_FILTER_GET, fal_port_bc_filter_get), \
-    SW_API_DEF(SW_API_CPU_PORT_STATUS_SET, fal_cpu_port_status_set), \
-    SW_API_DEF(SW_API_CPU_PORT_STATUS_GET, fal_cpu_port_status_get), \
-    SW_API_DEF(SW_API_BC_TO_CPU_PORT_SET, fal_bc_to_cpu_port_set), \
-    SW_API_DEF(SW_API_BC_TO_CPU_PORT_GET, fal_bc_to_cpu_port_get), \
-    SW_API_DEF(SW_API_PT_DHCP_SET, fal_port_dhcp_set), \
-    SW_API_DEF(SW_API_PT_DHCP_GET, fal_port_dhcp_get), \
-    SW_API_DEF(SW_API_ARP_CMD_SET, fal_arp_cmd_set), \
-    SW_API_DEF(SW_API_ARP_CMD_GET, fal_arp_cmd_get), \
-    SW_API_DEF(SW_API_EAPOL_CMD_SET, fal_eapol_cmd_set), \
-    SW_API_DEF(SW_API_EAPOL_CMD_GET, fal_eapol_cmd_get), \
-    SW_API_DEF(SW_API_EAPOL_STATUS_SET, fal_eapol_status_set), \
-    SW_API_DEF(SW_API_EAPOL_STATUS_GET, fal_eapol_status_get), \
-    SW_API_DEF(SW_API_RIPV1_STATUS_SET, fal_ripv1_status_set), \
-    SW_API_DEF(SW_API_RIPV1_STATUS_GET, fal_ripv1_status_get), \
-    SW_API_DEF(SW_API_PT_ARP_REQ_STATUS_SET, fal_port_arp_req_status_set), \
-    SW_API_DEF(SW_API_PT_ARP_REQ_STATUS_GET, fal_port_arp_req_status_get), \
-    SW_API_DEF(SW_API_PT_ARP_ACK_STATUS_SET, fal_port_arp_ack_status_set), \
-    SW_API_DEF(SW_API_PT_ARP_ACK_STATUS_GET, fal_port_arp_ack_status_get), \
-    SW_API_DEF(SW_API_INTR_MASK_SET, fal_intr_mask_set), \
-    SW_API_DEF(SW_API_INTR_MASK_GET, fal_intr_mask_get), \
-    SW_API_DEF(SW_API_INTR_STATUS_GET, fal_intr_status_get),   \
-    SW_API_DEF(SW_API_INTR_STATUS_CLEAR, fal_intr_status_clear), \
     SW_API_DEF(SW_API_INTR_PORT_LINK_MASK_SET, fal_intr_port_link_mask_set), \
     SW_API_DEF(SW_API_INTR_PORT_LINK_MASK_GET, fal_intr_port_link_mask_get), \
-    SW_API_DEF(SW_API_INTR_PORT_LINK_STATUS_GET, fal_intr_port_link_status_get), \
-    SW_API_DEF(SW_API_INTR_MASK_MAC_LINKCHG_SET, fal_intr_mask_mac_linkchg_set), \
-    SW_API_DEF(SW_API_INTR_MASK_MAC_LINKCHG_GET, fal_intr_mask_mac_linkchg_get), \
-    SW_API_DEF(SW_API_INTR_STATUS_MAC_LINKCHG_GET, fal_intr_status_mac_linkchg_get), \
-    SW_API_DEF(SW_API_INTR_STATUS_MAC_LINKCHG_CLEAR, fal_intr_status_mac_linkchg_clear), \
-    SW_API_DEF(SW_API_CPU_VID_EN_SET, fal_cpu_vid_en_set), \
-    SW_API_DEF(SW_API_CPU_VID_EN_GET, fal_cpu_vid_en_get), \
-    SW_API_DEF(SW_API_GLOBAL_MACADDR_SET, fal_global_macaddr_set), \
-    SW_API_DEF(SW_API_GLOBAL_MACADDR_GET, fal_global_macaddr_get), \
-    SW_API_DEF(SW_API_LLDP_STATUS_SET, fal_lldp_status_set), \
-    SW_API_DEF(SW_API_LLDP_STATUS_GET, fal_lldp_status_get), \
-    SW_API_DEF(SW_API_FRAME_CRC_RESERVE_SET, fal_frame_crc_reserve_set), \
-    SW_API_DEF(SW_API_FRAME_CRC_RESERVE_GET, fal_frame_crc_reserve_get),
-
-
+    SW_API_DEF(SW_API_INTR_PORT_LINK_STATUS_GET, fal_intr_port_link_status_get),
 #define MISC_API_PARAM \
-    SW_API_DESC(SW_API_ARP_STATUS_SET) \
-    SW_API_DESC(SW_API_ARP_STATUS_GET) \
-    SW_API_DESC(SW_API_FRAME_MAX_SIZE_SET) \
-    SW_API_DESC(SW_API_FRAME_MAX_SIZE_GET) \
-    SW_API_DESC(SW_API_PT_UNK_SA_CMD_SET) \
-    SW_API_DESC(SW_API_PT_UNK_SA_CMD_GET) \
-    SW_API_DESC(SW_API_PT_UNK_UC_FILTER_SET) \
-    SW_API_DESC(SW_API_PT_UNK_UC_FILTER_GET) \
-    SW_API_DESC(SW_API_PT_UNK_MC_FILTER_SET) \
-    SW_API_DESC(SW_API_PT_UNK_MC_FILTER_GET) \
-    SW_API_DESC(SW_API_PT_BC_FILTER_SET) \
-    SW_API_DESC(SW_API_PT_BC_FILTER_GET) \
-    SW_API_DESC(SW_API_CPU_PORT_STATUS_SET) \
-    SW_API_DESC(SW_API_CPU_PORT_STATUS_GET) \
-    SW_API_DESC(SW_API_BC_TO_CPU_PORT_SET) \
-    SW_API_DESC(SW_API_BC_TO_CPU_PORT_GET) \
-    SW_API_DESC(SW_API_PT_DHCP_SET) \
-    SW_API_DESC(SW_API_PT_DHCP_GET) \
-    SW_API_DESC(SW_API_ARP_CMD_SET) \
-    SW_API_DESC(SW_API_ARP_CMD_GET) \
-    SW_API_DESC(SW_API_EAPOL_CMD_SET) \
-    SW_API_DESC(SW_API_EAPOL_CMD_GET) \
-    SW_API_DESC(SW_API_EAPOL_STATUS_SET) \
-    SW_API_DESC(SW_API_EAPOL_STATUS_GET) \
-    SW_API_DESC(SW_API_RIPV1_STATUS_SET) \
-    SW_API_DESC(SW_API_RIPV1_STATUS_GET) \
-    SW_API_DESC(SW_API_PT_ARP_REQ_STATUS_SET) \
-    SW_API_DESC(SW_API_PT_ARP_REQ_STATUS_GET) \
-    SW_API_DESC(SW_API_PT_ARP_ACK_STATUS_SET) \
-    SW_API_DESC(SW_API_PT_ARP_ACK_STATUS_GET) \
-    SW_API_DESC(SW_API_INTR_MASK_SET) \
-    SW_API_DESC(SW_API_INTR_MASK_GET) \
-    SW_API_DESC(SW_API_INTR_STATUS_GET)   \
-    SW_API_DESC(SW_API_INTR_STATUS_CLEAR) \
     SW_API_DESC(SW_API_INTR_PORT_LINK_MASK_SET) \
     SW_API_DESC(SW_API_INTR_PORT_LINK_MASK_GET) \
-    SW_API_DESC(SW_API_INTR_PORT_LINK_STATUS_GET) \
-    SW_API_DESC(SW_API_INTR_MASK_MAC_LINKCHG_SET) \
-    SW_API_DESC(SW_API_INTR_MASK_MAC_LINKCHG_GET) \
-    SW_API_DESC(SW_API_INTR_STATUS_MAC_LINKCHG_GET) \
-    SW_API_DESC(SW_API_INTR_STATUS_MAC_LINKCHG_CLEAR) \
-    SW_API_DESC(SW_API_CPU_VID_EN_SET) \
-    SW_API_DESC(SW_API_CPU_VID_EN_GET) \
-    SW_API_DESC(SW_API_GLOBAL_MACADDR_SET) \
-    SW_API_DESC(SW_API_GLOBAL_MACADDR_GET) \
-    SW_API_DESC(SW_API_LLDP_STATUS_SET) \
-    SW_API_DESC(SW_API_LLDP_STATUS_GET) \
-    SW_API_DESC(SW_API_FRAME_CRC_RESERVE_SET) \
-    SW_API_DESC(SW_API_FRAME_CRC_RESERVE_GET)
+    SW_API_DESC(SW_API_INTR_PORT_LINK_STATUS_GET)
 #else
-#define MISC_API \
-    SW_API_DEF(SW_API_PT_UNK_SA_CMD_SET, fal_port_unk_sa_cmd_set), \
-    SW_API_DEF(SW_API_PT_UNK_UC_FILTER_SET, fal_port_unk_uc_filter_set), \
-    SW_API_DEF(SW_API_PT_UNK_MC_FILTER_SET, fal_port_unk_mc_filter_set), \
-    SW_API_DEF(SW_API_PT_BC_FILTER_SET, fal_port_bc_filter_set), \
-    SW_API_DEF(SW_API_EAPOL_STATUS_SET, fal_eapol_status_set), \
-    SW_API_DEF(SW_API_EAPOL_CMD_SET, fal_eapol_cmd_set), \
-    SW_API_DEF(SW_API_CPU_PORT_STATUS_SET, fal_cpu_port_status_set),
-
-#define MISC_API_PARAM \
-    SW_API_DESC(SW_API_PT_UNK_SA_CMD_SET) \
-    SW_API_DESC(SW_API_PT_UNK_UC_FILTER_SET) \
-    SW_API_DESC(SW_API_PT_UNK_MC_FILTER_SET) \
-    SW_API_DESC(SW_API_PT_BC_FILTER_SET) \
-    SW_API_DESC(SW_API_EAPOL_CMD_SET) \
-    SW_API_DESC(SW_API_EAPOL_STATUS_SET) \
-    SW_API_DESC(SW_API_CPU_PORT_STATUS_SET)
-
+#define MISC_API
+#define MISC_API_PARAM
 #endif
-
 #else
 #define MISC_API
 #define MISC_API_PARAM
@@ -1599,24 +1246,6 @@ extern "C" {
 #ifdef IN_SEC
 #ifndef IN_SEC_MINI
 #define SEC_API \
-    SW_API_DEF(SW_API_SEC_NORM_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_NORM_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_MAC_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_MAC_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_IP_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_IP_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_IP4_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_IP4_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_IP6_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_IP6_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_TCP_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_TCP_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_UDP_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_UDP_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_ICMP4_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_ICMP4_GET, fal_sec_norm_item_get), \
-    SW_API_DEF(SW_API_SEC_ICMP6_SET, fal_sec_norm_item_set), \
-    SW_API_DEF(SW_API_SEC_ICMP6_GET, fal_sec_norm_item_get), \
     SW_API_DEF(SW_API_SEC_L3_PARSER_CTRL_GET, fal_sec_l3_excep_parser_ctrl_get), \
     SW_API_DEF(SW_API_SEC_L3_PARSER_CTRL_SET, fal_sec_l3_excep_parser_ctrl_set), \
     SW_API_DEF(SW_API_SEC_L4_PARSER_CTRL_GET, fal_sec_l4_excep_parser_ctrl_get), \
@@ -1633,26 +1262,7 @@ extern "C" {
     SW_API_DEF(SW_API_SEC_TUNNEL_L4_PARSER_CTRL_GET, fal_sec_tunnel_l4_excep_parser_ctrl_get), \
     SW_API_DEF(SW_API_SEC_TUNNEL_FLAGS_PARSER_CTRL_SET, fal_sec_tunnel_flags_excep_parser_ctrl_set), \
     SW_API_DEF(SW_API_SEC_TUNNEL_FLAGS_PARSER_CTRL_GET, fal_sec_tunnel_flags_excep_parser_ctrl_get),
-
 #define SEC_API_PARAM \
-    SW_API_DESC(SW_API_SEC_NORM_SET) \
-    SW_API_DESC(SW_API_SEC_NORM_GET) \
-    SW_API_DESC(SW_API_SEC_MAC_SET) \
-    SW_API_DESC(SW_API_SEC_MAC_GET) \
-    SW_API_DESC(SW_API_SEC_IP_SET) \
-    SW_API_DESC(SW_API_SEC_IP_GET) \
-    SW_API_DESC(SW_API_SEC_IP4_SET) \
-    SW_API_DESC(SW_API_SEC_IP4_GET) \
-    SW_API_DESC(SW_API_SEC_IP6_SET) \
-    SW_API_DESC(SW_API_SEC_IP6_GET) \
-    SW_API_DESC(SW_API_SEC_TCP_SET) \
-    SW_API_DESC(SW_API_SEC_TCP_GET) \
-    SW_API_DESC(SW_API_SEC_UDP_SET) \
-    SW_API_DESC(SW_API_SEC_UDP_GET) \
-    SW_API_DESC(SW_API_SEC_ICMP4_SET) \
-    SW_API_DESC(SW_API_SEC_ICMP4_GET) \
-    SW_API_DESC(SW_API_SEC_ICMP6_SET) \
-    SW_API_DESC(SW_API_SEC_ICMP6_GET) \
     SW_API_DESC(SW_API_SEC_L3_PARSER_CTRL_GET) \
     SW_API_DESC(SW_API_SEC_L3_PARSER_CTRL_SET) \
     SW_API_DESC(SW_API_SEC_L4_PARSER_CTRL_GET) \
@@ -1675,7 +1285,6 @@ extern "C" {
     SW_API_DEF(SW_API_SEC_L4_PARSER_CTRL_SET, fal_sec_l4_excep_parser_ctrl_set), \
     SW_API_DEF(SW_API_SEC_EXP_CTRL_GET, fal_sec_l3_excep_ctrl_get), \
     SW_API_DEF(SW_API_SEC_EXP_CTRL_SET, fal_sec_l3_excep_ctrl_set),
-
 #define SEC_API_PARAM \
     SW_API_DESC(SW_API_SEC_L4_PARSER_CTRL_GET) \
     SW_API_DESC(SW_API_SEC_L4_PARSER_CTRL_SET) \
@@ -2253,18 +1862,13 @@ extern "C" {
     SW_API_DEF(SW_API_TRUNK_GROUP_GET, fal_trunk_group_get), \
     SW_API_DEF(SW_API_TRUNK_HASH_SET, fal_trunk_hash_mode_set), \
     SW_API_DEF(SW_API_TRUNK_HASH_GET, fal_trunk_hash_mode_get), \
-    SW_API_DEF(SW_API_TRUNK_MAN_SA_SET, fal_trunk_manipulate_sa_set), \
-    SW_API_DEF(SW_API_TRUNK_MAN_SA_GET, fal_trunk_manipulate_sa_get), \
     SW_API_DEF(SW_API_TRUNK_FAILOVER_EN_SET, fal_trunk_failover_enable), \
     SW_API_DEF(SW_API_TRUNK_FAILOVER_EN_GET, fal_trunk_failover_status_get),
-
 #define TRUNK_API_PARAM \
     SW_API_DESC(SW_API_TRUNK_GROUP_SET) \
     SW_API_DESC(SW_API_TRUNK_GROUP_GET) \
-    SW_API_DESC(SW_API_TRUNK_HASH_SET)  \
-    SW_API_DESC(SW_API_TRUNK_HASH_GET)  \
-    SW_API_DESC(SW_API_TRUNK_MAN_SA_SET)\
-    SW_API_DESC(SW_API_TRUNK_MAN_SA_GET) \
+    SW_API_DESC(SW_API_TRUNK_HASH_SET)	\
+    SW_API_DESC(SW_API_TRUNK_HASH_GET)	\
     SW_API_DESC(SW_API_TRUNK_FAILOVER_EN_SET)\
     SW_API_DESC(SW_API_TRUNK_FAILOVER_EN_GET)
 #else
@@ -2663,52 +2267,27 @@ extern "C" {
 #define QM_API_PARAM
 #endif
 
-
 #ifdef IN_PPPOE
 #define PPPOE_API \
-    SW_API_DEF(SW_API_PPPOE_CMD_SET, fal_pppoe_cmd_set), \
-    SW_API_DEF(SW_API_PPPOE_CMD_GET, fal_pppoe_cmd_get), \
-    SW_API_DEF(SW_API_PPPOE_STATUS_SET, fal_pppoe_status_set), \
-    SW_API_DEF(SW_API_PPPOE_STATUS_GET, fal_pppoe_status_get), \
-    SW_API_DEF(SW_API_PPPOE_SESSION_ADD, fal_pppoe_session_add), \
-    SW_API_DEF(SW_API_PPPOE_SESSION_DEL, fal_pppoe_session_del), \
-    SW_API_DEF(SW_API_PPPOE_SESSION_GET, fal_pppoe_session_get), \
     SW_API_DEF(SW_API_PPPOE_SESSION_TABLE_ADD, fal_pppoe_session_table_add), \
     SW_API_DEF(SW_API_PPPOE_SESSION_TABLE_DEL, fal_pppoe_session_table_del), \
     SW_API_DEF(SW_API_PPPOE_SESSION_TABLE_GET, fal_pppoe_session_table_get), \
-    SW_API_DEF(SW_API_PPPOE_SESSION_ID_SET, fal_pppoe_session_id_set), \
-    SW_API_DEF(SW_API_PPPOE_SESSION_ID_GET, fal_pppoe_session_id_get), \
-    SW_API_DEF(SW_API_RTD_PPPOE_EN_SET, fal_rtd_pppoe_en_set), \
-    SW_API_DEF(SW_API_RTD_PPPOE_EN_GET, fal_rtd_pppoe_en_get), \
     SW_API_DEF(SW_API_PPPOE_EN_SET, fal_pppoe_l3intf_enable), \
     SW_API_DEF(SW_API_PPPOE_EN_GET, fal_pppoe_l3intf_status_get), \
     SW_API_DEF(SW_API_PPPOE_L3_INTF_SET, fal_pppoe_l3_intf_set), \
     SW_API_DEF(SW_API_PPPOE_L3_INTF_GET, fal_pppoe_l3_intf_get), \
     SW_API_DEF(SW_API_PPPOE_GLOBAL_CTRL_SET, fal_pppoe_global_ctrl_set), \
     SW_API_DEF(SW_API_PPPOE_GLOBAL_CTRL_GET, fal_pppoe_global_ctrl_get),
-
 #define PPPOE_API_PARAM \
-    SW_API_DESC(SW_API_PPPOE_CMD_SET) \
-    SW_API_DESC(SW_API_PPPOE_CMD_GET) \
-    SW_API_DESC(SW_API_PPPOE_STATUS_SET) \
-    SW_API_DESC(SW_API_PPPOE_STATUS_GET) \
-    SW_API_DESC(SW_API_PPPOE_SESSION_ADD) \
-    SW_API_DESC(SW_API_PPPOE_SESSION_DEL) \
-    SW_API_DESC(SW_API_PPPOE_SESSION_GET) \
     SW_API_DESC(SW_API_PPPOE_SESSION_TABLE_ADD) \
     SW_API_DESC(SW_API_PPPOE_SESSION_TABLE_DEL) \
     SW_API_DESC(SW_API_PPPOE_SESSION_TABLE_GET) \
-    SW_API_DESC(SW_API_PPPOE_SESSION_ID_SET) \
-    SW_API_DESC(SW_API_PPPOE_SESSION_ID_GET) \
-    SW_API_DESC(SW_API_RTD_PPPOE_EN_SET) \
-    SW_API_DESC(SW_API_RTD_PPPOE_EN_GET) \
     SW_API_DESC(SW_API_PPPOE_EN_SET) \
     SW_API_DESC(SW_API_PPPOE_EN_GET) \
     SW_API_DESC(SW_API_PPPOE_L3_INTF_SET) \
     SW_API_DESC(SW_API_PPPOE_L3_INTF_GET) \
     SW_API_DESC(SW_API_PPPOE_GLOBAL_CTRL_SET) \
     SW_API_DESC(SW_API_PPPOE_GLOBAL_CTRL_GET)
-
 #else
 #define PPPOE_API
 #define PPPOE_API_PARAM
@@ -3744,6 +3323,536 @@ extern "C" {
 #define CROSSCHIP_API_PARAM
 #endif
 
+#ifdef ISISC
+	/* Trunk Legacy APIs */
+#ifdef IN_TRUNK
+#define TRUNK_LEGACY_API \
+	SW_API_DEF(SW_API_TRUNK_MAN_SA_SET, fal_trunk_manipulate_sa_set), \
+	SW_API_DEF(SW_API_TRUNK_MAN_SA_GET, fal_trunk_manipulate_sa_get),
+#define TRUNK_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_TRUNK_MAN_SA_SET)\
+	SW_API_DESC(SW_API_TRUNK_MAN_SA_GET)
+#else
+#define TRUNK_LEGACY_API
+#define TRUNK_LEGACY_API_PARAM
+#endif
+	/* Sec Legacy APIs */
+#ifdef IN_SEC
+#ifndef IN_SEC_MINI
+#define SEC_LEGACY_API \
+	SW_API_DEF(SW_API_SEC_NORM_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_NORM_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_MAC_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_MAC_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_IP_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_IP_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_IP4_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_IP4_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_IP6_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_IP6_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_TCP_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_TCP_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_UDP_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_UDP_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_ICMP4_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_ICMP4_GET, fal_sec_norm_item_get), \
+	SW_API_DEF(SW_API_SEC_ICMP6_SET, fal_sec_norm_item_set), \
+	SW_API_DEF(SW_API_SEC_ICMP6_GET, fal_sec_norm_item_get),
+#define SEC_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_SEC_NORM_SET) \
+	SW_API_DESC(SW_API_SEC_NORM_GET) \
+	SW_API_DESC(SW_API_SEC_MAC_SET) \
+	SW_API_DESC(SW_API_SEC_MAC_GET) \
+	SW_API_DESC(SW_API_SEC_IP_SET) \
+	SW_API_DESC(SW_API_SEC_IP_GET) \
+	SW_API_DESC(SW_API_SEC_IP4_SET) \
+	SW_API_DESC(SW_API_SEC_IP4_GET) \
+	SW_API_DESC(SW_API_SEC_IP6_SET) \
+	SW_API_DESC(SW_API_SEC_IP6_GET) \
+	SW_API_DESC(SW_API_SEC_TCP_SET) \
+	SW_API_DESC(SW_API_SEC_TCP_GET) \
+	SW_API_DESC(SW_API_SEC_UDP_SET) \
+	SW_API_DESC(SW_API_SEC_UDP_GET) \
+	SW_API_DESC(SW_API_SEC_ICMP4_SET) \
+	SW_API_DESC(SW_API_SEC_ICMP4_GET) \
+	SW_API_DESC(SW_API_SEC_ICMP6_SET) \
+	SW_API_DESC(SW_API_SEC_ICMP6_GET)
+#else
+#define SEC_LEGACY_API
+#define SEC_LEGACY_API_PARAM
+#endif
+#else
+#define SEC_LEGACY_API
+#define SEC_LEGACY_API_PARAM
+#endif
+	/* PPPoE Legacy APIs */
+#ifdef IN_PPPOE
+#define PPPOE_LEGACY_API \
+	SW_API_DEF(SW_API_PPPOE_CMD_SET, fal_pppoe_cmd_set), \
+	SW_API_DEF(SW_API_PPPOE_CMD_GET, fal_pppoe_cmd_get), \
+	SW_API_DEF(SW_API_PPPOE_STATUS_SET, fal_pppoe_status_set), \
+	SW_API_DEF(SW_API_PPPOE_STATUS_GET, fal_pppoe_status_get), \
+	SW_API_DEF(SW_API_PPPOE_SESSION_ADD, fal_pppoe_session_add), \
+	SW_API_DEF(SW_API_PPPOE_SESSION_DEL, fal_pppoe_session_del), \
+	SW_API_DEF(SW_API_PPPOE_SESSION_GET, fal_pppoe_session_get), \
+	SW_API_DEF(SW_API_PPPOE_SESSION_ID_SET, fal_pppoe_session_id_set), \
+	SW_API_DEF(SW_API_PPPOE_SESSION_ID_GET, fal_pppoe_session_id_get), \
+	SW_API_DEF(SW_API_RTD_PPPOE_EN_SET, fal_rtd_pppoe_en_set), \
+	SW_API_DEF(SW_API_RTD_PPPOE_EN_GET, fal_rtd_pppoe_en_get),
+#define PPPOE_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_PPPOE_CMD_SET) \
+	SW_API_DESC(SW_API_PPPOE_CMD_GET) \
+	SW_API_DESC(SW_API_PPPOE_STATUS_SET) \
+	SW_API_DESC(SW_API_PPPOE_STATUS_GET) \
+	SW_API_DESC(SW_API_PPPOE_SESSION_ADD) \
+	SW_API_DESC(SW_API_PPPOE_SESSION_DEL) \
+	SW_API_DESC(SW_API_PPPOE_SESSION_GET) \
+	SW_API_DESC(SW_API_PPPOE_SESSION_ID_SET) \
+	SW_API_DESC(SW_API_PPPOE_SESSION_ID_GET) \
+	SW_API_DESC(SW_API_RTD_PPPOE_EN_SET) \
+	SW_API_DESC(SW_API_RTD_PPPOE_EN_GET)
+#else
+#define PPPOE_LEGACY_API
+#define PPPOE_LEGACY_API_PARAM
+#endif
+	/* MISC Legacy APIs */
+#ifdef IN_MISC
+#ifndef IN_MISC_MINI
+#define MISC_LEGACY_API \
+	SW_API_DEF(SW_API_ARP_STATUS_SET, fal_arp_status_set), \
+	SW_API_DEF(SW_API_ARP_STATUS_GET, fal_arp_status_get), \
+	SW_API_DEF(SW_API_FRAME_MAX_SIZE_SET, fal_frame_max_size_set), \
+	SW_API_DEF(SW_API_FRAME_MAX_SIZE_GET, fal_frame_max_size_get), \
+	SW_API_DEF(SW_API_PT_UNK_SA_CMD_SET, fal_port_unk_sa_cmd_set), \
+	SW_API_DEF(SW_API_PT_UNK_SA_CMD_GET, fal_port_unk_sa_cmd_get), \
+	SW_API_DEF(SW_API_PT_UNK_UC_FILTER_SET, fal_port_unk_uc_filter_set), \
+	SW_API_DEF(SW_API_PT_UNK_UC_FILTER_GET, fal_port_unk_uc_filter_get), \
+	SW_API_DEF(SW_API_PT_UNK_MC_FILTER_SET, fal_port_unk_mc_filter_set), \
+	SW_API_DEF(SW_API_PT_UNK_MC_FILTER_GET, fal_port_unk_mc_filter_get), \
+	SW_API_DEF(SW_API_PT_BC_FILTER_SET, fal_port_bc_filter_set), \
+	SW_API_DEF(SW_API_PT_BC_FILTER_GET, fal_port_bc_filter_get), \
+	SW_API_DEF(SW_API_CPU_PORT_STATUS_SET, fal_cpu_port_status_set), \
+	SW_API_DEF(SW_API_CPU_PORT_STATUS_GET, fal_cpu_port_status_get), \
+	SW_API_DEF(SW_API_BC_TO_CPU_PORT_SET, fal_bc_to_cpu_port_set), \
+	SW_API_DEF(SW_API_BC_TO_CPU_PORT_GET, fal_bc_to_cpu_port_get), \
+	SW_API_DEF(SW_API_PT_DHCP_SET, fal_port_dhcp_set), \
+	SW_API_DEF(SW_API_PT_DHCP_GET, fal_port_dhcp_get), \
+	SW_API_DEF(SW_API_ARP_CMD_SET, fal_arp_cmd_set), \
+	SW_API_DEF(SW_API_ARP_CMD_GET, fal_arp_cmd_get), \
+	SW_API_DEF(SW_API_EAPOL_CMD_SET, fal_eapol_cmd_set), \
+	SW_API_DEF(SW_API_EAPOL_CMD_GET, fal_eapol_cmd_get), \
+	SW_API_DEF(SW_API_EAPOL_STATUS_SET, fal_eapol_status_set), \
+	SW_API_DEF(SW_API_EAPOL_STATUS_GET, fal_eapol_status_get), \
+	SW_API_DEF(SW_API_RIPV1_STATUS_SET, fal_ripv1_status_set), \
+	SW_API_DEF(SW_API_RIPV1_STATUS_GET, fal_ripv1_status_get), \
+	SW_API_DEF(SW_API_PT_ARP_REQ_STATUS_SET, fal_port_arp_req_status_set), \
+	SW_API_DEF(SW_API_PT_ARP_REQ_STATUS_GET, fal_port_arp_req_status_get), \
+	SW_API_DEF(SW_API_PT_ARP_ACK_STATUS_SET, fal_port_arp_ack_status_set), \
+	SW_API_DEF(SW_API_PT_ARP_ACK_STATUS_GET, fal_port_arp_ack_status_get), \
+	SW_API_DEF(SW_API_INTR_MASK_SET, fal_intr_mask_set), \
+	SW_API_DEF(SW_API_INTR_MASK_GET, fal_intr_mask_get), \
+	SW_API_DEF(SW_API_INTR_STATUS_GET, fal_intr_status_get),   \
+	SW_API_DEF(SW_API_INTR_STATUS_CLEAR, fal_intr_status_clear), \
+	SW_API_DEF(SW_API_INTR_MASK_MAC_LINKCHG_SET, fal_intr_mask_mac_linkchg_set), \
+	SW_API_DEF(SW_API_INTR_MASK_MAC_LINKCHG_GET, fal_intr_mask_mac_linkchg_get), \
+	SW_API_DEF(SW_API_INTR_STATUS_MAC_LINKCHG_GET, fal_intr_status_mac_linkchg_get), \
+	SW_API_DEF(SW_API_INTR_STATUS_MAC_LINKCHG_CLEAR, fal_intr_status_mac_linkchg_clear), \
+	SW_API_DEF(SW_API_CPU_VID_EN_SET, fal_cpu_vid_en_set), \
+	SW_API_DEF(SW_API_CPU_VID_EN_GET, fal_cpu_vid_en_get), \
+	SW_API_DEF(SW_API_GLOBAL_MACADDR_SET, fal_global_macaddr_set), \
+	SW_API_DEF(SW_API_GLOBAL_MACADDR_GET, fal_global_macaddr_get), \
+	SW_API_DEF(SW_API_LLDP_STATUS_SET, fal_lldp_status_set), \
+	SW_API_DEF(SW_API_LLDP_STATUS_GET, fal_lldp_status_get), \
+	SW_API_DEF(SW_API_FRAME_CRC_RESERVE_SET, fal_frame_crc_reserve_set), \
+	SW_API_DEF(SW_API_FRAME_CRC_RESERVE_GET, fal_frame_crc_reserve_get),
+#define MISC_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_ARP_STATUS_SET) \
+	SW_API_DESC(SW_API_ARP_STATUS_GET) \
+	SW_API_DESC(SW_API_FRAME_MAX_SIZE_SET) \
+	SW_API_DESC(SW_API_FRAME_MAX_SIZE_GET) \
+	SW_API_DESC(SW_API_PT_UNK_SA_CMD_SET) \
+	SW_API_DESC(SW_API_PT_UNK_SA_CMD_GET) \
+	SW_API_DESC(SW_API_PT_UNK_UC_FILTER_SET) \
+	SW_API_DESC(SW_API_PT_UNK_UC_FILTER_GET) \
+	SW_API_DESC(SW_API_PT_UNK_MC_FILTER_SET) \
+	SW_API_DESC(SW_API_PT_UNK_MC_FILTER_GET) \
+	SW_API_DESC(SW_API_PT_BC_FILTER_SET) \
+	SW_API_DESC(SW_API_PT_BC_FILTER_GET) \
+	SW_API_DESC(SW_API_CPU_PORT_STATUS_SET) \
+	SW_API_DESC(SW_API_CPU_PORT_STATUS_GET) \
+	SW_API_DESC(SW_API_BC_TO_CPU_PORT_SET) \
+	SW_API_DESC(SW_API_BC_TO_CPU_PORT_GET) \
+	SW_API_DESC(SW_API_PT_DHCP_SET) \
+	SW_API_DESC(SW_API_PT_DHCP_GET) \
+	SW_API_DESC(SW_API_ARP_CMD_SET) \
+	SW_API_DESC(SW_API_ARP_CMD_GET) \
+	SW_API_DESC(SW_API_EAPOL_CMD_SET) \
+	SW_API_DESC(SW_API_EAPOL_CMD_GET) \
+	SW_API_DESC(SW_API_EAPOL_STATUS_SET) \
+	SW_API_DESC(SW_API_EAPOL_STATUS_GET) \
+	SW_API_DESC(SW_API_RIPV1_STATUS_SET) \
+	SW_API_DESC(SW_API_RIPV1_STATUS_GET) \
+	SW_API_DESC(SW_API_PT_ARP_REQ_STATUS_SET) \
+	SW_API_DESC(SW_API_PT_ARP_REQ_STATUS_GET) \
+	SW_API_DESC(SW_API_PT_ARP_ACK_STATUS_SET) \
+	SW_API_DESC(SW_API_PT_ARP_ACK_STATUS_GET) \
+	SW_API_DESC(SW_API_INTR_MASK_SET) \
+	SW_API_DESC(SW_API_INTR_MASK_GET) \
+	SW_API_DESC(SW_API_INTR_STATUS_GET)   \
+	SW_API_DESC(SW_API_INTR_STATUS_CLEAR) \
+	SW_API_DESC(SW_API_INTR_MASK_MAC_LINKCHG_SET) \
+	SW_API_DESC(SW_API_INTR_MASK_MAC_LINKCHG_GET) \
+	SW_API_DESC(SW_API_INTR_STATUS_MAC_LINKCHG_GET) \
+	SW_API_DESC(SW_API_INTR_STATUS_MAC_LINKCHG_CLEAR) \
+	SW_API_DESC(SW_API_CPU_VID_EN_SET) \
+	SW_API_DESC(SW_API_CPU_VID_EN_GET) \
+	SW_API_DESC(SW_API_GLOBAL_MACADDR_SET) \
+	SW_API_DESC(SW_API_GLOBAL_MACADDR_GET) \
+	SW_API_DESC(SW_API_LLDP_STATUS_SET) \
+	SW_API_DESC(SW_API_LLDP_STATUS_GET) \
+	SW_API_DESC(SW_API_FRAME_CRC_RESERVE_SET) \
+	SW_API_DESC(SW_API_FRAME_CRC_RESERVE_GET)
+#else
+#define MISC_LEGACY_API \
+	SW_API_DEF(SW_API_PT_UNK_SA_CMD_SET, fal_port_unk_sa_cmd_set), \
+	SW_API_DEF(SW_API_PT_UNK_UC_FILTER_SET, fal_port_unk_uc_filter_set), \
+	SW_API_DEF(SW_API_PT_UNK_MC_FILTER_SET, fal_port_unk_mc_filter_set), \
+	SW_API_DEF(SW_API_PT_BC_FILTER_SET, fal_port_bc_filter_set), \
+	SW_API_DEF(SW_API_EAPOL_STATUS_SET, fal_eapol_status_set), \
+	SW_API_DEF(SW_API_EAPOL_CMD_SET, fal_eapol_cmd_set), \
+	SW_API_DEF(SW_API_CPU_PORT_STATUS_SET, fal_cpu_port_status_set),
+#define MISC_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_PT_UNK_SA_CMD_SET) \
+	SW_API_DESC(SW_API_PT_UNK_UC_FILTER_SET) \
+	SW_API_DESC(SW_API_PT_UNK_MC_FILTER_SET) \
+	SW_API_DESC(SW_API_PT_BC_FILTER_SET) \
+	SW_API_DESC(SW_API_EAPOL_CMD_SET) \
+	SW_API_DESC(SW_API_EAPOL_STATUS_SET) \
+	SW_API_DESC(SW_API_CPU_PORT_STATUS_SET)
+#endif
+#else
+#define MISC_LEGACY_API
+#define MISC_LEGACY_API_PARAM
+#endif
+	/* QoS Legacy APIs */
+#ifdef IN_QOS
+#ifndef IN_QOS_MINI
+#define QOS_LEGACY_API \
+	SW_API_DEF(SW_API_QOS_SCH_MODE_SET, fal_qos_sch_mode_set), \
+	SW_API_DEF(SW_API_QOS_SCH_MODE_GET, fal_qos_sch_mode_get), \
+	SW_API_DEF(SW_API_QOS_QU_TX_BUF_ST_SET, fal_qos_queue_tx_buf_status_set), \
+	SW_API_DEF(SW_API_QOS_QU_TX_BUF_ST_GET, fal_qos_queue_tx_buf_status_get), \
+	SW_API_DEF(SW_API_QOS_QU_TX_BUF_NR_SET, fal_qos_queue_tx_buf_nr_set), \
+	SW_API_DEF(SW_API_QOS_QU_TX_BUF_NR_GET, fal_qos_queue_tx_buf_nr_get), \
+	SW_API_DEF(SW_API_QOS_PT_TX_BUF_ST_SET, fal_qos_port_tx_buf_status_set), \
+	SW_API_DEF(SW_API_QOS_PT_TX_BUF_ST_GET, fal_qos_port_tx_buf_status_get), \
+	SW_API_DEF(SW_API_QOS_PT_RED_EN_SET, fal_qos_port_red_en_set), \
+	SW_API_DEF(SW_API_QOS_PT_RED_EN_GET, fal_qos_port_red_en_get), \
+	SW_API_DEF(SW_API_QOS_PT_TX_BUF_NR_SET, fal_qos_port_tx_buf_nr_set), \
+	SW_API_DEF(SW_API_QOS_PT_TX_BUF_NR_GET, fal_qos_port_tx_buf_nr_get), \
+	SW_API_DEF(SW_API_QOS_PT_RX_BUF_NR_SET, fal_qos_port_rx_buf_nr_set), \
+	SW_API_DEF(SW_API_QOS_PT_RX_BUF_NR_GET, fal_qos_port_rx_buf_nr_get), \
+	SW_API_DEF(SW_API_COSMAP_UP_QU_SET, fal_cosmap_up_queue_set), \
+	SW_API_DEF(SW_API_COSMAP_UP_QU_GET, fal_cosmap_up_queue_get), \
+	SW_API_DEF(SW_API_COSMAP_DSCP_QU_SET, fal_cosmap_dscp_queue_set), \
+	SW_API_DEF(SW_API_COSMAP_DSCP_QU_GET, fal_cosmap_dscp_queue_get), \
+	SW_API_DEF(SW_API_QOS_PT_MODE_SET, fal_qos_port_mode_set), \
+	SW_API_DEF(SW_API_QOS_PT_MODE_GET, fal_qos_port_mode_get), \
+	SW_API_DEF(SW_API_QOS_PT_MODE_PRI_SET, fal_qos_port_mode_pri_set), \
+	SW_API_DEF(SW_API_QOS_PT_MODE_PRI_GET, fal_qos_port_mode_pri_get), \
+	SW_API_DEF(SW_API_QOS_PORT_DEF_UP_SET, fal_qos_port_default_up_set), \
+	SW_API_DEF(SW_API_QOS_PORT_DEF_UP_GET, fal_qos_port_default_up_get), \
+	SW_API_DEF(SW_API_QOS_PORT_SCH_MODE_SET, fal_qos_port_sch_mode_set), \
+	SW_API_DEF(SW_API_QOS_PORT_SCH_MODE_GET, fal_qos_port_sch_mode_get), \
+	SW_API_DEF(SW_API_QOS_PT_DEF_SPRI_SET, fal_qos_port_default_spri_set), \
+	SW_API_DEF(SW_API_QOS_PT_DEF_SPRI_GET, fal_qos_port_default_spri_get), \
+	SW_API_DEF(SW_API_QOS_PT_DEF_CPRI_SET, fal_qos_port_default_cpri_set), \
+	SW_API_DEF(SW_API_QOS_PT_DEF_CPRI_GET, fal_qos_port_default_cpri_get), \
+	SW_API_DEF(SW_API_QOS_PT_FORCE_SPRI_ST_SET, fal_qos_port_force_spri_status_set), \
+	SW_API_DEF(SW_API_QOS_PT_FORCE_SPRI_ST_GET, fal_qos_port_force_spri_status_get), \
+	SW_API_DEF(SW_API_QOS_PT_FORCE_CPRI_ST_SET, fal_qos_port_force_cpri_status_set), \
+	SW_API_DEF(SW_API_QOS_PT_FORCE_CPRI_ST_GET, fal_qos_port_force_cpri_status_get), \
+	SW_API_DEF(SW_API_QOS_QUEUE_REMARK_SET, fal_qos_queue_remark_table_set), \
+	SW_API_DEF(SW_API_QOS_QUEUE_REMARK_GET, fal_qos_queue_remark_table_get),
+#define QOS_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_QOS_SCH_MODE_SET) \
+	SW_API_DESC(SW_API_QOS_SCH_MODE_GET) \
+	SW_API_DESC(SW_API_QOS_QU_TX_BUF_ST_SET) \
+	SW_API_DESC(SW_API_QOS_QU_TX_BUF_ST_GET) \
+	SW_API_DESC(SW_API_QOS_QU_TX_BUF_NR_SET) \
+	SW_API_DESC(SW_API_QOS_QU_TX_BUF_NR_GET) \
+	SW_API_DESC(SW_API_QOS_PT_TX_BUF_ST_SET) \
+	SW_API_DESC(SW_API_QOS_PT_TX_BUF_ST_GET) \
+	SW_API_DESC(SW_API_QOS_PT_RED_EN_SET)\
+	SW_API_DESC(SW_API_QOS_PT_RED_EN_GET)\
+	SW_API_DESC(SW_API_QOS_PT_TX_BUF_NR_SET) \
+	SW_API_DESC(SW_API_QOS_PT_TX_BUF_NR_GET) \
+	SW_API_DESC(SW_API_QOS_PT_RX_BUF_NR_SET) \
+	SW_API_DESC(SW_API_QOS_PT_RX_BUF_NR_GET) \
+	SW_API_DESC(SW_API_COSMAP_UP_QU_SET) \
+	SW_API_DESC(SW_API_COSMAP_UP_QU_GET) \
+	SW_API_DESC(SW_API_COSMAP_DSCP_QU_SET) \
+	SW_API_DESC(SW_API_COSMAP_DSCP_QU_GET) \
+	SW_API_DESC(SW_API_QOS_PT_MODE_SET) \
+	SW_API_DESC(SW_API_QOS_PT_MODE_GET) \
+	SW_API_DESC(SW_API_QOS_PT_MODE_PRI_SET) \
+	SW_API_DESC(SW_API_QOS_PT_MODE_PRI_GET) \
+	SW_API_DESC(SW_API_QOS_PORT_DEF_UP_SET) \
+	SW_API_DESC(SW_API_QOS_PORT_DEF_UP_GET) \
+	SW_API_DESC(SW_API_QOS_PORT_SCH_MODE_SET) \
+	SW_API_DESC(SW_API_QOS_PORT_SCH_MODE_GET) \
+	SW_API_DESC(SW_API_QOS_PT_DEF_SPRI_SET)  \
+	SW_API_DESC(SW_API_QOS_PT_DEF_SPRI_GET)  \
+	SW_API_DESC(SW_API_QOS_PT_DEF_CPRI_SET)  \
+	SW_API_DESC(SW_API_QOS_PT_DEF_CPRI_GET)  \
+	SW_API_DESC(SW_API_QOS_PT_FORCE_SPRI_ST_SET)  \
+	SW_API_DESC(SW_API_QOS_PT_FORCE_SPRI_ST_GET)  \
+	SW_API_DESC(SW_API_QOS_PT_FORCE_CPRI_ST_SET)  \
+	SW_API_DESC(SW_API_QOS_PT_FORCE_CPRI_ST_GET)  \
+	SW_API_DESC(SW_API_QOS_QUEUE_REMARK_SET) \
+	SW_API_DESC(SW_API_QOS_QUEUE_REMARK_GET)
+#else
+#define QOS_LEGACY_API \
+	SW_API_DEF(SW_API_QOS_PT_MODE_SET, fal_qos_port_mode_set),
+#define QOS_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_QOS_PT_MODE_SET)
+#endif
+#else
+#define QOS_LEGACY_API
+#define QOS_LEGACY_API_PARAM
+#endif
+	/* PORTVLAN Legacy APIs */
+#ifdef IN_PORTVLAN
+#ifndef IN_PORTVLAN_MINI
+#define PORTVLAN_LEGACY_API \
+	SW_API_DEF(SW_API_PT_ING_MODE_GET, fal_port_1qmode_get), \
+	SW_API_DEF(SW_API_PT_ING_MODE_SET, fal_port_1qmode_set), \
+	SW_API_DEF(SW_API_PT_EG_MODE_GET, fal_port_egvlanmode_get), \
+	SW_API_DEF(SW_API_PT_EG_MODE_SET, fal_port_egvlanmode_set), \
+	SW_API_DEF(SW_API_PT_FORCE_DEF_VID_SET, fal_port_force_default_vid_set), \
+	SW_API_DEF(SW_API_PT_FORCE_DEF_VID_GET, fal_port_force_default_vid_get), \
+	SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_SET, fal_port_force_portvlan_set), \
+	SW_API_DEF(SW_API_PT_FORCE_PORTVLAN_GET, fal_port_force_portvlan_get), \
+	SW_API_DEF(SW_API_NESTVLAN_TPID_SET, fal_nestvlan_tpid_set), \
+	SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
+	SW_API_DEF(SW_API_PT_TLS_SET, fal_port_tls_set), \
+	SW_API_DEF(SW_API_PT_TLS_GET, fal_port_tls_get), \
+	SW_API_DEF(SW_API_PT_PRI_PROPAGATION_SET, fal_port_pri_propagation_set), \
+	SW_API_DEF(SW_API_PT_PRI_PROPAGATION_GET, fal_port_pri_propagation_get), \
+	SW_API_DEF(SW_API_PT_DEF_SVID_SET, fal_port_default_svid_set), \
+	SW_API_DEF(SW_API_PT_DEF_SVID_GET, fal_port_default_svid_get), \
+	SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set), \
+	SW_API_DEF(SW_API_PT_DEF_CVID_GET, fal_port_default_cvid_get), \
+	SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_SET, fal_port_vlan_propagation_set), \
+	SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_GET, fal_port_vlan_propagation_get), \
+	SW_API_DEF(SW_API_PT_MAC_VLAN_XLT_SET, fal_port_mac_vlan_xlt_set), \
+	SW_API_DEF(SW_API_PT_MAC_VLAN_XLT_GET, fal_port_mac_vlan_xlt_get), \
+	SW_API_DEF(SW_API_NETISOLATE_SET, fal_netisolate_set), \
+	SW_API_DEF(SW_API_NETISOLATE_GET, fal_netisolate_get), \
+	SW_API_DEF(SW_API_EG_FLTR_BYPASS_EN_SET, fal_eg_trans_filter_bypass_en_set), \
+	SW_API_DEF(SW_API_EG_FLTR_BYPASS_EN_GET, fal_eg_trans_filter_bypass_en_get), \
+	SW_API_DEF(SW_API_PT_VRF_ID_SET, fal_port_vrf_id_set), \
+	SW_API_DEF(SW_API_PT_VRF_ID_GET, fal_port_vrf_id_get),
+#define PORTVLAN_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_PT_ING_MODE_GET) \
+	SW_API_DESC(SW_API_PT_ING_MODE_SET) \
+	SW_API_DESC(SW_API_PT_EG_MODE_GET) \
+	SW_API_DESC(SW_API_PT_EG_MODE_SET) \
+	SW_API_DESC(SW_API_PT_FORCE_DEF_VID_SET)	\
+	SW_API_DESC(SW_API_PT_FORCE_DEF_VID_GET)	\
+	SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_SET)	 \
+	SW_API_DESC(SW_API_PT_FORCE_PORTVLAN_GET)	 \
+	SW_API_DESC(SW_API_NESTVLAN_TPID_SET)	 \
+	SW_API_DESC(SW_API_NESTVLAN_TPID_GET)	 \
+	SW_API_DESC(SW_API_PT_TLS_SET)	 \
+	SW_API_DESC(SW_API_PT_TLS_GET)	 \
+	SW_API_DESC(SW_API_PT_PRI_PROPAGATION_SET)	  \
+	SW_API_DESC(SW_API_PT_PRI_PROPAGATION_GET)	 \
+	SW_API_DESC(SW_API_PT_DEF_SVID_SET)    \
+	SW_API_DESC(SW_API_PT_DEF_SVID_GET)    \
+	SW_API_DESC(SW_API_PT_DEF_CVID_SET)    \
+	SW_API_DESC(SW_API_PT_DEF_CVID_GET)    \
+	SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_SET)   \
+	SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_GET)   \
+	SW_API_DESC(SW_API_PT_MAC_VLAN_XLT_SET)   \
+	SW_API_DESC(SW_API_PT_MAC_VLAN_XLT_GET)  \
+	SW_API_DESC(SW_API_NETISOLATE_SET)	 \
+	SW_API_DESC(SW_API_NETISOLATE_GET)	 \
+	SW_API_DESC(SW_API_EG_FLTR_BYPASS_EN_SET)	\
+	SW_API_DESC(SW_API_EG_FLTR_BYPASS_EN_GET)	\
+	SW_API_DESC(SW_API_PT_VRF_ID_SET)  \
+	SW_API_DESC(SW_API_PT_VRF_ID_GET)
+#else
+#define PORTVLAN_LEGACY_API \
+	SW_API_DEF(SW_API_PT_ING_MODE_SET, fal_port_1qmode_set), \
+	SW_API_DEF(SW_API_PT_ING_MODE_GET, fal_port_1qmode_get), \
+	SW_API_DEF(SW_API_PT_EG_MODE_SET, fal_port_egvlanmode_set), \
+	SW_API_DEF(SW_API_PT_EG_MODE_GET, fal_port_egvlanmode_get), \
+	SW_API_DEF(SW_API_NESTVLAN_TPID_SET, fal_nestvlan_tpid_set), \
+	SW_API_DEF(SW_API_NESTVLAN_TPID_GET, fal_nestvlan_tpid_get), \
+	SW_API_DEF(SW_API_PT_TLS_SET, fal_port_tls_set), \
+	SW_API_DEF(SW_API_PT_DEF_SVID_SET, fal_port_default_svid_set), \
+	SW_API_DEF(SW_API_PT_DEF_SVID_GET, fal_port_default_svid_get), \
+	SW_API_DEF(SW_API_PT_DEF_CVID_SET, fal_port_default_cvid_set), \
+	SW_API_DEF(SW_API_PT_DEF_CVID_GET, fal_port_default_cvid_get), \
+	SW_API_DEF(SW_API_PT_VLAN_PROPAGATION_SET, fal_port_vlan_propagation_set),
+#define PORTVLAN_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_PT_ING_MODE_SET) \
+	SW_API_DESC(SW_API_PT_ING_MODE_GET) \
+	SW_API_DESC(SW_API_PT_EG_MODE_SET) \
+	SW_API_DESC(SW_API_PT_EG_MODE_GET) \
+	SW_API_DESC(SW_API_NESTVLAN_TPID_SET)	 \
+	SW_API_DESC(SW_API_NESTVLAN_TPID_GET)	 \
+	SW_API_DESC(SW_API_PT_TLS_SET)	 \
+	SW_API_DESC(SW_API_PT_DEF_SVID_SET)    \
+	SW_API_DESC(SW_API_PT_DEF_SVID_GET)    \
+	SW_API_DESC(SW_API_PT_DEF_CVID_SET)    \
+	SW_API_DESC(SW_API_PT_DEF_CVID_GET)    \
+	SW_API_DESC(SW_API_PT_VLAN_PROPAGATION_SET)
+#endif
+#else
+#define PORTVLAN_LEGACY_API
+#define PORTVLAN_LEGACY_API_PARAM
+#endif
+	/* FDB Legacy APIs */
+#ifdef IN_FDB
+#ifndef IN_FDB_MINI
+#define FDB_LEGACY_API \
+	SW_API_DEF(SW_API_FDB_VLAN_IVL_SVL_SET, fal_fdb_vlan_ivl_svl_set),\
+	SW_API_DEF(SW_API_FDB_VLAN_IVL_SVL_GET, fal_fdb_vlan_ivl_svl_get),\
+	SW_API_DEF(SW_API_FDB_LEARN_LIMIT_SET,	  fal_fdb_learn_limit_set),  \
+	SW_API_DEF(SW_API_FDB_LEARN_LIMIT_GET,	  fal_fdb_learn_limit_get),  \
+	SW_API_DEF(SW_API_FDB_LEARN_EXCEED_CMD_SET,    fal_fdb_learn_exceed_cmd_set),  \
+	SW_API_DEF(SW_API_FDB_LEARN_EXCEED_CMD_GET,    fal_fdb_learn_exceed_cmd_get),  \
+	SW_API_DEF(SW_API_FDB_RESV_ADD, fal_fdb_resv_add), \
+	SW_API_DEF(SW_API_FDB_RESV_DEL, fal_fdb_resv_del), \
+	SW_API_DEF(SW_API_FDB_RESV_FIND, fal_fdb_resv_find), \
+	SW_API_DEF(SW_API_FDB_RESV_ITERATE, fal_fdb_resv_iterate), \
+	SW_API_DEF(SW_API_FDB_PT_LEARN_STATIC_SET,	 fal_fdb_port_learn_static_set), \
+	SW_API_DEF(SW_API_FDB_PT_LEARN_STATIC_GET,	 fal_fdb_port_learn_static_get),
+#define FDB_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_FDB_VLAN_IVL_SVL_SET) \
+	SW_API_DESC(SW_API_FDB_VLAN_IVL_SVL_GET) \
+	SW_API_DESC(SW_API_FDB_LEARN_LIMIT_SET)  \
+	SW_API_DESC(SW_API_FDB_LEARN_LIMIT_GET)  \
+	SW_API_DESC(SW_API_FDB_LEARN_EXCEED_CMD_SET)  \
+	SW_API_DESC(SW_API_FDB_LEARN_EXCEED_CMD_GET)  \
+	SW_API_DESC(SW_API_FDB_RESV_ADD)  \
+	SW_API_DESC(SW_API_FDB_RESV_DEL)  \
+	SW_API_DESC(SW_API_FDB_RESV_FIND) \
+	SW_API_DESC(SW_API_FDB_RESV_ITERATE) \
+	SW_API_DESC(SW_API_FDB_PT_LEARN_STATIC_SET) \
+	SW_API_DESC(SW_API_FDB_PT_LEARN_STATIC_GET)
+#else
+#define FDB_LEGACY_API
+#define FDB_LEGACY_API_PARAM
+#endif
+#else
+#define FDB_LEGACY_API
+#define FDB_LEGACY_API_PARAM
+#endif
+	/* ACL Legacy APIs */
+#ifdef IN_ACL
+#define ACL_LEGACY_API \
+	SW_API_DEF(SW_API_ACL_STATUS_SET, fal_acl_status_set), \
+	SW_API_DEF(SW_API_ACL_STATUS_GET, fal_acl_status_get), \
+	SW_API_DEF(SW_API_ACL_LIST_DUMP, fal_acl_list_dump), \
+	SW_API_DEF(SW_API_ACL_PT_UDF_PROFILE_SET, fal_acl_port_udf_profile_set), \
+	SW_API_DEF(SW_API_ACL_PT_UDF_PROFILE_GET, fal_acl_port_udf_profile_get), \
+	SW_API_DEF(SW_API_ACL_RULE_ACTIVE, fal_acl_rule_active), \
+	SW_API_DEF(SW_API_ACL_RULE_DEACTIVE, fal_acl_rule_deactive),\
+	SW_API_DEF(SW_API_ACL_RULE_SRC_FILTER_STS_SET, fal_acl_rule_src_filter_sts_set),\
+	SW_API_DEF(SW_API_ACL_RULE_SRC_FILTER_STS_GET, fal_acl_rule_src_filter_sts_get),
+#define ACL_LEGACY_API_PARAM \
+	SW_API_DESC(SW_API_ACL_STATUS_SET) \
+	SW_API_DESC(SW_API_ACL_STATUS_GET) \
+	SW_API_DESC(SW_API_ACL_LIST_DUMP) \
+	SW_API_DESC(SW_API_ACL_PT_UDF_PROFILE_SET)	  \
+	SW_API_DESC(SW_API_ACL_PT_UDF_PROFILE_GET)	  \
+	SW_API_DESC(SW_API_ACL_RULE_ACTIVE)    \
+	SW_API_DESC(SW_API_ACL_RULE_DEACTIVE) \
+	SW_API_DESC(SW_API_ACL_RULE_SRC_FILTER_STS_SET)\
+	SW_API_DESC(SW_API_ACL_RULE_SRC_FILTER_STS_GET)
+#else
+#define ACL_LEGACY_API
+#define ACL_LEGACY_API_PARAM
+#endif
+	/* PORTCTRL Legacy APIs */
+#ifdef IN_PORTCONTROL
+#ifndef IN_PORTCONTROL_MINI
+#define PORTCONTROL_LEGACY_API \
+    SW_API_DEF(SW_API_PT_HDR_SET, fal_port_hdr_status_set), \
+    SW_API_DEF(SW_API_PT_HDR_GET, fal_port_hdr_status_get), \
+    SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
+    SW_API_DEF(SW_API_PT_TXHDR_GET, fal_port_txhdr_mode_get), \
+    SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
+    SW_API_DEF(SW_API_PT_RXHDR_GET, fal_port_rxhdr_mode_get), \
+    SW_API_DEF(SW_API_HEADER_TYPE_SET, fal_header_type_set),  \
+    SW_API_DEF(SW_API_HEADER_TYPE_GET, fal_header_type_get),  \
+    SW_API_DEF(SW_API_BP_STATUS_SET, fal_port_bp_status_set),   \
+    SW_API_DEF(SW_API_BP_STATUS_GET, fal_port_bp_status_get),   \
+    SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set),   \
+    SW_API_DEF(SW_API_PT_LINK_MODE_GET, fal_port_link_forcemode_get), \
+    SW_API_DEF(SW_API_PT_CONGESTION_DROP_SET, fal_port_congestion_drop_set), \
+    SW_API_DEF(SW_API_PT_CONGESTION_DROP_GET, fal_port_congestion_drop_get), \
+    SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_STATUS_GET, fal_vch_bp_status_get), \
+    SW_API_DEF(SW_API_PT_RING_UNION_SET, fal_ring_union_set), \
+    SW_API_DEF(SW_API_PT_RING_UNION_GET, fal_ring_union_get),
+#define PORTCONTROL_LEGACY_API_PARAM \
+    SW_API_DESC(SW_API_PT_HDR_SET) \
+    SW_API_DESC(SW_API_PT_HDR_GET) \
+    SW_API_DESC(SW_API_PT_TXHDR_SET) \
+    SW_API_DESC(SW_API_PT_TXHDR_GET) \
+    SW_API_DESC(SW_API_PT_RXHDR_SET) \
+    SW_API_DESC(SW_API_PT_RXHDR_GET) \
+    SW_API_DESC(SW_API_HEADER_TYPE_SET) \
+    SW_API_DESC(SW_API_HEADER_TYPE_GET) \
+    SW_API_DESC(SW_API_BP_STATUS_SET) \
+    SW_API_DESC(SW_API_BP_STATUS_GET) \
+    SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
+    SW_API_DESC(SW_API_PT_LINK_MODE_GET) \
+    SW_API_DESC(SW_API_PT_CONGESTION_DROP_SET) \
+    SW_API_DESC(SW_API_PT_CONGESTION_DROP_GET) \
+    SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_STATUS_GET) \
+    SW_API_DESC(SW_API_PT_RING_UNION_SET) \
+    SW_API_DESC(SW_API_PT_RING_UNION_GET)
+#else
+#define PORTCONTROL_LEGACY_API \
+    SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set), \
+    SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
+    SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
+    SW_API_DEF(SW_API_HEADER_TYPE_SET, fal_header_type_set),
+#define PORTCONTROL_LEGACY_API_PARAM \
+    SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
+    SW_API_DESC(SW_API_PT_TXHDR_SET) \
+    SW_API_DESC(SW_API_PT_RXHDR_SET) \
+    SW_API_DESC(SW_API_HEADER_TYPE_SET)
+#endif
+#else
+#define PORTCONTROL_LEGACY_API
+#define PORTCONTROL_LEGACY_API_PARAM
+#endif
+#else
+#define TRUNK_LEGACY_API
+#define TRUNK_LEGACY_API_PARAM
+#define SEC_LEGACY_API
+#define SEC_LEGACY_API_PARAM
+#define PPPOE_LEGACY_API
+#define PPPOE_LEGACY_API_PARAM
+#define MISC_LEGACY_API
+#define MISC_LEGACY_API_PARAM
+#define QOS_LEGACY_API
+#define QOS_LEGACY_API_PARAM
+#define PORTVLAN_LEGACY_API
+#define PORTVLAN_LEGACY_API_PARAM
+#define FDB_LEGACY_API
+#define FDB_LEGACY_API_PARAM
+#define ACL_LEGACY_API
+#define ACL_LEGACY_API_PARAM
+#define PORTCONTROL_LEGACY_API
+#define PORTCONTROL_LEGACY_API_PARAM
+#endif
+
 /* auto_insert_flag */
 /*qca808x_start*/
 #define SSDK_API \
@@ -3802,10 +3911,18 @@ extern "C" {
     PON_PM_API \
     IPMC_API \
     CROSSCHIP_API \
+    TRUNK_LEGACY_API \
+    SEC_LEGACY_API \
+    PPPOE_LEGACY_API \
+    MISC_LEGACY_API \
+    QOS_LEGACY_API \
+    PORTVLAN_LEGACY_API \
+    FDB_LEGACY_API \
+    ACL_LEGACY_API \
+    PORTCONTROL_LEGACY_API \
 /* auto_insert_flag_1 */ \
 /*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
-
 
 #define SSDK_PARAM  \
 /*qca808x_end*/\
@@ -3867,6 +3984,15 @@ extern "C" {
     PON_PM_API_PARAM \
     IPMC_API_PARAM \
     CROSSCHIP_API_PARAM \
+    TRUNK_LEGACY_API_PARAM \
+    SEC_LEGACY_API_PARAM \
+    PPPOE_LEGACY_API_PARAM \
+    MISC_LEGACY_API_PARAM \
+    QOS_LEGACY_API_PARAM \
+    PORTVLAN_LEGACY_API_PARAM \
+    FDB_LEGACY_API_PARAM \
+    ACL_LEGACY_API_PARAM \
+    PORTCONTROL_LEGACY_API_PARAM \
 /* auto_insert_flag_2 */ \
 /*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),

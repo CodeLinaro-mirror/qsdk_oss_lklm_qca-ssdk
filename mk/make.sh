@@ -32,6 +32,7 @@ prepare_compile() {
 			"$param3_qsdk" != *MINI_SSDK* && \
 			"$param3_qsdk" != *LOWMEM_256* && \
 			"$param3_qsdk" != *HNAT_FEATURE* && \
+			"$param3_qsdk" != *SWCONFIG_FEATURE* && \
 			"$param3_qsdk" != *RFS_FEATURE* ]]; then
 	    export QSDK_DIR=$param3_qsdk
 	else
@@ -95,6 +96,9 @@ check_soc () {
             ;;
         'JHPPE')
             IN_SOC=ipq96xx
+            ;;
+        'HTTPPE')
+            IN_SOC=non-ipq
             ;;
          *)
             echo "error: No such CHIP type [$1]"

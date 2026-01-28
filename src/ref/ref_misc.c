@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #include "sw.h"
@@ -65,7 +54,10 @@ qca_ar8327_sw_set_max_frame_size(struct switch_dev *dev,
 	a_uint32_t port_id = SSDK_PHYSICAL_PORT0;
 
 	if (priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE
-		|| priv->version == QCA_VER_MRPPE)
+		|| priv->version == QCA_VER_MRPPE
+		|| priv->version == QCA_VER_JHPPE
+		|| priv->version == QCA_VER_HMSPPE
+		|| priv->version == QCA_VER_HTTPPE)
 	{
 		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num;
 			port_id++)
@@ -78,32 +70,17 @@ qca_ar8327_sw_set_max_frame_size(struct switch_dev *dev,
 			}
 		}
 	}
-	else if (priv->version == QCA_VER_SCOMPHY)
-	{
-#ifdef MP
-		if(adapt_scomphy_revision_get(priv->device_id)
-			== MP_GEPHY)
-		{
-			for(port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT2;
-				port_id++)
-			{
-				ret = fal_port_max_frame_size_set(priv->device_id,
-					port_id, size);
-				if(ret)
-				{
-					return -1;
-				}
-			}
-		}
-#endif
-	}
 	else
 	{
+#ifdef ISISC
 		ret = fal_frame_max_size_set(priv->device_id, size);
 		if (ret)
 		{
 			return -1;
 		}
+#else
+		return -1;
+#endif
 	}
 
 	return 0;
@@ -119,25 +96,19 @@ qca_ar8327_sw_get_max_frame_size(struct switch_dev *dev,
 	a_uint32_t ret = 0;
 
 	if (priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE
-		|| priv->version == QCA_VER_MRPPE)
+		|| priv->version == QCA_VER_MRPPE || priv->version == QCA_VER_JHPPE
+		|| priv->version == QCA_VER_HMSPPE || priv->version == QCA_VER_HTTPPE)
 	{
 		ret = fal_port_max_frame_size_get(priv->device_id,
 			SSDK_PHYSICAL_PORT1, &size);
 	}
-	else if (priv->version == QCA_VER_SCOMPHY)
-	{
-#ifdef MP
-		if(adapt_scomphy_revision_get(priv->device_id)
-			== MP_GEPHY)
-		{
-			ret = fal_port_max_frame_size_get(priv->device_id,
-				SSDK_PHYSICAL_PORT1, &size);
-		}
-#endif
-	}
 	else
 	{
+#ifdef ISISC
 		ret = fal_frame_max_size_get(priv->device_id, &size);
+#else
+		return -1;
+#endif
 	}
 	if (ret){
 		return -1;
@@ -174,10 +145,11 @@ qca_ar8327_sw_reset_switch(struct switch_dev *dev)
 
 	mutex_unlock(&priv->reg_mutex);
 
+#ifdef ISISC
 	priv->init = true;
 	rv += qca_ar8327_sw_hw_apply(dev);
 	priv->init = false;
-
+#endif
 	mac_mode = ssdk_dt_global_get_mac_mode(priv->device_id, 0);
 	/* set mac5 flowcontol force for RGMII */
 	if ((mac_mode == PORT_WRAPPER_SGMII0_RGMII5)

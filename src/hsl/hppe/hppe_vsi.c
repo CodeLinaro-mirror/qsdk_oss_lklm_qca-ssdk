@@ -1,17 +1,9 @@
 /*
  * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
-*  Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
+
 /**
  * @defgroup
  * @{
@@ -258,5 +250,33 @@ hppe_pre_l2_cnt_tbl_rx_drop_pkt_cnt_set(
 	reg_val.bf.rx_drop_pkt_cnt_0 = value & (((a_uint64_t)1<<24)-1);
 	ret = hppe_pre_l2_cnt_tbl_set(dev_id, index, &reg_val);
 	return ret;
+}
+
+sw_error_t
+hppe_l3_vp_port_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l3_vp_port_tbl_u *value)
+{
+	return hppe_reg_tbl_get(
+				dev_id,
+				IPE_L3_BASE_ADDR + L3_VP_PORT_TBL_ADDRESS + \
+				index * L3_VP_PORT_TBL_INC,
+				value->val,
+				sizeof(union l3_vp_port_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
+hppe_l3_vp_port_tbl_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union l3_vp_port_tbl_u *value)
+{
+	return hppe_reg_tbl_set(
+				dev_id,
+				IPE_L3_BASE_ADDR + L3_VP_PORT_TBL_ADDRESS + \
+				index * L3_VP_PORT_TBL_INC,
+				value->val,
+				sizeof(union l3_vp_port_tbl_u)/sizeof(a_uint32_t));
 }
 

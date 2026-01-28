@@ -19,9 +19,8 @@ extern "C" {
 #include "fal/fal_type.h"
 #include "fal_tunnel.h"
 #include "fal_vport.h"
-#ifdef ISISC
 #include "fal_acl_legacy.h"
-#endif
+
     /**
     @brief This enum defines the ACL rule type.
     */

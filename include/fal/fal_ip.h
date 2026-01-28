@@ -18,10 +18,7 @@ extern "C" {
 #include "sw.h"
 #include "fal/fal_type.h"
 #include "fal_multi.h"
-#ifdef ISISC
 #include "fal_ip_legacy.h"
-#endif
-
 
 #define FAL_MIN_VRF_ID 0
 #define FAL_MAX_VRF_ID 7

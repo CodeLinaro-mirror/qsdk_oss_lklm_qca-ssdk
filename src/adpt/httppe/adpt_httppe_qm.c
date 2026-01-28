@@ -16,8 +16,6 @@
 #define MCAST_QUEUE_ITEMS	3
 #define DROP_INC	0x10
 
-static aos_lock_t httppe_qm_lock[SW_MAX_NR_DEV];
-
 extern sw_error_t adpt_hppe_qm_enqueue_ctrl_get(a_uint32_t dev_id, a_uint32_t queue_id,
 		a_bool_t *enable);
 
@@ -809,6 +807,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t ucast_enqueue_en)
 {
 	union mc_enq_ctrl_u reg_val;
+	struct qca_phy_priv *priv;
 	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -816,20 +815,21 @@ adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
 		return SW_OUT_OF_RANGE;
 
-	aos_lock_bh(&httppe_qm_lock[dev_id]);
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	aos_lock_bh(&priv->ppe_qm_lock);
 
 	rv = httppe_mc_enq_ctrl_get(dev_id, &reg_val);
-	if (rv != SW_OK) {
-		aos_unlock_bh(&httppe_qm_lock[dev_id]);
-		return rv;
-	}
+	if (rv != SW_OK)
+		goto unlock_and_exit;
 
 	if (ucast_enqueue_en == A_TRUE) {
 		/* nothing to do if mc_enq_ctrl is enabled on the same port */
 		if (reg_val.bf.uc_enq_en == A_TRUE &&
 				reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id)) {
-			aos_unlock_bh(&httppe_qm_lock[dev_id]);
-			return SW_OK;
+			rv = SW_OK;
+			goto unlock_and_exit;
 		} else {
 			reg_val.bf.uc_enq_en = A_TRUE;
 			reg_val.bf.uc_port_id = FAL_PORT_ID_VALUE(port_id);
@@ -843,15 +843,16 @@ adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 				reg_val.bf.uc_port_id == FAL_PORT_ID_VALUE(port_id))
 			reg_val.bf.uc_enq_en = A_FALSE;
 		else {
-			aos_unlock_bh(&httppe_qm_lock[dev_id]);
-			return SW_OK;
+			rv = SW_OK;
+			goto unlock_and_exit;
 		}
 
 	}
 
 	rv = httppe_mc_enq_ctrl_set(dev_id, &reg_val);
-	aos_unlock_bh(&httppe_qm_lock[dev_id]);
 
+unlock_and_exit:
+	aos_unlock_bh(&priv->ppe_qm_lock);
 	return rv;
 }
 
@@ -860,6 +861,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t *ucast_enqueue_en)
 {
 	union mc_enq_ctrl_u reg_val;
+	struct qca_phy_priv *priv;
 	sw_error_t rv = SW_OK;
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -868,11 +870,14 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
 		return SW_OUT_OF_RANGE;
 
-	aos_lock_bh(&httppe_qm_lock[dev_id]);
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	aos_lock_bh(&priv->ppe_qm_lock);
 
 	rv = httppe_mc_enq_ctrl_get(dev_id, &reg_val);
 	if (rv != SW_OK) {
-		aos_unlock_bh(&httppe_qm_lock[dev_id]);
+		aos_unlock_bh(&priv->ppe_qm_lock);
 		return rv;
 	}
 
@@ -881,25 +886,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	else
 		*ucast_enqueue_en = A_FALSE;
 
-	aos_unlock_bh(&httppe_qm_lock[dev_id]);
-
-	return SW_OK;
-}
-
-sw_error_t adpt_httppe_qm_init(a_uint32_t dev_id)
-{
-	adpt_api_t *p_adpt_api = NULL;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	aos_lock_init(&httppe_qm_lock[dev_id]);
-
-	p_adpt_api = adpt_api_ptr_get(dev_id);
-	if(p_adpt_api == NULL)
-		return SW_FAIL;
-
-	p_adpt_api->adpt_qm_mcast_enqueue_ctrl_set = adpt_httppe_qm_mcast_enqueue_ctrl_set;
-	p_adpt_api->adpt_qm_mcast_enqueue_ctrl_get = adpt_httppe_qm_mcast_enqueue_ctrl_get;
+	aos_unlock_bh(&priv->ppe_qm_lock);
 
 	return SW_OK;
 }

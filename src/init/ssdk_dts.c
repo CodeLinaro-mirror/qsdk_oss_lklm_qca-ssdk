@@ -91,6 +91,7 @@ a_uint16_t ssdk_ucast_l0_cdrr_num_get(a_uint32_t dev_id, a_uint32_t port)
 		cfg->scheduler_cfg.pool[port].l0cdrr_start + 1;
 }
 
+#ifdef IN_QOS
 a_uint8_t ssdk_port_ucast_max_pri_get(a_uint32_t dev_id, a_uint32_t port)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
@@ -111,7 +112,7 @@ void ssdk_port_ucast_max_pri_set(a_uint32_t dev_id, a_uint32_t port,
 
 	cfg->scheduler_cfg.pool[port].max_pri = max_pri;
 }
-
+#endif
 #endif
 a_uint32_t ssdk_intf_mac_num_get(void)
 {
@@ -1255,6 +1256,9 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 				ssdk_dt_priv->pcie_hw_base);
 	} else {
 		ssdk_dt_priv->switch_reg_access_mode = HSL_REG_MDIO;
+		reg_cfg = of_get_property(switch_node, "reg", &len);
+		if(reg_cfg)
+			ssdk_dt_priv->switchreg_base_addr = be32_to_cpup(reg_cfg);
 	}
 
 	return SW_OK;
