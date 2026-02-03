@@ -451,7 +451,15 @@ struct qca_phy_priv {
 	/* Shaper rate tables for multi-device support */
 	ssdk_ppe_shaper_priv_t *shaper_priv;
 	/* PPE qm lock */
-	aos_lock_t ppe_qm_lock;
+	union {
+		aos_lock_t qm_spin_lock;
+		aos_mutex_lock_t qm_mutex_lock;
+	} ppe_qm_lock;
+	/* PPE ACL lock */
+	union {
+		aos_lock_t acl_spin_lock;
+		aos_mutex_lock_t acl_mutex_lock;
+	} ppe_acl_lock;
 /*qca808x_start*/
 };
 

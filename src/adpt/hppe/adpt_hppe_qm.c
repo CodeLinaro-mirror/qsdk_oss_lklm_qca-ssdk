@@ -12,6 +12,7 @@
 #include "hsl_reg.h"
 #include "fal_qm.h"
 #include "adpt.h"
+#include "ssdk_dts.h"
 #include "adpt_hppe.h"
 #include "adpt_appe_qm.h"
 #include "hppe_global_reg.h"
@@ -1543,7 +1544,10 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	aos_lock_init(&priv->ppe_qm_lock);
+	if (ssdk_switch_reg_access_mode_get(dev_id) == HSL_REG_MDIO)
+		aos_mutex_lock_init(&priv->ppe_qm_lock.qm_mutex_lock);
+	else
+		aos_lock_init(&priv->ppe_qm_lock.qm_spin_lock);
 
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
