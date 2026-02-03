@@ -41,7 +41,10 @@ _adpt_appe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id,
 		return hmsppe_pon_mode_set(dev_id, &hmsppe_pon_mode);
 #endif
 	} else {
-		return SW_BAD_VALUE;
+		/* There is no need to configure mux mac for unknow mac type
+		 * port which is not used.
+		 */
+		return SW_OK;
 	}
 
 	rv = appe_port_mux_ctrl_get(dev_id, &appe_port_mux_ctrl);
