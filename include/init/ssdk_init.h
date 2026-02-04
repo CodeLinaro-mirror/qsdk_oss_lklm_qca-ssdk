@@ -341,9 +341,9 @@ a_uint32_t ssdk_dt_global_get_mac_mode(a_uint32_t dev_id, a_uint32_t index);
 a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode);
 
 a_uint32_t
-qca_hppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id);
+qca_ppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id);
 sw_error_t
-qca_hppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type);
+qca_ppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type);
 a_uint32_t
 ssdk_ifname_to_port(a_uint32_t dev_id, const char *ifname);
 char *

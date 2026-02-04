@@ -197,13 +197,13 @@ qca_httppe_portctrl_hw_init(a_uint32_t dev_id)
 	SW_RTN_ON_NULL(priv);
 
 	for(i = SSDK_PHYSICAL_PORT0; i < priv->ports_num; i++) {
-		mac_type_org = qca_hppe_port_mac_type_get(dev_id, i);
+		mac_type_org = qca_ppe_port_mac_type_get(dev_id, i);
 		for(mac_type = PORT_GMAC_TYPE; mac_type <= PORT_XGMAC_TYPE; mac_type++) {
 			if (mac_type == PORT_XGMAC_TYPE) {
 				if ((i != SSDK_PHYSICAL_PORT0) && (i != SSDK_PHYSICAL_PORT5))
 					continue;
 			}
-			qca_hppe_port_mac_type_set(dev_id, i, mac_type);
+			qca_ppe_port_mac_type_set(dev_id, i, mac_type);
 			if (hsl_port_feature_get(dev_id, i, PHY_F_FORCE) == A_TRUE) {
 				fal_port_txmac_status_set(dev_id, i, A_TRUE);
 				fal_port_rxmac_status_set(dev_id, i, A_TRUE);
@@ -219,7 +219,7 @@ qca_httppe_portctrl_hw_init(a_uint32_t dev_id)
 			port_eee_cfg.lpi_tx_enable = A_FALSE;
 			fal_port_interface_eee_cfg_set(dev_id, i, &port_eee_cfg);
 		}
-		qca_hppe_port_mac_type_set(dev_id, i, mac_type_org);
+		qca_ppe_port_mac_type_set(dev_id, i, mac_type_org);
 		if (i != SSDK_PHYSICAL_PORT0) {
 			qca_mac_port_status_init(dev_id, i);
 		}

@@ -106,14 +106,21 @@ struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id)
 /*qca808x_end*/
 
 a_uint32_t
-qca_hppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id)
+qca_ppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	if (!priv)
 		return 0;
 
 	if (priv->version == QCA_VER_HTTPPE) {
-		return priv->ports[port_id].port_mac_type;
+		if (priv->ports[port_id].port_mac_type != 0)
+			return priv->ports[port_id].port_mac_type;
+		else
+			/* SSDK interface init and MAC polling is not avaiable.
+			 * MAC type is selected by DSA PHYLINK and can be get
+			 * from current port mux control configuration.
+			 */
+			return adpt_ppe_mac_type_get(dev_id, port_id);
 	} else {
 		if (port_id < SSDK_PHYSICAL_PORT1 || port_id >= SW_MAX_NR_PORT)
 			return 0;
@@ -122,7 +129,7 @@ qca_hppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id)
 }
 
 sw_error_t
-qca_hppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type)
+qca_ppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type)
 {
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
