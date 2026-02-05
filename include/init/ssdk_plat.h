@@ -455,10 +455,16 @@ struct qca_phy_priv {
 /*qca808x_start*/
 };
 
+#define SSDK_SWITCH_REG_IS_QCA8386		0
+#define SSDK_SWITCH_REG_IS_QCA8337		1
+#define SSDK_SWITCH_REG_IS_QCA81XX		2
+#define SSDK_SWITCH_REG_IS_QCE2204		3
+
 #define SSDK_SWITCH_REG_TYPE_MASK		GENMASK(31, 29)
 #define SSDK_SWITCH_REG_MDIO_ADDR_MASK		GENMASK(28, 24)
-#define SSDK_SWITCH_REG_TYPE_QCA8337		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, 1)
-#define SSDK_SWITCH_REG_TYPE_QCA8386		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, 0)
+#define SSDK_SWITCH_REG_TYPE_QCA8337		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, SSDK_SWITCH_REG_IS_QCA8337)
+#define SSDK_SWITCH_REG_TYPE_QCA8386		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, SSDK_SWITCH_REG_IS_QCA8386)
+#define SSDK_SWITCH_REG_TYPE_QCE2204		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, SSDK_SWITCH_REG_IS_QCE2204)
 
 #define ETH_LDO_RDY_CNT		3
 struct qca_mdio_data{
@@ -536,11 +542,19 @@ int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint3
 
 sw_error_t
 qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
-			a_uint8_t * reg_data, a_uint32_t len);
+		    a_uint8_t * reg_data, a_uint32_t len);
 
 sw_error_t
 qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+		     a_uint8_t * reg_data, a_uint32_t len);
+
+sw_error_t
+qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 			a_uint8_t * reg_data, a_uint32_t len);
+
+sw_error_t
+qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+			 a_uint8_t * reg_data, a_uint32_t len);
 
 sw_error_t
 qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
