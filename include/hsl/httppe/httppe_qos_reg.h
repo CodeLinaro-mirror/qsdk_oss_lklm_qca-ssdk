@@ -110,60 +110,61 @@ union l0_flow_port_map_tbl_u {
 	/*[field] SP_ID*/
 	#define L1_FLOW_MAP_TBL_SP_ID
 	#define L1_FLOW_MAP_TBL_SP_ID_OFFSET  0
-	#define L1_FLOW_MAP_TBL_SP_ID_LEN     6
+	#define L1_FLOW_MAP_TBL_SP_ID_LEN     4
 	#define L1_FLOW_MAP_TBL_SP_ID_DEFAULT 0x0
 	/*[field] C_PRI*/
 	#define L1_FLOW_MAP_TBL_C_PRI
-	#define L1_FLOW_MAP_TBL_C_PRI_OFFSET  6
+	#define L1_FLOW_MAP_TBL_C_PRI_OFFSET  4
 	#define L1_FLOW_MAP_TBL_C_PRI_LEN     3
 	#define L1_FLOW_MAP_TBL_C_PRI_DEFAULT 0x0
 	/*[field] E_PRI*/
 	#define L1_FLOW_MAP_TBL_E_PRI
-	#define L1_FLOW_MAP_TBL_E_PRI_OFFSET  9
+	#define L1_FLOW_MAP_TBL_E_PRI_OFFSET  7
 	#define L1_FLOW_MAP_TBL_E_PRI_LEN     3
 	#define L1_FLOW_MAP_TBL_E_PRI_DEFAULT 0x0
 	/*[field] C_DRR_WT*/
 	#define L1_FLOW_MAP_TBL_C_DRR_WT
-	#define L1_FLOW_MAP_TBL_C_DRR_WT_OFFSET  12
+	#define L1_FLOW_MAP_TBL_C_DRR_WT_OFFSET  10
 	#define L1_FLOW_MAP_TBL_C_DRR_WT_LEN     10
 	#define L1_FLOW_MAP_TBL_C_DRR_WT_DEFAULT 0x0
 	/*[field] E_DRR_WT*/
 	#define L1_FLOW_MAP_TBL_E_DRR_WT
-	#define L1_FLOW_MAP_TBL_E_DRR_WT_OFFSET  22
+	#define L1_FLOW_MAP_TBL_E_DRR_WT_OFFSET  20
 	#define L1_FLOW_MAP_TBL_E_DRR_WT_LEN     10
 	#define L1_FLOW_MAP_TBL_E_DRR_WT_DEFAULT 0x0
 	/*[field] C_DRR_ID*/
 	#define L1_FLOW_MAP_TBL_C_DRR_ID
-	#define L1_FLOW_MAP_TBL_C_DRR_ID_OFFSET  32
+	#define L1_FLOW_MAP_TBL_C_DRR_ID_OFFSET  30
 	#define L1_FLOW_MAP_TBL_C_DRR_ID_LEN     6
 	#define L1_FLOW_MAP_TBL_C_DRR_ID_DEFAULT 0x0
 	/*[field] E_DRR_ID*/
 	#define L1_FLOW_MAP_TBL_E_DRR_ID
-	#define L1_FLOW_MAP_TBL_E_DRR_ID_OFFSET  38
+	#define L1_FLOW_MAP_TBL_E_DRR_ID_OFFSET  36
 	#define L1_FLOW_MAP_TBL_E_DRR_ID_LEN     6
 	#define L1_FLOW_MAP_TBL_E_DRR_ID_DEFAULT 0x0
 	/*[field] C_DRR_CREDIT_UNIT*/
 	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT
-	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_OFFSET  44
+	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_OFFSET  42
 	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_LEN     1
 	#define L1_FLOW_MAP_TBL_C_DRR_CREDIT_UNIT_DEFAULT 0x0
 	/*[field] E_DRR_CREDIT_UNIT*/
 	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT
-	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_OFFSET  45
+	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_OFFSET  43
 	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_LEN     1
 	#define L1_FLOW_MAP_TBL_E_DRR_CREDIT_UNIT_DEFAULT 0x0
 
 struct l1_flow_map_tbl {
-	a_uint32_t  sp_id:6;
+	a_uint32_t  sp_id:4;
 	a_uint32_t  c_pri:3;
 	a_uint32_t  e_pri:3;
 	a_uint32_t  c_drr_wt:10;
 	a_uint32_t  e_drr_wt:10;
-	a_uint32_t  c_drr_id:6;
+	a_uint32_t  c_drr_id_0:2;
+	a_uint32_t  c_drr_id_1:4;
 	a_uint32_t  e_drr_id:6;
 	a_uint32_t  c_drr_credit_unit:1;
 	a_uint32_t  e_drr_credit_unit:1;
-	a_uint32_t  _reserved0:18;
+	a_uint32_t  _reserved0:20;
 };
 
 union l1_flow_map_tbl_u {

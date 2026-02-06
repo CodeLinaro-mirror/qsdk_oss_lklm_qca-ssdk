@@ -29,7 +29,9 @@ adpt_httppe_l1_flow_map_set(a_uint32_t dev_id,
 	l1_flow_map_tbl.bf.e_drr_credit_unit = scheduler_cfg->e_drr_unit;
 	l1_flow_map_tbl.bf.c_drr_credit_unit = scheduler_cfg->c_drr_unit;
 	l1_flow_map_tbl.bf.e_drr_id = scheduler_cfg->e_drr_id;
-	l1_flow_map_tbl.bf.c_drr_id = scheduler_cfg->c_drr_id;
+	l1_flow_map_tbl.bf.c_drr_id_0 = scheduler_cfg->c_drr_id;
+	l1_flow_map_tbl.bf.c_drr_id_1 = (scheduler_cfg->c_drr_id >>
+				(SW_FIELD_OFFSET_IN_WORD(L1_FLOW_MAP_TBL_C_DRR_ID_OFFSET)));
 
 	l1_flow_map_tbl.bf.e_drr_wt= scheduler_cfg->e_drr_wt;
 	l1_flow_map_tbl.bf.c_drr_wt = scheduler_cfg->c_drr_wt;
@@ -73,7 +75,9 @@ adpt_httppe_l1_flow_map_get(a_uint32_t dev_id,
 	scheduler_cfg->e_pri = l1_flow_map_tbl.bf.e_pri;
 	scheduler_cfg->c_pri = l1_flow_map_tbl.bf.c_pri;
 	scheduler_cfg->sp_id = l1_flow_map_tbl.bf.sp_id;
-	scheduler_cfg->c_drr_id = l1_flow_map_tbl.bf.c_drr_id;
+	scheduler_cfg->c_drr_id = (l1_flow_map_tbl.bf.c_drr_id_0 |
+				l1_flow_map_tbl.bf.c_drr_id_1 << SW_FIELD_OFFSET_IN_WORD(L1_FLOW_MAP_TBL_C_DRR_ID_OFFSET));
+
 	scheduler_cfg->e_drr_id = l1_flow_map_tbl.bf.e_drr_id;
 	scheduler_cfg->c_drr_unit = l1_flow_map_tbl.bf.c_drr_credit_unit;
 	scheduler_cfg->e_drr_unit = l1_flow_map_tbl.bf.e_drr_credit_unit;
