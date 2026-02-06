@@ -1196,6 +1196,7 @@ static const struct phylink_pcs_ops ssdk_phylink_pcs_ops = {
 	.pcs_an_restart = ssdk_pcs_an_restart,
 };
 
+#ifdef CONFIG_PHYLINK
 struct phylink* ssdk_port_phylink_setup(a_uint32_t dev_id,
 					a_uint32_t port_id, struct net_device *netdev)
 {
@@ -1345,6 +1346,7 @@ void ssdk_port_phylink_destroy(a_uint32_t dev_id, a_uint32_t port_id)
 	}
 }
 EXPORT_SYMBOL(ssdk_port_phylink_destroy);
+#endif
 
 void
 qca_fdb_sw_sync_work_task(struct work_struct *work)

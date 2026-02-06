@@ -592,8 +592,8 @@ void ssdk_plat_exit(a_uint32_t dev_id);
 #define qca_mht_mii_write qca_mii_write
 #define qca_mht_mii_update qca_mii_update
 sw_error_t ssdk_netdev_switch_init(struct net_device *dev);
-#if IS_ENABLED(CONFIG_NET_DSA)
 void ssdk_switch_set_standby_status(a_uint32_t dev_id, bool enable);
+#if IS_ENABLED(CONFIG_NET_DSA)
 a_bool_t ssdk_switch_enable_dsa(a_uint32_t dev_id);
 #endif
 #endif
