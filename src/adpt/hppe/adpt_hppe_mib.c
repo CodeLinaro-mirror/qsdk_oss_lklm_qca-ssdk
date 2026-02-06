@@ -385,11 +385,6 @@ adpt_hppe_get_xgmib_info(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_NULL_POINT_CHECK(mib_info);
 	memset(mib_info, 0, sizeof( * mib_info ));
 
-	if(!(hppe_xgmac_port_check(dev_id, port_id)))
-	{
-		SSDK_DEBUG("port %d is not xg port!\n", port_id);
-		return SW_FAIL;
-	}
 	port_id = ppe_port_to_xgmac_id(dev_id, port_id);
 
 	/*get tx xgmib information*/
