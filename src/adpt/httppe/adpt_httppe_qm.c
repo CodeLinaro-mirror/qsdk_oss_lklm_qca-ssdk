@@ -818,7 +818,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	aos_lock_bh(&priv->ppe_qm_lock);
+	aos_mutex_lock(&priv->ppe_qm_lock.qm_mutex_lock);
 
 	rv = httppe_mc_enq_ctrl_get(dev_id, &reg_val);
 	if (rv != SW_OK)
@@ -852,7 +852,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	rv = httppe_mc_enq_ctrl_set(dev_id, &reg_val);
 
 unlock_and_exit:
-	aos_unlock_bh(&priv->ppe_qm_lock);
+	aos_mutex_unlock(&priv->ppe_qm_lock.qm_mutex_lock);
 	return rv;
 }
 
@@ -873,11 +873,11 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	aos_lock_bh(&priv->ppe_qm_lock);
+	aos_mutex_lock(&priv->ppe_qm_lock.qm_mutex_lock);
 
 	rv = httppe_mc_enq_ctrl_get(dev_id, &reg_val);
 	if (rv != SW_OK) {
-		aos_unlock_bh(&priv->ppe_qm_lock);
+		aos_mutex_unlock(&priv->ppe_qm_lock.qm_mutex_lock);
 		return rv;
 	}
 
@@ -886,7 +886,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	else
 		*ucast_enqueue_en = A_FALSE;
 
-	aos_unlock_bh(&priv->ppe_qm_lock);
+	aos_mutex_unlock(&priv->ppe_qm_lock.qm_mutex_lock);
 
 	return SW_OK;
 }

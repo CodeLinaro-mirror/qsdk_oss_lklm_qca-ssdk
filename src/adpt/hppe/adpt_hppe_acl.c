@@ -12,6 +12,7 @@
  */
 #include "hsl_reg.h"
 #include "adpt.h"
+#include "ssdk_dts.h"
 #include <linux/list.h>
 #include "adpt_hppe_acl.h"
 #include "adpt_appe_acl.h"
@@ -41,6 +42,22 @@
 #endif
 
 #define ADPT_ACL_RULE_NUM_PER_LIST 8 /* can change this MACRO to support more rules per ACL list */
+
+#define ADPT_ACL_LOCK(priv, access_mode) \
+do { \
+	if (access_mode == HSL_REG_MDIO) \
+		aos_mutex_lock(&priv->ppe_acl_lock.acl_mutex_lock); \
+	else \
+		aos_lock_bh(&priv->ppe_acl_lock.acl_spin_lock); \
+} while(0)
+
+#define ADPT_ACL_UNLOCK(priv, access_mode) \
+do { \
+	if (access_mode == HSL_REG_MDIO) \
+		aos_mutex_unlock(&priv->ppe_acl_lock.acl_mutex_lock); \
+	else \
+		aos_unlock_bh(&priv->ppe_acl_lock.acl_spin_lock); \
+} while(0)
 
 typedef struct{
 	struct list_head list;
@@ -463,7 +480,6 @@ typedef struct{
 
 static ADPT_HPPE_ACL_SW_LIST_HEAD g_acl_sw_list[SW_MAX_NR_DEV];
 static ADPT_HPPE_ACL_HW_LIST *g_acl_hw_list[SW_MAX_NR_DEV];
-static aos_lock_t hppe_acl_lock[SW_MAX_NR_DEV];
 
 const a_uint8_t s_acl_ext2[7][2] = {
 	{0,1},{2,3},{4,5},{6,7},{0,2},{4,6},{0,4}
@@ -930,16 +946,18 @@ adpt_hppe_acl_list_bind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t d
 	struct list_head *rule_pos = NULL;
 	ADPT_HPPE_ACL_SW_RULE *rule_bind_entry = NULL;
 	ADPT_HPPE_ACL_SW_LIST *list_bind_entry = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
-
 	ADPT_ACL_SW_LIST_ID_CHECK(dev_id, list_id);
+	SW_RTN_ON_NULL(priv);
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_bind_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_bind_entry == NULL)
 	{
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		return SW_NOT_FOUND;
 	}
 
@@ -954,12 +972,12 @@ adpt_hppe_acl_list_bind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t d
 			if(rc != SW_OK)
 			{
 				SSDK_ERROR("rule %d bind fail\n", rule_bind_entry->rule_id);
-				aos_unlock_bh(&hppe_acl_lock[dev_id]);
+				ADPT_ACL_UNLOCK(priv, access_mode);
 				return SW_FAIL;
 			}
 		}
 	}
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 	return SW_OK;
 }
 
@@ -2183,11 +2201,15 @@ _adpt_hppe_acl_rule_find(a_uint32_t dev_id, a_uint32_t list_id,
 	ADPT_HPPE_ACL_SW_LIST *list_find_entry = NULL;
 	ADPT_HPPE_ACL_SW_RULE *rule_find_entry = NULL;
 	struct list_head *rule_pos = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	SW_RTN_ON_NULL(priv);
+
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_find_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_find_entry == NULL) {
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		SSDK_ERROR("List %d not found\n", list_id);
 		return SW_NOT_FOUND;
 	}
@@ -2202,11 +2224,11 @@ _adpt_hppe_acl_rule_find(a_uint32_t dev_id, a_uint32_t list_id,
 	}
 
 	if(rule_pos == &list_find_entry->list_sw_rule) {
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		SSDK_ERROR("Rule %d not found\n", rule_id);
 		return SW_NOT_FOUND;
 	}
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 
 	return SW_OK;
 }
@@ -2221,7 +2243,6 @@ adpt_hppe_acl_rule_query(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(rule);
-
 
 	ADPT_ACL_SW_LIST_ID_CHECK(dev_id, list_id);
 
@@ -2344,12 +2365,15 @@ adpt_hppe_acl_list_unbind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t
 	struct list_head *rule_pos = NULL;
 	ADPT_HPPE_ACL_SW_RULE *rule_unbind_entry = NULL;
 	ADPT_HPPE_ACL_SW_LIST *list_unbind_entry = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
+	SW_RTN_ON_NULL(priv);
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	ADPT_ACL_SW_LIST_ID_CHECK(dev_id, list_id);
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_unbind_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_unbind_entry != NULL)
 	{
@@ -2363,7 +2387,7 @@ adpt_hppe_acl_list_unbind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t
 			}
 		}
 	}
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 	return SW_OK;
 }
 sw_error_t
@@ -4950,11 +4974,15 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 	ADPT_HPPE_ACL_SW_LIST *list_find_entry = NULL;
 	fal_acl_rule_t *inner_rule = NULL;
 	ADPT_HPPE_ACL_RULE_MAP rule_map, inner_rule_map;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
+
 	aos_mem_zero(&rule_map, sizeof(ADPT_HPPE_ACL_RULE_MAP));
 	aos_mem_zero(&inner_rule_map, sizeof(ADPT_HPPE_ACL_RULE_MAP));
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(rule);
+	SW_RTN_ON_NULL(priv);
 
 	ADPT_ACL_SW_LIST_ID_CHECK(dev_id, list_id);
 	ADPT_ACL_SW_RULE_ID_CHECK(dev_id, rule_id);
@@ -4974,12 +5002,12 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 		aos_mem_copy(&inner_rule->tunnel_info, &rule->tunnel_info,
 			     sizeof(fal_acl_tunnel_info_t));
 	}
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_find_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_find_entry == NULL)
 	{
 		SSDK_ERROR("List %d not create, no resource to insert rules into it\n", list_id);
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		rv = SW_NO_RESOURCE;
 		goto free_rule;
 	}
@@ -4989,7 +5017,7 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 		rule_exist_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
 		if((rule_exist_entry->rule_id == rule_id) && (rule_exist_entry->rule_hw_entry != 0))
 		{
-			aos_unlock_bh(&hppe_acl_lock[dev_id]);
+			ADPT_ACL_UNLOCK(priv, access_mode);
 			rv = SW_ALREADY_EXIST;
 			goto free_rule;
 		}
@@ -5009,7 +5037,7 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 	if(rv != SW_OK)
 	{
 		SSDK_ERROR("Alloc hw entries fail (err: %d) for rule %d\n", rv, rule_id);
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		goto free_rule;
 	}
 	/* msg for debug */
@@ -5026,7 +5054,7 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 		s_acl_entries[index].entries);
 	if(rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		goto free_rule;
 	}
 
@@ -5036,7 +5064,7 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 			s_acl_entries[index].ext_2, s_acl_entries[index].ext_4);
 		if(rv != SW_OK)
 		{
-			aos_unlock_bh(&hppe_acl_lock[dev_id]);
+			ADPT_ACL_UNLOCK(priv, access_mode);
 			goto free_rule;
 		}
 	}
@@ -5046,7 +5074,7 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 	if(rule_add_entry == NULL)
 	{
 		SSDK_ERROR("%s, %d:malloc fail for rule add entry\n", __FUNCTION__, __LINE__);
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		rv = SW_FAIL;
 		goto free_rule;
 	}
@@ -5081,7 +5109,7 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 	rule->hw_info.hw_list_id = hw_list_id;
 	rule->hw_info.hw_entries = s_acl_entries[index].entries;
 
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 
 free_rule:
 	if (inner_rule) {
@@ -5218,6 +5246,8 @@ adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id,
 	struct list_head *rule_pos = NULL;
 	ADPT_HPPE_ACL_SW_RULE *rule_delete_entry = NULL;
 	ADPT_HPPE_ACL_SW_LIST *list_find_entry = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
@@ -5225,7 +5255,9 @@ adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id,
 
 	ADPT_ACL_SW_RULE_ID_CHECK(dev_id, rule_id);
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	SW_RTN_ON_NULL(priv);
+
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_find_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_find_entry != NULL)
 	{
@@ -5240,7 +5272,7 @@ adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id,
 			}
 		}
 	}
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 	return SW_OK;
 }
 
@@ -5312,8 +5344,11 @@ adpt_hppe_acl_rule_dump(a_uint32_t dev_id)
 	struct list_head *list_pos = NULL, *rule_pos = NULL;
 	ADPT_HPPE_ACL_SW_LIST *list_dump_entry = NULL;
 	ADPT_HPPE_ACL_SW_RULE *rule_dump_entry = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
+	SW_RTN_ON_NULL(priv);
 
 	/*dump the hw list status for debug*/
 	for(hw_list_index = 0;
@@ -5328,7 +5363,7 @@ adpt_hppe_acl_rule_dump(a_uint32_t dev_id)
 			g_acl_hw_list[dev_id][ hw_list_index].free_hw_entry_count);
 	}
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_for_each(list_pos, &g_acl_sw_list[dev_id].list_sw_list)
 	{
 		list_dump_entry = list_entry(list_pos, ADPT_HPPE_ACL_SW_LIST, list);
@@ -5338,7 +5373,7 @@ adpt_hppe_acl_rule_dump(a_uint32_t dev_id)
 			_adpt_ppe_acl_rule_dump(dev_id, list_dump_entry->list_id, rule_dump_entry);
 		}
 	}
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 	return SW_OK;
 }
 
@@ -5355,16 +5390,18 @@ sw_error_t
 adpt_hppe_acl_list_creat(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t list_pri)
 {
 	ADPT_HPPE_ACL_SW_LIST *list_create_entry = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
-
 	ADPT_ACL_SW_LIST_ID_CHECK(dev_id, list_id);
+	SW_RTN_ON_NULL(priv);
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_create_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_create_entry != NULL)
 	{
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		return SW_ALREADY_EXIST;
 	}
 
@@ -5372,14 +5409,14 @@ adpt_hppe_acl_list_creat(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t list_
 	if(list_create_entry == NULL)
 	{
 		SSDK_ERROR("%s, %d:malloc fail for list create entry\n", __FUNCTION__, __LINE__);
-		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		ADPT_ACL_UNLOCK(priv, access_mode);
 		return SW_FAIL;
 	}
 	INIT_LIST_HEAD(&list_create_entry->list_sw_rule);
 	list_create_entry->list_id = list_id;
 	list_create_entry->list_pri = list_pri;
 	list_add(&list_create_entry->list, &g_acl_sw_list[dev_id].list_sw_list);
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 	return SW_OK;
 }
 
@@ -5389,12 +5426,14 @@ adpt_hppe_acl_list_destroy(a_uint32_t dev_id, a_uint32_t list_id)
 	struct list_head *rule_pos=NULL, *rule_pos_temp = NULL;
 	ADPT_HPPE_ACL_SW_RULE *rule_delete_entry = NULL;
 	ADPT_HPPE_ACL_SW_LIST *list_destroy_entry = NULL;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	ADPT_DEV_ID_CHECK(dev_id);
-
 	ADPT_ACL_SW_LIST_ID_CHECK(dev_id, list_id);
+	SW_RTN_ON_NULL(priv);
 
-	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_LOCK(priv, access_mode);
 	list_destroy_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
 	if(list_destroy_entry != NULL)
 	{
@@ -5407,7 +5446,7 @@ adpt_hppe_acl_list_destroy(a_uint32_t dev_id, a_uint32_t list_id)
 		aos_mem_free(list_destroy_entry);
 		list_destroy_entry = NULL;
 	}
-	aos_unlock_bh(&hppe_acl_lock[dev_id]);
+	ADPT_ACL_UNLOCK(priv, access_mode);
 	return SW_OK;
 }
 
@@ -5641,9 +5680,13 @@ sw_error_t adpt_hppe_acl_deinit(a_uint32_t dev_id)
 sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
+	struct qca_phy_priv *priv;
 	p_adpt_api = adpt_api_ptr_get(dev_id);
 
 	ADPT_NULL_POINT_CHECK(p_adpt_api);
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
 
 	SW_RTN_ON_ERROR(adpt_ppe_acl_list_init(dev_id));
 
@@ -5708,7 +5751,10 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 #endif
 	}
 #endif
-	aos_lock_init(&hppe_acl_lock[dev_id]);
+	if (ssdk_switch_reg_access_mode_get(dev_id) == HSL_REG_MDIO)
+		aos_mutex_lock_init(&priv->ppe_acl_lock.acl_mutex_lock);
+	else
+		aos_lock_init(&priv->ppe_acl_lock.acl_spin_lock);
 
 	return SW_OK;
 }
