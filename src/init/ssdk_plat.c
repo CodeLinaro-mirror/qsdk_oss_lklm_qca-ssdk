@@ -98,7 +98,7 @@ sw_error_t qca_mii_bus_lock(a_uint32_t dev_id, a_bool_t enable)
 
 sw_error_t
 __qca_mii_reg_get(a_uint32_t dev_id, a_uint32_t reg_addr,
-                   a_uint8_t value[], a_uint32_t value_len)
+		  a_uint8_t value[], a_uint32_t value_len)
 {
 	a_uint32_t reg_val = 0;
 
@@ -267,6 +267,9 @@ static sw_error_t qca_mii_reg_convert(a_uint32_t dev_id, a_uint32_t *reg)
 				return SW_FAIL;
 			*reg |= SSDK_SWITCH_REG_TYPE_QCA8386;
 			break;
+		case CHIP_HTTPPE:
+			*reg |= SSDK_SWITCH_REG_TYPE_QCE2204;
+			break;
 		default:
 			*reg |= SSDK_SWITCH_REG_TYPE_QCA8386;
 			break;
@@ -331,9 +334,118 @@ sw_error_t qca_bitbang_mii_raw_update_try(struct mii_bus *bus, a_uint32_t reg,
 }
 #endif
 
+/* QCE2204 MDIO access functions - reuse from DSA driver pattern */
+static inline void qce2204_split_addr(u32 regaddr, u16 *reg_low, u16 *reg_mid,
+				       u16 *reg_high)
+{
+	/* bit2 is 1 for writing/reading high byte data[31, 16],
+	 * bit2 is 0 for writing/reading low byte data[15, 0].
+	 */
+	*reg_low = FIELD_GET(GENMASK(3, 0), regaddr);
+	*reg_low &= 0xc;
+	*reg_low <<= 1;
+
+	*reg_mid = FIELD_GET(GENMASK(19, 4), regaddr);
+
+	*reg_high = FIELD_GET(GENMASK(23, 20), regaddr);
+	*reg_high <<= 1;
+	*reg_high |= BIT(0);
+}
+
+static int _qce2204_ahb_read(struct mii_bus *bus, int addr, u32 reg, u32 *val)
+{
+	u16 reg_low, reg_mid, reg_high;
+	int ret, data;
+
+	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
+
+	/* write ahb address bit4~bit23 */
+	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
+	udelay(1);
+
+	/* write ahb address bit0~bit3 and read low 16bit data */
+	ret = __mdiobus_read(bus, addr, reg_low);
+	if (ret >= 0) {
+		data = ret;
+		/* write ahb address bit0~bit3 and read high 16 bit data */
+		ret = __mdiobus_read(bus, addr, (reg_low | BIT(2)));
+		if (ret >= 0)
+			*val = data | ret << 16;
+	}
+
+	return ret < 0 ? ret : 0;
+}
+
+static int _qce2204_ahb_write(struct mii_bus *bus, int addr, u32 reg, u32 val)
+{
+	u16 reg_low, reg_mid, reg_high;
+	int ret;
+
+	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
+
+	/* write ahb address bit4~bit23 */
+	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
+	udelay(1);
+
+	/* write ahb address bit0~bit3 and write low 16 bit data */
+	ret = __mdiobus_write(bus, addr, reg_low, lower_16_bits(val));
+	/* write ahb address bit0~bit3 and write high 16 bit data */
+	if (!ret)
+		ret = __mdiobus_write(bus, addr, (reg_low | BIT(2)),
+				      upper_16_bits(val));
+
+	return ret;
+}
+
+static int _qce2204_ahb_update(struct mii_bus *bus, int addr, u32 reg,
+			      u32 mask, u32 value)
+{
+	u16 reg_low, reg_mid, reg_high;
+	u32 data;
+	int ret;
+
+	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
+
+	/* write ahb address bit4~bit23 */
+	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
+	udelay(1);
+
+	/* write ahb address bit0~bit3 and read low 16bit data */
+	ret = __mdiobus_read(bus, addr, reg_low);
+	if (ret >= 0) {
+		data = ret;
+		/* write ahb address bit0~bit3 and read high 16 bit data */
+		ret = __mdiobus_read(bus, addr, (reg_low | BIT(2)));
+		if (ret >= 0)
+			data |= ret << 16;
+	}
+
+	if (ret < 0)
+		return ret;
+
+	data &= ~mask;
+	data |= value;
+
+	/* write ahb address bit0~bit3 and write low 16 bit data */
+	ret = __mdiobus_write(bus, addr, reg_low, lower_16_bits(data));
+	/* write ahb address bit0~bit3 and write high 16 bit data */
+	if (!ret)
+		ret = __mdiobus_write(bus, addr, (reg_low | BIT(2)),
+				      upper_16_bits(data));
+
+	return ret < 0 ? ret : 0;
+}
+
 sw_error_t qca_mii_raw_read(struct mii_bus *bus, a_uint32_t reg, a_uint32_t *val)
 {
 	struct qca_mdio_data *mdio_priv = bus->priv;
+	int chip_type = FIELD_GET(SSDK_SWITCH_REG_TYPE_MASK, reg);
+
+	if (chip_type == SSDK_SWITCH_REG_IS_QCE2204) {
+		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
+
+		return _qce2204_ahb_read(bus, addr, reg, val);
+	}
 
 #if IS_ENABLED(CONFIG_MDIO_BITBANG)
 	sw_error_t rv = SW_OK;
@@ -354,6 +466,13 @@ sw_error_t qca_mii_raw_read(struct mii_bus *bus, a_uint32_t reg, a_uint32_t *val
 sw_error_t qca_mii_raw_write(struct mii_bus *bus, a_uint32_t reg, a_uint32_t val)
 {
 	struct qca_mdio_data *mdio_priv = bus->priv;
+	int chip_type = FIELD_GET(SSDK_SWITCH_REG_TYPE_MASK, reg);
+
+	if (chip_type == SSDK_SWITCH_REG_IS_QCE2204) {
+		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
+
+		return _qce2204_ahb_write(bus, addr, reg, val);
+	}
 
 #if IS_ENABLED(CONFIG_MDIO_BITBANG)
 	sw_error_t rv = SW_OK;
@@ -372,9 +491,16 @@ sw_error_t qca_mii_raw_write(struct mii_bus *bus, a_uint32_t reg, a_uint32_t val
 }
 
 sw_error_t qca_mii_raw_update(struct mii_bus *bus, a_uint32_t reg,
-		a_uint32_t clear, a_uint32_t set)
+			      a_uint32_t clear, a_uint32_t set)
 {
 	struct qca_mdio_data *mdio_priv = bus->priv;
+	int chip_type = FIELD_GET(SSDK_SWITCH_REG_TYPE_MASK, reg);
+
+	if (chip_type == SSDK_SWITCH_REG_IS_QCE2204) {
+		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
+
+		return _qce2204_ahb_update(bus, addr, reg, clear, set);
+	}
 
 #if IS_ENABLED(CONFIG_MDIO_BITBANG)
 	sw_error_t rv = SW_OK;
@@ -425,7 +551,8 @@ void __qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
 		qca_mii_raw_write(bus, reg, val);
 }
 
-int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_t val)
+int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg,
+		     a_uint32_t mask, a_uint32_t val)
 {
 	struct mii_bus *bus = NULL;
 
@@ -439,133 +566,29 @@ int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint3
 	return 0;
 }
 
-/* QCE2204 MDIO access functions - reuse from DSA driver pattern */
-static inline void qce2204_split_addr(u32 regaddr, u16 *reg_low, u16 *reg_mid,
-				       u16 *reg_high)
-{
-	/* bit2 is 1 for writing/reading high byte data[31, 16],
-	 * bit2 is 0 for writing/reading low byte data[15, 0].
-	 */
-	*reg_low = FIELD_GET(GENMASK(3, 0), regaddr);
-	*reg_low &= 0xc;
-	*reg_low <<= 1;
-
-	*reg_mid = FIELD_GET(GENMASK(19, 4), regaddr);
-
-	*reg_high = FIELD_GET(GENMASK(23, 20), regaddr);
-	*reg_high <<= 1;
-	*reg_high |= BIT(0);
-}
-
-static int qce2204_ahb_read(struct mii_bus *bus, int addr, u32 reg, u32 *val)
-{
-	u16 reg_low, reg_mid, reg_high;
-	int ret, data;
-
-	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
-
-	mutex_lock(&bus->mdio_lock);
-	/* write ahb address bit4~bit23 */
-	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
-	usleep_range(100, 200);
-
-	/* write ahb address bit0~bit3 and read low 16bit data */
-	ret = __mdiobus_read(bus, addr, reg_low);
-	if (ret >= 0) {
-		data = ret;
-		/* write ahb address bit0~bit3 and read high 16 bit data */
-		ret = __mdiobus_read(bus, addr, (reg_low | BIT(2)));
-		if (ret >= 0)
-			*val = data | ret << 16;
-	}
-	mutex_unlock(&bus->mdio_lock);
-
-	return ret < 0 ? ret : 0;
-}
-
-static int qce2204_ahb_write(struct mii_bus *bus, int addr, u32 reg, u32 val)
-{
-	u16 reg_low, reg_mid, reg_high;
-	int ret;
-
-	qce2204_split_addr(reg, &reg_low, &reg_mid, &reg_high);
-
-	mutex_lock(&bus->mdio_lock);
-	/* write ahb address bit4~bit23 */
-	__mdiobus_write(bus, addr, reg_high & 0x1f, reg_mid);
-	usleep_range(100, 200);
-
-	/* write ahb address bit0~bit3 and write low 16 bit data */
-	ret = __mdiobus_write(bus, addr, reg_low, lower_16_bits(val));
-	/* write ahb address bit0~bit3 and write high 16 bit data */
-	if (!ret)
-		ret = __mdiobus_write(bus, addr, (reg_low | BIT(2)), upper_16_bits(val));
-
-	mutex_unlock(&bus->mdio_lock);
-
-	return ret;
-}
-
 a_uint32_t qca_mii_read(a_uint32_t dev_id, a_uint32_t reg)
 {
 	a_uint32_t val = 0xffffffff;
-	struct mii_bus *bus = NULL;
 
-	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
-	if (!bus)
-		return val;
-
-	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
-		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
-
-		qce2204_ahb_read(bus, addr, reg, &val);
-
-		return val;
-	}
-
-	mutex_lock(&bus->mdio_lock);
-	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
-		qca_mii_raw_read(bus, reg, &val);
-	mutex_unlock(&bus->mdio_lock);
+	qca_mii_bus_lock(dev_id, A_TRUE);
+	val = __qca_mii_read(dev_id, reg);
+	qca_mii_bus_lock(dev_id, A_FALSE);
 
 	return val;
 }
 
 void qca_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val)
 {
-	struct mii_bus *bus = NULL;
-
-	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
-	if (!bus)
-		return;
-
-	if (hsl_get_current_chip_type(dev_id) == CHIP_HTTPPE) {
-		int addr = FIELD_GET(SSDK_SWITCH_REG_MDIO_ADDR_MASK, reg);
-
-		qce2204_ahb_write(bus, addr, reg, val);
-
-		return;
-	}
-
-	mutex_lock(&bus->mdio_lock);
-	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
-		qca_mii_raw_write(bus, reg, val);
-
-	mutex_unlock(&bus->mdio_lock);
+	qca_mii_bus_lock(dev_id, A_TRUE);
+	__qca_mii_write(dev_id, reg, val);
+	qca_mii_bus_lock(dev_id, A_FALSE);
 }
 
 int qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint32_t val)
 {
-	struct mii_bus *bus = NULL;
-
-	bus = ssdk_miibus_get(dev_id, SSDK_MII_DEFAULT_BUS_ID);
-	if (!bus)
-		return -1;
-
-	mutex_lock(&bus->mdio_lock);
-	if (qca_mii_reg_convert(dev_id, &reg) == SW_OK)
-		qca_mii_raw_update(bus, reg, mask, val);
-	mutex_unlock(&bus->mdio_lock);
+	qca_mii_bus_lock(dev_id, A_TRUE);
+	__qca_mii_update(dev_id, reg, mask, val);
+	qca_mii_bus_lock(dev_id, A_FALSE);
 
 	return 0;
 }
@@ -575,72 +598,127 @@ extern u32 ppe_mem_read(u32 reg);
 extern void ppe_mem_write(u32 reg, u32 val);
 #endif
 
-sw_error_t
-qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
+static sw_error_t
+__qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
+			  a_uint8_t * reg_data, a_uint32_t len, a_bool_t lock_en)
 {
+	hsl_reg_mode reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 	uint32_t reg_val = 0;
 
-	if (len != sizeof (a_uint32_t))
-        return SW_BAD_LEN;
+	if (len != sizeof(a_uint32_t))
+		return SW_BAD_LEN;
 
-	if ((reg_addr%4)!= 0)
-	return SW_BAD_PARAM;
+	if ((reg_addr % 4) != 0)
+		return SW_BAD_PARAM;
 
+	switch (reg_mode) {
+	case HSL_REG_PCIE_BUS:
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
-	if (HSL_REG_PCIE_BUS == ssdk_switch_reg_access_mode_get(dev_id)) {
 		uint32_t pcie_base = ssdk_switch_pcie_base_get(dev_id);
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
 		reg_val = qcom_fpga_mem_read(pcie_base + reg_addr);
 #elif defined(SSDK_PCIE_BUS)
 		reg_val = ppe_mem_read(pcie_base + reg_addr);
 #endif
-	} else
 #endif
-		if (HSL_REG_MDIO == ssdk_switch_reg_access_mode_get(dev_id)) {
-			struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
-			ssdk_reg_map_info map;
+		break;
+	case HSL_REG_MDIO:
+		struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
+		ssdk_reg_map_info map;
 
-			ssdk_switch_reg_map_info_get(dev_id, &map);
-			qce2204_ahb_read(bus, map.base_addr, reg_addr, &reg_val);
-		} else
-			reg_val = readl(qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+		ssdk_switch_reg_map_info_get(dev_id, &map);
+
+		if (lock_en)
+			qca_mii_bus_lock(dev_id, A_TRUE);
+
+		_qce2204_ahb_read(bus, map.base_addr, reg_addr, &reg_val);
+
+		if (lock_en)
+			qca_mii_bus_lock(dev_id, A_FALSE);
+		break;
+	default:
+		reg_val = readl(qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+		break;
+	}
 
 	aos_mem_copy(reg_data, &reg_val, sizeof (a_uint32_t));
 	return 0;
 }
 
-sw_error_t
-qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
+static sw_error_t
+__qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+			   a_uint8_t * reg_data, a_uint32_t len, a_bool_t lock_en)
 {
+	hsl_reg_mode reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 	uint32_t reg_val = 0;
-	if (len != sizeof (a_uint32_t))
-        return SW_BAD_LEN;
 
-	if ((reg_addr%4)!= 0)
-	return SW_BAD_PARAM;
+	if (len != sizeof(a_uint32_t))
+		return SW_BAD_LEN;
+
+	if ((reg_addr % 4) != 0)
+		return SW_BAD_PARAM;
 
 	aos_mem_copy(&reg_val, reg_data, sizeof (a_uint32_t));
 
+	switch (reg_mode) {
+	case HSL_REG_PCIE_BUS:
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
-	if (HSL_REG_PCIE_BUS == ssdk_switch_reg_access_mode_get(dev_id)) {
 		uint32_t pcie_base = ssdk_switch_pcie_base_get(dev_id);
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
 		qcom_fpga_mem_write(pcie_base + reg_addr, reg_val);
 #elif defined(SSDK_PCIE_BUS)
 		ppe_mem_write(pcie_base + reg_addr, reg_val);
 #endif
-	} else
 #endif
-		if (HSL_REG_MDIO == ssdk_switch_reg_access_mode_get(dev_id)) {
-			struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
-			ssdk_reg_map_info map;
+		break;
+	case HSL_REG_MDIO:
+		struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
+		ssdk_reg_map_info map;
 
-			ssdk_switch_reg_map_info_get(dev_id, &map);
-			qce2204_ahb_write(bus, map.base_addr, reg_addr, reg_val);
-		} else
-			writel(reg_val, qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+		ssdk_switch_reg_map_info_get(dev_id, &map);
+
+		if (lock_en)
+			qca_mii_bus_lock(dev_id, A_TRUE);
+
+		_qce2204_ahb_write(bus, map.base_addr, reg_addr, reg_val);
+
+		if (lock_en)
+			qca_mii_bus_lock(dev_id, A_FALSE);
+		break;
+	default:
+		writel(reg_val, qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
+		break;
+	}
 
 	return 0;
+}
+
+sw_error_t
+qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+		     a_uint8_t * reg_data, a_uint32_t len)
+{
+	return __qca_switch_reg_raw_write(dev_id, reg_addr, reg_data, len, A_TRUE);
+}
+
+sw_error_t
+qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
+		    a_uint8_t * reg_data, a_uint32_t len)
+{
+	return __qca_switch_reg_raw_read(dev_id, reg_addr, reg_data, len, A_TRUE);
+}
+
+sw_error_t
+qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+			 a_uint8_t * reg_data, a_uint32_t len)
+{
+	return __qca_switch_reg_raw_write(dev_id, reg_addr, reg_data, len, A_FALSE);
+}
+
+sw_error_t
+qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
+			a_uint8_t * reg_data, a_uint32_t len)
+{
+	return __qca_switch_reg_raw_read(dev_id, reg_addr, reg_data, len, A_FALSE);
 }
 
 sw_error_t
