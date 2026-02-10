@@ -151,33 +151,6 @@ adpt_httppe_private_vlan_tx_cfg_set(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg
 sw_error_t
 adpt_httppe_private_vlan_tx_cfg_get(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg);
 
-#ifndef IN_PORTVLAN_MINI
-sw_error_t
-adpt_httppe_port_tag_propagation_set(a_uint32_t dev_id,
-		fal_port_t port_id, a_uint32_t mask, fal_port_vlan_direction_t direction,
-		a_uint32_t value_pcp, a_uint32_t value_dei);
-
-sw_error_t
-adpt_httppe_port_tag_propagation_get(a_uint32_t dev_id,
-		fal_port_t port_id, fal_port_vlan_direction_t direction,
-		a_uint32_t *value_pcp, a_uint32_t *value_dei);
-
-sw_error_t
-adpt_httppe_port_vlan_counter_get(a_uint32_t dev_id,
-		a_uint32_t cnt_index, fal_port_vlan_counter_t *counter);
-
-sw_error_t
-adpt_httppe_port_vlan_counter_cleanup(a_uint32_t dev_id,
-		a_uint32_t cnt_index);
-
-sw_error_t
-adpt_httppe_port_egress_vlan_filter_set(a_uint32_t dev_id,
-		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
-
-sw_error_t
-adpt_httppe_port_egress_vlan_filter_get(a_uint32_t dev_id,
-		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
-
 sw_error_t
 adpt_httppe_port_isol_ctrl_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
@@ -209,6 +182,33 @@ adpt_httppe_port_isol_action_set(a_uint32_t dev_id,
 sw_error_t
 adpt_httppe_port_isol_action_get(a_uint32_t dev_id,
 		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
+
+#ifndef IN_PORTVLAN_MINI
+sw_error_t
+adpt_httppe_port_tag_propagation_set(a_uint32_t dev_id,
+		fal_port_t port_id, a_uint32_t mask, fal_port_vlan_direction_t direction,
+		a_uint32_t value_pcp, a_uint32_t value_dei);
+
+sw_error_t
+adpt_httppe_port_tag_propagation_get(a_uint32_t dev_id,
+		fal_port_t port_id, fal_port_vlan_direction_t direction,
+		a_uint32_t *value_pcp, a_uint32_t *value_dei);
+
+sw_error_t
+adpt_httppe_port_vlan_counter_get(a_uint32_t dev_id,
+		a_uint32_t cnt_index, fal_port_vlan_counter_t *counter);
+
+sw_error_t
+adpt_httppe_port_vlan_counter_cleanup(a_uint32_t dev_id,
+		a_uint32_t cnt_index);
+
+sw_error_t
+adpt_httppe_port_egress_vlan_filter_set(a_uint32_t dev_id,
+		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
+
+sw_error_t
+adpt_httppe_port_egress_vlan_filter_get(a_uint32_t dev_id,
+		fal_port_t port_id, fal_egress_vlan_filter_t *filter);
 #endif
 #ifdef __cplusplus
 }

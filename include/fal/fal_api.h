@@ -571,6 +571,10 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_DEL, fal_port_vlan_trans_adv_del), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETFIRST, fal_port_vlan_trans_adv_getfirst), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETNEXT, fal_port_vlan_trans_adv_getnext), \
+    SW_API_DEF(SW_API_PT_ISOL_CTRL_SET, fal_port_isol_ctrl_set), \
+    SW_API_DEF(SW_API_PT_ISOL_CTRL_GET, fal_port_isol_ctrl_get), \
+    SW_API_DEF(SW_API_PT_ISOL_GROUP_SET, fal_port_isol_group_set), \
+    SW_API_DEF(SW_API_PT_ISOL_GROUP_GET, fal_port_isol_group_get), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_ADD, fal_portvlan_member_add), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_DEL, fal_portvlan_member_del), \
     SW_API_DEF(SW_API_PT_VLAN_MEM_UPDATE, fal_portvlan_member_update), \
@@ -623,6 +627,10 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETFIRST) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETNEXT) \
+    SW_API_DESC(SW_API_PT_ISOL_CTRL_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_CTRL_GET) \
+    SW_API_DESC(SW_API_PT_ISOL_GROUP_SET) \
+    SW_API_DESC(SW_API_PT_ISOL_GROUP_GET) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_ADD) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_MEM_UPDATE) \
