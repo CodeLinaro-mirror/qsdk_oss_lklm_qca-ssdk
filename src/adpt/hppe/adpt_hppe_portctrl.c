@@ -913,9 +913,14 @@ adpt_hppe_port_txfc_status_get(a_uint32_t dev_id, fal_port_t port_id,
 		_adpt_gmac_port_txfc_status_get( dev_id, port_id, &txfc_status);
 	} else if (port_mac_type == PORT_PON_MAC_TYPE) {
 		p_adpt_api = adpt_api_ptr_get(dev_id);
-		if (p_adpt_api && p_adpt_api->adpt_port_bm_ctrl_get)
-			return p_adpt_api->adpt_port_bm_ctrl_get(dev_id,
-					PHY_PORT_TO_BM_PORT(port_id), enable);
+		if (p_adpt_api && p_adpt_api->adpt_port_bm_ctrl_get) {
+			int bm_id = PHY_PORT_TO_BM_PORT(port_id);
+
+			if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+				bm_id = port_id;
+
+			return p_adpt_api->adpt_port_bm_ctrl_get(dev_id, bm_id, enable);
+		}
 	} else {
 		return SW_BAD_VALUE;
 	}
@@ -1308,10 +1313,14 @@ _adpt_hppe_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	/*keep bm status same with port*/
 	p_adpt_api = adpt_api_ptr_get(dev_id);
-	if (p_adpt_api && p_adpt_api->adpt_port_bm_ctrl_set)
-		rv = p_adpt_api->adpt_port_bm_ctrl_set(dev_id,
-					PHY_PORT_TO_BM_PORT(port_id),
-					enable);
+	if (p_adpt_api && p_adpt_api->adpt_port_bm_ctrl_set) {
+		int bm_id = PHY_PORT_TO_BM_PORT(port_id);
+
+		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE)
+			bm_id = port_id;
+
+		rv = p_adpt_api->adpt_port_bm_ctrl_set(dev_id, bm_id, enable);
+	}
 
 	return rv;
 }
