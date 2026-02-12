@@ -31,7 +31,6 @@ adpt_jhppe_private_vlan_tx_cfg_set(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg)
 sw_error_t
 adpt_jhppe_private_vlan_tx_cfg_get(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg);
 
-#ifndef IN_PORTVLAN_MINI
 sw_error_t
 adpt_jhppe_port_isol_ctrl_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl);
@@ -50,7 +49,6 @@ adpt_jhppe_port_isol_action_set(a_uint32_t dev_id,
 sw_error_t
 adpt_jhppe_port_isol_action_get(a_uint32_t dev_id,
 		fal_port_isol_act_idx_t *isol_id, fal_port_isol_act_t *isol_act);
-#endif
 
 #ifdef __cplusplus
 }
