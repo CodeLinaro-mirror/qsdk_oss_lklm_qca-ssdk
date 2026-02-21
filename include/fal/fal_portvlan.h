@@ -657,6 +657,7 @@ sw_error_t
 fal_port_tag_propagation_get(a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_vlan_direction_t direction,
 		fal_vlantag_propagation_t *prop);
+#endif
 
 sw_error_t
 fal_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport,
@@ -665,7 +666,6 @@ fal_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport,
 sw_error_t
 fal_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport,
 		fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id);
-#endif
 
 sw_error_t
 fal_port_vlan_trans_adv_add(a_uint32_t dev_id, fal_port_t port_id,

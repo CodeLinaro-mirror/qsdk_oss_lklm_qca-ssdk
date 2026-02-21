@@ -355,6 +355,7 @@ fal_mcast_cpu_code_class_get(
 		a_uint32_t dev_id,
 		a_uint8_t cpu_code,
 		a_uint8_t *queue_class);
+#endif
 
 sw_error_t
 fal_port_mcast_priority_class_set(
@@ -369,7 +370,6 @@ fal_port_mcast_priority_class_get(
 		fal_port_t port,
 		a_uint8_t priority,
 		a_uint8_t *queue_class);
-#endif
 
 sw_error_t
 fal_queue_flush(

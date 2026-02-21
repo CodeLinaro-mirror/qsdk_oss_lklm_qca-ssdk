@@ -221,12 +221,12 @@ sw_error_t fal_mcast_cpu_code_class_set( a_uint32_t dev_id, a_uint8_t cpu_code, 
 sw_error_t fal_mcast_cpu_code_class_get( a_uint32_t dev_id, a_uint8_t cpu_code, a_uint8_t *queue_class)
     DEFINE_FAL_FUNC_ADPT_EXPORT(mcast_cpu_code_class_get, dev_id, cpu_code, queue_class)
 
+#endif
 sw_error_t fal_port_mcast_priority_class_set( a_uint32_t dev_id, fal_port_t port, a_uint8_t priority, a_uint8_t queue_class)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_mcast_priority_class_set, dev_id, port, priority, queue_class)
 
 sw_error_t fal_port_mcast_priority_class_get( a_uint32_t dev_id, fal_port_t port, a_uint8_t priority, a_uint8_t *queue_class)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_mcast_priority_class_get, dev_id, port, priority, queue_class)
-#endif
 
 sw_error_t fal_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t ucast_enqueue_en)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qm_mcast_enqueue_ctrl_set, dev_id, port_id, ucast_enqueue_en)

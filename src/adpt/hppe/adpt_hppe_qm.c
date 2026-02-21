@@ -164,7 +164,6 @@ adpt_hppe_ucast_queue_base_profile_get(
 	return SW_OK;
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 adpt_hppe_port_mcast_priority_class_get(
 		a_uint32_t dev_id,
@@ -211,7 +210,6 @@ adpt_hppe_port_mcast_priority_class_get(
 	*queue_class = mcast_priority_map0.bf.class;
 	return SW_OK;
 }
-#endif
 
 sw_error_t
 adpt_hppe_ac_dynamic_threshold_set(
@@ -460,7 +458,6 @@ adpt_hppe_ac_prealloc_buffer_get(
 		return SW_FAIL;
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 adpt_hppe_port_mcast_priority_class_set(
 		a_uint32_t dev_id,
@@ -503,7 +500,6 @@ adpt_hppe_port_mcast_priority_class_set(
 
 	return rv;
 }
-#endif
 
 sw_error_t
 adpt_hppe_ucast_hash_map_get(
@@ -1600,11 +1596,11 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_ucast_hash_map_set = adpt_hppe_ucast_hash_map_set;
 	p_adpt_api->adpt_ucast_queue_base_profile_get =
 			adpt_hppe_ucast_queue_base_profile_get;
-#if !defined(IN_QM_MINI)
 	p_adpt_api->adpt_port_mcast_priority_class_get =
 		adpt_hppe_port_mcast_priority_class_get;
 	p_adpt_api->adpt_port_mcast_priority_class_set =
 		adpt_hppe_port_mcast_priority_class_set;
+#if !defined(IN_QM_MINI)
 	p_adpt_api->adpt_mcast_cpu_code_class_get = adpt_hppe_mcast_cpu_code_class_get;
 	p_adpt_api->adpt_mcast_cpu_code_class_set = adpt_hppe_mcast_cpu_code_class_set;
 	p_adpt_api->adpt_ucast_default_hash_get = adpt_hppe_ucast_default_hash_get;

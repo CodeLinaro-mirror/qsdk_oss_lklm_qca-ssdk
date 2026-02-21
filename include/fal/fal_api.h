@@ -571,6 +571,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_DEL, fal_port_vlan_trans_adv_del), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETFIRST, fal_port_vlan_trans_adv_getfirst), \
     SW_API_DEF(SW_API_PT_VLAN_TRANS_ADV_GETNEXT, fal_port_vlan_trans_adv_getnext), \
+    SW_API_DEF(SW_API_PT_VLAN_VPGROUP_SET, fal_port_vlan_vpgroup_set), \
+    SW_API_DEF(SW_API_PT_VLAN_VPGROUP_GET, fal_port_vlan_vpgroup_get), \
     SW_API_DEF(SW_API_PT_ISOL_CTRL_SET, fal_port_isol_ctrl_set), \
     SW_API_DEF(SW_API_PT_ISOL_CTRL_GET, fal_port_isol_ctrl_get), \
     SW_API_DEF(SW_API_PT_ISOL_GROUP_SET, fal_port_isol_group_set), \
@@ -627,6 +629,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_DEL) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETFIRST) \
     SW_API_DESC(SW_API_PT_VLAN_TRANS_ADV_GETNEXT) \
+    SW_API_DESC(SW_API_PT_VLAN_VPGROUP_SET) \
+    SW_API_DESC(SW_API_PT_VLAN_VPGROUP_GET) \
     SW_API_DESC(SW_API_PT_ISOL_CTRL_SET) \
     SW_API_DESC(SW_API_PT_ISOL_CTRL_GET) \
     SW_API_DESC(SW_API_PT_ISOL_GROUP_SET) \
@@ -900,6 +904,8 @@ extern "C" {
 #define QOS_API \
     SW_API_DEF(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET, fal_scheduler_dequeue_ctrl_get), \
     SW_API_DEF(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, fal_scheduler_dequeue_ctrl_set), \
+    SW_API_DEF(SW_API_QOS_PCP_MAP_GET, fal_qos_cosmap_pcp_get), \
+    SW_API_DEF(SW_API_QOS_PCP_MAP_SET, fal_qos_cosmap_pcp_set), \
     SW_API_DEF(SW_API_QOS_QUEUE_SCHEDULER_GET, fal_queue_scheduler_get), \
     SW_API_DEF(SW_API_QOS_QUEUE_SCHEDULER_SET, fal_queue_scheduler_set), \
     SW_API_DEF(SW_API_QOS_PORT_PRI_GET, fal_qos_port_pri_precedence_get), \
@@ -919,6 +925,8 @@ extern "C" {
 #define QOS_API_PARAM \
     SW_API_DESC(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_GET) \
     SW_API_DESC(SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET) \
+    SW_API_DESC(SW_API_QOS_PCP_MAP_GET) \
+    SW_API_DESC(SW_API_QOS_PCP_MAP_SET) \
     SW_API_DESC(SW_API_QOS_QUEUE_SCHEDULER_GET) \
     SW_API_DESC(SW_API_QOS_QUEUE_SCHEDULER_SET) \
     SW_API_DESC(SW_API_QOS_PORT_PRI_GET) \
@@ -2146,6 +2154,8 @@ extern "C" {
     SW_API_DEF(SW_API_UCAST_QUEUE_BASE_PROFILE_GET, fal_ucast_queue_base_profile_get), \
     SW_API_DEF(SW_API_UCAST_PRIORITY_CLASS_SET, fal_ucast_priority_class_set), \
     SW_API_DEF(SW_API_UCAST_PRIORITY_CLASS_GET, fal_ucast_priority_class_get), \
+    SW_API_DEF(SW_API_MCAST_PRIORITY_CLASS_SET, fal_port_mcast_priority_class_set), \
+    SW_API_DEF(SW_API_MCAST_PRIORITY_CLASS_GET, fal_port_mcast_priority_class_get), \
     SW_API_DEF(SW_API_QUEUE_FLUSH, fal_queue_flush), \
     SW_API_DEF(SW_API_UCAST_HASH_MAP_SET, fal_ucast_hash_map_set), \
     SW_API_DEF(SW_API_UCAST_HASH_MAP_GET, fal_ucast_hash_map_get), \
@@ -2210,6 +2220,8 @@ extern "C" {
     SW_API_DESC(SW_API_UCAST_QUEUE_BASE_PROFILE_GET) \
     SW_API_DESC(SW_API_UCAST_PRIORITY_CLASS_SET) \
     SW_API_DESC(SW_API_UCAST_PRIORITY_CLASS_GET) \
+    SW_API_DESC(SW_API_MCAST_PRIORITY_CLASS_SET) \
+    SW_API_DESC(SW_API_MCAST_PRIORITY_CLASS_GET) \
     SW_API_DESC(SW_API_QUEUE_FLUSH) \
     SW_API_DESC(SW_API_UCAST_HASH_MAP_SET) \
     SW_API_DESC(SW_API_UCAST_HASH_MAP_GET) \

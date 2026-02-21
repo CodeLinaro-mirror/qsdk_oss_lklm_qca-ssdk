@@ -97,7 +97,6 @@ adpt_ppe_qos_port_pri_get(a_uint32_t dev_id, fal_port_t port_id,
 	return adpt_appe_qos_port_pri_get(dev_id, port_id, pri);
 }
 
-#ifndef IN_QOS_MINI
 sw_error_t
 adpt_ppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
@@ -108,7 +107,6 @@ adpt_ppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 	return adpt_appe_qos_cosmap_pcp_get(dev_id, group_id,
 			pcp, cosmap);
 }
-#endif
 
 sw_error_t
 adpt_hppe_l0_queue_map_set(a_uint32_t dev_id,
@@ -229,7 +227,6 @@ adpt_hppe_l0_queue_map_get(a_uint32_t dev_id,
 	return SW_OK;
 }
 
-#ifndef IN_QOS_MINI
 sw_error_t
 adpt_ppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
@@ -240,7 +237,6 @@ adpt_ppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 	return adpt_appe_qos_cosmap_pcp_set(dev_id, group_id,
 			pcp, cosmap);
 }
-#endif
 
 sw_error_t
 adpt_ppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
@@ -714,12 +710,12 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 			p_adpt_api->adpt_qos_port_group_get = adpt_httppe_qos_port_group_get;
 			p_adpt_api->adpt_qos_port_pcp_cfg_set = adpt_httppe_qos_port_pcp_cfg_set;
 			p_adpt_api->adpt_qos_port_pcp_cfg_get = adpt_httppe_qos_port_pcp_cfg_get;
+			p_adpt_api->adpt_qos_cosmap_pcp_get = adpt_httppe_qos_cosmap_pcp_get;
+			p_adpt_api->adpt_qos_cosmap_pcp_set = adpt_httppe_qos_cosmap_pcp_set;
 #ifndef IN_QOS_MINI
 			p_adpt_api->adpt_port_queues_get = adpt_httppe_port_queues_get;
 			p_adpt_api->adpt_tdm_tick_num_get = adpt_httppe_tdm_tick_num_get;
 			p_adpt_api->adpt_port_scheduler_cfg_get = adpt_httppe_port_scheduler_cfg_get;
-			p_adpt_api->adpt_qos_cosmap_pcp_get = adpt_httppe_qos_cosmap_pcp_get;
-			p_adpt_api->adpt_qos_cosmap_pcp_set = adpt_httppe_qos_cosmap_pcp_set;
 #endif
 			break;
 #endif
@@ -736,6 +732,8 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 			p_adpt_api->adpt_qos_port_pri_get = adpt_ppe_qos_port_pri_get;
 			p_adpt_api->adpt_qos_port_group_set = adpt_ppe_qos_port_group_set;
 			p_adpt_api->adpt_qos_port_group_get = adpt_ppe_qos_port_group_get;
+			p_adpt_api->adpt_qos_cosmap_pcp_get = adpt_ppe_qos_cosmap_pcp_get;
+			p_adpt_api->adpt_qos_cosmap_pcp_set = adpt_ppe_qos_cosmap_pcp_set;
 #if defined(JHPPE)
 			p_adpt_api->adpt_qos_port_pcp_cfg_set = adpt_jhppe_qos_port_pcp_cfg_set;
 			p_adpt_api->adpt_qos_port_pcp_cfg_get = adpt_jhppe_qos_port_pcp_cfg_get;
@@ -744,8 +742,6 @@ sw_error_t adpt_hppe_qos_init(a_uint32_t dev_id)
 			p_adpt_api->adpt_port_queues_get = adpt_hppe_port_queues_get;
 			p_adpt_api->adpt_tdm_tick_num_get = adpt_hppe_tdm_tick_num_get;
 			p_adpt_api->adpt_port_scheduler_cfg_get = adpt_hppe_port_scheduler_cfg_get;
-			p_adpt_api->adpt_qos_cosmap_pcp_get = adpt_ppe_qos_cosmap_pcp_get;
-			p_adpt_api->adpt_qos_cosmap_pcp_set = adpt_ppe_qos_cosmap_pcp_set;
 #endif
 			break;
 	}
