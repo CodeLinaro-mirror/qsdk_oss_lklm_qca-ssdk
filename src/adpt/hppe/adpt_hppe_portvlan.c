@@ -3280,9 +3280,9 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 #endif
 	p_adpt_api->adpt_port_vlan_counter_get = adpt_hppe_port_vlan_counter_get;
 	p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
+#endif
 	p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;
 	p_adpt_api->adpt_port_vlan_vpgroup_get = adpt_appe_port_vlan_vpgroup_get;
-#endif
 	p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;
 	p_adpt_api->adpt_global_qinq_mode_get = adpt_hppe_global_qinq_mode_get;
 	p_adpt_api->adpt_port_vlantag_egmode_set = adpt_hppe_port_vlantag_egmode_set;

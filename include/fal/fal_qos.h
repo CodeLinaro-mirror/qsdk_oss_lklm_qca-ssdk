@@ -141,7 +141,6 @@ sw_error_t
 fal_qos_port_pri_precedence_get(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_pri_precedence_t *pri);
 
-#ifndef IN_QOS_MINI
 sw_error_t
 fal_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap);
@@ -149,7 +148,6 @@ fal_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 sw_error_t
 fal_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t pcp, fal_qos_cosmap_t *cosmap);
-#endif
 
 sw_error_t
 fal_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,

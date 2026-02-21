@@ -71,13 +71,13 @@ sw_error_t fal_qos_port_pcp_cfg_set(a_uint32_t dev_id, fal_port_t port_id, fal_q
 sw_error_t fal_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id, fal_qos_pcp_cfg_t *pcp_cfg)
     DEFINE_FAL_FUNC_ADPT(qos_port_pcp_cfg_get, dev_id, port_id, pcp_cfg)
 
-#ifndef IN_QOS_MINI
 sw_error_t fal_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qos_cosmap_pcp_get, dev_id, group_id, pcp, cosmap)
 
 sw_error_t fal_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id, a_uint8_t pcp, fal_qos_cosmap_t *cosmap)
     DEFINE_FAL_FUNC_ADPT_EXPORT(qos_cosmap_pcp_set, dev_id, group_id, pcp, cosmap)
 
+#ifndef IN_QOS_MINI
 sw_error_t fal_port_queues_get(a_uint32_t dev_id, fal_port_t port_id, fal_queue_bmp_t *queue_bmp)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_queues_get, dev_id, port_id, queue_bmp)
 

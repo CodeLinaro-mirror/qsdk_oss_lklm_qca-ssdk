@@ -64,6 +64,7 @@ sw_error_t
 adpt_httppe_port_scheduler_cfg_get(a_uint32_t dev_id,
 				   a_uint32_t tick_index,
 				   fal_port_scheduler_cfg_t *cfg);
+#endif
 
 sw_error_t
 adpt_httppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
@@ -74,7 +75,6 @@ sw_error_t
 adpt_httppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t pcp,
 			fal_qos_cosmap_t *cosmap);
-#endif
 sw_error_t
 adpt_httppe_qos_port_pri_set(a_uint32_t dev_id, fal_port_t port_id,
 		fal_qos_pri_precedence_t *pri);

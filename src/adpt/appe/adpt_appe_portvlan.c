@@ -168,7 +168,6 @@ adpt_appe_port_isol_group_get(a_uint32_t dev_id,
 	return rv;
 }
 
-#ifndef IN_PORTVLAN_MINI
 sw_error_t
 adpt_appe_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport_id,
 		fal_port_vlan_direction_t direction, a_uint32_t vpgroup_id)
@@ -220,6 +219,7 @@ adpt_appe_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport_id,
 	return rtn;
 }
 
+#ifndef IN_PORTVLAN_MINI
 sw_error_t
 adpt_appe_port_egress_vlan_filter_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter)

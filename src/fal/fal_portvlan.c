@@ -193,6 +193,12 @@ sw_error_t
 fal_private_vlan_tx_cfg_get(a_uint32_t dev_id, fal_pvtvlan_tx_cfg_t *cfg)
 	DEFINE_FAL_FUNC_ADPT_EXPORT(private_vlan_tx_cfg_get, dev_id, cfg)
 
+sw_error_t fal_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t vpgroup_id)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_vpgroup_set, dev_id, vport, direction, vpgroup_id)
+
+sw_error_t fal_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_vpgroup_get, dev_id, vport, direction, vpgroup_id)
+
 #ifndef IN_PORTVLAN_MINI
 sw_error_t fal_port_vlan_trans_add(a_uint32_t dev_id, fal_port_t port_id, fal_vlan_trans_entry_t *entry)
     DEFINE_FAL_FUNC_EXPORT(port_vlan_trans_add, dev_id, port_id, entry)
@@ -217,12 +223,6 @@ sw_error_t fal_port_vlan_counter_get(a_uint32_t dev_id, a_uint32_t cnt_index, fa
 
 sw_error_t fal_port_vlan_counter_cleanup(a_uint32_t dev_id, a_uint32_t cnt_index)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_counter_cleanup, dev_id, cnt_index)
-
-sw_error_t fal_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t vpgroup_id)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_vpgroup_set, dev_id, vport, direction, vpgroup_id)
-
-sw_error_t fal_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport, fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(port_vlan_vpgroup_get, dev_id, vport, direction, vpgroup_id)
 
 sw_error_t fal_port_egress_vlan_filter_set(a_uint32_t dev_id, fal_port_t port_id, fal_egress_vlan_filter_t *filter)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_egress_vlan_filter_set, dev_id, port_id, filter)

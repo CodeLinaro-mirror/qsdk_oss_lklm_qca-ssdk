@@ -327,7 +327,6 @@ adpt_httppe_qos_mapping_set(a_uint32_t dev_id, a_uint32_t index,
 	return httppe_qos_mapping_tbl_set(dev_id, index, &qos_mapping_tbl);
 }
 
-#ifndef IN_QOS_MINI
 sw_error_t
 adpt_httppe_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 			a_uint8_t pcp,
@@ -371,7 +370,6 @@ adpt_httppe_qos_cosmap_pcp_set(a_uint32_t dev_id, a_uint8_t group_id,
 
 	return adpt_httppe_qos_mapping_set(dev_id, index, cosmap);
 }
-#endif
 
 sw_error_t
 adpt_httppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
