@@ -1816,6 +1816,7 @@ static sw_error_t
 adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
+	a_uint32_t port_mac_type;
 	sw_error_t rv = 0;
 
 	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
@@ -1823,10 +1824,16 @@ adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 	if (mode == PORT_USXGMII || mode == PORT_UQXGMII) {
 		SSDK_DEBUG("xgmac reset for port%d\n", port_id);
 		ssdk_port_mac_clock_reset(dev_id, port_id);
-		/*restore xgmac's pr and pcf setting, re-config flowctrl after reset
-		operation*/
-		rv = adpt_hppe_port_xgmac_reconfig(dev_id, port_id);
-		SW_RTN_ON_ERROR(rv);
+		/* Reset xgmac only when XGMAC is used in USXGMII/UQXGMII mode,
+		 * to note that for UQXGMII on ipq5210, GMAC is used and XGMAC
+		 * reset is not required.
+		 */
+		port_mac_type = qca_ppe_port_mac_type_get(dev_id, port_id);
+		if (port_mac_type == PORT_XGMAC_TYPE) {
+			/*restore xgmac's pr and pcf setting, re-config flowctrl after reset operation*/
+			rv = adpt_hppe_port_xgmac_reconfig(dev_id, port_id);
+			SW_RTN_ON_ERROR(rv);
+		}
 	}
 	return rv;
 }
@@ -1950,6 +1957,7 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t mode_tmp = PORT_WRAPPER_MAX;
+	struct qca_phy_priv *priv = NULL;
 
 	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
 	{
@@ -2044,7 +2052,10 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 		case PORT_WRAPPER_UDXGMII:
 			if(port_id >= SSDK_PHYSICAL_PORT1 && port_id <= SSDK_PHYSICAL_PORT4)
 			{
-				qca_ppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
+				if (hsl_port_feature_get(dev_id, port_id, PHY_F_QGMAC))
+					qca_ppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
+				else
+					qca_ppe_port_mac_type_set(dev_id, port_id, PORT_XGMAC_TYPE);
 				_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_UQXGMII);
 			}
 			break;
@@ -2122,6 +2133,15 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 			break;
 		default:
 			break;
+	}
+
+	/* For internal PHY which is not controlled by UNIPHY MAC mode */
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	if (priv->ports[port_id].interface == PHY_INTERFACE_MODE_INTERNAL) {
+		qca_ppe_port_mac_type_set(dev_id, port_id, PORT_GMAC_TYPE);
+		_adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_INTERNAL);
 	}
 
 	rv = _adpt_hppe_port_mux_set(dev_id, port_id);
@@ -2254,19 +2274,17 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t max_port_id,
 			}
 			*mode0 = PORT_WRAPPER_QSGMII;
 		}
-		if (adpt_ppe_type_get(dev_id) == APPE_TYPE) {
-			if(phy_info->port_mode[port_id] == PORT_UQXGMII)
+		if(phy_info->port_mode[port_id] == PORT_UQXGMII)
+		{
+			if((*mode0 != PORT_WRAPPER_MAX && *mode0 != PORT_WRAPPER_UQXGMII) ||
+				port_id == SSDK_PHYSICAL_PORT5)
 			{
-				if((*mode0 != PORT_WRAPPER_MAX && *mode0 != PORT_WRAPPER_UQXGMII) ||
-					port_id == SSDK_PHYSICAL_PORT5)
-				{
-					SSDK_ERROR("when the port_interface_mode of port %d is %d, "
-						"mode0:%d cannot be supported\n",
-						port_id, phy_info->port_mode[port_id], *mode0);
-					return SW_NOT_SUPPORTED;
-				}
-				*mode0 = PORT_WRAPPER_UQXGMII;
+				SSDK_ERROR("when the port_interface_mode of port %d is %d, "
+					"mode0:%d cannot be supported\n",
+					port_id, phy_info->port_mode[port_id], *mode0);
+				return SW_NOT_SUPPORTED;
 			}
+			*mode0 = PORT_WRAPPER_UQXGMII;
 		}
 		if(phy_info->port_mode[port_id] == PHY_SGMII_BASET ||
 			phy_info->port_mode[port_id] == PORT_SGMII_FIBER)
@@ -4006,13 +4024,14 @@ adpt_hppe_uniphy_usxgmii_autoneg_completed(a_uint32_t dev_id,
 static void
 adpt_hppe_uniphy_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed_t speed)
 {
-	a_uint32_t uniphy_index = 0, mode = 0;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	a_uint32_t uniphy_index = 0;
 
-	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
-	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_USXGMII) ||
-		(mode == PORT_WRAPPER_UDXGMII)) {
-		/* adpt_hppe_uniphy_usxgmii_autoneg_completed(dev_id,uniphy_index); */
+	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+
+	if ((port_mode == PORT_UQXGMII) || (port_mode == PORT_USXGMII)) {
+		uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+		/* adpt_hppe_uniphy_usxgmii_autoneg_completed(dev_id, uniphy_index); */
 		/* configure xpcs speed at usxgmii mode */
 		adpt_hppe_uniphy_usxgmii_speed_set(dev_id, uniphy_index, port_id, speed);
 	}
@@ -4022,13 +4041,14 @@ adpt_hppe_uniphy_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 static void
 adpt_hppe_uniphy_duplex_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_duplex_t duplex)
 {
-	a_uint32_t uniphy_index = 0, mode = 0;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	a_uint32_t uniphy_index = 0;
 
-	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
-	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_USXGMII) ||
-		(mode == PORT_WRAPPER_UDXGMII)) {
-		/* adpt_hppe_uniphy_usxgmii_autoneg_completed(0,uniphy_index); */
+	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+
+	if ((port_mode == PORT_UQXGMII) || (port_mode == PORT_USXGMII)) {
+		uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+		/* adpt_hppe_uniphy_usxgmii_autoneg_completed(0, uniphy_index); */
 		/* configure xpcs duplex at usxgmii mode */
 		adpt_hppe_uniphy_usxgmii_duplex_set(dev_id, uniphy_index, port_id, duplex);
 	}
@@ -4038,12 +4058,13 @@ adpt_hppe_uniphy_duplex_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_dupl
 static void
 adpt_hppe_uniphy_autoneg_status_check(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	a_uint32_t uniphy_index = 0, mode = 0;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	a_uint32_t uniphy_index = 0;
 
-	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
-	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_USXGMII) ||
-		(mode == PORT_WRAPPER_UDXGMII)) {
+	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+
+	if ((port_mode == PORT_UQXGMII) || (port_mode == PORT_USXGMII)) {
+		uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
 		adpt_hppe_uniphy_usxgmii_autoneg_completed(dev_id,uniphy_index, port_id);
 	}
 	return;
@@ -4102,23 +4123,26 @@ adpt_hppe_usxgmii_speed_clock_set(
 	a_uint32_t port_id,
 	fal_port_speed_t phy_speed)
 {
-	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
-
 	switch (phy_speed) {
 		case FAL_SPEED_10:
-			if (ppe_type == MPPE_TYPE) {
-				/* 4bit MII width */
-				ssdk_port_speed_clock_set(dev_id,
-						port_id, USXGMII_SPEED_10M_CLK*2);
-			} else {
-				/* 8bit MII width */
+			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id))
+				/* XGMAC with 8bit MII width */
 				ssdk_port_speed_clock_set(dev_id,
 						port_id, USXGMII_SPEED_10M_CLK);
-			}
+			else
+				/* GMAC with 4bit MII width */
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_10M_CLK*2);
 			break;
 		case FAL_SPEED_100:
-			ssdk_port_speed_clock_set(dev_id,
-					port_id, USXGMII_SPEED_100M_CLK);
+			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id))
+				/* XGMAC with 8bit MII width */
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_100M_CLK);
+			else
+				/* GMAC with 4bit MII width */
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_100M_CLK*2);
 			break;
 		case FAL_SPEED_1000:
 			ssdk_port_speed_clock_set(dev_id,
@@ -4191,7 +4215,7 @@ adpt_hppe_gcc_uniphy_clock_status_set(a_uint32_t dev_id, a_uint32_t port_id,
 	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
 
 	adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
-	if(port_mode == PORT_INTERFACE_MODE_MAX)
+	if(port_mode == PORT_INTERFACE_MODE_MAX || port_mode == PORT_INTERNAL)
 		return;
 	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
 	qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index, port_id, enable);
@@ -4246,7 +4270,15 @@ static sw_error_t
 adpt_hppe_phy_interface_mode_switch(a_uint32_t dev_id,
 	a_uint32_t port_id)
 {
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
 	sw_error_t rv = SW_OK;
+
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+	SW_RTN_ON_ERROR(rv);
+
+	/* built-in PHY does not need interface mode switch */
+	if (port_mode == PORT_INTERNAL)
+		return SW_OK;
 
 	if (A_TRUE == hsl_port_phy_connected(dev_id, port_id)) {
 		SSDK_DEBUG("phy port %d change interface mode!\n", port_id);
