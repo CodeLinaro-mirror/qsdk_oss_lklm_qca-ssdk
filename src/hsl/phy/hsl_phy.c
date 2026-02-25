@@ -172,10 +172,6 @@ int ssdk_phy_driver_init(a_uint32_t dev_id)
 					aquantia_phy_hw_init(dev_id,
 						qca_ssdk_port_to_phy_addr(dev_id, i));
 #endif
-			} else {
-				SSDK_INFO("dev_id = %d, phy_adress = 0x%x, phy_id = 0x%x phy"
-					"driver is not supported in qca-ssdk\n", dev_id,
-					phy_info[dev_id]->phy_address[i], phy_id);
 			}
 		}
 	}
