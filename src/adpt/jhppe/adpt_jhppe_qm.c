@@ -33,7 +33,7 @@ adpt_jhppe_qm_ddrq_counter_get(a_uint32_t dev_id,
 	ADPT_NULL_POINT_CHECK(info);
 
 	/* ddrq counter only exist for esram ucast queue id 0~159 */
-	if (queue_id > DDRQ_PKT_CNT_TBL_MAX_ENTRY) {
+	if (queue_id >= DDRQ_PKT_CNT_TBL_MAX_ENTRY) {
 		info->ddrq_packets = 0;
 		info->ddrq_bytes = 0;
 		return SW_OK;
