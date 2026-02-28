@@ -1660,7 +1660,11 @@ static char *ppe_clk_ids[UNIPHYT_CLK_MAX] = {
 	UNIPHY2_PORT6_RX_CLK,
 	UNIPHY2_PORT6_TX_CLK,
 	PORT5_RX_SRC,
-	PORT5_TX_SRC
+	PORT5_TX_SRC,
+	PORT4_RX_SRC,
+	PORT4_TX_SRC,
+	EPHY_RX_SRC_PARENT,
+	EPHY_TX_SRC_PARENT,
 };
 
 const char *uniphy_raw_clk_names[] = {
@@ -1904,6 +1908,40 @@ void ssdk_uniphy1_clock_source_set(a_uint32_t dev_id)
 	clk_set_parent(ssdk_ppe_uniphy_clock_get(dev_id, PORT5_TX_SRC_E),
 			ssdk_ppe_uniphy_raw_clock_get(dev_id, 3));
 }
+
+#if defined(HMSPPE)
+static
+sw_error_t ssdk_ephy_clock_source_set(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	struct clk *rx_clk, *tx_clk;
+	sw_error_t rv = SW_OK;
+
+	rv = fal_port_interface_mode_get(dev_id, port_id, &port_mode);
+	SW_RTN_ON_ERROR(rv);
+
+	if (port_mode != PORT_INTERNAL)
+		return rv;
+
+	switch (port_id) {
+	case SSDK_PHYSICAL_PORT4:
+		rx_clk = ssdk_ppe_uniphy_clock_get(dev_id, PORT4_RX_SRC_E);
+		tx_clk = ssdk_ppe_uniphy_clock_get(dev_id, PORT4_TX_SRC_E);
+		break;
+	case SSDK_PHYSICAL_PORT5:
+		rx_clk = ssdk_ppe_uniphy_clock_get(dev_id, PORT5_RX_SRC_E);
+		tx_clk = ssdk_ppe_uniphy_clock_get(dev_id, PORT5_TX_SRC_E);
+		break;
+	default:
+		return rv;
+	}
+
+	clk_set_parent(rx_clk, ssdk_ppe_uniphy_clock_get(dev_id, EPHY_RX_SRC_PARENT_E));
+	clk_set_parent(tx_clk, ssdk_ppe_uniphy_clock_get(dev_id, EPHY_TX_SRC_PARENT_E));
+
+	return SW_OK;
+}
+#endif
 
 void ssdk_uniphy_raw_clock_reset(a_uint32_t dev_id, a_uint8_t uniphy_index)
 {
@@ -2166,6 +2204,13 @@ static void ssdk_gcc_appe_clock_init(struct ssdk_clk_private *priv)
 
 	if (priv->ppe_type == APPE_TYPE)
 		ssdk_uniphy_port5_clock_source_set(priv->dev_id);
+
+#if defined(HMSPPE)
+	if (priv->ppe_type == HMSPPE_TYPE) {
+		ssdk_ephy_clock_source_set(priv->dev_id, SSDK_PHYSICAL_PORT4);
+		ssdk_ephy_clock_source_set(priv->dev_id, SSDK_PHYSICAL_PORT5);
+	}
+#endif
 }
 
 void
