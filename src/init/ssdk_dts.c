@@ -392,6 +392,10 @@ static void ssdk_softsku_uniphy_parse(a_uint32_t dev_id,
 	size_t uniphy_len;
 
 	for (i = 0; i < uniphy_id; i++) {
+		/* By default, the uniphy is enabled unless disabled status is retrieved
+		 * from the nvmem cell.
+		 */
+		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->uniphy_status[i] = A_TRUE;
 		uniphy_nvmem = of_nvmem_cell_get(uniphy_node, uniphy_name[i]);
 		if (IS_ERR(uniphy_nvmem)) {
 			if (PTR_ERR(uniphy_nvmem) == -EPROBE_DEFER)
@@ -422,7 +426,7 @@ static void ssdk_dt_parse_uniphy(a_uint32_t dev_id)
 
 	/* read uniphy register base and address space */
 	uniphy_node = of_find_node_by_name(NULL, "ess-uniphy");
-	if (!uniphy_node)
+	if (!of_device_is_available(uniphy_node))
 		SSDK_INFO("ess-uniphy DT doesn't exist!\n");
 	else {
 		cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];

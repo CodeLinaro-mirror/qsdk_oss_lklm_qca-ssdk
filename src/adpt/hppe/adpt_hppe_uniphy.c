@@ -443,10 +443,13 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	vr_xs_pcs_dig_ctrl1.bf.vr_rst = 1;
 	hppe_vr_xs_pcs_dig_ctrl1_set(dev_id, uniphy_index, &vr_xs_pcs_dig_ctrl1);
 
-	/* enable uniphy autoneg complete interrupt and 10M/100M 8-bits MII width */
+	/* enable uniphy autoneg complete interrupt and 10M/100M 8-bits or 4bit MII width */
 	hppe_vr_mii_an_ctrl_get(dev_id, uniphy_index, &vr_mii_an_ctrl);
 	vr_mii_an_ctrl.bf.mii_an_intr_en = 1;
-	vr_mii_an_ctrl.bf.mii_ctrl = 1;
+	if (hsl_port_feature_get(dev_id, SSDK_PHYSICAL_PORT1, PHY_F_QGMAC))
+		vr_mii_an_ctrl.bf.mii_ctrl = 0;
+	else
+		vr_mii_an_ctrl.bf.mii_ctrl = 1;
 	hppe_vr_mii_an_ctrl_set(dev_id, uniphy_index, &vr_mii_an_ctrl);
 	hppe_vr_mii_an_ctrl_channel1_set(dev_id, uniphy_index, &vr_mii_an_ctrl);
 	hppe_vr_mii_an_ctrl_channel2_set(dev_id, uniphy_index, &vr_mii_an_ctrl);

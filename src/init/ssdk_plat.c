@@ -771,7 +771,7 @@ qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	void __iomem *hppe_uniphy_base = NULL;
 	a_uint32_t reg_addr1, reg_addr2;
 
-	SSDK_DEBUG("qca_uniphy_reg_read function reg:0x%x\n and value:0x%x", reg_addr, *reg_data);
+	SSDK_DEBUG("uniphy %d reg 0x%x value 0x%x", uniphy_index, reg_addr, *reg_data);
 	if (len != sizeof (a_uint32_t))
 		return SW_BAD_LEN;
 
@@ -817,7 +817,7 @@ qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_uint32_t reg_addr1, reg_addr2;
 	uint32_t reg_val = 0;
 
-	SSDK_DEBUG("qca_uniphy_reg_write function reg:0x%x\n and value:0x%x", reg_addr, *reg_data);
+	SSDK_DEBUG("uniphy %d reg 0x%x value 0x%x", uniphy_index, reg_addr, *reg_data);
 	if (len != sizeof (a_uint32_t))
 	        return SW_BAD_LEN;
 

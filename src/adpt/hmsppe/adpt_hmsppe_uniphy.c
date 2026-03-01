@@ -221,37 +221,45 @@ adpt_hmsppe_uniphy_pon_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	/* Step 1: Write 1'b1 to PON_REG_SOURCE_SEL1[10] SRC_PON_MODE_EXT_INTERNAL */
 	rv = hmsppe_uniphy_pon_reg_source_sel1_mmd1_reg_src_pon_mode_ext_internal_set(
 		dev_id, uniphy_index, SRC_PON_MODE_EXTERNAL);
-	SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d source select failed.\n", uniphy_index, mode);
 
 	/* Step 2: UNIPHY_INST2 PON interface clock enable */
 	rv = adpt_hmsppe_uniphy_pon_clock_enable(dev_id, uniphy_index, mode);
-	SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d interface clock enable failed.\n", uniphy_index, mode);
 
 	/* Step 3: UNIPHY_PON interface data disable - Write 0 to FUNC_RST_PON[5:4] & [1:0] */
 	rv = hmsppe_uniphy_func_rst_pon_get(dev_id, uniphy_index, &func_rst);
-	SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d interface data disable failed.\n", uniphy_index, mode);
+
 	func_rst.bf.mmd1_reg_func_rst_pon_tx_n = A_FALSE;
 	func_rst.bf.mmd1_reg_func_rst_pon_rx_n = A_FALSE;
 	func_rst.bf.mmd1_reg_qsgmii_enable = A_FALSE;
 	func_rst.bf.mmd1_reg_xpcs_enable = A_FALSE;
 	rv = hmsppe_uniphy_func_rst_pon_set(dev_id, uniphy_index, &func_rst);
-	SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d interface data disable failed.\n", uniphy_index, mode);
 
 	/* Step 4: PON jccdr fast lock tune (if needed) */
 	if (jccdr_fast_lock) {
 		rv = adpt_hmsppe_uniphy_jccdr_fast_lock_tune(dev_id, uniphy_index, mode);
-		SW_RTN_ON_ERROR(rv);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d pon mode %d jccdr fast lock tune failed.\n", uniphy_index, mode);
 	}
 
 	/* Step 5: PON jccdr regular lock tune (if needed) */
 	if (jccdr_regular_lock) {
 		rv = adpt_hmsppe_uniphy_jccdr_regular_lock_tune(dev_id, uniphy_index, mode);
-		SW_RTN_ON_ERROR(rv);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d pon mode %d jccdr regular lock tune failed.\n", uniphy_index, mode);
 	}
 
 	/* Step 6: Wait calibration done - read CSR0 OFFSET_CALIB_4[7] (OFFSET 0x1E0) */
 	rv = __adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
-	SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d calibration failed.\n", uniphy_index, mode);
 
 	/* Step 7: Wait sdrx_lock asserted - JCCDR_CALIB_STS_DEBUG[7] SDRX_LOCK */
 	rv = read_poll_timeout(hmsppe_uniphy_jccdr_calib_sts_debug_mmd1_reg_sdrx_lock_get,
@@ -260,16 +268,21 @@ adpt_hmsppe_uniphy_pon_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	if (rv) {
 		SSDK_ERROR("Timeout waiting for sdrx_lock on uniphy %d mode %d\n",
 			   uniphy_index, mode);
-		return SW_TIMEOUT;
 	}
 
 	/* Step 8: UNIPHY_PON interface data enable */
 	/* Write 2'b11 to FUNC_RST_PON[1:0] FUNC_RST_PON_RX_N, FUNC_RST_PON_TX_N */
 	rv = hmsppe_uniphy_func_rst_pon_get(dev_id, uniphy_index, &func_rst);
-	SW_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d interface data enable failed.\n", uniphy_index, mode);
+
 	func_rst.bf.mmd1_reg_func_rst_pon_rx_n = A_TRUE;
 	func_rst.bf.mmd1_reg_func_rst_pon_tx_n = A_TRUE;
-	return hmsppe_uniphy_func_rst_pon_set(dev_id, uniphy_index, &func_rst);
+	rv = hmsppe_uniphy_func_rst_pon_set(dev_id, uniphy_index, &func_rst);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d pon mode %d interface data enable failed.\n", uniphy_index, mode);
+
+	return SW_OK;
 }
 
 /**
