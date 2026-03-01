@@ -393,6 +393,10 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		UNIPHY_SGMIIPLUS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_ENABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	hppe_qp_usxg_opiton1_get(dev_id, uniphy_index, &qp_usxg_opiton1);
@@ -526,6 +530,10 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		UNIPHY_SGMIIPLUS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_ENABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	ssdk_port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
@@ -660,7 +668,10 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		UNIPHY_SGMIIPLUS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_ENABLE;
-
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 	if(__adpt_hppe_uniphy_rxlos_check(dev_id, uniphy_index))
 	{
@@ -790,6 +801,11 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 		uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
 			UNIPHY_SGMIIPLUS_MODE_ENABLE;
 	}
+
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	/* configure uniphy gcc software reset */
@@ -910,6 +926,11 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 		uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
 			UNIPHY_SGMII_MODE_ENABLE;
 	}
+
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	force_port = hsl_port_feature_get(dev_id,
@@ -1011,6 +1032,10 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		UNIPHY_SGMII_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_DISABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	/* configure uniphy gcc software reset */
@@ -1067,6 +1092,10 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		UNIPHY_SGMIIPLUS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_DISABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	/* configure uniphy gcc software reset */
