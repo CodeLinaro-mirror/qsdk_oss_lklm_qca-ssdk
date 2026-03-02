@@ -80,23 +80,22 @@ sw_error_t
 adpt_hppe_uniphy_usxgmii_status_get(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		a_uint32_t port_id, union sr_mii_ctrl_u *sr_mii_ctrl)
 {
+	a_uint32_t mode;
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(sr_mii_ctrl);
 
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_sr_mii_ctrl_get(dev_id, uniphy_index, sr_mii_ctrl);
 	}
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
-		a_uint32_t mode;
-		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-		if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
-			if (port_id == SSDK_PHYSICAL_PORT2) {
-				hppe_sr_mii_ctrl_channel1_get(dev_id, uniphy_index, sr_mii_ctrl);
-			} else if (port_id == SSDK_PHYSICAL_PORT3) {
-				hppe_sr_mii_ctrl_channel2_get(dev_id, uniphy_index, sr_mii_ctrl);
-			} else if (port_id == SSDK_PHYSICAL_PORT4) {
-				hppe_sr_mii_ctrl_channel3_get(dev_id, uniphy_index, sr_mii_ctrl);
-			}
+
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
+		if (port_id == SSDK_PHYSICAL_PORT2) {
+			hppe_sr_mii_ctrl_channel1_get(dev_id, uniphy_index, sr_mii_ctrl);
+		} else if (port_id == SSDK_PHYSICAL_PORT3) {
+			hppe_sr_mii_ctrl_channel2_get(dev_id, uniphy_index, sr_mii_ctrl);
+		} else if (port_id == SSDK_PHYSICAL_PORT4) {
+			hppe_sr_mii_ctrl_channel3_get(dev_id, uniphy_index, sr_mii_ctrl);
 		}
 	}
 
@@ -107,25 +106,24 @@ sw_error_t
 adpt_hppe_uniphy_usxgmii_status_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		a_uint32_t port_id, union sr_mii_ctrl_u *sr_mii_ctrl)
 {
+	a_uint32_t mode;
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(sr_mii_ctrl);
 
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_sr_mii_ctrl_set(dev_id, uniphy_index, sr_mii_ctrl);
 	}
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
-		a_uint32_t mode;
-		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-		if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
-			if (port_id == SSDK_PHYSICAL_PORT2) {
-				hppe_sr_mii_ctrl_channel1_set(dev_id, uniphy_index, sr_mii_ctrl);
-			} else if (port_id == SSDK_PHYSICAL_PORT3) {
-				hppe_sr_mii_ctrl_channel2_set(dev_id, uniphy_index, sr_mii_ctrl);
-			} else if (port_id == SSDK_PHYSICAL_PORT4) {
-				hppe_sr_mii_ctrl_channel3_set(dev_id, uniphy_index, sr_mii_ctrl);
-			}
-			SSDK_DEBUG("uqxgmii uniphy %d port %d status set!\n", uniphy_index, port_id);
+
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
+		if (port_id == SSDK_PHYSICAL_PORT2) {
+			hppe_sr_mii_ctrl_channel1_set(dev_id, uniphy_index, sr_mii_ctrl);
+		} else if (port_id == SSDK_PHYSICAL_PORT3) {
+			hppe_sr_mii_ctrl_channel2_set(dev_id, uniphy_index, sr_mii_ctrl);
+		} else if (port_id == SSDK_PHYSICAL_PORT4) {
+			hppe_sr_mii_ctrl_channel3_set(dev_id, uniphy_index, sr_mii_ctrl);
 		}
+		SSDK_DEBUG("uqxgmii uniphy %d port %d status set!\n", uniphy_index, port_id);
 	}
 
 	return SW_OK;
@@ -135,28 +133,27 @@ sw_error_t
 adpt_hppe_uniphy_usxgmii_autoneg_status_get(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		a_uint32_t port_id, union vr_mii_an_intr_sts_u *vr_mii_an_intr_sts)
 {
+	a_uint32_t mode;
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(vr_mii_an_intr_sts);
 
 	if (adpt_hppe_uniphy_usxgmii_port_check(dev_id, uniphy_index, port_id)) {
 		hppe_vr_mii_an_intr_sts_get(dev_id, uniphy_index, vr_mii_an_intr_sts);
 	}
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
-		a_uint32_t mode;
-		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-		if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
-			if (port_id == SSDK_PHYSICAL_PORT2) {
-				hppe_vr_mii_an_intr_sts_channel1_get(dev_id,
-					uniphy_index, vr_mii_an_intr_sts);
-			} else if (port_id == SSDK_PHYSICAL_PORT3) {
-				hppe_vr_mii_an_intr_sts_channel2_get(dev_id,
-					uniphy_index, vr_mii_an_intr_sts);
-			} else if (port_id == SSDK_PHYSICAL_PORT4) {
-				hppe_vr_mii_an_intr_sts_channel3_get(dev_id,
-					uniphy_index, vr_mii_an_intr_sts);
-			}
-			SSDK_DEBUG("uqxgmii uniphy port %d autoneg check\n", port_id);
+
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
+		if (port_id == SSDK_PHYSICAL_PORT2) {
+			hppe_vr_mii_an_intr_sts_channel1_get(dev_id,
+				uniphy_index, vr_mii_an_intr_sts);
+		} else if (port_id == SSDK_PHYSICAL_PORT3) {
+			hppe_vr_mii_an_intr_sts_channel2_get(dev_id,
+				uniphy_index, vr_mii_an_intr_sts);
+		} else if (port_id == SSDK_PHYSICAL_PORT4) {
+			hppe_vr_mii_an_intr_sts_channel3_get(dev_id,
+				uniphy_index, vr_mii_an_intr_sts);
 		}
+		SSDK_DEBUG("uqxgmii uniphy port %d autoneg check\n", port_id);
 	}
 
 	return SW_OK;
