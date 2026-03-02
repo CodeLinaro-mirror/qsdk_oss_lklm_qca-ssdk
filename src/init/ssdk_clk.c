@@ -63,7 +63,7 @@ struct ssdk_clk_private {
 	a_uint32_t dev_id;
 	struct device *dev;
 	int ppe_type;
-	struct clk_hw *uniphy_raw_clks[SSDK_MAX_UNIPHY_INSTANCE * 2];
+	struct clk_hw_onecell_data *uniphy_clk;
 	struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX];
 	struct reset_control *uniphy_rsts[UNIPHY_RST_MAX];
 	struct reset_control *port_rsts[SSDK_MAX_PORT_NUM * 2];
@@ -1220,7 +1220,10 @@ static struct clk *ssdk_ppe_uniphy_raw_clock_get(a_uint32_t dev_id, int index)
 	if (!clk_priv)
 		return NULL;
 
-	return clk_priv->uniphy_raw_clks[index]->clk;
+	if (!(clk_priv->uniphy_clk) || !(clk_priv->uniphy_clk->hws[index]))
+		return NULL;
+
+	return clk_priv->uniphy_clk->hws[index]->clk;
 }
 
 static struct clk *ssdk_ppe_uniphy_clock_get(a_uint32_t dev_id, enum unphy_clk_type clock_type)
@@ -1703,6 +1706,8 @@ static struct clk_hw *ssdk_uniphy_clk_register(struct device *dev, const char *c
 
 static void ssdk_ppe_uniphy_clock_init(struct ssdk_clk_private *priv, adpt_ppe_type_t chip_type)
 {
+	struct device_node *uniphy_node;
+	struct platform_device *pdev;
 	a_uint32_t i, inst_num = 0;
 	struct clk_hw *uniphy_hw;
 	char name[64];
@@ -1724,6 +1729,26 @@ static void ssdk_ppe_uniphy_clock_init(struct ssdk_clk_private *priv, adpt_ppe_t
 			return;
 	}
 
+	uniphy_node = of_find_node_by_name(NULL, "ess-uniphy");
+	if (!uniphy_node) {
+		SSDK_ERROR("can not find UNIPHY node\n");
+		return;
+	}
+
+	pdev = of_find_device_by_node(uniphy_node);
+	of_node_put(uniphy_node);
+	if (!pdev)
+		return;
+
+	priv->uniphy_clk = devm_kzalloc(&pdev->dev,
+			struct_size(priv->uniphy_clk, hws, inst_num * 2), GFP_KERNEL);
+	if (!priv->uniphy_clk) {
+		put_device(&pdev->dev);
+		return;
+	}
+
+	priv->uniphy_clk->num = inst_num * 2;
+
 	for (i = 0; i < inst_num * 2; i++) {
 		if (priv->dev_id)
 			snprintf(name, sizeof(name), "%s_%d", uniphy_raw_clk_names[i], priv->dev_id);
@@ -1735,8 +1760,12 @@ static void ssdk_ppe_uniphy_clock_init(struct ssdk_clk_private *priv, adpt_ppe_t
 			SSDK_ERROR("Device %d: Clk register %s fail!\n",
 				   priv->dev_id, uniphy_raw_clk_names[i]);
 		else
-			priv->uniphy_raw_clks[i] = uniphy_hw;
+			priv->uniphy_clk->hws[i] = uniphy_hw;
 	}
+
+	/* register uniphy clock to provider */
+	devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get, priv->uniphy_clk);
+	put_device(&pdev->dev);
 
 	for (i = 0; i < ARRAY_SIZE(ppe_clk_ids); i++) {
 		priv->uniphy_port_clks[i] = devm_clk_get_optional(priv->dev, ppe_clk_ids[i]);
