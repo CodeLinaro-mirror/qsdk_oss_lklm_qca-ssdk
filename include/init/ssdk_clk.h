@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2017, 2019-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
  */
@@ -73,6 +72,10 @@ extern "C" {
 #define SSDK_PORT4_MAC_RESET_ID	"nss_port4_mac_rst"
 #define SSDK_PORT5_MAC_RESET_ID	"nss_port5_mac_rst"
 #define SSDK_PORT6_MAC_RESET_ID	"nss_port6_mac_rst"
+
+#if defined(SSDK_RAW_CLOCK)
+extern void __iomem *nsscc_clk_base_g;
+#endif
 
 enum ssdk_rst_action {
         SSDK_RESET_DEASSERT      = 0,
@@ -208,6 +211,14 @@ enum unphy_rst_type {
 #define UNIPHY_PORT1_TX_CLK	"uniphy_port1_tx_clk"
 #define UNIPHY_PORT2_RX_CLK	"uniphy_port2_rx_clk"
 #define UNIPHY_PORT2_TX_CLK	"uniphy_port2_tx_clk"
+#define UNIPHY_PORT1_RX_DIV4_CLK	"uniphy_port1_rx_div4_clk"
+#define UNIPHY_PORT1_TX_DIV4_CLK	"uniphy_port1_tx_div4_clk"
+#define UNIPHY_PORT2_RX_DIV4_CLK	"uniphy_port2_rx_div4_clk"
+#define UNIPHY_PORT2_TX_DIV4_CLK	"uniphy_port2_tx_div4_clk"
+#define UNIPHY_PORT3_RX_DIV4_CLK	"uniphy_port3_rx_div4_clk"
+#define UNIPHY_PORT3_TX_DIV4_CLK	"uniphy_port3_tx_div4_clk"
+#define UNIPHY_PORT4_RX_DIV4_CLK	"uniphy_port4_rx_div4_clk"
+#define UNIPHY_PORT4_TX_DIV4_CLK	"uniphy_port4_tx_div4_clk"
 
 enum unphy_clk_type {
 	NSS_PORT1_RX_CLK_E = 0,
@@ -242,7 +253,15 @@ enum unphy_clk_type {
 	PORT4_TX_SRC_E,
 	EPHY_RX_SRC_PARENT_E,
 	EPHY_TX_SRC_PARENT_E,
-	UNIPHYT_CLK_MAX
+	UNIPHY_PORT1_RX_DIV4_CLK_E,
+	UNIPHY_PORT1_TX_DIV4_CLK_E,
+	UNIPHY_PORT2_RX_DIV4_CLK_E,
+	UNIPHY_PORT2_TX_DIV4_CLK_E,
+	UNIPHY_PORT3_RX_DIV4_CLK_E,
+	UNIPHY_PORT3_TX_DIV4_CLK_E,
+	UNIPHY_PORT4_RX_DIV4_CLK_E,
+	UNIPHY_PORT4_TX_DIV4_CLK_E,
+	UNIPHY_CLK_MAX
 };
 
 enum cmnblk_clk_type {
@@ -379,6 +398,10 @@ ssdk_port_speed_clock_set(
 void ssdk_port_mac_clock_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id);
+void ssdk_uniphy_clock_rate_set(
+	a_uint32_t dev_id,
+	enum unphy_clk_type clock_type,
+	a_uint32_t rate);
 
 void ssdk_ppe_reset_init(a_uint32_t dev_id);
 void ssdk_uniphy_raw_clock_reset(a_uint32_t dev_id, a_uint8_t uniphy_index);
@@ -400,4 +423,3 @@ void ssdk_appe_port_speed_clock_set(
 }
 #endif                          /* __cplusplus */
 #endif                          /* _SSDK_CLK_H */
-
