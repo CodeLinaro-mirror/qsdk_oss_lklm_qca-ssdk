@@ -1334,33 +1334,15 @@ void ssdk_uniphy_reset(
 	ssdk_gcc_reset(rst, action);
 }
 
-void ssdk_port_reset(
+void ssdk_port_interface_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id,
 	a_uint32_t action)
 {
 	struct reset_control *rst;
+#if defined(MPPE)
 	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
 
-	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
-		return;
-
-	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") ||
-			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
-			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
-			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx") ||
-			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
-		struct reset_control *mac_rst = NULL;
-
-		mac_rst = ssdk_ppe_reset_get(dev_id, PPE_MAC_RST, port_id - 1);
-		if (IS_ERR(mac_rst)) {
-			SSDK_ERROR("appe port mac reset(%d) not exist!\n", port_id);
-			return;
-		}
-		ssdk_gcc_reset(mac_rst, action);
-	}
-
-#if defined(MPPE)
 	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
 			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx") ||
@@ -1390,6 +1372,34 @@ void ssdk_port_reset(
 		}
 		ssdk_gcc_reset(rst, action);
 	}
+}
+
+void ssdk_port_reset(
+	a_uint32_t dev_id,
+	a_uint32_t port_id,
+	a_uint32_t action)
+{
+	struct device_node *clock_node = ssdk_dts_node_get(dev_id);
+
+	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
+		return;
+
+	if (of_device_is_compatible(clock_node, "qcom,ess-switch-ipq95xx") ||
+			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq53xx") ||
+			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq54xx") ||
+			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq52xx") ||
+			of_device_is_compatible(clock_node, "qcom,ess-switch-ipq96xx")) {
+		struct reset_control *mac_rst = NULL;
+
+		mac_rst = ssdk_ppe_reset_get(dev_id, PPE_MAC_RST, port_id - 1);
+		if (IS_ERR(mac_rst)) {
+			SSDK_ERROR("appe port mac reset(%d) not exist!\n", port_id);
+			return;
+		}
+		ssdk_gcc_reset(mac_rst, action);
+	}
+
+	return ssdk_port_interface_reset(dev_id, port_id, action);
 }
 
 void ssdk_uniphy_clock_rate_set(

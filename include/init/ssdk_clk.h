@@ -370,6 +370,11 @@ void ssdk_uniphy_reset(
 	enum unphy_rst_type rst_type,
 	a_uint32_t action);
 
+void ssdk_port_interface_reset(
+	a_uint32_t dev_id,
+	a_uint32_t port_id,
+	a_uint32_t action);
+
 void ssdk_port_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id,

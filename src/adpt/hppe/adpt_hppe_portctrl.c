@@ -4338,15 +4338,6 @@ adpt_hppe_phy_interface_mode_switch(a_uint32_t dev_id,
 	return SW_OK;
 }
 
-void
-adpt_hppe_gcc_mac_clock_status_set(a_uint32_t dev_id, a_uint32_t port_id,
-				a_bool_t enable)
-{
-
-	qca_gcc_mac_port_clock_set(dev_id, port_id, enable);
-
-	return;
-}
 a_bool_t
 adpt_hppe_port_phy_status_change(struct qca_phy_priv *priv, a_uint32_t port_id,
 				struct port_phy_status phy_status)
@@ -4383,6 +4374,40 @@ adpt_hppe_port_mac_loopback_reset(a_uint32_t dev_id, a_uint32_t port_id)
 
 	return SW_OK;
 }
+
+#ifdef HMSPPE
+sw_error_t
+adpt_hmsppe_port_interface_clk_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_bool_t enable)
+{
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	sw_error_t rv = SW_OK;
+
+	rv = fal_port_interface_mode_get(dev_id, port_id, &port_mode);
+	SW_RTN_ON_ERROR(rv);
+	if (port_mode == PORT_INTERNAL)
+		qca_gcc_mac_port_clock_set(dev_id, port_id, enable);
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_hmsppe_port_interface_clk_reset(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	sw_error_t rv = SW_OK;
+
+	rv = fal_port_interface_mode_get(dev_id, port_id, &port_mode);
+	SW_RTN_ON_ERROR(rv);
+	if (port_mode == PORT_INTERNAL) {
+		ssdk_port_interface_reset(dev_id, port_id, SSDK_RESET_ASSERT);
+		aos_mdelay(1);
+		ssdk_port_interface_reset(dev_id, port_id, SSDK_RESET_DEASSERT);
+ 	}
+
+	return SW_OK;
+}
+#endif
 
 sw_error_t
 qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
@@ -4442,6 +4467,13 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				HSL_PORT_PHY_API_RUN(adjust_link_post,
 					priv->device_id, port_id);
 			}
+#ifdef HMSPPE
+			if (adpt_ppe_type_get(priv->device_id) == HMSPPE_TYPE) {
+				adpt_hmsppe_port_interface_clk_set(priv->device_id, port_id, A_FALSE);
+				adpt_hmsppe_port_interface_clk_reset(priv->device_id, port_id);
+			}
+#endif
+
 		}
 		/* link status from down to up*/
 		if ((phy_status.link_status == PORT_LINK_UP) &&
@@ -4558,6 +4590,12 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 						port_id, A_TRUE);
 				adpt_hppe_uniphy_port_adapter_reset(priv->device_id, port_id);
 			}
+#ifdef HMSPPE
+			if (adpt_ppe_type_get(priv->device_id) == HMSPPE_TYPE) {
+				adpt_hmsppe_port_interface_clk_set(priv->device_id, port_id, A_TRUE);
+				adpt_hmsppe_port_interface_clk_reset(priv->device_id, port_id);
+			}
+#endif
 			/* enable mac and ppe txmac*/
 			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_TRUE);
