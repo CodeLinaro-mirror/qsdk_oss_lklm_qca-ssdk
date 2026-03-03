@@ -4120,28 +4120,65 @@ adpt_hppe_usxgmii_speed_clock_set(
 {
 	switch (phy_speed) {
 		case FAL_SPEED_10:
-			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id))
+			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id)) {
 				/* XGMAC with 8bit MII width */
 				ssdk_port_speed_clock_set(dev_id,
 						port_id, USXGMII_SPEED_10M_CLK);
-			else
+			} else {
 				/* GMAC with 4bit MII width */
 				ssdk_port_speed_clock_set(dev_id,
 						port_id, USXGMII_SPEED_10M_CLK*2);
+#if defined(SSDK_RAW_CLOCK)
+				writel(0x0, nsscc_clk_base_g + 0x624 + (port_id - 1)*8);
+				writel(0x0, nsscc_clk_base_g + 0x628 + (port_id - 1)*8);
+#else
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_10M_CLK*2);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_10M_CLK*2);
+#endif
+			}
 			break;
 		case FAL_SPEED_100:
-			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id))
+			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id)) {
 				/* XGMAC with 8bit MII width */
 				ssdk_port_speed_clock_set(dev_id,
 						port_id, USXGMII_SPEED_100M_CLK);
-			else
+			} else {
 				/* GMAC with 4bit MII width */
 				ssdk_port_speed_clock_set(dev_id,
 						port_id, USXGMII_SPEED_100M_CLK*2);
+#if defined(SSDK_RAW_CLOCK)
+				writel(0x0, nsscc_clk_base_g + 0x624 + (port_id - 1)*8);
+				writel(0x0, nsscc_clk_base_g + 0x628 + (port_id - 1)*8);
+#else
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_100M_CLK*2);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_100M_CLK*2);
+#endif
+			}
 			break;
 		case FAL_SPEED_1000:
 			ssdk_port_speed_clock_set(dev_id,
 					port_id, USXGMII_SPEED_1000M_CLK);
+			if (PORT_GMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id)) {
+#if defined(SSDK_RAW_CLOCK)
+				writel(0x0, nsscc_clk_base_g + 0x624 + (port_id - 1)*8);
+				writel(0x0, nsscc_clk_base_g + 0x628 + (port_id - 1)*8);
+#else
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_1000M_CLK);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_1000M_CLK);
+#endif
+			}
 			break;
 		case FAL_SPEED_2500:
 			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id)) {
