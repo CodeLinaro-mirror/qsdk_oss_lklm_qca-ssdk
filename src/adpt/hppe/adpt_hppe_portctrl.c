@@ -68,8 +68,6 @@
 #define XGMAC_SPEED_XGMII_2500M		6
 #define XGMAC_SPEED_GMII_2500M		2
 #define XGMAC_SPEED_GMII_1000M		3
-#define XGMAC_SPEED_MII_100M		4
-#define XGMAC_SPEED_MII_10M		7
 #else
 #define XGMAC_USXGMII_ENABLE 1
 #define XGMAC_USXGMII_CLEAR 0
@@ -1662,13 +1660,9 @@ _adpt_jhppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mod
 			ss = XGMAC_SPEED_GMII_2500M;
 		break;
 	case FAL_SPEED_1000:
-		ss = XGMAC_SPEED_GMII_1000M;
-		break;
 	case FAL_SPEED_100:
-		ss = XGMAC_SPEED_MII_100M;
-		break;
 	case FAL_SPEED_10:
-		ss = XGMAC_SPEED_MII_10M;
+		ss = XGMAC_SPEED_GMII_1000M;
 		break;
 	default:
 		return SW_BAD_PARAM;
