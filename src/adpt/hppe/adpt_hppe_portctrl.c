@@ -3365,8 +3365,7 @@ _adpt_ppe_port_gmac_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(port_eee_cfg);
-	memset(port_eee_cfg, 0, sizeof(*port_eee_cfg));
-
+/* the port_eee_cfg cannot be cleared as the current port_eee_cfg has phy eee information */
 #ifdef MRPPE
 	return _adpt_mrppe_port_gmac_eee_cfg_get(dev_id, port_id, port_eee_cfg);
 #else
