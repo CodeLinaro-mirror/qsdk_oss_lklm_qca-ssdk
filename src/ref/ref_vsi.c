@@ -8,13 +8,41 @@
 #include "ssdk_init.h"
 #include "ssdk_plat.h"
 #include "adpt.h"
+#include "ssdk_dts.h"
 
 #define PPE_VSI_MAX FAL_VSI_MAX
 
 static ref_vsi_t ref_vsi_mapping[SW_MAX_NR_DEV][PPE_VSI_MAX+1] ={{{0, 0, {0},NULL},
 								{0, 0, {0}, NULL},
 								{0, 0, {0}, NULL}}};
-static aos_lock_t ppe_vlan_vsi_lock[SW_MAX_NR_DEV];
+union {
+	aos_lock_t spin_lock;
+	aos_mutex_lock_t mutex_lock;
+} ppe_vlan_vsi_lock[SW_MAX_NR_DEV];
+
+#define REF_VLAN_VSI_LOCK(lock, access_mode) \
+do { \
+	if (access_mode == HSL_REG_MDIO) \
+		aos_mutex_lock(&lock.mutex_lock); \
+	else \
+		aos_lock_bh(&lock.spin_lock); \
+} while(0)
+
+#define REF_VLAN_VSI_UNLOCK(lock, access_mode) \
+do { \
+	if (access_mode == HSL_REG_MDIO) \
+		aos_mutex_unlock(&lock.mutex_lock); \
+	else \
+		aos_unlock_bh(&lock.spin_lock); \
+} while(0)
+
+#define REF_VLAN_VSI_LOCK_INIT(lock, access_mode) \
+do { \
+	if (access_mode == HSL_REG_MDIO) \
+		aos_mutex_lock_init(&lock.mutex_lock); \
+	else \
+		aos_lock_init(&lock.spin_lock); \
+} while(0)
 
 static sw_error_t
 _ppe_vsi_member_init(a_uint32_t dev_id, a_uint32_t vsi_id)
@@ -326,6 +354,7 @@ ppe_port_vlan_vsi_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv;
 	a_uint32_t cur_vsi = PPE_VSI_INVALID;
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	REF_DEV_ID_CHECK(dev_id);
 
@@ -343,7 +372,8 @@ ppe_port_vlan_vsi_set(a_uint32_t dev_id, fal_port_t port_id,
 	ppe_port_vlan_vsi_get(dev_id, port_id, stag_vid, ctag_vid, &cur_vsi);
 	if(cur_vsi == vsi_id)
 		return SW_OK;
-	aos_lock_bh(&ppe_vlan_vsi_lock[dev_id]);
+	REF_VLAN_VSI_LOCK(ppe_vlan_vsi_lock[dev_id], access_mode);
+
 	if(PPE_VSI_INVALID == vsi_id || cur_vsi != PPE_VSI_INVALID)
 	{
 		SSDK_DEBUG("Deleting port 0x%x svlan %d cvlan %d vsi %d\n",
@@ -351,7 +381,7 @@ ppe_port_vlan_vsi_set(a_uint32_t dev_id, fal_port_t port_id,
 		rv = _ppe_vlan_vsi_mapping_del(dev_id, port_id, stag_vid, ctag_vid, cur_vsi);
 		if( rv != SW_OK )
 		{
-			aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
+			REF_VLAN_VSI_UNLOCK(ppe_vlan_vsi_lock[dev_id], access_mode);
 			return rv;
 		}
 	}
@@ -363,7 +393,7 @@ ppe_port_vlan_vsi_set(a_uint32_t dev_id, fal_port_t port_id,
 
 		rv = _ppe_vlan_vsi_mapping_add(dev_id, port_id, stag_vid, ctag_vid, vsi_id);
 	}
-	aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
+	REF_VLAN_VSI_UNLOCK(ppe_vlan_vsi_lock[dev_id], access_mode);
 	return rv;
 }
 
@@ -372,13 +402,14 @@ sw_error_t ppe_port_vlan_vsi_get(a_uint32_t dev_id, fal_port_t port_id,
 {
 	ref_vlan_info_t *p_vsi_info = NULL;
 	a_uint32_t i = 0;
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	SSDK_DEBUG("Getting port 0x%x svlan %d cvlan %d\n", port_id, stag_vid, ctag_vid);
 
 	REF_DEV_ID_CHECK(dev_id);
 	REF_NULL_POINT_CHECK(vsi_id);
 
-	aos_lock_bh(&ppe_vlan_vsi_lock[dev_id]);
+	REF_VLAN_VSI_LOCK(ppe_vlan_vsi_lock[dev_id], access_mode);
 	for( i = 0; i <= PPE_VSI_MAX; i++ )
 	{
 		p_vsi_info = ref_vsi_mapping[dev_id][i].pHead;
@@ -394,7 +425,7 @@ sw_error_t ppe_port_vlan_vsi_get(a_uint32_t dev_id, fal_port_t port_id,
 					*vsi_id = i;
 					SSDK_DEBUG("Returned port 0x%x svlan %d cvlan %d vsi %d\n",
 							port_id, stag_vid, ctag_vid, *vsi_id);
-					aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
+					REF_VLAN_VSI_UNLOCK(ppe_vlan_vsi_lock[dev_id], access_mode);
 
 					return SW_OK;
 				}
@@ -402,7 +433,7 @@ sw_error_t ppe_port_vlan_vsi_get(a_uint32_t dev_id, fal_port_t port_id,
 			p_vsi_info = p_vsi_info->pNext;
 		}
 	}
-	aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
+	REF_VLAN_VSI_UNLOCK(ppe_vlan_vsi_lock[dev_id], access_mode);
 	return SW_NOT_FOUND;
 }
 
@@ -531,9 +562,10 @@ sw_error_t ppe_vsi_free(a_uint32_t dev_id, a_uint32_t vsi_id)
 
 sw_error_t ppe_vsi_init(a_uint32_t dev_id)
 {
+	hsl_reg_mode access_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
 	/*ppe_port_vlan_vsi_set/get need to use ppe_vlan_vsi_lock*/
-	aos_lock_init(&ppe_vlan_vsi_lock[dev_id]);
+	REF_VLAN_VSI_LOCK_INIT(ppe_vlan_vsi_lock[dev_id], access_mode);
 
 	return SW_OK;
 }
