@@ -1942,14 +1942,12 @@ void ssdk_uniphy1_clock_source_set(a_uint32_t dev_id)
 static
 sw_error_t ssdk_ephy_clock_source_set(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	a_uint32_t phy_id;
 	struct clk *rx_clk, *tx_clk;
 	sw_error_t rv = SW_OK;
 
-	rv = fal_port_interface_mode_get(dev_id, port_id, &port_mode);
-	SW_RTN_ON_ERROR(rv);
-
-	if (port_mode != PORT_INTERNAL)
+	phy_id = hsl_phyid_get(dev_id, port_id);
+	if (phy_id != IPQ52XX_PHY)
 		return rv;
 
 	switch (port_id) {
