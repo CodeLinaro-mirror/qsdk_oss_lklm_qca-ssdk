@@ -4348,6 +4348,8 @@ a_bool_t
 adpt_hppe_port_phy_status_change(struct qca_phy_priv *priv, a_uint32_t port_id,
 				struct port_phy_status phy_status)
 {
+	if (port_id == 0 || port_id >= SW_MAX_NR_PORT)
+		return A_FALSE;
 	if ((a_uint32_t)phy_status.speed != priv->ports[port_id].port_old_speed)
 		return A_TRUE;
 	if ((a_uint32_t)phy_status.duplex != priv->ports[port_id].port_old_duplex)

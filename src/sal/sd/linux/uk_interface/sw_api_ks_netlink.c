@@ -1,15 +1,7 @@
 /*
  * Copyright (c) 2012, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -269,6 +261,7 @@ sw_api_excep_ack(struct sock *sk, pid_t pid)
 {
     sw_error_t rv = SW_NO_RESOURCE;
     a_uint32_t args[SW_MAX_API_PARAM], rtn;
+    size_t copy_len;
     struct sk_buff *skb, *skb_first = NULL;
     struct nlmsghdr *nlh = NULL;
 
@@ -314,12 +307,13 @@ sw_api_excep_ack(struct sock *sk, pid_t pid)
 #endif
     }
 
-	if(nlh->nlmsg_len < (SW_MAX_PAYLOAD + sizeof(nlmsghdr)))
+	if (nlh->nlmsg_len < sizeof(*nlh) || skb->len < nlh->nlmsg_len)
 	{
-		dprintk("data length is less than %d bytes\n", SW_MAX_PAYLOAD);
+		dprintk("nlmsg len error - (%d)\n", nlh->nlmsg_len);
 		SW_OUT_ON_ERROR(SW_ABORTED);
 	}
-    aos_mem_copy(args, NLMSG_DATA(nlh), SW_MAX_PAYLOAD);
+	copy_len = min_t(size_t, SW_MAX_PAYLOAD, nlh->nlmsg_len - NLMSG_HDRLEN);
+    aos_mem_copy(args, NLMSG_DATA(nlh), copy_len);
     /* return API result to user */
     rtn = (a_uint32_t) rv;
     if (copy_to_user
@@ -344,6 +338,7 @@ sw_api_exec(struct sock *sk, pid_t pid)
 {
     sw_error_t rv = SW_NO_RESOURCE;
     a_uint32_t args[SW_MAX_API_PARAM], rtn;
+    size_t copy_len;
     struct sk_buff *skb, *skb_first = NULL;
     struct nlmsghdr *nlh = NULL;
 
@@ -389,12 +384,13 @@ sw_api_exec(struct sock *sk, pid_t pid)
 #endif
     }
 
-	if(nlh->nlmsg_len < (SW_MAX_PAYLOAD + sizeof(nlmsghdr)))
+	if (nlh->nlmsg_len < sizeof(*nlh) || skb->len < nlh->nlmsg_len)
 	{
-		dprintk("data length is less than %d bytes\n", SW_MAX_PAYLOAD);
+		dprintk("nlmsg len error - (%d)\n", nlh->nlmsg_len);
 		SW_OUT_ON_ERROR(SW_ABORTED);
 	}
-    aos_mem_copy(args, NLMSG_DATA(nlh), SW_MAX_PAYLOAD);
+	copy_len = min_t(size_t, SW_MAX_PAYLOAD, nlh->nlmsg_len - NLMSG_HDRLEN);
+    aos_mem_copy(args, NLMSG_DATA(nlh), copy_len);
 
     rv = sw_api_cmd(args);
     /* return API result to user */
@@ -505,6 +501,7 @@ sw_api_excep_ack_26_22(struct sk_buff *skb)
 {
     sw_error_t rv = SW_NO_RESOURCE;
     a_uint32_t args[SW_MAX_API_PARAM], rtn, size, dst_pid;
+    size_t copy_len;
     struct nlmsghdr *nlh = NULL;
     struct sk_buff *rep;
 
@@ -516,12 +513,13 @@ sw_api_excep_ack_26_22(struct sk_buff *skb)
     }
     dst_pid = nlh->nlmsg_pid;
 
-	if(nlh->nlmsg_len < (SW_MAX_PAYLOAD + sizeof(nlmsghdr)))
+	if (nlh->nlmsg_len < sizeof(*nlh) || skb->len < nlh->nlmsg_len)
 	{
-		dprintk("data length is less than %d bytes\n", SW_MAX_PAYLOAD);
+		dprintk("nlmsglen error - (%d)\n", nlh->nlmsg_len);
 		SW_OUT_ON_ERROR(SW_ABORTED);
 	}
-    aos_mem_copy(args, NLMSG_DATA(nlh), SW_MAX_PAYLOAD);
+	copy_len = min_t(size_t, SW_MAX_PAYLOAD, nlh->nlmsg_len - NLMSG_HDRLEN);
+    aos_mem_copy(args, NLMSG_DATA(nlh), copy_len);
     /* return API result to user */
     rtn = (a_uint32_t) rv;
     if (copy_to_user
@@ -549,6 +547,7 @@ sw_api_exec_26_22(pid_t parent_pid)
 {
     sw_error_t rv = SW_NO_RESOURCE;
     a_uint32_t loc, args[SW_MAX_API_PARAM], rtn, skblen, nlmsglen, size, dst_pid;
+    size_t copy_len;
     struct nlmsghdr *nlh = NULL;
     struct sk_buff *skb;
     struct sk_buff *rep;
@@ -587,15 +586,12 @@ sw_api_exec_26_22(pid_t parent_pid)
         dprintk("nlmsglen error - (%d)\n", nlmsglen);
         SW_OUT_ON_ERROR(SW_ABORTED);
     }
-    dst_pid = nlh->nlmsg_pid;
+	dst_pid = nlh->nlmsg_pid;
 
-	if(nlmsglen < (SW_MAX_PAYLOAD + sizeof(nlmsghdr)))
-	{
-		dprintk("data length is less than %d bytes\n", SW_MAX_PAYLOAD);
-		SW_OUT_ON_ERROR(SW_ABORTED);
-	}
-    aos_mem_copy(args, NLMSG_DATA(nlh), SW_MAX_PAYLOAD);
-    rv = sw_api_cmd(args);
+	copy_len = min_t(size_t, SW_MAX_PAYLOAD, nlmsglen - NLMSG_HDRLEN);
+	aos_mem_copy(args, NLMSG_DATA(nlh), copy_len);
+
+	rv = sw_api_cmd(args);
 
     /* return API result to user */
     rtn = (a_uint32_t) rv;

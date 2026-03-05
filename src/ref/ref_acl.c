@@ -1,9 +1,7 @@
 /*
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup
@@ -51,6 +49,8 @@ ref_acl_mac_entry[SW_MAX_NR_DEV][PPE_ACL_MAC_ENTRY_MAX] = {0};
 static a_bool_t
 _ref_acl_mac_entry_valid(a_uint32_t dev_id, a_uint32_t entry_idx)
 {
+	if (dev_id >= SW_MAX_NR_DEV || entry_idx >= PPE_ACL_MAC_ENTRY_MAX)
+		return A_FALSE;
 	return !SW_IS_PBMP_EQ(ref_acl_mac_entry[dev_id][entry_idx].port_map, 0);
 }
 
@@ -60,7 +60,12 @@ _ref_acl_mac_entry_find(a_uint32_t dev_id,
 {
 	a_uint32_t find_idx_start = 0, find_idx_end = 0;
 	a_uint32_t index, empty_index = PPE_ACL_MAC_ENTRY_MAX;
-	a_uint32_t port_id = ssdk_ifname_to_port(dev_id, entry->ifname);
+	a_uint32_t port_id;
+
+	if (dev_id >= SW_MAX_NR_DEV)
+		return SW_OUT_OF_RANGE;
+
+	port_id = ssdk_ifname_to_port(dev_id, entry->ifname);
 
 	if (port_id < SSDK_PHYSICAL_PORT1 || port_id > SSDK_PHYSICAL_PORT6)
 	{
@@ -119,7 +124,12 @@ _ref_acl_mac_entry_create_rule(a_uint32_t dev_id,
 	sw_error_t rv = SW_OK;
 	fal_acl_rule_t *rule = NULL;
 	struct net_device *eth_dev = NULL;
-	a_uint32_t port_id = ssdk_ifname_to_port(dev_id, entry->ifname);
+	a_uint32_t port_id;
+
+	if (dev_id >= SW_MAX_NR_DEV)
+		return SW_OUT_OF_RANGE;
+
+	port_id = ssdk_ifname_to_port(dev_id, entry->ifname);
 	SSDK_DEBUG("port_id %d entry_idx %d\n", port_id, entry_idx);
 
 	if (port_id < SSDK_PHYSICAL_PORT1 || port_id > SSDK_PHYSICAL_PORT6)
@@ -246,7 +256,12 @@ _ref_acl_mac_entry_update_rule(a_uint32_t dev_id,
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t index = 0;
-	a_uint32_t port_id = ssdk_ifname_to_port(dev_id, entry->ifname);
+	a_uint32_t port_id;
+
+	if (dev_id >= SW_MAX_NR_DEV)
+		return SW_OUT_OF_RANGE;
+
+	port_id = ssdk_ifname_to_port(dev_id, entry->ifname);
 	SSDK_DEBUG("port_id %d entry_idx %d\n", port_id, entry_idx);
 
 	if (port_id < SSDK_PHYSICAL_PORT1 || port_id > SSDK_PHYSICAL_PORT6)
@@ -313,6 +328,10 @@ ref_acl_mac_entry_set(a_uint32_t dev_id, fal_acl_mac_entry_t * entry)
 {
 	a_uint32_t entry_idx = 0;
 	sw_error_t rv = SW_OK;
+
+	if (dev_id >= SW_MAX_NR_DEV)
+		return SW_OUT_OF_RANGE;
+
 	SSDK_DEBUG("setting deny unless accept policy rules...\n");
 
 	rv = _ref_acl_mac_entry_find(dev_id, entry, &entry_idx);
@@ -340,6 +359,9 @@ sw_error_t
 ref_acl_mac_entry_dump(a_uint32_t dev_id)
 {
 	a_uint32_t index = 0, port_map = 0, port_id = 0;
+
+	if (dev_id >= SW_MAX_NR_DEV)
+		return SW_OUT_OF_RANGE;
 
 	if (_ref_acl_mac_entry_valid(dev_id, 0))
 	{

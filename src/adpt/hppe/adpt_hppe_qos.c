@@ -127,6 +127,10 @@ adpt_hppe_l0_queue_map_set(a_uint32_t dev_id,
 	memset(&l0_flow_map_tbl, 0, sizeof(l0_flow_map_tbl));
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(scheduler_cfg);
+
+	if (port_id >= ARRAY_SIZE(port_queue_map))
+		return SW_BAD_PARAM;
+
 	if (node_id >= L0_FLOW_MAP_TBL_MAX_ENTRY)
 		return SW_BAD_PARAM;
 

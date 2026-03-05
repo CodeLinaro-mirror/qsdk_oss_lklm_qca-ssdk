@@ -1,17 +1,8 @@
 /*
  * Copyright (c) 2012, 2016, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup isis_sec ISIS_SEC
@@ -35,13 +26,9 @@ _isis_sec_norm_item_set(a_uint32_t dev_id, fal_norm_item_t item, void *value)
     sw_error_t rv;
     fal_fwd_cmd_t cmd;
     a_bool_t enable;
-    a_uint32_t addr, offset, len, reg = 0, val;
+    a_uint32_t addr, offset, len, reg = 0, val = 0;
 
     HSL_DEV_ID_CHECK(dev_id);
-
-    cmd = *((fal_fwd_cmd_t *) value);
-    enable = *((a_bool_t *) value);
-    val = *((a_uint32_t *) value);
 
     len = 1;
     switch (item)
@@ -76,6 +63,7 @@ _isis_sec_norm_item_set(a_uint32_t dev_id, fal_norm_item_t item, void *value)
             addr = NORM_CTRL3_ADDR;
             offset = 12;
             len = 8;
+            val = *((a_uint32_t *) value);
             goto set_reg;
 
         case FAL_NROM_IP4_INVALID_HL_CMD:
@@ -103,6 +91,7 @@ _isis_sec_norm_item_set(a_uint32_t dev_id, fal_norm_item_t item, void *value)
             addr = NORM_CTRL1_ADDR;
             offset = 24;
             len = 8;
+            val = *((a_uint32_t *) value);
             goto set_reg;
 
         case FAL_NROM_IP4_FRAG_OFFSET_MAX_LEN_CMD:
@@ -175,6 +164,7 @@ _isis_sec_norm_item_set(a_uint32_t dev_id, fal_norm_item_t item, void *value)
             addr = NORM_CTRL1_ADDR;
             offset = 12;
             len = 4;
+            val = *((a_uint32_t *) value);
             goto set_reg;
 
         case FAL_NROM_TCP_INVALID_SYN_CMD:
@@ -307,12 +297,14 @@ _isis_sec_norm_item_set(a_uint32_t dev_id, fal_norm_item_t item, void *value)
             addr = NORM_CTRL2_ADDR;
             offset = 0;
             len = 14;
+            val = *((a_uint32_t *) value);
             goto set_reg;
 
         case FAL_NROM_ICMP6_PING_MAX_PL_VALUE:
             addr = NORM_CTRL2_ADDR;
             offset = 16;
             len = 14;
+            val = *((a_uint32_t *) value);
             goto set_reg;
 
         default:
@@ -320,6 +312,7 @@ _isis_sec_norm_item_set(a_uint32_t dev_id, fal_norm_item_t item, void *value)
     }
 
 sts_chk:
+    enable = *((a_bool_t *) value);
     if (A_TRUE == enable)
     {
         val = 1;
@@ -335,6 +328,7 @@ sts_chk:
     goto set_reg;
 
 s_cmd_chk:
+    cmd = *((fal_fwd_cmd_t *) value);
     if (FAL_MAC_FRWRD == cmd)
     {
         val = 0;
@@ -354,6 +348,7 @@ s_cmd_chk:
     goto set_reg;
 
 cmd_chk:
+    cmd = *((fal_fwd_cmd_t *) value);
     if (FAL_MAC_FRWRD == cmd)
     {
         val = 0;
