@@ -200,6 +200,10 @@ enum unphy_rst_type {
 #define UNIPHY2_PORT6_TX_CLK	"uniphy2_port6_tx_clk"
 #define PORT5_RX_SRC		"nss_port5_rx_clk_src"
 #define PORT5_TX_SRC		"nss_port5_tx_clk_src"
+#define PORT4_RX_SRC		"nss_port4_rx_clk_src"
+#define PORT4_TX_SRC		"nss_port4_tx_clk_src"
+#define EPHY_RX_SRC_PARENT	"ephy_rx_clk_src_parent"
+#define EPHY_TX_SRC_PARENT	"ephy_tx_clk_src_parent"
 #define UNIPHY_PORT1_RX_CLK	"uniphy_port1_rx_clk"
 #define UNIPHY_PORT1_TX_CLK	"uniphy_port1_tx_clk"
 #define UNIPHY_PORT2_RX_CLK	"uniphy_port2_rx_clk"
@@ -234,6 +238,10 @@ enum unphy_clk_type {
 	UNIPHY2_PORT6_TX_CLK_E,
 	PORT5_RX_SRC_E,
 	PORT5_TX_SRC_E,
+	PORT4_RX_SRC_E,
+	PORT4_TX_SRC_E,
+	EPHY_RX_SRC_PARENT_E,
+	EPHY_TX_SRC_PARENT_E,
 	UNIPHYT_CLK_MAX
 };
 
