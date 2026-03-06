@@ -2610,10 +2610,12 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 							port_id, port_mode);
 					SW_RTN_ON_ERROR(rv);
 				}
-				/* set phy mode */
-				HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN(interface_set, dev_id, port_id, port_mode);
-				SSDK_DEBUG("port_id:%d is configured as port_mode:0x%x\n",
-					port_id, port_mode);
+				if (port_mode != PORT_GPON && port_mode != PORT_XGPON && port_mode != PORT_XGSPON) {
+					/* set phy mode */
+					HSL_PORT_PHY_EXT_NSS_WITH_AQR_API_RUN(interface_set, dev_id, port_id, port_mode);
+					SSDK_DEBUG("port_id:%d is configured as port_mode:0x%x\n",
+						port_id, port_mode);
+				}
 			}
 		}
 		/* init port status to trigger polling */
@@ -4142,8 +4144,24 @@ adpt_hppe_usxgmii_speed_clock_set(
 					port_id, USXGMII_SPEED_1000M_CLK);
 			break;
 		case FAL_SPEED_2500:
-			ssdk_port_speed_clock_set(dev_id,
-					port_id, USXGMII_SPEED_2500M_CLK);
+			if (PORT_XGMAC_TYPE == qca_ppe_port_mac_type_get(dev_id, port_id)) {
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_2500M_CLK);
+			} else {
+				ssdk_port_speed_clock_set(dev_id,
+						port_id, USXGMII_SPEED_10000M_CLK);
+#if defined(SSDK_RAW_CLOCK)
+				writel(0x3, nsscc_clk_base_g + 0x624 + (port_id - 1)*8);
+				writel(0x3, nsscc_clk_base_g + 0x628 + (port_id - 1)*8);
+#else
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_2500M_CLK);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_2500M_CLK);
+#endif
+			}
 			break;
 		case FAL_SPEED_5000:
 			ssdk_port_speed_clock_set(dev_id,

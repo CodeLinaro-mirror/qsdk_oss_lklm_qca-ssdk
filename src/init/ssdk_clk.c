@@ -64,7 +64,7 @@ struct ssdk_clk_private {
 	struct device *dev;
 	int ppe_type;
 	struct clk_hw_onecell_data *uniphy_clk;
-	struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX];
+	struct clk *uniphy_port_clks[UNIPHY_CLK_MAX];
 	struct reset_control *uniphy_rsts[UNIPHY_RST_MAX];
 	struct reset_control *port_rsts[SSDK_MAX_PORT_NUM * 2];
 	struct reset_control *port_mac_rsts[SSDK_MAX_PORT_NUM];
@@ -1635,7 +1635,7 @@ static struct clk_hw *uniphy_raw_clks[SSDK_MAX_UNIPHY_INSTANCE * 2] = {
 };
 #endif
 
-static char *ppe_clk_ids[UNIPHYT_CLK_MAX] = {
+static char *ppe_clk_ids[UNIPHY_CLK_MAX] = {
 	NSS_PORT1_RX_CLK,
 	NSS_PORT1_TX_CLK,
 	NSS_PORT2_RX_CLK,
@@ -1668,6 +1668,14 @@ static char *ppe_clk_ids[UNIPHYT_CLK_MAX] = {
 	PORT4_TX_SRC,
 	EPHY_RX_SRC_PARENT,
 	EPHY_TX_SRC_PARENT,
+	UNIPHY_PORT1_RX_DIV4_CLK,
+	UNIPHY_PORT1_TX_DIV4_CLK,
+	UNIPHY_PORT2_RX_DIV4_CLK,
+	UNIPHY_PORT2_TX_DIV4_CLK,
+	UNIPHY_PORT3_RX_DIV4_CLK,
+	UNIPHY_PORT3_TX_DIV4_CLK,
+	UNIPHY_PORT4_RX_DIV4_CLK,
+	UNIPHY_PORT4_TX_DIV4_CLK,
 };
 
 const char *uniphy_raw_clk_names[] = {
