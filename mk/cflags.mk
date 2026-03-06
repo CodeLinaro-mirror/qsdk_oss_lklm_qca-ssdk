@@ -386,9 +386,6 @@ ifneq (,$(findstring HMSPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/hmsppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/hmsppe
   MODULE_CFLAG += -DHMSPPE
-  ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
-  MODULE_CFLAG += -DSSDK_RAW_CLOCK
-  endif
 endif
 
 ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
