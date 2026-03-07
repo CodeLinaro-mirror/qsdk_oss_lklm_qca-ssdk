@@ -4136,6 +4136,9 @@ adpt_hppe_usxgmii_speed_clock_set(
 				ssdk_uniphy_clock_rate_set(dev_id,
 						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
 						USXGMII_SPEED_10M_CLK*2);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_10M_CLK*2);
 #endif
 			}
 			break;
@@ -4155,6 +4158,9 @@ adpt_hppe_usxgmii_speed_clock_set(
 				ssdk_uniphy_clock_rate_set(dev_id,
 						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
 						USXGMII_SPEED_100M_CLK*2);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_100M_CLK*2);
 #endif
 			}
 			break;
@@ -4168,6 +4174,9 @@ adpt_hppe_usxgmii_speed_clock_set(
 #else
 				ssdk_uniphy_clock_rate_set(dev_id,
 						UNIPHY_PORT1_RX_DIV4_CLK_E + (port_id - 1)*2,
+						USXGMII_SPEED_1000M_CLK);
+				ssdk_uniphy_clock_rate_set(dev_id,
+						UNIPHY_PORT1_TX_DIV4_CLK_E + (port_id - 1)*2,
 						USXGMII_SPEED_1000M_CLK);
 #endif
 			}
