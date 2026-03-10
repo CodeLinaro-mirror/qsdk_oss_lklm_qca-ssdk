@@ -12,6 +12,7 @@
 #include "hsl_reg.h"
 #include "fal_qm.h"
 #include "adpt.h"
+#include "ssdk_dts.h"
 #include "adpt_hppe.h"
 #include "adpt_appe_qm.h"
 #include "hppe_global_reg.h"
@@ -163,7 +164,6 @@ adpt_hppe_ucast_queue_base_profile_get(
 	return SW_OK;
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 adpt_hppe_port_mcast_priority_class_get(
 		a_uint32_t dev_id,
@@ -210,7 +210,6 @@ adpt_hppe_port_mcast_priority_class_get(
 	*queue_class = mcast_priority_map0.bf.class;
 	return SW_OK;
 }
-#endif
 
 sw_error_t
 adpt_hppe_ac_dynamic_threshold_set(
@@ -459,7 +458,6 @@ adpt_hppe_ac_prealloc_buffer_get(
 		return SW_FAIL;
 }
 
-#if !defined(IN_QM_MINI)
 sw_error_t
 adpt_hppe_port_mcast_priority_class_set(
 		a_uint32_t dev_id,
@@ -502,7 +500,6 @@ adpt_hppe_port_mcast_priority_class_set(
 
 	return rv;
 }
-#endif
 
 sw_error_t
 adpt_hppe_ucast_hash_map_get(
@@ -1436,13 +1433,13 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 	switch (chip_type) {
 		case JHPPE_TYPE:
 		case HTTPPE_TYPE:
-			ceiling = 2200;
+			ceiling = 3200;
 			weight = 7;
 			resume_offset = 36;
 			green_max = 250;
 			break;
 		case HMSPPE_TYPE:
-			ceiling = 2200;
+			ceiling = 2400;
 			weight = 7;
 			resume_offset = 36;
 			green_max = 250;
@@ -1543,7 +1540,10 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	aos_lock_init(&priv->ppe_qm_lock);
+	if (ssdk_switch_reg_access_mode_get(dev_id) == HSL_REG_MDIO)
+		aos_mutex_lock_init(&priv->ppe_qm_lock.qm_mutex_lock);
+	else
+		aos_lock_init(&priv->ppe_qm_lock.qm_spin_lock);
 
 	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
@@ -1596,11 +1596,11 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_ucast_hash_map_set = adpt_hppe_ucast_hash_map_set;
 	p_adpt_api->adpt_ucast_queue_base_profile_get =
 			adpt_hppe_ucast_queue_base_profile_get;
-#if !defined(IN_QM_MINI)
 	p_adpt_api->adpt_port_mcast_priority_class_get =
 		adpt_hppe_port_mcast_priority_class_get;
 	p_adpt_api->adpt_port_mcast_priority_class_set =
 		adpt_hppe_port_mcast_priority_class_set;
+#if !defined(IN_QM_MINI)
 	p_adpt_api->adpt_mcast_cpu_code_class_get = adpt_hppe_mcast_cpu_code_class_get;
 	p_adpt_api->adpt_mcast_cpu_code_class_set = adpt_hppe_mcast_cpu_code_class_set;
 	p_adpt_api->adpt_ucast_default_hash_get = adpt_hppe_ucast_default_hash_get;

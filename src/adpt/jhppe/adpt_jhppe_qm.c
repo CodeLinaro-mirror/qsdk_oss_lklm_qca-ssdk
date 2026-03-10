@@ -33,7 +33,7 @@ adpt_jhppe_qm_ddrq_counter_get(a_uint32_t dev_id,
 	ADPT_NULL_POINT_CHECK(info);
 
 	/* ddrq counter only exist for esram ucast queue id 0~159 */
-	if (queue_id > DDRQ_PKT_CNT_TBL_MAX_ENTRY) {
+	if (queue_id >= DDRQ_PKT_CNT_TBL_MAX_ENTRY) {
 		info->ddrq_packets = 0;
 		info->ddrq_bytes = 0;
 		return SW_OK;
@@ -886,7 +886,7 @@ adpt_jhppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
-	aos_lock_bh(&priv->ppe_qm_lock);
+	aos_lock_bh(&priv->ppe_qm_lock.qm_spin_lock);
 
 	rv = jhppe_mc_enq_ctrl_get(dev_id, &reg_val);
 	if (rv != SW_OK)
@@ -945,7 +945,7 @@ adpt_jhppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 	}
 
 unlock_and_exit:
-	aos_unlock_bh(&priv->ppe_qm_lock);
+	aos_unlock_bh(&priv->ppe_qm_lock.qm_spin_lock);
 	return rv;
 }
 /**

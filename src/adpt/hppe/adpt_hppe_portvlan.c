@@ -3211,11 +3211,6 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_private_vlan_mapping_get = adpt_httppe_private_vlan_mapping_get;
 		p_adpt_api->adpt_private_vlan_tx_cfg_set = adpt_httppe_private_vlan_tx_cfg_set;
 		p_adpt_api->adpt_private_vlan_tx_cfg_get = adpt_httppe_private_vlan_tx_cfg_get;
-#ifndef IN_PORTVLAN_MINI
-		p_adpt_api->adpt_port_egress_vlan_filter_set =
-			adpt_httppe_port_egress_vlan_filter_set;
-		p_adpt_api->adpt_port_egress_vlan_filter_get =
-			adpt_httppe_port_egress_vlan_filter_get;
 		p_adpt_api->adpt_port_isol_ctrl_set = adpt_httppe_port_isol_ctrl_set;
 		p_adpt_api->adpt_port_isol_ctrl_get = adpt_httppe_port_isol_ctrl_get;
 		p_adpt_api->adpt_port_isol_group_set = adpt_httppe_port_isol_group_set;
@@ -3224,6 +3219,11 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_httppe_port_isol_action_ctrl_get;
 		p_adpt_api->adpt_port_isol_action_set = adpt_httppe_port_isol_action_set;
 		p_adpt_api->adpt_port_isol_action_get = adpt_httppe_port_isol_action_get;
+#ifndef IN_PORTVLAN_MINI
+		p_adpt_api->adpt_port_egress_vlan_filter_set =
+			adpt_httppe_port_egress_vlan_filter_set;
+		p_adpt_api->adpt_port_egress_vlan_filter_get =
+			adpt_httppe_port_egress_vlan_filter_get;
 #endif
 #endif
 	} else {
@@ -3241,15 +3241,15 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 			adpt_hppe_port_vlan_trans_adv_getfirst;
 		p_adpt_api->adpt_port_vlan_trans_adv_getnext =
 			adpt_hppe_port_vlan_trans_adv_getnext;
+		p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
+		p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
+		p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
+		p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
 #ifndef IN_PORTVLAN_MINI
 		p_adpt_api->adpt_port_egress_vlan_filter_set =
 			adpt_appe_port_egress_vlan_filter_set;
 		p_adpt_api->adpt_port_egress_vlan_filter_get =
 			adpt_appe_port_egress_vlan_filter_get;
-		p_adpt_api->adpt_port_isol_ctrl_set = adpt_appe_port_isol_ctrl_set;
-		p_adpt_api->adpt_port_isol_ctrl_get = adpt_appe_port_isol_ctrl_get;
-		p_adpt_api->adpt_port_isol_group_set = adpt_appe_port_isol_group_set;
-		p_adpt_api->adpt_port_isol_group_get = adpt_appe_port_isol_group_get;
 #endif
 #if defined(JHPPE)
 		p_adpt_api->adpt_vlan_trans_dscp_pcp_mapping_set =
@@ -3262,12 +3262,10 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_private_vlan_mapping_get = adpt_jhppe_private_vlan_mapping_get;
 		p_adpt_api->adpt_private_vlan_tx_cfg_set = adpt_jhppe_private_vlan_tx_cfg_set;
 		p_adpt_api->adpt_private_vlan_tx_cfg_get = adpt_jhppe_private_vlan_tx_cfg_get;
-#ifndef IN_PORTVLAN_MINI
 		p_adpt_api->adpt_port_isol_action_ctrl_set = adpt_jhppe_port_isol_action_ctrl_set;
 		p_adpt_api->adpt_port_isol_action_ctrl_get = adpt_jhppe_port_isol_action_ctrl_get;
 		p_adpt_api->adpt_port_isol_action_set = adpt_jhppe_port_isol_action_set;
 		p_adpt_api->adpt_port_isol_action_get = adpt_jhppe_port_isol_action_get;
-#endif
 #endif
 	}
 
@@ -3282,9 +3280,9 @@ sw_error_t adpt_hppe_portvlan_init(a_uint32_t dev_id)
 #endif
 	p_adpt_api->adpt_port_vlan_counter_get = adpt_hppe_port_vlan_counter_get;
 	p_adpt_api->adpt_port_vlan_counter_cleanup = adpt_hppe_port_vlan_counter_cleanup;
+#endif
 	p_adpt_api->adpt_port_vlan_vpgroup_set = adpt_appe_port_vlan_vpgroup_set;
 	p_adpt_api->adpt_port_vlan_vpgroup_get = adpt_appe_port_vlan_vpgroup_get;
-#endif
 	p_adpt_api->adpt_global_qinq_mode_set = adpt_hppe_global_qinq_mode_set;
 	p_adpt_api->adpt_global_qinq_mode_get = adpt_hppe_global_qinq_mode_get;
 	p_adpt_api->adpt_port_vlantag_egmode_set = adpt_hppe_port_vlantag_egmode_set;

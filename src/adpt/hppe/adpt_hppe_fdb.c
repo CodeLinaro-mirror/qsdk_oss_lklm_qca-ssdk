@@ -27,9 +27,6 @@
 #define ARL_EXTENDFIRST_ENTRY	0x2
 #define ARL_EXTENDNEXT_ENTRY	0x3
 
-
-static aos_lock_t hppe_fdb_lock;
-
 /*
  * Remove port type.
  * Current fal_port_t format:
@@ -319,18 +316,15 @@ _get_fdb_table_entryindex_by_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 	a_uint32_t init_entry_index = 0;
 	fal_fdb_entry_t temp_entry;
 
-	aos_lock_bh(&hppe_fdb_lock);
 	rv = _adpt_hppe_fdb_tbl_rd_op_data_reg_set(dev_id, entry);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
 	mb();
 	rv = _adpt_hppe_fdb_tbl_rd_op_reg_set(dev_id, cmd_id, OP_MODE_HASH, init_entry_index);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
 	mb();
@@ -343,7 +337,6 @@ _get_fdb_table_entryindex_by_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, &temp_entry);
 		if (rv != SW_OK)
 		{
-			aos_unlock_bh(&hppe_fdb_lock);
 			return SW_NOT_FOUND;
 		}
 	}
@@ -355,12 +348,9 @@ _get_fdb_table_entryindex_by_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
 		if (rv != SW_OK)
 		{
-			aos_unlock_bh(&hppe_fdb_lock);
 			return SW_NOT_FOUND;
 		}
 	}
-
-	aos_unlock_bh(&hppe_fdb_lock);
 
 	if (*entry_index == 0)
 	{
@@ -384,18 +374,15 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 
 	aos_mem_zero(&init_entry, sizeof (fal_fdb_entry_t));
 
-	aos_lock_bh(&hppe_fdb_lock);
 	rv = _adpt_hppe_fdb_tbl_rd_op_data_reg_set(dev_id, &init_entry);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
 	mb();
 	rv = _adpt_hppe_fdb_tbl_rd_op_reg_set(dev_id, cmd_id, OP_MODE_INDEX, entry_index);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
 	mb();
@@ -408,7 +395,6 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_data_reg_get(dev_id, entry);
 		if (rv != SW_OK)
 		{
-			aos_unlock_bh(&hppe_fdb_lock);
 			return SW_NOT_FOUND;
 		}
 	}
@@ -420,11 +406,9 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 		rv |= _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
 		if (rv != SW_OK)
 		{
-			aos_unlock_bh(&hppe_fdb_lock);
 			return SW_NOT_FOUND;
 		}
 	}
-	aos_unlock_bh(&hppe_fdb_lock);
 
 	return rv;
 }
@@ -435,27 +419,22 @@ _modify_fdb_table_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry, a_uint32_t o
 {
 	sw_error_t rv = SW_OK;
 
-	aos_lock_bh(&hppe_fdb_lock);
 	rv = _adpt_hppe_fdb_tbl_op_data_reg_set(dev_id, entry);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
 
 	rv = _adpt_hppe_fdb_tbl_op_reg_set(dev_id, cmd_id, op_type);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
 	rv = _adpt_hppe_fdb_tbl_op_rslt_reg_get(dev_id, cmd_id);
 	if (rv != SW_OK)
 	{
-		aos_unlock_bh(&hppe_fdb_lock);
 		return rv;
 	}
-	aos_unlock_bh(&hppe_fdb_lock);
 
 	return SW_OK;
 }
@@ -1523,12 +1502,9 @@ sw_error_t adpt_hppe_fdb_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_fdb_port_maclimit_ctrl_get = adpt_hppe_fdb_port_maclimit_ctrl_get;
 	p_adpt_api->adpt_fdb_del_by_fid = adpt_hppe_fdb_del_by_fid;
 
-	aos_lock_init(&hppe_fdb_lock);
-
 	return SW_OK;
 }
 
 /**
  * @}
  */
-

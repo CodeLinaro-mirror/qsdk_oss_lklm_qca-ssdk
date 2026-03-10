@@ -239,8 +239,14 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 				/**<PORT_UQXGMII mode*/
 		PORT_25GBASE_R = PHY_INTERFACE_MODE_25GBASER,
 				/**<PORT_25GBASE_R mode*/
-		PORT_PON_SERDES,
-				/**<PON SERDES mode*/
+		PORT_INTERNAL = PHY_INTERFACE_MODE_INTERNAL,
+				/**<PORT_INTERNAL mode*/
+		PORT_GPON = 0xFB,
+				/**<GPON mode*/
+		PORT_XGPON,
+				/**<XGPON mode*/
+		PORT_XGSPON,
+				/**<XGSPON mode*/
 		PORT_INTERFACE_MODE_AUTO,
 				/**PORT AUTO INTERFACE MODE*/
 		PORT_INTERFACE_MODE_MAX = 0xFF
@@ -594,6 +600,10 @@ fal_port_power_off(a_uint32_t dev_id, fal_port_t port_id);
 
 sw_error_t
 fal_port_power_on(a_uint32_t dev_id, fal_port_t port_id);
+
+sw_error_t
+fal_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
+			      fal_port_interface_mode_t * mode);
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 fal_port_magic_frame_mac_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -623,9 +633,6 @@ fal_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_interface_mode_apply(a_uint32_t dev_id);
 
-sw_error_t
-fal_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
-			      fal_port_interface_mode_t * mode);
 /*qca808x_start*/
 sw_error_t
 fal_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,

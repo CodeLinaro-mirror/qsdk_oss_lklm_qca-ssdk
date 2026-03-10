@@ -84,58 +84,6 @@ adpt_appe_portvlan_vpmember_del(a_uint32_t dev_id, fal_port_t port_id, fal_port_
 	return rv;
 }
 
-#ifndef IN_PORTVLAN_MINI
-sw_error_t
-adpt_appe_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport_id,
-		fal_port_vlan_direction_t direction, a_uint32_t vpgroup_id)
-{
-	sw_error_t rtn = SW_OK;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	switch (direction) {
-		case FAL_PORT_VLAN_INGRESS:
-			rtn = appe_vlan_port_vp_tbl_vlan_profile_set(dev_id, vport_id, vpgroup_id);
-			break;
-		case FAL_PORT_VLAN_EGRESS:
-			rtn = appe_eg_vp_tbl_xlat_profile_set(dev_id, vport_id, vpgroup_id);
-			SW_RTN_ON_ERROR(rtn);
-			break;
-		case FAL_PORT_VLAN_ALL:
-		default:
-			rtn = SW_BAD_PARAM;
-			break;
-	}
-
-	return rtn;
-}
-
-sw_error_t
-adpt_appe_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport_id,
-		fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id)
-{
-	sw_error_t rtn = SW_OK;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	switch (direction) {
-		case FAL_PORT_VLAN_INGRESS:
-			rtn = appe_vlan_port_vp_tbl_vlan_profile_get(dev_id, vport_id, vpgroup_id);
-			SW_RTN_ON_ERROR(rtn);
-			break;
-		case FAL_PORT_VLAN_EGRESS:
-			rtn = appe_eg_vp_tbl_xlat_profile_get(dev_id, vport_id, vpgroup_id);
-			SW_RTN_ON_ERROR(rtn);
-			break;
-		case FAL_PORT_VLAN_ALL:
-		default:
-			rtn = SW_BAD_PARAM;
-			break;
-	}
-
-	return rtn;
-}
-
 sw_error_t
 adpt_appe_port_isol_ctrl_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_port_isol_ctrl_t *isol_ctrl)
@@ -220,6 +168,58 @@ adpt_appe_port_isol_group_get(a_uint32_t dev_id,
 	return rv;
 }
 
+sw_error_t
+adpt_appe_port_vlan_vpgroup_set(a_uint32_t dev_id, a_uint32_t vport_id,
+		fal_port_vlan_direction_t direction, a_uint32_t vpgroup_id)
+{
+	sw_error_t rtn = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	switch (direction) {
+		case FAL_PORT_VLAN_INGRESS:
+			rtn = appe_vlan_port_vp_tbl_vlan_profile_set(dev_id, vport_id, vpgroup_id);
+			break;
+		case FAL_PORT_VLAN_EGRESS:
+			rtn = appe_eg_vp_tbl_xlat_profile_set(dev_id, vport_id, vpgroup_id);
+			SW_RTN_ON_ERROR(rtn);
+			break;
+		case FAL_PORT_VLAN_ALL:
+		default:
+			rtn = SW_BAD_PARAM;
+			break;
+	}
+
+	return rtn;
+}
+
+sw_error_t
+adpt_appe_port_vlan_vpgroup_get(a_uint32_t dev_id, a_uint32_t vport_id,
+		fal_port_vlan_direction_t direction, a_uint32_t *vpgroup_id)
+{
+	sw_error_t rtn = SW_OK;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	switch (direction) {
+		case FAL_PORT_VLAN_INGRESS:
+			rtn = appe_vlan_port_vp_tbl_vlan_profile_get(dev_id, vport_id, vpgroup_id);
+			SW_RTN_ON_ERROR(rtn);
+			break;
+		case FAL_PORT_VLAN_EGRESS:
+			rtn = appe_eg_vp_tbl_xlat_profile_get(dev_id, vport_id, vpgroup_id);
+			SW_RTN_ON_ERROR(rtn);
+			break;
+		case FAL_PORT_VLAN_ALL:
+		default:
+			rtn = SW_BAD_PARAM;
+			break;
+	}
+
+	return rtn;
+}
+
+#ifndef IN_PORTVLAN_MINI
 sw_error_t
 adpt_appe_port_egress_vlan_filter_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_egress_vlan_filter_t *filter)

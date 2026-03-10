@@ -432,6 +432,35 @@ sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capa
 	return SW_OK;
 }
 
+a_uint32_t adpt_ppe_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	union appe_port_mux_ctrl_u appe_port_mux_ctrl;
+	a_uint32_t port_mac_sel = 0;
+	sw_error_t rv;
+
+	rv = appe_port_mux_ctrl_get(dev_id, &appe_port_mux_ctrl);
+	if (rv != SW_OK)
+		return PORT_GMAC_TYPE;
+
+	/* Only HTTPPE is supported currently. Branches can be added below
+	 * to support other PPE types in the future.
+	 */
+	if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
+		switch (port_id) {
+		case SSDK_PHYSICAL_PORT0:
+			port_mac_sel = appe_port_mux_ctrl.bf.port1_mac_sel;
+			break;
+		case SSDK_PHYSICAL_PORT5:
+			port_mac_sel = appe_port_mux_ctrl.bf.port5_mac_sel;
+			break;
+		default:
+			return PORT_GMAC_TYPE;
+		}
+	}
+
+	return port_mac_sel ? PORT_XGMAC_TYPE : PORT_GMAC_TYPE;
+}
+
 sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 {
 	sw_error_t rv= SW_OK;

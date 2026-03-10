@@ -451,13 +451,28 @@ struct qca_phy_priv {
 	/* Shaper rate tables for multi-device support */
 	ssdk_ppe_shaper_priv_t *shaper_priv;
 	/* PPE qm lock */
-	aos_lock_t ppe_qm_lock;
+	union {
+		aos_lock_t qm_spin_lock;
+		aos_mutex_lock_t qm_mutex_lock;
+	} ppe_qm_lock;
+	/* PPE ACL lock */
+	union {
+		aos_lock_t acl_spin_lock;
+		aos_mutex_lock_t acl_mutex_lock;
+	} ppe_acl_lock;
 /*qca808x_start*/
 };
 
+#define SSDK_SWITCH_REG_IS_QCA8386		0
+#define SSDK_SWITCH_REG_IS_QCA8337		1
+#define SSDK_SWITCH_REG_IS_QCA81XX		2
+#define SSDK_SWITCH_REG_IS_QCE2204		3
+
 #define SSDK_SWITCH_REG_TYPE_MASK		GENMASK(31, 29)
-#define SSDK_SWITCH_REG_TYPE_QCA8337		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, 1)
-#define SSDK_SWITCH_REG_TYPE_QCA8386		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, 0)
+#define SSDK_SWITCH_REG_MDIO_ADDR_MASK		GENMASK(28, 24)
+#define SSDK_SWITCH_REG_TYPE_QCA8337		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, SSDK_SWITCH_REG_IS_QCA8337)
+#define SSDK_SWITCH_REG_TYPE_QCA8386		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, SSDK_SWITCH_REG_IS_QCA8386)
+#define SSDK_SWITCH_REG_TYPE_QCE2204		FIELD_PREP(SSDK_SWITCH_REG_TYPE_MASK, SSDK_SWITCH_REG_IS_QCE2204)
 
 #define ETH_LDO_RDY_CNT		3
 struct qca_mdio_data{
@@ -535,11 +550,19 @@ int __qca_mii_update(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t mask, a_uint3
 
 sw_error_t
 qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
-			a_uint8_t * reg_data, a_uint32_t len);
+		    a_uint8_t * reg_data, a_uint32_t len);
 
 sw_error_t
 qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+		     a_uint8_t * reg_data, a_uint32_t len);
+
+sw_error_t
+qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 			a_uint8_t * reg_data, a_uint32_t len);
+
+sw_error_t
+qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
+			 a_uint8_t * reg_data, a_uint32_t len);
 
 sw_error_t
 qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
@@ -569,8 +592,8 @@ void ssdk_plat_exit(a_uint32_t dev_id);
 #define qca_mht_mii_write qca_mii_write
 #define qca_mht_mii_update qca_mii_update
 sw_error_t ssdk_netdev_switch_init(struct net_device *dev);
-#if IS_ENABLED(CONFIG_NET_DSA)
 void ssdk_switch_set_standby_status(a_uint32_t dev_id, bool enable);
+#if IS_ENABLED(CONFIG_NET_DSA)
 a_bool_t ssdk_switch_enable_dsa(a_uint32_t dev_id);
 #endif
 #endif
