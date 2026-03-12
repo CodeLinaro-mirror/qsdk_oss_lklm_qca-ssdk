@@ -47,6 +47,37 @@ extern "C" {
 #define HPPE_UNIPHY_INDIRECT_HIGH_ADDR                     0x1fff00
 #define HPPE_UNIPHY_INDIRECT_LOW_ADDR                      0xff
 #define HPPE_UNIPHY_INDIRECT_DATA                          0x20
+
+/* JHPPE UNIPHY CSR block definitions */
+#define JHPPE_UNIPHY_CSR_BLOCK_SHIFT                       24
+#define JHPPE_UNIPHY_CSR_BLOCK_MASK                        0xFF000000
+#define JHPPE_UNIPHY_REG_ADDR_MASK                         0x00FFFFFF
+
+/* JHPPE CSR access types */
+#define JHPPE_UNIPHY_CSR_TYPE_DIRECT                       0  /* CSR0 and CSR3 - Direct access */
+#define JHPPE_UNIPHY_CSR_TYPE_INDIRECT1                    1  /* CSR1 - Indirect via 0x43FC */
+#define JHPPE_UNIPHY_CSR_TYPE_INDIRECT2                    2  /* CSR2 - Indirect via 0x83FC */
+
+/* JHPPE CSR block definitions (encode as access type in high byte) */
+#define JHPPE_UNIPHY_CSR0_BLOCK                            (JHPPE_UNIPHY_CSR_TYPE_DIRECT << JHPPE_UNIPHY_CSR_BLOCK_SHIFT)
+#define JHPPE_UNIPHY_CSR1_BLOCK                            (JHPPE_UNIPHY_CSR_TYPE_INDIRECT1 << JHPPE_UNIPHY_CSR_BLOCK_SHIFT)
+#define JHPPE_UNIPHY_CSR2_BLOCK                            (JHPPE_UNIPHY_CSR_TYPE_INDIRECT2 << JHPPE_UNIPHY_CSR_BLOCK_SHIFT)
+#define JHPPE_UNIPHY_CSR3_BLOCK                            (JHPPE_UNIPHY_CSR_TYPE_DIRECT << JHPPE_UNIPHY_CSR_BLOCK_SHIFT)
+
+/* JHPPE CSR block helper macros */
+#define JHPPE_CSR0_ADDR(addr)                              (JHPPE_UNIPHY_CSR0_BLOCK | (addr))
+#define JHPPE_CSR1_ADDR(addr)                              (JHPPE_UNIPHY_CSR1_BLOCK | (addr))
+#define JHPPE_CSR2_ADDR(addr)                              (JHPPE_UNIPHY_CSR2_BLOCK | (addr))
+#define JHPPE_CSR3_ADDR(addr)                              (JHPPE_UNIPHY_CSR3_BLOCK | (addr))
+
+/* JHPPE CSR1 indirect access registers */
+#define JHPPE_UNIPHY_CSR1_INDIRECT_REG_ADDR                0x43fc
+#define JHPPE_UNIPHY_CSR1_INDIRECT_DATA                    0x10
+
+/* JHPPE CSR2 indirect access registers */
+#define JHPPE_UNIPHY_CSR2_INDIRECT_REG_ADDR                0x83fc
+#define JHPPE_UNIPHY_CSR2_INDIRECT_DATA                    0x20
+
 #define UNIPHY_CALIBRATION_DONE                            0x1
 #define UNIPHY_10GR_LINKUP                                 0x1
 #define UNIPHY_10GR_LINK_LOSS                              0x7

@@ -763,13 +763,90 @@ qca_psgmii_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_dat
 	return 0;
 }
 
+static sw_error_t
+qca_uniphy_csr_access(a_uint32_t dev_id, void __iomem *hppe_uniphy_base,
+		      a_uint32_t reg_addr, a_uint32_t *reg_val, a_bool_t is_read)
+{
+	a_uint32_t reg_addr1, reg_addr2;
+
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE) {
+		/* Extract CSR type and actual address */
+		a_uint32_t csr_type = (reg_addr & JHPPE_UNIPHY_CSR_BLOCK_MASK) >> JHPPE_UNIPHY_CSR_BLOCK_SHIFT;
+		a_uint32_t actual_addr = reg_addr & JHPPE_UNIPHY_REG_ADDR_MASK;
+
+		/* JHPPE: 3 CSR access types */
+		switch (csr_type) {
+			case JHPPE_UNIPHY_CSR_TYPE_DIRECT:
+				/* Type 0: CSR0 or CSR3 - Direct access */
+				if (is_read)
+					*reg_val = readl(hppe_uniphy_base + actual_addr);
+				else
+					writel(*reg_val, hppe_uniphy_base + actual_addr);
+				break;
+
+			case JHPPE_UNIPHY_CSR_TYPE_INDIRECT1:
+				/* Type 1: CSR1 - Indirect access via 0x43FC */
+				reg_addr1 = (actual_addr & 0xffffff) >> 8;
+				writel(reg_addr1, hppe_uniphy_base + JHPPE_UNIPHY_CSR1_INDIRECT_REG_ADDR);
+
+				reg_addr2 = actual_addr & HPPE_UNIPHY_INDIRECT_LOW_ADDR;
+				reg_addr = (JHPPE_UNIPHY_CSR1_INDIRECT_DATA << 10) | (reg_addr2 << 2);
+
+				if (is_read)
+					*reg_val = readl(hppe_uniphy_base + reg_addr);
+				else
+					writel(*reg_val, hppe_uniphy_base + reg_addr);
+				break;
+
+			case JHPPE_UNIPHY_CSR_TYPE_INDIRECT2:
+				/* Type 2: CSR2 - Indirect access via 0x83FC */
+				reg_addr1 = (actual_addr & 0xffffff) >> 8;
+				writel(reg_addr1, hppe_uniphy_base + JHPPE_UNIPHY_CSR2_INDIRECT_REG_ADDR);
+
+				reg_addr2 = actual_addr & HPPE_UNIPHY_INDIRECT_LOW_ADDR;
+				reg_addr = (JHPPE_UNIPHY_CSR2_INDIRECT_DATA << 10) | (reg_addr2 << 2);
+
+				if (is_read)
+					*reg_val = readl(hppe_uniphy_base + reg_addr);
+				else
+					writel(*reg_val, hppe_uniphy_base + reg_addr);
+				break;
+
+			default:
+				return SW_BAD_PARAM;
+		}
+	} else {
+		if (reg_addr > HPPE_UNIPHY_MAX_DIRECT_ACCESS_REG) {
+			/* CSR1: Indirect access */
+			reg_addr1 = (reg_addr & 0xffffff) >> 8;
+			writel(reg_addr1, hppe_uniphy_base + HPPE_UNIPHY_INDIRECT_REG_ADDR);
+
+			reg_addr2 = reg_addr & HPPE_UNIPHY_INDIRECT_LOW_ADDR;
+			reg_addr = (HPPE_UNIPHY_INDIRECT_DATA << 10) | (reg_addr2 << 2);
+
+			if (is_read)
+				*reg_val = readl(hppe_uniphy_base + reg_addr);
+			else
+				writel(*reg_val, hppe_uniphy_base + reg_addr);
+		} else {
+			/* CSR0: Direct access */
+			if (is_read)
+				*reg_val = readl(hppe_uniphy_base + reg_addr);
+			else
+				writel(*reg_val, hppe_uniphy_base + reg_addr);
+		}
+	}
+
+	return SW_OK;
+}
+
 sw_error_t
 qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
 {
 	uint32_t reg_val = 0;
 	void __iomem *hppe_uniphy_base = NULL;
-	a_uint32_t reg_addr1, reg_addr2;
+	sw_error_t rv;
 
 	SSDK_DEBUG("uniphy %d reg 0x%x value 0x%x", uniphy_index, reg_addr, *reg_data);
 	if (len != sizeof (a_uint32_t))
@@ -782,31 +859,16 @@ qca_uniphy_reg_read(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr;
 	else if (SSDK_UNIPHY_INSTANCE1 == uniphy_index)
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr + HPPE_UNIPHY_BASE1;
-
 	else if (SSDK_UNIPHY_INSTANCE2 == uniphy_index)
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr + HPPE_UNIPHY_BASE2;
 	else
 		return SW_BAD_PARAM;
 
-	if ( reg_addr > HPPE_UNIPHY_MAX_DIRECT_ACCESS_REG)
-	{
-		// uniphy reg indireclty access
-		reg_addr1 = (reg_addr & 0xffffff) >> 8;
-		writel(reg_addr1, hppe_uniphy_base + HPPE_UNIPHY_INDIRECT_REG_ADDR);
+	rv = qca_uniphy_csr_access(dev_id, hppe_uniphy_base, reg_addr, &reg_val, A_TRUE);
+	if (rv == SW_OK)
+		aos_mem_copy(reg_data, &reg_val, sizeof(a_uint32_t));
 
-		reg_addr2 = reg_addr & HPPE_UNIPHY_INDIRECT_LOW_ADDR;
-		reg_addr = (HPPE_UNIPHY_INDIRECT_DATA << 10) | (reg_addr2 << 2);
-
-		reg_val = readl(hppe_uniphy_base + reg_addr);
-		aos_mem_copy(reg_data, &reg_val, sizeof (a_uint32_t));
-	}
-	else
-	{	// uniphy reg directly access
-		reg_val = readl(hppe_uniphy_base + reg_addr);
-		aos_mem_copy(reg_data, &reg_val, sizeof (a_uint32_t));
-	}
-
-	return 0;
+	return rv;
 }
 
 sw_error_t
@@ -814,7 +876,6 @@ qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 				a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
 {
 	void __iomem *hppe_uniphy_base = NULL;
-	a_uint32_t reg_addr1, reg_addr2;
 	uint32_t reg_val = 0;
 
 	SSDK_DEBUG("uniphy %d reg 0x%x value 0x%x", uniphy_index, reg_addr, *reg_data);
@@ -828,30 +889,13 @@ qca_uniphy_reg_write(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr;
 	else if (SSDK_UNIPHY_INSTANCE1 == uniphy_index)
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr + HPPE_UNIPHY_BASE1;
-
 	else if (SSDK_UNIPHY_INSTANCE2 == uniphy_index)
 		hppe_uniphy_base = qca_phy_priv_global[dev_id]->uniphy_hw_addr + HPPE_UNIPHY_BASE2;
 	else
 		return SW_BAD_PARAM;
 
-	if ( reg_addr > HPPE_UNIPHY_MAX_DIRECT_ACCESS_REG)
-	{
-		// uniphy reg indireclty access
-		reg_addr1 = (reg_addr & 0xffffff) >> 8;
-		writel(reg_addr1, hppe_uniphy_base + HPPE_UNIPHY_INDIRECT_REG_ADDR);
-
-		reg_addr2 = reg_addr & HPPE_UNIPHY_INDIRECT_LOW_ADDR;
-		reg_addr = (HPPE_UNIPHY_INDIRECT_DATA << 10) | (reg_addr2 << 2);
-		aos_mem_copy(&reg_val, reg_data, sizeof (a_uint32_t));
-		writel(reg_val, hppe_uniphy_base + reg_addr);
-	}
-	else
-	{	// uniphy reg directly access
-		aos_mem_copy(&reg_val, reg_data, sizeof (a_uint32_t));
-		writel(reg_val, hppe_uniphy_base + reg_addr);
-	}
-
-	return 0;
+	aos_mem_copy(&reg_val, reg_data, sizeof(a_uint32_t));
+	return qca_uniphy_csr_access(dev_id, hppe_uniphy_base, reg_addr, &reg_val, A_FALSE);
 }
 /*qca808x_start*/
 struct mii_bus *ssdk_miibus_get(a_uint32_t dev_id, a_uint32_t index)
@@ -2021,4 +2065,3 @@ void ssdk_log_fun(a_uint8_t level, const char *func, unsigned int line, const ch
 	  va_end(args);
 	}
 }
-
