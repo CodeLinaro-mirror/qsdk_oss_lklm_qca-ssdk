@@ -2842,8 +2842,6 @@ adpt_hppe_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 
-	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
-		return SW_BAD_VALUE;
 #ifdef JHPPE
 	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_TRUE)
 	{
