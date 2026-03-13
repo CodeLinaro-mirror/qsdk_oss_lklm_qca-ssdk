@@ -26,6 +26,12 @@ adpt_jhppe_uniphy_calibrate(a_uint32_t dev_id, a_uint32_t uniphy_index);
 sw_error_t
 adpt_jhppe_uniphy_25g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index);
 
+sw_error_t
+adpt_jhppe_uniphy_pma_init_setting(a_uint32_t dev_id, a_uint32_t uniphy_index,
+		a_uint32_t uniphy_mode, a_uint32_t dfe_mode, a_bool_t is_long);
+
+sw_error_t
+adpt_jhppe_uniphy_pma_dfe_sw_tune(a_uint32_t dev_id, a_uint32_t uniphy_index);
 #ifdef __cplusplus
 }
 #endif

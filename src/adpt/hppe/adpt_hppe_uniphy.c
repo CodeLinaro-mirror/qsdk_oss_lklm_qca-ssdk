@@ -377,8 +377,14 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	msleep(1);
 	hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 		uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-	__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
+	if (adpt_ppe_type_get(dev_id) != JHPPE_TYPE)
+		__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+				PORT_WRAPPER_UQXGMII, 0, A_FALSE);
+#endif
 	/* disable instance clock */
 	for (i = SSDK_PHYSICAL_PORT1; i <= SSDK_PHYSICAL_PORT4; i++) {
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
@@ -492,6 +498,10 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	/* enable uniphy eee transparent mode*/
 	__adpt_hppe_uniphy_xpcs_eee_set(dev_id, uniphy_index);
 
+#if 0
+	/* software tuning if dfe mode choose software mode */
+	adpt_jhppe_uniphy_pma_dfe_sw_tune(dev_id, uniphy_index);
+#endif
 	return SW_OK;
 }
 
@@ -522,8 +532,14 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	msleep(1);
 	hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 		uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-	__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
+	if (adpt_ppe_type_get(dev_id) != JHPPE_TYPE)
+		__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+				PORT_WRAPPER_25GBASE_R, 0, A_FALSE);
+#endif
 	/* disable instance clock */
 	qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			1, A_FALSE);
@@ -612,6 +628,10 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	/* enable uniphy eee transparent mode*/
 	__adpt_hppe_uniphy_xpcs_eee_set(dev_id, uniphy_index);
 
+#if 0
+	/* software tuning if dfe mode choose software mode */
+	adpt_jhppe_uniphy_pma_dfe_sw_tune(dev_id, uniphy_index);
+#endif
 	return rv;
 }
 
@@ -666,6 +686,11 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	memset(&uniphy_instance_link_detect, 0, sizeof(uniphy_instance_link_detect));
 	ADPT_DEV_ID_CHECK(dev_id);
 
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+			PORT_WRAPPER_10GBASE_R, 0, A_FALSE);
+#endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
@@ -778,9 +803,15 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 		msleep(1);
 		hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 				uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-		__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
+		if (adpt_ppe_type_get(dev_id) != JHPPE_TYPE)
+			__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 	}
 
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+				PORT_WRAPPER_SGMII_PLUS, 0, A_FALSE);
+#endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
@@ -870,8 +901,14 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 		msleep(1);
 		hppe_uniphy_reg_set(dev_id, UNIPHY_PLL_RESET_REG_OFFSET,
 			uniphy_index, UNIPHY_PLL_RESET_REG_DEFAULT_VALUE);
-		__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
+		if (adpt_ppe_type_get(dev_id) != JHPPE_TYPE)
+			__adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 	}
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+			PORT_WRAPPER_SGMII_CHANNEL0, 0, A_FALSE);
+#endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
@@ -1029,6 +1066,11 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	/* configure malibu phy to qsgmii mode*/
 	HSL_PORT_PHY_API_RUN(interface_set, dev_id, SSDK_PHYSICAL_PORT1,
 		(a_uint32_t)PORT_QSGMII);
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+			PORT_WRAPPER_QSGMII, 0, A_FALSE);
+#endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
@@ -1091,6 +1133,11 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is psgmii mode\n", uniphy_index);
+#if defined(JHPPE)
+	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
+			PORT_WRAPPER_PSGMII, 0, A_FALSE);
+#endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
