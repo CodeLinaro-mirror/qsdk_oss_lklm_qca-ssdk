@@ -20,21 +20,6 @@
 #define FLOW_ENTRY_TYPE_IPV6 1
 #define FLOW_TUPLE_TYPE_3    0
 
-#define FLOW_COOKIE_48BIT_LOW		GENMASK_ULL(15, 0)
-#define FLOW_COOKIE_48BIT_MIDDLE	GENMASK_ULL(23, 16)
-#define FLOW_COOKIE_48BIT_HIGH_16BIT_L	GENMASK_ULL(39, 24)
-#define FLOW_COOKIE_48BIT_HIGH_8BIT_H	GENMASK_ULL(47, 40)
-
-#define FLOW_COOKIE_40BIT_LOW		GENMASK_ULL(15, 0)
-#define FLOW_COOKIE_40BIT_HIGH_16BIT_L	GENMASK_ULL(31, 16)
-#define FLOW_COOKIE_40BIT_HIGH_8BIT_H	GENMASK_ULL(39, 32)
-
-#define FLOW_COOKIE_16BIT		GENMASK_ULL(15, 0)
-
-#define FLOW_TREE_ID_24BIT		GENMASK_ULL(23, 0)
-#define FLOW_TREE_ID_24BIT_L		GENMASK_ULL(15, 0)
-#define FLOW_TREE_ID_24BIT_H		GENMASK_ULL(23, 16)
-
 #if defined(MRPPE)
 static DECLARE_BITMAP(flow_cookie_48bit, EG_FLOW_TREE_MAP_TBL_NUM);
 #endif
@@ -258,20 +243,20 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->tree_id, sizeof(flow_qos->tree_id));
 #if defined(JHPPE)
-			eg_treemap->bf.tree_id_0 = FIELD_GET(FLOW_TREE_ID_24BIT_L, tmp);
-			eg_treemap->bf.tree_id_1 = FIELD_GET(FLOW_TREE_ID_24BIT_H, tmp);
+			eg_treemap->bf.tree_id_0 = FIELD_GET(FAL_FLOW_TREE_ID_24BIT_L, tmp);
+			eg_treemap->bf.tree_id_1 = FIELD_GET(FAL_FLOW_TREE_ID_24BIT_H, tmp);
 #else
-			eg_treemap->bf.tree_id = FIELD_GET(FLOW_TREE_ID_24BIT, tmp);
+			eg_treemap->bf.tree_id = FIELD_GET(FAL_FLOW_TREE_ID_24BIT, tmp);
 #endif
 #if defined(MPPE)
 			eg_treemap->bf.type = 0;
 #endif
 		} else {
 #if defined(JHPPE)
-			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT_L, eg_treemap->bf.tree_id_0);
-			tmp |= FIELD_PREP(FLOW_TREE_ID_24BIT_H, eg_treemap->bf.tree_id_1);
+			tmp = FIELD_PREP(FAL_FLOW_TREE_ID_24BIT_L, eg_treemap->bf.tree_id_0);
+			tmp |= FIELD_PREP(FAL_FLOW_TREE_ID_24BIT_H, eg_treemap->bf.tree_id_1);
 #else
-			tmp = FIELD_PREP(FLOW_TREE_ID_24BIT, eg_treemap->bf.tree_id);
+			tmp = FIELD_PREP(FAL_FLOW_TREE_ID_24BIT, eg_treemap->bf.tree_id);
 #endif
 			memcpy(flow_qos->tree_id, &tmp, sizeof(flow_qos->tree_id));
 		}
@@ -280,24 +265,24 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 	case FAL_FLOW_QOS_TYPE_COOKIE_40B:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->cookie_40b, sizeof(flow_qos->cookie_40b));
-			eg_treemap->bf1.flow_cookie = FIELD_GET(FLOW_COOKIE_40BIT_LOW, tmp);
-			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_16BIT_L, tmp);
-			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FLOW_COOKIE_40BIT_HIGH_8BIT_H, tmp);
+			eg_treemap->bf1.flow_cookie = FIELD_GET(FAL_FLOW_COOKIE_40BIT_LOW, tmp);
+			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FAL_FLOW_COOKIE_40BIT_HIGH_16BIT_L, tmp);
+			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FAL_FLOW_COOKIE_40BIT_HIGH_8BIT_H, tmp);
 			eg_treemap->bf1.type = 1;
 		} else {
-			tmp = FIELD_PREP(FLOW_COOKIE_40BIT_LOW, eg_treemap->bf1.flow_cookie);
-			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_ext_0);
-			tmp |= FIELD_PREP(FLOW_COOKIE_40BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_ext_1);
+			tmp = FIELD_PREP(FAL_FLOW_COOKIE_40BIT_LOW, eg_treemap->bf1.flow_cookie);
+			tmp |= FIELD_PREP(FAL_FLOW_COOKIE_40BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_ext_0);
+			tmp |= FIELD_PREP(FAL_FLOW_COOKIE_40BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_ext_1);
 			memcpy(flow_qos->cookie_40b, &tmp, sizeof(flow_qos->cookie_40b));
 		}
 		break;
 	case FAL_FLOW_QOS_TYPE_COOKIE_48B:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->cookie_48b, sizeof(flow_qos->cookie_48b));
-			eg_treemap->bf1.flow_cookie = FIELD_GET(FLOW_COOKIE_48BIT_LOW, tmp);
-			eg_treemap->bf1.wifi_qos = FIELD_GET(FLOW_COOKIE_48BIT_MIDDLE, tmp);
-			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
-			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
+			eg_treemap->bf1.flow_cookie = FIELD_GET(FAL_FLOW_COOKIE_48BIT_LOW, tmp);
+			eg_treemap->bf1.wifi_qos = FIELD_GET(FAL_FLOW_COOKIE_48BIT_MIDDLE, tmp);
+			eg_treemap->bf1.flow_cookie_ext_0 = FIELD_GET(FAL_FLOW_COOKIE_48BIT_HIGH_16BIT_L, tmp);
+			eg_treemap->bf1.flow_cookie_ext_1 = FIELD_GET(FAL_FLOW_COOKIE_48BIT_HIGH_8BIT_H, tmp);
 
 #if !defined(JHPPE)
 			/* wifi qos is valid only when the flag is true on only Marina. */
@@ -305,10 +290,10 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 #endif
 			eg_treemap->bf1.type = 1;
 		} else {
-			tmp = FIELD_PREP(FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie);
-			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_MIDDLE, eg_treemap->bf1.wifi_qos);
-			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_ext_0);
-			tmp |= FIELD_PREP(FLOW_COOKIE_48BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_ext_1);
+			tmp = FIELD_PREP(FAL_FLOW_COOKIE_48BIT_LOW, eg_treemap->bf1.flow_cookie);
+			tmp |= FIELD_PREP(FAL_FLOW_COOKIE_48BIT_MIDDLE, eg_treemap->bf1.wifi_qos);
+			tmp |= FIELD_PREP(FAL_FLOW_COOKIE_48BIT_HIGH_16BIT_L, eg_treemap->bf1.flow_cookie_ext_0);
+			tmp |= FIELD_PREP(FAL_FLOW_COOKIE_48BIT_HIGH_8BIT_H, eg_treemap->bf1.flow_cookie_ext_1);
 			memcpy(flow_qos->cookie_48b, &tmp, sizeof(flow_qos->cookie_48b));
 
 			/* qos & qos_valid is already assigned before this function called. */
@@ -318,10 +303,10 @@ static sw_error_t adpt_flow_cookie_convert(fal_flow_qos_t *flow_qos,
 	case FAL_FLOW_QOS_TYPE_COOKIE_16B:
 		if (to_hsl == A_TRUE) {
 			memcpy(&tmp, flow_qos->cookie_16b, sizeof(flow_qos->cookie_16b));
-			eg_treemap->bf2.flow_cookie = FIELD_GET(FLOW_COOKIE_16BIT, tmp);
+			eg_treemap->bf2.flow_cookie = FIELD_GET(FAL_FLOW_COOKIE_16BIT, tmp);
 			eg_treemap->bf2.type = 1;
 		} else {
-			tmp = FIELD_PREP(FLOW_COOKIE_16BIT, eg_treemap->bf2.flow_cookie);
+			tmp = FIELD_PREP(FAL_FLOW_COOKIE_16BIT, eg_treemap->bf2.flow_cookie);
 			memcpy(flow_qos->cookie_16b, &tmp, sizeof(flow_qos->cookie_16b));
 		}
 		break;
