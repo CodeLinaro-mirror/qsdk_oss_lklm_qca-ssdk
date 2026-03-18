@@ -604,6 +604,13 @@ fal_port_power_on(a_uint32_t dev_id, fal_port_t port_id);
 sw_error_t
 fal_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode);
+
+sw_error_t
+fal_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
+			      fal_port_interface_mode_t mode);
+
+sw_error_t
+fal_port_interface_mode_apply(a_uint32_t dev_id);
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 fal_port_magic_frame_mac_set(a_uint32_t dev_id, fal_port_t port_id,
@@ -625,15 +632,7 @@ fal_port_wol_status_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_wol_status_get(a_uint32_t dev_id, fal_port_t port_id,
 			      a_bool_t * enable);
- /*qca808x_end*/
-sw_error_t
-fal_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
-			      fal_port_interface_mode_t mode);
 
-sw_error_t
-fal_port_interface_mode_apply(a_uint32_t dev_id);
-
-/*qca808x_start*/
 sw_error_t
 fal_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode);

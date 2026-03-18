@@ -213,6 +213,11 @@ sw_error_t fal_port_pps_ctrl_get(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctr
 sw_error_t fal_port_interface_mode_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_interface_mode_t * mode)
     DEFINE_FAL_FUNC_EXPORT(port_interface_mode_get, dev_id, port_id, mode)
 
+sw_error_t fal_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_interface_mode_t mode)
+    DEFINE_FAL_FUNC_EXPORT(port_interface_mode_set, dev_id, port_id, mode)
+
+sw_error_t fal_port_interface_mode_apply (a_uint32_t dev_id)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_interface_mode_apply, dev_id)
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t fal_port_txmac_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_EXPORT(port_txmac_status_get, dev_id, port_id, enable)
@@ -234,12 +239,6 @@ sw_error_t fal_port_mac_loopback_get (a_uint32_t dev_id, fal_port_t port_id, a_b
 
 sw_error_t fal_vch_bp_thres_get (a_uint32_t dev_id, a_uint32_t vch_id, a_uint16_t * on_thres, a_uint16_t * off_thres)
     DEFINE_FAL_FUNC_ADPT_HSL_EXPORT(vch_bp_thres_get, ring_flow_ctrl_thres_get, dev_id, vch_id, on_thres, off_thres)
-
-sw_error_t fal_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_interface_mode_t mode)
-    DEFINE_FAL_FUNC_EXPORT(port_interface_mode_set, dev_id, port_id, mode)
-
-sw_error_t fal_port_interface_mode_apply (a_uint32_t dev_id)
-    DEFINE_FAL_FUNC_ADPT_EXPORT(port_interface_mode_apply, dev_id)
 
 sw_error_t fal_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_interface_mode_t * mode)
     DEFINE_FAL_FUNC_EXPORT(port_interface_mode_status_get, dev_id, port_id, mode)
