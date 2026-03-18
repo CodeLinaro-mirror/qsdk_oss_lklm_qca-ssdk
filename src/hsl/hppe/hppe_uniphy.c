@@ -1,19 +1,8 @@
 /*
  * Copyright (c) 2017, 2019-2020, The Linux Foundation. All rights reserved.
  *
- * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 /**
@@ -25,6 +14,8 @@
 #include "hppe_reg_access.h"
 #include "hppe_uniphy_reg.h"
 #include "hppe_uniphy.h"
+#include "hsl_dev.h"
+#include "hppe_init.h"
 
 sw_error_t
 hppe_uniphy_offset_calib_4_get(
@@ -298,11 +289,17 @@ hppe_sr_xs_pcs_eee_abl_get(
 		a_uint32_t index,
 		union sr_xs_pcs_eee_abl_u *value)
 {
+	a_uint32_t reg_addr = SR_XS_PCS_EEE_ABL_ADDRESS;
+
 	if (index >= SR_XS_PCS_EEE_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_XS_PCS_EEE_ABL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_XS_PCS_EEE_ABL_INC,
 				&value->val);
 }
@@ -313,11 +310,17 @@ hppe_sr_xs_pcs_kr_sts1_get(
 		a_uint32_t index,
 		union sr_xs_pcs_kr_sts1_u *value)
 {
+	a_uint32_t reg_addr = SR_XS_PCS_KR_STS1_ADDRESS;
+
 	if (index >= SR_XS_PCS_KR_STS1_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_XS_PCS_KR_STS1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_XS_PCS_KR_STS1_INC,
 				&value->val);
 }
@@ -344,11 +347,17 @@ hppe_vr_xs_pcs_dig_ctrl1_get(
 		a_uint32_t index,
 		union vr_xs_pcs_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_DIG_CTRL1_ADDRESS;
+
 	if (index >= VR_XS_PCS_DIG_CTRL1_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_DIG_CTRL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_DIG_CTRL1_INC,
 				&value->val);
 }
@@ -359,9 +368,14 @@ hppe_vr_xs_pcs_dig_ctrl1_set(
 		a_uint32_t index,
 		union vr_xs_pcs_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_DIG_CTRL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_DIG_CTRL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_DIG_CTRL1_INC,
 				value->val);
 }
@@ -372,11 +386,17 @@ hppe_vr_xs_pcs_eee_ctrl0_get(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_ctrl0_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_MCTRL0_ADDRESS;
+
 	if (index >= VR_XS_PCS_EEE_MCTRL0_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_MCTRL0_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_MCTRL0_INC,
 				&value->val);
 }
@@ -387,9 +407,14 @@ hppe_vr_xs_pcs_eee_ctrl0_set(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_ctrl0_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_MCTRL0_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_MCTRL0_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_MCTRL0_INC,
 				value->val);
 }
@@ -400,11 +425,17 @@ hppe_vr_xs_pcs_eee_txtimer_get(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_txtimer_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_TXTIMER_ADDRESS;
+
 	if (index >= VR_XS_PCS_EEE_TXTIMER_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_TXTIMER_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_TXTIMER_INC,
 				&value->val);
 }
@@ -415,9 +446,14 @@ hppe_vr_xs_pcs_eee_txtimer_set(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_txtimer_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_TXTIMER_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_TXTIMER_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_TXTIMER_INC,
 				value->val);
 }
@@ -428,11 +464,17 @@ hppe_vr_xs_pcs_eee_rxtimer_get(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_rxtimer_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_RXTIMER_ADDRESS;
+
 	if (index >= VR_XS_PCS_EEE_RXTIMER_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_RXTIMER_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_RXTIMER_INC,
 				&value->val);
 }
@@ -443,9 +485,14 @@ hppe_vr_xs_pcs_eee_rxtimer_set(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_rxtimer_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_RXTIMER_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_RXTIMER_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_RXTIMER_INC,
 				value->val);
 }
@@ -456,11 +503,17 @@ hppe_vr_xs_pcs_eee_ctrl1_get(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_MCTRL1_ADDRESS;
+
 	if (index >= VR_XS_PCS_EEE_MCTRL1_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_MCTRL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_MCTRL1_INC,
 				&value->val);
 }
@@ -471,9 +524,14 @@ hppe_vr_xs_pcs_eee_ctrl1_set(
 		a_uint32_t index,
 		union vr_xs_pcs_eee_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_EEE_MCTRL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_EEE_MCTRL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_EEE_MCTRL1_INC,
 				value->val);
 }
@@ -484,11 +542,17 @@ hppe_vr_xs_pcs_kr_ctrl_get(
 		a_uint32_t index,
 		union vr_xs_pcs_kr_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_KR_CTRL_ADDRESS;
+
 	if (index >= VR_XS_PCS_KR_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_KR_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_KR_CTRL_INC,
 				&value->val);
 }
@@ -499,9 +563,14 @@ hppe_vr_xs_pcs_kr_ctrl_set(
 		a_uint32_t index,
 		union vr_xs_pcs_kr_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_KR_CTRL_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_KR_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_KR_CTRL_INC,
 				value->val);
 }
@@ -512,11 +581,17 @@ hppe_vr_xs_pcs_dig_sts_get(
 		a_uint32_t index,
 		union vr_xs_pcs_dig_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_DIG_STS_ADDRESS;
+
 	if (index >= VR_XS_PCS_DIG_STS_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_DIG_STS_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_DIG_STS_INC,
 				&value->val);
 }
@@ -527,9 +602,14 @@ hppe_vr_xs_pcs_dig_sts_set(
 		a_uint32_t index,
 		union vr_xs_pcs_dig_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_XS_PCS_DIG_STS_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XS_PCS_DIG_STS_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XS_PCS_DIG_STS_INC,
 				value->val);
 }
@@ -540,11 +620,17 @@ hppe_vr_mii_dig_ctrl1_channel1_get(
 		a_uint32_t index,
 		union vr_mii_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_DIG_CTRL1_CHANNEL1_ADDRESS;
+
 	if (index >= VR_XS_PCS_DIG_CTRL1_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_DIG_CTRL1_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_DIG_CTRL1_CHANNEL1_INC,
 				&value->val);
 }
@@ -555,9 +641,14 @@ hppe_vr_mii_dig_ctrl1_channel1_set(
 		a_uint32_t index,
 		union vr_mii_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_DIG_CTRL1_CHANNEL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_DIG_CTRL1_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_DIG_CTRL1_CHANNEL1_INC,
 				value->val);
 }
@@ -568,11 +659,17 @@ hppe_vr_mii_dig_ctrl1_channel2_get(
 		a_uint32_t index,
 		union vr_mii_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_DIG_CTRL1_CHANNEL2_ADDRESS;
+
 	if (index >= VR_XS_PCS_DIG_CTRL1_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_DIG_CTRL1_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_DIG_CTRL1_CHANNEL1_INC,
 				&value->val);
 }
@@ -583,9 +680,14 @@ hppe_vr_mii_dig_ctrl1_channel2_set(
 		a_uint32_t index,
 		union vr_mii_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_DIG_CTRL1_CHANNEL2_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_DIG_CTRL1_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_DIG_CTRL1_CHANNEL1_INC,
 				value->val);
 }
@@ -596,11 +698,17 @@ hppe_vr_mii_dig_ctrl1_channel3_get(
 		a_uint32_t index,
 		union vr_mii_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_DIG_CTRL1_CHANNEL3_ADDRESS;
+
 	if (index >= VR_XS_PCS_DIG_CTRL1_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_DIG_CTRL1_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_DIG_CTRL1_CHANNEL1_INC,
 				&value->val);
 }
@@ -611,9 +719,14 @@ hppe_vr_mii_dig_ctrl1_channel3_set(
 		a_uint32_t index,
 		union vr_mii_dig_ctrl1_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_DIG_CTRL1_CHANNEL3_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_DIG_CTRL1_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_DIG_CTRL1_CHANNEL1_INC,
 				value->val);
 }
@@ -624,11 +737,17 @@ hppe_sr_mii_ctrl_get(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_ADDRESS;
+
 	if (index >= SR_MII_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				&value->val);
 }
@@ -639,9 +758,14 @@ hppe_sr_mii_ctrl_set(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				value->val);
 }
@@ -652,11 +776,17 @@ hppe_sr_mii_ctrl_channel1_get(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_CHANNEL1_ADDRESS;
+
 	if (index >= SR_MII_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				&value->val);
 }
@@ -667,9 +797,14 @@ hppe_sr_mii_ctrl_channel1_set(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_CHANNEL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				value->val);
 }
@@ -680,11 +815,17 @@ hppe_sr_mii_ctrl_channel2_get(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_CHANNEL2_ADDRESS;
+
 	if (index >= SR_MII_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				&value->val);
 }
@@ -695,9 +836,14 @@ hppe_sr_mii_ctrl_channel2_set(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_CHANNEL2_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				value->val);
 }
@@ -708,11 +854,16 @@ hppe_sr_mii_ctrl_channel3_get(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_CHANNEL3_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	if (index >= SR_MII_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				&value->val);
 }
@@ -723,9 +874,14 @@ hppe_sr_mii_ctrl_channel3_set(
 		a_uint32_t index,
 		union sr_mii_ctrl_u *value)
 {
+	a_uint32_t reg_addr = SR_MII_CTRL_CHANNEL3_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + SR_MII_CTRL_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * SR_MII_CTRL_INC,
 				value->val);
 }
@@ -736,11 +892,17 @@ hppe_vr_mii_an_ctrl_get(
 		a_uint32_t index,
 		union vr_mii_an_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_CTRL_ADDRESS;
+
 	if (index >= VR_MII_AN_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_CTRL_INC,
 				&value->val);
 }
@@ -751,9 +913,14 @@ hppe_vr_mii_an_ctrl_set(
 		a_uint32_t index,
 		union vr_mii_an_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_CTRL_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_CTRL_INC,
 				value->val);
 }
@@ -764,9 +931,14 @@ hppe_vr_mii_an_ctrl_channel1_set(
 		a_uint32_t index,
 		union vr_mii_an_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_CTRL_CHANNEL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_CTRL_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_CTRL_INC,
 				value->val);
 }
@@ -777,9 +949,14 @@ hppe_vr_mii_an_ctrl_channel2_set(
 		a_uint32_t index,
 		union vr_mii_an_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_CTRL_CHANNEL2_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_CTRL_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_CTRL_INC,
 				value->val);
 }
@@ -790,9 +967,14 @@ hppe_vr_mii_an_ctrl_channel3_set(
 		a_uint32_t index,
 		union vr_mii_an_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_CTRL_CHANNEL3_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_CTRL_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_CTRL_INC,
 				value->val);
 }
@@ -850,11 +1032,17 @@ hppe_vr_mii_an_intr_sts_get(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_ADDRESS;
+
 	if (index >= VR_MII_AN_INTR_STS_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				&value->val);
 }
@@ -865,9 +1053,14 @@ hppe_vr_mii_an_intr_sts_set(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				value->val);
 }
@@ -878,11 +1071,17 @@ hppe_vr_xaui_mode_ctrl_get(
 		a_uint32_t index,
 		union vr_xaui_mode_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XAUI_MODE_CTRL_ADDRESS;
+
 	if (index >= VR_XAUI_MODE_CTRL_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XAUI_MODE_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XAUI_MODE_CTRL_INC,
 				&value->val);
 }
@@ -893,9 +1092,14 @@ hppe_vr_xaui_mode_ctrl_set(
 		a_uint32_t index,
 		union vr_xaui_mode_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XAUI_MODE_CTRL_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XAUI_MODE_CTRL_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XAUI_MODE_CTRL_INC,
 				value->val);
 }
@@ -906,9 +1110,14 @@ hppe_vr_xaui_mode_ctrl_channel1_set(
 		a_uint32_t index,
 		union vr_xaui_mode_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XAUI_MODE_CTRL_CHANNEL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XAUI_MODE_CTRL_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XAUI_MODE_CTRL_INC,
 				value->val);
 }
@@ -919,9 +1128,14 @@ hppe_vr_xaui_mode_ctrl_channel2_set(
 		a_uint32_t index,
 		union vr_xaui_mode_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XAUI_MODE_CTRL_CHANNEL2_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XAUI_MODE_CTRL_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XAUI_MODE_CTRL_INC,
 				value->val);
 }
@@ -932,9 +1146,14 @@ hppe_vr_xaui_mode_ctrl_channel3_set(
 		a_uint32_t index,
 		union vr_xaui_mode_ctrl_u *value)
 {
+	a_uint32_t reg_addr = VR_XAUI_MODE_CTRL_CHANNEL3_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_XAUI_MODE_CTRL_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_XAUI_MODE_CTRL_INC,
 				value->val);
 }
@@ -991,11 +1210,17 @@ hppe_vr_mii_an_intr_sts_channel1_get(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_CHANNEL1_ADDRESS;
+
 	if (index >= VR_MII_AN_INTR_STS_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				&value->val);
 }
@@ -1006,9 +1231,14 @@ hppe_vr_mii_an_intr_sts_channel1_set(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_CHANNEL1_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_CHANNEL1_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				value->val);
 }
@@ -1019,11 +1249,17 @@ hppe_vr_mii_an_intr_sts_channel2_get(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_CHANNEL2_ADDRESS;
+
 	if (index >= VR_MII_AN_INTR_STS_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				&value->val);
 }
@@ -1034,9 +1270,14 @@ hppe_vr_mii_an_intr_sts_channel2_set(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_CHANNEL2_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_CHANNEL2_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				value->val);
 }
@@ -1047,11 +1288,17 @@ hppe_vr_mii_an_intr_sts_channel3_get(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_CHANNEL3_ADDRESS;
+
 	if (index >= VR_MII_AN_INTR_STS_MAX_ENTRY)
 		return SW_OUT_OF_RANGE;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_get(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				&value->val);
 }
@@ -1062,9 +1309,14 @@ hppe_vr_mii_an_intr_sts_channel3_set(
 		a_uint32_t index,
 		union vr_mii_an_intr_sts_u *value)
 {
+	a_uint32_t reg_addr = VR_MII_AN_INTR_STS_CHANNEL3_ADDRESS;
+
+	if (hsl_get_current_chip_type(dev_id) == CHIP_JHPPE)
+		reg_addr = JHPPE_CSR1_ADDR(reg_addr);
+
 	return hppe_uniphy_reg_set(
 				dev_id,
-				NSS_UNIPHY_BASE_ADDR + VR_MII_AN_INTR_STS_CHANNEL3_ADDRESS,
+				NSS_UNIPHY_BASE_ADDR + reg_addr,
 				index * VR_MII_AN_INTR_STS_INC,
 				value->val);
 }
