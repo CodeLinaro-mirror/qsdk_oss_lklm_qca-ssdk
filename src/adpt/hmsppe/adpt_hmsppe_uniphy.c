@@ -32,12 +32,15 @@
 
 #define JCCDR_FST_CDR_DIV_STG1_STEP2_DEFAULT			0x80
 #define JCCDR_FST_CDR_DIV_STG1_STEP2_64HZ			0xFF
+#define JCCDR_FST_CDR_DIV_STG1_STEP2_XGPON_2MHZ			0x4
 #define JCCDR_FST_CDR_DIV_STG2_STEP2_DEFAULT			0x4
 
 #define JCCDR_FST_CDR_DIV_STG1_STEP3_DEFAULT			0x80
+#define JCCDR_FST_CDR_DIV_STG1_STEP3_XGPON_2MHZ			0x4
 #define JCCDR_FST_CDR_DIV_STG2_STEP3_DEFAULT			0x80
 #define JCCDR_FST_CDR_DIV_STG2_STEP3_GPON_4KHZ			0x10
 #define JCCDR_FST_CDR_DIV_STG2_STEP3_GPON_2KHZ			0x20
+#define JCCDR_FST_CDR_DIV_STG2_STEP3_XGPON_2MHZ			0x4
 
 #define JCCDR_FST_CDR_DIV_STG3_STEP_DEFAULT			0x0
 #define JCCDR_FST_CDR_DIV_STG3_STEP_XGPON_64HZ			0x3
@@ -52,6 +55,10 @@
 #define JCCDR_FLOOP_GAIN_TUNE0_GPON_4KHZ_2KHZ			0x3
 #define JCCDR_FLOOP_GAIN_TUNE1_GPON_4KHZ_2KHZ			0x8
 #define JCCDR_FLOOP_GAIN_TUNE2_GPON_4KHZ			0xA
+#define JCCDR_FLOOP_GAIN_TUNE1_XGPON_2MHZ			0x1
+#define JCCDR_FLOOP_GAIN_TUNE2_XGPON_2MHZ			0x1
+#define JCCDR_FLOOP_GAIN_TUNE1_GPON_500KHZ			0xD
+#define JCCDR_FLOOP_GAIN_TUNE2_GPON_500KHZ			0xC
 
 static sw_error_t
 adpt_hmsppe_uniphy_pon_clock_enable(a_uint32_t dev_id, a_uint32_t uniphy_index,
@@ -118,18 +125,15 @@ adpt_hmsppe_uniphy_jccdr_fast_lock_tune(a_uint32_t dev_id, a_uint32_t uniphy_ind
 
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step2_get(dev_id, uniphy_index, &step2_reg);
 	SW_RTN_ON_ERROR(rv);
-	step2_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step2 = JCCDR_FST_CDR_DIV_STG1_STEP2_DEFAULT; /* 0x80 */
+	step2_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step2 = JCCDR_FST_CDR_DIV_STG1_STEP2_XGPON_2MHZ; /* 0x4 */
 	step2_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step2 = JCCDR_FST_CDR_DIV_STG2_STEP2_DEFAULT; /* 0x4 */
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step2_set(dev_id, uniphy_index, &step2_reg);
 	SW_RTN_ON_ERROR(rv);
 
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step3_get(dev_id, uniphy_index, &step3_reg);
 	SW_RTN_ON_ERROR(rv);
-	step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step3 = JCCDR_FST_CDR_DIV_STG1_STEP3_DEFAULT; /* 0x80 */
-	if (mode == PORT_WRAPPER_GPON)
-		step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step3 = JCCDR_FST_CDR_DIV_STG2_STEP3_GPON_2KHZ; /* 0x20 */
-	else
-		step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step3 = JCCDR_FST_CDR_DIV_STG2_STEP3_DEFAULT; /* 0x80 */
+	step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step3 = JCCDR_FST_CDR_DIV_STG1_STEP3_XGPON_2MHZ; /* 0x4 */
+	step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step3 = JCCDR_FST_CDR_DIV_STG2_STEP3_XGPON_2MHZ; /* 0x4 */
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step3_set(dev_id, uniphy_index, &step3_reg);
 	SW_RTN_ON_ERROR(rv);
 
@@ -146,14 +150,14 @@ adpt_hmsppe_uniphy_jccdr_fast_lock_tune(a_uint32_t dev_id, a_uint32_t uniphy_ind
 	rv = hmsppe_uniphy_jccdr_floop_gain_tune_val_get(dev_id, uniphy_index, &fgain_reg);
 	SW_RTN_ON_ERROR(rv);
 	fgain_reg.bf.mmd1_reg_jccdr_floop_gain_tune_en = A_TRUE;
+	fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune0 = JCCDR_FLOOP_GAIN_TUNE0_DEFAULT; /* 0x1 */
 	if (mode == PORT_WRAPPER_GPON) {
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune0 = JCCDR_FLOOP_GAIN_TUNE0_GPON_4KHZ_2KHZ; /* 0x3 */
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_GPON_4KHZ_2KHZ; /* 0x8 */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_GPON_500KHZ; /* 0xD */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune2 = JCCDR_FLOOP_GAIN_TUNE2_GPON_500KHZ; /* 0xC */
 	} else {
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune0 = JCCDR_FLOOP_GAIN_TUNE0_DEFAULT; /* 0x1 */
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_DEFAULT; /* 0x6 */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_XGPON_2MHZ; /* 0x1 */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune2 = JCCDR_FLOOP_GAIN_TUNE2_XGPON_2MHZ; /* 0x1 */
 	}
-	fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune2 = JCCDR_FLOOP_GAIN_TUNE2_DEFAULT; /* 0xB */
 	rv = hmsppe_uniphy_jccdr_floop_gain_tune_val_set(dev_id, uniphy_index, &fgain_reg);
 	SW_RTN_ON_ERROR(rv);
 
