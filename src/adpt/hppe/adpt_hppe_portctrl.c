@@ -5104,9 +5104,7 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_port_max_frame_size_get = adpt_ppe_port_max_frame_size_get;
 	p_adpt_api->adpt_port_source_filter_get = adpt_ppe_port_source_filter_get;
 	p_adpt_api->adpt_port_source_filter_set = adpt_ppe_port_source_filter_set;
-#ifndef IN_PORTCONTROL_MINI
 	p_adpt_api->adpt_port_interface_mode_apply = adpt_hppe_port_interface_mode_apply;
-#endif
 	p_adpt_api->adpt_port_promisc_mode_set = adpt_hppe_port_promisc_mode_set;
 	p_adpt_api->adpt_port_promisc_mode_get = adpt_hppe_port_promisc_mode_get;
 	p_adpt_api->adpt_port_flowctrl_forcemode_set =
