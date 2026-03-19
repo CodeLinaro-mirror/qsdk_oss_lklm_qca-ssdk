@@ -375,7 +375,17 @@ void ssdk_uniphy_reset(
 	enum uniphy_rst_type rst_type,
 	a_uint32_t action);
 
-void ssdk_port_reset(
+void ssdk_ppe_port_clock_assert(
+	a_uint32_t dev_id,
+	a_uint32_t port_id,
+	a_uint32_t action);
+
+void ssdk_ppe_mac_clock_assert(
+	a_uint32_t dev_id,
+	a_uint32_t port_id,
+	a_uint32_t action);
+
+void ssdk_port_clock_assert(
 	a_uint32_t dev_id,
 	a_uint32_t port_id,
 	a_uint32_t action);
@@ -400,7 +410,7 @@ ssdk_port_speed_clock_set(
 	a_uint32_t dev_id,
 	a_uint32_t port_id,
 	a_uint32_t rate);
-void ssdk_port_mac_clock_reset(
+void ssdk_port_clock_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id);
 void ssdk_uniphy_clock_rate_set(
