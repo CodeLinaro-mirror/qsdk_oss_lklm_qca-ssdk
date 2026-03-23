@@ -31,6 +31,9 @@ extern "C" {
 #define UNIPHY2_SYS_RESET_ID	"uniphy2_sys_rst"
 #define UNIPHY0_AHB_RESET_ID	"uniphy0_ahb_rst"
 #define UNIPHY1_AHB_RESET_ID	"uniphy1_ahb_rst"
+#define UNIPHY0_PMA_RESET_ID	"uniphy0_pma_rst"
+#define UNIPHY1_PMA_RESET_ID	"uniphy1_pma_rst"
+#define UNIPHY2_PMA_RESET_ID	"uniphy2_pma_rst"
 #define UNIPHY_PORT1_RX_RESET_ID	"uniphy_port1_rx_rst"
 #define UNIPHY_PORT1_TX_RESET_ID	"uniphy_port1_tx_rst"
 #define UNIPHY_PORT2_RX_RESET_ID	"uniphy_port2_rx_rst"
@@ -119,6 +122,9 @@ enum uniphy_rst_type {
 	PON_RESET_E,
 	UNIPHY1_XLGPCS_RESET_E,
 	UNIPHY2_XLGPCS_RESET_E,
+	UNIPHY0_PMA_RESET_E,
+	UNIPHY1_PMA_RESET_E,
+	UNIPHY2_PMA_RESET_E,
 	UNIPHY_RST_MAX
 };
 
