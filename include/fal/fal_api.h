@@ -304,7 +304,10 @@ extern "C" {
     SW_API_DEF(SW_API_PT_ERP_STANDBY_EXIT, fal_erp_standby_exit), \
     SW_API_DEF(SW_API_PT_SWITCH_LOOPBACK_PORT_GET, fal_switch_loopback_port_get), \
     SW_API_DEF(SW_API_PT_PPS_CTRL_SET, fal_port_pps_ctrl_set), \
-    SW_API_DEF(SW_API_PT_PPS_CTRL_GET, fal_port_pps_ctrl_get),
+    SW_API_DEF(SW_API_PT_PPS_CTRL_GET, fal_port_pps_ctrl_get), \
+    SW_API_DEF(SW_API_PT_INTERFACE_MODE_SET, fal_port_interface_mode_set), \
+    SW_API_DEF(SW_API_PT_INTERFACE_MODE_APPLY, fal_port_interface_mode_apply), \
+    SW_API_DEF(SW_API_PT_INTERFACE_MODE_GET, fal_port_interface_mode_get),
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
     SW_API_DESC(SW_API_PT_CDT) \
@@ -361,7 +364,10 @@ extern "C" {
     SW_API_DESC(SW_API_PT_ERP_STANDBY_EXIT) \
     SW_API_DESC(SW_API_PT_SWITCH_LOOPBACK_PORT_GET) \
     SW_API_DESC(SW_API_PT_PPS_CTRL_SET) \
-    SW_API_DESC(SW_API_PT_PPS_CTRL_GET)
+    SW_API_DESC(SW_API_PT_PPS_CTRL_GET) \
+    SW_API_DESC(SW_API_PT_INTERFACE_MODE_SET) \
+    SW_API_DESC(SW_API_PT_INTERFACE_MODE_GET) \
+    SW_API_DESC(SW_API_PT_INTERFACE_MODE_APPLY)
 /*end of PORTCONTROL_API_PARAM*/
 #endif
 #else
