@@ -2497,7 +2497,7 @@ adpt_jhppe_uniphy_25g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 
 	/* PMA init setting */
 	adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-			PORT_WRAPPER_25GBASE_R, 0, A_FALSE);
+			PORT_WRAPPER_25GBASE_R, 2, A_FALSE);
 
 	/* disable instance clock */
 	qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index, 1, A_FALSE);
