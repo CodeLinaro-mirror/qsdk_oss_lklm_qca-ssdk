@@ -383,7 +383,7 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-				PORT_WRAPPER_UQXGMII, 0, A_FALSE);
+				PORT_WRAPPER_UQXGMII, 2, A_FALSE);
 #endif
 	/* disable instance clock */
 	for (i = SSDK_PHYSICAL_PORT1; i <= SSDK_PHYSICAL_PORT4; i++) {
@@ -538,7 +538,7 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-				PORT_WRAPPER_25GBASE_R, 0, A_FALSE);
+				PORT_WRAPPER_USXGMII, 2, A_FALSE);
 #endif
 	/* disable instance clock */
 	qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
@@ -689,7 +689,7 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-			PORT_WRAPPER_10GBASE_R, 0, A_FALSE);
+			PORT_WRAPPER_10GBASE_R, 2, A_FALSE);
 #endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
@@ -810,7 +810,7 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-				PORT_WRAPPER_SGMII_PLUS, 0, A_FALSE);
+				PORT_WRAPPER_SGMII_PLUS, 2, A_FALSE);
 #endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
@@ -907,7 +907,7 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-			PORT_WRAPPER_SGMII_CHANNEL0, 0, A_FALSE);
+			PORT_WRAPPER_SGMII_CHANNEL0, 2, A_FALSE);
 #endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
@@ -1069,7 +1069,7 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-			PORT_WRAPPER_QSGMII, 0, A_FALSE);
+			PORT_WRAPPER_QSGMII, 2, A_FALSE);
 #endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
@@ -1136,7 +1136,7 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 #if defined(JHPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		adpt_jhppe_uniphy_pma_init_setting(dev_id, uniphy_index,
-			PORT_WRAPPER_PSGMII, 0, A_FALSE);
+			PORT_WRAPPER_PSGMII, 2, A_FALSE);
 #endif
 	/* keep xpcs to reset status */
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
