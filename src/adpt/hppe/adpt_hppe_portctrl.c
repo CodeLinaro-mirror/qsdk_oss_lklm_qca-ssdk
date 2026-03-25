@@ -107,12 +107,36 @@
  */
 #define GMAC_TX_THD    0x1
 
+#define PPE_PHY_STATUS_LINK_BIT		7
+#define PPE_PHY_STATUS_25G_LINK_BIT	1
+
+sw_error_t
+adpt_hppe_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
+			      fal_port_interface_mode_t * mode)
+{
+	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
+
+	SW_RTN_ON_NULL(phy_info);
+	SW_RTN_ON_NULL(mode);
+
+	if (adpt_ppe_type_get(dev_id) != HTTPPE_TYPE) {
+		if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+		{
+			return SW_BAD_PARAM;
+		}
+	}
+	*mode = phy_info->port_mode[port_id];
+
+	return SW_OK;
+}
+
 static sw_error_t
 _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 		struct port_phy_status *phy_status)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t reg_field = 0;
+	a_uint32_t reg_field = 0, link = 0;
+	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
@@ -178,32 +202,44 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 		return SW_NOT_SUPPORTED;
 	}
 
-	if ((reg_field >> 7) & 0x1)
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
+	SW_RTN_ON_ERROR(rv);
+
+	if (mode == PORT_25GBASE_R)
+		link = (reg_field >> PPE_PHY_STATUS_25G_LINK_BIT) & 0x1;
+	else
+		link = (reg_field >> PPE_PHY_STATUS_LINK_BIT) & 0x1;
+	if (link)
 	{
 		phy_status->link_status = PORT_LINK_UP;
-		switch (reg_field & 0x7)
-		{
-			case MAC_SPEED_10M:
-				phy_status->speed = FAL_SPEED_10;
-				break;
-			case MAC_SPEED_100M:
-				phy_status->speed = FAL_SPEED_100;
-				break;
-			case MAC_SPEED_1000M:
-				phy_status->speed = FAL_SPEED_1000;
-				break;
-			case MAC_SPEED_10000M:
-				phy_status->speed = FAL_SPEED_10000;
-				break;
-			case MAC_SPEED_2500M:
-				phy_status->speed = FAL_SPEED_2500;
-				break;
-			case MAC_SPEED_5000M:
-				phy_status->speed = FAL_SPEED_5000;
-				break;
-			default:
-				phy_status->speed = FAL_SPEED_BUTT;
-				break;
+
+		if (mode == PORT_25GBASE_R) {
+			phy_status->speed = FAL_SPEED_25000;
+		} else {
+			switch (reg_field & 0x7)
+			{
+				case MAC_SPEED_10M:
+					phy_status->speed = FAL_SPEED_10;
+					break;
+				case MAC_SPEED_100M:
+					phy_status->speed = FAL_SPEED_100;
+					break;
+				case MAC_SPEED_1000M:
+					phy_status->speed = FAL_SPEED_1000;
+					break;
+				case MAC_SPEED_10000M:
+					phy_status->speed = FAL_SPEED_10000;
+					break;
+				case MAC_SPEED_2500M:
+					phy_status->speed = FAL_SPEED_2500;
+					break;
+				case MAC_SPEED_5000M:
+					phy_status->speed = FAL_SPEED_5000;
+					break;
+				default:
+					phy_status->speed = FAL_SPEED_BUTT;
+					break;
+			}
 		}
 		phy_status->duplex = FAL_FULL_DUPLEX;
 	}
@@ -1097,23 +1133,6 @@ adpt_ppe_port_mru_get(a_uint32_t dev_id, fal_port_t port_id,
 	port_value = FAL_PORT_ID_VALUE(port_id);
 	ADPT_PPE_PORT_ID_CHECK(port_value);	
 	return adpt_hppe_port_mru_get(dev_id, port_value, ctrl);
-}
-
-sw_error_t
-adpt_hppe_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
-			      fal_port_interface_mode_t * mode)
-{
-	phy_info_t *phy_info = hsl_phy_info_get(dev_id);
-
-	if (adpt_ppe_type_get(dev_id) != HTTPPE_TYPE) {
-		if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
-		{
-			return SW_BAD_PARAM;
-		}
-	}
-	*mode = phy_info->port_mode[port_id];
-
-	return SW_OK;
 }
 
 sw_error_t
@@ -2832,6 +2851,45 @@ adpt_ppe_port_mru_mtu_get(a_uint32_t dev_id, fal_port_t port_id,
 	return rv;
 }
 
+#ifdef CONFIG_PHYLINK
+static a_bool_t
+adpt_hppe_port_phylink_is_enabled(a_uint32_t dev_id, fal_port_t port_id)
+{
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	if (!priv || port_id >= SW_MAX_NR_PORT)
+		return A_FALSE;
+
+	return priv->ports[port_id].phylink ? A_TRUE : A_FALSE;
+}
+#if defined(IN_SFP_PHY)
+static sw_error_t
+adpt_hppe_sfp_port_phylink_interface_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_interface_mode_t *mode)
+{
+	phy_interface_t interface;
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	SW_RTN_ON_NULL(priv);
+	SW_RTN_ON_NULL(mode);
+
+	if (port_id >= SW_MAX_NR_PORT)
+		return SW_BAD_PARAM;
+
+	interface = priv->ports[port_id].phylink_link_state.interface;
+
+	/* Only update mode if there is a valid match, otherwise leave input parameter unchanged */
+	if (interface == PHY_INTERFACE_MODE_25GBASER)
+		*mode = PORT_25GBASE_R;
+
+	SSDK_DEBUG("port id:%d, phylink_link_state interface:%d, port mode:%d\n",
+		port_id, interface, *mode);
+
+	return SW_OK;
+}
+#endif
+#endif
+
 sw_error_t
 adpt_hppe_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode)
@@ -2854,7 +2912,12 @@ adpt_hppe_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 
 	if (A_TRUE == hsl_port_is_sfp(dev_id, port_id)) {
 #if defined(IN_SFP_PHY)
-		rv = sfp_phy_interface_get_mode_status(dev_id, port_id, mode);
+#ifdef CONFIG_PHYLINK
+		if (adpt_hppe_port_phylink_is_enabled(dev_id, port_id))
+			rv = adpt_hppe_sfp_port_phylink_interface_get(dev_id, port_id, mode);
+		else
+#endif
+			rv = sfp_phy_interface_get_mode_status(dev_id, port_id, mode);
 #endif
 		SW_RTN_ON_ERROR (rv);
 	} else {
@@ -4488,6 +4551,28 @@ adpt_hmsppe_port_interface_clk_reset(a_uint32_t dev_id, a_uint32_t port_id)
 }
 #endif
 
+#ifdef CONFIG_PHYLINK
+static sw_error_t
+adpt_hppe_port_phylink_phy_status_get(a_uint32_t dev_id, a_uint32_t port_id,
+	struct port_phy_status *phy_status)
+{
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+	SW_RTN_ON_NULL(priv);
+
+	if (port_id >= SW_MAX_NR_PORT)
+		return SW_BAD_PARAM;
+
+	phy_status->speed = priv->ports[port_id].phylink_link_state.speed;
+	phy_status->duplex = priv->ports[port_id].phylink_link_state.duplex;
+	phy_status->link_status = priv->ports[port_id].phylink_link_state.link;
+
+	SSDK_DEBUG("port id:%d, link:%d, speed:%d, duplex:%d\n",
+		port_id, phy_status->link_status, phy_status->speed, phy_status->duplex);
+	return SW_OK;
+}
+#endif
+
 sw_error_t
 qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 {
@@ -4508,8 +4593,17 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 		if(rv) {
 			SSDK_DEBUG("port %d sfp interface mode change failed\n", port_id);
 		}
-		rv = adpt_hppe_port_phy_status_get(priv->device_id,
+#ifdef CONFIG_PHYLINK
+		if (hsl_port_is_sfp(priv->device_id, port_id) &&
+			(adpt_hppe_port_phylink_is_enabled(priv->device_id, port_id))) {
+			rv = adpt_hppe_port_phylink_phy_status_get(priv->device_id,
 				port_id, &phy_status);
+		} else
+#endif
+		{
+			rv = adpt_hppe_port_phy_status_get(priv->device_id,
+				port_id, &phy_status);
+		}
 		if (rv != SW_OK) {
 			SSDK_DEBUG("failed to get port %d status return value is %d\n",
 					port_id, rv);
