@@ -1,17 +1,8 @@
 /*
  * Copyright (c) 2012, 2016, 2018, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
-
 
 /**
  * @defgroup isisc_acl ISISC_ACL
@@ -1400,6 +1391,9 @@ _isisc_acl_rule_src_filter_sts_set(a_uint32_t dev_id,
 
     HSL_DEV_ID_CHECK(dev_id);
 
+    if (rule_id >= ISISC_MAX_FILTER)
+        return SW_OUT_OF_RANGE;
+
     sw_rule = &sw_rule_ent[dev_id][rule_id];
     if (!(ENT_USED & sw_rule->status))
     {
@@ -1442,6 +1436,8 @@ _isisc_acl_rule_src_filter_sts_get(a_uint32_t dev_id,
     isisc_acl_rule_t *sw_rule;
 
     HSL_DEV_ID_CHECK(dev_id);
+    if (rule_id >= ISISC_MAX_FILTER)
+        return SW_OUT_OF_RANGE;
 
     sw_rule = &sw_rule_ent[dev_id][rule_id];
     if (!(ENT_USED & sw_rule->status))
@@ -1689,7 +1685,7 @@ isisc_acl_rule_sync_multi_portmap(a_uint32_t dev_id, a_uint32_t pos, a_uint32_t 
 
     HSL_DEV_ID_CHECK(dev_id);
 
-    if (ISISC_MAX_LIST_ID < pos)
+    if (pos >= ISISC_MAX_FILTER)
     {
         return SW_NOT_SUPPORTED;
     }

@@ -105,6 +105,11 @@ int parse_uci_option(struct switch_val *val, const char *option_names[], const i
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0, index = 0;
 
+	if (length < 0 || length > SWITCH_CFG_LEN_MAX) {
+		SSDK_ERROR("Invalid length %d, max %d\n", length, SWITCH_CFG_LEN_MAX);
+		return -1;
+	}
+
 	/* initialize all options to default value */
 	while (index < length) {
 		val_ptr[index++] = "default";
@@ -11413,6 +11418,9 @@ parse_policer_portentry(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
+
+	BUILD_BUG_ON(41 > SWITCH_CFG_LEN_MAX);
+
 	switch_ext_p = val->value.ext_val;
 	while(switch_ext_p) {
 		ext_value_p = switch_ext_p;
@@ -11517,6 +11525,9 @@ parse_policer_aclentry(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
+
+	BUILD_BUG_ON(39 > SWITCH_CFG_LEN_MAX);
+
 	switch_ext_p = val->value.ext_val;
 	while(switch_ext_p) {
 		ext_value_p = switch_ext_p;
@@ -11952,6 +11963,8 @@ parse_shaper_queueshaper(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
+
+	BUILD_BUG_ON(16 > SWITCH_CFG_LEN_MAX);
 
 	switch_ext_p = val->value.ext_val;
 	while(switch_ext_p) {

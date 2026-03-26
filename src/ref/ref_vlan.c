@@ -191,6 +191,8 @@ qca_lan_wan_cfg_get(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg)
 		while (vlan_entry.mem_ports >> port_id) {
 			if (((vlan_entry.mem_ports >> port_id) & 1) &&
 					SW_IS_PBMP_MEMBER(member_pmap, port_id)) {
+				if (entry_id >= SW_MAX_NR_PORT)
+					break;
 				lan_wan_cfg->v_port_info[entry_id].port_id = port_id;
 				lan_wan_cfg->v_port_info[entry_id].vid = vlan_entry.vid;
 				lan_wan_cfg->v_port_info[entry_id].valid = A_TRUE;
@@ -212,6 +214,8 @@ qca_lan_wan_cfg_get(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg)
 		port_id = 1;
 		while (lan_bmp >> port_id) {
 			if ((lan_bmp >> port_id) & 1) {
+				if (entry_id >= SW_MAX_NR_PORT)
+					break;
 				lan_wan_cfg->v_port_info[entry_id].port_id = port_id;
 				lan_wan_cfg->v_port_info[entry_id].vid = 0;
 				lan_wan_cfg->v_port_info[entry_id].is_wan_port = A_FALSE;

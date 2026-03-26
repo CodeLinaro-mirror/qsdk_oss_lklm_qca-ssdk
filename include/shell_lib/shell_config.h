@@ -1,17 +1,7 @@
 /*
  * Copyright (c) 2013, The Linux Foundation. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #ifndef _SHELL_CONFIG_H_
@@ -56,12 +46,12 @@ extern "C" {
 #define GCMD_DES gcmd_des
 
 #define GCMD_NAME(cmd_nr)  GCMD_DES[cmd_nr].name
-#define GCMD_MEMO(cmd_nr)  GCMD_DES[cmd_nr].memo
+#define GCMD_MEMO(cmd_nr)  NULL
 
 #define GCMD_SUB_NAME(cmd_nr, sub_cmd_nr)  GCMD_DES[cmd_nr].sub_cmd_des[sub_cmd_nr].sub_name
 #define GCMD_SUB_ACT(cmd_nr, sub_cmd_nr)  GCMD_DES[cmd_nr].sub_cmd_des[sub_cmd_nr].sub_act
-#define GCMD_SUB_MEMO(cmd_nr, sub_cmd_nr)  GCMD_DES[cmd_nr].sub_cmd_des[sub_cmd_nr].sub_memo
-#define GCMD_SUB_USAGE(cmd_nr, sub_cmd_nr)  GCMD_DES[cmd_nr].sub_cmd_des[sub_cmd_nr].sub_usage
+#define GCMD_SUB_MEMO(cmd_nr, sub_cmd_nr)  NULL
+#define GCMD_SUB_USAGE(cmd_nr, sub_cmd_nr) NULL
 #define GCMD_SUB_API(cmd_nr, sub_cmd_nr)  GCMD_DES[cmd_nr].sub_cmd_des[sub_cmd_nr].sub_api
 #define GCMD_SUB_FUNC(cmd_nr, sub_cmd_nr)  GCMD_DES[cmd_nr].sub_cmd_des[sub_cmd_nr].sub_func
 

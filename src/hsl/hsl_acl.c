@@ -1,15 +1,7 @@
 /*
  * Copyright (c) 2012, 2016, The Linux Foundation. All rights reserved.
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 
@@ -264,7 +256,7 @@ _hsl_acl_blk_left_defrag(a_uint32_t dev_id, a_uint32_t p_idx, a_uint32_t t_size,
     _hsl_acl_blk_dump(dev_id, "_hsl_acl_left_defrag before defrag");
 
     f_rsc = 0;
-    for (idx = p_idx - 1; idx >= 0; idx--)
+    for (idx = (p_idx > 0) ? (a_int32_t)(p_idx - 1) : -1; idx >= 0; idx--)
     {
         if (MEM_FREE == acl_pool[dev_id].blk_ent[idx].status)
         {
