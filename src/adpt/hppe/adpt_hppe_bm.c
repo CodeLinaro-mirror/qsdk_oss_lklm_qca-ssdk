@@ -91,9 +91,7 @@ adpt_hppe_bm_port_dynamic_thresh_get(a_uint32_t dev_id, fal_port_t port,
 	if( rv != SW_OK )
 		return rv;
 
-	if (!port_fc_cfg.bf.port_shared_dynamic)
-		return SW_FAIL;
-
+	cfg->is_dynamic = port_fc_cfg.bf.port_shared_dynamic;
 	cfg->weight = port_fc_cfg.bf.port_shared_weight;
 	cfg->shared_ceiling = port_fc_cfg.bf.port_shared_ceiling_0;
 	cfg->shared_ceiling |= port_fc_cfg.bf.port_shared_ceiling_1 <<
@@ -175,9 +173,7 @@ adpt_hppe_bm_port_static_thresh_get(a_uint32_t dev_id, fal_port_t port,
 	if( rv != SW_OK )
 		return rv;
 
-	if (port_fc_cfg.bf.port_shared_dynamic)
-		return SW_FAIL;
-
+	cfg->is_dynamic = port_fc_cfg.bf.port_shared_dynamic;
 	cfg->resume_off = port_fc_cfg.bf.port_resume_offset;
 	cfg->max_thresh = port_fc_cfg.bf.port_shared_ceiling_0;
 	cfg->max_thresh |= port_fc_cfg.bf.port_shared_ceiling_1 <<

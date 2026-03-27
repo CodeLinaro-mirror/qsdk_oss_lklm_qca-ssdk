@@ -22,6 +22,7 @@ typedef struct
 {
 	a_uint16_t max_thresh;  /* Static Maximum threshold */
 	a_uint16_t resume_off; /*resume offset */
+	a_bool_t is_dynamic;
 } fal_bm_static_cfg_t;
 
 typedef struct
@@ -30,6 +31,7 @@ typedef struct
 	a_uint16_t shared_ceiling;  /* Maximum shared buffers */
 	a_uint16_t resume_off; /*resume offset */
 	a_uint16_t resume_min_thresh; /* Minumum thresh for resume */
+	a_bool_t is_dynamic;
 } fal_bm_dynamic_cfg_t;
 
 typedef struct
