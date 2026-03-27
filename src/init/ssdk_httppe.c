@@ -373,6 +373,76 @@ sw_error_t qca_httppe_mdio_master_init(a_uint32_t dev_id)
 }
 #endif
 
+#if IS_ENABLED(CONFIG_NET_DSA)
+sw_error_t ssdk_httppe_init_with_dsa(struct qca_phy_priv* priv)
+{
+	a_uint32_t dev_id = priv->device_id;
+	sw_error_t rv = SW_OK;
+
+	/* Return if not HTTPPE */
+	if (priv->version != QCA_VER_HTTPPE)
+		return SW_OK;
+
+	/* HW init and swconfig only need process once in DSA interface events */
+	if (priv->dsa_setup == A_TRUE)
+		return SW_OK;
+
+#if defined(IN_VSI)
+	rv = qca_hppe_vsi_hw_init(dev_id);
+	if (rv)
+		goto SETUP_DONE;
+#endif
+
+#if defined(IN_POLICER)
+	rv = qca_appe_policer_hw_init(dev_id);
+	if (rv)
+		goto SETUP_DONE;
+#endif
+
+#if defined(IN_SHAPER)
+	rv = qca_appe_shaper_hw_init(dev_id);
+	if (rv)
+		goto SETUP_DONE;
+#endif
+
+#if defined(IN_ACL)
+	rv = qca_hppe_acl_byp_intf_mac_learn(dev_id);
+	if (rv)
+		goto SETUP_DONE;
+#if defined(IN_PTP)
+	rv = qca_hppe_acl_remark_ptp_servcode(dev_id);
+	if (rv)
+		goto SETUP_DONE;
+#endif
+#endif
+
+#if defined(IN_CTRLPKT)
+	rv = qca_hppe_ctlpkt_hw_init(dev_id);
+	if (rv)
+		goto SETUP_DONE;
+#endif
+
+#if defined(IN_SWCONFIG)
+	if (!priv->qca_ssdk_sw_dev_registered) {
+		rv = qca_switchdev_register(priv);
+		if (rv)
+			goto SETUP_DONE;
+
+		priv->qca_ssdk_sw_dev_registered = A_TRUE;
+	}
+#endif
+
+	SSDK_INFO("HTTPPE Initializing for QCE DSA done!!\n");
+
+SETUP_DONE:
+	mutex_lock(&priv->reg_mutex);
+	priv->dsa_setup = A_TRUE;
+	mutex_unlock(&priv->reg_mutex);
+
+	return rv;
+}
+#endif
+
 sw_error_t qca_httppe_hw_init(a_uint32_t dev_id)
 {
 	sw_error_t rv = SW_OK;

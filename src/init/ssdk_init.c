@@ -833,6 +833,63 @@ const struct switch_dev_ops qca_ar8327_sw_ops = {
 	.get_port_link = qca_ar8327_sw_get_port_link,
 #endif
 };
+
+/* standalone swconfig for htt to avoid impact to legacy devices */
+#if defined(HTTPPE) && IS_ENABLED(CONFIG_NET_DSA)
+static struct switch_attr qce_2204_globals[] = {
+#if defined(IN_MISC)
+	{
+		.name = "max_frame_size",
+		.description = "Set Max frame Size Of Mac",
+		.type = SWITCH_TYPE_INT,
+		.set = qca_ar8327_sw_set_max_frame_size,
+		.get = qca_ar8327_sw_get_max_frame_size,
+		.max = 9018
+	},
+#endif
+#ifdef IN_FDB
+	{
+		.name = "dump_arl",
+		.description = "Dump All ARL table",
+		.type = SWITCH_TYPE_STRING,
+		.get = qca_ar8327_sw_atu_dump,
+	},
+#endif
+	{
+		.name = "switch_ext",
+		.description = "Switch extended configuration",
+		.type = SWITCH_TYPE_EXT,
+		.set = qca_ar8327_sw_switch_ext,
+	},
+};
+
+static struct switch_attr qce_2204_port[] = {
+#if defined(IN_PORTCONTROL)
+	{
+		.type = SWITCH_TYPE_INT,
+		.name = "enable_eee",
+		.description = "Enable EEE",
+		.set = qca_ar8327_sw_set_eee,
+		.get = qca_ar8327_sw_get_eee,
+		.max = 1,
+	},
+#endif
+};
+
+const struct switch_dev_ops qce_2204_sw_ops = {
+	.attr_global = {
+		.attr = qce_2204_globals,
+		.n_attr = ARRAY_SIZE(qce_2204_globals),
+	},
+	.attr_port = {
+		.attr = qce_2204_port,
+		.n_attr = ARRAY_SIZE(qce_2204_port),
+	},
+#if defined(IN_PORTCONTROL)
+	.get_port_link = qca_ar8327_sw_get_port_link,
+#endif
+};
+#endif
 #endif
 
 #define SSDK_MIB_CHANGE_WQ
@@ -1461,7 +1518,7 @@ sw_error_t ssdk_ppe_hw_recover(a_uint32_t dev_id)
 EXPORT_SYMBOL(ssdk_ppe_hw_recover);
 
 #if defined(IN_SWCONFIG)
-static int qca_switchdev_register(struct qca_phy_priv *priv)
+int qca_switchdev_register(struct qca_phy_priv *priv)
 {
 	struct switch_dev *sw_dev;
 	int ret = SW_OK;
@@ -1489,7 +1546,6 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 		case QCA_VER_JHPPE:
 		case QCA_VER_HMSPPE:
 		case QCA_VER_HPPE:
-		case QCA_VER_HTTPPE:
 			sw_dev->name = "QCA "PPE_STR;
 			sw_dev->alias = "QCA "PPE_STR;
 			break;
@@ -1497,14 +1553,25 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 			sw_dev->name = "QCA MHT";
 			sw_dev->alias = "QCA MHT";
 			break;
+		case QCA_VER_HTTPPE:
+			sw_dev->name = "QCA HTTPPE";
+			sw_dev->alias = "QCA HTTPPE";
+			break;
 		default:
 			sw_dev->name = "unknown switch";
 			sw_dev->alias = "unknown switch";
 			break;
 	}
 
-	sw_dev->ops = &qca_ar8327_sw_ops;
-	sw_dev->vlans = AR8327_MAX_VLANS;
+#if defined(HTTPPE) && IS_ENABLED(CONFIG_NET_DSA)
+	if (adpt_ppe_type_get(priv->device_id) == HTTPPE_TYPE) {
+		sw_dev->ops = &qce_2204_sw_ops;
+	} else
+#endif
+	{
+		sw_dev->ops = &qca_ar8327_sw_ops;
+		sw_dev->vlans = AR8327_MAX_VLANS;
+	}
 	sw_dev->ports = priv->ports_num;
 
 	ret = register_switch(sw_dev, NULL);
@@ -1518,29 +1585,52 @@ static int qca_switchdev_register(struct qca_phy_priv *priv)
 #endif
 
 #if IS_ENABLED(CONFIG_NET_DSA)
-static int ssdk_dsa_event_link_change(struct net_device *dev, bool link)
+static struct qca_phy_priv* ssdk_get_priv_with_dsa_dev(struct net_device *dev)
 {
 	struct dsa_port *dp = NULL;
 	ssdk_netdev_switch_t *netdev_switch = NULL;
-	struct qca_phy_priv* priv = NULL;
+	a_uint32_t dev_id = 0;
 
 	if (!dsa_slave_dev_check(dev))
-		return NOTIFY_DONE;
+		return NULL;
 
 	/* find dp,master by dsa helper and get net_switch */
 	dp = dsa_port_from_netdev(dev);
 	netdev_switch = ssdk_dts_netdev_switch_find_by_netdev(dp->cpu_dp->master);
-	if (!netdev_switch)
-		return NOTIFY_DONE;
+	if (netdev_switch) {
+		dev_id = netdev_switch->switch_dev_id;
+	}
 
-	priv = ssdk_phy_priv_data_get(netdev_switch->switch_dev_id);
-	if (!priv)
+	return ssdk_phy_priv_data_get(dev_id);
+}
+
+static int ssdk_dsa_event_link_change(struct net_device *dev, bool link)
+{
+	struct qca_phy_priv* priv = ssdk_get_priv_with_dsa_dev(dev);
+	if (!priv) {
+		SSDK_ERROR("Priv handle could not be obtained by %s.\n", dev->name);
 		return NOTIFY_DONE;
+	}
 
 	priv->polling_once = A_TRUE;
 	mod_delayed_work(system_wq, &priv->qm_dwork_polling, 0);
 
 	return NOTIFY_OK;
+}
+
+static void ssdk_dsa_intf_register(struct net_device *dev)
+{
+	struct qca_phy_priv *priv = ssdk_get_priv_with_dsa_dev(dev);
+	if (!priv) {
+		SSDK_ERROR("Priv handle could not be obtained by %s.\n", dev->name);
+		return;
+	}
+
+	/* Initialization for QCE2204-DSA uninitialized modules */
+	if (ssdk_httppe_init_with_dsa(priv)){
+		SSDK_ERROR("HTTPPE Initializing for QCE DSA failed.\n");
+		return;
+	}
 }
 
 static int ssdk_dsa_event_nb(struct notifier_block *unused,
@@ -1963,6 +2053,10 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 		case NETDEV_REGISTER:
 			if (strstr(dev->name, "eth") && !(dev->priv_flags & IFF_802_1Q_VLAN))
 				ssdk_netdev_switch_init(dev);
+
+			if (dsa_slave_dev_check(dev))
+				ssdk_dsa_intf_register(dev);
+
 			break;
 	}
 
@@ -2204,12 +2298,12 @@ static int __init regi_init(void)
 				break;
 #if defined(HTTPPE)
 			case CHIP_HTTPPE: {
+				qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
 				struct device_node *dsa_node = of_find_compatible_node(NULL, NULL, "qcom,qce2204");
 				if (dsa_node) {
+					mutex_init(&qca_phy_priv_global[dev_id]->reg_mutex);
 					of_node_put(dsa_node);
-					SSDK_INFO("Skipping HTTPPE Initializing for QCE DSA enabled!!\n");
 				} else {
-					qca_phy_priv_global[dev_id]->ports_num = SSDK_PHYSICAL_PORT6;
 					rv = qca_httppe_hw_init(dev_id);
 					ssdk_init_status_debug_state(dev_id, SSDK_HW_INIT_FAILURE, rv);
 					rv = ssdk_switch_register(dev_id, cfg.chip_type);

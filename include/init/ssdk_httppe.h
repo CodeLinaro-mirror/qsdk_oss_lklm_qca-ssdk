@@ -12,6 +12,10 @@ extern "C" {
 
 sw_error_t qca_httppe_hw_init(a_uint32_t dev_id);
 
+sw_error_t ssdk_httppe_init_with_dsa(struct qca_phy_priv* priv);
+
+sw_error_t qca_httppe_mdio_master_init(a_uint32_t dev_id);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
