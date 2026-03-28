@@ -500,7 +500,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		 * 8 queues per port for appe, class 0~6 matches with priority 0~6, and
 		 * class 7 matches with priority >=7.
 		 */
-		max_pri_supported = ssdk_ucast_l0_cdrr_num_get(dev_id, i);
+		max_pri_supported = ssdk_port_ucast_max_pri_get(dev_id, i);
 
 		if (max_pri_supported > SSDK_PRI_MAX) {
 			max_pri_supported = SSDK_CPU_PRI_NUM;
@@ -607,7 +607,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	 * Configure the RDTCPU ARP reply packet with the max priority.
 	 */
 	queue_dst.cpu_code = SSDK_MGMT_ARP_REP_CPU_CODE;
-	max_pri_supported = ssdk_ucast_l0_cdrr_num_get(dev_id, SSDK_PORT_CPU);
+	max_pri_supported = ssdk_port_ucast_max_pri_get(dev_id, SSDK_PORT_CPU);
 	if (max_pri_supported > SSDK_PRI_MAX) {
 		max_pri_supported = SSDK_CPU_PRI_NUM;
 	}
