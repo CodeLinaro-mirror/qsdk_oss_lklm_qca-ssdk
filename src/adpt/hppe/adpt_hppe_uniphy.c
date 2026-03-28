@@ -283,6 +283,31 @@ __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	ssdk_gcc_uniphy_sys_set(dev_id, uniphy_index, A_TRUE);
 }
 
+/*
+ * adpt_hppe_uniphy_xpcs_eee_support - check whether XPCS hardware supports EEE
+ * @dev_id:       device ID
+ * @uniphy_index: uniphy instance index
+ *
+ * Read the XPCS EEE ability register (SR_XS_PCS_EEE_ABL) and check the kreee
+ * field to determine whether the XPCS of this uniphy instance has EEE
+ * hardware capability.
+ */
+a_bool_t
+adpt_hppe_uniphy_xpcs_eee_support(a_uint32_t dev_id, a_uint32_t uniphy_index)
+{
+	sw_error_t rv;
+	union sr_xs_pcs_eee_abl_u sr_xs_pcs_eee_abl = {0};
+
+	rv = hppe_sr_xs_pcs_eee_abl_get(dev_id, uniphy_index, &sr_xs_pcs_eee_abl);
+	if (rv != SW_OK)
+		return A_FALSE;
+
+	if (sr_xs_pcs_eee_abl.bf.kreee == 0)
+		return A_FALSE;
+
+	return A_TRUE;
+}
+
 static sw_error_t
 __adpt_hppe_uniphy_xpcs_eee_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
@@ -292,18 +317,14 @@ __adpt_hppe_uniphy_xpcs_eee_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	union vr_xs_pcs_eee_txtimer_u vr_xs_pcs_eee_txtimer;
 	union vr_xs_pcs_eee_rxtimer_u vr_xs_pcs_eee_rxtimer;
 	union vr_xs_pcs_eee_ctrl1_u vr_xs_pcs_eee_ctrl1;
-	union sr_xs_pcs_eee_abl_u sr_xs_pcs_eee_abl;
 
 	memset(&vr_xs_pcs_eee_ctrl0, 0, sizeof(vr_xs_pcs_eee_ctrl0));
 	memset(&vr_xs_pcs_eee_txtimer, 0, sizeof(vr_xs_pcs_eee_txtimer));
 	memset(&vr_xs_pcs_eee_rxtimer, 0, sizeof(vr_xs_pcs_eee_rxtimer));
 	memset(&vr_xs_pcs_eee_ctrl1, 0, sizeof(vr_xs_pcs_eee_ctrl1));
-	memset(&sr_xs_pcs_eee_abl, 0, sizeof(sr_xs_pcs_eee_abl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	rv = hppe_sr_xs_pcs_eee_abl_get(dev_id, uniphy_index, &sr_xs_pcs_eee_abl);
-	SW_RTN_ON_ERROR (rv);
-	if (sr_xs_pcs_eee_abl.bf.kreee == 0)
+	if (!adpt_hppe_uniphy_xpcs_eee_support(dev_id, uniphy_index))
 		return SW_NOT_SUPPORTED;
 
 	/* configure eee related timer value */

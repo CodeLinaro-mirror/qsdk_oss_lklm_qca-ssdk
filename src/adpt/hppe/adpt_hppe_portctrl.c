@@ -3579,6 +3579,42 @@ adpt_hppe_port_mac_eee_timer_adjust(a_uint32_t dev_id, fal_port_t port_id,
 	return adpt_ppe_port_mac_eee_timer_set(dev_id, port_id, &port_eee_cfg);
 }
 
+/*
+ * adpt_ppe_port_mac_eee_can_enable - check whether MAC-side EEE can be enabled
+ *                                    on the given port
+ * @dev_id:  device ID
+ * @port_id: port ID
+ *
+ * Returns A_TRUE if EEE may be enabled, A_FALSE otherwise.
+ *
+ * For USXGMII/UQXGMII/10G BASER interface modes, some XPCS would not support eee,
+ * so the XPCS EEE capability register of the corresponding uniphy
+ * instance must be checked.
+ *
+ * For other interface modes (e.g. SGMII, SGMII+), pcs always support EEE, so A_TRUE is
+ * returned unconditionally.
+ */
+static a_bool_t adpt_ppe_port_mac_eee_can_enable(a_uint32_t dev_id, fal_port_t port_id)
+{
+	sw_error_t rv;
+	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+	if (rv != SW_OK)
+		return A_FALSE;
+	/* 10GBASER mode also use XPCS and may be connected with laguna */
+	if (port_mode == PORT_USXGMII || port_mode == PORT_UQXGMII || port_mode == PORT_10GBASE_R) {
+		a_uint32_t uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+
+		if (uniphy_index >= SSDK_MAX_UNIPHY_INSTANCE)
+			return A_FALSE;
+		if (!adpt_hppe_uniphy_xpcs_eee_support(dev_id, uniphy_index))
+			return A_FALSE;
+	}
+
+	return A_TRUE;
+}
+
 static sw_error_t
 adpt_ppe_port_mac_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	fal_port_eee_cfg_t *port_eee_cfg)
@@ -3587,6 +3623,17 @@ adpt_ppe_port_mac_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
 	SW_RTN_ON_NULL(priv);
+
+	/*
+	 * If the caller requests LPI TX to be enabled but the hardware does not
+	 * support EEE on this port, silently skip the configuration (return SW_OK
+	 * rather than an error) so that upper layers do not treat this as a failure.
+	 */
+	if (port_eee_cfg->lpi_tx_enable && !adpt_ppe_port_mac_eee_can_enable(dev_id, port_id)) {
+		SSDK_DEBUG("port %d: EEE not supported on this interface, "
+			"skipping EEE configuration\n", port_id);
+		return SW_OK;
+	}
 	rv = adpt_ppe_port_mac_eee_status_set(dev_id, port_id, port_eee_cfg);
 	SW_RTN_ON_ERROR(rv);
 	/* If lpi_wakeup_timer is non-zero, wakeup_timer_force will be enabled, */
