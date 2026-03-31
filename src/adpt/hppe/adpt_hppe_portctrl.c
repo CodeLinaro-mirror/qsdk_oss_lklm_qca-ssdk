@@ -629,9 +629,10 @@ adpt_hppe_port_xgmac_reconfig(a_uint32_t dev_id, a_uint32_t port_id)
 
 	rv = hppe_mac_watchdog_timeout_wto_set(dev_id, index, XGMAC_WTO_LIMIT_13K);
 	SW_RTN_ON_ERROR(rv);
+	mdelay(1);
 	rv = hppe_mac_watchdog_timeout_pwe_set(dev_id, index, XGMAC_PWE_ENABLE);
 	SW_RTN_ON_ERROR(rv);
-
+	mdelay(1);
 	rv = _adpt_xgmac_port_rxfc_status_get(dev_id, port_id, &rxfc_status);
 	SW_RTN_ON_ERROR(rv);
 	rv = _adpt_xgmac_port_rxfc_status_set(dev_id, port_id, rxfc_status);
