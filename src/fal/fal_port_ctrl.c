@@ -218,6 +218,11 @@ sw_error_t fal_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id, f
 
 sw_error_t fal_port_interface_mode_apply (a_uint32_t dev_id)
     DEFINE_FAL_FUNC_ADPT_EXPORT(port_interface_mode_apply, dev_id)
+sw_error_t fal_port_fec_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_fec_config_t *ptfec)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_fec_set, dev_id, port_id, ptfec)
+
+sw_error_t fal_port_fec_get(a_uint32_t dev_id, a_uint32_t port_id, fal_port_fec_config_t *ptfec)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(port_fec_get, dev_id, port_id, ptfec)
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t fal_port_txmac_status_get (a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable)
     DEFINE_FAL_FUNC_EXPORT(port_txmac_status_get, dev_id, port_id, enable)

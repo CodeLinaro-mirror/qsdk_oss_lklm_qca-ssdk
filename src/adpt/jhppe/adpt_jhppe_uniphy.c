@@ -2291,12 +2291,116 @@ adpt_jhppe_uniphy_pma_dfe_sw_tune(a_uint32_t dev_id, a_uint32_t uniphy_index)
 }
 
 static sw_error_t
-adpt_jhppe_uniphy_25g_pcs_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
+adpt_jhppe_uniphy_xlgpcs_soft_reset(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
 	sw_error_t ret = SW_OK;
-	bool rs_fec_en = false, base_r_fec_en = false;
 	a_uint32_t vr_rst;
 	a_uint32_t timeout = ADPT_JHPPE_UNIPHY_POLLING_TIMEOUT;
+
+	/* Program the VR_RST field (bit [15]) of the VR_PCS_DIG_CTRL1 register to 1 */
+	ret = jhppe_uniphy_vr_pcs_dig_ctrl1_vr_rst_set(dev_id, uniphy_index, 1);
+	SW_RTN_ON_ERROR(ret);
+
+	/* Polling until VR_RST field (bit [15]) to be 0 */
+	while (timeout > 0) {
+		ret = jhppe_uniphy_vr_pcs_dig_ctrl1_vr_rst_get(dev_id, uniphy_index, &vr_rst);
+		SW_RTN_ON_ERROR(ret);
+
+		if (vr_rst == 0) {
+			/* Reset completed */
+			break;
+		}
+
+		mdelay(ADPT_JHPPE_UNIPHY_POLLING_DELAY);
+		timeout--;
+	}
+
+	if (timeout == 0) {
+		SSDK_ERROR("JHPPE UNIPHY %d: VR_RST polling timeout\n", uniphy_index);
+		return SW_TIMEOUT;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_jhppe_uniphy_fec_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_uint32_t configured_fec)
+
+{
+	a_uint32_t am_cnt, cwn00, cwn01, cwn02, cwn03;
+	a_bool_t rs_fec_en, baser_fec_en;
+	sw_error_t ret = SW_OK;
+
+	if (uniphy_index >= SSDK_MAX_UNIPHY_INSTANCE)
+		return SW_BAD_PARAM;
+
+	switch (configured_fec) {
+	case ETHTOOL_FEC_RS:
+		am_cnt = 0x400;
+		cwn00 = 0x68C1;
+		cwn01 = 0x3321;
+		cwn02 = 0x973E;
+		cwn03 = 0xCCDE;
+		rs_fec_en = A_TRUE;
+		baser_fec_en = A_FALSE;
+		break;
+	case ETHTOOL_FEC_BASER:
+		am_cnt = 0x3FF;
+		cwn00 = 0x7690;
+		cwn01 = 0x3347;
+		cwn02 = 0x896F;
+		cwn03 = 0xCCB8;
+		rs_fec_en = A_FALSE;
+		baser_fec_en = A_TRUE;
+		break;
+	case ETHTOOL_FEC_OFF:
+		am_cnt = 0x3FF;
+		cwn00 = 0x7690;
+		cwn01 = 0x3347;
+		cwn02 = 0x896F;
+		cwn03 = 0xCCB8;
+		rs_fec_en = A_FALSE;
+		baser_fec_en = A_FALSE;
+		break;
+	default:
+		SSDK_ERROR("uniphy %d does not support fec mode 0x%x\n",
+			   uniphy_index, configured_fec);
+		return SW_NOT_SUPPORTED;
+	}
+
+	/* Set FEC configuration */
+	ret = jhppe_uniphy_vr_pcs_am_cnt_pcs_am_cnt_set(dev_id, uniphy_index, am_cnt);
+	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_uniphy_vr_pma_cwm00_cwm15_0_set(dev_id, uniphy_index, cwn00);
+	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_uniphy_vr_pma_cwm01_cwm31_16_set(dev_id, uniphy_index, cwn01);
+	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_uniphy_vr_pma_cwm02_cwm47_32_set(dev_id, uniphy_index, cwn02);
+	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_uniphy_vr_pma_cwm03_cwm63_48_set(dev_id, uniphy_index, cwn03);
+	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_uniphy_sr_pma_rs_fec_ctrl_rsfec_en_set(dev_id, uniphy_index, rs_fec_en);
+	SW_RTN_ON_ERROR(ret);
+
+	ret = jhppe_uniphy_sr_pma_kr_fec_ctrl_fec_en_set(dev_id, uniphy_index, baser_fec_en);
+	SW_RTN_ON_ERROR(ret);
+
+	/* Perform XLGPCS soft reset after FEC mode configuration */
+	return adpt_jhppe_uniphy_xlgpcs_soft_reset(dev_id, uniphy_index);
+}
+
+static sw_error_t
+adpt_jhppe_uniphy_25g_pcs_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
+{
+	struct ssdk_port_priv *port_priv = NULL;
+	struct qca_phy_priv *priv = NULL;
+	sw_error_t ret = SW_OK;
+	a_uint32_t port;
 
 	/* Step 1: Write 4'b0101 to bits[5:2] (SS_5_2 field) of the SR_PCS_CTRL1 register */
 	ret = jhppe_uniphy_sr_pcs_ctrl1_ss_5_2_set(dev_id, uniphy_index, 0x5);
@@ -2324,62 +2428,25 @@ adpt_jhppe_uniphy_25g_pcs_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	ret = jhppe_uniphy_vr_pcs_dig_ctrl3_cns_en_set(dev_id, uniphy_index, 0);
 	SW_RTN_ON_ERROR(ret);
 
-	/* Step 6: To enable RS-FEC, perform the following */
-	if (rs_fec_en == true) {
-		/* Step 6a: Program the AM interval period in field [13:0] of the VR_PCS_AM_CNT
-		 * register to 14'h400 (16'd1024).
-		 */
-		ret = jhppe_uniphy_vr_pcs_am_cnt_pcs_am_cnt_set(dev_id, uniphy_index, 0x400);
+
+	/* Step 6: Configure FEC mode and PCS soft reset */
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index, SSDK_UNIPHY_CHANNEL0);
+	if (port >= SW_MAX_NR_PORT)
+		return SW_BAD_PARAM;
+
+	port_priv = &priv->ports[port];
+
+	if (port_priv->configured_fec) {
+		ret = adpt_jhppe_uniphy_fec_set(dev_id, uniphy_index, port_priv->configured_fec);
 		SW_RTN_ON_ERROR(ret);
-
-		/* Step 6b: Program the VR_PMA_CWM00 register to 16'h68C1 */
-		ret = jhppe_uniphy_vr_pma_cwm00_cwm15_0_set(dev_id, uniphy_index, 0x68C1);
+	} else {
+		/* For initialization, use RS FEC mode */
+		port_priv->configured_fec = ETHTOOL_FEC_RS;
+		ret = adpt_jhppe_uniphy_fec_set(dev_id, uniphy_index, ETHTOOL_FEC_RS);
 		SW_RTN_ON_ERROR(ret);
-
-		/* Step 6c: Program the VR_PMA_CWM01 register to 16'h3321 */
-		ret = jhppe_uniphy_vr_pma_cwm01_cwm31_16_set(dev_id, uniphy_index, 0x3321);
-		SW_RTN_ON_ERROR(ret);
-
-		/* Step 6d: Program the VR_PMA_CWM02 register to 16'h973E */
-		ret = jhppe_uniphy_vr_pma_cwm02_cwm47_32_set(dev_id, uniphy_index, 0x973E);
-		SW_RTN_ON_ERROR(ret);
-
-		/* Step 6e: Program the VR_PMA_CWM03 register to 16'hCCDE */
-		ret = jhppe_uniphy_vr_pma_cwm03_cwm63_48_set(dev_id, uniphy_index, 0xCCDE);
-		SW_RTN_ON_ERROR(ret);
-
-		/* Step 6f: Set bit [2] in the SR_PMA_RS_FEC_CTRL register to 1 */
-		ret = jhppe_uniphy_sr_pma_rs_fec_ctrl_rsfec_en_set(dev_id, uniphy_index, 1);
-		SW_RTN_ON_ERROR(ret);
-	}
-
-	/* Step 7: To enable BASE-R FEC, program bit [0] in the SR_PMA_KR_FEC_CTRL register */
-	if (base_r_fec_en == true) {
-		ret = jhppe_uniphy_sr_pma_kr_fec_ctrl_fec_en_set(dev_id, uniphy_index, 1);
-		SW_RTN_ON_ERROR(ret);
-	}
-
-	/* Step 8: Program the VR_RST field (bit [15]) of the VR_PCS_DIG_CTRL1 register to 1 */
-	ret = jhppe_uniphy_vr_pcs_dig_ctrl1_vr_rst_set(dev_id, uniphy_index, 1);
-	SW_RTN_ON_ERROR(ret);
-
-	/* Step 9: Polling until VR_RST field (bit [15]) to be 0 */
-	while (timeout > 0) {
-		ret = jhppe_uniphy_vr_pcs_dig_ctrl1_vr_rst_get(dev_id, uniphy_index, &vr_rst);
-		SW_RTN_ON_ERROR(ret);
-
-		if (vr_rst == 0) {
-			/* Reset completed */
-			break;
-		}
-
-		mdelay(ADPT_JHPPE_UNIPHY_POLLING_DELAY);
-		timeout--;
-	}
-
-	if (timeout == 0) {
-		SSDK_ERROR("JHPPE UNIPHY %d: VR_RST polling timeout\n", uniphy_index);
-		return SW_TIMEOUT;
 	}
 
 	SSDK_INFO("JHPPE UNIPHY %d: 25G PCS configuration completed successfully\n", uniphy_index);
@@ -2547,5 +2614,29 @@ adpt_jhppe_uniphy_25g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	/* software tuning if dfe mode choose software mode */
 	adpt_jhppe_uniphy_pma_dfe_sw_tune(dev_id, uniphy_index);
 #endif
+	return SW_OK;
+}
+
+sw_error_t
+adpt_jhppe_uniphy_25gr_status_check(a_uint32_t dev_id, a_uint32_t uniphy_index, a_bool_t *status)
+{
+	sw_error_t ret = SW_OK;
+	a_uint32_t rlu = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(status);
+
+	if (uniphy_index >= SSDK_MAX_UNIPHY_INSTANCE)
+		return SW_BAD_PARAM;
+
+	/* Read SR_PCS_STS1 BIT2 (RLU - Receive Link Up) */
+	ret = jhppe_uniphy_sr_pcs_sts1_rlu_get(dev_id, uniphy_index, &rlu);
+	if (ret != SW_OK) {
+		SSDK_ERROR("JHPPE UNIPHY %d: Failed to read SR_PCS_STS1 RLU bit\n", uniphy_index);
+		return ret;
+	}
+
+	/* Set status based on RLU bit value */
+	*status = (rlu == 1) ? A_TRUE : A_FALSE;
 	return SW_OK;
 }

@@ -363,6 +363,12 @@ typedef struct {
 	a_uint32_t pps_in_sel;  /* 0: input pps 1: output pps */
 } fal_port_pps_ctrl_t;
 
+typedef struct {
+	a_uint32_t supported_fec; /* supported fec */
+	a_uint32_t configured_fec; /* configured fec */
+	a_uint32_t active_fec; /* active fec */
+} fal_port_fec_config_t;
+
 sw_error_t
 fal_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 		a_uint32_t max_frame);
@@ -758,6 +764,12 @@ fal_port_pps_ctrl_set(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctrl);
 
 sw_error_t
 fal_port_pps_ctrl_get(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctrl);
+
+sw_error_t
+fal_port_fec_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_fec_config_t *ptfec);
+
+sw_error_t
+fal_port_fec_get(a_uint32_t dev_id, a_uint32_t port_id, fal_port_fec_config_t *ptfec);
 /*qca808x_start*/
 #ifdef __cplusplus
 }

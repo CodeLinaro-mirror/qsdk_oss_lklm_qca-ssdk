@@ -32,6 +32,12 @@ adpt_jhppe_uniphy_pma_init_setting(a_uint32_t dev_id, a_uint32_t uniphy_index,
 
 sw_error_t
 adpt_jhppe_uniphy_pma_dfe_sw_tune(a_uint32_t dev_id, a_uint32_t uniphy_index);
+
+sw_error_t
+adpt_jhppe_uniphy_fec_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_uint32_t active_fec);
+
+sw_error_t
+adpt_jhppe_uniphy_25gr_status_check(a_uint32_t dev_id, a_uint32_t uniphy_index, a_bool_t *status);
 #ifdef __cplusplus
 }
 #endif
