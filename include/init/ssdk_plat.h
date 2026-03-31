@@ -318,6 +318,7 @@ struct ssdk_port_priv {
 	a_uint32_t sfp_medium_pin;
 	a_bool_t lpi_wakeup_timer_force;
 	a_bool_t lpi_sleep_timer_force;
+	a_uint32_t configured_fec; /* configured fec */
 };
 
 struct ssdk_ppe_tunnel_priv {
