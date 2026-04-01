@@ -394,9 +394,6 @@ ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/jhppe
   MODULE_INC   += -I$(PRJ_PATH)/include/adpt/jhppe
   MODULE_CFLAG += -DJHPPE
-  ifeq ($(OS_VER),$(filter 6_6, $(OS_VER)))
-  MODULE_CFLAG += -DSSDK_RAW_CLOCK
-  endif
 endif
 
 ifneq (,$(findstring MHT, $(SUPPORT_CHIP)))
