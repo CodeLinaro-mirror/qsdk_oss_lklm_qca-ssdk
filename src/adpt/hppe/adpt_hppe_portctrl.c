@@ -3781,6 +3781,7 @@ adpt_hppe_uniphy_usxgmii_port_reset(a_uint32_t dev_id, a_uint32_t uniphy_index,
 {
 	union vr_xs_pcs_dig_ctrl1_u vr_xs_pcs_dig_ctrl1;
 	union vr_mii_dig_ctrl1_u vr_mii_dig_ctrl1;
+	a_uint32_t mode;
 
 	memset(&vr_xs_pcs_dig_ctrl1, 0, sizeof(vr_xs_pcs_dig_ctrl1));
 	memset(&vr_mii_dig_ctrl1, 0, sizeof(vr_mii_dig_ctrl1));
@@ -3792,29 +3793,27 @@ adpt_hppe_uniphy_usxgmii_port_reset(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		hppe_vr_xs_pcs_dig_ctrl1_set(dev_id, uniphy_index,
 				&vr_xs_pcs_dig_ctrl1);
 	}
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE) {
-		a_uint32_t mode;
-		mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-		if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
-			if (port_id == SSDK_PHYSICAL_PORT2) {
-				hppe_vr_mii_dig_ctrl1_channel1_get(0, uniphy_index,
-						&vr_mii_dig_ctrl1);
-				vr_mii_dig_ctrl1.bf.usra_rst = 1;
-				hppe_vr_mii_dig_ctrl1_channel1_set(0, uniphy_index,
-						&vr_mii_dig_ctrl1);
-			} else if (port_id == SSDK_PHYSICAL_PORT3) {
-				hppe_vr_mii_dig_ctrl1_channel2_get(0, uniphy_index,
-						&vr_mii_dig_ctrl1);
-				vr_mii_dig_ctrl1.bf.usra_rst = 1;
-				hppe_vr_mii_dig_ctrl1_channel2_set(0, uniphy_index,
-						&vr_mii_dig_ctrl1);
-			} else if (port_id == SSDK_PHYSICAL_PORT4) {
-				hppe_vr_mii_dig_ctrl1_channel3_get(0, uniphy_index,
-						&vr_mii_dig_ctrl1);
-				vr_mii_dig_ctrl1.bf.usra_rst = 1;
-				hppe_vr_mii_dig_ctrl1_channel3_set(0, uniphy_index,
-						&vr_mii_dig_ctrl1);
-			}
+
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if ((mode == PORT_WRAPPER_UQXGMII) || (mode == PORT_WRAPPER_UDXGMII)) {
+		if (port_id == SSDK_PHYSICAL_PORT2) {
+			hppe_vr_mii_dig_ctrl1_channel1_get(0, uniphy_index,
+					&vr_mii_dig_ctrl1);
+			vr_mii_dig_ctrl1.bf.usra_rst = 1;
+			hppe_vr_mii_dig_ctrl1_channel1_set(0, uniphy_index,
+					&vr_mii_dig_ctrl1);
+		} else if (port_id == SSDK_PHYSICAL_PORT3) {
+			hppe_vr_mii_dig_ctrl1_channel2_get(0, uniphy_index,
+					&vr_mii_dig_ctrl1);
+			vr_mii_dig_ctrl1.bf.usra_rst = 1;
+			hppe_vr_mii_dig_ctrl1_channel2_set(0, uniphy_index,
+					&vr_mii_dig_ctrl1);
+		} else if (port_id == SSDK_PHYSICAL_PORT4) {
+			hppe_vr_mii_dig_ctrl1_channel3_get(0, uniphy_index,
+					&vr_mii_dig_ctrl1);
+			vr_mii_dig_ctrl1.bf.usra_rst = 1;
+			hppe_vr_mii_dig_ctrl1_channel3_set(0, uniphy_index,
+					&vr_mii_dig_ctrl1);
 		}
 	}
 
