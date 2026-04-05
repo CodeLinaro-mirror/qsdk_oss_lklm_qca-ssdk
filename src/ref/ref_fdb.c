@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
- *
- * Permission to use, copy, modify, and/or distribute this software for
- * any purpose with or without fee is hereby granted, provided that the
- * above copyright notice and this permission notice appear in all copies.
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
- * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ * SPDX-License-Identifier: ISC
  */
 
 #include "sw.h"
@@ -92,30 +81,30 @@ qca_ar8327_sw_atu_dump(struct switch_dev *dev,
 		rv = fal_fdb_entry_extend_getfirst(priv->device_id, &option, &entry);
 	while (!rv)
     {
-		len += snprintf(buf+len, 2048-len, "MAC: %02x:%02x:%02x:%02x:%02x:%02x ",
+		len += scnprintf(buf+len, 2048-len, "MAC: %02x:%02x:%02x:%02x:%02x:%02x ",
 			entry.addr.uc[0],entry.addr.uc[1],entry.addr.uc[2],entry.addr.uc[3],
 			entry.addr.uc[4],entry.addr.uc[5]);
 		if(entry.portmap_en == A_TRUE) {
 			port_bmp = entry.port.map;
-			len += snprintf(buf+len, 2048-len,
+			len += scnprintf(buf+len, 2048-len,
 				"PORTMAP: 0x%02x VID: 0x%x STATUS: 0x%x\n",
 				port_bmp, entry.fid, entry.static_en);
 		} else {
 			port_type = FAL_PORT_ID_TYPE(entry.port.id);
 			if(port_type == FAL_PORT_TYPE_PPORT) {
 				port_bmp = 1 << entry.port.id;
-				len += snprintf(buf+len, 2048-len,
+				len += scnprintf(buf+len, 2048-len,
 					"PORTMAP: 0x%02x VID: 0x%x STATUS: 0x%x\n",
 					port_bmp, entry.fid, entry.static_en);
 			} else {
-				len += snprintf(buf+len, 2048-len,
+				len += scnprintf(buf+len, 2048-len,
 					"DEST_INFO: 0x%02x VID: 0x%x STATUS: 0x%x\n",
 					entry.port.id, entry.fid, entry.static_en);
 			}
 		}
 
 		if (2048-len < 74){
-//			snprintf(buf+len, 2048-len, "Buffer not enough!\n");
+//			scnprintf(buf+len, 2048-len, "Buffer not enough!\n");
 			break;
 		}
 		entry.type = HW_ENTRY;
