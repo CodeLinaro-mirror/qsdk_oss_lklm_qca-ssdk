@@ -1942,8 +1942,9 @@ void ssdk_port_clock_reset(
 	a_uint32_t port_id)
 {
 	ssdk_port_clock_assert(dev_id, port_id, SSDK_RESET_ASSERT);
-	msleep(10);
+	msleep(1);
 	ssdk_port_clock_assert(dev_id, port_id, SSDK_RESET_DEASSERT);
+	msleep(1);
 }
 
 static
