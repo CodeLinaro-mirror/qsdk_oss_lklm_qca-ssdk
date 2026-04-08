@@ -1313,6 +1313,8 @@ void ssdk_gcc_reset(struct reset_control *rst, a_uint32_t action)
 	if (ssdk_reset_control(rst, action))
 		return;
 #endif
+	if (IS_ERR(rst))
+		return;
 
 	if (action == SSDK_RESET_ASSERT)
 		reset_control_assert(rst);
