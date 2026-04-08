@@ -1775,6 +1775,138 @@ jhppe_uniphy_sr_pcs_ctrl1_ss13_set(
 }
 
 /*
+ * SR_PCS_STS1 Register Access Functions Implementation (Address: 0x30001)
+ */
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    union sr_pcs_sts1_u *value)
+{
+    if (index >= SR_PCS_STS1_NUM)
+        return SW_OUT_OF_RANGE;
+
+    return hppe_uniphy_reg_get(
+        dev_id,
+        NSS_UNIPHY_BASE_ADDR + JHPPE_CSR2_ADDR(SR_PCS_STS1_ADDRESS),
+        index * SR_PCS_STS1_INC,
+        &value->val);
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_lpms_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.lpms;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_rlu_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.rlu;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_csc_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.csc;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_flt_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.flt;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_rxlpii_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.rxlpii;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_txlpii_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.txlpii;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_rxlpir_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.rxlpir;
+    return ret;
+}
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_txlpir_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value)
+{
+    union sr_pcs_sts1_u reg_val;
+    sw_error_t ret = SW_OK;
+
+    ret = jhppe_uniphy_sr_pcs_sts1_get(dev_id, index, &reg_val);
+    *value = reg_val.bf.txlpir;
+    return ret;
+}
+
+/*
  * SR_PCS_CTRL2 Register Access Functions Implementation (Address: 0x30007)
  */
 

@@ -739,6 +739,66 @@ jhppe_uniphy_sr_pcs_ctrl1_ss13_set(
     a_uint32_t value);
 
 /*
+ * SR_PCS_STS1 Register Access Functions (Address: 0x30001)
+ */
+
+/* Register level access functions */
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    union sr_pcs_sts1_u *value);
+
+/* Bit field level access functions */
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_lpms_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_rlu_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_csc_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_flt_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_rxlpii_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_txlpii_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_rxlpir_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+sw_error_t
+jhppe_uniphy_sr_pcs_sts1_txlpir_get(
+    a_uint32_t dev_id,
+    a_uint32_t index,
+    a_uint32_t *value);
+
+/*
  * SR_PCS_CTRL2 Register Access Functions (Address: 0x30007)
  */
 

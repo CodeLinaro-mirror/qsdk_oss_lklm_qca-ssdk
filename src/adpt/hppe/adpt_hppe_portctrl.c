@@ -39,6 +39,9 @@
 #include "adpt_httppe_portctrl.h"
 #include "adpt_httppe_portvlan.h"
 #endif
+#if defined(JHPPE)
+#include "adpt_jhppe_uniphy.h"
+#endif
 
 #define PORT4_PCS_SEL_GMII_FROM_PCS0 1
 #define PORT4_PCS_SEL_RGMII 0
@@ -2399,6 +2402,9 @@ _adpt_hppe_instance1_mode_get(a_uint32_t dev_id, a_uint32_t port_id,  a_uint32_t
 				return SW_NOT_SUPPORTED;
 			}
 			*mode = PORT_WRAPPER_MAX;
+			break;
+		case PORT_25GBASE_R:
+			*mode = PORT_WRAPPER_25GBASE_R;
 			break;
 		case PORT_GPON:
 			*mode = PORT_WRAPPER_GPON;
@@ -5114,6 +5120,80 @@ sw_error_t adpt_hppe_port_rx_buff_thresh_set(a_uint32_t dev_id,
 	return rv;
 }
 
+#if defined(JHPPE)
+sw_error_t adpt_jhppe_port_fec_set(a_uint32_t dev_id,
+		a_uint32_t port_id, fal_port_fec_config_t *ptfec)
+{
+	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
+	struct ssdk_port_priv *port_priv;
+	struct qca_phy_priv *priv;
+	a_uint32_t uniphy_index;
+	sw_error_t rv;
+
+	ADPT_NULL_POINT_CHECK(ptfec);
+
+	if (port_id >= SW_MAX_NR_PORT)
+		return SW_BAD_PARAM;
+
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
+	SW_RTN_ON_ERROR(rv);
+
+	if (mode != PORT_25GBASE_R)
+		return SW_NOT_SUPPORTED;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	port_priv = &priv->ports[port_id];
+	port_priv->configured_fec = ptfec->configured_fec;
+
+	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+	return adpt_jhppe_uniphy_fec_set(dev_id, uniphy_index, ptfec->configured_fec);
+}
+
+sw_error_t adpt_jhppe_port_fec_get(a_uint32_t dev_id,
+		a_uint32_t port_id, fal_port_fec_config_t *ptfec)
+{
+	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
+	struct ssdk_port_priv *port_priv;
+	struct qca_phy_priv *priv;
+	a_uint32_t uniphy_index;
+	a_bool_t status;
+	sw_error_t rv;
+
+	ADPT_NULL_POINT_CHECK(ptfec);
+
+	if (port_id >= SW_MAX_NR_PORT)
+		return SW_BAD_PARAM;
+
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
+	SW_RTN_ON_ERROR(rv);
+
+	if (mode != PORT_25GBASE_R)
+		return SW_NOT_SUPPORTED;
+
+	/* The three FEC modes are supported for 25GBASE-R */
+	ptfec->supported_fec = ETHTOOL_FEC_OFF | ETHTOOL_FEC_RS | ETHTOOL_FEC_BASER;
+
+	/* Get configured FEC */
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	port_priv = &priv->ports[port_id];
+	ptfec->configured_fec = port_priv->configured_fec;
+
+	/* Get active FEC */
+	uniphy_index = hsl_port_to_uniphy(dev_id, port_id);
+	rv = adpt_jhppe_uniphy_25gr_status_check(dev_id, uniphy_index, &status);
+	SW_RTN_ON_ERROR(rv);
+
+	/* Configured FEC becomes active when 25gr link up */
+	ptfec->active_fec = (status == A_TRUE) ? ptfec->configured_fec : ETHTOOL_FEC_NONE;
+
+	return SW_OK;
+}
+#endif
+
 sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
@@ -5215,6 +5295,8 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_switch_loopback_port_get = adpt_jhppe_switch_loopback_port_get;
 	p_adpt_api->adpt_port_pps_ctrl_set = adpt_jhppe_port_pps_ctrl_set;
 	p_adpt_api->adpt_port_pps_ctrl_get = adpt_jhppe_port_pps_ctrl_get;
+	p_adpt_api->adpt_port_fec_set = adpt_jhppe_port_fec_set;
+	p_adpt_api->adpt_port_fec_get = adpt_jhppe_port_fec_get;
 #endif
 	return SW_OK;
 }

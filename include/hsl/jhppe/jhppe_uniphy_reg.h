@@ -542,6 +542,89 @@ union sr_pcs_ctrl1_u {
 	struct sr_pcs_ctrl1 bf;
 };
 
+/*[register] SR_PCS_STS1*/
+#define SR_PCS_STS1
+#define SR_PCS_STS1_ADDRESS 0x30001
+#define SR_PCS_STS1_NUM     3
+#define SR_PCS_STS1_INC     0x1
+#define SR_PCS_STS1_TYPE    REG_TYPE_RO
+#define SR_PCS_STS1_DEFAULT 0x0
+	/*[field] Reserved_0*/
+	#define SR_PCS_STS1_RESERVED_0
+	#define SR_PCS_STS1_RESERVED_0_OFFSET  0
+	#define SR_PCS_STS1_RESERVED_0_LEN     1
+	#define SR_PCS_STS1_RESERVED_0_DEFAULT 0x0
+	/*[field] LPMS*/
+	#define SR_PCS_STS1_LPMS
+	#define SR_PCS_STS1_LPMS_OFFSET  1
+	#define SR_PCS_STS1_LPMS_LEN     1
+	#define SR_PCS_STS1_LPMS_DEFAULT 0x0
+	/*[field] RLU*/
+	#define SR_PCS_STS1_RLU
+	#define SR_PCS_STS1_RLU_OFFSET  2
+	#define SR_PCS_STS1_RLU_LEN     1
+	#define SR_PCS_STS1_RLU_DEFAULT 0x0
+	/*[field] Reserved_5_3*/
+	#define SR_PCS_STS1_RESERVED_5_3
+	#define SR_PCS_STS1_RESERVED_5_3_OFFSET  3
+	#define SR_PCS_STS1_RESERVED_5_3_LEN     3
+	#define SR_PCS_STS1_RESERVED_5_3_DEFAULT 0x0
+	/*[field] CSC*/
+	#define SR_PCS_STS1_CSC
+	#define SR_PCS_STS1_CSC_OFFSET  6
+	#define SR_PCS_STS1_CSC_LEN     1
+	#define SR_PCS_STS1_CSC_DEFAULT 0x0
+	/*[field] FLT*/
+	#define SR_PCS_STS1_FLT
+	#define SR_PCS_STS1_FLT_OFFSET  7
+	#define SR_PCS_STS1_FLT_LEN     1
+	#define SR_PCS_STS1_FLT_DEFAULT 0x0
+	/*[field] RXLPII*/
+	#define SR_PCS_STS1_RXLPII
+	#define SR_PCS_STS1_RXLPII_OFFSET  8
+	#define SR_PCS_STS1_RXLPII_LEN     1
+	#define SR_PCS_STS1_RXLPII_DEFAULT 0x0
+	/*[field] TXLPII*/
+	#define SR_PCS_STS1_TXLPII
+	#define SR_PCS_STS1_TXLPII_OFFSET  9
+	#define SR_PCS_STS1_TXLPII_LEN     1
+	#define SR_PCS_STS1_TXLPII_DEFAULT 0x0
+	/*[field] RXLPIR*/
+	#define SR_PCS_STS1_RXLPIR
+	#define SR_PCS_STS1_RXLPIR_OFFSET  10
+	#define SR_PCS_STS1_RXLPIR_LEN     1
+	#define SR_PCS_STS1_RXLPIR_DEFAULT 0x0
+	/*[field] TXLPIR*/
+	#define SR_PCS_STS1_TXLPIR
+	#define SR_PCS_STS1_TXLPIR_OFFSET  11
+	#define SR_PCS_STS1_TXLPIR_LEN     1
+	#define SR_PCS_STS1_TXLPIR_DEFAULT 0x0
+	/*[field] Reserved_15_12*/
+	#define SR_PCS_STS1_RESERVED_15_12
+	#define SR_PCS_STS1_RESERVED_15_12_OFFSET  12
+	#define SR_PCS_STS1_RESERVED_15_12_LEN     4
+	#define SR_PCS_STS1_RESERVED_15_12_DEFAULT 0x0
+
+struct sr_pcs_sts1 {
+	a_uint32_t  reserved_0:1;
+	a_uint32_t  lpms:1;
+	a_uint32_t  rlu:1;
+	a_uint32_t  reserved_5_3:3;
+	a_uint32_t  csc:1;
+	a_uint32_t  flt:1;
+	a_uint32_t  rxlpii:1;
+	a_uint32_t  txlpii:1;
+	a_uint32_t  rxlpir:1;
+	a_uint32_t  txlpir:1;
+	a_uint32_t  reserved_15_12:4;
+	a_uint32_t  _reserved0:16;
+};
+
+union sr_pcs_sts1_u {
+	a_uint32_t val;
+	struct sr_pcs_sts1 bf;
+};
+
 /*[register] SR_PCS_CTRL2*/
 #define SR_PCS_CTRL2
 #define SR_PCS_CTRL2_ADDRESS 0x30007
