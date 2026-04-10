@@ -1299,6 +1299,24 @@ typedef sw_error_t (*adpt_policer_ctrl_set_func)(a_uint32_t dev_id, fal_policer_
 typedef sw_error_t (*adpt_policer_ctrl_get_func)(a_uint32_t dev_id, fal_policer_ctrl_t *ctrl);
 
 /* misc */
+/* Buffer size for debug counter output */
+#define SSDK_COUNTER_BUF_SIZE (32 * 1024)  /* 32KB */
+/*
+ * SSDK_BUF_REMAINING - safely compute remaining bytes in the counter buffer.
+ *
+ * @count: pointer to the running offset (ssize_t *)
+ *
+ * Returns the number of bytes still available in the buffer as size_t.
+ * If *count has already reached or exceeded SSDK_COUNTER_BUF_SIZE (e.g. due
+ * to accumulated writes), the expression (SSDK_COUNTER_BUF_SIZE - *count)
+ * would be negative.  Passing a negative ssize_t to scnprintf() as its
+ * size_t 'size' argument wraps to a huge value and causes a heap overwrite.
+ * This macro clamps the result to 0 in that case.
+ */
+#define SSDK_BUF_REMAINING(count) \
+	(*(count) < (ssize_t)(SSDK_COUNTER_BUF_SIZE) ? \
+	 (size_t)((ssize_t)(SSDK_COUNTER_BUF_SIZE) - *(count)) : 0)
+
 typedef sw_error_t (*adpt_debug_counter_get_func)(a_uint32_t dev_id, a_bool_t show_type,
 		    char **buf, ssize_t *count);
 typedef sw_error_t (*adpt_debug_counter_set_func)(a_uint32_t dev_id);

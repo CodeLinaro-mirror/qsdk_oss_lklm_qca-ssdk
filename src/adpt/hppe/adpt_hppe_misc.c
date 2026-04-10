@@ -560,23 +560,23 @@ adpt_hppe_debug_prx_drop_cnt_get(a_uint32_t dev_id, char **buf, ssize_t *count)
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_CNT RX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PRX_DROP_CNT RX:");
 	for (i = 0; i < DROP_CNT_NUM; i++)
 	{
 		hppe_drop_cnt_drop_cnt_get(dev_id, i, &value);
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15u(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -587,7 +587,7 @@ adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type, cha
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_PKT_STAT OVERFLOW DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PRX_DROP_PKT_STAT OVERFLOW DROP:");
 	for (i = 0; i < DROP_STAT_NUM / 2; i++)
 	{
 		if (show_type == A_FALSE)
@@ -600,19 +600,19 @@ adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type, cha
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRX_DROP_PKT_STAT FC DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PRX_DROP_PKT_STAT FC DROP:");
 	for (i = DROP_STAT_NUM / 2; i < DROP_STAT_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -626,17 +626,17 @@ adpt_hppe_debug_prx_drop_pkt_stat_get(a_uint32_t dev_id, a_bool_t show_type, cha
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i - (DROP_STAT_NUM / 2));
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i - (DROP_STAT_NUM / 2));
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
 
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -649,7 +649,7 @@ adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type, char **bu
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "IPR_PKT_NUM RX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "IPR_PKT_NUM RX:");
 	for (i = 0; i < IPR_PKT_NUM_TBL_REG_MAX_ENTRY; i++)
 	{
 		hppe_ipr_pkt_num_tbl_reg_get(dev_id, i, &ipr_pkt_num_tbl_reg);
@@ -669,16 +669,16 @@ adpt_hppe_debug_ipx_pkt_num_get(a_uint32_t dev_id, a_bool_t show_type, char **bu
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -689,7 +689,7 @@ adpt_hppe_debug_vlan_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **b
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VLAN_CNT_TBL RX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "VLAN_CNT_TBL RX:");
 	for (i = 0; i < VLAN_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_vlan_cnt_tbl_get(dev_id, i, &vlan_cnt_tbl);
@@ -700,16 +700,16 @@ adpt_hppe_debug_vlan_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **b
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -720,7 +720,7 @@ adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type, char *
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRE_L2_CNT_TBL RX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PRE_L2_CNT_TBL RX:");
 	for (i = 0; i < PRE_L2_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_pre_l2_cnt_tbl_get(dev_id, i, &pre_l2_cnt_tbl);
@@ -731,19 +731,19 @@ adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type, char *
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PRE_L2_CNT_TBL RX_DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PRE_L2_CNT_TBL RX_DROP:");
 	for (i = 0; i < PRE_L2_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_pre_l2_cnt_tbl_get(dev_id, i, &pre_l2_cnt_tbl);
@@ -754,16 +754,16 @@ adpt_hppe_debug_pre_l2_counter_get(a_uint32_t dev_id, a_bool_t show_type, char *
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void adpt_hppe_debug_port_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
@@ -773,7 +773,7 @@ static void adpt_hppe_debug_port_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_TX_DROP_CNT_TBL TX_DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PORT_TX_DROP_CNT_TBL TX_DROP:");
 	for (i = 0; i < PORT_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_port_tx_drop_cnt_tbl_get(dev_id, i, &port_tx_drop_cnt_tbl);
@@ -784,16 +784,16 @@ static void adpt_hppe_debug_port_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -804,7 +804,7 @@ adpt_hppe_debug_eg_vsi_counter_get(a_uint32_t dev_id, a_bool_t show_type, char *
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "EG_VSI_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "EG_VSI_COUNTER_TBL TX:");
 	for (i = 0; i < EG_VSI_COUNTER_TBL_MAX_ENTRY; i++)
 	{
 		hppe_eg_vsi_counter_tbl_get(dev_id, i, &eg_vsi_counter_tbl);
@@ -815,16 +815,16 @@ adpt_hppe_debug_eg_vsi_counter_get(a_uint32_t dev_id, a_bool_t show_type, char *
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(vsi=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(vsi=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -835,7 +835,7 @@ adpt_hppe_debug_port_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char 
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_TX_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PORT_TX_COUNTER_TBL TX:");
 	for (i = 0; i < PORT_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
 	{
 		hppe_port_tx_counter_tbl_reg_get(dev_id, i, &port_tx_counter_tbl);
@@ -846,16 +846,16 @@ adpt_hppe_debug_port_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char 
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -866,7 +866,7 @@ adpt_hppe_debug_vp_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_TX_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "VP_TX_COUNTER_TBL TX:");
 	for (i = 0; i < VP_TX_COUNTER_TBL_REG_MAX_ENTRY; i++)
 	{
 		hppe_vp_tx_counter_tbl_reg_get(dev_id, i, &vp_tx_counter_tbl);
@@ -877,16 +877,16 @@ adpt_hppe_debug_vp_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -897,7 +897,7 @@ adpt_hppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "QUEUE_TX_COUNTER_TBL TX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "QUEUE_TX_COUNTER_TBL TX:");
 	for (i = 0; i < QUEUE_TX_COUNTER_TBL_MAX_ENTRY; i++)
 	{
 		hppe_queue_tx_counter_tbl_get(dev_id, i, &queue_tx_counter_tbl);
@@ -908,16 +908,16 @@ adpt_hppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(queue=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(queue=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -928,7 +928,7 @@ adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, ch
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_TX_DROP_CNT_TBL TX_DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "VP_TX_DROP_CNT_TBL TX_DROP:");
 	for (i = 0; i < VP_TX_DROP_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_vp_tx_drop_cnt_tbl_get(dev_id, i, &vp_tx_drop_cnt_tbl);
@@ -939,16 +939,16 @@ adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, ch
 		if (value > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%04d)", value, i);
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%04d)", value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -960,7 +960,7 @@ adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type,
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "CPU_CODE_CNT_TBL:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "CPU_CODE_CNT_TBL:");
 	for (i = 0; i < CPU_CODE_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_drop_cpu_cnt_tbl_get(dev_id, i, &drop_cpu_cnt_tbl);
@@ -970,15 +970,15 @@ adpt_hppe_debug_cpu_code_counter_get(a_uint32_t dev_id, a_bool_t show_type,
 			value = drop_cpu_cnt_tbl.bf.byte_cnt_0 | ((a_uint64_t)drop_cpu_cnt_tbl.bf.byte_cnt_1 << 32);
 		if (value > 0)
 		{
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			if (i >= 0 && i < sd_size)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(%s),cpucode:%d", value, cpucode[i], i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(%s),cpucode:%d", value, cpucode[i], i);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(Unknown),cpucode:%d", value, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(Unknown),cpucode:%d", value, i);
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -991,7 +991,7 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type,
 	int drop_code_idx;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "DROP_CPU_CNT_TBL:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "DROP_CPU_CNT_TBL:");
 	for (i = CPU_CODE_CNT_TBL_MAX_ENTRY; i < DROP_CPU_CNT_TBL_MAX_ENTRY; i++)
 	{
 		hppe_drop_cpu_cnt_tbl_get(dev_id, i, &drop_cpu_cnt_tbl);
@@ -1003,19 +1003,19 @@ adpt_hppe_debug_drop_cpu_counter_get(a_uint32_t dev_id, a_bool_t show_type,
 		{
 			drop_code_idx = (i - CPU_CODE_CNT_TBL_MAX_ENTRY) / SSDK_MAX_PORT_NUM;
 
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-			*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+			*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 
 			if (drop_code_idx >= 0 && drop_code_idx < sd_size)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:%s),dropcode:%d", value,
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%d:%s),dropcode:%d", value,
 					(i - CPU_CODE_CNT_TBL_MAX_ENTRY) % SSDK_MAX_PORT_NUM,
 					dropcode[drop_code_idx], drop_code_idx);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port=%d:Unknown),dropcode:%d", value,
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port=%d:Unknown),dropcode:%d", value,
                     (i - CPU_CODE_CNT_TBL_MAX_ENTRY) % SSDK_MAX_PORT_NUM, drop_code_idx);
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -1026,7 +1026,7 @@ adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_RX_COUNTER_TBL RX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "VP_RX_COUNTER_TBL RX:");
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1036,19 +1036,19 @@ adpt_appe_debug_vp_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -1059,7 +1059,7 @@ adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, ch
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "VP_RX_DROP_CNT_TBL RX_DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "VP_RX_DROP_CNT_TBL RX_DROP:");
 	for (i = 0; i < PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1069,19 +1069,19 @@ adpt_appe_debug_vp_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, ch
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -1092,7 +1092,7 @@ adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char 
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_RX_COUNTER_TBL RX:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PORT_RX_COUNTER_TBL RX:");
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1102,19 +1102,19 @@ adpt_appe_debug_port_rx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char 
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 static void
@@ -1125,7 +1125,7 @@ adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, 
 	int i, tags, sign;
 
 	sign = tags = 0;
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count,"%-35s", "PORT_RX_DROP_CNT_TBL RX_DROP:");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "PORT_RX_DROP_CNT_TBL RX_DROP:");
 	for (i = 0; i < PHY_PORT_RX_CNT_TBL_NUM; i++)
 	{
 		if (show_type == A_FALSE)
@@ -1136,19 +1136,19 @@ adpt_appe_debug_port_rx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, 
 		if (rx_value > 0 || rx_pkt > 0)
 		{
 			if (sign) {
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%-35s", "");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
 			}
 			sign = 0;
 			if (show_type == A_FALSE)
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15u(port_id=%04d)", rx_pkt, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15u(port_id=%04d)", rx_pkt, i);
 			else
-				*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "%15llu(port_id=%04d)", rx_value, i);
+				*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15llu(port_id=%04d)", rx_value, i);
 			if (++tags % 3 == 0)
 				sign = 1;
 		}
 	}
-	*count += scnprintf(*buf + *count, PAGE_SIZE - *count, "\n");
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
 /* if show_type = A_FALSE, show packets.

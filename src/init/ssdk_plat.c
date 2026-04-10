@@ -1072,90 +1072,171 @@ static ssize_t ssdk_log_level_set(struct device *dev,
 	return count;
 }
 
-static ssize_t ssdk_packet_counter_get(struct device *dev,
-		struct device_attribute *attr,
-		char *buf)
-{
-	ssize_t count = 0;
-	adpt_api_t *p_api;
+/* Context structure for counter bin attributes */
+struct ssdk_counter_ctx {
+	struct mutex lock;
+	char *buf;
+	ssize_t buf_size;
+	a_bool_t show_type;  /* A_FALSE = packet counters, A_TRUE = byte counters */
+};
 
-	p_api = adpt_api_ptr_get(ssdk_dev_id);
-	if (p_api == NULL || p_api->adpt_debug_counter_get == NULL)
-	{
-		count = scnprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
-		return count;
+static struct ssdk_counter_ctx ssdk_packet_counter_ctx = {
+	.lock      = __MUTEX_INITIALIZER(ssdk_packet_counter_ctx.lock),
+	.buf       = NULL,
+	.buf_size  = 0,
+	.show_type = A_FALSE,
+};
+
+static struct ssdk_counter_ctx ssdk_byte_counter_ctx = {
+	.lock      = __MUTEX_INITIALIZER(ssdk_byte_counter_ctx.lock),
+	.buf       = NULL,
+	.buf_size  = 0,
+	.show_type = A_TRUE,
+};
+
+/* Common read implementation shared by packet_counter and byte_counter */
+static ssize_t ssdk_counter_bin_read_common(struct ssdk_counter_ctx *ctx,
+					    char *buf, loff_t off, size_t count)
+{
+	mutex_lock(&ctx->lock);
+
+	/* If first read (offset = 0), regenerate data */
+	if (off == 0) {
+		char *temp_buf = NULL;
+		adpt_api_t *p_api;
+		ssize_t temp_count = 0;
+		sw_error_t rv;
+
+		/* Snapshot dev_id once inside the lock to avoid TOCTOU race
+		 * with ssdk_dev_id_set: adpt_api_ptr_get and adpt_debug_counter_get
+		 * must use the same dev_id value.
+		 */
+		a_uint32_t dev_id = READ_ONCE(ssdk_dev_id);
+
+		/* Normally ctx->buf is freed at the end of each read sequence
+		 * (after the last chunk is consumed or at EOF). However, if the
+		 * previous read was aborted mid-way (e.g. user-space closed the fd
+		 * before reading all data), the buffer may still be allocated here.
+		 * Free it now to avoid a memory leak before allocating a fresh one.
+		 */
+		if (ctx->buf) {
+			kfree(ctx->buf);
+			ctx->buf = NULL;
+			ctx->buf_size = 0;
+		}
+
+		/* Allocate large buffer */
+		temp_buf = kmalloc(SSDK_COUNTER_BUF_SIZE, GFP_KERNEL);
+		if (!temp_buf) {
+			mutex_unlock(&ctx->lock);
+			return -ENOMEM;
+		}
+
+		p_api = adpt_api_ptr_get(dev_id);
+		if (p_api == NULL || p_api->adpt_debug_counter_get == NULL) {
+			temp_count = scnprintf(temp_buf, SSDK_COUNTER_BUF_SIZE, "Unsupported\n");
+		} else {
+			rv = p_api->adpt_debug_counter_get(dev_id, ctx->show_type,
+							   &temp_buf, &temp_count);
+			if (rv != SW_OK) {
+				kfree(temp_buf);
+				mutex_unlock(&ctx->lock);
+				return -EIO;
+			}
+		}
+
+		/* Save to context buffer */
+		ctx->buf = temp_buf;
+		ctx->buf_size = temp_count;
 	}
 
-	p_api->adpt_debug_counter_get(ssdk_dev_id, A_FALSE, &buf, &count);
-
-	return count;
-}
-
-static ssize_t ssdk_packet_counter_set(struct device *dev,
-		struct device_attribute *attr,
-		const char *buf, size_t count)
-{
-	char num_buf[12];
-	adpt_api_t *p_api;
-
-	p_api = adpt_api_ptr_get(ssdk_dev_id);
-	if (p_api == NULL || p_api->adpt_debug_counter_set == NULL) {
-		SSDK_WARN("Unsupported\n");
-		return count;
-	}
-
-	p_api->adpt_debug_counter_set(ssdk_dev_id);
-
-	if (count >= sizeof(num_buf))
+	/* Check if offset is valid - also free buffer here (EOF signal or empty data) */
+	if (off >= ctx->buf_size) {
+		kfree(ctx->buf);
+		ctx->buf = NULL;
+		ctx->buf_size = 0;
+		mutex_unlock(&ctx->lock);
 		return 0;
-	memcpy(num_buf, buf, count);
-	num_buf[count] = '\0';
-
-
-	return count;
-}
-
-static ssize_t ssdk_byte_counter_get(struct device *dev,
-		struct device_attribute *attr,
-		char *buf)
-{
-	ssize_t count = 0;
-	adpt_api_t *p_api;
-
-	p_api = adpt_api_ptr_get(ssdk_dev_id);
-	if (p_api == NULL || p_api->adpt_debug_counter_get == NULL)
-	{
-		count = scnprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
-		return count;
 	}
 
-	p_api->adpt_debug_counter_get(ssdk_dev_id, A_TRUE, &buf, &count);
+	/* Calculate actual bytes to read */
+	if (off + count > ctx->buf_size)
+		count = ctx->buf_size - off;
 
+	/* Copy data to user buffer */
+	memcpy(buf, ctx->buf + off, count);
+
+	/* Free buffer after last chunk is read to release memory promptly */
+	if (off + count >= ctx->buf_size) {
+		kfree(ctx->buf);
+		ctx->buf = NULL;
+		ctx->buf_size = 0;
+	}
+
+	mutex_unlock(&ctx->lock);
 	return count;
 }
 
-static ssize_t ssdk_byte_counter_set(struct device *dev,
-		struct device_attribute *attr,
-		const char *buf, size_t count)
+/* Common write implementation shared by packet_counter and byte_counter (clear counters) */
+static ssize_t ssdk_counter_bin_write_common(struct ssdk_counter_ctx *ctx, size_t count)
 {
-	char num_buf[12];
 	adpt_api_t *p_api;
+	/* Snapshot dev_id once to avoid TOCTOU race with ssdk_dev_id_set */
+	a_uint32_t dev_id = READ_ONCE(ssdk_dev_id);
 
-	p_api = adpt_api_ptr_get(ssdk_dev_id);
-	if (p_api == NULL || p_api->adpt_debug_counter_set == NULL) {
+	mutex_lock(&ctx->lock);
+
+	p_api = adpt_api_ptr_get(dev_id);
+	if (p_api && p_api->adpt_debug_counter_set)
+		p_api->adpt_debug_counter_set(dev_id);
+	else
 		SSDK_WARN("Unsupported\n");
-		return count;
+
+	/* Clear cached buffer */
+	if (ctx->buf) {
+		kfree(ctx->buf);
+		ctx->buf = NULL;
+		ctx->buf_size = 0;
 	}
-
-	p_api->adpt_debug_counter_set(ssdk_dev_id);
-
-	if (count >= sizeof(num_buf))
-		return 0;
-	memcpy(num_buf, buf, count);
-	num_buf[count] = '\0';
-
+	mutex_unlock(&ctx->lock);
 
 	return count;
+}
+
+/* bin_attribute read function for packet_counter */
+static ssize_t ssdk_packet_counter_bin_read(struct file *filp,
+					     struct kobject *kobj,
+					     struct bin_attribute *attr,
+					     char *buf, loff_t off, size_t count)
+{
+	return ssdk_counter_bin_read_common(&ssdk_packet_counter_ctx, buf, off, count);
+}
+
+/* bin_attribute write function for packet_counter (clear counters) */
+static ssize_t ssdk_packet_counter_bin_write(struct file *filp,
+					      struct kobject *kobj,
+					      struct bin_attribute *attr,
+					      char *buf, loff_t off, size_t count)
+{
+	return ssdk_counter_bin_write_common(&ssdk_packet_counter_ctx, count);
+}
+
+/* bin_attribute read function for byte_counter */
+static ssize_t ssdk_byte_counter_bin_read(struct file *filp,
+					   struct kobject *kobj,
+					   struct bin_attribute *attr,
+					   char *buf, loff_t off, size_t count)
+{
+	return ssdk_counter_bin_read_common(&ssdk_byte_counter_ctx, buf, off, count);
+}
+
+/* bin_attribute write function for byte_counter (clear counters) */
+static ssize_t ssdk_byte_counter_bin_write(struct file *filp,
+					    struct kobject *kobj,
+					    struct bin_attribute *attr,
+					    char *buf, loff_t off, size_t count)
+{
+	return ssdk_counter_bin_write_common(&ssdk_byte_counter_ctx, count);
 }
 
 #ifdef IN_QOS
@@ -1717,10 +1798,20 @@ static const struct device_attribute ssdk_dev_id_attr =
 	__ATTR(dev_id, 0660, ssdk_dev_id_get, ssdk_dev_id_set);
 static const struct device_attribute ssdk_log_level_attr =
 	__ATTR(log_level, 0660, ssdk_log_level_get, ssdk_log_level_set);
-static const struct device_attribute ssdk_packet_counter_attr =
-	__ATTR(packet_counter, 0660, ssdk_packet_counter_get, ssdk_packet_counter_set);
-static const struct device_attribute ssdk_byte_counter_attr =
-	__ATTR(byte_counter, 0660, ssdk_byte_counter_get, ssdk_byte_counter_set);
+/* New bin_attribute definitions */
+static struct bin_attribute ssdk_packet_counter_bin_attr = {
+	.attr = { .name = "packet_counter", .mode = 0660 },
+	.size = 0,  /* 0 = dynamic size */
+	.read = ssdk_packet_counter_bin_read,
+	.write = ssdk_packet_counter_bin_write,
+};
+
+static struct bin_attribute ssdk_byte_counter_bin_attr = {
+	.attr = { .name = "byte_counter", .mode = 0660 },
+	.size = 0,  /* 0 = dynamic size */
+	.read = ssdk_byte_counter_bin_read,
+	.write = ssdk_byte_counter_bin_write,
+};
 static const struct device_attribute ssdk_dts_dump_attr =
 	__ATTR(dts_dump, 0660, ssdk_dts_dump, NULL);
 static const struct device_attribute ssdk_phy_write_reg_attr =
@@ -1764,14 +1855,14 @@ int ssdk_sysfs_init (void)
 	}
 
 	/* create /sys/ssdk/packet_counter file */
-	ret = sysfs_create_file(ssdk_sys, &ssdk_packet_counter_attr.attr);
+	ret = sysfs_create_bin_file(ssdk_sys, &ssdk_packet_counter_bin_attr);
 	if (ret) {
 		printk("Failed to register SSDK switch counter SysFS file\n");
 		goto CLEANUP_3;
 	}
 
 	/* create /sys/ssdk/byte_counter file */
-	ret = sysfs_create_file(ssdk_sys, &ssdk_byte_counter_attr.attr);
+	ret = sysfs_create_bin_file(ssdk_sys, &ssdk_byte_counter_bin_attr);
 	if (ret) {
 		printk("Failed to register SSDK switch counter bytes SysFS file\n");
 		goto CLEANUP_4;
@@ -1834,9 +1925,9 @@ CLEANUP_7:
 CLEANUP_6:
 	sysfs_remove_file(ssdk_sys, &ssdk_dts_dump_attr.attr);
 CLEANUP_5:
-	sysfs_remove_file(ssdk_sys, &ssdk_byte_counter_attr.attr);
+	sysfs_remove_bin_file(ssdk_sys, &ssdk_byte_counter_bin_attr);
 CLEANUP_4:
-	sysfs_remove_file(ssdk_sys, &ssdk_packet_counter_attr.attr);
+	sysfs_remove_bin_file(ssdk_sys, &ssdk_packet_counter_bin_attr);
 CLEANUP_3:
 	sysfs_remove_file(ssdk_sys, &ssdk_log_level_attr.attr);
 CLEANUP_2:
@@ -1852,8 +1943,8 @@ void ssdk_sysfs_exit (void)
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_read_reg_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_phy_write_reg_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dts_dump_attr.attr);
-	sysfs_remove_file(ssdk_sys, &ssdk_byte_counter_attr.attr);
-	sysfs_remove_file(ssdk_sys, &ssdk_packet_counter_attr.attr);
+	sysfs_remove_bin_file(ssdk_sys, &ssdk_byte_counter_bin_attr);
+	sysfs_remove_bin_file(ssdk_sys, &ssdk_packet_counter_bin_attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_log_level_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_dev_id_attr.attr);
 #ifdef ISISC
@@ -1862,6 +1953,23 @@ void ssdk_sysfs_exit (void)
 	sysfs_remove_file(ssdk_sys, &ssdk_mac_polling_attr.attr);
 	sysfs_remove_file(ssdk_sys, &ssdk_module_debug_stats_attr.attr);
 	kobject_put(ssdk_sys);
+
+	/* Free counter buffers */
+	mutex_lock(&ssdk_packet_counter_ctx.lock);
+	if (ssdk_packet_counter_ctx.buf) {
+		kfree(ssdk_packet_counter_ctx.buf);
+		ssdk_packet_counter_ctx.buf = NULL;
+		ssdk_packet_counter_ctx.buf_size = 0;
+	}
+	mutex_unlock(&ssdk_packet_counter_ctx.lock);
+
+	mutex_lock(&ssdk_byte_counter_ctx.lock);
+	if (ssdk_byte_counter_ctx.buf) {
+		kfree(ssdk_byte_counter_ctx.buf);
+		ssdk_byte_counter_ctx.buf = NULL;
+		ssdk_byte_counter_ctx.buf_size = 0;
+	}
+	mutex_unlock(&ssdk_byte_counter_ctx.lock);
 }
 
 /*qca808x_start*/
