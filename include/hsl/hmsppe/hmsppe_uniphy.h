@@ -326,6 +326,129 @@ hmsppe_uniphy_func_rst_pon_mmd1_reg_func_rst_pon_tx_n_set(
         a_uint32_t index,
         a_uint32_t value);
 
+/* PON_PLL_BANDWIDTH_CTRL - 0x5F0 */
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union pon_pll_bandwidth_ctrl_u *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union pon_pll_bandwidth_ctrl_u *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_mmd1_reg_reg_pon_pll_cp_sel_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_mmd1_reg_reg_pon_pll_cp_sel_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_mmd1_reg_reg_pon_pll_lpf_c2_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_mmd1_reg_reg_pon_pll_lpf_c2_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_mmd1_reg_reg_pon_pll_lpf_res_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_bandwidth_ctrl_mmd1_reg_reg_pon_pll_lpf_res_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+/* PON_PLL_VCO_CTRL - 0x5F4 */
+sw_error_t
+hmsppe_uniphy_pon_pll_vco_ctrl_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union pon_pll_vco_ctrl_u *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_vco_ctrl_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union pon_pll_vco_ctrl_u *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_vco_ctrl_mmd1_reg_reg_pon_pll_vco_amp_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_vco_ctrl_mmd1_reg_reg_pon_pll_vco_amp_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_vco_ctrl_mmd1_reg_reg_pon_pll_vco_temp_cmp_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_vco_ctrl_mmd1_reg_reg_pon_pll_vco_temp_cmp_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+/* PON_PLL_REFCLK_FBCLK - 0x5F8 */
+sw_error_t
+hmsppe_uniphy_pon_pll_refclk_fbclk_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union pon_pll_refclk_fbclk_u *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_refclk_fbclk_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union pon_pll_refclk_fbclk_u *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_refclk_fbclk_mmd1_reg_reg_pon_pll_refclk_div_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_refclk_fbclk_mmd1_reg_reg_pon_pll_refclk_div_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_refclk_fbclk_mmd1_reg_reg_pon_pll_fbclk_div_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_pon_pll_refclk_fbclk_mmd1_reg_reg_pon_pll_fbclk_div_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
 /* PON_REG_SOURCE_SEL1 - 0x5FC */
 sw_error_t
 hmsppe_uniphy_pon_reg_source_sel1_get(
@@ -432,6 +555,115 @@ hmsppe_uniphy_pon_cdr_lock_wait_cnt_mmd1_reg_reg_pon_cdr_lock_wait_cnt_get(
 
 sw_error_t
 hmsppe_uniphy_pon_cdr_lock_wait_cnt_mmd1_reg_reg_pon_cdr_lock_wait_cnt_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+/* JCCDR_CDR_CTRL - 0x640 */
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union jccdr_cdr_ctrl_u *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union jccdr_cdr_ctrl_u *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_floop_gain_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_floop_gain_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_mmd1_uphy_rx_floop_byps_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_mmd1_uphy_rx_floop_byps_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_jccdr_rx_floop_byps_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_jccdr_rx_floop_byps_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_jccdr_rx_ploop_en_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_jccdr_rx_ploop_en_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_speed_mode_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_speed_mode_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_ploop_gain_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_ploop_gain_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_dlf_rate_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_dlf_rate_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_cdr_en_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_jccdr_cdr_ctrl_mmd1_reg_reg_jccdr_rx_cdr_en_set(
         a_uint32_t dev_id,
         a_uint32_t index,
         a_uint32_t value);
@@ -1052,6 +1284,91 @@ hmsppe_uniphy_jccdr_rgl_fst_div_stg3_mmd1_reg_reg_rgl_cdr_div_stg3_get(
 
 sw_error_t
 hmsppe_uniphy_jccdr_rgl_fst_div_stg3_mmd1_reg_reg_rgl_cdr_div_stg3_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+/* TX_CLK_GEN_1 - 0x7A0 */
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union tx_clk_gen_1_u *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        union tx_clk_gen_1_u *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txclk_source_sel_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txclk_source_sel_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txclkgen_en_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txclkgen_en_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txpi_en_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txpi_en_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txpi_cur_sel_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txpi_cur_sel_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txpi_slew_cur_sel_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_uphy_txpi_slew_cur_sel_set(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_reg_uphy_tx_speed_mode_get(
+        a_uint32_t dev_id,
+        a_uint32_t index,
+        a_uint32_t *value);
+
+sw_error_t
+hmsppe_uniphy_tx_clk_gen_1_miireg_reg_uphy_tx_speed_mode_set(
         a_uint32_t dev_id,
         a_uint32_t index,
         a_uint32_t value);
