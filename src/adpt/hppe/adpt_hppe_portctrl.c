@@ -4298,6 +4298,11 @@ adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id, a_uint32_t port_id,
 		case PORT_QSGMII:
 			adpt_hppe_pqsgmii_speed_clock_set(dev_id, port_id, phy_speed);
 			break;
+#if defined(JHPPE)
+		case PORT_25GBASE_R:
+			ssdk_port_speed_clock_set(dev_id, port_id, UNIPHY_CLK_RATE_781P25M);
+			break;
+#endif
 		default:
 			break;
 	}
