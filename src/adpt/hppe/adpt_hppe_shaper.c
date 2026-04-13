@@ -947,6 +947,7 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	fal_shaper_token_number_t token_number;
 	a_uint64_t temp_cir_max = 0, temp_eir_max =0;
 	a_uint32_t hppe_cir_max = 0, hppe_eir_max= 0;
+	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
 
 	memset(&l1_shp_cfg_tbl, 0, sizeof(l1_shp_cfg_tbl));
 	memset(&l1_comp_cfg_tbl, 0, sizeof(l1_comp_cfg_tbl));
@@ -1076,14 +1077,23 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	l1_shp_cfg_tbl.bf.c_shaper_enable = shaper->c_shaper_en;
 	l1_shp_cfg_tbl.bf.cbs = hppe_cbs;
 	l1_shp_cfg_tbl.bf.cir = hppe_cir;
-	l1_shp_cfg_tbl.bf.e_shaper_enable = shaper->e_shaper_en;
-	l1_shp_cfg_tbl.bf.ebs = hppe_ebs;
-	l1_shp_cfg_tbl.bf.eir = hppe_eir;
+	/* only use C shaper path for below specified platform */
+	if ((ppe_type == CHIP_HTTPPE) || (ppe_type == CHIP_HMSPPE) ||
+		(ppe_type == CHIP_JHPPE)) {
+		l1_shp_cfg_tbl.bf.e_shaper_enable = A_TRUE;
+		l1_shp_cfg_tbl.bf.ebs = 0;
+		l1_shp_cfg_tbl.bf.eir = 0;
+		l1_shp_cfg_tbl.bf.eir_max = 0;
+	} else {
+		l1_shp_cfg_tbl.bf.e_shaper_enable = shaper->e_shaper_en;
+		l1_shp_cfg_tbl.bf.ebs = hppe_ebs;
+		l1_shp_cfg_tbl.bf.eir = hppe_eir;
+		l1_shp_cfg_tbl.bf.eir_max = hppe_eir_max;
+	}
 	l1_shp_cfg_tbl.bf.token_unit = token_unit;
 	l1_comp_cfg_tbl.bf.shaper_meter_len = shaper->shaper_frame_mode;
 	l1_shp_cfg_tbl.bf.cir_max_0 = hppe_cir_max & 0x1ffff;
 	l1_shp_cfg_tbl.bf.cir_max_1 = hppe_cir_max >> 17;
-	l1_shp_cfg_tbl.bf.eir_max = hppe_eir_max;
 	if (shaper->meter_type == FAL_SHAPER_METER_MEF10_3) {
 		l1_shp_cfg_tbl.bf.shp_refresh_nxt_ptr = shaper->next_ptr;
 		l1_shp_cfg_tbl.bf.grp_end = shaper->grp_end;
@@ -1326,6 +1336,7 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	fal_shaper_token_number_t token_number;
 	a_uint64_t temp_cir_max = 0, temp_eir_max =0;
 	a_uint32_t hppe_cir_max = 0, hppe_eir_max= 0;
+	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
 
 	memset(&l0_shp_cfg_tbl, 0, sizeof(l0_shp_cfg_tbl));
 	memset(&l0_comp_cfg_tbl, 0, sizeof(l0_comp_cfg_tbl));
@@ -1454,14 +1465,23 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	l0_shp_cfg_tbl.bf.c_shaper_enable = shaper->c_shaper_en;
 	l0_shp_cfg_tbl.bf.cbs = hppe_cbs;
 	l0_shp_cfg_tbl.bf.cir = hppe_cir;
-	l0_shp_cfg_tbl.bf.e_shaper_enable = shaper->e_shaper_en;
-	l0_shp_cfg_tbl.bf.ebs = hppe_ebs;
-	l0_shp_cfg_tbl.bf.eir = hppe_eir;
+	/* only use C shaper path for below specified platform */
+	if ((ppe_type == CHIP_HTTPPE) || (ppe_type == CHIP_HMSPPE) ||
+		(ppe_type == CHIP_JHPPE)) {
+		l0_shp_cfg_tbl.bf.e_shaper_enable = A_TRUE;
+		l0_shp_cfg_tbl.bf.ebs = 0;
+		l0_shp_cfg_tbl.bf.eir = 0;
+		l0_shp_cfg_tbl.bf.eir_max = 0;
+	} else {
+		l0_shp_cfg_tbl.bf.e_shaper_enable = shaper->e_shaper_en;
+		l0_shp_cfg_tbl.bf.ebs = hppe_ebs;
+		l0_shp_cfg_tbl.bf.eir = hppe_eir;
+		l0_shp_cfg_tbl.bf.eir_max = hppe_eir_max;
+	}
 	l0_shp_cfg_tbl.bf.token_unit = token_unit;
 	l0_comp_cfg_tbl.bf.shaper_meter_len = shaper->shaper_frame_mode;
 	l0_shp_cfg_tbl.bf.cir_max_0 = hppe_cir_max & 0x3fff;
 	l0_shp_cfg_tbl.bf.cir_max_1 = hppe_cir_max >> 14;
-	l0_shp_cfg_tbl.bf.eir_max = hppe_eir_max;
 	if (shaper->meter_type == FAL_SHAPER_METER_MEF10_3) {
 		l0_shp_cfg_tbl.bf.shp_refresh_nxt_ptr = shaper->next_ptr;
 		l0_shp_cfg_tbl.bf.grp_end = shaper->grp_end;

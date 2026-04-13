@@ -55,33 +55,33 @@ static void hsl_ptp_event_stat_get(hsl_ptp_event_pkt_stat_t *pkt_stat,
 	}
 
 	/* stat for the ptp event packet handled by phc driver */
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "Sync_check_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "Sync_check_pkts",
 			pkt_stat->sync_cnt[PTP_PKT_SEQID_CHECKED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "DelayReq_check_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "DelayReq_check_pkts",
 			pkt_stat->delay_req_cnt[PTP_PKT_SEQID_CHECKED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "PdelayReq_check_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "PdelayReq_check_pkts",
 			pkt_stat->pdelay_req_cnt[PTP_PKT_SEQID_CHECKED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n\n", "PdelayResp_check_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n\n", "PdelayResp_check_pkts",
 			pkt_stat->pdelay_resp_cnt[PTP_PKT_SEQID_CHECKED]);
 
 	/* stat for the ptp event packet with timestamp matched by phc driver */
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "Sync_match_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "Sync_match_pkts",
 			pkt_stat->sync_cnt[PTP_PKT_SEQID_MATCHED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "DelayReq_match_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "DelayReq_match_pkts",
 			pkt_stat->delay_req_cnt[PTP_PKT_SEQID_MATCHED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "PdelayReq_match_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "PdelayReq_match_pkts",
 			pkt_stat->pdelay_req_cnt[PTP_PKT_SEQID_MATCHED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n\n", "PdelayResp_match_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n\n", "PdelayResp_match_pkts",
 			pkt_stat->pdelay_resp_cnt[PTP_PKT_SEQID_MATCHED]);
 
 	/* stat for the ptp event packet with timestamp unmatched by phc driver */
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "Sync_unmatch_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "Sync_unmatch_pkts",
 			pkt_stat->sync_cnt[PTP_PKT_SEQID_UNMATCHED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "DelayReq_unmatch_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "DelayReq_unmatch_pkts",
 			pkt_stat->delay_req_cnt[PTP_PKT_SEQID_UNMATCHED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "PdelayReq_unmatch_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n", "PdelayReq_unmatch_pkts",
 			pkt_stat->pdelay_req_cnt[PTP_PKT_SEQID_UNMATCHED]);
-	*count += snprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n\n", "PdelayResp_unmatch_pkts",
+	*count += scnprintf(buf + *count, PAGE_SIZE, "%-30s = %lld\n\n", "PdelayResp_unmatch_pkts",
 			pkt_stat->pdelay_resp_cnt[PTP_PKT_SEQID_UNMATCHED]);
 }
 
@@ -145,20 +145,20 @@ static int hsl_ptp_event_stat_operation_callback(struct device *dev, void *data)
 #else
 		phy_addr = phydev->mdio.addr;
 #endif
-		count += snprintf(buf + count, PAGE_SIZE,
+		count += scnprintf(buf + count, PAGE_SIZE,
 				"PHY [%#x] PTP event packet statistics:\n", phy_addr);
-		count += snprintf(buf + count, PAGE_SIZE,
+		count += scnprintf(buf + count, PAGE_SIZE,
 				"****************** RX direction ******************\n");
 		hsl_ptp_event_stat_get(&pkt_stat[FAL_RX_DIRECTION], buf, &count);
 
-		count += snprintf(buf + count, PAGE_SIZE,
+		count += scnprintf(buf + count, PAGE_SIZE,
 				"****************** TX direction ******************\n");
 		hsl_ptp_event_stat_get(&pkt_stat[FAL_TX_DIRECTION], buf, &count);
 
 		if (count > PAGE_SIZE - 5) {
 			count = -ENOMEM;
 		}
-		snprintf(buf + PAGE_SIZE - 5, 5, "%zd", count);
+		scnprintf(buf + PAGE_SIZE - 5, 5, "%zd", count);
 	}
 
 	return count < 0 ? count: 0;

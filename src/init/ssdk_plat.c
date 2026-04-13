@@ -1020,7 +1020,7 @@ static ssize_t ssdk_dev_id_get(struct device *dev,
 
 	num = (a_uint32_t)ssdk_dev_id;
 
-	count = snprintf(buf, (ssize_t)PAGE_SIZE, "%u", num);
+	count = scnprintf(buf, (ssize_t)PAGE_SIZE, "%u", num);
 	return count;
 }
 
@@ -1050,7 +1050,7 @@ static ssize_t ssdk_log_level_get(struct device *dev,
 
 	num = ssdk_log_level;
 
-	count = snprintf(buf, (ssize_t)PAGE_SIZE, "%u", num);
+	count = scnprintf(buf, (ssize_t)PAGE_SIZE, "%u", num);
 	return count;
 }
 
@@ -1173,19 +1173,19 @@ void ssdk_dts_port_scheduler_dump(a_uint32_t dev_id)
 	for (i = 0; i < SSDK_MAX_PORT_NUM; i++)
 	{
 		portscheduler_cfg = &scheduler_cfg->pool[i];
-		snprintf(srcmsg[0], sizeof(srcmsg[0]), "<%d %d>", portscheduler_cfg->ucastq_start,
+		scnprintf(srcmsg[0], sizeof(srcmsg[0]), "<%d %d>", portscheduler_cfg->ucastq_start,
 				portscheduler_cfg->ucastq_end);
-		snprintf(srcmsg[1], sizeof(srcmsg[1]), "<%d %d>", portscheduler_cfg->mcastq_start,
+		scnprintf(srcmsg[1], sizeof(srcmsg[1]), "<%d %d>", portscheduler_cfg->mcastq_start,
 				portscheduler_cfg->mcastq_end);
-		snprintf(srcmsg[2], sizeof(srcmsg[2]), "<%d %d>", portscheduler_cfg->l0sp_start,
+		scnprintf(srcmsg[2], sizeof(srcmsg[2]), "<%d %d>", portscheduler_cfg->l0sp_start,
 				portscheduler_cfg->l0sp_end);
-		snprintf(srcmsg[3], sizeof(srcmsg[3]), "<%d %d>", portscheduler_cfg->l0cdrr_start,
+		scnprintf(srcmsg[3], sizeof(srcmsg[3]), "<%d %d>", portscheduler_cfg->l0cdrr_start,
 				portscheduler_cfg->l0cdrr_end);
-		snprintf(srcmsg[4], sizeof(srcmsg[4]), "<%d %d>", portscheduler_cfg->l0edrr_start,
+		scnprintf(srcmsg[4], sizeof(srcmsg[4]), "<%d %d>", portscheduler_cfg->l0edrr_start,
 				portscheduler_cfg->l0edrr_end);
-		snprintf(srcmsg[5], sizeof(srcmsg[5]), "<%d %d>", portscheduler_cfg->l1cdrr_start,
+		scnprintf(srcmsg[5], sizeof(srcmsg[5]), "<%d %d>", portscheduler_cfg->l1cdrr_start,
 				portscheduler_cfg->l1cdrr_end);
-		snprintf(srcmsg[6], sizeof(srcmsg[6]), "<%d %d>", portscheduler_cfg->l1edrr_start,
+		scnprintf(srcmsg[6], sizeof(srcmsg[6]), "<%d %d>", portscheduler_cfg->l1edrr_start,
 				portscheduler_cfg->l1edrr_end);
 		printk("%6d%11s%11s%9s%11s%11s%11s%11s\n", i, srcmsg[0], srcmsg[1], srcmsg[2], srcmsg[3],
 				srcmsg[4], srcmsg[5], srcmsg[6]);
@@ -1209,19 +1209,19 @@ void ssdk_dts_reserved_scheduler_dump(a_uint32_t dev_id)
 			"\n");
 	printk("reserved   ucastq     mcastq     10sp     10cdrr     10edrr     11cdrr     11edrr"
 			"\n");
-	snprintf(srcmsg[0], sizeof(srcmsg[0]), "<%d %d>", reserved_cfg->ucastq_start,
+	scnprintf(srcmsg[0], sizeof(srcmsg[0]), "<%d %d>", reserved_cfg->ucastq_start,
 			reserved_cfg->ucastq_end);
-	snprintf(srcmsg[1], sizeof(srcmsg[1]), "<%d %d>", reserved_cfg->mcastq_start,
+	scnprintf(srcmsg[1], sizeof(srcmsg[1]), "<%d %d>", reserved_cfg->mcastq_start,
 			reserved_cfg->mcastq_end);
-	snprintf(srcmsg[2], sizeof(srcmsg[2]), "<%d %d>", reserved_cfg->l0sp_start,
+	scnprintf(srcmsg[2], sizeof(srcmsg[2]), "<%d %d>", reserved_cfg->l0sp_start,
 			reserved_cfg->l0sp_end);
-	snprintf(srcmsg[3], sizeof(srcmsg[3]), "<%d %d>", reserved_cfg->l0cdrr_start,
+	scnprintf(srcmsg[3], sizeof(srcmsg[3]), "<%d %d>", reserved_cfg->l0cdrr_start,
 			reserved_cfg->l0cdrr_end);
-	snprintf(srcmsg[4], sizeof(srcmsg[4]), "<%d %d>", reserved_cfg->l0edrr_start,
+	scnprintf(srcmsg[4], sizeof(srcmsg[4]), "<%d %d>", reserved_cfg->l0edrr_start,
 			reserved_cfg->l0edrr_end);
-	snprintf(srcmsg[5], sizeof(srcmsg[5]), "<%d %d>", reserved_cfg->l1cdrr_start,
+	scnprintf(srcmsg[5], sizeof(srcmsg[5]), "<%d %d>", reserved_cfg->l1cdrr_start,
 			reserved_cfg->l1cdrr_end);
-	snprintf(srcmsg[6], sizeof(srcmsg[6]), "<%d %d>", reserved_cfg->l1edrr_start,
+	scnprintf(srcmsg[6], sizeof(srcmsg[6]), "<%d %d>", reserved_cfg->l1edrr_start,
 			reserved_cfg->l1edrr_end);
 	printk("      %11s%11s%9s%11s%11s%11s%11s\n", srcmsg[0], srcmsg[1], srcmsg[2], srcmsg[3],
 			srcmsg[4], srcmsg[5], srcmsg[6]);
@@ -1318,7 +1318,7 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 	ssdk_reg_map_info map;
 	hsl_reg_mode mode;
 
-	count = snprintf(buf, (ssize_t)PAGE_SIZE, "\n");
+	count = scnprintf(buf, (ssize_t)PAGE_SIZE, "\n");
 
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id ++)
@@ -1439,7 +1439,7 @@ static ssize_t ssdk_phy_read_reg_get(struct device *dev,
 {
 	ssize_t count;
 
-	count = snprintf(buf, (ssize_t)PAGE_SIZE, "reg_val = 0x%x\n", phy_reg_val);
+	count = scnprintf(buf, (ssize_t)PAGE_SIZE, "reg_val = 0x%x\n", phy_reg_val);
 	return count;
 }
 
