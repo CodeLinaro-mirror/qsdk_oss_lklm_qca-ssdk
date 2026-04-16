@@ -219,6 +219,99 @@ union func_rst_pon_u {
 	struct func_rst_pon bf;
 };
 
+/*[register] PON_PLL_BANDWIDTH_CTRL - 0x5F0*/
+#define PON_PLL_BANDWIDTH_CTRL
+#define PON_PLL_BANDWIDTH_CTRL_ADDRESS 0x5F0
+#define PON_PLL_BANDWIDTH_CTRL_NUM     3
+#define PON_PLL_BANDWIDTH_CTRL_INC     0x1
+#define PON_PLL_BANDWIDTH_CTRL_TYPE    REG_TYPE_RW
+#define PON_PLL_BANDWIDTH_CTRL_DEFAULT 0xA3
+	/*[field] MMD1_REG_REG_PON_PLL_CP_SEL*/
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_CP_SEL
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_CP_SEL_OFFSET  7
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_CP_SEL_LEN     3
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_CP_SEL_DEFAULT 0x1
+	/*[field] MMD1_REG_REG_PON_PLL_LPF_C2*/
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_C2
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_C2_OFFSET  4
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_C2_LEN     3
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_C2_DEFAULT 0x2
+	/*[field] MMD1_REG_REG_PON_PLL_LPF_RES*/
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_RES
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_RES_OFFSET  0
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_RES_LEN     4
+	#define PON_PLL_BANDWIDTH_CTRL_MMD1_REG_REG_PON_PLL_LPF_RES_DEFAULT 0x3
+
+struct pon_pll_bandwidth_ctrl {
+	a_uint32_t  mmd1_reg_reg_pon_pll_lpf_res:4;
+	a_uint32_t  mmd1_reg_reg_pon_pll_lpf_c2:3;
+	a_uint32_t  mmd1_reg_reg_pon_pll_cp_sel:3;
+	a_uint32_t  _reserved0:22;
+};
+
+union pon_pll_bandwidth_ctrl_u {
+	a_uint32_t val;
+	struct pon_pll_bandwidth_ctrl bf;
+};
+
+/*[register] PON_PLL_VCO_CTRL - 0x5F4*/
+#define PON_PLL_VCO_CTRL
+#define PON_PLL_VCO_CTRL_ADDRESS 0x5F4
+#define PON_PLL_VCO_CTRL_NUM     3
+#define PON_PLL_VCO_CTRL_INC     0x1
+#define PON_PLL_VCO_CTRL_TYPE    REG_TYPE_RW
+#define PON_PLL_VCO_CTRL_DEFAULT 0x184
+	/*[field] MMD1_REG_REG_PON_PLL_VCO_AMP*/
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_AMP
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_AMP_OFFSET  6
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_AMP_LEN     4
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_AMP_DEFAULT 0x6
+	/*[field] MMD1_REG_REG_PON_PLL_VCO_TEMP_CMP*/
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_TEMP_CMP
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_TEMP_CMP_OFFSET  0
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_TEMP_CMP_LEN     6
+	#define PON_PLL_VCO_CTRL_MMD1_REG_REG_PON_PLL_VCO_TEMP_CMP_DEFAULT 0x4
+
+struct pon_pll_vco_ctrl {
+	a_uint32_t  mmd1_reg_reg_pon_pll_vco_temp_cmp:6;
+	a_uint32_t  mmd1_reg_reg_pon_pll_vco_amp:4;
+	a_uint32_t  _reserved0:22;
+};
+
+union pon_pll_vco_ctrl_u {
+	a_uint32_t val;
+	struct pon_pll_vco_ctrl bf;
+};
+
+/*[register] PON_PLL_REFCLK_FBCLK - 0x5F8*/
+#define PON_PLL_REFCLK_FBCLK
+#define PON_PLL_REFCLK_FBCLK_ADDRESS 0x5F8
+#define PON_PLL_REFCLK_FBCLK_NUM     3
+#define PON_PLL_REFCLK_FBCLK_INC     0x1
+#define PON_PLL_REFCLK_FBCLK_TYPE    REG_TYPE_RW
+#define PON_PLL_REFCLK_FBCLK_DEFAULT 0x1860
+	/*[field] MMD1_REG_REG_PON_PLL_REFCLK_DIV*/
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_REFCLK_DIV
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_REFCLK_DIV_OFFSET  8
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_REFCLK_DIV_LEN     5
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_REFCLK_DIV_DEFAULT 0x18
+	/*[field] MMD1_REG_REG_PON_PLL_FBCLK_DIV*/
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_FBCLK_DIV
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_FBCLK_DIV_OFFSET  0
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_FBCLK_DIV_LEN     8
+	#define PON_PLL_REFCLK_FBCLK_MMD1_REG_REG_PON_PLL_FBCLK_DIV_DEFAULT 0x60
+
+struct pon_pll_refclk_fbclk {
+	a_uint32_t  mmd1_reg_reg_pon_pll_fbclk_div:8;
+	a_uint32_t  mmd1_reg_reg_pon_pll_refclk_div:5;
+	a_uint32_t  _reserved0:19;
+};
+
+union pon_pll_refclk_fbclk_u {
+	a_uint32_t val;
+	struct pon_pll_refclk_fbclk bf;
+};
+
 /*[register] PON_REG_SOURCE_SEL1 - 0x5FC*/
 #define PON_REG_SOURCE_SEL1
 #define PON_REG_SOURCE_SEL1_ADDRESS 0x5FC
@@ -293,6 +386,71 @@ struct pon_cdr_lock_wait_cnt {
 union pon_cdr_lock_wait_cnt_u {
 	a_uint32_t val;
 	struct pon_cdr_lock_wait_cnt bf;
+};
+
+/*[register] JCCDR_CDR_CTRL - 0x640*/
+#define JCCDR_CDR_CTRL
+#define JCCDR_CDR_CTRL_ADDRESS 0x640
+#define JCCDR_CDR_CTRL_NUM     3
+#define JCCDR_CDR_CTRL_INC     0x1
+#define JCCDR_CDR_CTRL_TYPE    REG_TYPE_RW
+#define JCCDR_CDR_CTRL_DEFAULT 0x591D
+	/*[field] MMD1_REG_REG_JCCDR_FLOOP_GAIN*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_FLOOP_GAIN
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_FLOOP_GAIN_OFFSET  11
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_FLOOP_GAIN_LEN     5
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_FLOOP_GAIN_DEFAULT 0xB
+	/*[field] MMD1_REG_MMD1_UPHY_RX_FLOOP_BYPS*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_MMD1_UPHY_RX_FLOOP_BYPS
+	#define JCCDR_CDR_CTRL_MMD1_REG_MMD1_UPHY_RX_FLOOP_BYPS_OFFSET  10
+	#define JCCDR_CDR_CTRL_MMD1_REG_MMD1_UPHY_RX_FLOOP_BYPS_LEN     1
+	#define JCCDR_CDR_CTRL_MMD1_REG_MMD1_UPHY_RX_FLOOP_BYPS_DEFAULT 0x0
+	/*[field] MMD1_REG_JCCDR_RX_FLOOP_BYPS*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_FLOOP_BYPS
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_FLOOP_BYPS_OFFSET  9
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_FLOOP_BYPS_LEN     1
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_FLOOP_BYPS_DEFAULT 0x0
+	/*[field] MMD1_REG_JCCDR_RX_PLOOP_EN*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_PLOOP_EN
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_PLOOP_EN_OFFSET  8
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_PLOOP_EN_LEN     1
+	#define JCCDR_CDR_CTRL_MMD1_REG_JCCDR_RX_PLOOP_EN_DEFAULT 0x1
+	/*[field] MMD1_REG_REG_JCCDR_RX_SPEED_MODE*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_SPEED_MODE
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_SPEED_MODE_OFFSET  6
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_SPEED_MODE_LEN     2
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_SPEED_MODE_DEFAULT 0x0
+	/*[field] MMD1_REG_REG_JCCDR_RX_PLOOP_GAIN*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_PLOOP_GAIN
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_PLOOP_GAIN_OFFSET  3
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_PLOOP_GAIN_LEN     3
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_PLOOP_GAIN_DEFAULT 0x3
+	/*[field] MMD1_REG_REG_JCCDR_RX_DLF_RATE*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_DLF_RATE
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_DLF_RATE_OFFSET  1
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_DLF_RATE_LEN     2
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_DLF_RATE_DEFAULT 0x2
+	/*[field] MMD1_REG_REG_JCCDR_RX_CDR_EN*/
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_CDR_EN
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_CDR_EN_OFFSET  0
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_CDR_EN_LEN     1
+	#define JCCDR_CDR_CTRL_MMD1_REG_REG_JCCDR_RX_CDR_EN_DEFAULT 0x1
+
+struct jccdr_cdr_ctrl {
+	a_uint32_t  mmd1_reg_reg_jccdr_rx_cdr_en:1;
+	a_uint32_t  mmd1_reg_reg_jccdr_rx_dlf_rate:2;
+	a_uint32_t  mmd1_reg_reg_jccdr_rx_ploop_gain:3;
+	a_uint32_t  mmd1_reg_reg_jccdr_rx_speed_mode:2;
+	a_uint32_t  mmd1_reg_jccdr_rx_ploop_en:1;
+	a_uint32_t  mmd1_reg_jccdr_rx_floop_byps:1;
+	a_uint32_t  mmd1_reg_mmd1_uphy_rx_floop_byps:1;
+	a_uint32_t  mmd1_reg_reg_jccdr_floop_gain:5;
+	a_uint32_t  _reserved0:16;
+};
+
+union jccdr_cdr_ctrl_u {
+	a_uint32_t val;
+	struct jccdr_cdr_ctrl bf;
 };
 
 /*[register] JCCDR_DIG_CTRL1 - 0x644*/
@@ -793,6 +951,61 @@ struct jccdr_rgl_fst_div_stg3 {
 union jccdr_rgl_fst_div_stg3_u {
 	a_uint32_t val;
 	struct jccdr_rgl_fst_div_stg3 bf;
+};
+
+/*[register] TX_CLK_GEN_1 - 0x7A0*/
+#define TX_CLK_GEN_1
+#define TX_CLK_GEN_1_ADDRESS 0x7A0
+#define TX_CLK_GEN_1_NUM     3
+#define TX_CLK_GEN_1_INC     0x1
+#define TX_CLK_GEN_1_TYPE    REG_TYPE_RW
+#define TX_CLK_GEN_1_DEFAULT 0xE0A0
+	/*[field] MIIREG_UPHY_TXCLK_SOURCE_SEL*/
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLK_SOURCE_SEL
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLK_SOURCE_SEL_OFFSET  15
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLK_SOURCE_SEL_LEN     1
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLK_SOURCE_SEL_DEFAULT 0x1
+	/*[field] MIIREG_UPHY_TXCLKGEN_EN*/
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLKGEN_EN
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLKGEN_EN_OFFSET  14
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLKGEN_EN_LEN     1
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXCLKGEN_EN_DEFAULT 0x1
+	/*[field] MIIREG_UPHY_TXPI_EN*/
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_EN
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_EN_OFFSET  13
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_EN_LEN     1
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_EN_DEFAULT 0x1
+	/*[field] MIIREG_UPHY_TXPI_CUR_SEL*/
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_CUR_SEL
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_CUR_SEL_OFFSET  6
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_CUR_SEL_LEN     2
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_CUR_SEL_DEFAULT 0x2
+	/*[field] MIIREG_UPHY_TXPI_SLEW_CUR_SEL*/
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_SLEW_CUR_SEL
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_SLEW_CUR_SEL_OFFSET  4
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_SLEW_CUR_SEL_LEN     2
+	#define TX_CLK_GEN_1_MIIREG_UPHY_TXPI_SLEW_CUR_SEL_DEFAULT 0x2
+	/*[field] MIIREG_REG_UPHY_TX_SPEED_MODE*/
+	#define TX_CLK_GEN_1_MIIREG_REG_UPHY_TX_SPEED_MODE
+	#define TX_CLK_GEN_1_MIIREG_REG_UPHY_TX_SPEED_MODE_OFFSET  0
+	#define TX_CLK_GEN_1_MIIREG_REG_UPHY_TX_SPEED_MODE_LEN     2
+	#define TX_CLK_GEN_1_MIIREG_REG_UPHY_TX_SPEED_MODE_DEFAULT 0x0
+
+struct tx_clk_gen_1 {
+	a_uint32_t  miireg_reg_uphy_tx_speed_mode:2;
+	a_uint32_t  _reserved0:2;
+	a_uint32_t  miireg_uphy_txpi_slew_cur_sel:2;
+	a_uint32_t  miireg_uphy_txpi_cur_sel:2;
+	a_uint32_t  _reserved1:5;
+	a_uint32_t  miireg_uphy_txpi_en:1;
+	a_uint32_t  miireg_uphy_txclkgen_en:1;
+	a_uint32_t  miireg_uphy_txclk_source_sel:1;
+	a_uint32_t  _reserved2:16;
+};
+
+union tx_clk_gen_1_u {
+	a_uint32_t val;
+	struct tx_clk_gen_1 bf;
 };
 
 #endif /* _HMSPPE_UNIPHY_REG_H_ */

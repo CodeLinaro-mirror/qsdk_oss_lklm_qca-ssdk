@@ -125,15 +125,18 @@ adpt_hmsppe_uniphy_jccdr_fast_lock_tune(a_uint32_t dev_id, a_uint32_t uniphy_ind
 
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step2_get(dev_id, uniphy_index, &step2_reg);
 	SW_RTN_ON_ERROR(rv);
-	step2_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step2 = JCCDR_FST_CDR_DIV_STG1_STEP2_XGPON_2MHZ; /* 0x4 */
+	step2_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step2 = JCCDR_FST_CDR_DIV_STG1_STEP2_DEFAULT; /* 0x80 */
 	step2_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step2 = JCCDR_FST_CDR_DIV_STG2_STEP2_DEFAULT; /* 0x4 */
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step2_set(dev_id, uniphy_index, &step2_reg);
 	SW_RTN_ON_ERROR(rv);
 
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step3_get(dev_id, uniphy_index, &step3_reg);
 	SW_RTN_ON_ERROR(rv);
-	step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step3 = JCCDR_FST_CDR_DIV_STG1_STEP3_XGPON_2MHZ; /* 0x4 */
-	step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step3 = JCCDR_FST_CDR_DIV_STG2_STEP3_XGPON_2MHZ; /* 0x4 */
+	step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg1_step3 = JCCDR_FST_CDR_DIV_STG1_STEP3_DEFAULT; /* 0x80 */
+	if (mode == PORT_WRAPPER_GPON)
+		step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step3 = JCCDR_FST_CDR_DIV_STG2_STEP3_GPON_2KHZ; /* 0x20 */
+	else
+		step3_reg.bf.mmd1_reg_reg_fst_cdr_div_stg2_step3 = JCCDR_FST_CDR_DIV_STG2_STEP3_DEFAULT; /* 0x80 */
 	rv = hmsppe_uniphy_jccdr_fst_div_stg1_2_step3_set(dev_id, uniphy_index, &step3_reg);
 	SW_RTN_ON_ERROR(rv);
 
@@ -150,14 +153,14 @@ adpt_hmsppe_uniphy_jccdr_fast_lock_tune(a_uint32_t dev_id, a_uint32_t uniphy_ind
 	rv = hmsppe_uniphy_jccdr_floop_gain_tune_val_get(dev_id, uniphy_index, &fgain_reg);
 	SW_RTN_ON_ERROR(rv);
 	fgain_reg.bf.mmd1_reg_jccdr_floop_gain_tune_en = A_TRUE;
-	fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune0 = JCCDR_FLOOP_GAIN_TUNE0_DEFAULT; /* 0x1 */
 	if (mode == PORT_WRAPPER_GPON) {
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_GPON_500KHZ; /* 0xD */
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune2 = JCCDR_FLOOP_GAIN_TUNE2_GPON_500KHZ; /* 0xC */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune0 = JCCDR_FLOOP_GAIN_TUNE0_GPON_4KHZ_2KHZ; /* 0x3 */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_GPON_4KHZ_2KHZ; /* 0x8 */
 	} else {
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_XGPON_2MHZ; /* 0x1 */
-		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune2 = JCCDR_FLOOP_GAIN_TUNE2_XGPON_2MHZ; /* 0x1 */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune0 = JCCDR_FLOOP_GAIN_TUNE0_DEFAULT; /* 0x1 */
+		fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune1 = JCCDR_FLOOP_GAIN_TUNE1_DEFAULT; /* 0x6 */
 	}
+	fgain_reg.bf.mmd1_reg_reg_jccdr_floop_gain_tune2 = JCCDR_FLOOP_GAIN_TUNE2_DEFAULT; /* 0xB */
 	rv = hmsppe_uniphy_jccdr_floop_gain_tune_val_set(dev_id, uniphy_index, &fgain_reg);
 	SW_RTN_ON_ERROR(rv);
 
@@ -236,6 +239,7 @@ adpt_hmsppe_uniphy_pon_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 {
 	a_bool_t jccdr_regular_lock = A_FALSE;
 	a_bool_t jccdr_fast_lock = A_TRUE;
+	union jccdr_cdr_ctrl_u cdr_ctrl;
 	union func_rst_pon_u func_rst;
 	a_uint32_t reg_value = 0;
 	sw_error_t rv = SW_OK;
@@ -245,18 +249,97 @@ adpt_hmsppe_uniphy_pon_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	msleep(1);
 	ssdk_uniphy_reset(dev_id, UNIPHY0_SYS_RESET_E + uniphy_index, SSDK_RESET_DEASSERT);
 
+	/* Keep XPCS to assert status */
+	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
+
 	/* Step 1: Write 1'b1 to PON_REG_SOURCE_SEL1[10] SRC_PON_MODE_EXT_INTERNAL */
 	rv = hmsppe_uniphy_pon_reg_source_sel1_mmd1_reg_src_pon_mode_ext_internal_set(
 		dev_id, uniphy_index, SRC_PON_MODE_EXTERNAL);
 	if (rv != SW_OK)
 		SSDK_WARN("uniphy %d pon mode %d source select failed.\n", uniphy_index, mode);
 
-	/* Step 2: UNIPHY_INST2 PON interface clock enable */
+	/* Step 2: Mode-specific CDR and PLL configuration */
+	/* 2-1. Configure JCCDR_CDR_CTRL in one get/set:
+	 *   [7:6] jccdr_rx_speed_mode = 2'b10 (/4)
+	 *   [2:1] jccdr_rx_dlf_rate = 2'b00 (2UI)
+	 */
+	rv = hmsppe_uniphy_jccdr_cdr_ctrl_get(dev_id, uniphy_index, &cdr_ctrl);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d JCCDR_CDR_CTRL get failed.\n", uniphy_index);
+
+	cdr_ctrl.bf.mmd1_reg_reg_jccdr_rx_speed_mode = 0x2;
+	cdr_ctrl.bf.mmd1_reg_reg_jccdr_rx_dlf_rate = 0x0;
+	rv = hmsppe_uniphy_jccdr_cdr_ctrl_set(dev_id, uniphy_index, &cdr_ctrl);
+	if (rv != SW_OK)
+		SSDK_WARN("uniphy %d GPON JCCDR_CDR_CTRL set failed.\n", uniphy_index);
+
+	if (mode == PORT_WRAPPER_GPON) {
+		union tx_clk_gen_1_u tx_clk_gen;
+
+		/* 2-2. Set tx_speed_mode to 2'b00 (/1): TX_CLK_GEN_1[1:0] */
+		rv = hmsppe_uniphy_tx_clk_gen_1_get(dev_id, uniphy_index, &tx_clk_gen);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d GPON tx_clk_gen_1 get failed.\n", uniphy_index);
+
+		tx_clk_gen.bf.miireg_reg_uphy_tx_speed_mode = 0x0;
+		rv = hmsppe_uniphy_tx_clk_gen_1_set(dev_id, uniphy_index, &tx_clk_gen);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d GPON tx_speed_mode set failed.\n", uniphy_index);
+	} else {
+		union jccdr_dig_ctrl1_u dig_ctrl1;
+		union pon_pll_bandwidth_ctrl_u pll_bw;
+		union pon_pll_vco_ctrl_u pll_vco;
+
+		/* 2-2. Set pon_pll_refclk_div to 5'h06: PON_PLL_REFCLK_FBCLK[12:8] */
+		rv = hmsppe_uniphy_pon_pll_refclk_fbclk_mmd1_reg_reg_pon_pll_refclk_div_set(
+			dev_id, uniphy_index, 0x06);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON pon_pll_refclk_div set failed.\n", uniphy_index);
+
+		/* 2-3. Enable JCPLL: clear JCCDR_DIG_CTRL1[7] pon_pll_bypass = 0 */
+		rv = hmsppe_uniphy_jccdr_dig_ctrl1_get(dev_id, uniphy_index, &dig_ctrl1);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON JCPLL_DIG_CTRL1 get failed.\n", uniphy_index);
+
+		dig_ctrl1.bf.mmd1_reg_pon_pll_bypass = A_FALSE;
+		rv = hmsppe_uniphy_jccdr_dig_ctrl1_set(dev_id, uniphy_index, &dig_ctrl1);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON JCPLL enable failed.\n", uniphy_index);
+
+		/* 2-4. Set PON_PLL_BANDWIDTH_CTRL to 0x2F8:
+		 *    cp_sel[9:7]=5, lpf_c2[6:4]=7, lpf_res[3:0]=8
+		 */
+		rv = hmsppe_uniphy_pon_pll_bandwidth_ctrl_get(dev_id, uniphy_index, &pll_bw);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON PON_PLL_BANDWIDTH_CTRL get failed.\n", uniphy_index);
+
+		pll_bw.bf.mmd1_reg_reg_pon_pll_cp_sel = 0x5;
+		pll_bw.bf.mmd1_reg_reg_pon_pll_lpf_c2 = 0x7;
+		pll_bw.bf.mmd1_reg_reg_pon_pll_lpf_res = 0x8;
+		rv = hmsppe_uniphy_pon_pll_bandwidth_ctrl_set(dev_id, uniphy_index, &pll_bw);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON PON_PLL_BANDWIDTH_CTRL set failed.\n", uniphy_index);
+
+		/* 2-5. Set PON_PLL_VCO_CTRL to 0x204:
+		 *    vco_amp[9:6]=8, vco_temp_cmp[5:0]=4
+		 */
+		rv = hmsppe_uniphy_pon_pll_vco_ctrl_get(dev_id, uniphy_index, &pll_vco);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON PON_PLL_VCO_CTRL get failed.\n", uniphy_index);
+
+		pll_vco.bf.mmd1_reg_reg_pon_pll_vco_amp = 0x8;
+		pll_vco.bf.mmd1_reg_reg_pon_pll_vco_temp_cmp = 0x4;
+		rv = hmsppe_uniphy_pon_pll_vco_ctrl_set(dev_id, uniphy_index, &pll_vco);
+		if (rv != SW_OK)
+			SSDK_WARN("uniphy %d XGPON PON_PLL_VCO_CTRL set failed.\n", uniphy_index);
+	}
+
+	/* Step 3: UNIPHY_INST2 PON interface clock enable */
 	rv = adpt_hmsppe_uniphy_pon_clock_enable(dev_id, uniphy_index, mode);
 	if (rv != SW_OK)
 		SSDK_WARN("uniphy %d pon mode %d interface clock enable failed.\n", uniphy_index, mode);
 
-	/* Step 3: UNIPHY_PON interface data disable - Write 0 to FUNC_RST_PON[5:4] & [1:0] */
+	/* Step 4: UNIPHY_PON interface data disable - Write 0 to FUNC_RST_PON[5:4] & [1:0] */
 	rv = hmsppe_uniphy_func_rst_pon_get(dev_id, uniphy_index, &func_rst);
 	if (rv != SW_OK)
 		SSDK_WARN("uniphy %d pon mode %d interface data disable failed.\n", uniphy_index, mode);
@@ -269,26 +352,26 @@ adpt_hmsppe_uniphy_pon_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	if (rv != SW_OK)
 		SSDK_WARN("uniphy %d pon mode %d interface data disable failed.\n", uniphy_index, mode);
 
-	/* Step 4: PON jccdr fast lock tune (if needed) */
+	/* Step 5: PON jccdr fast lock tune (if needed) */
 	if (jccdr_fast_lock) {
 		rv = adpt_hmsppe_uniphy_jccdr_fast_lock_tune(dev_id, uniphy_index, mode);
 		if (rv != SW_OK)
 			SSDK_WARN("uniphy %d pon mode %d jccdr fast lock tune failed.\n", uniphy_index, mode);
 	}
 
-	/* Step 5: PON jccdr regular lock tune (if needed) */
+	/* Step 6: PON jccdr regular lock tune (if needed) */
 	if (jccdr_regular_lock) {
 		rv = adpt_hmsppe_uniphy_jccdr_regular_lock_tune(dev_id, uniphy_index, mode);
 		if (rv != SW_OK)
 			SSDK_WARN("uniphy %d pon mode %d jccdr regular lock tune failed.\n", uniphy_index, mode);
 	}
 
-	/* Step 6: Wait calibration done - read CSR0 OFFSET_CALIB_4[7] (OFFSET 0x1E0) */
+	/* Step 7: Wait calibration done - read CSR0 OFFSET_CALIB_4[7] (OFFSET 0x1E0) */
 	rv = __adpt_hppe_uniphy_calibrate(dev_id, uniphy_index);
 	if (rv != SW_OK)
 		SSDK_WARN("uniphy %d pon mode %d calibration failed.\n", uniphy_index, mode);
 
-	/* Step 7: Wait sdrx_lock asserted - JCCDR_CALIB_STS_DEBUG[7] SDRX_LOCK */
+	/* Step 8: Wait sdrx_lock asserted - JCCDR_CALIB_STS_DEBUG[7] SDRX_LOCK */
 	rv = read_poll_timeout(hmsppe_uniphy_jccdr_calib_sts_debug_mmd1_reg_sdrx_lock_get,
 				rv, (rv == SW_OK && reg_value), 1000, 100000, false,
 				dev_id, uniphy_index, &reg_value);
@@ -297,7 +380,7 @@ adpt_hmsppe_uniphy_pon_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 			   uniphy_index, mode);
 	}
 
-	/* Step 8: UNIPHY_PON interface data enable */
+	/* Step 9: UNIPHY_PON interface data enable */
 	/* Write 2'b11 to FUNC_RST_PON[1:0] FUNC_RST_PON_RX_N, FUNC_RST_PON_TX_N */
 	rv = hmsppe_uniphy_func_rst_pon_get(dev_id, uniphy_index, &func_rst);
 	if (rv != SW_OK)
