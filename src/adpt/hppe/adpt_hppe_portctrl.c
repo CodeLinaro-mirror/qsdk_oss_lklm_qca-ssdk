@@ -1628,20 +1628,29 @@ _adpt_hppe_gmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed_
 	return rv;
 }
 
-
 #if defined(JHPPE)
+static sw_error_t
+_adpt_jhppe_xgmac_chicken_set(a_uint32_t dev_id, a_uint32_t mac_id, a_bool_t en)
+{
+	union mac_snps_scs_u mac_snps_scs = {0};
+	sw_error_t rv;
+
+	rv = hppe_mac_snps_scs_get(dev_id, mac_id, &mac_snps_scs);
+	SW_RTN_ON_ERROR(rv);
+
+	mac_snps_scs.bf.mtl_scs1 = en;
+
+	return hppe_mac_snps_scs_set(dev_id, mac_id, &mac_snps_scs);
+}
+
 static sw_error_t
 _adpt_jhppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mode, fal_port_speed_t speed)
 {
 	union mac_tx_configuration_u mac_tx_configuration = {0};
-	union mac_snps_scs_u mac_snps_scs = {0};
 	a_uint32_t ss = 0;
 	sw_error_t rv;
 
 	rv = hppe_mac_tx_configuration_get(dev_id, mac_id, &mac_tx_configuration);
-	SW_RTN_ON_ERROR(rv);
-
-	rv = hppe_mac_snps_scs_get(dev_id, mac_id, &mac_snps_scs);
 	SW_RTN_ON_ERROR(rv);
 
 	switch (speed) {
@@ -1670,10 +1679,6 @@ _adpt_jhppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t mac_id, a_uint32_t mod
 	}
 
 	mac_tx_configuration.bf.ss = ss;
-	mac_snps_scs.bf.mtl_scs1 = A_TRUE;
-
-	rv = hppe_mac_snps_scs_set(dev_id, mac_id, &mac_snps_scs);
-	SW_RTN_ON_ERROR(rv);
 
 	return hppe_mac_tx_configuration_set(dev_id, mac_id, &mac_tx_configuration);
 }
@@ -1747,6 +1752,11 @@ _adpt_hppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 		break;
 #endif
 	case JHPPE_TYPE:
+#if defined(JHPPE)
+		rv = _adpt_jhppe_xgmac_chicken_set(dev_id, port_id, A_TRUE);
+		SW_RTN_ON_ERROR(rv);
+#endif
+		fallthrough;
 	case HMSPPE_TYPE:
 #if defined(JHPPE)
 		rv = _adpt_jhppe_xgmac_speed_set(dev_id, port_id, mode, speed);
