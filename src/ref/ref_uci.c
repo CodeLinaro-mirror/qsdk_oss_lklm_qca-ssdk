@@ -13964,6 +13964,77 @@ int parse_tunnel_udfprofilecfg(struct switch_val *val)
 }
 #endif
 
+#ifdef IN_CROSSCHIP
+static int
+parse_crosschip_bpmode(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "bp_mode")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_crosschip_bpen(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "queue_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bp_en")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_crosschip(const char *command_name, struct switch_val *val)
+{
+	int rv = -1;
+	if (!strcmp(command_name, "Bpmode")) {
+		rv = parse_crosschip_bpmode(val);
+	} else if (!strcmp(command_name, "Bpen")) {
+		rv = parse_crosschip_bpen(val);
+	}
+
+	return rv;
+}
+#endif
+
 static int name_transfer(char *name, char *module, char *cmd)
 {
         char *p;
@@ -14159,6 +14230,10 @@ qca_ar8327_sw_switch_ext(struct switch_dev *dev,
 	} else if(!strcmp(module_name, "Ipmc")) {
 #ifdef IN_IPMC
 		rv = parse_ipmc(command_name, val);
+#endif
+	} else if(!strcmp(module_name, "Crosschip")) {
+#ifdef IN_CROSSCHIP
+		rv = parse_crosschip(command_name, val);
 #endif
 	}
 
