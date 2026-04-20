@@ -96,6 +96,20 @@ a_uint32_t adpt_chip_revision_get(a_uint32_t dev_id)
 	return g_chip_ver[dev_id].chip_revision;
 }
 
+a_uint32_t adpt_ppe_port_id_max_get(a_uint32_t dev_id)
+{
+	a_uint32_t chip_type = adpt_chip_type_get(dev_id);
+
+	if (chip_type == CHIP_JHPPE)
+		return JHPPE_PORT_ID_MAX;
+	if (chip_type == CHIP_HTTPPE)
+		return HTTPPE_PORT_ID_MAX;
+	if (adpt_ppe_type_get(dev_id) == MPPE_TYPE)
+		return MPPE_PORT_ID_MAX;
+	/* APPE, MRPPE and HMSPPE chip type use below value */
+	return HPPE_PORT_ID_MAX;
+}
+
 a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 {
 	a_uint32_t ppe_freq = ADPT_HPPE_FREQUENCY;
