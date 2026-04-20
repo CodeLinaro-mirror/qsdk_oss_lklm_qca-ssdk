@@ -32,6 +32,9 @@
 #define ADPT_HPPE_ACL_POLICER_MIN_ENTRY  0
 #define ADPT_APPE_POLICER_MAX           0x3ffff
 #define ADPT_POLICER_TIME_SLOT_MAX	4095
+/* 25G max rates for JHPPE */
+#define BYTE_POLICER_MAX_RATE_25G      25000000
+#define FRAME_POLICER_MAX_RATE_25G     37202500
 
 #define ADPT_1BIT_MAGNI_SCALE   1000    /*Improve accuracy rate*/
 
@@ -74,6 +77,22 @@ struct adpt_ppe_acl_meter_ops {
 	adpt_ppe_acl_write_ir_fn write_ir;
 };
 static const struct adpt_ppe_acl_meter_ops *g_ppe_acl_meter_ops[SW_MAX_NR_DEV] = { NULL };
+
+static inline a_uint32_t
+__adpt_ppe_policer_byte_max_rate_get(a_uint32_t dev_id)
+{
+	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
+		return BYTE_POLICER_MAX_RATE_25G;
+	return BYTE_POLICER_MAX_RATE;
+}
+
+static inline a_uint32_t
+__adpt_ppe_policer_frame_max_rate_get(a_uint32_t dev_id)
+{
+	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
+		return FRAME_POLICER_MAX_RATE_25G;
+	return FRAME_POLICER_MAX_RATE;
+}
 
 static inline a_uint32_t __adpt_ppe_acl_policer_max_num_get(a_uint32_t dev_id)
 {
@@ -372,7 +391,7 @@ adpt_hppe_port_policer_counter_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(counter);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	hppe_in_port_meter_cnt_tbl_get(dev_id, port_id * 3, &in_port_meter_cnt_tbl);
@@ -404,7 +423,7 @@ adpt_hppe_port_compensation_byte_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(length);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	rv = hppe_meter_cmpst_length_reg_get(dev_id, port_id, &meter_cmpst_length_reg);
@@ -790,6 +809,8 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 	a_uint32_t cir_ref = 0, eir_ref = 0, cbs_bkt = 0, ebs_bkt = 0;
 	a_uint32_t appe_cir_max_ref = 0, appe_eir_max_ref= 0;
 	__adpt_ppe_acl_meter_cfg_ir_t ir;
+	a_uint32_t byte_max_rate  = 0;
+	a_uint32_t frame_max_rate = 0;
 
 	memset(&ir, 0, sizeof(ir));
 
@@ -801,9 +822,12 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 		(index > __adpt_ppe_acl_policer_max_num_get(dev_id)))
 		return SW_BAD_PARAM;
 
+	byte_max_rate  = __adpt_ppe_policer_byte_max_rate_get(dev_id);
+	frame_max_rate = __adpt_ppe_policer_frame_max_rate_get(dev_id);
+
 	if(ADPT_HPPE_POLICER_METER_UNIT_BYTE == policer->meter_unit) {
-		if ((policer->cir > BYTE_POLICER_MAX_RATE) ||
-			(policer->eir > BYTE_POLICER_MAX_RATE))
+		if ((policer->cir > byte_max_rate) ||
+			(policer->eir > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((policer->cir < BYTE_POLICER_MIN_RATE) &&
 			(policer->cir != 0))
@@ -811,8 +835,8 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 		if ((policer->eir < BYTE_POLICER_MIN_RATE) &&
 			(policer->eir != 0))
 			return SW_BAD_PARAM;
-		if ((policer->cir_max> BYTE_POLICER_MAX_RATE) ||
-			(policer->eir_max > BYTE_POLICER_MAX_RATE))
+		if ((policer->cir_max> byte_max_rate) ||
+			(policer->eir_max > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((policer->cir_max < BYTE_POLICER_MIN_RATE) &&
 			(policer->cir_max != 0))
@@ -824,8 +848,8 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 
 	if(ADPT_HPPE_POLICER_METER_UNIT_FRAME == policer->meter_unit)
 	{
-		if ((policer->cir > FRAME_POLICER_MAX_RATE) ||
-			(policer->eir > FRAME_POLICER_MAX_RATE))
+		if ((policer->cir > frame_max_rate) ||
+			(policer->eir > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((policer->cir < FRAME_POLICER_MIN_RATE) &&
 			(policer->cir != 0))
@@ -833,8 +857,8 @@ adpt_hppe_acl_policer_entry_set(a_uint32_t dev_id, a_uint32_t index,
 		if ((policer->eir < FRAME_POLICER_MIN_RATE) &&
 			(policer->eir != 0))
 			return SW_BAD_PARAM;
-		if ((policer->cir_max > FRAME_POLICER_MAX_RATE) ||
-			(policer->eir_max > FRAME_POLICER_MAX_RATE))
+		if ((policer->cir_max > frame_max_rate) ||
+			(policer->eir_max > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((policer->cir_max < FRAME_POLICER_MIN_RATE) &&
 			(policer->cir_max != 0))
@@ -1019,7 +1043,7 @@ adpt_hppe_port_policer_entry_get(a_uint32_t dev_id, fal_port_t port_id,
 
 		return rv;
 	}
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	hppe_in_port_meter_cfg_tbl_get(dev_id, port_id, &in_port_meter_cfg_tbl);
@@ -1111,6 +1135,8 @@ adpt_hppe_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t token_unit = 0;
 	sw_error_t rv = SW_OK;
 	union l2_vp_port_tbl_u l2_vp_port_tbl;
+	a_uint32_t byte_max_rate  = 0;
+	a_uint32_t frame_max_rate = 0;
 
 	memset(&in_port_meter_cfg_tbl, 0, sizeof(in_port_meter_cfg_tbl));
 	memset(&l2_vp_port_tbl, 0, sizeof(l2_vp_port_tbl));
@@ -1133,12 +1159,15 @@ adpt_hppe_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
 
 		return rv;
 	}
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
+
+	byte_max_rate  = __adpt_ppe_policer_byte_max_rate_get(dev_id);
+	frame_max_rate = __adpt_ppe_policer_frame_max_rate_get(dev_id);
 
 	if(ADPT_HPPE_POLICER_METER_UNIT_BYTE == policer->meter_unit)
 	{
-		if ((policer->cir > BYTE_POLICER_MAX_RATE) || (policer->eir > BYTE_POLICER_MAX_RATE))
+		if ((policer->cir > byte_max_rate) || (policer->eir > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((policer->cir < BYTE_POLICER_MIN_RATE) && (policer->cir != 0))
 			return SW_BAD_PARAM;
@@ -1148,7 +1177,7 @@ adpt_hppe_port_policer_entry_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	if(ADPT_HPPE_POLICER_METER_UNIT_FRAME == policer->meter_unit)
 	{
-		if ((policer->cir > FRAME_POLICER_MAX_RATE) || (policer->eir > FRAME_POLICER_MAX_RATE))
+		if ((policer->cir > frame_max_rate) || (policer->eir > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((policer->cir < FRAME_POLICER_MIN_RATE) && (policer->cir != 0))
 			return SW_BAD_PARAM;
@@ -1245,7 +1274,7 @@ adpt_hppe_port_compensation_byte_set(a_uint32_t dev_id, fal_port_t port_id,
 	memset(&meter_cmpst_length_reg, 0, sizeof(meter_cmpst_length_reg));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	if (length > 0x1f)
