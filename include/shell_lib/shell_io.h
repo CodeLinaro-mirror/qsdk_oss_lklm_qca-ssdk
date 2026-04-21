@@ -99,6 +99,20 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val,
 				a_uint32_t size);
 sw_error_t
 cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+sw_error_t
+cmd_data_check_isol_act_ctrl(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_isol_id(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_isol_act(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size);
+sw_error_t
+cmd_data_check_pvlan_rx_cfg(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_pvlan_tx_cfg(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_pvlan_map(char *cmd_str, void *val, a_uint32_t size);
+#endif
 #endif
 #ifdef IN_PORTCONTROL
 sw_error_t cmd_data_check_capable(char *cmd_str, a_uint32_t * arg_val,
@@ -624,9 +638,10 @@ cmd_data_check_tunnel_program_cfg(char *cmd_str, void * val, a_uint32_t size);
 #endif
 #endif
 
-#ifdef IN_ATHTAG
 sw_error_t
 cmd_data_check_direction(char * cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+
+#ifdef IN_ATHTAG
 sw_error_t
 cmd_data_check_athtag_pri_mapping(char * cmd_str, void * val, a_uint32_t size);
 sw_error_t
@@ -655,5 +670,20 @@ cmd_data_check_ipmc_entry(char *cmd_str, void *val, a_uint32_t size);
 sw_error_t
 cmd_data_check_ipmc_ucast_fwd(char *cmd_str, void *val, a_uint32_t size);
 #endif
+#ifdef IN_PON
+sw_error_t
+cmd_data_check_gemport_global_cfg(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_gemport_gen_default(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_gemport_gen_entry(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_gemport_map(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_gemport_cfg(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t
+cmd_data_check_gemport_policer(char *cmd_str, void *val, a_uint32_t size);
+#endif
+
 #endif
 

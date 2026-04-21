@@ -742,6 +742,14 @@ struct sub_cmd_des_t g_portvlan_des[] =
 #ifdef JHPPE
 	{"TransDscpPcpMapping", "set", SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, NULL},
 #endif
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	{"PvtvlanRx", "set", SW_API_PVLAN_RX_CFG_SET, NULL},
+	{"PvtvlanTx", "set", SW_API_PVLAN_TX_CFG_SET, NULL},
+	{"PvtvlanMap", "set", SW_API_PVLAN_MAP_SET, NULL},
+	{"IsolActCtrl", "set", SW_API_PT_ISOL_ACT_CTRL_SET, NULL},
+	{"IsolActMap", "set", SW_API_PT_ISOL_ACT_SET, NULL},
+#endif
+
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
@@ -1455,6 +1463,21 @@ struct sub_cmd_des_t g_ponpm_des[] =
 };
 #endif
 
+#ifdef IN_PON
+struct sub_cmd_des_t g_pon_des[] =
+{
+	{"GemptGlb", "set", SW_API_PON_GEMPORT_GLB_SET, NULL},
+	{"GemptDft", "set", SW_API_PON_GEMPORT_GEN_DFT_SET, NULL},
+	{"GemptRule", "set", SW_API_PON_GEMPORT_GEN_ENTRY_SET, NULL},
+	{"GemptEn", "set", SW_API_PON_GEMPORT_GEN_EN_SET, NULL},
+	{"GemptMapEn", "set", SW_API_PON_GEMPORT_MAP_EN_SET, NULL},
+	{"GemptMapRule", "set", SW_API_PON_GEMPORT_MAP_SET, NULL},
+	{"GemptCfg", "set", SW_API_PON_GEMPORT_CFG_SET, NULL},
+	{"GemptPolicer", "set", SW_API_PON_GEMPORT_PLC_SET, NULL},
+	{NULL, NULL, 0, NULL},/*end of desc*/
+};
+#endif
+
 #ifdef IN_IPMC
 struct sub_cmd_des_t g_ipmc_des[] =
 {
@@ -1717,6 +1740,11 @@ struct cmd_des_t gcmd_des[] =
     {
 	    "ponpm", g_ponpm_des,
     },
+#endif
+#ifdef IN_PON
+	{
+		"pon", g_pon_des,
+	},
 #endif
 #ifdef IN_IPMC
    {
