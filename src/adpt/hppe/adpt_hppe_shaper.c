@@ -32,6 +32,9 @@
 #define FRAME_SHAPER_MAX_RATE         14881000
 #define FRAME_SHAPER_MIN_RATE         6
 #define ADPT_PORT_SHAPER_TIMESLOT_MIN       6
+/* 25G max rates for JHPPE */
+#define BYTE_SHAPER_MAX_RATE_25G      25000000   /* 25G in Kbps */
+#define FRAME_SHAPER_MAX_RATE_25G     37202500   /* 25G in fps  */
 
 static a_uint32_t appe_flow_shaper_type[SW_MAX_NR_DEV][APPE_SHAPER_FLOW_ID_MAX + 1] = {0};
 static a_uint32_t appe_queue_shaper_type[SW_MAX_NR_DEV][APPE_SHAPER_QUEUE_ID_MAX + 1] = {0};
@@ -547,6 +550,22 @@ __adpt_hppe_shaper_bucket_size_to_burst_size(a_uint32_t dev_id,
 	return SW_OK;
 }
 
+static a_uint32_t
+__adpt_ppe_shaper_byte_max_rate_get(a_uint32_t dev_id)
+{
+	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
+		return BYTE_SHAPER_MAX_RATE_25G;
+	return BYTE_SHAPER_MAX_RATE;
+}
+
+static a_uint32_t
+__adpt_ppe_shaper_frame_max_rate_get(a_uint32_t dev_id)
+{
+	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
+		return FRAME_SHAPER_MAX_RATE_25G;
+	return FRAME_SHAPER_MAX_RATE;
+}
+
 sw_error_t
 adpt_hppe_queue_shaper_get(a_uint32_t dev_id, a_uint32_t queue_id,
 		fal_shaper_config_t * shaper)
@@ -674,7 +693,7 @@ adpt_hppe_port_shaper_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(shaper);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	hppe_psch_shp_cfg_tbl_get(dev_id, port_id, &psch_shp_cfg_tbl);
@@ -785,7 +804,7 @@ adpt_hppe_port_shaper_token_number_set(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(token_number);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	hppe_psch_shp_credit_tbl_get(dev_id, port_id, &psch_shp_credit_tbl);
@@ -865,7 +884,7 @@ adpt_hppe_port_shaper_token_number_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(token_number);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	hppe_psch_shp_credit_tbl_get(dev_id, port_id, &psch_shp_credit_tbl);
@@ -948,6 +967,8 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	a_uint64_t temp_cir_max = 0, temp_eir_max =0;
 	a_uint32_t hppe_cir_max = 0, hppe_eir_max= 0;
 	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
+	a_uint32_t byte_max_rate  = __adpt_ppe_shaper_byte_max_rate_get(dev_id);
+	a_uint32_t frame_max_rate = __adpt_ppe_shaper_frame_max_rate_get(dev_id);
 
 	memset(&l1_shp_cfg_tbl, 0, sizeof(l1_shp_cfg_tbl));
 	memset(&l1_comp_cfg_tbl, 0, sizeof(l1_comp_cfg_tbl));
@@ -959,14 +980,14 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 
 	if(ADPT_HPPE_SHAPER_METER_UNIT_BYTE == shaper->meter_unit)
 	{
-		if ((shaper->cir > BYTE_SHAPER_MAX_RATE) || (shaper->eir > BYTE_SHAPER_MAX_RATE))
+		if ((shaper->cir > byte_max_rate) || (shaper->eir > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir < BYTE_SHAPER_MIN_RATE) && (shaper->cir != 0))
 			return SW_BAD_PARAM;
 		if ((shaper->eir < BYTE_SHAPER_MIN_RATE) && (shaper->eir != 0))
 			return SW_BAD_PARAM;
 
-		if ((shaper->cir_max > BYTE_SHAPER_MAX_RATE) || (shaper->eir_max > BYTE_SHAPER_MAX_RATE))
+		if ((shaper->cir_max > byte_max_rate) || (shaper->eir_max > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir_max < BYTE_SHAPER_MIN_RATE) && (shaper->cir_max != 0))
 			return SW_BAD_PARAM;
@@ -975,13 +996,13 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	}
 	if(ADPT_HPPE_SHAPER_METER_UNIT_FRAME == shaper->meter_unit)
 	{
-		if ((shaper->cir > FRAME_SHAPER_MAX_RATE) || (shaper->eir > FRAME_SHAPER_MAX_RATE))
+		if ((shaper->cir > frame_max_rate) || (shaper->eir > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir < FRAME_SHAPER_MIN_RATE) && (shaper->cir != 0))
 			return SW_BAD_PARAM;
 		if ((shaper->eir < FRAME_SHAPER_MIN_RATE) && (shaper->eir != 0))
 			return SW_BAD_PARAM;
-		if ((shaper->cir_max > FRAME_SHAPER_MAX_RATE) || (shaper->eir_max > FRAME_SHAPER_MAX_RATE))
+		if ((shaper->cir_max > frame_max_rate) || (shaper->eir_max > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir_max < FRAME_SHAPER_MIN_RATE) && (shaper->cir_max != 0))
 			return SW_BAD_PARAM;
@@ -1133,25 +1154,27 @@ adpt_hppe_port_shaper_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t hppe_cir = 0, hppe_cbs = 0;
 	a_uint32_t token_unit = 0;
 	fal_shaper_token_number_t token_number;
+	a_uint32_t byte_max_rate  = __adpt_ppe_shaper_byte_max_rate_get(dev_id);
+	a_uint32_t frame_max_rate = __adpt_ppe_shaper_frame_max_rate_get(dev_id);
 
 	memset(&psch_shp_cfg_tbl, 0, sizeof(psch_shp_cfg_tbl));
 	memset(&psch_comp_cfg_tbl, 0, sizeof(psch_comp_cfg_tbl));
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(shaper);
 
-	if (port_id < 0 || port_id > 7)
+	if (port_id > adpt_ppe_port_id_max_get(dev_id))
 		return SW_BAD_PARAM;
 
 	if(ADPT_HPPE_SHAPER_METER_UNIT_BYTE == shaper->meter_unit)
 	{
-		if (shaper->cir > BYTE_SHAPER_MAX_RATE)
+		if (shaper->cir > byte_max_rate)
 			return SW_BAD_PARAM;
 		if ((shaper->cir < BYTE_SHAPER_MIN_RATE) && (shaper->cir != 0))
 			return SW_BAD_PARAM;
 	}
 	if(ADPT_HPPE_SHAPER_METER_UNIT_FRAME == shaper->meter_unit)
 	{
-		if (shaper->cir > FRAME_SHAPER_MAX_RATE)
+		if (shaper->cir > frame_max_rate)
 			return SW_BAD_PARAM;
 		if ((shaper->cir < FRAME_SHAPER_MIN_RATE) && (shaper->cir != 0))
 			return SW_BAD_PARAM;
@@ -1337,6 +1360,8 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	a_uint64_t temp_cir_max = 0, temp_eir_max =0;
 	a_uint32_t hppe_cir_max = 0, hppe_eir_max= 0;
 	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
+	a_uint32_t byte_max_rate  = __adpt_ppe_shaper_byte_max_rate_get(dev_id);
+	a_uint32_t frame_max_rate = __adpt_ppe_shaper_frame_max_rate_get(dev_id);
 
 	memset(&l0_shp_cfg_tbl, 0, sizeof(l0_shp_cfg_tbl));
 	memset(&l0_comp_cfg_tbl, 0, sizeof(l0_comp_cfg_tbl));
@@ -1348,14 +1373,14 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 
 	if(ADPT_HPPE_SHAPER_METER_UNIT_BYTE == shaper->meter_unit)
 	{
-		if ((shaper->cir > BYTE_SHAPER_MAX_RATE) || (shaper->eir > BYTE_SHAPER_MAX_RATE))
+		if ((shaper->cir > byte_max_rate) || (shaper->eir > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir < BYTE_SHAPER_MIN_RATE) && (shaper->cir != 0))
 			return SW_BAD_PARAM;
 		if ((shaper->eir < BYTE_SHAPER_MIN_RATE) && (shaper->eir != 0))
 			return SW_BAD_PARAM;
 
-		if ((shaper->cir_max > BYTE_SHAPER_MAX_RATE) || (shaper->eir_max > BYTE_SHAPER_MAX_RATE))
+		if ((shaper->cir_max > byte_max_rate) || (shaper->eir_max > byte_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir_max < BYTE_SHAPER_MIN_RATE) && (shaper->cir_max != 0))
 			return SW_BAD_PARAM;
@@ -1364,13 +1389,13 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	}
 	if(ADPT_HPPE_SHAPER_METER_UNIT_FRAME == shaper->meter_unit)
 	{
-		if ((shaper->cir > FRAME_SHAPER_MAX_RATE) || (shaper->eir > FRAME_SHAPER_MAX_RATE))
+		if ((shaper->cir > frame_max_rate) || (shaper->eir > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir < FRAME_SHAPER_MIN_RATE) && (shaper->cir != 0))
 			return SW_BAD_PARAM;
 		if ((shaper->eir < FRAME_SHAPER_MIN_RATE) && (shaper->eir != 0))
 			return SW_BAD_PARAM;
-		if ((shaper->cir_max > FRAME_SHAPER_MAX_RATE) || (shaper->eir_max > FRAME_SHAPER_MAX_RATE))
+		if ((shaper->cir_max > frame_max_rate) || (shaper->eir_max > frame_max_rate))
 			return SW_BAD_PARAM;
 		if ((shaper->cir_max < FRAME_SHAPER_MIN_RATE) && (shaper->cir_max != 0))
 			return SW_BAD_PARAM;

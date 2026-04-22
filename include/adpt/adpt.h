@@ -2795,11 +2795,18 @@ adpt_forward_action_convert(fal_fwd_cmd_t *fwd_cmd, a_uint32_t *value, a_bool_t 
 #define ADPT_HMSPPE_FREQUENCY    429  /*MHZ*/
 #define ADPT_HTTPPE_FREQUENCY    250  /*MHZ*/
 
+/* Maximum valid physical port ID (inclusive) per chip type */
+#define JHPPE_PORT_ID_MAX   8   /* ports 0..8, 9 ports  (25G)    */
+#define MPPE_PORT_ID_MAX    6   /* ports 0..6, 7 ports  (Miami)  */
+#define HTTPPE_PORT_ID_MAX  5   /* ports 0..5, 6 ports  (HTTPPE) */
+#define HPPE_PORT_ID_MAX    7   /* ports 0..7, 8 ports  (default: HPPE/APPE/MRPPE/HMSPPE) */
+
 adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id);
 sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
 sw_error_t adpt_deinit(a_uint32_t dev_id);
 a_uint32_t adpt_chip_type_get(a_uint32_t dev_id);
 a_uint32_t adpt_chip_revision_get(a_uint32_t dev_id);
+a_uint32_t adpt_ppe_port_id_max_get(a_uint32_t dev_id);
 a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id);
 sw_error_t adpt_ppe_capacity_get(a_uint32_t dev_id, fal_ppe_tbl_caps_t *ppe_capacity);
 a_uint32_t adpt_ppe_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id);
