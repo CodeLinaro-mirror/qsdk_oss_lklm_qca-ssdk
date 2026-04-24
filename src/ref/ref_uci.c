@@ -11525,8 +11525,12 @@ parse_policer_aclentry(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
+	int i;
 
-	BUILD_BUG_ON(39 > SWITCH_CFG_LEN_MAX);
+	BUILD_BUG_ON(40 > SWITCH_CFG_LEN_MAX);
+
+	for (i = 0; i < 40; i++)
+		val_ptr[i] = "default";
 
 	switch_ext_p = val->value.ext_val;
 	while(switch_ext_p) {
@@ -11567,59 +11571,63 @@ parse_policer_aclentry(struct switch_val *val)
 			val_ptr[14] = (char*)ext_value_p->option_value;
 		} else if(!strcmp(ext_value_p->option_name, "grp_coupling_en")) {
 			val_ptr[15] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_priremark_en")) {
+#if defined(JHPPE) || defined(HTTPPE)
+		} else if(!strcmp(ext_value_p->option_name, "length_mode")) {
 			val_ptr[16] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_dropprec_remark_en")) {
+#endif
+		} else if(!strcmp(ext_value_p->option_name, "yellow_priremark_en")) {
 			val_ptr[17] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_pcpremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellow_dropprec_remark_en")) {
 			val_ptr[18] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_deiremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellow_pcpremark_en")) {
 			val_ptr[19] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_dscpremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellow_deiremark_en")) {
 			val_ptr[20] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_remap_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellow_dscpremark_en")) {
 			val_ptr[21] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellowpri")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellow_remap_en")) {
 			val_ptr[22] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellow_dropprec")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellowpri")) {
 			val_ptr[23] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellowpcp")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellow_dropprec")) {
 			val_ptr[24] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellowdei")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellowpcp")) {
 			val_ptr[25] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "yellowdscp")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellowdei")) {
 			val_ptr[26] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "redaction")) {
+		} else if(!strcmp(ext_value_p->option_name, "yellowdscp")) {
 			val_ptr[27] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_priremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "redaction")) {
 			val_ptr[28] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_dropprec_remark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_priremark_en")) {
 			val_ptr[29] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_pcpremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_dropprec_remark_en")) {
 			val_ptr[30] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_deiremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_pcpremark_en")) {
 			val_ptr[31] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_dscpremark_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_deiremark_en")) {
 			val_ptr[32] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_remap_en")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_dscpremark_en")) {
 			val_ptr[33] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "redpri")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_remap_en")) {
 			val_ptr[34] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "red_dropprec")) {
+		} else if(!strcmp(ext_value_p->option_name, "redpri")) {
 			val_ptr[35] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "redpcp")) {
+		} else if(!strcmp(ext_value_p->option_name, "red_dropprec")) {
 			val_ptr[36] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "reddei")) {
+		} else if(!strcmp(ext_value_p->option_name, "redpcp")) {
 			val_ptr[37] = (char*)ext_value_p->option_value;
-		} else if(!strcmp(ext_value_p->option_name, "reddscp")) {
+		} else if(!strcmp(ext_value_p->option_name, "reddei")) {
 			val_ptr[38] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "reddscp")) {
+			val_ptr[39] = (char*)ext_value_p->option_value;
 		} else {
 			rv = -1;
 			break;
 		}
 		switch_ext_p = switch_ext_p->next;
 	}
-	parameter_length = 39;
+	parameter_length = 40;
 
 	return rv;
 }
