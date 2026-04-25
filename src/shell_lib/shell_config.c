@@ -1108,6 +1108,12 @@ struct sub_cmd_des_t g_ip_des[] =
 	{"portarpsg", "set",  SW_API_IP_PORT_ARP_SG_SET, NULL},
 	{"mcmode", "set",  SW_API_IP_VSI_MC_MODE_SET, NULL},
 	{"globalctrl", "set",  SW_API_GLOBAL_CTRL_SET, NULL},
+	{"intfmacaddr", "add",      SW_API_IP_INTF_MACADDR_ADD,       NULL},
+	{"intfmacaddr", "del",      SW_API_IP_INTF_MACADDR_DEL,       NULL},
+#if defined(JHPPE)
+	{"portvlanasflowkey", "set", SW_API_IP_PORT_VLAN_AS_FLOW_KEY_SET, NULL},
+	{"intfvlanasflowkey", "set", SW_API_IP_INTF_VLAN_AS_FLOW_KEY_SET, NULL},
+#endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
@@ -1125,6 +1131,16 @@ struct sub_cmd_des_t g_flow_des[] =
 	{"host", "add", SW_API_FLOW_HOST_ADD, NULL},
 	{"host", "del", SW_API_FLOW_HOST_DEL, NULL},
 	{"global", "set", SW_API_FLOW_GLOBAL_CFG_SET, NULL},
+	{"npt66prefix", "add", SW_API_FLOW_NPT66_PREFIX_ADD, NULL},
+	{"npt66prefix", "del", SW_API_FLOW_NPT66_PREFIX_DEL, NULL},
+	{"npt66iid", "add", SW_API_FLOW_NPT66_IID_ADD, NULL},
+	{"npt66iid", "del", SW_API_FLOW_NPT66_IID_DEL, NULL},
+	{"npt66status", "set", SW_API_FLOW_NPT66_STATUS_SET, NULL},
+#if defined(JHPPE)
+	{"key", "set", SW_API_FLOW_KEY_SET, NULL},
+	{"appentry", "add", SW_API_FLOW_APP_ADD, NULL},
+	{"appentry", "del", SW_API_FLOW_APP_DEL, NULL},
+#endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
@@ -1258,6 +1274,8 @@ struct sub_cmd_des_t g_qm_des[] =
     {"cnt", "set", SW_API_QUEUE_CNT_CLEANUP, NULL},
     {"enqueue", "set", SW_API_QM_ENQUEUE_CTRL_SET, NULL},
     {"srcprofile", "set", SW_API_QM_SOURCE_PROFILE_SET, NULL},
+    {"dequeuedrop", "set", SW_API_QM_DEQUEUE_DROP_SET, NULL},
+    {"acdropstate", "set", SW_API_AC_DROP_STATE_SET, NULL},
 #ifdef JHPPE
     {"cntmonitoren", "set", SW_API_QM_COUNTER_MONITOR_EN_SET, NULL},
     {"cntmonitorstatscleanup", "set", SW_API_QM_COUNTER_MONITOR_STATS_CLEANUP, NULL},
@@ -1268,6 +1286,10 @@ struct sub_cmd_des_t g_qm_des[] =
     {"passthroughdirectenqueue", "set", SW_API_QM_PASSTHROUGH_DIRECT_ENQUEUE_SET, NULL},
     {"passthroughcpucode", "set", SW_API_QM_PASSTHROUGH_CPUCODE_SET, NULL},
     {"passthroughcpucodeen", "set", SW_API_QM_PASSTHROUGH_CPUCODE_EN_SET, NULL},
+    {"tcont", "set", SW_API_QM_TCONT_SET, NULL},
+    {"tcontstat", "set", SW_API_QM_TCONT_STAT_SET, NULL},
+    {"cpucode_enqueue", "set", SW_API_QM_CPUCODE_ENQUEUE_SET, NULL},
+    {"crosschip_bp_qmap", "set", SW_API_QM_CROSSCHIP_BP_QMAP_SET, NULL},
 #endif
 #if defined(HTTPPE)
     {"mcastenqueuectrl", "set", SW_API_QM_MCAST_ENQUEUE_CTRL_SET, NULL},
