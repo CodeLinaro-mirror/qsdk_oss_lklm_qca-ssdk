@@ -14168,7 +14168,7 @@ cmd_data_check_athtag_rx_cfg(char * cmd_str, void * val, a_uint32_t size)
                                0x0));
     entry.athtag_type = tmpdata & 0xffff;
 
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
     cmd_data_check_element("athtag version", "v0",
                      "usage: v0 or v1\n",
                      cmd_data_check_attr, ("athtag_version", cmd,

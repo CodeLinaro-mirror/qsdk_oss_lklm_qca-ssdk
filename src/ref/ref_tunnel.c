@@ -258,7 +258,7 @@ static const char *tunnel_tupleentry[] = {
 	"dport_en",
 	"dport",
 	"tuple_context_type",
-	"tuple_contex",
+	"tuple_context",
 };
 
 static const char *tunnel_decapmissaction[] = {

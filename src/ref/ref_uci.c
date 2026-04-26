@@ -3653,7 +3653,7 @@ parse_portvlan_isol_group(struct switch_val *val)
 	return rv;
 }
 
-#ifdef JHPPE
+#if defined(JHPPE) || defined(HTTPPE)
 static int
 parse_vlan_trans_dscp_pcp_mapping(struct switch_val *val)
 {
@@ -9818,7 +9818,7 @@ parse_acl_vpgroup(struct switch_val *val)
 	return rv;
 }
 
-#ifdef JHPPE
+#if defined(JHPPE) || defined(HTTPPE)
 static int
 parse_acl_dscp_pcp_mapping(struct switch_val *val)
 {
@@ -12449,7 +12449,7 @@ parse_portvlan(const char *command_name, struct switch_val *val)
 		rv = parse_portvlan_isol(val);
 	} else if (!strcmp(command_name, "IsolGroup")) {
 		rv = parse_portvlan_isol_group(val);
-#ifdef JHPPE
+#if defined(JHPPE) || defined(HTTPPE)
 	} else if (!strcmp(command_name, "TransDscpPcpMapping")) {
 		rv = parse_vlan_trans_dscp_pcp_mapping(val);
 #endif
@@ -12983,7 +12983,7 @@ parse_acl(a_uint32_t dev_id, const char *command_name, struct switch_val *val)
 		rv = parse_acl_udfprofilecfg(val);
 	} else if(!strcmp(command_name, "Vpgroup")) {
 		rv = parse_acl_vpgroup(val);
-#ifdef JHPPE
+#if defined(JHPPE) || defined(HTTPPE)
 	} else if(!strcmp(command_name, "DscpPcpMapping")) {
 		rv = parse_acl_dscp_pcp_mapping(val);
 #endif

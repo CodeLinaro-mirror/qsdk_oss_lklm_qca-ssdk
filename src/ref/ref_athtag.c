@@ -28,7 +28,7 @@ static const char *athtag_rx[] = {
 	"port_id",
 	"athtag_en",
 	"athtag_type",
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	"athtag_version",
 #endif
 };
@@ -43,7 +43,7 @@ static const char *athtag_tx[] = {
 	"athtag_field_disable",
 };
 
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 static const char *athtag_rx_src_port_mapping[] = {
 	"ath_src_port",
 	"int_dest_info_type",
@@ -83,7 +83,7 @@ int parse_athtag(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "Tx")) {
 		rv = parse_uci_option(val, athtag_tx,
 				sizeof(athtag_tx)/sizeof(char *));
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
 	} else if (!strcmp(command_name, "Rxsrcportmapping")) {
 		rv = parse_uci_option(val, athtag_rx_src_port_mapping,
 				sizeof(athtag_rx_src_port_mapping)/sizeof(char *));

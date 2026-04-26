@@ -247,11 +247,9 @@ static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t m
 			rv = adpt_appe_mapt_init(dev_id);
 #endif
 			break;
-#if defined(MPPE)
-		case FAL_MODULE_ATHTAG:
 #if defined(IN_ATHTAG)
+		case FAL_MODULE_ATHTAG:
 			rv = adpt_mppe_athtag_init(dev_id);
-#endif
 			break;
 #endif
 #if defined(IN_PKTEDIT)

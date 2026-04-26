@@ -739,7 +739,7 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"netiso", "set",   SW_API_NETISOLATE_SET, NULL},
 	{"egbypass", "set",   SW_API_EG_FLTR_BYPASS_EN_SET, NULL},
 #endif
-#ifdef JHPPE
+#if defined(JHPPE) || defined(HTTPPE)
 	{"TransDscpPcpMapping", "set", SW_API_VLAN_TRANS_DSCP_PCP_MAPPING_SET, NULL},
 #endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
@@ -790,7 +790,7 @@ struct sub_cmd_des_t g_acl_des[] =
 	{"udfprofileEntry", "set", SW_API_ACL_UDF_PROFILE_ENTRY_ADD, NULL},
 	{"udfprofilecfg", "set", SW_API_ACL_UDF_PROFILE_CFG_SET, NULL},
 	{"vpgroup", "set", SW_API_ACL_VPGROUP_SET, NULL},
-#ifdef JHPPE
+#if defined(JHPPE) || defined(HTTPPE)
 	{"DscpPcpMapping", "set", SW_API_ACL_DSCP_PCP_MAPPING_SET, NULL},
 #endif
 	{NULL, NULL,  0, NULL},/*end of desc*/
@@ -1425,7 +1425,7 @@ struct sub_cmd_des_t g_athtag_des[] =
     {"portmapping", "set", SW_API_ATHTAG_PORT_MAPPING_SET, NULL},
     {"rx", "set", SW_API_PORT_ATHTAG_RX_SET, NULL},
     {"tx", "set", SW_API_PORT_ATHTAG_TX_SET, NULL},
-#if defined(JHPPE)
+#if defined(JHPPE) || defined(HTTPPE)
     {"rxsrcportmapping", "set", SW_API_ATHTAG_RX_SRC_PORT_MAPPING_SET, NULL},
     {"rxdestportmapping", "set", SW_API_ATHTAG_RX_DEST_PORT_MAPPING_SET, NULL},
     {"rxservcodemapping", "set", SW_API_ATHTAG_RX_SERVCODE_MAPPING_SET, NULL},
