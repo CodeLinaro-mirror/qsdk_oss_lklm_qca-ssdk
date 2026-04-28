@@ -117,6 +117,21 @@ _adpt_phy_status_get_from_ppe(a_uint32_t dev_id, a_uint32_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	if (hsl_port_feature_get(dev_id, port_id, PHY_F_FORCE)) {
+		struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+
+		/*
+		 * For force-link ports, track phylink state so that bringing the
+		 * interface down (ndo_stop) is reflected in PPE port status.
+		 */
+		if (priv && port_id < SW_MAX_NR_PORT &&
+		    priv->ports[port_id].phylink &&
+		    !READ_ONCE(priv->ports[port_id].port_phylink_up)) {
+			phy_status->link_status = PORT_LINK_DOWN;
+			phy_status->speed = FAL_SPEED_BUTT;
+			phy_status->duplex = FAL_DUPLEX_BUTT;
+			return SW_OK;
+		}
+
 		phy_status->link_status = PORT_LINK_UP;
 		phy_status->speed = hsl_port_force_speed_get(dev_id, port_id);
 		phy_status->duplex = hsl_port_force_duplex_get(dev_id, port_id);
