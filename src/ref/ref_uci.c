@@ -6778,9 +6778,9 @@ parse_ip_vsiarpsg(struct switch_val *val)
 			val_ptr[3] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceguard_svlan_en")) {
 			val_ptr[4] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourcegurad_cvlan_en")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceguard_cvlan_en")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceunkown_action")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceunknown_action")) {
 			val_ptr[6] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceguard_en")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
@@ -6794,6 +6794,12 @@ parse_ip_vsiarpsg(struct switch_val *val)
 			val_ptr[11] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceunknown_action")) {
 			val_ptr[12] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceguard_pass_action")) {
+			val_ptr[13] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceguard_pass_action")) {
+			val_ptr[14] = (char*)ext_value_p->option_value;
+#endif
 		}  else {
 			rv = -1;
 			break;
@@ -6831,7 +6837,7 @@ parse_ip_vsisg(struct switch_val *val)
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceguard_cvlan_en")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceunkown_action")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceunknown_action")) {
 			val_ptr[6] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceguard_en")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
@@ -6845,6 +6851,12 @@ parse_ip_vsisg(struct switch_val *val)
 			val_ptr[11] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceunknown_action")) {
 			val_ptr[12] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceguard_pass_action")) {
+			val_ptr[13] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceguard_pass_action")) {
+			val_ptr[14] = (char*)ext_value_p->option_value;
+#endif
 		}  else {
 			rv = -1;
 			break;
@@ -6882,7 +6894,7 @@ parse_ip_portarpsg(struct switch_val *val)
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceguard_cvlan_en")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceunkown_action")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceunknown_action")) {
 			val_ptr[6] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceguard_en")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
@@ -6894,8 +6906,14 @@ parse_ip_portarpsg(struct switch_val *val)
 			val_ptr[10] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceguard_cvlan_en")) {
 			val_ptr[11] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceunkown_action")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceunknown_action")) {
 			val_ptr[12] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "ip4_arp_sourceguard_pass_action")) {
+			val_ptr[13] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "ip6_nd_sourceguard_pass_action")) {
+			val_ptr[14] = (char*)ext_value_p->option_value;
+#endif
 		}  else {
 			rv = -1;
 			break;
@@ -6933,7 +6951,7 @@ parse_ip_portsg(struct switch_val *val)
 			val_ptr[4] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceguard_cvlan_en")) {
 			val_ptr[5] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceunkown_action")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceunknown_action")) {
 			val_ptr[6] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceguard_en")) {
 			val_ptr[7] = (char*)ext_value_p->option_value;
@@ -6945,8 +6963,14 @@ parse_ip_portsg(struct switch_val *val)
 			val_ptr[10] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceguard_cvlan_en")) {
 			val_ptr[11] = (char*)ext_value_p->option_value;
-		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceunkown_action")) {
+		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceunknown_action")) {
 			val_ptr[12] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "ip4_sourceguard_pass_action")) {
+			val_ptr[13] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "ip6_sourceguard_pass_action")) {
+			val_ptr[14] = (char*)ext_value_p->option_value;
+#endif
 		}  else {
 			rv = -1;
 			break;
@@ -7074,6 +7098,14 @@ parse_ip_intf(struct switch_val *val)
 			val_ptr[14] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "vpn_id")) {
 			val_ptr[15] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "l3_dst_valid")) {
+			val_ptr[16] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "l3_dst_port")) {
+			val_ptr[17] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "l3_dst_action")) {
+			val_ptr[18] = (char*)ext_value_p->option_value;
+#endif
 		} else {
 			rv = -1;
 			break;
@@ -7229,6 +7261,45 @@ parse_ip_portmac(struct switch_val *val)
 }
 
 static int
+parse_ip_intfmacaddr(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "l3_if_index")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "direction")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "macaddr")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+#if defined(JHPPE)
+		} else if (!strcmp(ext_value_p->option_name, "vsi_valid")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "vsi")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "type")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+#endif
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
 parse_ip_routemiss(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
@@ -7340,6 +7411,70 @@ parse_ip_globalctrl(struct switch_val *val)
 
 	return rv;
 }
+
+#if defined(JHPPE)
+static int
+parse_ip_port_vlan_as_flow_key(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "port_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "valid")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "mode")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_ip_intf_vlan_as_flow_key(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "intf_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "valid")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "mode")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+#endif
 #endif
 
 #ifdef IN_NAT
@@ -9858,6 +9993,7 @@ parse_flow_entry(struct switch_val *val)
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
 
+	BUILD_BUG_ON(48 > SWITCH_CFG_LEN_MAX);
 	switch_ext_p = val->value.ext_val;
 	while (switch_ext_p) {
 		ext_value_p = switch_ext_p;
@@ -9949,6 +10085,23 @@ parse_flow_entry(struct switch_val *val)
 			val_ptr[39] = (char*)ext_value_p->option_value;
 		} else if (!strcmp(ext_value_p->option_name, "policer_index")) {
 			val_ptr[40] = (char*)ext_value_p->option_value;
+		}
+#endif
+#if defined(JHPPE)
+		else if (!strcmp(ext_value_p->option_name, "route_en")) {
+			val_ptr[41] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udf0_en")) {
+			val_ptr[42] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udf1_en")) {
+			val_ptr[43] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "match_more")) {
+			val_ptr[44] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "nat_action")) {
+			val_ptr[45] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "sampling_id")) {
+			val_ptr[46] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "gro_en")) {
+			val_ptr[47] = (char*)ext_value_p->option_value;
 		}
 #endif
 		else {
@@ -10137,10 +10290,211 @@ static const char *flow_global[] = {
 	"ptmu_fail_df_deacclr_en",
 	"l2_vpn_en",
 	"l3_vpn_en",
+#if defined(JHPPE)
+	"flow_key_en_bitmap",
+#endif
 #if defined(MPPE)
 	"flow_cookie_pri",
 #endif
 };
+
+static int
+parse_flow_npt66_prefix(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "l3_if_index")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "ip6addr")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "prefix_len")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_flow_npt66_iid(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "flow_index")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "iid_offset")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "iid")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "is_dnat")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_flow_npt66_status(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "status")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+#if defined(JHPPE)
+static int
+parse_flow_eip_lookup_mode(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "mode")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_flow_key(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "key_type")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "valid")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "key_bmp")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "l3_type")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "l4_type")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "app_type")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udf0_idx")) {
+			val_ptr[6] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udf0_mask")) {
+			val_ptr[7] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udf1_idx")) {
+			val_ptr[8] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udf1_mask")) {
+			val_ptr[9] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_flow_app_entry(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "ip_ver")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "udp_type")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "l4_port_type")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "l4_port")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+#endif
 
 #endif
 
@@ -10897,6 +11251,76 @@ parse_qm_srcprofile(struct switch_val *val)
 	return rv;
 }
 
+static int
+parse_qm_dequeue_drop(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "queue_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "enable")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_acdropstate(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "type")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "obj_id")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "green_resume_thrd")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "yel_resume_thrd")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "red_resume_thrd")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "green_drop")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "yel_drop")) {
+			val_ptr[6] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "red_drop")) {
+			val_ptr[7] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
 #if defined(JHPPE)
 static int
 parse_qm_cntmonitoren(struct switch_val *val)
@@ -11005,6 +11429,144 @@ parse_qm_cntmonitorctrl(struct switch_val *val)
 		}  else if (!strcmp(ext_value_p->option_name, "cnt_threshold")) {
 			val_ptr[3] = (char*)ext_value_p->option_value;
 		}  else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_tcont(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "queue_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "valid")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "tcont_id")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_tcontstat(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "tcont_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bytes")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "credit")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_cpucode_enqueue(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "cpu_code")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "enable")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_qm_crosschip_bp_qmap(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "lp_qid")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_0")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_1")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_2")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_3")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_4")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_5")) {
+			val_ptr[6] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_6")) {
+			val_ptr[7] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_7")) {
+			val_ptr[8] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_8")) {
+			val_ptr[9] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bmp_9")) {
+			val_ptr[10] = (char*)ext_value_p->option_value;
+		} else {
 			rv = -1;
 			break;
 		}
@@ -12827,6 +13389,8 @@ parse_ip(const char *command_name, struct switch_val *val)
 		rv = parse_ip_nexthop(val);
 	} else if (!strcmp(command_name, "Portmac")) {
 		rv = parse_ip_portmac(val);
+	} else if (!strcmp(command_name, "Intfmacaddr")) {
+		rv = parse_ip_intfmacaddr(val);
 	} else if (!strcmp(command_name, "Routemiss")) {
 		rv = parse_ip_routemiss(val);
 	} else if (!strcmp(command_name, "Mcmode")) {
@@ -12835,6 +13399,12 @@ parse_ip(const char *command_name, struct switch_val *val)
 		rv = parse_ip_globalctrl(val);
 	} else if (!strcmp(command_name, "Hostentry")) {
 		rv = parse_ip_hostentry(val);
+#if defined(JHPPE)
+	} else if (!strcmp(command_name, "PortVlanAsFlowKey")) {
+		rv = parse_ip_port_vlan_as_flow_key(val);
+	} else if (!strcmp(command_name, "IntfVlanAsFlowKey")) {
+		rv = parse_ip_intf_vlan_as_flow_key(val);
+#endif
 	}
 	return rv;
 }
@@ -13010,6 +13580,20 @@ parse_flow(const char *command_name, struct switch_val *val)
 		rv = parse_uci_option(val, flow_host, sizeof(flow_host)/sizeof(char *));
 	} else if (!strcmp(command_name, "Global")) {
 		rv = parse_uci_option(val, flow_global, sizeof(flow_global)/sizeof(char *));
+	} else if (!strcmp(command_name, "Npt66Prefix")) {
+		rv = parse_flow_npt66_prefix(val);
+	} else if (!strcmp(command_name, "Npt66Iid")) {
+		rv = parse_flow_npt66_iid(val);
+	} else if (!strcmp(command_name, "Npt66Status")) {
+		rv = parse_flow_npt66_status(val);
+#if defined(JHPPE)
+	} else if (!strcmp(command_name, "EipLookupMode")) {
+		rv = parse_flow_eip_lookup_mode(val);
+	} else if (!strcmp(command_name, "Key")) {
+		rv = parse_flow_key(val);
+	} else if (!strcmp(command_name, "AppEntry")) {
+		rv = parse_flow_app_entry(val);
+#endif
 	}
 
 	return rv;
@@ -13135,6 +13719,10 @@ parse_qm(const char *command_name, struct switch_val *val)
 		rv = parse_qm_enqueue(val);
 	} else if (!strcmp(command_name, "Srcprofile")) {
 		rv = parse_qm_srcprofile(val);
+	} else if (!strcmp(command_name, "DequeueDrop")) {
+		rv = parse_qm_dequeue_drop(val);
+	} else if (!strcmp(command_name, "AcDropState")) {
+		rv = parse_qm_acdropstate(val);
 #if defined(JHPPE)
 	} else if (!strcmp(command_name, "Cntmonitoren")) {
 		rv = parse_qm_cntmonitoren(val);
@@ -13159,6 +13747,14 @@ parse_qm(const char *command_name, struct switch_val *val)
 	} else if (!strcmp(command_name, "PassthroughCpucodeen")) {
 		rv = parse_uci_option(val, passthrough_cpucode_en,
 				sizeof(passthrough_cpucode_en)/sizeof(char *));
+	} else if (!strcmp(command_name, "Tcont")) {
+		rv = parse_qm_tcont(val);
+	} else if (!strcmp(command_name, "Tcontstat")) {
+		rv = parse_qm_tcontstat(val);
+	} else if (!strcmp(command_name, "CpucodeEnqueue")) {
+		rv = parse_qm_cpucode_enqueue(val);
+	} else if (!strcmp(command_name, "CrosschipBpQmap")) {
+		rv = parse_qm_crosschip_bp_qmap(val);
 #endif
 #if defined(HTTPPE)
 	} else if (!strcmp(command_name, "Mcastenqueuectrl")) {

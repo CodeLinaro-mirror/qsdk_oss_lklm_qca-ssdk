@@ -632,6 +632,13 @@ is_dec(char c)
     return A_FALSE;
 }
 
+#if defined(JHPPE)
+sw_error_t cmd_data_check_flow_key(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t cmd_data_check_flow_app(char *cmd_str, void *val, a_uint32_t size);
+#endif
+sw_error_t cmd_data_check_ac_drop_state(char *cmd_str, void *val, a_uint32_t size);
+sw_error_t cmd_data_check_intf_macaddr(char *cmd_str, void *val, a_uint32_t size);
+
 static sw_data_type_t sw_data_type[] =
 {
     SW_TYPE_DEF(SW_UINT8, (param_check_t)cmd_data_check_uint8, NULL),
@@ -827,6 +834,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_IP_SG, (param_check_t)cmd_data_check_ip_sg, NULL),
     SW_TYPE_DEF(SW_IP_PUB, (param_check_t)cmd_data_check_ip_pub, NULL),
     SW_TYPE_DEF(SW_IP_PORTMAC, (param_check_t)cmd_data_check_ip_portmac, NULL),
+    SW_TYPE_DEF(SW_INTF_MAC_ENTRY, (param_check_t)cmd_data_check_intf_macaddr, NULL),
     SW_TYPE_DEF(SW_IP_MCMODE, (param_check_t)cmd_data_check_ip_mcmode, NULL),
     SW_TYPE_DEF(SW_IP_GLOBAL, (param_check_t)cmd_data_check_ip_global, NULL),
 #endif
@@ -885,6 +893,14 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_FLOW_ENTRY, (param_check_t)cmd_data_check_flow, NULL),
     SW_TYPE_DEF(SW_FLOW_GLOBAL, (param_check_t)cmd_data_check_flow_global, NULL),
     SW_TYPE_DEF(SW_FLOW_HOST, (param_check_t)cmd_data_check_flow_host, NULL),
+#if defined(JHPPE)
+    SW_TYPE_DEF(SW_FLOW_KEY, (param_check_t)cmd_data_check_flow_key, NULL),
+    SW_TYPE_DEF(SW_FLOW_APP, (param_check_t)cmd_data_check_flow_app, NULL),
+#else
+    SW_TYPE_DEF(SW_FLOW_KEY, NULL, NULL),
+    SW_TYPE_DEF(SW_FLOW_APP, NULL, NULL),
+#endif
+    SW_TYPE_DEF(SW_AC_DROP_STATE, (param_check_t)cmd_data_check_ac_drop_state, NULL),
 #endif
 #ifdef IN_PORTCONTROL
 #ifndef IN_PORTCONTROL_MINI
@@ -7732,6 +7748,61 @@ cmd_data_check_ip_portmac(char *cmd_str, void * val, a_uint32_t size)
 }
 
 sw_error_t
+cmd_data_check_intf_macaddr(char *cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    sw_error_t rv;
+    fal_intf_macaddr_t entry;
+    a_uint32_t tmp = 0;
+
+    aos_mem_zero(&entry, sizeof (fal_intf_macaddr_t));
+
+    do {
+        cmd = get_sub_cmd("direction", "0");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_uint32(cmd, &tmp, sizeof(a_uint32_t));
+        if (SW_OK == rv)
+            entry.direction = (fal_ip_direction_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    rv = __cmd_data_check_complex("macaddr", NULL,
+                        "usage: the format is xx-xx-xx-xx-xx-xx \n",
+                        (param_check_t)cmd_data_check_macaddr, &(entry.mac_addr),
+                        sizeof (fal_mac_addr_t));
+    if (rv)
+        return rv;
+
+#if defined(JHPPE)
+    do {
+        cmd = get_sub_cmd("vsi_valid", "no");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.vsi_valid), sizeof (a_bool_t));
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+        cmd = get_sub_cmd("vsi", "0");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_uint32(cmd, &(entry.vsi), sizeof(a_uint32_t));
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+        cmd = get_sub_cmd("type", "0");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_uint32(cmd, &tmp, sizeof(a_uint32_t));
+        if (SW_OK == rv)
+            entry.type = (fal_ip_intf_mac_type)tmp;
+    } while (talk_mode && (SW_OK != rv));
+#endif
+
+    *(fal_intf_macaddr_t *)val = entry;
+    return SW_OK;
+}
+
+sw_error_t
 cmd_data_check_ip_pub(char *cmd_str, void * val, a_uint32_t size)
 {
     sw_error_t rv;
@@ -7874,6 +7945,30 @@ cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
 
     }
     while (talk_mode && (SW_OK != rv));
+
+#if defined(JHPPE)
+    do
+    {
+        cmd = get_sub_cmd("ipv4_sg_pass_action", "forward");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_maccmd(cmd, &(entry.ipv4_sg_pass_action),
+                                   sizeof (fal_fwd_cmd_t));
+
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("ipv6_sg_pass_action", "forward");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_maccmd(cmd, &(entry.ipv6_sg_pass_action),
+                                   sizeof (fal_fwd_cmd_t));
+
+    }
+    while (talk_mode && (SW_OK != rv));
+#endif
 
     *(fal_sg_cfg_t *)val = entry;
     return SW_OK;
@@ -8188,6 +8283,30 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
 	    return rv;
 #endif
 
+#if defined(JHPPE)
+    do {
+	    cmd = get_sub_cmd("l3_dst_valid", "no");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_confirm(cmd, A_FALSE,
+			    &(entry.l3_dst_valid), sizeof(a_bool_t));
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+	    cmd = get_sub_cmd("l3_dst_port", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint32_t));
+	    if (SW_OK == rv)
+		    entry.l3_dst_port = (a_uint8_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    cmd_data_check_element("l3_dst_action", "forward",
+		    "usage: action: forward, drop, cpycpu, rdtcpu\n",
+		    cmd_data_check_maccmd, (cmd, &(entry.l3_dst_action),
+			    sizeof(fal_fwd_cmd_t)));
+#endif
+
     *(fal_intf_entry_t *)val = entry;
     return SW_OK;
 }
@@ -8416,6 +8535,30 @@ cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
 
     }
     while (talk_mode && (SW_OK != rv));
+
+#if defined(JHPPE)
+    do
+    {
+        cmd = get_sub_cmd("arp_sg_pass_action", "forward");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_maccmd(cmd, &(entry.ipv4_arp_sg_pass_action),
+                                   sizeof (fal_fwd_cmd_t));
+
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("nd_sg_pass_action", "forward");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_maccmd(cmd, &(entry.ip_nd_sg_pass_action),
+                                   sizeof (fal_fwd_cmd_t));
+
+    }
+    while (talk_mode && (SW_OK != rv));
+#endif
 
     *(fal_arp_sg_cfg_t *)val = entry;
     return SW_OK;
@@ -8836,6 +8979,13 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
     entry.flow_cookie_pri = tmp;
 #endif
 
+#if defined(JHPPE)
+    cmd_data_check_element("flow_key_en_bitmap", "0",
+		    "usage: flow key enable bitmap\n",
+		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+    entry.flow_key_en_bitmap = (a_uint8_t)tmp;
+#endif
+
     *(fal_flow_global_cfg_t *)val = entry;
     return SW_OK;
 
@@ -9221,7 +9371,202 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
     entry.policer_index = tmp;
 #endif
 
+#if defined(JHPPE)
+    rv = __cmd_data_check_boolean("route_en", "no",
+		    "usage: <yes/no/y/n>\n",
+		    cmd_data_check_confirm, A_FALSE, &(entry.route_en),
+		    sizeof(a_bool_t));
+    SW_RTN_ON_ERROR(rv);
+
+    rv = __cmd_data_check_boolean("udf0_en", "no",
+		    "usage: <yes/no/y/n>\n",
+		    cmd_data_check_confirm, A_FALSE, &(entry.udf0_en),
+		    sizeof(a_bool_t));
+    SW_RTN_ON_ERROR(rv);
+
+    rv = __cmd_data_check_boolean("udf1_en", "no",
+		    "usage: <yes/no/y/n>\n",
+		    cmd_data_check_confirm, A_FALSE, &(entry.udf1_en),
+		    sizeof(a_bool_t));
+    SW_RTN_ON_ERROR(rv);
+
+    cmd_data_check_element("match_more", "0",
+		    "usage: SPI value for NATT, UDF0+UDF1 for flow key sel\n",
+		    cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+    entry.match_more = tmp;
+
+    cmd_data_check_element("nat_action", "0",
+		    "usage: NAT action for routing\n",
+		    cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+    entry.nat_action = tmp;
+
+    cmd_data_check_element("sampling_id", "0",
+		    "usage: STC index\n",
+		    cmd_data_check_uint32, (cmd, &tmp, sizeof(a_uint32_t)));
+    entry.sampling_id = tmp;
+
+    rv = __cmd_data_check_boolean("gro_en", "no",
+		    "usage: <yes/no/y/n>\n",
+		    cmd_data_check_confirm, A_FALSE, &(entry.gro_en),
+		    sizeof(a_bool_t));
+    SW_RTN_ON_ERROR(rv);
+#endif
+
     *(fal_flow_entry_t *)val = entry;
+    return SW_OK;
+}
+
+#if defined(JHPPE)
+sw_error_t
+cmd_data_check_flow_key(char *cmd_str, void *val, a_uint32_t size)
+{
+    char *cmd;
+    sw_error_t rv;
+    fal_flow_key_t entry;
+    a_uint32_t tmp;
+
+    aos_mem_zero(&entry, sizeof(fal_flow_key_t));
+    tmp = 0;
+
+    rv = __cmd_data_check_boolean("valid", "no",
+		    "usage: <yes/no/y/n>\n",
+		    cmd_data_check_confirm, A_FALSE, &(entry.valid),
+		    sizeof(a_bool_t));
+    SW_RTN_ON_ERROR(rv);
+
+    cmd_data_check_element("key_bmp", "0",
+		    "usage: flow key bitmap\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.key_bmp = (a_uint16_t)tmp;
+
+    cmd_data_check_element("l3_type", "0",
+		    "usage: l3 type: 1=IPv4 2=ARP 3=IPv6\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.l3_type = (a_uint16_t)tmp;
+
+    cmd_data_check_element("l4_type", "0",
+		    "usage: l4 type: 1=TCP 2=UDP 3=UDP-Lite 4=ICMP\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.l4_type = (a_uint16_t)tmp;
+
+    cmd_data_check_element("app_type", "0",
+		    "usage: app type from mapped tunnel type\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.app_type = (a_uint16_t)tmp;
+
+    cmd_data_check_element("udf0_idx", "0",
+		    "usage: udf0 index\n",
+		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+    entry.udf0_idx = (a_uint8_t)tmp;
+
+    cmd_data_check_element("udf0_mask", "0",
+		    "usage: udf0 mask\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.udf0_mask = (a_uint16_t)tmp;
+
+    cmd_data_check_element("udf1_idx", "0",
+		    "usage: udf1 index\n",
+		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+    entry.udf1_idx = (a_uint8_t)tmp;
+
+    cmd_data_check_element("udf1_mask", "0",
+		    "usage: udf1 mask\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.udf1_mask = (a_uint16_t)tmp;
+
+    *(fal_flow_key_t *)val = entry;
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_flow_app(char *cmd_str, void *val, a_uint32_t size)
+{
+    char *cmd;
+    fal_flow_app_entry_t entry;
+    a_uint32_t tmp;
+
+    aos_mem_zero(&entry, sizeof(fal_flow_app_entry_t));
+    tmp = 0;
+
+    cmd_data_check_element("ip_ver", "0",
+		    "usage: 1=IPv4 2=IPv6 3=IPv4orIPv6\n",
+		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+    entry.ip_ver = (a_uint8_t)tmp;
+
+    cmd_data_check_element("udp_type", "0",
+		    "usage: 1=UDP 2=UDP-Lite 3=UDPorUDP-Lite\n",
+		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+    entry.udp_type = (a_uint8_t)tmp;
+
+    cmd_data_check_element("l4_port_type", "0",
+		    "usage: 1=dst port 2=src port 3=dst or src port\n",
+		    cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+    entry.l4_port_type = (a_uint8_t)tmp;
+
+    cmd_data_check_element("l4_port", "0",
+		    "usage: l4 port value\n",
+		    cmd_data_check_uint16, (cmd, &tmp, sizeof(a_uint16_t)));
+    entry.l4_port = (a_uint16_t)tmp;
+
+    *(fal_flow_app_entry_t *)val = entry;
+    return SW_OK;
+}
+#endif
+
+sw_error_t
+cmd_data_check_ac_drop_state(char *cmd_str, void *val, a_uint32_t size)
+{
+    char *cmd;
+    sw_error_t rv;
+    fal_ac_drop_state_t entry;
+    a_uint32_t tmp;
+
+    aos_mem_zero(&entry, sizeof(fal_ac_drop_state_t));
+    tmp = 0;
+
+    do {
+	    cmd = get_sub_cmd("green_resume_thrd", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint16_t));
+	    entry.green_resume_thrd = (a_uint16_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+	    cmd = get_sub_cmd("yel_resume_thrd", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint16_t));
+	    entry.yel_resume_thrd = (a_uint16_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+	    cmd = get_sub_cmd("red_resume_thrd", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint16_t));
+	    entry.red_resume_thrd = (a_uint16_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+	    cmd = get_sub_cmd("green_drop", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint8_t));
+	    entry.green_drop = (a_uint8_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+	    cmd = get_sub_cmd("yel_drop", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint8_t));
+	    entry.yel_drop = (a_uint8_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    do {
+	    cmd = get_sub_cmd("red_drop", "0");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint8_t));
+	    entry.red_drop = (a_uint8_t)tmp;
+    } while (talk_mode && (SW_OK != rv));
+
+    *(fal_ac_drop_state_t *)val = entry;
     return SW_OK;
 }
 

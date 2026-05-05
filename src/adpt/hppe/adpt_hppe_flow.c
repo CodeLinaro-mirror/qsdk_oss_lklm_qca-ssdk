@@ -2523,6 +2523,7 @@ adpt_hppe_flow_npt66_status_get(a_uint32_t dev_id, a_bool_t *enable)
 	return SW_OK;
 }
 
+#if defined(JHPPE)
 sw_error_t
 adpt_ppe_flow_eip_lookup_mode_set(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t mode)
 {
@@ -2570,6 +2571,7 @@ adpt_ppe_flow_eip_lookup_mode_get(a_uint32_t dev_id, fal_flow_eip_lookup_mode_t 
 
 	return SW_OK;
 }
+#endif
 
 sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 {
@@ -2612,8 +2614,10 @@ sw_error_t adpt_hppe_flow_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_flow_npt66_iid_del = adpt_hppe_flow_npt66_iid_del;
 	p_adpt_api->adpt_flow_npt66_status_set = adpt_hppe_flow_npt66_status_set;
 	p_adpt_api->adpt_flow_npt66_status_get = adpt_hppe_flow_npt66_status_get;
+#if defined(JHPPE)
 	p_adpt_api->adpt_flow_eip_lookup_mode_set = adpt_ppe_flow_eip_lookup_mode_set;
 	p_adpt_api->adpt_flow_eip_lookup_mode_get = adpt_ppe_flow_eip_lookup_mode_get;
+#endif
 	p_adpt_api->adpt_flow_fwd_type_set = adpt_ppe_flow_fwd_type_set;
 	p_adpt_api->adpt_flow_fwd_type_get = adpt_ppe_flow_fwd_type_get;
 #if defined(JHPPE)
