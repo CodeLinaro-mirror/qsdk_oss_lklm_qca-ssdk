@@ -1185,9 +1185,23 @@ static void ssdk_phylink_mac_link_up(struct phylink_config *config,
 {
 	struct ssdk_port_priv *port_priv = container_of(config, struct ssdk_port_priv,
 							 phylink_config);
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(port_priv->dev_id);
+
 	SSDK_DEBUG("PPE port %d mac link up: interface %s speed %d, duplex %d, tx_pause %d, "
 			"rx_pause %d\n", port_priv->port_id, phy_modes(interface), speed,
 			duplex, tx_pause, rx_pause);
+
+	if (!priv || !hsl_port_feature_get(port_priv->dev_id,
+					   port_priv->port_id, PHY_F_FORCE))
+		return;
+
+	mutex_lock(&priv->mac_sw_sync_lock);
+	WRITE_ONCE(port_priv->port_phylink_up, A_TRUE);
+	mutex_unlock(&priv->mac_sw_sync_lock);
+
+	if (priv->link_polling_required &&
+	    _ssdk_mac_sw_sync_chip_check(priv) == SW_OK)
+		mod_delayed_work(system_wq, &priv->mac_sw_sync_dwork, 0);
 }
 
 static void ssdk_phylink_mac_link_down(struct phylink_config *config,
@@ -1196,8 +1210,22 @@ static void ssdk_phylink_mac_link_down(struct phylink_config *config,
 {
 	struct ssdk_port_priv *port_priv = container_of(config, struct ssdk_port_priv,
 							 phylink_config);
+	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(port_priv->dev_id);
+
 	SSDK_DEBUG("PPE port %d mac link down: interface %s\n",
 			port_priv->port_id, phy_modes(interface));
+
+	if (!priv || !hsl_port_feature_get(port_priv->dev_id,
+					   port_priv->port_id, PHY_F_FORCE))
+		return;
+
+	mutex_lock(&priv->mac_sw_sync_lock);
+	WRITE_ONCE(port_priv->port_phylink_up, A_FALSE);
+	mutex_unlock(&priv->mac_sw_sync_lock);
+
+	if (priv->link_polling_required &&
+	    _ssdk_mac_sw_sync_chip_check(priv) == SW_OK)
+		mod_delayed_work(system_wq, &priv->mac_sw_sync_dwork, 0);
 }
 
 static struct phylink_pcs *ssdk_phylink_mac_select_pcs(struct phylink_config *config,

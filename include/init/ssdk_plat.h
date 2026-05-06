@@ -319,6 +319,8 @@ struct ssdk_port_priv {
 	a_bool_t lpi_wakeup_timer_force;
 	a_bool_t lpi_sleep_timer_force;
 	a_uint32_t configured_fec; /* configured fec */
+	/* link state reported by the phylink */
+	a_bool_t port_phylink_up;
 };
 
 struct ssdk_ppe_tunnel_priv {
