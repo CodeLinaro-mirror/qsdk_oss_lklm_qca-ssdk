@@ -67,7 +67,7 @@ eg_servcode_config:
 	SW_RTN_ON_ERROR(rv);
 	eg_service_tbl.bf.field_update_action = entry->field_update_bitmap[0];
 	eg_service_tbl.bf.field_update_action_ext = entry->field_update_bitmap[0] >>
-		FLD_UPDATE_XLAN_XLT_DROP_BYPASS;
+		FLD_UPDATE_VLAN_XLT_DROP_BYPASS;
 	eg_service_tbl.bf.field_update_action_ext1 = entry->field_update_bitmap[0] >>
 		FLD_UP_EG_CNT_VSI_BYPASS | entry->field_update_bitmap[1] <<
 		(BITS_PER_TYPE(u64) - FLD_UP_EG_CNT_VSI_BYPASS);
@@ -126,7 +126,7 @@ eg_servcode_config:
 	entry->bypass_bitmap[2] |= eg_service_tbl.bf.tx_counting_en << 2;
 	entry->field_update_bitmap[0] = eg_service_tbl.bf.field_update_action;
 	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext) <<
-		FLD_UPDATE_XLAN_XLT_DROP_BYPASS;
+		FLD_UPDATE_VLAN_XLT_DROP_BYPASS;
 	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext1) <<
 		FLD_UP_EG_CNT_VSI_BYPASS;
 	entry->field_update_bitmap[1] = (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext1) >>

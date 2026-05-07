@@ -87,9 +87,9 @@ sw_error_t adpt_hppe_servcode_config_set(a_uint32_t dev_id, a_uint32_t servcode_
 #if defined(JHPPE)
 	/* extend field update action */
 	eg_service_tbl.bf.field_update_action_ext_0 = entry->field_update_bitmap[0] >>
-		FLD_UPDATE_XLAN_XLT_DROP_BYPASS;
+		FLD_UPDATE_VLAN_XLT_DROP_BYPASS;
 	eg_service_tbl.bf.field_update_action_ext_1 = entry->field_update_bitmap[0] >>
-		(FLD_UPDATE_XLAN_XLT_DROP_BYPASS +
+		(FLD_UPDATE_VLAN_XLT_DROP_BYPASS +
 		 SW_FIELD_OFFSET_IN_WORD(EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_OFFSET));
 	eg_service_tbl.bf.field_update_action_ext1_0 = entry->field_update_bitmap[0] >>
 		FLD_UP_EG_CNT_VSI_BYPASS | entry->field_update_bitmap[1] <<
@@ -174,7 +174,7 @@ sw_error_t adpt_hppe_servcode_config_get(a_uint32_t dev_id, a_uint32_t servcode_
 	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext_0 |
 		eg_service_tbl.bf.field_update_action_ext_1 <<
 		SW_FIELD_OFFSET_IN_WORD(EG_SERVICE_TBL_FIELD_UPDATE_ACTION_EXT_OFFSET)) <<
-		FLD_UPDATE_XLAN_XLT_DROP_BYPASS;
+		FLD_UPDATE_VLAN_XLT_DROP_BYPASS;
 	entry->field_update_bitmap[0] |= (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext1_0)
 		<< FLD_UP_EG_CNT_VSI_BYPASS;
 	entry->field_update_bitmap[1] = (a_uint64_t)(eg_service_tbl.bf.field_update_action_ext1_0 |
