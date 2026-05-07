@@ -8,6 +8,7 @@
 #include "shell_io.h"
 #include "shell.h"
 #include "shell_sw.h"
+#include "adpt.h"
 
 #define SW_RTN_ON_NULL_PARAM(rtn) \
     do { if ((rtn) == NULL) return SW_BAD_PARAM; } while(0);
@@ -741,6 +742,14 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_PT_VLAN_TRANS_ADV_ACTION,
 		    (param_check_t)cmd_data_check_port_vlan_translation_adv_action, NULL),
 	SW_TYPE_DEF(SW_ISOL_CTRL, cmd_data_check_isol_ctrl, NULL),
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	SW_TYPE_DEF(SW_ISOL_ACT_CTRL, (param_check_t)cmd_data_check_isol_act_ctrl, NULL),
+	SW_TYPE_DEF(SW_ISOL_ID, (param_check_t)cmd_data_check_isol_id, NULL),
+	SW_TYPE_DEF(SW_ISOL_ACT, (param_check_t)cmd_data_check_isol_act, NULL),
+	SW_TYPE_DEF(SW_PVLAN_RX, (param_check_t)cmd_data_check_pvlan_rx_cfg, NULL),
+	SW_TYPE_DEF(SW_PVLAN_TX, (param_check_t)cmd_data_check_pvlan_tx_cfg, NULL),
+	SW_TYPE_DEF(SW_PVLAN_MAP, (param_check_t)cmd_data_check_pvlan_map, NULL),
+#endif
 #ifndef IN_PORTVLAN_MINI
     SW_TYPE_DEF(SW_VLANPROPAGATION, cmd_data_check_vlan_propagation, NULL),
     SW_TYPE_DEF(SW_VLANTRANSLATION, (param_check_t)cmd_data_check_vlan_translation, NULL),
@@ -1029,6 +1038,14 @@ static sw_data_type_t sw_data_type[] =
 #endif
 #ifdef IN_PON_PM
     SW_TYPE_DEF(SW_PON_PM_COUNTER_ENTRY, (param_check_t)cmd_data_check_pon_pm_counter_entry, NULL),
+#endif
+#ifdef IN_PON
+	SW_TYPE_DEF(SW_GEMPORT_GLB_CFG, (param_check_t)cmd_data_check_gemport_global_cfg, NULL),
+	SW_TYPE_DEF(SW_GEMPORT_GEN_DFT, (param_check_t)cmd_data_check_gemport_gen_default, NULL),
+	SW_TYPE_DEF(SW_GEMPORT_GEN, (param_check_t)cmd_data_check_gemport_gen_entry, NULL),
+	SW_TYPE_DEF(SW_GEMPORT_MAP, (param_check_t)cmd_data_check_gemport_map, NULL),
+	SW_TYPE_DEF(SW_GEMPORT_CFG, (param_check_t)cmd_data_check_gemport_cfg, NULL),
+	SW_TYPE_DEF(SW_GEMPORT_PLC, (param_check_t)cmd_data_check_gemport_policer, NULL),
 #endif
 #ifdef IN_IPMC
     SW_TYPE_DEF(SW_IPMC_GLOBAL_CFG, (param_check_t)cmd_data_check_ipmc_global_cfg, NULL),
@@ -4022,6 +4039,17 @@ cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size)
 					cmd_data_check_attr, ("port_select", cmd,
 					&(pEntry->ingress_port_sel), sizeof(pEntry->ingress_port_sel)));
 #endif
+#if defined(JHPPE) || defined(HMSPPE)
+	cmd_data_check_element("in_port_ponmode_en", "disable",
+					"usage: usage: enable/disable\n",
+					cmd_data_check_enable, (cmd,
+					&(pEntry->in_port_ponmode_en), sizeof(pEntry->in_port_ponmode_en)));
+
+	cmd_data_check_element("tl_port_ponmode_en", "disable",
+					"usage: usage: enable/disable\n",
+					cmd_data_check_enable, (cmd,
+					&(pEntry->tl_port_ponmode_en), sizeof(pEntry->tl_port_ponmode_en)));
+#endif
 
     return SW_OK;
 }
@@ -4033,6 +4061,7 @@ cmd_data_check_tpid(char *info, void *val, a_uint32_t size)
     sw_error_t rv;
     fal_tpid_t *pEntry = (fal_tpid_t *)val;
     a_uint32_t tmp = 0;
+	a_uint32_t chip_type = adpt_chip_type_get(get_devid());
 
     memset(pEntry, 0, sizeof(fal_tpid_t));
 
@@ -4084,6 +4113,84 @@ cmd_data_check_tpid(char *info, void *val, a_uint32_t size)
 	    if (rv == SW_OK)
 		    pEntry->tunnel_stpid = (a_uint16_t)tmp;
     } while (talk_mode && (SW_OK != rv));
+
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	if (chip_type == CHIP_JHPPE ||
+		chip_type == CHIP_HMSPPE ||
+		chip_type == CHIP_HTTPPE) {
+		do {
+	    cmd = get_sub_cmd("extra_ctagtpid", "0x8100");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->ext_ctpid = (a_uint16_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("extra_stagtpid", "0x88a8");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->ext_stpid = (a_uint16_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("extra_tunnel_ctagtpid", "0x8100");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->ext_tunnel_ctpid = (a_uint16_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("extra_tunnel_stagtpid", "0x88a8");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->ext_tunnel_stpid = (a_uint16_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("ctagtpid_map", "0x5");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->ctpid_map = (a_uint8_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("stagtpid_map", "0xa");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->stpid_map = (a_uint8_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("tunnel_ctagtpid_map", "0x5");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->tunnel_ctpid_map = (a_uint8_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+
+		do {
+	    cmd = get_sub_cmd("tunnel_stagtpid_map", "0xa");
+	    SW_RTN_ON_NULL_PARAM(cmd);
+
+	    rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint32_t));
+	    if (rv == SW_OK)
+		    pEntry->tunnel_stpid_map = (a_uint8_t)tmp;
+    	} while (talk_mode && (SW_OK != rv));
+	}
+#endif
 
     return SW_OK;
 }
@@ -4422,6 +4529,7 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, void *val, a_uint32_t 
 	sw_error_t rv;
 	a_uint32_t tmp;
 	fal_vlan_trans_adv_rule_t *pEntry = (fal_vlan_trans_adv_rule_t *)val;
+	a_uint32_t chip_type = adpt_chip_type_get(get_devid());
 
 	memset(pEntry, 0, sizeof(fal_vlan_trans_adv_rule_t));
 
@@ -4660,6 +4768,59 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, void *val, a_uint32_t 
 
 	} while (talk_mode && (SW_OK != rv));
 
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	if (chip_type == CHIP_JHPPE ||
+		chip_type == CHIP_HMSPPE ||
+		chip_type == CHIP_HTTPPE) {
+
+		do {
+			cmd = get_sub_cmd("stpid_idx_en", "yes");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &pEntry->stpid_idx_en, sizeof(a_bool_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		do {
+			cmd = get_sub_cmd("stpid_idx", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->stpid_idx = tmp;
+
+		do {
+			cmd = get_sub_cmd("ctpid_idx_en", "yes");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &pEntry->ctpid_idx_en, sizeof(a_bool_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		do {
+			cmd = get_sub_cmd("ctpid_idx", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint8_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->ctpid_idx = tmp;
+
+		do {
+			cmd = get_sub_cmd("dhcp_type", "0x7");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint8_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->dhcp_type = tmp;
+
+		do {
+			cmd = get_sub_cmd("mc_type", "0x7");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint8_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->mc_type = tmp;
+	}
+#endif
+
 	return SW_OK;
 }
 
@@ -4684,6 +4845,7 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 	sw_error_t rv;
 	a_uint32_t tmp = 0;
 	fal_vlan_trans_adv_action_t *pEntry = (fal_vlan_trans_adv_action_t *)val;
+	a_uint32_t chip_type = adpt_chip_type_get(get_devid());
 
 	memset(pEntry, 0, sizeof(fal_vlan_trans_adv_action_t));
 
@@ -4842,6 +5004,22 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 	}
 	while (talk_mode && (SW_OK != rv));
 
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	if (chip_type == CHIP_JHPPE ||
+		chip_type == CHIP_HMSPPE ||
+		chip_type == CHIP_HTTPPE) {
+
+		do {
+			cmd = get_sub_cmd("pm_counter_mode", "No");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_confirm(cmd, A_TRUE, &tmp,
+					sizeof (a_bool_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->counter_mode = tmp;
+	}
+#endif
+
 	do
 	{
 		cmd = get_sub_cmd("counter_id", "0");
@@ -4924,6 +5102,101 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, void *val, a_uint32_
 	}
 	while (talk_mode && (SW_OK != rv));
 
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	if (chip_type == CHIP_JHPPE ||
+		chip_type == CHIP_HMSPPE ||
+		chip_type == CHIP_HTTPPE) {
+
+		do {
+		cmd = get_sub_cmd("tags_to_rm", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->tags_to_rm = tmp;
+
+		do {
+			cmd = get_sub_cmd("stpid_idx_xlt_cmd", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint32(cmd, &pEntry->stpid_idx_xlt_cmd, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		do {
+			cmd = get_sub_cmd("stpid_idx_xlt", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->stpid_idx_xlt = tmp;
+
+		do {
+			cmd = get_sub_cmd("ctpid_idx_xlt_cmd", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint32(cmd, &pEntry->ctpid_idx_xlt_cmd, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		do {
+			cmd = get_sub_cmd("ctpid_idx_xlt", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->ctpid_idx_xlt = tmp;
+
+		do {
+			cmd = get_sub_cmd("dscp_map_idx", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->dscp_map_idx = tmp;
+
+		do {
+			cmd = get_sub_cmd("fwd_action", "forward");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_maccmd(cmd, &pEntry->fwd_cmd, sizeof(a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		do {
+			cmd = get_sub_cmd("svc_code_en", "no");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &pEntry->svc_code_en,
+							sizeof (a_bool_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		do {
+			cmd = get_sub_cmd("svc_code", "0");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
+		} while (talk_mode && (SW_OK != rv));
+		pEntry->svc_code = tmp;
+
+		do {
+			cmd = get_sub_cmd("dst_valid", "no");
+			SW_RTN_ON_NULL_PARAM(cmd);
+
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &pEntry->dst_valid,
+							sizeof (a_bool_t));
+		} while (talk_mode && (SW_OK != rv));
+
+		cmd_data_check_element("dest_info_type", "port_id",
+				"usage:dest_info_type:port_bitmap/port_id, etc\n",
+				cmd_data_check_attr, ("dest_info_type", cmd,
+				&(pEntry->dst_port.dest_info_type),
+				sizeof(pEntry->dst_port.dest_info_type)));
+
+		cmd_data_check_element("dest_info_value", "0",
+				"usage:dest_info_value, port_id/port_bmp, etc\n",
+				cmd_data_check_uint32, (cmd, &(pEntry->dst_port.dest_info_value),
+				sizeof (pEntry->dst_port.dest_info_value)));
+	}
+#endif
+
 	return SW_OK;
 }
 
@@ -4936,6 +5209,19 @@ cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 	a_uint32_t tmp = 0;
 
 	aos_mem_zero(&entry, sizeof(fal_port_isol_ctrl_t));
+
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+	do {
+		cmd = get_sub_cmd("direction", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_direction(cmd, &tmp, sizeof(tmp));
+		if (SW_OK != rv)
+			rv = SW_BAD_VALUE;
+		else
+			entry.dir = tmp;
+	} while(talk_mode && (SW_OK != rv));
+#endif
 
 	do {
 		cmd = get_sub_cmd("isol_en", "n");
@@ -4962,6 +5248,236 @@ cmd_data_check_isol_ctrl(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 
 	return SW_OK;
 }
+
+#if defined(JHPPE) || defined(HMSPPE) || defined(HTTPPE)
+sw_error_t
+cmd_data_check_isol_act_ctrl(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_port_isol_act_ctrl_t entry;
+
+	memset(&entry, 0, sizeof (fal_port_isol_act_ctrl_t));
+
+	cmd_data_check_element("bc_isol_en", "disable",
+			"usage: <yes/no>\n", cmd_data_check_enable,
+			(cmd, &entry.bc_isol_en, sizeof(entry.bc_isol_en)));
+
+	cmd_data_check_element("mc_isol_en", "disable",
+			"usage: <yes/no>\n", cmd_data_check_enable,
+			(cmd, &entry.mc_isol_en, sizeof(entry.mc_isol_en)));
+
+	*(fal_port_isol_act_ctrl_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_isol_id(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_port_isol_act_idx_t entry;
+	a_uint32_t tmp1 = 0, tmp2 = 0;
+
+	memset(&entry, 0, sizeof (fal_port_isol_act_idx_t));
+
+	cmd_data_check_element("isol_id_type", "phy_port",
+			"usage: <phy_port/isol_group>\n", cmd_data_check_attr,
+			("isol_id_type", cmd, &entry.isol_type, sizeof(entry.isol_type)));
+
+	cmd_data_check_element("phy_port_id", "0",
+			"usage: physical port id.\n", cmd_data_check_uint32,
+			(cmd, &tmp1, sizeof(tmp1)));
+
+	cmd_data_check_element("isol_group_id", "0",
+			"usage: isol group id.\n", cmd_data_check_uint32,
+			(cmd, &tmp2, sizeof(tmp2)));
+
+	if (entry.isol_type == FAL_ISOL_ACT_PPORT)
+		entry.pport_id= tmp1;
+	else
+		entry.isol_group_id = tmp2;
+
+	*(fal_port_isol_act_idx_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_isol_act(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_port_isol_act_t entry;
+
+	aos_mem_zero(&entry, sizeof(fal_port_isol_act_t));
+
+	do {
+		cmd = get_sub_cmd("isol_act_map", "0x0:0x0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		char *token, *sub_token;
+		char *str1, *str2;
+		a_uint32_t idx_val, act_val;
+		char tmp_str[512] = {0};
+		int i;
+		rv = SW_OK;
+
+		/* Validate input length before processing */
+		if (strlen(cmd) >= sizeof(tmp_str)) {
+			SSDK_ERROR("Input string too long (max %zu chars)\n", sizeof(tmp_str) - 1);
+			rv = SW_BAD_VALUE;
+			break;
+		}
+
+		/* Initialize act_bitmap to all zeros */
+		aos_mem_zero(entry.act_bitmap, sizeof(entry.act_bitmap));
+		strlcpy(tmp_str, cmd, sizeof(tmp_str));
+
+		str1 = tmp_str;
+
+		/* Parse the input string: "0x0:0x2,0x3:0x1,0x5:0x2..." */
+		while ((token = strsep(&str1, ",")) != NULL) {
+			if (*token == '\0')
+            	continue;
+
+			str2 = token;
+			sub_token = strsep(&str2, ":");
+
+			if (sub_token == NULL || str2 == NULL) {
+				rv = SW_BAD_VALUE;
+				break;
+			}
+			if (cmd_sscanf(sub_token, NULL, &idx_val) != SW_OK ||
+				cmd_sscanf(str2, NULL, &act_val) != SW_OK) {
+				rv = SW_BAD_VALUE;
+				break;
+			}
+
+			/* Validate idx and act ranges */
+			if (idx_val > 63 || act_val > 3) {
+				rv = SW_BAD_VALUE;
+				break;
+			}
+
+			/* Store act_val into act_bitmap */
+			i = idx_val / 16; /* Each uint32 holds 16 idx:act pairs */
+			int bit_offset = (idx_val % 16) * 2; /* Each pair takes 2 bits */
+
+			/* Clear existing bits for this idx and then set new act_val */
+			entry.act_bitmap[i] &= ~((0x3) << bit_offset);
+			entry.act_bitmap[i] |= (act_val & 0x3) << bit_offset;
+		}
+
+		if (SW_OK != rv)
+        	SSDK_ERROR("idx0:act0,idx1:act1..., idx[0-63], act[0-2].\n");
+	}while (talk_mode && (SW_OK != rv));
+
+	*(fal_port_isol_act_t* )arg_val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_pvlan_rx_cfg(char *cmd_str, void *val, a_uint32_t size)
+{
+	fal_pvtvlan_rx_cfg_t rx_cfg;
+	sw_error_t rv;
+	char *cmd;
+	a_uint32_t tmp;
+
+	aos_mem_zero(&rx_cfg, sizeof(fal_pvtvlan_rx_cfg_t));
+
+	do {
+		cmd = get_sub_cmd("map_en", "n");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_confirm(cmd, A_FALSE, &(rx_cfg.map_en),
+					sizeof(a_bool_t));
+	} while(talk_mode && (SW_OK != rv));
+
+	do {
+		cmd = get_sub_cmd("tpid", "0x8100");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	} while (talk_mode && (SW_OK != rv));
+	rx_cfg.tpid = tmp;
+
+	*(fal_pvtvlan_rx_cfg_t *)val = rx_cfg;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_pvlan_tx_cfg(char *cmd_str, void *val, a_uint32_t size)
+{
+	fal_pvtvlan_tx_cfg_t tx_cfg;
+	sw_error_t rv;
+	char *cmd;
+	a_uint32_t tmp;
+
+	aos_mem_zero(&tx_cfg, sizeof(fal_pvtvlan_tx_cfg_t));
+
+	do {
+		cmd = get_sub_cmd("tpid", "0x8100");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	} while (talk_mode && (SW_OK != rv));
+	tx_cfg.tpid = tmp;
+
+	*(fal_pvtvlan_tx_cfg_t *)val = tx_cfg;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_pvlan_map(char *cmd_str, void *val, a_uint32_t size)
+{
+	fal_pvtvlan_map_t pvlan_map;
+	sw_error_t rv;
+	char *cmd;
+	a_uint32_t tmp;
+
+	aos_mem_zero(&pvlan_map, sizeof(fal_pvtvlan_map_t));
+
+	do {
+		cmd = get_sub_cmd("ptmap_en", "n");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_confirm(cmd, A_FALSE, &(pvlan_map.ptmap_en),
+							sizeof(a_bool_t));
+	} while(talk_mode && (SW_OK != rv));
+
+	do {
+		cmd = get_sub_cmd("vlan_tci", "0x0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	} while (talk_mode && (SW_OK != rv));
+	pvlan_map.vlan_tci = tmp;
+
+	do {
+		cmd = get_sub_cmd("vlan_tci_mask", "0x0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
+	} while (talk_mode && (SW_OK != rv));
+	pvlan_map.vlan_tci_mask = tmp;
+
+	do {
+		cmd = get_sub_cmd("int_port", "0x0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		rv = cmd_data_check_uint8(cmd, &tmp, sizeof(a_uint32_t));
+	} while (talk_mode && (SW_OK != rv));
+	pvlan_map.int_port = tmp;
+
+	*(fal_pvtvlan_map_t *)val = pvlan_map;
+
+	return SW_OK;
+}
+#endif
 
 sw_error_t
 cmd_data_check_vlan_propagation(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
@@ -14683,6 +15199,266 @@ cmd_data_check_pon_pm_counter_entry(char *cmd_str, void *val, a_uint32_t size)
 	return SW_OK;
 }
 #endif
+
+#ifdef IN_PON
+sw_error_t
+cmd_data_check_gemport_global_cfg(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_gemport_global_cfg_t entry;
+    a_uint32_t tmp;
+
+	memset(&entry, 0, sizeof (fal_gemport_global_cfg_t));
+
+	cmd_data_check_element("gen_rule_miss_action", "rdtcpu",
+			"usage: <drop/cpycpu/rdtcpu>\n", cmd_data_check_maccmd,
+			(cmd, &entry.gen_miss_cmd, sizeof(fal_fwd_cmd_t)));
+
+	cmd_data_check_element("gen_rule_miss_pon_port", "6",
+			"usage: port_id, <0-255>\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.gen_miss_pon_port = tmp;
+
+	cmd_data_check_element("vlan_mode", "vid_match",
+					"usage:vid_match/vsi_match.\n",
+					cmd_data_check_attr, ("vlan_mode", cmd,
+					&(tmp), sizeof(a_uint8_t)));
+	entry.vlan_mode = tmp;
+	cmd_data_check_element("pcp_mode", "pcp_dei_match",
+					"usage:pcp_dei_match/int_pri_match.\n",
+					cmd_data_check_attr, ("pcp_mode", cmd,
+					&(tmp), sizeof(a_uint8_t)));
+	entry.pcp_mode = tmp;
+
+	*(fal_gemport_global_cfg_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_gemport_gen_default(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_gemport_gen_default_t entry;
+    a_uint32_t tmp;
+
+	memset(&entry, 0, sizeof (fal_gemport_gen_default_t));
+
+	cmd_data_check_element("vid", "0", "usage: <0-4095>\n",
+			cmd_data_check_uint32, (cmd, &entry.vlan_id, sizeof(a_uint32_t)));
+	cmd_data_check_element("pcp", "0", "usage: <0-7>\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.pcp = tmp;
+	cmd_data_check_element("dei", "0", "usage: <0-1>\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dei = tmp;
+	cmd_data_check_element("dscp", "0", "usage: <0-63>\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dscp = tmp;
+	cmd_data_check_element("dscp_mask", "0", "usage: <0x0-0x3f>\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dscp_mask = tmp;
+
+	*(fal_gemport_gen_default_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_gemport_gen_entry(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_gemport_gen_t entry;
+    a_uint32_t tmp;
+
+	memset(&entry, 0, sizeof (fal_gemport_gen_t));
+
+	cmd_data_check_element("src_info_valid", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.src_info_valid, sizeof(a_bool_t)));
+	cmd_data_check_element("src_info", "0", "port bitmap or vp\n",
+				cmd_data_check_uint32, (cmd, &entry.src_info, sizeof(a_uint32_t)));
+
+	cmd_data_check_element("dest_info_valid", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.dest_info_valid, sizeof (a_bool_t)));
+	cmd_data_check_element("dest_info_type", "port_id",
+				"usage: port_id\n", cmd_data_check_attr,("dest_info_type", cmd,
+				&(entry.dest_info.dest_info_type), sizeof(entry.dest_info.dest_info_type)));
+	cmd_data_check_element("dest_port_id", "0", "physical or virtual port id.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dest_info.dest_info_value = tmp;
+
+	cmd_data_check_element("vlan_id_valid", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.vlan_id_valid, sizeof (a_bool_t)));
+	cmd_data_check_element("vlan_id", "0", "usage: <0-4095>.\n",
+			cmd_data_check_uint32, (cmd, &entry.vlan_id, sizeof(a_uint32_t)));
+
+	cmd_data_check_element("pri_type", "0", "usage: <0-1>\n",
+				cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.pri_type = tmp;
+
+	cmd_data_check_element("pcp_valid", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.pcp_valid, sizeof (a_bool_t)));
+	cmd_data_check_element("pcp", "0", "usage: <0-7>.\n",
+					cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.pcp = tmp;
+
+	cmd_data_check_element("dei_valid", "no",
+				"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+				(cmd, A_FALSE, &entry.dei_valid, sizeof (a_bool_t)));
+	cmd_data_check_element("dei", "0", "usage: <0-1>.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dei = tmp;
+
+	cmd_data_check_element("dscp_valid", "no",
+				"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+				(cmd, A_FALSE, &entry.dscp_valid, sizeof (a_bool_t)));
+	cmd_data_check_element("dscp", "0", "usage: <0-1>.\n",
+				cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dscp = tmp;
+
+	cmd_data_check_element("gemport", "0", "usage: <0-127>.\n",
+						cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.gemport = tmp;
+
+	*(fal_gemport_gen_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_gemport_map(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_gemport_map_t entry;
+    a_uint32_t tmp;
+
+	memset(&entry, 0, sizeof (fal_gemport_map_t));
+
+	cmd_data_check_element("src_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.src_en, sizeof(a_bool_t)));
+	cmd_data_check_element("src_port", "0", "port id, pp or vp.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.src_port = tmp;
+
+	cmd_data_check_element("int_pri_dp_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.int_pri_dp_en, sizeof(a_bool_t)));
+	cmd_data_check_element("int_pri", "0", "internal priority 0-15.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.int_pri = tmp;
+	cmd_data_check_element("int_dp", "0", "Internal drop precedence.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.int_dp = tmp;
+
+	cmd_data_check_element("dest_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.dest_en, sizeof(a_bool_t)));
+	cmd_data_check_element("dest_info_type", "port_id",
+			"usage: port_bmp or port_id\n", cmd_data_check_attr,("dest_info_type", cmd,
+			&(entry.dest_info.dest_info_type), sizeof(entry.dest_info.dest_info_type)));
+	cmd_data_check_element("dest_port_id", "0", "physical or virtual port id or port bitmap.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dest_info.dest_info_value = tmp;
+
+	cmd_data_check_element("service_code", "0", "usage: <0-255>.\n",
+						cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.service_code = tmp;
+
+	*(fal_gemport_map_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_gemport_cfg(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_gemport_cfg_t entry;
+    a_uint32_t tmp;
+
+	memset(&entry, 0, sizeof(fal_gemport_cfg_t));
+
+	cmd_data_check_element("service_code_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.service_code_en, sizeof(a_bool_t)));
+	cmd_data_check_element("service_code", "0", "usage: <0-255>.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.service_code = tmp;
+
+	cmd_data_check_element("int_pri_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.int_pri_en, sizeof(a_bool_t)));
+	cmd_data_check_element("int_pri", "0", "internal priority 0-15.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.int_pri = tmp;
+
+	cmd_data_check_element("int_dp_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.int_dp_en, sizeof(a_bool_t)));
+	cmd_data_check_element("int_dp", "0", "Internal drop precedence.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.int_dp = tmp;
+
+	cmd_data_check_element("enq_vp_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.enq_vp_en, sizeof(a_bool_t)));
+	cmd_data_check_element("enq_vp", "0", "enqueue vp\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.enq_vp = tmp;
+
+	cmd_data_check_element("dest_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.dest_en, sizeof(a_bool_t)));
+	cmd_data_check_element("dest_pp", "0", "dest physical portid.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dest_pp = tmp;
+	cmd_data_check_element("dest_vp", "0", "dest virtual portid.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.dest_vp = tmp;
+
+	cmd_data_check_element("fwd_cmd", "forward",
+			"usage: <forward/drop/cpycpu/rdtcpu>\n", cmd_data_check_maccmd,
+			(cmd, &entry.fwd_cmd, sizeof(fal_fwd_cmd_t)));
+
+	cmd_data_check_element("bypass_bitmap", "0", "qm, sawf bypassbitmap.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.bypass_bitmap = tmp;
+
+	*(fal_gemport_cfg_t *)val = entry;
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_gemport_policer(char *cmd_str, void *val, a_uint32_t size)
+{
+	char *cmd;
+	fal_gemport_policer_t entry;
+    a_uint32_t tmp;
+
+	memset(&entry, 0, sizeof(fal_gemport_policer_t));
+
+	cmd_data_check_element("us_policer_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.us_policer_en, sizeof(a_bool_t)));
+	cmd_data_check_element("ds_policer_en", "no",
+			"usage: <yes/no/y/n>\n", cmd_data_check_confirm,
+			(cmd, A_FALSE, &entry.ds_policer_en, sizeof(a_bool_t)));
+	cmd_data_check_element("us_policer_idx", "0", "usage: <0-511>.\n",
+			cmd_data_check_uint8, (cmd, &tmp, sizeof(a_uint8_t)));
+	entry.us_policer_idx = tmp;
+
+	*(fal_gemport_policer_t *)val = entry;
+
+	return SW_OK;
+}
+#endif
+
 #ifdef IN_IPMC
 sw_error_t cmd_data_check_ipmc_global_cfg(char *cmd_str, void *val, a_uint32_t size)
 {
