@@ -298,6 +298,7 @@ struct ssdk_port_priv {
 	struct phylink *phylink;
 	struct phylink_config phylink_config;
 	struct phylink_pcs phylink_pcs;
+	struct phylink_link_state phylink_link_state;
 	a_uint32_t port_mac_type;
 	a_uint32_t port_link_up;
 	a_uint32_t port_old_link;

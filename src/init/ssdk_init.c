@@ -1247,7 +1247,23 @@ static const struct phylink_mac_ops ssdk_phylink_ops = {
 static int ssdk_pcs_config(struct phylink_pcs *pcs, unsigned int mode,
 	phy_interface_t interface, const unsigned long *advertising, bool permitted)
 {
-	/* pcs no need to be configured here as pcs is configured in SSDK polling task */
+	/* Save negotiated interface; actual PCS register configuration done in SSDK polling task */
+	struct qca_phy_priv *priv = NULL;
+	struct ssdk_port_priv *port_priv = container_of(pcs, struct ssdk_port_priv,
+		phylink_pcs);
+
+	if (port_priv->port_id >= SW_MAX_NR_PORT)
+		return 0;
+	priv = ssdk_phy_priv_data_get(port_priv->dev_id);
+	if (!priv)
+		return 0;
+	mutex_lock(&priv->mac_sw_sync_lock);
+	/* update phylink_link_state for SSDK polling */
+	port_priv->phylink_link_state.interface = interface;
+	mutex_unlock(&priv->mac_sw_sync_lock);
+
+	SSDK_DEBUG("port id:%d, phylink_link_state interface:%d\n",
+		port_priv->port_id, port_priv->phylink_link_state.interface);
 
 	return 0;
 }
@@ -1259,20 +1275,86 @@ static void ssdk_pcs_an_restart(struct phylink_pcs *pcs)
 
 static void ssdk_pcs_get_state(struct phylink_pcs *pcs, struct phylink_link_state *state)
 {
+	sw_error_t rv = SW_OK;
 	struct qca_phy_priv *priv = NULL;
+	struct port_phy_status phy_status = {0};
+	adpt_api_t *p_api;
 	struct ssdk_port_priv *port_priv = container_of(pcs, struct ssdk_port_priv,
 		phylink_pcs);
+	int retries = 10;  /* Maximum 10 retries to wait for PCS state synchronization */
 
-	if (!port_priv || port_priv->port_id >= SW_MAX_NR_PORT || !state)
+	if (!pcs || !state)
+		return;
+
+	if (port_priv->port_id >= SW_MAX_NR_PORT)
 		return;
 	priv = ssdk_phy_priv_data_get(port_priv->dev_id);
 	if (!priv)
 		return;
+	p_api = adpt_api_ptr_get(port_priv->dev_id);
+	if (!p_api || !p_api->adpt_port_phy_status_get)
+		return;
+
 	mutex_lock(&priv->mac_sw_sync_lock);
-	state->speed = port_priv->port_old_speed;
-	state->duplex = port_priv->port_old_duplex;
-	state->link = port_priv->port_old_link;
+	/*
+	 * This API is called when link state changes
+	 * - If current link is UP, try to get link down state directly
+	 * - If current link is DOWN, need to loop retry to wait for link up state
+	 */
+	if (port_priv->phylink_link_state.link) {
+		/* Current link is UP, read status directly (detect if it becomes DOWN) */
+		rv = p_api->adpt_port_phy_status_get(port_priv->dev_id,
+			port_priv->port_id, &phy_status);
+		if (rv != SW_OK) {
+			mutex_unlock(&priv->mac_sw_sync_lock);
+			return;
+		}
+	} else {
+		/*
+		 * Current link is DOWN, need to loop wait for link up
+		 *
+		 * [IMPORTANT] For 25G SFP modules, this loop mechanism is MANDATORY:
+		 * the kernel driver sfp.c use interrupt mechanism to notify link changes. When
+		 * the interrupt is triggered, the PCS link state may not have fully
+		 * synchronized yet. Therefore, loop retry (100ms interval each time) is
+		 * needed to wait for PCS state synchronization, otherwise link up state
+		 * may not be read.
+		 *
+		 * Retry up to 10 times (total ~1 second). Exit loop immediately if
+		 * link up is detected during this period.
+		 */
+		do {
+			mutex_unlock(&priv->mac_sw_sync_lock);
+			msleep(100);  /* 100ms interval per retry, wait for PCS state sync */
+			mutex_lock(&priv->mac_sw_sync_lock);
+			rv = p_api->adpt_port_phy_status_get(port_priv->dev_id,
+				port_priv->port_id, &phy_status);
+			if (rv != SW_OK) {
+				mutex_unlock(&priv->mac_sw_sync_lock);
+				return;
+			}
+			if (phy_status.link_status == PORT_LINK_UP)
+				break;  /* Link up detected, exit loop immediately */
+		} while (--retries);
+	}
+
+	/* Update returned link state information */
+	state->speed = phy_status.speed;
+	state->duplex = phy_status.duplex;
+	state->link = (bool)phy_status.link_status;
+
+	/* Update internal phylink link state for SSDK polling task.
+	 * Note: phylink_link_state.interface is intentionally NOT updated here;
+	 * it is set once in ssdk_pcs_config() when the interface is negotiated
+	 * and remains valid for the lifetime of the link.
+	 */
+	port_priv->phylink_link_state.speed = phy_status.speed;
+	port_priv->phylink_link_state.duplex = phy_status.duplex;
+	port_priv->phylink_link_state.link = (bool)phy_status.link_status;
 	mutex_unlock(&priv->mac_sw_sync_lock);
+
+	SSDK_DEBUG("port id:%d, link:%d, speed:%d, duplex:%d\n",
+		port_priv->port_id, phy_status.link_status, phy_status.speed, phy_status.duplex);
 }
 
 static const struct phylink_pcs_ops ssdk_phylink_pcs_ops = {
