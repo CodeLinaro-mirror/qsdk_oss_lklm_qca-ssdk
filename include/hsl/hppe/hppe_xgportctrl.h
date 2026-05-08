@@ -338,6 +338,7 @@ hppe_mac_tx_configuration_ipg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
 		a_uint32_t *value);
+#endif
 
 sw_error_t
 hppe_mac_tx_configuration_ipg_set(
@@ -345,6 +346,7 @@ hppe_mac_tx_configuration_ipg_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+#if 0
 sw_error_t
 hppe_mac_tx_configuration_ism_get(
 		a_uint32_t dev_id,

@@ -734,23 +734,6 @@ hppe_mac_tx_configuration_ipg_get(
 }
 
 sw_error_t
-hppe_mac_tx_configuration_ipg_set(
-		a_uint32_t dev_id,
-		a_uint32_t index,
-		a_uint32_t value)
-{
-	union mac_tx_configuration_u reg_val;
-	sw_error_t ret = SW_OK;
-
-	ret = hppe_mac_tx_configuration_get(dev_id, index, &reg_val);
-	if (SW_OK != ret)
-		return ret;
-	reg_val.bf.ipg = value;
-	ret = hppe_mac_tx_configuration_set(dev_id, index, &reg_val);
-	return ret;
-}
-
-sw_error_t
 hppe_mac_tx_configuration_ism_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
@@ -1013,6 +996,23 @@ hppe_mac_tx_configuration_jd_get(
 }
 #endif
 #endif
+sw_error_t
+hppe_mac_tx_configuration_ipg_set(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		a_uint32_t value)
+{
+	union mac_tx_configuration_u reg_val;
+	sw_error_t ret = SW_OK;
+
+	ret = hppe_mac_tx_configuration_get(dev_id, index, &reg_val);
+	if (SW_OK != ret)
+		return ret;
+	reg_val.bf.ipg = value;
+	ret = hppe_mac_tx_configuration_set(dev_id, index, &reg_val);
+	return ret;
+}
+
 sw_error_t
 hppe_mac_tx_configuration_jd_set(
 		a_uint32_t dev_id,

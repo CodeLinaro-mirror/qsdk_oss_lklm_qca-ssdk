@@ -182,6 +182,7 @@
 #define QSERDES_RX_EXT_RX_MODE_RATE6_B7_ADDRESS			0xcac0
 #define QSERDES_RX_EXT_RX_MODE_RATE6_B8_ADDRESS			0xcac4
 #define QSERDES_RX_EXT_RX_MODE_RATE6_B9_ADDRESS			0xcac8
+#define QSERDES_RX_EXT_Q_PI_INTRINSIC_BIAS_RATE65_ADDRESS	0xcacc
 #define QSERDES_RX_EXT_RX_MODE_HIGH_RATE1_B0_ADDRESS		0xcad4
 #define QSERDES_RX_EXT_RX_MODE_HIGH_RATE1_B1_ADDRESS		0xcad8
 #define QSERDES_RX_EXT_RX_MODE_HIGH_RATE2_B0_ADDRESS		0xcadc
@@ -578,8 +579,12 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_hw_tuning_init(a_uint32_t dev_id,
 		uniphy_index, 0x4E);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_2_ADDRESS,
 		uniphy_index, 0xD0);
-	hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
-		uniphy_index, 0x40);
+	if (uniphy_mode == PORT_WRAPPER_25GBASE_R)
+		hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
+			uniphy_index, 0x50);
+	else
+		hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
+			uniphy_index, 0x40);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_EXT_ADAPTOR_MODE_CTRL1_ADDRESS,
 		uniphy_index, 0x2A);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_EXT_ADAPTOR_MODE_CTRL3_ADDRESS,
@@ -786,7 +791,7 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_hw_tuning_init(a_uint32_t dev_id,
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_UCDR_SO_GAIN_RATE5_ADDRESS,
 		uniphy_index, 0x00);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_TERM_BW_CTRL2_ADDRESS,
-		uniphy_index, 0x05);
+		uniphy_index, 0x01);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE5_B0_ADDRESS,
 		uniphy_index, 0x15); /* 0x15(S)|0x15(L)	S: Short channel, L: long channel */
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE5_B1_ADDRESS,
@@ -854,7 +859,7 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_hw_tuning_init(a_uint32_t dev_id,
 			uniphy_index, 0x12);
 	} else {
 		hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE6_B4_ADDRESS,
-			uniphy_index, 0x4A);
+			uniphy_index, 0x7F);
 		hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE6_B5_ADDRESS,
 			uniphy_index, 0x00);
 	}
@@ -947,6 +952,8 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_hw_tuning_init(a_uint32_t dev_id,
 		uniphy_index, 0x01);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_OFFSET_ADAPTOR_CNTRL15_ADDRESS,
 		uniphy_index, 0x38);
+	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_Q_PI_INTRINSIC_BIAS_RATE65_ADDRESS,
+		uniphy_index, 0x39);
 	hppe_uniphy_reg_set(dev_id, QSERDES_COM_CMN_MODE_ADDRESS,
 		uniphy_index, 0x04); /* Placeholder */
 	hppe_uniphy_reg_set(dev_id, QSERDES_COM_CMN_MODE_CONTD_ADDRESS,
@@ -1224,8 +1231,12 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_sw_tuning_init(a_uint32_t dev_id,
 		uniphy_index, 0x4E);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_2_ADDRESS,
 		uniphy_index, 0xD0);
-	hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
-		uniphy_index, 0x40);
+	if (uniphy_mode == PORT_WRAPPER_25GBASE_R)
+		hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
+			uniphy_index, 0x50);
+	else
+		hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
+			uniphy_index, 0x40);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_EXT_ADAPTOR_MODE_CTRL1_ADDRESS,
 		uniphy_index, 0x2A);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_EXT_ADAPTOR_MODE_CTRL3_ADDRESS,
@@ -1433,7 +1444,7 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_sw_tuning_init(a_uint32_t dev_id,
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_UCDR_SO_GAIN_RATE5_ADDRESS,
 		uniphy_index, 0x00);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_TERM_BW_CTRL2_ADDRESS,
-		uniphy_index, 0x05);
+		uniphy_index, 0x01);
 
 	/* RX_MODE_RATE5 settings - all same regardless of is_long */
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE5_B0_ADDRESS,
@@ -1500,7 +1511,7 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_sw_tuning_init(a_uint32_t dev_id,
 			uniphy_index, 0x12);
 	} else {
 		hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE6_B4_ADDRESS,
-			uniphy_index, 0x4A);
+			uniphy_index, 0x7F);
 		hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE6_B5_ADDRESS,
 			uniphy_index, 0x00);
 	}
@@ -1591,6 +1602,8 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_sw_tuning_init(a_uint32_t dev_id,
 		uniphy_index, 0x01);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_OFFSET_ADAPTOR_CNTRL15_ADDRESS,
 		uniphy_index, 0x38);
+	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_Q_PI_INTRINSIC_BIAS_RATE65_ADDRESS,
+		uniphy_index, 0x39);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RXEQ_CTRL9_ADDRESS,
 		uniphy_index, 0x40); /* Mask RXEQ_ENGINE_DONE flag for software tuning */
 	hppe_uniphy_reg_set(dev_id, QSERDES_COM_CMN_MODE_ADDRESS,
@@ -1850,8 +1863,12 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_disabled_init(a_uint32_t dev_id,
 		uniphy_index, 0x4E);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_2_ADDRESS,
 		uniphy_index, 0xD0);
-	hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
-		uniphy_index, 0x40);
+	if (uniphy_mode == PORT_WRAPPER_25GBASE_R)
+		hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
+			uniphy_index, 0x50);
+	else
+		hppe_uniphy_reg_set(dev_id, QSERDES_TX_LANE_MODE_3_ADDRESS,
+			uniphy_index, 0x40);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_EXT_ADAPTOR_MODE_CTRL1_ADDRESS,
 		uniphy_index, 0x2A);
 	hppe_uniphy_reg_set(dev_id, QSERDES_TX_EXT_ADAPTOR_MODE_CTRL3_ADDRESS,
@@ -2056,7 +2073,7 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_disabled_init(a_uint32_t dev_id,
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_UCDR_SO_GAIN_RATE5_ADDRESS,
 		uniphy_index, 0x00);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_TERM_BW_CTRL2_ADDRESS,
-		uniphy_index, 0x05);
+		uniphy_index, 0x01);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE5_B0_ADDRESS,
 		uniphy_index, 0x15); /* 0x15(S)|0x15(L)	S: Short channel, L: long channel */
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE5_B1_ADDRESS,
@@ -2118,7 +2135,7 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_disabled_init(a_uint32_t dev_id,
 			uniphy_index, 0x12);
 	} else {
 		hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE6_B4_ADDRESS,
-			uniphy_index, 0x4A);
+			uniphy_index, 0x7F);
 		hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_MODE_RATE6_B5_ADDRESS,
 			uniphy_index, 0x00);
 	}
@@ -2207,6 +2224,8 @@ static sw_error_t adpt_jhppe_uniphy_pma_dfe_disabled_init(a_uint32_t dev_id,
 		uniphy_index, 0x01);
 	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RX_OFFSET_ADAPTOR_CNTRL15_ADDRESS,
 		uniphy_index, 0x38);
+	hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_Q_PI_INTRINSIC_BIAS_RATE65_ADDRESS,
+		uniphy_index, 0x39);
 	hppe_uniphy_reg_set(dev_id, QSERDES_COM_CMN_MODE_ADDRESS,
 		uniphy_index, 0x04); /* Placeholder */
 	hppe_uniphy_reg_set(dev_id, QSERDES_COM_CMN_MODE_CONTD_ADDRESS,

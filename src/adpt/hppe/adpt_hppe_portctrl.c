@@ -89,6 +89,7 @@
 #define CARRIER_SENSE_SIGNAL_FROM_MAC        0x0
 #define XGMAC_PWE_ENABLE	0x1
 #define XGMAC_WTO_LIMIT_13K	0xb
+#define XGMAC_IPG_88BIT		0x1
 
 #define PHY_PORT_TO_BM_PORT(port)	(PPE_BM_PHY_PORT_OFFSET + port - 1)
 #define GMAC_IPG_CHECK          0xc
@@ -364,7 +365,15 @@ _adpt_xgmac_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t index = ppe_port_to_xgmac_id(dev_id, port_id);
+	fal_port_interface_mode_t mode = PORT_INTERFACE_MODE_MAX;
 
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &mode);
+	SW_RTN_ON_ERROR(rv);
+
+	if (mode == PORT_25GBASE_R) {
+		/* Decrease IPG to 88bits to work around 25G XGMAC backpressured by Uniphy issue */
+		rv |= hppe_mac_tx_configuration_ipg_set(dev_id, index, XGMAC_IPG_88BIT);
+	}
 	rv |= hppe_mac_tx_configuration_jd_set(dev_id, index, (a_uint32_t)A_TRUE);
 	rv |= hppe_mac_rx_configuration_gpsl_set(dev_id, index, max_frame);
 	rv |= hppe_mac_rx_configuration_wd_set(dev_id, index, (a_uint32_t)A_FALSE);
