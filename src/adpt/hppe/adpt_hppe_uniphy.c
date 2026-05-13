@@ -30,6 +30,7 @@
 #endif
 #if defined(JHPPE)
 #include "adpt_jhppe_uniphy.h"
+#include <linux/of.h>
 #endif
 extern void adpt_hppe_gcc_port_speed_clock_set(a_uint32_t dev_id,
 				a_uint32_t port_id, fal_port_speed_t phy_speed);
@@ -696,6 +697,25 @@ __adpt_hppe_uniphy_rxlos_sel(a_uint32_t dev_id, a_uint32_t uniphy_index)
 }
 #endif
 
+#if defined(JHPPE)
+static bool
+__adpt_hppe_uniphy_overspeed_enabled(a_uint32_t dev_id, a_uint32_t uniphy_index)
+{
+	ssdk_netdev_switch_t *sw;
+	a_uint32_t port_id;
+
+	port_id = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
+					       SSDK_UNIPHY_CHANNEL0);
+
+	sw = ssdk_dts_netdev_switch_find(port_id);
+	if (!sw || !sw->switch_node)
+		return false;
+
+	/* overspeed is enabled when QCE2204 switch is connected */
+	return of_device_is_compatible(sw->switch_node, "qcom,ess-switch-qce22xx");
+}
+#endif
+
 static sw_error_t
 __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
@@ -735,7 +755,9 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 		UNIPHY_XPCS_MODE_ENABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+	/* enable 12.5G overspeed when connected to QCE2204 switch via force-link */
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g =
+		__adpt_hppe_uniphy_overspeed_enabled(dev_id, uniphy_index);
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
