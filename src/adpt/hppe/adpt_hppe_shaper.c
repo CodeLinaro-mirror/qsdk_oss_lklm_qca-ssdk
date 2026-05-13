@@ -13,6 +13,7 @@
 #include "adpt.h"
 #include "adpt_hppe.h"
 #include "adpt_appe_shaper.h"
+#include <linux/math64.h>
 
 #define NR_ADPT_HPPE_SHAPER_METER_UNIT         2
 #define NR_ADPT_HPPE_SHAPER_METER_TOKEN_UNIT         8
@@ -84,15 +85,15 @@ __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/*max rate unit is bps*/
-		temp1 = (a_uint64_t)(ADPT_HPPE_SHAPER_REFRESH_MAX  * 1000 * 8) *
-			(a_uint64_t)(ppe_freq * 1000);
-		temp2 =  hppe_shaper_token_unit[i][j] * time_cycle;
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 8 *
+			(a_uint64_t)ppe_freq * 1000;
+		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
-		do_div(temp1, temp2);
+		temp1 = div64_u64(temp1, temp2);
 		shaper_priv->port_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
-		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
+		temp = div64_u64(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
 		shaper_priv->port_shaper_rate[i][j].rate_1bit = temp;
 
 		//printk("port shaper hppe_max_rate generating =%llu\n", shaper_priv->port_shaper_rate[i][j].rate_max);
@@ -103,15 +104,19 @@ __adpt_hppe_port_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/* max rate unit  is 1/1000 pps*/
-		temp1 = (a_uint64_t)(ADPT_HPPE_SHAPER_REFRESH_MAX * 1000) * 1000 *
-			(a_uint64_t)(ppe_freq * 1000);
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 1000 *
+			(a_uint64_t)ppe_freq * 1000;
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
-		do_div(temp1, temp2);
+		/* temp2 can exceed 2^32 for large token_unit (j=0,1) with large
+		 * time_slot values; use div64_u64 to avoid do_div() truncating
+		 * the divisor to 32 bits and producing a wrong rate_max.
+		 */
+		temp1 = div64_u64(temp1, temp2);
 		shaper_priv->port_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
-		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
+		temp = div64_u64(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
 		shaper_priv->port_shaper_rate[i][j].rate_1bit = temp;
 
 		//printk("port shaper hppe_max_rate generating =%llu\n", shaper_priv->port_shaper_rate[i][j].rate_max);
@@ -139,15 +144,15 @@ __adpt_hppe_flow_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/*max rate unit is bps*/
-		temp1 = (a_uint64_t)(ADPT_HPPE_SHAPER_REFRESH_MAX  * 1000 * 8) *
-			(a_uint64_t)(ppe_freq * 1000);
-		temp2 =  hppe_shaper_token_unit[i][j] * time_cycle;
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 8 *
+			(a_uint64_t)ppe_freq * 1000;
+		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
-		do_div(temp1, temp2);
+		temp1 = div64_u64(temp1, temp2);
 		shaper_priv->flow_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
-		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
+		temp = div64_u64(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
 		shaper_priv->flow_shaper_rate[i][j].rate_1bit = temp;
 
 		//printk("flow shaper hppe_max_rate generating =%llu\n", shaper_priv->flow_shaper_rate[i][j].rate_max);
@@ -158,15 +163,19 @@ __adpt_hppe_flow_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/* max rate unit  is 1/1000 pps*/
-		temp1 = (a_uint64_t)(ADPT_HPPE_SHAPER_REFRESH_MAX * 1000) * 1000 *
-			(a_uint64_t)(ppe_freq * 1000);
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 1000 *
+			(a_uint64_t)ppe_freq * 1000;
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
-		do_div(temp1, temp2);
+		/* temp2 can exceed 2^32 for large token_unit (j=0,1) with large
+		 * time_slot values; use div64_u64 to avoid do_div() truncating
+		 * the divisor to 32 bits and producing a wrong rate_max.
+		 */
+		temp1 = div64_u64(temp1, temp2);
 		shaper_priv->flow_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
-		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
+		temp = div64_u64(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
 		shaper_priv->flow_shaper_rate[i][j].rate_1bit = temp;
 
 		//printk("flow shaper hppe_max_rate generating =%llu\n", shaper_priv->flow_shaper_rate[i][j].rate_max);
@@ -194,14 +203,14 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/*max rate unit is bps*/
-		temp1 = (a_uint64_t)(ADPT_HPPE_SHAPER_REFRESH_MAX  * 1000 * 8) * 1000;
-		temp2 =  hppe_shaper_token_unit[i][j] * time_cycle;
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 8 * 1000;
+		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
-		do_div(temp1, temp2);
+		temp1 = div64_u64(temp1, temp2);
 		shaper_priv->queue_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
-		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
+		temp = div64_u64(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
 		shaper_priv->queue_shaper_rate[i][j].rate_1bit = temp;
 
 		//printk("queue shaper hppe_max_rate generating =%llu\n", shaper_priv->queue_shaper_rate[i][j].rate_max);
@@ -212,14 +221,14 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/* max rate unit  is 1/1000 pps*/
-		temp1 = (a_uint64_t)(ADPT_HPPE_SHAPER_REFRESH_MAX * 1000) * 1000 * 1000;
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 1000 * 1000;
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
-		do_div(temp1, temp2);
+		temp1 = div64_u64(temp1, temp2);
 		shaper_priv->queue_shaper_rate[i][j].rate_max = temp1;
 
 		temp = temp1;
-		do_div(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
+		temp = div64_u64(temp, ADPT_HPPE_SHAPER_REFRESH_MAX);
 		shaper_priv->queue_shaper_rate[i][j].rate_1bit = temp;
 
 		//printk("queue shaper hppe_max_rate generating =%llu\n", shaper_priv->queue_shaper_rate[i][j].rate_max);
@@ -242,12 +251,12 @@ __adpt_hppe_shaper_max_burst_size(a_uint32_t dev_id)
 	for (j = 0; j < 8; j++)
 	{
 		/*max size unit is 1/1000 byte based*/
-		temp = (a_uint64_t)(ADPT_HPPE_SHAPER_BURST_SIZE_UNIT * ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
-		do_div(temp, hppe_shaper_token_unit[i][j]);
-		shaper_priv->shaper_burst_size[i][j].burst_size_max = (a_uint64_t)(temp * 1000);
+		temp = (a_uint64_t)ADPT_HPPE_SHAPER_BURST_SIZE_UNIT * ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX;
+		temp = div64_u64(temp, hppe_shaper_token_unit[i][j]);
+		shaper_priv->shaper_burst_size[i][j].burst_size_max = temp * 1000;
 
 		temp1 = shaper_priv->shaper_burst_size[i][j].burst_size_max;
-		do_div(temp1, ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
+		temp1 = div64_u64(temp1, ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
 		shaper_priv->shaper_burst_size[i][j].burst_size_1bit = temp1;
 
 		//printk("shpaer byte hppe_max_burst_size generating =%llu\n", shaper_priv->shaper_burst_size[i][j].burst_size_max);
@@ -258,12 +267,12 @@ __adpt_hppe_shaper_max_burst_size(a_uint32_t dev_id)
 	for (j = 0; j < 8; j++)
 	{
 		/* max size unit is 1/1000 frame based */
-		temp = (a_uint64_t)(ADPT_HPPE_SHAPER_BURST_SIZE_UNIT * ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
-		do_div(temp, hppe_shaper_token_unit[i][j]);
-		shaper_priv->shaper_burst_size[i][j].burst_size_max = (a_uint64_t)(temp * 1000);
+		temp = (a_uint64_t)ADPT_HPPE_SHAPER_BURST_SIZE_UNIT * ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX;
+		temp = div64_u64(temp, hppe_shaper_token_unit[i][j]);
+		shaper_priv->shaper_burst_size[i][j].burst_size_max = temp * 1000;
 
 		temp1 = shaper_priv->shaper_burst_size[i][j].burst_size_max;
-		do_div(temp1, ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
+		temp1 = div64_u64(temp1, ADPT_HPPE_SHAPER_BUCKET_SIZE_MAX);
 		shaper_priv->shaper_burst_size[i][j].burst_size_1bit = temp1;
 
 		//printk("shaper frame hppe_max_burst_size generating =%llu\n", shaper_priv->shaper_burst_size[i][j].burst_size_max);
@@ -389,7 +398,7 @@ __adpt_hppe_shaper_rate_to_refresh(a_uint32_t dev_id,
 							a_bool_t meter_unit,
 							a_uint32_t  token_unit)
 {
-	a_uint32_t temp_refresh;
+	a_uint64_t temp_refresh;
 	a_uint64_t temp_rate, temp_rate_1bit;
 	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
 
@@ -413,10 +422,10 @@ __adpt_hppe_shaper_rate_to_refresh(a_uint32_t dev_id,
 		temp_rate_1bit = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
-	if(temp_rate_1bit > 0)
+	if (temp_rate_1bit > 0)
 	{
 		temp_rate = ((a_uint64_t)rate) * 1000;
-		do_div(temp_rate, temp_rate_1bit);
+		temp_rate = div64_u64(temp_rate, temp_rate_1bit);
 		temp_refresh = temp_rate;
 	}
 	else
@@ -429,7 +438,7 @@ __adpt_hppe_shaper_rate_to_refresh(a_uint32_t dev_id,
 		temp_refresh = ADPT_HPPE_SHAPER_REFRESH_MAX;
 	}
 
-	*refresh = temp_refresh;
+	*refresh = (a_uint32_t)temp_refresh;
 
 	return SW_OK;
 }
@@ -451,7 +460,7 @@ __adpt_hppe_shaper_burst_size_to_bucket_size(a_uint32_t dev_id,
 	if(shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit > 0)
 	{
 		temp_burst_size = ((a_uint64_t)burst_size) * 1000;
-		do_div(temp_burst_size, shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit);
+		temp_burst_size = div64_u64(temp_burst_size, shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit);
 		temp_bucket_size = temp_burst_size;
 	}
 	else
@@ -473,6 +482,22 @@ __adpt_hppe_shaper_burst_size_to_bucket_size(a_uint32_t dev_id,
 	return SW_OK;
 }
 
+static a_uint32_t
+__adpt_ppe_shaper_byte_max_rate_get(a_uint32_t dev_id)
+{
+	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
+		return BYTE_SHAPER_MAX_RATE_25G;
+	return BYTE_SHAPER_MAX_RATE;
+}
+
+static a_uint32_t
+__adpt_ppe_shaper_frame_max_rate_get(a_uint32_t dev_id)
+{
+	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
+		return FRAME_SHAPER_MAX_RATE_25G;
+	return FRAME_SHAPER_MAX_RATE;
+}
+
 static sw_error_t
 __adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
 							a_uint32_t shaper_type,
@@ -481,7 +506,7 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
 							a_bool_t meter_unit,
 							a_uint32_t  token_unit)
 {
-	a_uint32_t temp_rate;
+	a_uint64_t temp_rate;
 	a_uint64_t temp_refresh, temp_rate_1bit;
 	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
 
@@ -505,10 +530,10 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
 		temp_rate_1bit = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_1bit;
 	}
 
-	if(temp_rate_1bit > 0)
+	if (temp_rate_1bit > 0)
 	{
 		temp_refresh = ((a_uint64_t)refresh) * temp_rate_1bit;
-		do_div(temp_refresh, 1000);
+		temp_refresh = div64_u64(temp_refresh, 1000);
 		temp_rate = temp_refresh;
 	}
 	else
@@ -516,7 +541,18 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
 		return SW_BAD_PARAM;
 	}
 
-	*rate = temp_rate;
+	if (meter_unit == ADPT_HPPE_SHAPER_METER_UNIT_BYTE)
+	{
+		if (temp_rate > __adpt_ppe_shaper_byte_max_rate_get(dev_id))
+			temp_rate = __adpt_ppe_shaper_byte_max_rate_get(dev_id);
+	}
+	else
+	{
+		if (temp_rate > __adpt_ppe_shaper_frame_max_rate_get(dev_id))
+			temp_rate = __adpt_ppe_shaper_frame_max_rate_get(dev_id);
+	}
+
+	*rate = (a_uint32_t)temp_rate;
 
 	return SW_OK;
 }
@@ -537,7 +573,7 @@ __adpt_hppe_shaper_bucket_size_to_burst_size(a_uint32_t dev_id,
 	if(shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit > 0)
 	{
 		temp_bucket_size = ((a_uint64_t)bucket_size) * shaper_priv->shaper_burst_size[meter_unit][token_unit].burst_size_1bit;
-		do_div(temp_bucket_size, 1000);
+		temp_bucket_size = div64_u64(temp_bucket_size, 1000);
 		temp_burst_size = temp_bucket_size;
 	}
 	else
@@ -548,22 +584,6 @@ __adpt_hppe_shaper_bucket_size_to_burst_size(a_uint32_t dev_id,
 	*burst_size = temp_burst_size;
 
 	return SW_OK;
-}
-
-static a_uint32_t
-__adpt_ppe_shaper_byte_max_rate_get(a_uint32_t dev_id)
-{
-	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
-		return BYTE_SHAPER_MAX_RATE_25G;
-	return BYTE_SHAPER_MAX_RATE;
-}
-
-static a_uint32_t
-__adpt_ppe_shaper_frame_max_rate_get(a_uint32_t dev_id)
-{
-	if (adpt_chip_type_get(dev_id) == CHIP_JHPPE)
-		return FRAME_SHAPER_MAX_RATE_25G;
-	return FRAME_SHAPER_MAX_RATE;
 }
 
 sw_error_t
@@ -581,7 +601,7 @@ adpt_hppe_queue_shaper_get(a_uint32_t dev_id, a_uint32_t queue_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(shaper);
 
-	if ((queue_id < 0) || (queue_id > 299))
+	if (queue_id > 299)
 		return SW_BAD_PARAM;
 
 	hppe_l0_comp_cfg_tbl_get(dev_id, queue_id, &l0_comp_cfg_tbl);
@@ -663,11 +683,10 @@ adpt_hppe_queue_shaper_token_number_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(token_number);
 
-	if ((queue_id < 0) || (queue_id > 299))
+	if (queue_id > 299)
 		return SW_BAD_PARAM;
 
 	hppe_l0_shp_credit_tbl_get(dev_id, queue_id, &l0_shp_credit_tbl);
-
 
 	l0_shp_credit_tbl.bf.c_shaper_credit_neg = token_number->c_token_number_negative_en;
 	l0_shp_credit_tbl.bf.c_shaper_credit = token_number->c_token_number;
@@ -833,7 +852,7 @@ adpt_hppe_queue_shaper_token_number_get(a_uint32_t dev_id, a_uint32_t queue_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(token_number);
 
-	if ((queue_id < 0) || (queue_id > 299))
+	if (queue_id > 299)
 		return SW_BAD_PARAM;
 
 	rv = hppe_l0_shp_credit_tbl_get(dev_id, queue_id, &l0_shp_credit_tbl);
@@ -909,7 +928,7 @@ adpt_hppe_flow_shaper_token_number_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(token_number);
 
-	if ((flow_id < 0) || (flow_id > 63))
+	if (flow_id > 63)
 		return SW_BAD_PARAM;
 
 
@@ -935,7 +954,7 @@ adpt_hppe_flow_shaper_token_number_get(a_uint32_t dev_id, a_uint32_t flow_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(token_number);
 
-	if ((flow_id < 0) || (flow_id > 63))
+	if (flow_id > 63)
 		return SW_BAD_PARAM;
 
 	rv = hppe_l1_shp_credit_tbl_get(dev_id, flow_id, &l1_shp_credit_tbl);
@@ -975,7 +994,7 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(shaper);
 
-	if ((flow_id < 0) || (flow_id > 63))
+	if (flow_id > 63)
 		return SW_BAD_PARAM;
 
 	if(ADPT_HPPE_SHAPER_METER_UNIT_BYTE == shaper->meter_unit)
@@ -1273,7 +1292,7 @@ adpt_hppe_flow_shaper_get(a_uint32_t dev_id, a_uint32_t flow_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(shaper);
 
-	if (flow_id < 0 || flow_id > 63)
+	if (flow_id > 63)
 		return SW_BAD_PARAM;
 
 	hppe_l1_comp_cfg_tbl_get(dev_id, flow_id, &l1_comp_cfg_tbl);
@@ -1368,7 +1387,7 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(shaper);
 
-	if (queue_id < 0 || queue_id > 299)
+	if (queue_id > 299)
 		return SW_BAD_PARAM;
 
 	if(ADPT_HPPE_SHAPER_METER_UNIT_BYTE == shaper->meter_unit)
