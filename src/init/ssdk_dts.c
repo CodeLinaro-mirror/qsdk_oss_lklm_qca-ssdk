@@ -680,6 +680,13 @@ static void ssdk_dt_parse_scheduler_resource(
 		scheduler_cfg = &cfg->pool[port_id];
 	}
 
+	if (l0sp[0] >= SSDK_L1SCHEDULER_CFG_MAX ||
+	    l0sp[1] >= SSDK_L1SCHEDULER_CFG_MAX) {
+		SSDK_ERROR("l0sp_start %d or l0sp_end %d out of l1cfg range\n",
+			   l0sp[0], l0sp[1]);
+		return;
+	}
+
 	scheduler_cfg->ucastq_start = uq[0];
 	scheduler_cfg->ucastq_end = uq[1];
 	scheduler_cfg->mcastq_start = mq[0];
@@ -694,6 +701,97 @@ static void ssdk_dt_parse_scheduler_resource(
 	scheduler_cfg->l1cdrr_end = l1cdrr[1];
 	scheduler_cfg->l1edrr_start = l1edrr[0];
 	scheduler_cfg->l1edrr_end = l1edrr[1];
+}
+
+static void ssdk_dt_apply_qpool_switch(a_uint32_t dev_id)
+{
+	a_uint16_t dst_uq_start, dst_uq_end, src_uq_start, src_uq_end;
+	a_uint16_t dst_mq_start, dst_mq_end, src_mq_start, src_mq_end;
+	a_uint8_t dst_sp_start, dst_sp_end, src_sp_start, src_sp_end;
+	a_uint8_t dst_l1_sp_id, src_l1_sp_id;
+	ssdk_dt_portscheduler_cfg tmp;
+	a_uint32_t i, src_port, dst_port;
+	ssdk_dt_cfg *dt_cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	ssdk_qpool_switch_ports_get(&src_port, &dst_port);
+
+	if (!dt_cfg || src_port == dst_port ||
+	    src_port >= SSDK_MAX_PORT_NUM || dst_port >= SSDK_MAX_PORT_NUM)
+		return;
+
+	/* capture ranges and L1 sp_ids before pool swap */
+	dst_uq_start = dt_cfg->scheduler_cfg.pool[dst_port].ucastq_start;
+	dst_uq_end   = dt_cfg->scheduler_cfg.pool[dst_port].ucastq_end;
+	src_uq_start = dt_cfg->scheduler_cfg.pool[src_port].ucastq_start;
+	src_uq_end   = dt_cfg->scheduler_cfg.pool[src_port].ucastq_end;
+	dst_mq_start = dt_cfg->scheduler_cfg.pool[dst_port].mcastq_start;
+	dst_mq_end   = dt_cfg->scheduler_cfg.pool[dst_port].mcastq_end;
+	src_mq_start = dt_cfg->scheduler_cfg.pool[src_port].mcastq_start;
+	src_mq_end   = dt_cfg->scheduler_cfg.pool[src_port].mcastq_end;
+	dst_sp_start = dt_cfg->scheduler_cfg.pool[dst_port].l0sp_start;
+	dst_sp_end   = dt_cfg->scheduler_cfg.pool[dst_port].l0sp_end;
+	src_sp_start = dt_cfg->scheduler_cfg.pool[src_port].l0sp_start;
+	src_sp_end   = dt_cfg->scheduler_cfg.pool[src_port].l0sp_end;
+	dst_l1_sp_id = dt_cfg->scheduler_cfg.l1cfg[dst_sp_start].sp_id;
+	src_l1_sp_id = dt_cfg->scheduler_cfg.l1cfg[src_sp_start].sp_id;
+
+	/* swap pool resource allocation between the two ports */
+	tmp = dt_cfg->scheduler_cfg.pool[dst_port];
+	dt_cfg->scheduler_cfg.pool[dst_port] = dt_cfg->scheduler_cfg.pool[src_port];
+	dt_cfg->scheduler_cfg.pool[src_port] = tmp;
+
+	/* update port_id for unicast L0 scheduler entries */
+	for (i = dst_uq_start; i <= dst_uq_end && i < SSDK_L0SCHEDULER_CFG_MAX; i++) {
+		if (dt_cfg->scheduler_cfg.l0cfg[i].valid)
+			dt_cfg->scheduler_cfg.l0cfg[i].port_id = src_port;
+	}
+	for (i = src_uq_start; i <= src_uq_end && i < SSDK_L0SCHEDULER_CFG_MAX; i++) {
+		if (dt_cfg->scheduler_cfg.l0cfg[i].valid)
+			dt_cfg->scheduler_cfg.l0cfg[i].port_id = dst_port;
+	}
+
+	/* update port_id and sp_id for L1 SP scheduler entries */
+	for (i = dst_sp_start; i <= dst_sp_end && i < SSDK_L1SCHEDULER_CFG_MAX; i++) {
+		if (dt_cfg->scheduler_cfg.l1cfg[i].valid) {
+			dt_cfg->scheduler_cfg.l1cfg[i].port_id = src_port;
+			dt_cfg->scheduler_cfg.l1cfg[i].sp_id = src_l1_sp_id;
+		}
+	}
+	for (i = src_sp_start; i <= src_sp_end && i < SSDK_L1SCHEDULER_CFG_MAX; i++) {
+		if (dt_cfg->scheduler_cfg.l1cfg[i].valid) {
+			dt_cfg->scheduler_cfg.l1cfg[i].port_id = dst_port;
+			dt_cfg->scheduler_cfg.l1cfg[i].sp_id = dst_l1_sp_id;
+		}
+	}
+
+	/*
+	 * Multicast queues are pinned to their physical PPE port so port_id
+	 * must not change.  Update sp_id, cdrr_id and edrr_id positionally
+	 * between the two ports to reflect the new pool assignment.
+	 */
+	for (i = 0; i <= (a_uint32_t)(dst_mq_end - dst_mq_start); i++) {
+		a_uint16_t di = dst_mq_start + i;
+		a_uint16_t si = src_mq_start + i;
+		a_uint8_t tmp_sp, tmp_cdrr, tmp_edrr;
+
+		if (di >= SSDK_L0SCHEDULER_CFG_MAX || si >= SSDK_L0SCHEDULER_CFG_MAX)
+			break;
+
+		tmp_sp = dt_cfg->scheduler_cfg.l0cfg[di].sp_id;
+		dt_cfg->scheduler_cfg.l0cfg[di].sp_id = dt_cfg->scheduler_cfg.l0cfg[si].sp_id;
+		dt_cfg->scheduler_cfg.l0cfg[si].sp_id = tmp_sp;
+
+		tmp_cdrr = dt_cfg->scheduler_cfg.l0cfg[di].cdrr_id;
+		dt_cfg->scheduler_cfg.l0cfg[di].cdrr_id = dt_cfg->scheduler_cfg.l0cfg[si].cdrr_id;
+		dt_cfg->scheduler_cfg.l0cfg[si].cdrr_id = tmp_cdrr;
+
+		tmp_edrr = dt_cfg->scheduler_cfg.l0cfg[di].edrr_id;
+		dt_cfg->scheduler_cfg.l0cfg[di].edrr_id = dt_cfg->scheduler_cfg.l0cfg[si].edrr_id;
+		dt_cfg->scheduler_cfg.l0cfg[si].edrr_id = tmp_edrr;
+	}
+
+	SSDK_INFO("qpool_switch: swapped queue pool from port %u to port %u\n",
+		  src_port, dst_port);
 }
 
 static void ssdk_dt_parse_scheduler_cfg(a_uint32_t dev_id, struct device_node *switch_node)
@@ -1479,6 +1577,7 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 #endif
 #ifdef IN_QOS
 		ssdk_dt_parse_scheduler_cfg(*dev_id, switch_node);
+		ssdk_dt_apply_qpool_switch(*dev_id);
 #endif
 		ssdk_dt_parse_intf_mac();
 
