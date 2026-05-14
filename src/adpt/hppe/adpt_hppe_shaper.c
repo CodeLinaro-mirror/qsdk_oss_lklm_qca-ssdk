@@ -399,34 +399,40 @@ __adpt_hppe_shaper_rate_to_refresh(a_uint32_t dev_id,
 							a_uint32_t  token_unit)
 {
 	a_uint64_t temp_refresh;
-	a_uint64_t temp_rate, temp_rate_1bit;
+	a_uint64_t temp_rate, temp_rate_max;
 	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
 
 	if (!shaper_priv)
 		return SW_FAIL;
 
-	temp_rate_1bit = 0;
+	temp_rate_max = 0;
 
 	if (ADPT_HPPE_PORT_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = shaper_priv->port_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_max = shaper_priv->port_shaper_rate[meter_unit][token_unit].rate_max;
 	}
 
 	if (ADPT_HPPE_FLOW_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = shaper_priv->flow_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_max = shaper_priv->flow_shaper_rate[meter_unit][token_unit].rate_max;
 	}
 
 	if (ADPT_HPPE_QUEUE_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_max = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_max;
 	}
 
-	if (temp_rate_1bit > 0)
+	if (temp_rate_max > 0)
 	{
-		temp_rate = ((a_uint64_t)rate) * 1000;
-		temp_rate = div64_u64(temp_rate, temp_rate_1bit);
-		temp_refresh = temp_rate;
+		/* Use rate_max directly to avoid precision loss from the integer-
+		 * truncated rate_1bit = rate_max / REFRESH_MAX.  For large time_slot
+		 * values rate_1bit can be as small as 5 (exact: 5.27), causing a
+		 * 5%+ CIR error.  One division instead of two eliminates this.
+		 *
+		 * refresh = rate_kbps * 1000 * REFRESH_MAX / rate_max
+		 */
+		temp_rate = ((a_uint64_t)rate) * 1000 * ADPT_HPPE_SHAPER_REFRESH_MAX;
+		temp_refresh = div64_u64(temp_rate, temp_rate_max);
 	}
 	else
 	{
@@ -507,34 +513,39 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
 							a_uint32_t  token_unit)
 {
 	a_uint64_t temp_rate;
-	a_uint64_t temp_refresh, temp_rate_1bit;
+	a_uint64_t temp_rate_max;
 	ssdk_ppe_shaper_priv_t *shaper_priv = __adpt_ppe_shaper_priv_get(dev_id);
 
 	if (!shaper_priv)
 		return SW_FAIL;
 
-	temp_rate_1bit = 0;
+	temp_rate_max = 0;
 
 	if (ADPT_HPPE_PORT_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = shaper_priv->port_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_max = shaper_priv->port_shaper_rate[meter_unit][token_unit].rate_max;
 	}
 
 	if (ADPT_HPPE_FLOW_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = shaper_priv->flow_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_max = shaper_priv->flow_shaper_rate[meter_unit][token_unit].rate_max;
 	}
 
 	if (ADPT_HPPE_QUEUE_SHAPER == shaper_type)
 	{
-		temp_rate_1bit = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_1bit;
+		temp_rate_max = shaper_priv->queue_shaper_rate[meter_unit][token_unit].rate_max;
 	}
 
-	if (temp_rate_1bit > 0)
+	if (temp_rate_max > 0)
 	{
-		temp_refresh = ((a_uint64_t)refresh) * temp_rate_1bit;
-		temp_refresh = div64_u64(temp_refresh, 1000);
-		temp_rate = temp_refresh;
+		/* Symmetric with rate_to_refresh: use rate_max to avoid the
+		 * precision loss from integer-truncated rate_1bit.
+		 *
+		 * rate_kbps = refresh * rate_max / (REFRESH_MAX * 1000)
+		 */
+		temp_rate = ((a_uint64_t)refresh) * temp_rate_max;
+		temp_rate = div64_u64(temp_rate,
+				(a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000);
 	}
 	else
 	{
@@ -556,6 +567,7 @@ __adpt_hppe_shaper_refresh_to_rate(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+
 static sw_error_t
 __adpt_hppe_shaper_bucket_size_to_burst_size(a_uint32_t dev_id,
 							a_uint32_t bucket_size,
