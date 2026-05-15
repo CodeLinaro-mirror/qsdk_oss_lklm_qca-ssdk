@@ -366,14 +366,14 @@ typedef struct
 typedef struct
 {
 	fal_pbmp_t port_bitmap; /* rule need know which ports matched this rule */
-	a_uint8_t s_tagged; /* rule need know stag type(untagged/pri_tagged/tagged) */
+	a_uint8_t s_tagged; /* rule need know stag type(bit0-untagged/bit1-pri_tagged/bit2-tagged) */
 	a_bool_t s_vid_enable; /* check if rule will include service vid value */
 	a_uint32_t s_vid; /* service vid */
 	a_bool_t s_pcp_enable; /* check if rule will include service pcp value */
 	a_uint8_t s_pcp; /* service pcp value */
 	a_bool_t s_dei_enable; /* check if rule will include service dei value */
 	a_uint8_t s_dei; /* service dei value */
-	a_uint8_t c_tagged; /* rule need know ctag type(untagged/pri_tagged/tagged) */
+	a_uint8_t c_tagged; /* rule need know ctag type(bit0-untagged/bit1-pri_tagged/bit2-tagged) */
 	a_bool_t c_vid_enable; /* check if rule will include customer vid value */
 	a_uint32_t c_vid; /* customer vid */
 	a_bool_t c_pcp_enable; /* check if rule will include customer pcp value */
