@@ -2253,6 +2253,8 @@ adpt_jhppe_uniphy_pma_init_setting(a_uint32_t dev_id, a_uint32_t uniphy_index,
 		break;
 	}
 	ssdk_uniphy_reset(dev_id, UNIPHY0_SYS_RESET_E + uniphy_index, SSDK_RESET_DEASSERT);
+	/* wait for uniphy sys reset to settle after deassert */
+	msleep(1);
 	return rv;
 }
 

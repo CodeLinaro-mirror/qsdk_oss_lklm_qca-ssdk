@@ -280,6 +280,8 @@ __adpt_ppe_gcc_uniphy_software_reset(a_uint32_t dev_id,
 	ssdk_gcc_uniphy_sys_set(dev_id, uniphy_index, A_FALSE);
 	msleep(1);
 	ssdk_gcc_uniphy_sys_set(dev_id, uniphy_index, A_TRUE);
+	/* wait for uniphy sys reset to settle after deassert */
+	msleep(1);
 }
 
 /*
