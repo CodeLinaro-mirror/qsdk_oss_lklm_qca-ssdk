@@ -25,10 +25,12 @@ sw_error_t fal_sec_l2_excep_ctrl_set(a_uint32_t dev_id, a_uint32_t excep_type, f
 
 sw_error_t fal_sec_l2_excep_ctrl_get(a_uint32_t dev_id, a_uint32_t excep_type, fal_l2_excep_ctrl_t *ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(sec_l2_excep_ctrl_get, dev_id, excep_type, ctrl)
+#endif
 
 sw_error_t fal_sec_tunnel_excep_ctrl_set(a_uint32_t dev_id, a_uint32_t excep_type, fal_tunnel_excep_ctrl_t *ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(sec_tunnel_excep_ctrl_set, dev_id, excep_type, ctrl)
 
+#ifndef IN_SEC_MINI
 sw_error_t fal_sec_tunnel_excep_ctrl_get(a_uint32_t dev_id, a_uint32_t excep_type, fal_tunnel_excep_ctrl_t *ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(sec_tunnel_excep_ctrl_get, dev_id, excep_type, ctrl)
 

@@ -819,7 +819,9 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_EXP_CTRL, (param_check_t)cmd_data_check_exp_ctrl, NULL),
 #ifndef IN_SEC_MINI
     SW_TYPE_DEF(SW_L2_EXP_CTRL, (param_check_t)cmd_data_check_l2_exp_ctrl, NULL),
+#endif
     SW_TYPE_DEF(SW_TUNNEL_EXP_CTRL, (param_check_t)cmd_data_check_tunnel_exp_ctrl, NULL),
+#ifndef IN_SEC_MINI
     SW_TYPE_DEF(SW_TUNNEL_FLAGS_PARSER, (param_check_t)cmd_data_check_tunnel_flags_parser, NULL),
 #endif
 #endif
@@ -7511,6 +7513,7 @@ cmd_data_check_l2_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
     *(fal_l2_excep_ctrl_t *)val = entry;
     return SW_OK;
 }
+#endif
 
 sw_error_t
 cmd_data_check_tunnel_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
@@ -7565,6 +7568,7 @@ cmd_data_check_tunnel_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
     return SW_OK;
 }
 
+#ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_tunnel_flags_parser(char *cmd_str, void * val, a_uint32_t size)
 {

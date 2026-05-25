@@ -952,7 +952,9 @@ struct sub_cmd_des_t g_sec_des[] =
 	{"expctrl", "set", SW_API_SEC_EXP_CTRL_SET, NULL},
 #ifndef IN_SEC_MINI
 	{"l2expctrl", "set", SW_API_SEC_L2_EXP_CTRL_SET, NULL},
+#endif
 	{"tunnelexpctrl", "set", SW_API_SEC_TUNNEL_EXP_CTRL_SET, NULL},
+#ifndef IN_SEC_MINI
 	{"tunnell3parser", "set", SW_API_SEC_TUNNEL_L3_PARSER_CTRL_SET, NULL},
 	{"tunnell4parser", "set", SW_API_SEC_TUNNEL_L4_PARSER_CTRL_SET, NULL},
 	{"tunnelflagsparser", "set", SW_API_SEC_TUNNEL_FLAGS_PARSER_CTRL_SET, NULL},

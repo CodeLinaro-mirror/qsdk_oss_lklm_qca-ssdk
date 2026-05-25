@@ -310,10 +310,12 @@ cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size);
 #ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_l2_exp_ctrl(char *cmd_str, void * val, a_uint32_t size);
+#endif
 
 sw_error_t
 cmd_data_check_tunnel_exp_ctrl(char *cmd_str, void * val, a_uint32_t size);
 
+#ifndef IN_SEC_MINI
 sw_error_t
 cmd_data_check_tunnel_flags_parser(char *cmd_str, void * val, a_uint32_t size);
 #endif
