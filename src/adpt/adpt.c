@@ -69,6 +69,9 @@ adpt_ppe_type_t adpt_ppe_type_get(a_uint32_t dev_id)
 		case CHIP_HTTPPE:
 			ppe_type = HTTPPE_TYPE;
 			break;
+		case CHIP_BLMPPE:
+			ppe_type = BLMPPE_TYPE;
+			break;
 		default:
 			break;
 	}
@@ -106,6 +109,8 @@ a_uint32_t adpt_ppe_port_id_max_get(a_uint32_t dev_id)
 		return JHPPE_PORT_ID_MAX;
 	if (chip_type == CHIP_HTTPPE)
 		return HTTPPE_PORT_ID_MAX;
+	if (chip_type == CHIP_BLMPPE)
+		return BLMPPE_PORT_ID_MAX;
 	if (adpt_ppe_type_get(dev_id) == MPPE_TYPE)
 		return MPPE_PORT_ID_MAX;
 	/* APPE, MRPPE and HMSPPE chip type use below value */
@@ -146,6 +151,9 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 				ppe_freq = ADPT_HTTPPE_FREQUENCY;
 			break;
 		}
+		case BLMPPE_TYPE:
+			ppe_freq = ADPT_BLMPPE_FREQUENCY;
+			break;
 		default:
 			SSDK_ERROR("Unknown chip type: %d\n", ppe_type);
 			break;
@@ -180,6 +188,10 @@ void adpt_ppe_mac_num_get(a_uint32_t dev_id, a_uint32_t *gmac_num, a_uint32_t *x
 			*gmac_num = 6;
 			*xgmac_num = 2;
 			break;
+		case BLMPPE_TYPE:
+			*gmac_num = 7;
+			*xgmac_num = 4;
+			break;
 		default:
 			break;
 	}
@@ -201,11 +213,12 @@ a_uint32_t ppe_port_to_xgmac_id(a_uint32_t dev_id, fal_port_t port_id)
 {
 	a_uint32_t xgmac_id = 0;
 
-	if ((adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) && (port_id > SSDK_PHYSICAL_PORT0)) {
+	if (adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == BLMPPE_TYPE) {
 		if (port_id > SSDK_PHYSICAL_PORT4)
-			xgmac_id = port_id -4;
-		else
-			xgmac_id = port_id -1;
+			xgmac_id = port_id - 4;
+		else if (port_id > SSDK_PHYSICAL_PORT0)
+			xgmac_id = port_id - 1;
 	} else if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
 		if (port_id == SSDK_PHYSICAL_PORT5)
 			xgmac_id = port_id - 4;
@@ -213,7 +226,7 @@ a_uint32_t ppe_port_to_xgmac_id(a_uint32_t dev_id, fal_port_t port_id)
 			xgmac_id = port_id;
 	} else {
 		if (port_id > SSDK_PHYSICAL_PORT0)
-			xgmac_id = port_id -1;
+			xgmac_id = port_id - 1;
 	}
 
 	return xgmac_id;
@@ -526,6 +539,7 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
 	switch (cfg->chip_type)
 	{
+		case CHIP_BLMPPE:
 		case CHIP_HMSPPE:
 #if defined(HMSPPE)
 			rv = adpt_appe_module_func_register(dev_id, FAL_MODULE_PON);
@@ -645,6 +659,7 @@ sw_error_t adpt_deinit(a_uint32_t dev_id)
 	case CHIP_JHPPE:
 	case CHIP_HMSPPE:
 	case CHIP_HTTPPE:
+	case CHIP_BLMPPE:
 #if defined(IN_ACL)
 		rv = adpt_hppe_acl_deinit(dev_id);
 		SW_RTN_ON_ERROR(rv);
@@ -678,4 +693,3 @@ adpt_ppe_loopback_port_validate(a_uint32_t dev_id, fal_port_t port_id)
 #endif
 	return A_FALSE;
 }
-

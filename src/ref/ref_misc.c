@@ -57,7 +57,8 @@ qca_ar8327_sw_set_max_frame_size(struct switch_dev *dev,
 		|| priv->version == QCA_VER_MRPPE
 		|| priv->version == QCA_VER_JHPPE
 		|| priv->version == QCA_VER_HMSPPE
-		|| priv->version == QCA_VER_HTTPPE)
+		|| priv->version == QCA_VER_HTTPPE
+		|| priv->version == QCA_VER_BLMPPE)
 	{
 		for(port_id = SSDK_PHYSICAL_PORT1; port_id < priv->ports_num;
 			port_id++)
@@ -97,7 +98,8 @@ qca_ar8327_sw_get_max_frame_size(struct switch_dev *dev,
 
 	if (priv->version == QCA_VER_HPPE || priv->version == QCA_VER_APPE
 		|| priv->version == QCA_VER_MRPPE || priv->version == QCA_VER_JHPPE
-		|| priv->version == QCA_VER_HMSPPE || priv->version == QCA_VER_HTTPPE)
+		|| priv->version == QCA_VER_HMSPPE || priv->version == QCA_VER_HTTPPE
+		|| priv->version == QCA_VER_BLMPPE)
 	{
 		ret = fal_port_max_frame_size_get(priv->device_id,
 			SSDK_PHYSICAL_PORT1, &size);
@@ -172,4 +174,3 @@ qca_ar8327_sw_reset_switch(struct switch_dev *dev)
 
 	return rv;
 }
-

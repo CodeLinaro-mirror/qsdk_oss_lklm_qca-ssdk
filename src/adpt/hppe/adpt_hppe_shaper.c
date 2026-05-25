@@ -84,7 +84,7 @@ __adpt_hppe_shaper_time_cycle_get(a_uint32_t dev_id, a_uint32_t time_slot)
 	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
 
 	if ((ppe_type == CHIP_HTTPPE) || (ppe_type == CHIP_HMSPPE) ||
-		(ppe_type == CHIP_JHPPE)) {
+		(ppe_type == CHIP_JHPPE) || (ppe_type == CHIP_BLMPPE)) {
 		return (time_slot * 4);
 	} else {
 		return (time_slot * 8);

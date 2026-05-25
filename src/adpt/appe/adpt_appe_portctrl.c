@@ -96,6 +96,11 @@ _adpt_appe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id,
 		case SSDK_PHYSICAL_PORT6:
 			appe_port_mux_ctrl.bf.port6_mac_sel = mux_mac_type;
 			break;
+#if defined(BLMPPE)
+		case SSDK_PHYSICAL_PORT7:
+			appe_port_mux_ctrl.bf.port7_mac_sel = mux_mac_type;
+			break;
+#endif
 		default:
 			break;
 	}

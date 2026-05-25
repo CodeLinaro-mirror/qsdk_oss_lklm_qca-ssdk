@@ -25,7 +25,10 @@ extern "C" {
 #define HPPE_TO_XGMAC_PORT_ID(port_id)	((port_id) - 1)
 #endif
 #define HPPE_TO_GMAC_PORT_ID(port_id)                      (port_id -1)
-#ifdef HMSPPE
+#if defined(BLMPPE)
+#define PHYSICAL_LPBK_PORT_ID                              9
+#define TO_LPBK_ID(port_id)                                (port_id -2)
+#elif defined(HMSPPE)
 #define PHYSICAL_LPBK_PORT_ID                              7
 #define TO_LPBK_ID(port_id)                                (port_id -1)
 #else

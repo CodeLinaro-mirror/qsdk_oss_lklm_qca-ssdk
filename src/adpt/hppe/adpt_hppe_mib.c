@@ -61,7 +61,8 @@ adpt_ppe_mib_cpukeep_set(a_uint32_t dev_id, a_bool_t enable)
 		hppe_mac_mib_ctrl_mib_rd_clr_set(dev_id, mac_id, (a_uint32_t)(!enable));
 #ifdef JHPPE
 	if ((adpt_ppe_type_get(dev_id) == JHPPE_TYPE) ||
-		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)) {
+		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) ||
+		(adpt_ppe_type_get(dev_id) == BLMPPE_TYPE)) {
 		rv = adpt_jhppe_lpbk_mib_cpukeep_set(dev_id, enable);
 		SW_RTN_ON_ERROR(rv);
 	}
@@ -227,7 +228,8 @@ adpt_ppe_mib_status_set(a_uint32_t dev_id, a_bool_t enable)
 
 #ifdef JHPPE
 	if ((adpt_ppe_type_get(dev_id) == JHPPE_TYPE) ||
-		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)) {
+		(adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) ||
+		(adpt_ppe_type_get(dev_id) == BLMPPE_TYPE)) {
 		rv = adpt_jhppe_lpbk_mib_status_set(dev_id, enable);
 		SW_RTN_ON_ERROR(rv);
 	}

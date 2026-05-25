@@ -484,7 +484,7 @@ adpt_hppe_vsi_member_set(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 
 #ifdef JHPPE
 	vsi_tbl.bf.bc_bitmap_0 = vsi_member->bc_ports;
-	vsi_tbl.bf.bc_bitmap_1 = vsi_member->bc_ports >> 5;
+	vsi_tbl.bf.bc_bitmap_1 = vsi_member->bc_ports >> SW_FIELD_OFFSET_IN_WORD(VSI_TBL_BC_BITMAP_OFFSET);
 #else
 	vsi_tbl.bf.bc_bitmap = vsi_member->bc_ports;
 #endif
@@ -516,7 +516,7 @@ adpt_hppe_vsi_member_get(a_uint32_t dev_id, a_uint32_t vsi_id, fal_vsi_member_t 
 		return rv;
 
 #ifdef JHPPE
-	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap_0 | ((vsi_tbl.bf.bc_bitmap_1 & 0xf) << 5);
+	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap_0 | (vsi_tbl.bf.bc_bitmap_1 << SW_FIELD_OFFSET_IN_WORD(VSI_TBL_BC_BITMAP_OFFSET));
 #else
 	vsi_member->bc_ports = vsi_tbl.bf.bc_bitmap;
 #endif

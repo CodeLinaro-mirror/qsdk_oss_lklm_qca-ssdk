@@ -1683,8 +1683,8 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 		return SW_BAD_VALUE;
 	}
 
-#if defined(HMSPPE)
-	if (chip_type == HMSPPE_TYPE) {
+#if defined(HMSPPE) || defined(BLMPPE)
+	if (chip_type == HMSPPE_TYPE || chip_type == BLMPPE_TYPE) {
 		switch (tm_tick_mode) {
 			case 2:
 				num = ARRAY_SIZE(ppe_port_scheduler2_tbl);
@@ -1770,8 +1770,8 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 	SW_RTN_ON_NULL(p_api->adpt_port_tdm_tick_cfg_set);
 	SW_RTN_ON_NULL(p_api->adpt_port_tdm_ctrl_set);
 
-#if defined(HMSPPE)
-	if (chip_type == HMSPPE_TYPE) {
+#if defined(HMSPPE) || defined(BLMPPE)
+	if (chip_type == HMSPPE_TYPE || chip_type == BLMPPE_TYPE) {
 		switch (bm_tick_mode) {
 			case 2:
 				num = ARRAY_SIZE(ppe_port_tdm2_tbl);
@@ -1993,6 +1993,10 @@ qca_appe_shaper_hw_init(a_uint32_t dev_id)
 			port_timeslot = HMSPPE_PORT_SHAPER_TIMESLOT_DFT;
 			queue_timeslot = HMSPPE_QUEUE_SHAPER_TIMESLOT_DFT;
 			break;
+		case QCA_VER_BLMPPE:
+			port_timeslot = BLMPPE_PORT_SHAPER_TIMESLOT_DFT;
+			queue_timeslot = BLMPPE_QUEUE_SHAPER_TIMESLOT_DFT;
+			break;
 		case QCA_VER_HTTPPE:
 			port_timeslot = HTTPPE_PORT_SHAPER_TIMESLOT_DFT;
 			queue_timeslot = HTTPPE_QUEUE_SHAPER_TIMESLOT_DFT;
@@ -2069,6 +2073,11 @@ qca_appe_policer_hw_init(a_uint32_t dev_id)
 		timeslot = HMSPPE_POLICER_TIMESLOT_DFT;
 		acl_policer_cfg_max = POLICER_CFG_MAX_128;
 		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_128);
+		break;
+	case BLMPPE_TYPE:
+		timeslot = BLMPPE_POLICER_TIMESLOT_DFT;
+		acl_policer_cfg_max = POLICER_CFG_MAX_512;
+		policer_ctrl.tail = POLICER_TAIL(POLICER_CFG_MAX_512);
 		break;
 	default:
 		SSDK_ERROR("Unsupported chip type: %d\n", chip_type);

@@ -18,7 +18,9 @@ extern "C" {
 /*qca808x_end*/
 #include "fal/fal_led.h"
 /*qca808x_start*/
-#if defined(JHPPE)
+#if defined(BLMPPE)
+#define SSDK_MAX_PORT_NUM               10
+#elif defined(JHPPE)
 #define SSDK_MAX_PORT_NUM		9
 #else
 #define SSDK_MAX_PORT_NUM               8
@@ -51,7 +53,9 @@ extern "C" {
 #define SSDK_MAX_UNIPHY_INSTANCE        3
 
 #define IOCTL_COMPAT
-#if defined(HMSPPE)
+#if defined(BLMPPE)
+#define PPE_STR "BLMPPE"
+#elif defined(HMSPPE)
 #define PPE_STR "HMSPPE"
 #elif defined(JHPPE)
 #define PPE_STR "JHPPE"
@@ -202,6 +206,7 @@ enum ssdk_port_wrapper_cfg {
 	CHIP_JHPPE,
 	CHIP_HMSPPE,
 	CHIP_HTTPPE,
+	CHIP_BLMPPE,
     } ssdk_chip_type;
 /*qca808x_end*/
 	typedef struct

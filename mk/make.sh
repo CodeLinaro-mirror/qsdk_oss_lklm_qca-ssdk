@@ -94,6 +94,9 @@ check_soc () {
         'HMSPPE')
             IN_SOC=ipq52xx
             ;;
+        'BLMPPE')
+            IN_SOC=ipq56xx
+            ;;
         'JHPPE')
             IN_SOC=ipq96xx
             ;;
@@ -200,7 +203,7 @@ ssdk_usage() {
     echo "       Usage                                                                 "
     echo "-----------------------------------------------------------------------------"
 
-    echo "./make.sh <compile> <APPE|HPPE|CPPE|MPPE|MRPPE> [qsdk_location] [-j31] [MINI_SSDK=enable] [LOWMEM_256=enable] [HNAT_FEATURE=enable] [RFS_FEATURE=enable] [-j31]"
+    echo "./make.sh <compile> <APPE|HPPE|CPPE|MPPE|MRPPE|HMSPPE|BLMPPE|JHPPE|HTTPPE> [qsdk_location] [-j31] [MINI_SSDK=enable] [LOWMEM_256=enable] [HNAT_FEATURE=enable] [RFS_FEATURE=enable] [-j31]"
     echo "./make.sh <test> <profile_name> [-j31]"
     echo "./make.sh <clean>"
 }
@@ -228,4 +231,3 @@ ssdk_main (){
 #               main function
 ################################################################################
 ssdk_main $param1_action
-

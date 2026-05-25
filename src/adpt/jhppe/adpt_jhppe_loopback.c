@@ -30,6 +30,7 @@ adpt_jhppe_switch_loopback_port_get(a_uint32_t dev_id, fal_port_t *port_id)
 	switch (chip_type) {
 		case HMSPPE_TYPE:
 		case JHPPE_TYPE:
+		case BLMPPE_TYPE:
 			*port_id = PHYSICAL_LPBK_PORT_ID;
 			break;
 		default:
@@ -71,6 +72,8 @@ adpt_jhppe_switch_port_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
 		freq = ADPT_HMSPPE_FREQUENCY;
 	else if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
 		freq = ADPT_JHPPE_FREQUENCY;
+	else if (adpt_ppe_type_get(dev_id) == BLMPPE_TYPE)
+		freq = ADPT_BLMPPE_FREQUENCY;
 
 	if (freq) {
 		if (loopback_cfg->loopback_rate == 0)
@@ -135,6 +138,9 @@ adpt_jhppe_switch_port_loopback_get(a_uint32_t dev_id, fal_port_t port_id,
 	if (adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) {
 		 loopback_cfg->loopback_rate =
 			ADPT_HMSPPE_FREQUENCY / loopback_rate_ctrl_tbl.bf.lpbk_pps_threshold;
+	} else if (adpt_ppe_type_get(dev_id) == BLMPPE_TYPE) {
+		loopback_cfg->loopback_rate =
+			ADPT_BLMPPE_FREQUENCY / loopback_rate_ctrl_tbl.bf.lpbk_pps_threshold;
 	} else if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE) {
 		loopback_cfg->loopback_rate =
 			ADPT_JHPPE_FREQUENCY / loopback_rate_ctrl_tbl.bf.lpbk_pps_threshold;

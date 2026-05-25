@@ -331,6 +331,7 @@ _get_fdb_table_entryindex_by_entry(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 #if defined(JHPPE) || defined (HTTPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
 		adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == BLMPPE_TYPE ||
 		adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
 		rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, entry_index);
 		mb();
@@ -389,6 +390,7 @@ _get_fdb_table_entry_by_entryindex(a_uint32_t dev_id, fal_fdb_entry_t * entry,
 #if defined(JHPPE) || defined (HTTPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
 		adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+		adpt_ppe_type_get(dev_id) == BLMPPE_TYPE ||
 		adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
 		rv = _adpt_hppe_fdb_tbl_rd_op_rslt_reg_get(dev_id, cmd_id, &rslt_entry_index);
 		mb();
