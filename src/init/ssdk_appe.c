@@ -1272,6 +1272,7 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 	a_uint32_t i = 0, mac_type_org = 0, mac_type = 0;
 	fal_port_cnt_cfg_t init_cnt_cfg = {0};
 	struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
+	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
 #ifdef JHPPE
 	sw_error_t rv = SW_OK;
 	fal_port_t lpbk_port_id = 0;
@@ -1280,21 +1281,28 @@ qca_appe_portctrl_hw_init(a_uint32_t dev_id)
 
 	SW_RTN_ON_NULL(priv);
 
-#if defined(MPPE)
-	if (adpt_chip_revision_get(dev_id) == MPPE_REVISION) {
-		for(i = SSDK_PHYSICAL_PORT0; i < priv->ports_num; i++) {
-			/* PTX buffer threshold need to be updated to 3 on MPPE
-			 * for fixing tunnel perfomance issue where MAPT inbound case,
-			 * only the buffer size >= 48 can be transmitted out.
-			 */
-			fal_port_flow_ctrl_thres_set(dev_id, i, 3, 3);
-
+	for(i = SSDK_PHYSICAL_PORT0; i < priv->ports_num; i++) {
+		switch (chip_type) {
+		case MPPE_TYPE:
 			/* Fix 147B line rate on physical port1 */
 			if (i != SSDK_PHYSICAL_PORT0)
 				fal_port_rx_fifo_thres_set(dev_id, i, 7);
+			fallthrough;
+		case MRPPE_TYPE:
+		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
+			/* PTX buffer threshold need to be updated to 3
+			 * for fixing tunnel performance issue where MAPT
+			 * inbound case, only the buffer size >= 48 can
+			 * be transmitted out.
+			 */
+			fal_port_flow_ctrl_thres_set(dev_id, i, 3, 3);
+			break;
+		default:
+			break;
 		}
 	}
-#endif
+
 	for(i = SSDK_PHYSICAL_PORT1; i < priv->ports_num; i++) {
 		mac_type_org = qca_ppe_port_mac_type_get(dev_id, i);
 		for(mac_type = PORT_GMAC_TYPE; mac_type <= PORT_XGMAC_TYPE; mac_type++) {
