@@ -18,6 +18,7 @@ extern "C" {
 #include "fal_type.h"
 
 #define PON_PORT_ID 6
+#define PON_GEM_PORT_NUM 128
 
 #define OMCI_CTRL_PKT_GEN_RULE_IDX_RSV 0x0
 #define OMCI_CTRL_PKT_GEMPORT 0x0

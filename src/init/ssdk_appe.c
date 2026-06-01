@@ -1590,6 +1590,8 @@ qca_hmsppe_gemgen_rule_hw_init(a_uint32_t dev_id)
 	fal_gemport_global_cfg_t glb_cfg = {0};
 	fal_gemport_gen_t gempt_rule = {0};
 	fal_gemport_cfg_t gempt_cfg = {0};
+	fal_gemport_map_t map_entry = {0};
+	int i;
 
 	glb_cfg.gen_miss_pon_port = PON_PORT_ID;
 	rv = fal_pon_gemport_global_set(dev_id, &glb_cfg);
@@ -1631,9 +1633,22 @@ qca_hmsppe_gemgen_rule_hw_init(a_uint32_t dev_id)
 	rv = fal_pon_gemport_cfg_set(dev_id, gempt_rule.gemport, &gempt_cfg);
 	if (rv != SW_OK) {
 		SSDK_ERROR("gemport-%#x enqueue vp-%#x cfg failed.", gempt_rule.gemport, gempt_cfg.enq_vp);
+		return rv;
 	}
 
-	return rv;
+	/* The GEM port mapping table in hardware has random initial values and
+	 * can't be cleared by the PPE reset, so explicitly write a zero-initialized
+	 * entry to every slot here to guarantee a clean state.
+	 */
+	for (i = 0; i < PON_GEM_PORT_NUM; i++) {
+		rv = fal_pon_gemport_map_set(dev_id, i, &map_entry);
+		if (rv != SW_OK) {
+			SSDK_ERROR("gemport %d mapping table reset failed.\n", i);
+			return rv;
+		}
+	}
+
+	return SW_OK;
 }
 #endif
 
