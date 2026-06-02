@@ -666,17 +666,21 @@ sw_error_t
 fal_tunnel_decap_key_set(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_key_t *key_gen);
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_decap_key_get(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_key_t *key_gen);
+#endif
 
 sw_error_t
 fal_tunnel_decap_en_set(a_uint32_t dev_id,
 		a_uint32_t tunnel_index, a_bool_t en);
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_decap_en_get(a_uint32_t dev_id,
 		a_uint32_t tunnel_index, a_bool_t *en);
+#endif
 
 sw_error_t
 fal_tunnel_decap_action_update(a_uint32_t dev_id,
@@ -692,6 +696,8 @@ fal_tunnel_decap_entry_add(a_uint32_t dev_id,
 sw_error_t
 fal_tunnel_decap_entry_del(a_uint32_t dev_id,
 		fal_tunnel_op_mode_t del_mode, fal_tunnel_decap_entry_t *value);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_decap_entry_get(a_uint32_t dev_id,
 		fal_tunnel_op_mode_t get_mode, fal_tunnel_decap_entry_t *value);
@@ -704,12 +710,15 @@ fal_tunnel_decap_entry_flush(a_uint32_t dev_id);
 sw_error_t
 fal_tunnel_global_cfg_get(a_uint32_t dev_id,
 		fal_tunnel_global_cfg_t *cfg);
+#endif
+
 sw_error_t
 fal_tunnel_global_cfg_set(a_uint32_t dev_id,
 		fal_tunnel_global_cfg_t *cfg);
 sw_error_t
 fal_tunnel_port_intf_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_tunnel_port_intf_t *port_cfg);
+
 sw_error_t
 fal_tunnel_port_intf_get(a_uint32_t dev_id,
 		fal_port_t port_id, fal_tunnel_port_intf_t *port_cfg);
@@ -738,15 +747,20 @@ fal_tunnel_intf_get(a_uint32_t dev_id,
 sw_error_t
 fal_tunnel_encap_port_tunnelid_set(a_uint32_t dev_id,
 		fal_port_t port_id, fal_tunnel_id_t *tunnel_id);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_encap_port_tunnelid_get(a_uint32_t dev_id,
 		fal_port_t port_id, fal_tunnel_id_t *tunnel_id);
+#endif
+
 sw_error_t
 fal_tunnel_encap_intf_tunnelid_set(a_uint32_t dev_id,
 		a_uint32_t intf_id, fal_tunnel_id_t *tunnel_id);
 sw_error_t
 fal_tunnel_encap_intf_tunnelid_get(a_uint32_t dev_id,
 		a_uint32_t intf_id, fal_tunnel_id_t *tunnel_id);
+
 sw_error_t
 fal_tunnel_encap_entry_add(a_uint32_t dev_id, a_uint32_t tunnel_id,
 		fal_tunnel_encap_cfg_t *tunnel_encap_cfg);
@@ -756,18 +770,25 @@ fal_tunnel_encap_entry_del(a_uint32_t dev_id,
 sw_error_t
 fal_tunnel_encap_entry_get(a_uint32_t dev_id, a_uint32_t tunnel_id,
 		fal_tunnel_encap_cfg_t *tunnel_encap_cfg);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_encap_entry_getnext(a_uint32_t dev_id, a_uint32_t tunnel_id,
 		fal_tunnel_encap_cfg_t *tunnel_encap_cfg);
+#endif
+
 sw_error_t
 fal_tunnel_encap_rule_entry_set(a_uint32_t dev_id, a_uint32_t rule_id,
 		fal_tunnel_encap_rule_t *rule_entry);
 sw_error_t
 fal_tunnel_encap_rule_entry_get(a_uint32_t dev_id, a_uint32_t rule_id,
 		fal_tunnel_encap_rule_t *rule_entry);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_encap_rule_entry_del(a_uint32_t dev_id, a_uint32_t rule_id,
 		fal_tunnel_encap_rule_t *rule_entry);
+#endif
 
 sw_error_t
 fal_tunnel_udf_profile_entry_add(a_uint32_t dev_id, a_uint32_t profile_id,
@@ -775,18 +796,25 @@ fal_tunnel_udf_profile_entry_add(a_uint32_t dev_id, a_uint32_t profile_id,
 sw_error_t
 fal_tunnel_udf_profile_entry_del(a_uint32_t dev_id, a_uint32_t profile_id,
 		fal_tunnel_udf_profile_entry_t * entry);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_udf_profile_entry_getfirst(a_uint32_t dev_id, a_uint32_t profile_id,
 		fal_tunnel_udf_profile_entry_t * entry);
 sw_error_t
 fal_tunnel_udf_profile_entry_getnext(a_uint32_t dev_id, a_uint32_t profile_id,
 		fal_tunnel_udf_profile_entry_t * entry);
+#endif
+
 sw_error_t
 fal_tunnel_udf_profile_cfg_set(a_uint32_t dev_id, a_uint32_t profile_id,
 		a_uint32_t udf_idx, fal_tunnel_udf_type_t udf_type, a_uint32_t offset);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_udf_profile_cfg_get(a_uint32_t dev_id, a_uint32_t profile_id,
 		a_uint32_t udf_idx, fal_tunnel_udf_type_t * udf_type, a_uint32_t * offset);
+#endif
 
 sw_error_t
 fal_tunnel_encap_header_ctrl_set(a_uint32_t dev_id, fal_tunnel_encap_header_ctrl_t *header_ctrl);
@@ -815,8 +843,10 @@ fal_tunnel_encap_ecn_mode_get(a_uint32_t dev_id, fal_tunnel_encap_ecn_t *ecn_rul
 sw_error_t
 fal_tunnel_exp_decap_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_exp_decap_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
+#endif
 
 sw_error_t
 fal_tunnel_tuple_entry_add(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
@@ -824,19 +854,24 @@ fal_tunnel_tuple_entry_add(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
 sw_error_t
 fal_tunnel_tuple_entry_del(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_tuple_entry_getfirst(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
 
 sw_error_t
 fal_tunnel_tuple_entry_getnext(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry);
+#endif
 
 sw_error_t
 fal_tunnel_decap_miss_action_set(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action);
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_decap_miss_action_get(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action);
+#endif
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

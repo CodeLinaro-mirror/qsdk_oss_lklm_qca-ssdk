@@ -856,6 +856,7 @@ adpt_appe_tunnel_decap_entry_del(a_uint32_t dev_id,
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_decap_entry_getnext(a_uint32_t dev_id,
 		fal_tunnel_op_mode_t next_mode, fal_tunnel_decap_entry_t *entry)
@@ -923,6 +924,7 @@ adpt_appe_tunnel_decap_entry_flush(a_uint32_t dev_id)
 
 	return rv;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_encap_header_ctrl_set(a_uint32_t dev_id,
@@ -1316,7 +1318,6 @@ adpt_appe_tunnel_decap_ecn_mode_set(a_uint32_t dev_id,
 
 	return rv;
 }
-#endif
 
 sw_error_t
 adpt_appe_tunnel_global_cfg_get(a_uint32_t dev_id,
@@ -1347,6 +1348,7 @@ adpt_appe_tunnel_global_cfg_get(a_uint32_t dev_id,
 
 	return rv;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_global_cfg_set(a_uint32_t dev_id,
@@ -1769,6 +1771,7 @@ adpt_appe_tunnel_encap_port_tunnelid_set(a_uint32_t dev_id,
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_encap_port_tunnelid_get(a_uint32_t dev_id,
 		fal_port_t port_id, fal_tunnel_id_t *tunnel_id)
@@ -1790,6 +1793,7 @@ adpt_appe_tunnel_encap_port_tunnelid_get(a_uint32_t dev_id,
 
 	return rv;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_encap_intf_tunnelid_set(a_uint32_t dev_id,
@@ -1996,6 +2000,7 @@ adpt_appe_tunnel_encap_entry_get(a_uint32_t dev_id,
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_encap_entry_getnext(a_uint32_t dev_id,
 		a_uint32_t tunnel_id, fal_tunnel_encap_cfg_t *tunnel_encap_cfg)
@@ -2062,6 +2067,7 @@ adpt_appe_tunnel_encap_entry_getnext(a_uint32_t dev_id,
 
 	return rv;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_encap_rule_entry_set(a_uint32_t dev_id,
@@ -2167,6 +2173,7 @@ adpt_appe_tunnel_encap_rule_entry_get(a_uint32_t dev_id,
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_encap_rule_entry_del(a_uint32_t dev_id,
 		a_uint32_t rule_id, fal_tunnel_encap_rule_t *rule_entry)
@@ -2187,6 +2194,7 @@ adpt_appe_tunnel_encap_rule_entry_del(a_uint32_t dev_id,
 
 	return rv;
 }
+#endif
 
 static a_bool_t
 _adpt_appe_is_udf_profile_entry_equal(a_uint32_t dev_id,
@@ -2362,6 +2370,7 @@ _adpt_appe_insert_udf_profile_entry_by_sort(a_uint32_t dev_id,
 	return _adpt_appe_insert_udf_profile_entry_by_index(dev_id, idx, entry, profile_id);
 }
 
+#ifndef IN_TUNNEL_MINI
 static sw_error_t
 _adpt_appe_tunnel_udf_profile_entry_get(a_uint32_t dev_id, a_uint32_t profile_id,
 		fal_tunnel_udf_profile_entry_t * entry, a_bool_t sign_tag)
@@ -2406,6 +2415,7 @@ _adpt_appe_tunnel_udf_profile_entry_get(a_uint32_t dev_id, a_uint32_t profile_id
 	}
 	return SW_OK;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_udf_profile_entry_add(a_uint32_t dev_id, a_uint32_t profile_id,
@@ -2520,6 +2530,7 @@ adpt_appe_tunnel_udf_profile_entry_del(a_uint32_t dev_id, a_uint32_t profile_id,
 	return appe_tpr_udf_ctrl_0_set(dev_id, j, &udf_ctrl_zero_entry);
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_udf_profile_entry_getfirst(a_uint32_t dev_id, a_uint32_t profile_id,
 		fal_tunnel_udf_profile_entry_t * entry)
@@ -2533,6 +2544,7 @@ adpt_appe_tunnel_udf_profile_entry_getnext(a_uint32_t dev_id, a_uint32_t profile
 {
 	return _adpt_appe_tunnel_udf_profile_entry_get(dev_id, profile_id, entry, A_FALSE);
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_udf_profile_cfg_set(a_uint32_t dev_id, a_uint32_t profile_id,
@@ -2602,6 +2614,7 @@ adpt_appe_tunnel_udf_profile_cfg_set(a_uint32_t dev_id, a_uint32_t profile_id,
 	return appe_tpr_udf_profile_offset_set(dev_id, profile_id, &udf_profile_offset);
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_udf_profile_cfg_get(a_uint32_t dev_id, a_uint32_t profile_id,
 		a_uint32_t udf_idx, fal_tunnel_udf_type_t * udf_type, a_uint32_t * offset)
@@ -2665,6 +2678,7 @@ adpt_appe_tunnel_udf_profile_cfg_get(a_uint32_t dev_id, a_uint32_t profile_id,
 
 	return SW_OK;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_exp_decap_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable)
@@ -2688,6 +2702,7 @@ adpt_appe_tunnel_exp_decap_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_appe_tunnel_exp_decap_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable)
 {
@@ -2707,6 +2722,7 @@ adpt_appe_tunnel_exp_decap_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *
 
 	return rv;
 }
+#endif
 
 sw_error_t adpt_appe_tunnel_decap_key_set(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_key_t *key_gen)
@@ -2717,6 +2733,7 @@ sw_error_t adpt_appe_tunnel_decap_key_set(a_uint32_t dev_id,
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t adpt_appe_tunnel_decap_key_get(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_key_t *key_gen)
 {
@@ -2725,6 +2742,7 @@ sw_error_t adpt_appe_tunnel_decap_key_get(a_uint32_t dev_id,
 	rv = adpt_appe_tunnel_key_op(dev_id, tunnel_type, FAL_TUNNEL_OP_TYPE_GET, key_gen);
 	return rv;
 }
+#endif
 
 sw_error_t adpt_appe_tunnel_decap_en_set(a_uint32_t dev_id,
 		a_uint32_t tunnel_index, a_bool_t en)
@@ -2739,6 +2757,7 @@ sw_error_t adpt_appe_tunnel_decap_en_set(a_uint32_t dev_id,
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t adpt_appe_tunnel_decap_en_get(a_uint32_t dev_id,
 		a_uint32_t tunnel_index, a_bool_t *en)
 {
@@ -2756,6 +2775,7 @@ sw_error_t adpt_appe_tunnel_decap_en_get(a_uint32_t dev_id,
 
 	return rv;
 }
+#endif
 
 sw_error_t adpt_appe_tunnel_decap_action_update(a_uint32_t dev_id,
 		a_uint32_t tunnel_index, fal_tunnel_action_t *update_action)
@@ -2887,16 +2907,20 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 		adpt_appe_tunnel_decap_entry_add;
 	p_adpt_api->adpt_tunnel_decap_entry_del =
 		adpt_appe_tunnel_decap_entry_del;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_decap_entry_get =
 		adpt_appe_tunnel_decap_entry_get;
 	p_adpt_api->adpt_tunnel_decap_entry_getnext =
 		adpt_appe_tunnel_decap_entry_getnext;
 	p_adpt_api->adpt_tunnel_decap_entry_flush =
 		adpt_appe_tunnel_decap_entry_flush;
+#endif
 	p_adpt_api->adpt_tunnel_global_cfg_set =
 		adpt_appe_tunnel_global_cfg_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_global_cfg_get =
 		adpt_appe_tunnel_global_cfg_get;
+#endif
 	p_adpt_api->adpt_tunnel_port_intf_set =
 		adpt_appe_tunnel_port_intf_set;
 	p_adpt_api->adpt_tunnel_port_intf_get =
@@ -2917,8 +2941,10 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 		adpt_appe_tunnel_intf_get;
 	p_adpt_api->adpt_tunnel_encap_port_tunnelid_set =
 		adpt_appe_tunnel_encap_port_tunnelid_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_encap_port_tunnelid_get =
 		adpt_appe_tunnel_encap_port_tunnelid_get;
+#endif
 	p_adpt_api->adpt_tunnel_encap_intf_tunnelid_set =
 		adpt_appe_tunnel_encap_intf_tunnelid_set;
 	p_adpt_api->adpt_tunnel_encap_intf_tunnelid_get =
@@ -2929,14 +2955,18 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 		adpt_appe_tunnel_encap_entry_del;
 	p_adpt_api->adpt_tunnel_encap_entry_get =
 		adpt_appe_tunnel_encap_entry_get;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_encap_entry_getnext =
 		adpt_appe_tunnel_encap_entry_getnext;
+#endif
 	p_adpt_api->adpt_tunnel_encap_rule_entry_set =
 		adpt_appe_tunnel_encap_rule_entry_set;
 	p_adpt_api->adpt_tunnel_encap_rule_entry_get =
 		adpt_appe_tunnel_encap_rule_entry_get;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_encap_rule_entry_del =
 		adpt_appe_tunnel_encap_rule_entry_del;
+#endif
 	p_adpt_api->adpt_tunnel_encap_header_ctrl_set =
 		adpt_appe_tunnel_encap_header_ctrl_set;
 	p_adpt_api->adpt_tunnel_encap_header_ctrl_get =
@@ -2955,26 +2985,36 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 		adpt_appe_tunnel_udf_profile_entry_add;
 	p_adpt_api->adpt_tunnel_udf_profile_entry_del =
 		adpt_appe_tunnel_udf_profile_entry_del;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_udf_profile_entry_getfirst =
 		adpt_appe_tunnel_udf_profile_entry_getfirst;
 	p_adpt_api->adpt_tunnel_udf_profile_entry_getnext =
 		adpt_appe_tunnel_udf_profile_entry_getnext;
+#endif
 	p_adpt_api->adpt_tunnel_udf_profile_cfg_set =
 		adpt_appe_tunnel_udf_profile_cfg_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_udf_profile_cfg_get =
 		adpt_appe_tunnel_udf_profile_cfg_get;
+#endif
 	p_adpt_api->adpt_tunnel_exp_decap_set=
 		adpt_appe_tunnel_exp_decap_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_exp_decap_get=
 		adpt_appe_tunnel_exp_decap_get;
+#endif
 	p_adpt_api->adpt_tunnel_decap_key_set =
 		adpt_appe_tunnel_decap_key_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_decap_key_get =
 		adpt_appe_tunnel_decap_key_get;
+#endif
 	p_adpt_api->adpt_tunnel_decap_en_set =
 		adpt_appe_tunnel_decap_en_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_decap_en_get =
 		adpt_appe_tunnel_decap_en_get;
+#endif
 	p_adpt_api->adpt_tunnel_decap_action_update =
 		adpt_appe_tunnel_decap_action_update;
 	p_adpt_api->adpt_tunnel_decap_counter_get =
@@ -2985,14 +3025,18 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 		adpt_jhppe_tunnel_tuple_entry_add;
 	p_adpt_api->adpt_tunnel_tuple_entry_del =
 		adpt_jhppe_tunnel_tuple_entry_del;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_tuple_entry_getfirst =
 		adpt_jhppe_tunnel_tuple_entry_getfirst;
 	p_adpt_api->adpt_tunnel_tuple_entry_getnext =
 		adpt_jhppe_tunnel_tuple_entry_getnext;
+#endif
 	p_adpt_api->adpt_tunnel_decap_miss_action_set =
 		adpt_jhppe_tunnel_decap_miss_action_set;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_decap_miss_action_get =
 		adpt_jhppe_tunnel_decap_miss_action_get;
+#endif
 #endif
 	return SW_OK;
 }

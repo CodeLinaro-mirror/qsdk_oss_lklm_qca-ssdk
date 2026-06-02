@@ -653,6 +653,7 @@ adpt_appe_tunnel_program_entry_del(a_uint32_t dev_id,
 	return SW_OK;
 }
 
+#ifndef IN_TUNNEL_PROGRAM_MINI
 sw_error_t
 adpt_appe_tunnel_program_entry_getfirst(a_uint32_t dev_id,
 		fal_tunnel_program_type_t type, fal_tunnel_program_entry_t * entry)
@@ -722,6 +723,7 @@ adpt_appe_tunnel_program_entry_getnext(a_uint32_t dev_id,
 	}
 	return SW_OK;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_program_cfg_set(a_uint32_t dev_id,
@@ -769,6 +771,7 @@ adpt_appe_tunnel_program_cfg_set(a_uint32_t dev_id,
 	return SW_OK;
 }
 
+#ifndef IN_TUNNEL_PROGRAM_MINI
 sw_error_t
 adpt_appe_tunnel_program_cfg_get(a_uint32_t dev_id,
 		fal_tunnel_program_type_t type, fal_tunnel_program_cfg_t * cfg)
@@ -800,6 +803,7 @@ adpt_appe_tunnel_program_cfg_get(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+#endif
 
 sw_error_t
 adpt_appe_tunnel_program_udf_add(a_uint32_t dev_id,
@@ -905,6 +909,7 @@ adpt_appe_tunnel_program_udf_del(a_uint32_t dev_id,
 	return SW_OK;
 }
 
+#ifndef IN_TUNNEL_PROGRAM_MINI
 sw_error_t
 _adpt_appe_tunnel_program_udf_get(a_uint32_t dev_id,
 		fal_tunnel_program_type_t type, fal_tunnel_program_udf_t * udf, a_bool_t sign_tag)
@@ -962,6 +967,8 @@ adpt_appe_tunnel_program_udf_getnext(a_uint32_t dev_id,
 	return _adpt_appe_tunnel_program_udf_get(dev_id, type, udf, A_FALSE);
 }
 
+#endif
+
 sw_error_t adpt_appe_tunnel_program_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
@@ -972,18 +979,24 @@ sw_error_t adpt_appe_tunnel_program_init(a_uint32_t dev_id)
 
 	p_adpt_api->adpt_tunnel_program_entry_add = adpt_appe_tunnel_program_entry_add;
 	p_adpt_api->adpt_tunnel_program_entry_del = adpt_appe_tunnel_program_entry_del;
+#ifndef IN_TUNNEL_PROGRAM_MINI
 	p_adpt_api->adpt_tunnel_program_entry_getfirst =
 					adpt_appe_tunnel_program_entry_getfirst;
 	p_adpt_api->adpt_tunnel_program_entry_getnext =
 					adpt_appe_tunnel_program_entry_getnext;
+#endif
 	p_adpt_api->adpt_tunnel_program_cfg_set = adpt_appe_tunnel_program_cfg_set;
+#ifndef IN_TUNNEL_PROGRAM_MINI
 	p_adpt_api->adpt_tunnel_program_cfg_get = adpt_appe_tunnel_program_cfg_get;
+#endif
 	p_adpt_api->adpt_tunnel_program_udf_add = adpt_appe_tunnel_program_udf_add;
 	p_adpt_api->adpt_tunnel_program_udf_del = adpt_appe_tunnel_program_udf_del;
+#ifndef IN_TUNNEL_PROGRAM_MINI
 	p_adpt_api->adpt_tunnel_program_udf_getfirst =
 					adpt_appe_tunnel_program_udf_getfirst;
 	p_adpt_api->adpt_tunnel_program_udf_getnext =
 					adpt_appe_tunnel_program_udf_getnext;
+#endif
 
 	return SW_OK;
 }

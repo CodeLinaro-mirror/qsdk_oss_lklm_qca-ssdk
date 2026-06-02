@@ -25,6 +25,7 @@ enum {
 	ADPT_TUPLE_PROTO_ENTRY,
 };
 
+#ifndef IN_TUNNEL_MINI
 static sw_error_t
 _adpt_jhppe_tunnel_tuple_addr_entry_get(a_uint32_t dev_id, a_uint32_t index,
 		fal_tunnel_tuple_entry_t *entry)
@@ -140,6 +141,7 @@ _adpt_jhppe_tunnel_tuple_addr_port_entry_get(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+#endif
 
 static sw_error_t
 _adpt_jhppe_tunnel_tuple_new_addr_entry_set(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry,
@@ -531,6 +533,7 @@ static a_bool_t _adpt_jhppe_tunnel_tuple_match_ctrl_equal(a_uint32_t dev_id,
 	return A_TRUE;
 }
 
+#ifndef IN_TUNNEL_MINI
 static a_bool_t _adpt_jhppe_tunnel_tuple_addr_port_equal(a_uint32_t dev_id,
 	fal_tunnel_tuple_entry_t *entry1, fal_tunnel_tuple_entry_t *entry2)
 {
@@ -565,6 +568,7 @@ static a_bool_t _adpt_jhppe_tunnel_tuple_addr_port_equal(a_uint32_t dev_id,
 
 	return A_TRUE;
 }
+#endif
 
 static sw_error_t
 _adpt_jhppe_tunnel_tuple_match_ctrl_index_get(a_uint32_t dev_id, fal_tunnel_op_type_t op_type,
@@ -762,6 +766,7 @@ _adpt_jhppe_tunnel_tuple_entry_operation(a_uint32_t dev_id, fal_tunnel_op_type_t
 	return rv;
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 _adpt_jhppe_tunnel_tuple_entry_getnext(a_uint32_t dev_id,
 		fal_tunnel_tuple_entry_t *entry, a_bool_t sign_tag)
@@ -798,6 +803,7 @@ _adpt_jhppe_tunnel_tuple_entry_getnext(a_uint32_t dev_id,
 
 	return SW_NO_MORE;
 }
+#endif
 
 sw_error_t
 adpt_jhppe_tunnel_tuple_entry_add(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
@@ -805,13 +811,13 @@ adpt_jhppe_tunnel_tuple_entry_add(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *e
 	return _adpt_jhppe_tunnel_tuple_entry_operation(dev_id, FAL_TUNNEL_OP_TYPE_ADD, entry);
 }
 
-
 sw_error_t
 adpt_jhppe_tunnel_tuple_entry_del(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
 {
 	return _adpt_jhppe_tunnel_tuple_entry_operation(dev_id, FAL_TUNNEL_OP_TYPE_DEL, entry);
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_jhppe_tunnel_tuple_entry_getfirst(a_uint32_t dev_id, fal_tunnel_tuple_entry_t *entry)
 {
@@ -823,6 +829,7 @@ adpt_jhppe_tunnel_tuple_entry_getnext(a_uint32_t dev_id, fal_tunnel_tuple_entry_
 {
 	return _adpt_jhppe_tunnel_tuple_entry_getnext(dev_id, entry, A_FALSE);
 }
+#endif
 
 sw_error_t
 adpt_jhppe_tunnel_decap_miss_action_set(a_uint32_t dev_id,
@@ -845,6 +852,7 @@ adpt_jhppe_tunnel_decap_miss_action_set(a_uint32_t dev_id,
 	return appe_tl_key_gen_set(dev_id, tunnel_type, &key_gen);
 }
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 adpt_jhppe_tunnel_decap_miss_action_get(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action)
@@ -865,3 +873,4 @@ adpt_jhppe_tunnel_decap_miss_action_get(a_uint32_t dev_id,
 
 	return SW_OK;
 }
+#endif
