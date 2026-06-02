@@ -1131,6 +1131,15 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	l1_shp_cfg_tbl.bf.cir = hppe_cir;
 	/* HMSPPE/JHPPE: force C-path only; HTTPPE allows E-shaper on all flow IDs */
 	if ((ppe_type == CHIP_HMSPPE) || (ppe_type == CHIP_JHPPE)) {
+		if (hppe_cir == 0) {
+			l1_shp_cfg_tbl.bf.cir = hppe_eir & 0x3ffff;
+			hppe_cir_max = hppe_eir_max & 0x3ffff;
+			l1_shp_cfg_tbl.bf.cbs = hppe_ebs & 0x3fff;
+		} else {
+			l1_shp_cfg_tbl.bf.cir = hppe_cir & 0x3ffff;
+			hppe_cir_max = hppe_cir_max & 0x3ffff;
+			l1_shp_cfg_tbl.bf.cbs = hppe_cbs & 0x3fff;
+		}
 		l1_shp_cfg_tbl.bf.e_shaper_enable = A_TRUE;
 		l1_shp_cfg_tbl.bf.ebs = 0;
 		l1_shp_cfg_tbl.bf.eir = 0;
@@ -1523,6 +1532,15 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	/* HMSPPE/JHPPE and HTTPPE multicast queues (256-299): force C-path only */
 	if ((ppe_type == CHIP_HMSPPE) || (ppe_type == CHIP_JHPPE) ||
 		((ppe_type == CHIP_HTTPPE) && (queue_id >= SSDK_L0SCHEDULER_UCASTQ_CFG_MAX))) {
+		if (hppe_cir == 0) {
+			l0_shp_cfg_tbl.bf.cir = hppe_eir & 0x3ffff;
+			hppe_cir_max = hppe_eir_max & 0x3ffff;
+			l0_shp_cfg_tbl.bf.cbs = hppe_ebs & 0x3fff;
+		} else {
+			l0_shp_cfg_tbl.bf.cir = hppe_cir & 0x3ffff;
+			hppe_cir_max = hppe_cir_max & 0x3ffff;
+			l0_shp_cfg_tbl.bf.cbs = hppe_cbs & 0x3fff;
+		}
 		l0_shp_cfg_tbl.bf.e_shaper_enable = A_TRUE;
 		l0_shp_cfg_tbl.bf.ebs = 0;
 		l0_shp_cfg_tbl.bf.eir = 0;
