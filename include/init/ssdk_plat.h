@@ -344,6 +344,9 @@ struct ssdk_port_priv {
 	a_uint32_t configured_fec; /* configured fec */
 	/* link state reported by the phylink */
 	a_bool_t port_phylink_up;
+#if IS_ENABLED(CONFIG_NET_DSA)
+	struct net_device *netdev;  /* DSA user-port netdev, cf. dp->index */
+#endif
 };
 
 struct ssdk_ppe_tunnel_priv {

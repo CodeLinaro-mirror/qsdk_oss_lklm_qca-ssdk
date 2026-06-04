@@ -5,6 +5,9 @@
 
 #include "adpt.h"
 #include "hsl_htt_reg.h"
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+#include <linux/dsa/qce2204_api.h>
+#endif
 
 static fal_queue_bmp_t port_queue_map[6] = {0};
 
@@ -553,4 +556,92 @@ adpt_httppe_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 	return SW_OK;
 }
 
+sw_error_t
+adpt_httppe_port_scheduler_cfg_reset(a_uint32_t dev_id, fal_port_t port_id)
+{
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+	struct qca_phy_priv *priv;
+	struct net_device *netdev;
 
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (FAL_PORT_ID_VALUE(port_id) >= SW_MAX_NR_PORT)
+		return SW_OUT_OF_RANGE;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv)
+		return SW_NOT_SUPPORTED;
+
+	netdev = priv->ports[FAL_PORT_ID_VALUE(port_id)].netdev;
+	if (!netdev)
+		return SW_NOT_SUPPORTED;
+
+	return qce2204_ppe_port_scheduler_cfg_reset(netdev) ?
+		SW_FAIL : SW_OK;
+#else
+	return SW_NOT_SUPPORTED;
+#endif
+}
+
+#define HTTPPE_PORT_SCHEDULER_MAX_PRI	7
+
+sw_error_t
+adpt_httppe_port_scheduler_resource_get(a_uint32_t dev_id,
+					fal_port_t port_id,
+					fal_portscheduler_resource_t *cfg)
+{
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+	struct qce2204_ppe_scheduler_resource res;
+	struct qca_phy_priv *priv;
+	struct net_device *netdev;
+	int ret;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(cfg);
+
+	if (FAL_PORT_ID_VALUE(port_id) >= SW_MAX_NR_PORT)
+		return SW_OUT_OF_RANGE;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv)
+		return SW_NOT_SUPPORTED;
+
+	netdev = priv->ports[FAL_PORT_ID_VALUE(port_id)].netdev;
+	if (!netdev)
+		return SW_NOT_SUPPORTED;
+
+	ret = qce2204_ppe_port_scheduler_resource_get(netdev, &res);
+	if (ret)
+		return SW_FAIL;
+
+	if (res.ucastq_end < res.ucastq_start ||
+	    res.mcastq_end < res.mcastq_start ||
+	    res.l0node_end < res.l0node_start ||
+	    res.l1node_end < res.l1node_start)
+		return SW_FAIL;
+
+	cfg->ucastq_start  = res.ucastq_start;
+	cfg->ucastq_num    = res.ucastq_end - res.ucastq_start + 1;
+	cfg->mcastq_start  = res.mcastq_start;
+	cfg->mcastq_num    = res.mcastq_end - res.mcastq_start + 1;
+	/* L0 SP/CDRR/EDRR all map to the same L0 scheduler nodes */
+	cfg->l0sp_start    = res.l0node_start;
+	cfg->l0sp_num      = res.l0node_end - res.l0node_start + 1;
+	cfg->l0cdrr_start  = res.l0node_start;
+	cfg->l0cdrr_num    = res.l0node_end - res.l0node_start + 1;
+	cfg->l0edrr_start  = res.l0node_start;
+	cfg->l0edrr_num    = res.l0node_end - res.l0node_start + 1;
+	/* L1 SP/CDRR/EDRR all map to the same L1 scheduler nodes */
+	cfg->l1sp_start    = res.l1node_start;
+	cfg->l1sp_num      = res.l1node_end - res.l1node_start + 1;
+	cfg->l1cdrr_start  = res.l1node_start;
+	cfg->l1cdrr_num    = res.l1node_end - res.l1node_start + 1;
+	cfg->l1edrr_start  = res.l1node_start;
+	cfg->l1edrr_num    = res.l1node_end - res.l1node_start + 1;
+	cfg->max_pri       = HTTPPE_PORT_SCHEDULER_MAX_PRI;
+
+	return SW_OK;
+#else
+	return SW_NOT_SUPPORTED;
+#endif
+}

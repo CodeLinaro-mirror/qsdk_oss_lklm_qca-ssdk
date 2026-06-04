@@ -1554,6 +1554,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return SW_FAIL;
 
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
 	priv = ssdk_phy_priv_data_get(dev_id);
 	SW_RTN_ON_NULL(priv);
 
@@ -1562,7 +1563,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 	else
 		aos_lock_init(&priv->ppe_qm_lock.qm_spin_lock);
 
-	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+	if (ppe_type == HTTPPE_TYPE) {
 #if defined(HTTPPE)
 		p_adpt_api->adpt_queue_flush = adpt_httppe_queue_flush;
 		p_adpt_api->adpt_ac_dynamic_threshold_set = adpt_httppe_ac_dynamic_threshold_set;
@@ -1584,6 +1585,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_queue_counter_cleanup = adpt_httppe_queue_counter_cleanup;
 		p_adpt_api->adpt_qm_port_source_profile_get = adpt_httppe_qm_port_source_profile_get;
 		p_adpt_api->adpt_qm_port_source_profile_set = adpt_httppe_qm_port_source_profile_set;
+		p_adpt_api->adpt_port_mcast_priority_class_set = adpt_httppe_port_mcast_priority_class_set;
 #endif
 	} else {
 		p_adpt_api->adpt_queue_flush = adpt_hppe_queue_flush;
@@ -1606,6 +1608,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 		p_adpt_api->adpt_queue_counter_cleanup = adpt_hppe_queue_counter_cleanup;
 		p_adpt_api->adpt_qm_port_source_profile_get = adpt_hppe_qm_port_source_profile_get;
 		p_adpt_api->adpt_qm_port_source_profile_set = adpt_hppe_qm_port_source_profile_set;
+		p_adpt_api->adpt_port_mcast_priority_class_set = adpt_hppe_port_mcast_priority_class_set;
 	}
 	p_adpt_api->adpt_ucast_queue_base_profile_set =
 		adpt_hppe_ucast_queue_base_profile_set;
@@ -1615,8 +1618,6 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 			adpt_hppe_ucast_queue_base_profile_get;
 	p_adpt_api->adpt_port_mcast_priority_class_get =
 		adpt_hppe_port_mcast_priority_class_get;
-	p_adpt_api->adpt_port_mcast_priority_class_set =
-		adpt_hppe_port_mcast_priority_class_set;
 #if !defined(IN_QM_MINI)
 	p_adpt_api->adpt_mcast_cpu_code_class_get = adpt_hppe_mcast_cpu_code_class_get;
 	p_adpt_api->adpt_mcast_cpu_code_class_set = adpt_hppe_mcast_cpu_code_class_set;
@@ -1625,7 +1626,13 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 #endif
 	p_adpt_api->adpt_ucast_hash_map_get = adpt_hppe_ucast_hash_map_get;
 	p_adpt_api->adpt_ucast_priority_class_get = adpt_hppe_ucast_priority_class_get;
-	p_adpt_api->adpt_ucast_priority_class_set = adpt_hppe_ucast_priority_class_set;
+#if defined(HTTPPE)
+	if (ppe_type == HTTPPE_TYPE)
+		p_adpt_api->adpt_ucast_priority_class_set =
+			adpt_httppe_ucast_priority_class_set;
+	else
+#endif
+		p_adpt_api->adpt_ucast_priority_class_set = adpt_hppe_ucast_priority_class_set;
 	p_adpt_api->adpt_qm_enqueue_ctrl_get = adpt_hppe_qm_enqueue_ctrl_get;
 	p_adpt_api->adpt_qm_enqueue_config_get = adpt_appe_qm_enqueue_config_get;
 	p_adpt_api->adpt_qm_enqueue_config_set = adpt_appe_qm_enqueue_config_set;
