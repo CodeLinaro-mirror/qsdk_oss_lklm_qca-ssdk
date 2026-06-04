@@ -96,6 +96,16 @@ extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
 /*qca808x_start*/
 struct qca_phy_priv **qca_phy_priv_global;
 
+static a_uint32_t qpool_switch_ports[2] = {SSDK_PHYSICAL_PORT6, SSDK_PHYSICAL_PORT6};
+module_param_array(qpool_switch_ports, uint, NULL, 0444);
+MODULE_PARM_DESC(qpool_switch_ports, "Source and destination port IDs for queue pool switch (e.g. 6,2)");
+
+void ssdk_qpool_switch_ports_get(a_uint32_t *src_port, a_uint32_t *dst_port)
+{
+	*src_port = qpool_switch_ports[0];
+	*dst_port = qpool_switch_ports[1];
+}
+
 struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id)
 {
 	if (dev_id >= SW_MAX_NR_DEV || !qca_phy_priv_global)
