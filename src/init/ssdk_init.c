@@ -2173,10 +2173,10 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 		case NETDEV_REGISTER:
 			if (strstr(dev->name, "eth") && !(dev->priv_flags & IFF_802_1Q_VLAN))
 				ssdk_netdev_switch_init(dev);
-
+#if IS_ENABLED(CONFIG_NET_DSA)
 			if (dsa_slave_dev_check(dev))
 				ssdk_dsa_intf_register(dev);
-
+#endif
 			break;
 	}
 
