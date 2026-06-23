@@ -198,6 +198,183 @@ fal_port_tdm_tick_cfg_t ppe_port_tdm0_tbl[] = {
 	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 5},
 };
 
+/* port 1 is 12.5G, port 5, 6 are 10G. */
+fal_port_tdm_tick_cfg_t ppe_port_tdm2_tbl[] = {
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 3, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 4, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 4, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 3, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 4, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 4, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 2},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 2, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 2, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 3, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 3, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 4, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 4, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 0, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 3},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 4},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 6},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 1, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 6, 1, 0},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 5, 1, 7},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 0, 1, 1},
+	{A_TRUE, FAL_PORT_TDB_DIR_INGRESS, 7, 1, 5},
+	{A_TRUE, FAL_PORT_TDB_DIR_EGRESS, 7, 1, 5},
+};
 /* PORT 1-4 are 2.5G + port 5, 6 are 10G. */
 fal_port_scheduler_cfg_t ppe_port_scheduler0_tbl[] = {
 	{0x0, 0x0, 0x7, 0x0, 0x0},
@@ -343,6 +520,96 @@ fal_port_scheduler_cfg_t ppe_port_scheduler1_tbl[] = {
 	{0x0, 0x7, 0x0, 0x0, 0x0},
 	{0x0, 0x3, 0x1, 0x0, 0x0},
 	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x6, 0x5, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x6, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x5, 0x1, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x0, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x5, 0x7, 0x0, 0x0},
+	{0x0, 0xf, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x4, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x4, 0x5, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x1, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x6, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x5, 0x0, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x6, 0x7, 0x0, 0x0},
+	{0x0, 0xf, 0x0, 0x0, 0x0},
+	{0x0, 0x3, 0x4, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x2, 0x5, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x1, 0x6, 0x0, 0x0},
+	{0x0, 0x5, 0x7, 0x0, 0x0},
+	{0x0, 0x5, 0x1, 0x0, 0x0},
+	{0x0, 0x6, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x4, 0x0, 0x0},
+	{0x0, 0x1, 0x5, 0x0, 0x0},
+	{0x0, 0x4, 0x6, 0x0, 0x0},
+};
+
+/* PORT 1 is 12.5G and 5, 6 are 10G ports. */
+fal_port_scheduler_cfg_t ppe_port_scheduler2_tbl[] = {
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0xf, 0x6, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x1, 0x5, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x6, 0x1, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x6, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x6, 0x1, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x5, 0x6, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x2, 0x5, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x1, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x5, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x1, 0x0, 0x0},
+	{0x0, 0x0, 0x1, 0x0, 0x0},
+	{0x0, 0x5, 0x6, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x5, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x3, 0x6, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x1, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x6, 0x5, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x5, 0x6, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x5, 0x1, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x5, 0x6, 0x0, 0x0},
+	{0x0, 0x0, 0x1, 0x0, 0x0},
+	{0x0, 0x5, 0x1, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x1, 0x5, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x4, 0x5, 0x0, 0x0},
+	{0x0, 0xf, 0x7, 0x0, 0x0},
+	{0x0, 0x1, 0x6, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x2, 0x1, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x6, 0x5, 0x0, 0x0},
+	{0x0, 0x0, 0x7, 0x0, 0x0},
+	{0x0, 0x5, 0x6, 0x0, 0x0},
+	{0x0, 0x7, 0x0, 0x0, 0x0},
+	{0x0, 0x3, 0x1, 0x0, 0x0},
+	{0x0, 0xf, 0x1, 0x0, 0x0},
 	{0x0, 0x6, 0x5, 0x0, 0x0},
 	{0x0, 0xf, 0x7, 0x0, 0x0},
 	{0x0, 0x1, 0x6, 0x0, 0x0},
@@ -1128,23 +1395,28 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 	tm_tick_mode = ssdk_tm_tick_mode_get(dev_id);
 	bm_tick_mode = ssdk_bm_tick_mode_get(dev_id);
 
-	if (tm_tick_mode > 2) {
-		SSDK_ERROR("appe invalid tm tdm mode %d!\n", tm_tick_mode);
+	if (tm_tick_mode > 2 || bm_tick_mode > 2) {
+		SSDK_ERROR("appe invalid tm/bm tdm mode %d/%d!\n",
+			   tm_tick_mode, bm_tick_mode);
 		return SW_BAD_VALUE;
 	}
 
 #if defined(HMSPPE)
 	if (chip_type == HMSPPE_TYPE) {
 		switch (tm_tick_mode) {
-		case 1:
-			num = ARRAY_SIZE(ppe_port_scheduler1_tbl);
-			scheduler_cfg = ppe_port_scheduler1_tbl;
-			break;
-		case 0:
-		default:
-			num = ARRAY_SIZE(ppe_port_scheduler0_tbl);
-			scheduler_cfg = ppe_port_scheduler0_tbl;
-			break;
+			case 2:
+				num = ARRAY_SIZE(ppe_port_scheduler2_tbl);
+				scheduler_cfg = ppe_port_scheduler2_tbl;
+				break;
+			case 1:
+				num = ARRAY_SIZE(ppe_port_scheduler1_tbl);
+				scheduler_cfg = ppe_port_scheduler1_tbl;
+				break;
+			case 0:
+			default:
+				num = ARRAY_SIZE(ppe_port_scheduler0_tbl);
+				scheduler_cfg = ppe_port_scheduler0_tbl;
+				break;
 		}
 	}
 #elif defined(JHPPE)
@@ -1208,8 +1480,18 @@ qca_appe_tdm_hw_init(a_uint32_t dev_id)
 
 #if defined(HMSPPE)
 	if (chip_type == HMSPPE_TYPE) {
-		num = ARRAY_SIZE(ppe_port_tdm0_tbl);
-		bm_cfg = ppe_port_tdm0_tbl;
+		switch (bm_tick_mode) {
+			case 2:
+				num = ARRAY_SIZE(ppe_port_tdm2_tbl);
+				bm_cfg = ppe_port_tdm2_tbl;
+				break;
+			case 1:
+			case 0:
+			default:
+				num = ARRAY_SIZE(ppe_port_tdm0_tbl);
+				bm_cfg = ppe_port_tdm0_tbl;
+				break;
+		}
 	}
 #elif defined(JHPPE)
 	if (chip_type == JHPPE_TYPE) {
