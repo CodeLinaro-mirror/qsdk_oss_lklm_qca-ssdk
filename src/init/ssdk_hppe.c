@@ -684,7 +684,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 			total_buf = 4000;
 			break;
 		case HMSPPE_TYPE:
-			total_buf = 3000;
+			total_buf = 2800;
 			break;
 		case MRPPE_TYPE:
 		case APPE_TYPE:
