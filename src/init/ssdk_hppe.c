@@ -500,11 +500,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		 * 8 queues per port for appe, class 0~6 matches with priority 0~6, and
 		 * class 7 matches with priority >=7.
 		 */
-		max_pri_supported = ssdk_port_ucast_max_pri_get(dev_id, i);
-
-		if (max_pri_supported > SSDK_PRI_MAX) {
-			max_pri_supported = SSDK_CPU_PRI_NUM;
-		}
+		max_pri_supported = ssdk_ucast_l0_cdrr_num_get(dev_id, i);
 
 		for (pri = 0; pri < SSDK_PRI_MAX; pri++) {
 			if (pri >= max_pri_supported)
