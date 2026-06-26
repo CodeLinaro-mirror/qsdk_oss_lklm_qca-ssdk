@@ -1082,6 +1082,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 			netdev_switch_node = of_parse_phandle(switch_external_node, "switch_handle",
 				0);
 			if(netdev_switch_node) {
+				netdev_switch->switch_node = netdev_switch_node;
 				if(!of_property_read_u32(netdev_switch_node, "device_id",
 					&device_id))
 					netdev_switch->switch_dev_id = device_id;
