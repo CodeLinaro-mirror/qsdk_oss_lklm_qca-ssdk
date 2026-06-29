@@ -13,6 +13,7 @@
 #include "hsl_api.h"
 #include "adpt.h"
 #include "ref_fdb.h"
+#include "ssdk_plat.h"
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -341,6 +342,10 @@ fal_fdb_entry_search(a_uint32_t dev_id, fal_fdb_entry_t * entry)
     FAL_API_LOCK;
     rv = _fal_fdb_entry_search(dev_id, entry);
     FAL_API_UNLOCK;
+
+    if (rv != SW_OK && rv != SW_NOT_FOUND)
+        SSDK_WARN("fdb search failed dev=%u rv=%d\n", dev_id, rv);
+
     return rv;
 }
 
