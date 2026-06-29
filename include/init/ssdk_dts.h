@@ -100,6 +100,7 @@ typedef struct
 typedef struct
 {
 	struct net_device *dev;
+	struct device_node *switch_node;
 	a_uint8_t switch_netdev_port;
 	a_bool_t switch_connected;
 	a_uint8_t switch_dev_id;
