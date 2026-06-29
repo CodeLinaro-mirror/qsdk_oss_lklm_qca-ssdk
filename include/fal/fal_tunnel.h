@@ -697,10 +697,11 @@ sw_error_t
 fal_tunnel_decap_entry_del(a_uint32_t dev_id,
 		fal_tunnel_op_mode_t del_mode, fal_tunnel_decap_entry_t *value);
 
-#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_decap_entry_get(a_uint32_t dev_id,
 		fal_tunnel_op_mode_t get_mode, fal_tunnel_decap_entry_t *value);
+
+#ifndef IN_TUNNEL_MINI
 sw_error_t
 fal_tunnel_decap_entry_getnext(a_uint32_t dev_id,
 		fal_tunnel_op_mode_t next_mode, fal_tunnel_decap_entry_t *value);

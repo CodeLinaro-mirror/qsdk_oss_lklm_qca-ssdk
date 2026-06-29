@@ -2907,9 +2907,9 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 		adpt_appe_tunnel_decap_entry_add;
 	p_adpt_api->adpt_tunnel_decap_entry_del =
 		adpt_appe_tunnel_decap_entry_del;
-#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_decap_entry_get =
 		adpt_appe_tunnel_decap_entry_get;
+#ifndef IN_TUNNEL_MINI
 	p_adpt_api->adpt_tunnel_decap_entry_getnext =
 		adpt_appe_tunnel_decap_entry_getnext;
 	p_adpt_api->adpt_tunnel_decap_entry_flush =

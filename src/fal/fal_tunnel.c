@@ -20,10 +20,10 @@ sw_error_t fal_tunnel_decap_entry_add(a_uint32_t dev_id, fal_tunnel_op_mode_t ad
 sw_error_t fal_tunnel_decap_entry_del(a_uint32_t dev_id, fal_tunnel_op_mode_t del_mode, fal_tunnel_decap_entry_t *decap_entry)
     DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_decap_entry_del, dev_id, del_mode, decap_entry)
 
-#ifndef IN_TUNNEL_MINI
 sw_error_t fal_tunnel_decap_entry_get(a_uint32_t dev_id, fal_tunnel_op_mode_t get_mode, fal_tunnel_decap_entry_t *decap_entry)
     DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_decap_entry_get, dev_id, get_mode, decap_entry)
 
+#ifndef IN_TUNNEL_MINI
 sw_error_t fal_tunnel_decap_entry_getnext(a_uint32_t dev_id, fal_tunnel_op_mode_t next_mode, fal_tunnel_decap_entry_t *decap_entry)
     DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_decap_entry_getnext, dev_id, next_mode, decap_entry)
 
