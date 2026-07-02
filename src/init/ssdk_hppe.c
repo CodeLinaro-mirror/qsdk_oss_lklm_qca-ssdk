@@ -554,38 +554,45 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		a_uint8_t max_pri = ssdk_port_ucast_max_pri_get(dev_id,
 								SSDK_PHYSICAL_PORT6);
 
-		/* Assign the queue base of port 6 as the last reserved queue,
-		 * and disable the enqueue for the port 6 queue base to make
-		 * the packet go to this queue dropped.
+		/* Skip the PON port(6) queue/tcont initialization if it has no
+		 * queue resource assigned in the DTS (e.g. PON port unused on
+		 * this board), otherwise max_pri is 0 and the while loop below
+		 * never advances index, causing a permanent dead loop.
 		 */
-		dt_cfg = ssdk_bootup_shceduler_cfg_get(dev_id);
-		if (!dt_cfg)
-			return SW_NOT_SUPPORTED;
+		if (max_pri != 0) {
+			/* Assign the queue base of port 6 as the last reserved queue,
+			 * and disable the enqueue for the port 6 queue base to make
+			 * the packet go to this queue dropped.
+			 */
+			dt_cfg = ssdk_bootup_shceduler_cfg_get(dev_id);
+			if (!dt_cfg)
+				return SW_NOT_SUPPORTED;
 
-		pon_port_qbase = dt_cfg->reserved_pool.ucastq_end;
-		queue_dst.dst_port = SSDK_PHYSICAL_PORT6;
-		fal_ucast_queue_base_profile_set(dev_id, &queue_dst,
-						 pon_port_qbase,
-						 SSDK_PHYSICAL_PORT6);
-		fal_qm_enqueue_ctrl_set(dev_id, pon_port_qbase, A_FALSE);
-
-		/* Assign the virtual ports starting from 128 with the queues of PON port 6 */
-		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT6);
-		q_num = ssdk_ucast_queue_num_get(dev_id, SSDK_PHYSICAL_PORT6);
-		while (index < q_num) {
-			queue_dst.dst_port = vport;
+			pon_port_qbase = dt_cfg->reserved_pool.ucastq_end;
+			queue_dst.dst_port = SSDK_PHYSICAL_PORT6;
 			fal_ucast_queue_base_profile_set(dev_id, &queue_dst,
-							 qbase, SSDK_PHYSICAL_PORT6);
+							 pon_port_qbase,
+							 SSDK_PHYSICAL_PORT6);
+			fal_qm_enqueue_ctrl_set(dev_id, pon_port_qbase, A_FALSE);
 
-			tcont_cfg.valid = A_TRUE;
-			tcont_cfg.tcont_id = tcont_id;
-			for (i = 0; i < max_pri; i++)
-				fal_qm_tcont_set(dev_id, qbase + i, &tcont_cfg);
+			/* Assign the virtual ports starting from 128 with the queues of PON port 6 */
+			qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT6);
+			q_num = ssdk_ucast_queue_num_get(dev_id, SSDK_PHYSICAL_PORT6);
+			while (index < q_num) {
+				queue_dst.dst_port = vport;
+				fal_ucast_queue_base_profile_set(dev_id, &queue_dst,
+								 qbase, SSDK_PHYSICAL_PORT6);
 
-			qbase += max_pri;
-			index += max_pri;
-			tcont_id++;
-			vport++;
+				tcont_cfg.valid = A_TRUE;
+				tcont_cfg.tcont_id = tcont_id;
+				for (i = 0; i < max_pri; i++)
+					fal_qm_tcont_set(dev_id, qbase + i, &tcont_cfg);
+
+				qbase += max_pri;
+				index += max_pri;
+				tcont_id++;
+				vport++;
+			}
 		}
 	}
 #endif
