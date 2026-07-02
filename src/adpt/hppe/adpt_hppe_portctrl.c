@@ -101,6 +101,7 @@
 #define PORT_LPI_WAKEUP_TIMER_100M 28
 /* the sleep timer unit is us */
 #define PORT_LPI_SLEEP_TIMER_10000M 10000
+#define PORT_LPI_SLEEP_TIMER_1000M 20000
 #define PORT_LPI_SLEEP_TIMER_DEFAULT 100
 
 /* This register is used to adjust the write timing for reserving
@@ -3666,6 +3667,7 @@ adpt_hppe_port_mac_eee_timer_adjust(a_uint32_t dev_id, fal_port_t port_id,
 			break;
 		case FAL_SPEED_1000:
 			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_1000M;
+			sleep_timer_val = PORT_LPI_SLEEP_TIMER_1000M;
 			break;
 		case FAL_SPEED_100:
 			wakeup_timer_val = PORT_LPI_WAKEUP_TIMER_100M;
