@@ -655,9 +655,19 @@ static void ssdk_dt_parse_scheduler_resource(
 	a_uint32_t dev_id, a_uint32_t port_id)
 {
 	a_uint32_t uq[2], mq[2], l0sp[2], l0cdrr[2];
-	a_uint32_t l0edrr[2], l1cdrr[2], l1edrr[2];
+	a_uint32_t l0edrr[2], l1cdrr[2], l1edrr[2], l1sp[2];
 	ssdk_dt_portscheduler_cfg *scheduler_cfg = NULL;
 	ssdk_dt_scheduler_cfg *cfg = &(ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->scheduler_cfg);
+	int ret;
+
+	ret = of_property_read_u32_array(port_node, "l1sp", l1sp, 2);
+	if (ret == -EINVAL) {
+		l1sp[0] = SSDK_L1_SP_ID_INVALID;
+		l1sp[1] = SSDK_L1_SP_ID_INVALID;
+	} else if (ret != 0) {
+		SSDK_ERROR("error reading L1 SP ID properties of port %d\n", port_id);
+		return;
+	}
 
 	if (of_property_read_u32_array(port_node, "ucast_queue", uq, 2)
 		|| of_property_read_u32_array(port_node, "mcast_queue", mq, 2)
@@ -697,6 +707,8 @@ static void ssdk_dt_parse_scheduler_resource(
 	scheduler_cfg->l0cdrr_end = l0cdrr[1];
 	scheduler_cfg->l0edrr_start = l0edrr[0];
 	scheduler_cfg->l0edrr_end = l0edrr[1];
+	scheduler_cfg->l1sp_start = l1sp[0];
+	scheduler_cfg->l1sp_end = l1sp[1];
 	scheduler_cfg->l1cdrr_start = l1cdrr[0];
 	scheduler_cfg->l1cdrr_end = l1cdrr[1];
 	scheduler_cfg->l1edrr_start = l1edrr[0];
