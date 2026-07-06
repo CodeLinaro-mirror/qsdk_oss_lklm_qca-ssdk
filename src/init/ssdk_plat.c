@@ -603,6 +603,7 @@ __qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 			  a_uint8_t * reg_data, a_uint32_t len, a_bool_t lock_en)
 {
 	hsl_reg_mode reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
+	ssdk_reg_map_info map;
 	uint32_t reg_val = 0;
 
 	if (len != sizeof(a_uint32_t))
@@ -611,8 +612,13 @@ __qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 	if ((reg_addr % 4) != 0)
 		return SW_BAD_PARAM;
 
+	ssdk_switch_reg_map_info_get(dev_id, &map);
+
 	switch (reg_mode) {
 	case HSL_REG_PCIE_BUS:
+		if (reg_addr >= map.size)
+			return SW_OUT_OF_RANGE;
+
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
 		uint32_t pcie_base = ssdk_switch_pcie_base_get(dev_id);
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
@@ -624,9 +630,6 @@ __qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 		break;
 	case HSL_REG_MDIO:
 		struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
-		ssdk_reg_map_info map;
-
-		ssdk_switch_reg_map_info_get(dev_id, &map);
 
 		if (lock_en)
 			qca_mii_bus_lock(dev_id, A_TRUE);
@@ -637,6 +640,9 @@ __qca_switch_reg_raw_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 			qca_mii_bus_lock(dev_id, A_FALSE);
 		break;
 	default:
+		if (reg_addr >= map.size)
+			return SW_OUT_OF_RANGE;
+
 		reg_val = readl(qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
 		break;
 	}
@@ -650,6 +656,7 @@ __qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
 			   a_uint8_t * reg_data, a_uint32_t len, a_bool_t lock_en)
 {
 	hsl_reg_mode reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
+	ssdk_reg_map_info map;
 	uint32_t reg_val = 0;
 
 	if (len != sizeof(a_uint32_t))
@@ -658,10 +665,14 @@ __qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
 	if ((reg_addr % 4) != 0)
 		return SW_BAD_PARAM;
 
+	ssdk_switch_reg_map_info_get(dev_id, &map);
 	aos_mem_copy(&reg_val, reg_data, sizeof (a_uint32_t));
 
 	switch (reg_mode) {
 	case HSL_REG_PCIE_BUS:
+		if (reg_addr >= map.size)
+			return SW_OUT_OF_RANGE;
+
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI) || defined(SSDK_PCIE_BUS)
 		uint32_t pcie_base = ssdk_switch_pcie_base_get(dev_id);
 #if IS_ENABLED(CONFIG_QCOM_FPGA_PCI)
@@ -673,9 +684,6 @@ __qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
 		break;
 	case HSL_REG_MDIO:
 		struct mii_bus *bus = ssdk_miibus_get(dev_id, 0);
-		ssdk_reg_map_info map;
-
-		ssdk_switch_reg_map_info_get(dev_id, &map);
 
 		if (lock_en)
 			qca_mii_bus_lock(dev_id, A_TRUE);
@@ -686,6 +694,9 @@ __qca_switch_reg_raw_write(a_uint32_t dev_id, a_uint32_t reg_addr,
 			qca_mii_bus_lock(dev_id, A_FALSE);
 		break;
 	default:
+		if (reg_addr >= map.size)
+			return SW_OUT_OF_RANGE;
+
 		writel(reg_val, qca_phy_priv_global[dev_id]->hw_addr + reg_addr);
 		break;
 	}

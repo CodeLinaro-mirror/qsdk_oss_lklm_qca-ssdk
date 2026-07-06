@@ -1355,6 +1355,7 @@ static sw_error_t ssdk_dt_parse_access_mode(struct device_node *switch_node,
 			return SW_BAD_PARAM;
 		}
 		ssdk_dt_priv->pcie_hw_base = be32_to_cpup(reg_cfg);
+		ssdk_dt_priv->switchreg_size = be32_to_cpup(reg_cfg + 1);
 		SSDK_INFO("PCIE bus pcie_base_addr: 0x%x\n",
 				ssdk_dt_priv->pcie_hw_base);
 	} else {
