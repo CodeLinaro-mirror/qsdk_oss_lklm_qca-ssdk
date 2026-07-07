@@ -198,12 +198,13 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 		return SW_FAIL;
 
 	/* time_cycle is ns*/
-	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot) / ppe_freq;
+	time_cycle =  __adpt_hppe_shaper_time_cycle_get(dev_id, time_slot);
 
 	for (j = 0; j < 8; j++)
 	{
 		/*max rate unit is bps*/
-		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 8 * 1000;
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 8 *
+			(a_uint64_t)ppe_freq * 1000;
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
 		temp1 = div64_u64(temp1, temp2);
@@ -221,7 +222,8 @@ __adpt_hppe_queue_shaper_max_rate(a_uint32_t dev_id, a_uint32_t time_slot)
 	for (j = 0; j < 8; j++)
 	{
 		/* max rate unit  is 1/1000 pps*/
-		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 1000 * 1000;
+		temp1 = (a_uint64_t)ADPT_HPPE_SHAPER_REFRESH_MAX * 1000 * 1000 *
+			(a_uint64_t)ppe_freq * 1000;
 		temp2 = (a_uint64_t)hppe_shaper_token_unit[i][j] * time_cycle;
 
 		temp1 = div64_u64(temp1, temp2);
