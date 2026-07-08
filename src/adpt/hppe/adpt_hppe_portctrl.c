@@ -4547,18 +4547,15 @@ adpt_hmsppe_port_interface_clk_set(a_uint32_t dev_id, a_uint32_t port_id,
 }
 
 sw_error_t
-adpt_hmsppe_port_interface_clk_reset(a_uint32_t dev_id, a_uint32_t port_id)
+adpt_hmsppe_port_clk_reset(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
 	sw_error_t rv = SW_OK;
 
 	rv = fal_port_interface_mode_get(dev_id, port_id, &port_mode);
 	SW_RTN_ON_ERROR(rv);
-	if (port_mode == PORT_INTERNAL) {
-		ssdk_ppe_port_clock_assert(dev_id, port_id, SSDK_RESET_ASSERT);
-		aos_mdelay(1);
-		ssdk_ppe_port_clock_assert(dev_id, port_id, SSDK_RESET_DEASSERT);
-	}
+	if (port_mode == PORT_INTERNAL)
+		ssdk_port_clock_reset(dev_id, port_id);
 
 	return SW_OK;
 }
@@ -4659,7 +4656,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				if (rv != SW_OK) {
 					continue;
 				}
-				rv = adpt_hmsppe_port_interface_clk_reset(priv->device_id, port_id);
+				rv = adpt_hmsppe_port_clk_reset(priv->device_id, port_id);
 				if (rv != SW_OK) {
 					continue;
 				}
@@ -4788,7 +4785,7 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				if (rv != SW_OK) {
 					continue;
 				}
-				rv = adpt_hmsppe_port_interface_clk_reset(priv->device_id, port_id);
+				rv = adpt_hmsppe_port_clk_reset(priv->device_id, port_id);
 				if (rv != SW_OK) {
 					continue;
 				}
