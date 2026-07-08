@@ -643,8 +643,16 @@ adpt_hppe_port_scheduler_resource_get(a_uint32_t dev_id,
 	cfg->l0cdrr_num = port_resource->l0cdrr_end - port_resource->l0cdrr_start + 1;
 	cfg->l0edrr_start = port_resource->l0edrr_start;
 	cfg->l0edrr_num = port_resource->l0edrr_end - port_resource->l0edrr_start + 1;
-	cfg->l1sp_start = port_id;
-	cfg->l1sp_num = 1;
+
+	if (port_resource->l1sp_start != SSDK_L1_SP_ID_INVALID &&
+	    port_resource->l1sp_end != SSDK_L1_SP_ID_INVALID) {
+		cfg->l1sp_start = port_resource->l1sp_start;
+		cfg->l1sp_num = port_resource->l1sp_end - port_resource->l1sp_start + 1;
+	} else {
+		cfg->l1sp_start = port_id;
+		cfg->l1sp_num = 1;
+	}
+
 	cfg->l1cdrr_start = port_resource->l1cdrr_start;
 	cfg->l1cdrr_num = port_resource->l1cdrr_end - port_resource->l1cdrr_start + 1;
 	cfg->l1edrr_start = port_resource->l1edrr_start;

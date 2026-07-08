@@ -26,6 +26,8 @@ typedef struct {
 	a_uint8_t l0cdrr_end;
 	a_uint8_t l0edrr_start;
 	a_uint8_t l0edrr_end;
+	a_uint8_t l1sp_start;
+	a_uint8_t l1sp_end;
 	a_uint8_t l1cdrr_start;
 	a_uint8_t l1cdrr_end;
 	a_uint8_t l1edrr_start;

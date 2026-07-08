@@ -37,6 +37,7 @@ extern "C" {
 #define SSDK_L0SCHEDULER_CFG_MAX        300
 #define SSDK_L0SCHEDULER_UCASTQ_CFG_MAX 256
 #define SSDK_L1SCHEDULER_CFG_MAX        64
+#define SSDK_L1_SP_ID_INVALID		0xff
 #define SSDK_SP_MAX_PRIORITY            8
 #define SSDK_MAX_FRAME_SIZE_12K         0x3000
 #define SSDK_MAX_FRAME_SIZE_16K         0x3FFF
