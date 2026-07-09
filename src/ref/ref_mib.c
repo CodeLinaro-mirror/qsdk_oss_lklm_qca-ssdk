@@ -280,9 +280,7 @@ qca_ar8327_sw_get_port_mib(struct switch_dev *dev,
     port = val->port_vlan;
     if (port >= dev->ports)
         return -EINVAL;
-    if ((priv->version == QCA_VER_APPE ||
-        priv->version == QCA_VER_MRPPE) &&
-        qca_ppe_port_mac_type_get(priv->device_id, port) == PORT_XGMAC_TYPE)
+    if (qca_ppe_port_mac_type_get(priv->device_id, port) == PORT_XGMAC_TYPE)
     {
         qca_ar8327_sw_print_xgport_mib(dev, attr, val);
         return 0;
