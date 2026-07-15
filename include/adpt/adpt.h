@@ -2793,8 +2793,11 @@ adpt_forward_action_convert(fal_fwd_cmd_t *fwd_cmd, a_uint32_t *value, a_bool_t 
 #define ADPT_MRPPE_FREQUENCY     375  /*MHZ*/
 #define ADPT_JHPPE_FREQUENCY     462  /*MHZ*/
 #define ADPT_HMSPPE_FREQUENCY    429  /*MHZ*/
+#if defined(JHPPE)
 #define ADPT_HTTPPE_FREQUENCY    250  /*MHZ*/
-
+#else
+#define ADPT_HTTPPE_FREQUENCY    258  /*MHZ*/
+#endif
 /* Maximum valid physical port ID (inclusive) per chip type */
 #define JHPPE_PORT_ID_MAX   8   /* ports 0..8, 9 ports  (25G)    */
 #define MPPE_PORT_ID_MAX    6   /* ports 0..6, 7 ports  (Miami)  */
