@@ -534,3 +534,19 @@ fal_erp_standby_exit (a_uint32_t dev_id)
 EXPORT_SYMBOL(fal_port_erp_power_mode_get);
 EXPORT_SYMBOL(fal_erp_standby_enter);
 EXPORT_SYMBOL(fal_erp_standby_exit);
+
+sw_error_t fal_port_fastretrain_cfg_set (a_uint32_t dev_id, fal_port_t port_id, fal_port_fr_cfg_t * cfg)
+    DEFINE_FAL_PORT_PHY_FUNC(fr_cfg_set, dev_id, port_id, (void*)cfg)
+    EXPORT_SYMBOL(fal_port_fastretrain_cfg_set);
+
+sw_error_t fal_port_fastretrain_cfg_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_fr_cfg_t * cfg)
+    DEFINE_FAL_PORT_PHY_FUNC(fr_cfg_get, dev_id, port_id, (void*)cfg)
+    EXPORT_SYMBOL(fal_port_fastretrain_cfg_get);
+
+sw_error_t fal_port_fastretrain_status_get (a_uint32_t dev_id, fal_port_t port_id, fal_port_fr_status_t * status)
+    DEFINE_FAL_PORT_PHY_FUNC(fr_status_get, dev_id, port_id, (void*)status)
+    EXPORT_SYMBOL(fal_port_fastretrain_status_get);
+
+sw_error_t fal_port_fastretrain_trigger (a_uint32_t dev_id, fal_port_t port_id)
+    DEFINE_FAL_PORT_PHY_FUNC(fr_trigger, dev_id, port_id)
+    EXPORT_SYMBOL(fal_port_fastretrain_trigger);

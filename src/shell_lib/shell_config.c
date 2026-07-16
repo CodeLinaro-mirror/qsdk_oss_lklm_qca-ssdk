@@ -660,6 +660,10 @@ struct sub_cmd_des_t g_port_des[] =
 	{"promiscmode", "set",   SW_API_PT_PROMISC_MODE_SET, NULL},
 #endif
 	{"eeecfg", "set", SW_API_PT_INTERFACE_EEE_CFG_SET, NULL},
+	{"frcfg", "set", SW_API_PT_FASTRETRAIN_CFG_SET, NULL},
+	{"frcfg", "get", SW_API_PT_FASTRETRAIN_CFG_GET, NULL},
+	{"frstatus", "get", SW_API_PT_FASTRETRAIN_STATUS_GET, NULL},
+	{"frtrigger", "set", SW_API_PT_FASTRETRAIN_TRIGGER, NULL},
 #ifndef IN_PORTCONTROL_MINI
 	{"srcfiltercfg", "set",   SW_API_PT_SOURCE_FILTER_CONFIG_SET, NULL},
 	{"switchportloopback", "set", SW_API_PT_SWITCH_PORT_LOOPBACK_SET, NULL},

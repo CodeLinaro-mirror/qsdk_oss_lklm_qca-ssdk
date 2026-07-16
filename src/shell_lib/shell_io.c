@@ -658,6 +658,8 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_PORT_8023AH_CTRL, (param_check_t)cmd_data_check_port_8023ah_ctrl, NULL),
 #endif
     SW_TYPE_DEF(SW_PORT_EEE_CONFIG, (param_check_t)cmd_data_check_port_eee_config, NULL),
+    SW_TYPE_DEF(SW_PORT_FR_CFG, (param_check_t)cmd_data_check_port_fr_cfg, NULL),
+    SW_TYPE_DEF(SW_PORT_FR_STATUS, NULL, NULL),
 #ifndef IN_PORTCONTROL_MINI
     SW_TYPE_DEF(SW_PORT_LOOPBACK_CONFIG, (param_check_t)cmd_data_check_switch_port_loopback_config, NULL),
 #endif
@@ -1448,6 +1450,39 @@ cmd_data_check_port_eee_config(char *cmd_str, void * val, a_uint32_t size)
     while (talk_mode && (SW_OK != rv));
 
     *(fal_port_eee_cfg_t *)val = cfg;
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_port_fr_cfg(char *cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    sw_error_t rv;
+    fal_port_fr_cfg_t cfg;
+
+    aos_mem_zero(&cfg, sizeof (fal_port_fr_cfg_t));
+
+    do
+    {
+        cmd = get_sub_cmd("ieee_fr_en", "yes");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_confirm(cmd, A_FALSE, &(cfg.ieee_fr_en),
+                                    sizeof (a_bool_t));
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("cisco_fr_en", "yes");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        rv = cmd_data_check_confirm(cmd, A_FALSE, &(cfg.cisco_fr_en),
+                                    sizeof (a_bool_t));
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    *(fal_port_fr_cfg_t *)val = cfg;
     return SW_OK;
 }
 #ifndef IN_PORTCONTROL_MINI

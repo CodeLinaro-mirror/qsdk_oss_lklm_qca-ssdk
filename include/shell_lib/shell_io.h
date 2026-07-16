@@ -60,6 +60,8 @@ sw_error_t cmd_data_check_port_8023ah_ctrl(char *cmd_str, void * val,
 #endif
 sw_error_t
 cmd_data_check_port_eee_config(char *cmd_str, void * val, a_uint32_t size);
+sw_error_t
+cmd_data_check_port_fr_cfg(char *cmd_str, void * val, a_uint32_t size);
 #ifndef IN_PORTCONTROL_MINI
 sw_error_t
 cmd_data_check_switch_port_loopback_config(char *cmd_str, void * val,
