@@ -2311,7 +2311,7 @@ adpt_jhppe_uniphy_pma_dfe_sw_tune(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	return hppe_uniphy_reg_set(dev_id, QSERDES_RX_EXT_RXEQ_CTRL9_ADDRESS, uniphy_index, 0x00);
 }
 
-static sw_error_t
+sw_error_t
 adpt_jhppe_uniphy_xlgpcs_soft_reset(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
 	sw_error_t ret = SW_OK;

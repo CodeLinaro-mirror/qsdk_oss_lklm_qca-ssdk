@@ -4683,6 +4683,10 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			adpt_hppe_uniphy_autoneg_status_check(priv->device_id, port_id);
 			if (status == A_TRUE)
 			{
+				fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+				adpt_hppe_port_interface_mode_get(priv->device_id,
+								  port_id, &port_mode);
+
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
 						port_id, A_FALSE);
 				if ((a_uint32_t)phy_status.speed !=
@@ -4777,6 +4781,19 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				}
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
 						port_id, A_TRUE);
+
+#if defined(JHPPE)
+				if (port_mode == PORT_25GBASE_R) {
+					a_uint32_t uniphy_index = hsl_port_to_uniphy(priv->device_id, port_id);
+					/*
+					 * XLGPCS soft reset after enabling uniphy port clocks to
+					 * clear the pipeline in case of any garbage corruption.
+					 */
+					adpt_jhppe_uniphy_xlgpcs_soft_reset(priv->device_id,
+									    uniphy_index);
+				}
+#endif
+
 				adpt_hppe_uniphy_port_adapter_reset(priv->device_id, port_id);
 			}
 #ifdef HMSPPE
