@@ -553,13 +553,14 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 		int vport = (SSDK_MAX_VIRTUAL_PORT_ID + 1) / 2;
 		a_uint8_t max_pri = ssdk_port_ucast_max_pri_get(dev_id,
 								SSDK_PHYSICAL_PORT6);
+		a_uint32_t mac2_mode = ssdk_dt_global_get_mac_mode(dev_id, SSDK_UNIPHY_INSTANCE2);
 
 		/* Skip the PON port(6) queue/tcont initialization if it has no
 		 * queue resource assigned in the DTS (e.g. PON port unused on
 		 * this board), otherwise max_pri is 0 and the while loop below
 		 * never advances index, causing a permanent dead loop.
 		 */
-		if (max_pri != 0) {
+		if (max_pri != 0 && mac2_mode == PORT_WRAPPER_MAX) {
 			/* Assign the queue base of port 6 as the last reserved queue,
 			 * and disable the enqueue for the port 6 queue base to make
 			 * the packet go to this queue dropped.
