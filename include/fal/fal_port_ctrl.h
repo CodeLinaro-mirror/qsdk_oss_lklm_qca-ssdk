@@ -277,6 +277,39 @@ typedef struct {
 	a_uint32_t link_partner_advertisement;
 } fal_port_eee_cfg_t;
 
+/* Bit values match nss_phy.h's NSS_PHY_FR_* bitmap exactly, since
+ * nss-phy passes its bitmap straight through as this struct's
+ * negotiated field.
+ */
+#define FAL_PORT_FR_2500BASE_T                  0x40
+#define FAL_PORT_FR_5000BASE_T                  0x80
+#define FAL_PORT_FR_10000BASE_T                 0x100
+#define FAL_PORT_FR_THP_BYPASS_2500BASE_T       0x200
+#define FAL_PORT_FR_THP_BYPASS_5000BASE_T       0x400
+#define FAL_PORT_FR_THP_BYPASS_10000BASE_T      0x800
+#define FAL_PORT_FR_CISCO_ABILITY               0x1000
+#define FAL_PORT_FR_CISCO_THP_BYPASS_ABILITY    0x2000
+#define FAL_PORT_FR_CISCO_EXTEND_WAIT_ABILITY   0x4000
+#define FAL_PORT_FR_CISCO_DISABLE_TIMER_ABILITY 0x8000
+
+typedef struct {
+	a_bool_t   ieee_fr_en;
+	a_bool_t   cisco_fr_en;
+} fal_port_fr_cfg_t;
+
+typedef struct {
+	a_bool_t   ieee_enabled;
+	a_bool_t   cisco_enabled;
+	a_uint32_t negotiated;      /* bitmap of FAL_PORT_FR_* */
+	a_bool_t   active;
+	a_bool_t   success;
+	a_bool_t   fail;
+	a_uint64_t rx_count;        /* since last link-up, SW accumulated */
+	a_uint64_t tx_count;        /* since last link-up, SW accumulated */
+	a_uint64_t rx_total;        /* cumulative since bootup, SW accumulated */
+	a_uint64_t tx_total;        /* cumulative since bootup, SW accumulated */
+} fal_port_fr_status_t;
+
 typedef enum {
 	FAL_MTU_ETHERNET = 0,
 	FAL_MTU_IP,
@@ -764,6 +797,18 @@ fal_port_pps_ctrl_set(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctrl);
 
 sw_error_t
 fal_port_pps_ctrl_get(a_uint32_t dev_id, fal_port_pps_ctrl_t *pps_ctrl);
+
+sw_error_t
+fal_port_fastretrain_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_fr_cfg_t *cfg);
+sw_error_t
+fal_port_fastretrain_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_fr_cfg_t *cfg);
+sw_error_t
+fal_port_fastretrain_status_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_fr_status_t *status);
+sw_error_t
+fal_port_fastretrain_trigger(a_uint32_t dev_id, fal_port_t port_id);
 
 sw_error_t
 fal_port_fec_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_fec_config_t *ptfec);

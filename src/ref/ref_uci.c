@@ -1583,6 +1583,36 @@ parse_port_speed(struct switch_val *val)
 }
 
 static int
+parse_port_fastretrain(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+	switch_ext_p = val->value.ext_val;
+	while(switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if(!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if(!strcmp(ext_value_p->option_name, "port_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "ieee_fr_en")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "cisco_fr_en")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		}  else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
 parse_port_autoadv(struct switch_val *val)
 {
 	struct switch_ext *switch_ext_p, *ext_value_p;
@@ -1625,6 +1655,32 @@ parse_port_autonegenable(struct switch_val *val)
 		} else if(!strcmp(ext_value_p->option_name, "port_id")) {
 			val_ptr[0] = (char*)ext_value_p->option_value;
 		}  else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_port_frtrigger(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+	switch_ext_p = val->value.ext_val;
+	while(switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if(!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if(!strcmp(ext_value_p->option_name, "port_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else {
 			rv = -1;
 			break;
 		}
@@ -13160,6 +13216,10 @@ parse_port(const char *command_name, struct switch_val *val)
 		rv = parse_port_duplex(val);
 	} else if(!strcmp(command_name, "Speed")) {
 		rv = parse_port_speed(val);
+	} else if(!strcmp(command_name, "Frcfg")) {
+		rv = parse_port_fastretrain(val);
+	} else if(!strcmp(command_name, "Frtrigger")) {
+		rv = parse_port_frtrigger(val);
 	} else if(!strcmp(command_name, "AutoAdv")) {
 		rv = parse_port_autoadv(val);
 	} else if(!strcmp(command_name, "AutoNegEnable")) {
