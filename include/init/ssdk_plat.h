@@ -466,6 +466,7 @@ struct qca_phy_priv {
 	} ppe_acl_lock;
 	/* indicate HTT switch set up or not in dsa mode */
 	a_bool_t dsa_setup;
+	a_ulong_t core_clk_rate;
 /*qca808x_start*/
 };
 
