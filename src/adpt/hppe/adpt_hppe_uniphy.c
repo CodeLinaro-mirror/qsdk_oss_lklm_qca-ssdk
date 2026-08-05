@@ -432,6 +432,10 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
@@ -585,6 +589,10 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
@@ -758,6 +766,10 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	/* enable 12.5G overspeed when connected to QCE2204 switch via force-link */
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g =
 		__adpt_hppe_uniphy_overspeed_enabled(dev_id, uniphy_index);
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
@@ -899,6 +911,10 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
@@ -1031,6 +1047,10 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
@@ -1142,6 +1162,10 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
@@ -1208,6 +1232,10 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
 #if defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
 #endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
