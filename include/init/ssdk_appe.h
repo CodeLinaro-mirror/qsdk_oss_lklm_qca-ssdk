@@ -19,6 +19,9 @@ sw_error_t qca_appe_portctrl_hw_init(a_uint32_t dev_id);
 sw_error_t qca_appe_shaper_hw_init(a_uint32_t dev_id);
 sw_error_t qca_appe_policer_hw_init(a_uint32_t dev_id);
 sw_error_t qca_appe_rss_hash_hw_init(a_uint32_t dev_id);
+#if defined(IN_PON)
+sw_error_t qca_hmsppe_omci_enq_vp_init(a_uint32_t dev_id, a_uint8_t enq_vp);
+#endif
 
 #define APPE_MAX_C_TOKEN_NUM                0x3fffffff
 #define APPE_MAX_E_TOKEN_NUM                0x3fffffff

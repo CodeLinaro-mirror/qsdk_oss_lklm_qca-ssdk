@@ -2174,30 +2174,12 @@ qca_appe_rss_hash_hw_init(a_uint32_t dev_id)
 #endif
 
 #if defined(IN_PON)
-static sw_error_t
-qca_hmsppe_gemgen_rule_hw_init(a_uint32_t dev_id)
+sw_error_t
+qca_hmsppe_omci_enq_vp_init(a_uint32_t dev_id, a_uint8_t enq_vp)
 {
-	sw_error_t rv = SW_OK;
-	fal_gemport_global_cfg_t glb_cfg = {0};
+	sw_error_t rv;
 	fal_gemport_gen_t gempt_rule = {0};
 	fal_gemport_cfg_t gempt_cfg = {0};
-	fal_gemport_map_t map_entry = {0};
-	int i;
-
-	glb_cfg.gen_miss_pon_port = PON_PORT_ID;
-	rv = fal_pon_gemport_global_set(dev_id, &glb_cfg);
-	if (rv != SW_OK) {
-		SSDK_ERROR("gemport rule mismatch check pon port set failed.\n");
-		return rv;
-	}
-
-#if defined(IN_QM)
-	rv = fal_qm_mcast_enqueue_ctrl_set(dev_id, PON_PORT_ID, A_TRUE);
-	if (rv != SW_OK) {
-		SSDK_ERROR("Pon port enable ucast enqueue for mcast traffic failed.\n");
-		return rv;
-	}
-#endif
 
 	gempt_rule.dest_info_valid = A_TRUE;
 	gempt_rule.dest_info.dest_info_type = FAL_DEST_INFO_PORT_ID;
@@ -2220,12 +2202,22 @@ qca_hmsppe_gemgen_rule_hw_init(a_uint32_t dev_id)
 	}
 
 	gempt_cfg.enq_vp_en = A_TRUE;
-	gempt_cfg.enq_vp = OMCI_CTRL_PKT_ENQ_VP;
+	gempt_cfg.enq_vp = enq_vp;
 	rv = fal_pon_gemport_cfg_set(dev_id, gempt_rule.gemport, &gempt_cfg);
 	if (rv != SW_OK) {
 		SSDK_ERROR("gemport-%#x enqueue vp-%#x cfg failed.", gempt_rule.gemport, gempt_cfg.enq_vp);
 		return rv;
 	}
+
+	return SW_OK;
+}
+
+static sw_error_t
+qca_hmsppe_gemgen_rule_hw_init(a_uint32_t dev_id)
+{
+	sw_error_t rv;
+	fal_gemport_map_t map_entry = {0};
+	int i;
 
 	/* The GEM port mapping table in hardware has random initial values and
 	 * can't be cleared by the PPE reset, so explicitly write a zero-initialized
@@ -2332,5 +2324,6 @@ sw_error_t qca_appe_hw_init(a_uint32_t dev_id)
 	rv = qca_hmsppe_gemgen_rule_hw_init(dev_id);
 	SW_RTN_ON_ERROR(rv);
 #endif
+
 	return rv;
 }

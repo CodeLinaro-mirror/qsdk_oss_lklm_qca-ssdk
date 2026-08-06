@@ -16,6 +16,7 @@
 #ifdef IN_LED
 #include "ssdk_led.h"
 #endif
+#include "ssdk_appe.h"
 
 #if defined(IN_VSI)
 sw_error_t qca_hppe_vsi_hw_init(a_uint32_t dev_id)
@@ -575,6 +576,11 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 							 pon_port_qbase,
 							 SSDK_PHYSICAL_PORT6);
 			fal_qm_enqueue_ctrl_set(dev_id, pon_port_qbase, A_FALSE);
+
+#if defined(IN_PON)
+			fal_qm_mcast_enqueue_ctrl_set(dev_id, PON_PORT_ID, A_TRUE);
+			qca_hmsppe_omci_enq_vp_init(dev_id, vport);
+#endif
 
 			/* Assign the virtual ports starting from 128 with the queues of PON port 6 */
 			qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT6);
