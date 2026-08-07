@@ -2606,7 +2606,9 @@ adpt_jhppe_uniphy_25g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
 		UNIPHY_XPCS_MODE_DISABLE;
 	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if !defined(HMSPPE)
 	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = true;
+#endif
 	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 
 	/* configure uniphy gcc software reset */

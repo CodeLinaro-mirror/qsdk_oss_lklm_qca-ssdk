@@ -102,6 +102,7 @@ extern "C" {
 #define UNIPHY_FORCE_SPEED_ENABLE                          0x1
 #define UNIPHY_1000BASE_X_MODE                             0x0
 #define UNIPHY_SGMII_MAC_MODE                              0x2
+#define UNIPHY_PON_MODE_DISABLE                            0x0
 
 #define SGMII_1000M_SOURCE1_CLOCK1                         0x101
 #define SGMII_100M_SOURCE1_CLOCK1                          0x109

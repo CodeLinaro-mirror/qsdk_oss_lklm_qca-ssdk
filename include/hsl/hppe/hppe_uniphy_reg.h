@@ -160,12 +160,15 @@ struct uniphy_mode_ctrl {
 	a_uint32_t  newaddedfromhere_sgplus_mode:1;
 	a_uint32_t  newaddedfromhere_xpcs_mode:1;
 	a_uint32_t  newaddedfromhere_usxg_en:1;
-#if defined(JHPPE)
+#if defined(HMSPPE)
+	a_uint32_t  newaddedfromhere_pon_mode:2;
+#elif defined(JHPPE)
 	a_uint32_t  newaddedfromhere_xlgpcs_en:1;
+	a_uint32_t  newaddedfromhere_sw_v17_v18:1;
 #else
 	a_uint32_t  _reserved1:1;
-#endif
 	a_uint32_t  newaddedfromhere_sw_v17_v18:1;
+#endif
 	a_uint32_t  _reserved2:16;
 };
 
