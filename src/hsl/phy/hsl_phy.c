@@ -789,6 +789,9 @@ a_uint32_t hsl_port_mode_to_uniphy_mode(a_uint32_t dev_id,
 		case PORT_XGSPON:
 			uniphy_mode = PORT_WRAPPER_XGSPON;
 			break;
+		case PORT_25GBASE_R:
+			uniphy_mode = PORT_WRAPPER_25GBASE_R;
+			break;
 		default:
 			break;
 	}
@@ -844,6 +847,9 @@ a_uint32_t hsl_uniphy_mode_to_port_mode(a_uint32_t dev_id, a_uint32_t port_id,
 			break;
 		case PORT_WRAPPER_XGSPON:
 			port_mode = PORT_XGSPON;
+			break;
+		case PORT_WRAPPER_25GBASE_R:
+			port_mode = PORT_25GBASE_R;
 			break;
 		case PORT_WRAPPER_MAX:
 			port_mode = PORT_INTERFACE_MODE_MAX;

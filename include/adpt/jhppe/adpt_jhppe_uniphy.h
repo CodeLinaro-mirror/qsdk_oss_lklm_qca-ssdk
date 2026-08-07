@@ -38,6 +38,9 @@ adpt_jhppe_uniphy_fec_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_uint32_t
 
 sw_error_t
 adpt_jhppe_uniphy_25gr_status_check(a_uint32_t dev_id, a_uint32_t uniphy_index, a_bool_t *status);
+
+sw_error_t
+adpt_jhppe_uniphy_xlgpcs_soft_reset(a_uint32_t dev_id, a_uint32_t uniphy_index);
 #ifdef __cplusplus
 }
 #endif
