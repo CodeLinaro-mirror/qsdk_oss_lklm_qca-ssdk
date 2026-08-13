@@ -10,9 +10,6 @@
 #include "sw.h"
 #include "adpt.h"
 #include "ssdk_clk.h"
-#include "hppe_init.h"
-#include "hppe_uniphy_reg.h"
-#include "hppe_uniphy.h"
 #include "jhppe_uniphy_reg.h"
 #include "jhppe_uniphy.h"
 #include "adpt_hppe_uniphy.h"
@@ -2580,7 +2577,6 @@ adpt_jhppe_uniphy_calibrate(a_uint32_t dev_id, a_uint32_t uniphy_index)
 sw_error_t
 adpt_jhppe_uniphy_25g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
 	sw_error_t rv;
 
 	/* PMA init setting */
@@ -2594,23 +2590,8 @@ adpt_jhppe_uniphy_25g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	adpt_jhppe_gcc_uniphy_xlgpcs_reset(dev_id, uniphy_index, A_TRUE);
 
 	/* configure uniphy to 25G-R/XLGPCS mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if !defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = true;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
-
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+					 PORT_WRAPPER_25GBASE_R, SSDK_UNIPHY_CHANNEL0);
 	/* configure uniphy gcc software reset */
 	__adpt_ppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
 

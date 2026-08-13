@@ -52,6 +52,9 @@ a_bool_t
 adpt_hppe_uniphy_xpcs_eee_support(a_uint32_t dev_id, a_uint32_t uniphy_index);
 void
 __adpt_hppe_gcc_uniphy_xpcs_reset(a_uint32_t dev_id, a_uint32_t uniphy_index, a_bool_t enable);
+void
+__adpt_hppe_uniphy_mode_ctrl_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
+				 a_uint32_t mode, a_uint32_t channel);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

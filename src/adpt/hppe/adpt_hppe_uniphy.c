@@ -367,13 +367,143 @@ __adpt_hppe_uniphy_xpcs_eee_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	return rv;
 }
 
+#if defined(JHPPE)
+static bool
+__adpt_hppe_uniphy_overspeed_enabled(a_uint32_t dev_id, a_uint32_t uniphy_index)
+{
+	ssdk_netdev_switch_t *sw;
+	a_uint32_t port_id;
+
+	port_id = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index, SSDK_UNIPHY_CHANNEL0);
+
+	sw = ssdk_dts_netdev_switch_find(port_id);
+	if (!sw || !sw->switch_node)
+		return false;
+
+	/* overspeed is enabled when QCE2204 switch is connected */
+	return of_device_is_compatible(sw->switch_node, "qcom,ess-switch-qce22xx");
+}
+#endif
+
+void __adpt_hppe_uniphy_mode_ctrl_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
+				      a_uint32_t mode, a_uint32_t channel)
+{
+	union uniphy_mode_ctrl_u uniphy_mode_ctrl = {0};
+	a_uint32_t ssdk_port = 0;
+
+	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
+
+	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii = UNIPHY_CH0_QSGMII_SGMII_MODE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii = UNIPHY_CH0_SGMII_MODE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode = UNIPHY_SGMII_MODE_DISABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode = UNIPHY_SGMIIPLUS_MODE_DISABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode = UNIPHY_XPCS_MODE_DISABLE;
+	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
+#if defined(JHPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
+#endif
+#if defined(HMSPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
+#elif defined(JHPPE)
+	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
+#endif
+
+	switch (mode) {
+	case PORT_WRAPPER_10GBASE_R:
+#if defined(JHPPE)
+		/* enable 12.5G overspeed when connected to QCE2204 switch via force-link */
+		uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g =
+			__adpt_hppe_uniphy_overspeed_enabled(dev_id, uniphy_index);
+		fallthrough;
+#endif
+	case PORT_WRAPPER_UQXGMII:
+	case PORT_WRAPPER_USXGMII:
+		uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode = UNIPHY_XPCS_MODE_ENABLE;
+		break;
+	case PORT_WRAPPER_PSGMII:
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode = UNIPHY_ATHEROS_NEGOTIATION;
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii = UNIPHY_CH0_PSGMII_MODE;
+		break;
+	case PORT_WRAPPER_QSGMII:
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode = UNIPHY_ATHEROS_NEGOTIATION;
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii = UNIPHY_CH0_QSGMII_MODE;
+		break;
+	case PORT_WRAPPER_SGMII_CHANNEL0:
+		ssdk_port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index, channel);
+		if ((A_TRUE == hsl_port_is_sfp(dev_id, ssdk_port)) &&
+			(A_TRUE != hsl_port_feature_get(dev_id, ssdk_port, PHY_F_SFP_SGMII))) {
+			uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m =
+				UNIPHY_1000BASE_X_MODE;
+			SSDK_DEBUG("port_id %d is a fiber port!\n", ssdk_port);
+		} else {
+			uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m =
+				UNIPHY_SGMII_MAC_MODE;
+			SSDK_DEBUG("port_id %d is a sfp sgmii or phy port!\n", ssdk_port);
+		}
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode = UNIPHY_ATHEROS_NEGOTIATION;
+		if((adpt_chip_type_get(dev_id) == CHIP_HPPE ||
+			adpt_ppe_type_get(dev_id) == APPE_TYPE)
+			&& uniphy_index == SSDK_UNIPHY_INSTANCE0) {
+			uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode = UNIPHY_SGMII_MODE_DISABLE;
+			/* select channel as a sgmii interface */
+			if (channel == SSDK_UNIPHY_CHANNEL0) {
+				uniphy_mode_ctrl.bf.newaddedfromhere_ch1_ch0_sgmii =
+					UNIPHY_SGMII_CHANNEL1_DISABLE;
+				uniphy_mode_ctrl.bf.newaddedfromhere_ch4_ch1_0_sgmii =
+					UNIPHY_SGMII_CHANNEL4_DISABLE;
+			} else if (channel == SSDK_UNIPHY_CHANNEL1) {
+				uniphy_mode_ctrl.bf.newaddedfromhere_ch1_ch0_sgmii =
+					UNIPHY_SGMII_CHANNEL1_ENABLE;
+				uniphy_mode_ctrl.bf.newaddedfromhere_ch4_ch1_0_sgmii =
+					UNIPHY_SGMII_CHANNEL4_DISABLE;
+			} else if (channel == SSDK_UNIPHY_CHANNEL4) {
+				uniphy_mode_ctrl.bf.newaddedfromhere_ch1_ch0_sgmii =
+					UNIPHY_SGMII_CHANNEL1_DISABLE;
+				uniphy_mode_ctrl.bf.newaddedfromhere_ch4_ch1_0_sgmii =
+					UNIPHY_SGMII_CHANNEL4_ENABLE;
+			}
+		} else {
+			uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode = UNIPHY_SGMII_MODE_ENABLE;
+		}
+		break;
+	case PORT_WRAPPER_SGMII_PLUS:
+		ssdk_port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
+					SSDK_UNIPHY_CHANNEL0);
+		if (A_TRUE == hsl_port_is_sfp(dev_id, ssdk_port)) {
+			uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m =
+				UNIPHY_SGMII_MAC_MODE;
+			SSDK_DEBUG("uniphy %d is a sgmiiplus fiber port!\n", uniphy_index);
+		}
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode = UNIPHY_ATHEROS_NEGOTIATION;
+		if((adpt_chip_type_get(dev_id) == CHIP_HPPE ||
+			adpt_ppe_type_get(dev_id) == APPE_TYPE)
+			&& uniphy_index == SSDK_UNIPHY_INSTANCE0) {
+			uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
+				UNIPHY_SGMIIPLUS_MODE_DISABLE;
+		} else {
+			uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
+				UNIPHY_SGMIIPLUS_MODE_ENABLE;
+		}
+		break;
+#if defined(JHPPE) && !defined(HMSPPE)
+	case PORT_WRAPPER_25GBASE_R:
+		uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = true;
+		break;
+#endif
+	default:
+		SSDK_ERROR("uniphy %d do not support mode %d\n", uniphy_index, mode);
+		return;
+	}
+
+	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
+}
+
 static sw_error_t
 __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	a_uint32_t mode)
 {
 	a_uint32_t i = 0;
 
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
 	union vr_xs_pcs_dig_ctrl1_u vr_xs_pcs_dig_ctrl1;
 	union vr_mii_an_ctrl_u vr_mii_an_ctrl;
 	union sr_mii_ctrl_u sr_mii_ctrl;
@@ -382,7 +512,6 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	union vr_xs_pcs_dig_sts_u vr_xs_pcs_dig_sts;
 	union qp_usxg_opiton1_u qp_usxg_opiton1;
 
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	memset(&vr_xs_pcs_dig_ctrl1, 0, sizeof(vr_xs_pcs_dig_ctrl1));
 	memset(&vr_mii_an_ctrl, 0, sizeof(vr_mii_an_ctrl));
 	memset(&sr_mii_ctrl, 0, sizeof(sr_mii_ctrl));
@@ -418,27 +547,8 @@ __adpt_hppe_uniphy_uxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
 	/* configure uniphy to usxgmii mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_ENABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_UQXGMII, SSDK_UNIPHY_CHANNEL0);
 
 	hppe_qp_usxg_opiton1_get(dev_id, uniphy_index, &qp_usxg_opiton1);
 	qp_usxg_opiton1.bf.gmii_src_sel = 0x1;
@@ -538,13 +648,11 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	sw_error_t rv = SW_OK;
 	a_uint32_t ssdk_port = 0;
 
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
 	union vr_xs_pcs_dig_ctrl1_u vr_xs_pcs_dig_ctrl1;
 	union vr_mii_an_ctrl_u vr_mii_an_ctrl;
 	union sr_mii_ctrl_u sr_mii_ctrl;
 	union uniphy_instance_link_detect_u uniphy_instance_link_detect;
 
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	memset(&vr_xs_pcs_dig_ctrl1, 0, sizeof(vr_xs_pcs_dig_ctrl1));
 	memset(&vr_mii_an_ctrl, 0, sizeof(vr_mii_an_ctrl));
 	memset(&sr_mii_ctrl, 0, sizeof(sr_mii_ctrl));
@@ -575,27 +683,8 @@ __adpt_hppe_uniphy_usxgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
 	/* configure uniphy to usxgmii mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_ENABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_USXGMII, SSDK_UNIPHY_CHANNEL0);
 
 	ssdk_port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
 		SSDK_UNIPHY_CHANNEL0);
@@ -705,34 +794,13 @@ __adpt_hppe_uniphy_rxlos_sel(a_uint32_t dev_id, a_uint32_t uniphy_index)
 }
 #endif
 
-#if defined(JHPPE)
-static bool
-__adpt_hppe_uniphy_overspeed_enabled(a_uint32_t dev_id, a_uint32_t uniphy_index)
-{
-	ssdk_netdev_switch_t *sw;
-	a_uint32_t port_id;
-
-	port_id = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
-					       SSDK_UNIPHY_CHANNEL0);
-
-	sw = ssdk_dts_netdev_switch_find(port_id);
-	if (!sw || !sw->switch_node)
-		return false;
-
-	/* overspeed is enabled when QCE2204 switch is connected */
-	return of_device_is_compatible(sw->switch_node, "qcom,ess-switch-qce22xx");
-}
-#endif
-
 static sw_error_t
 __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
 	sw_error_t rv = SW_OK;
 
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
 	union uniphy_instance_link_detect_u uniphy_instance_link_detect;
 
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	memset(&uniphy_instance_link_detect, 0, sizeof(uniphy_instance_link_detect));
 	ADPT_DEV_ID_CHECK(dev_id);
 
@@ -749,30 +817,9 @@ __adpt_hppe_uniphy_10g_r_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 				1, A_FALSE);
 
 	/* configure uniphy to 10g_r mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_10GBASE_R, SSDK_UNIPHY_CHANNEL0);
 
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_ENABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	/* enable 12.5G overspeed when connected to QCE2204 switch via force-link */
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g =
-		__adpt_hppe_uniphy_overspeed_enabled(dev_id, uniphy_index);
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
 	if(__adpt_hppe_uniphy_rxlos_check(dev_id, uniphy_index))
 	{
 #ifdef MRPPE
@@ -828,11 +875,7 @@ static sw_error_t
 __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t ssdk_port = 0;
 
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
-
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is sgmiiplus mode\n", uniphy_index);
@@ -876,48 +919,8 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 				1, A_FALSE);
 
 	/* configure uniphy to Athr mode and sgmiiplus mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
-
-	ssdk_port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index,
-		SSDK_UNIPHY_CHANNEL0);
-	if (A_TRUE == hsl_port_is_sfp(dev_id, ssdk_port)) {
-		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m = 2;
-		SSDK_DEBUG("uniphy %d is a sgmiiplus fiber port!\n", uniphy_index);
-	}
-
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode =
-		UNIPHY_ATHEROS_NEGOTIATION;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_DISABLE;
-	if((adpt_chip_type_get(dev_id) == CHIP_HPPE ||
-		adpt_ppe_type_get(dev_id) == APPE_TYPE)
-		&& uniphy_index == SSDK_UNIPHY_INSTANCE0)
-	{
-		uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-			UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	}
-	else
-	{
-		uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-			UNIPHY_SGMIIPLUS_MODE_ENABLE;
-	}
-
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_SGMII_PLUS, SSDK_UNIPHY_CHANNEL0);
 
 	/* configure uniphy gcc software reset */
 #ifdef MPPE
@@ -945,9 +948,6 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 #ifdef MHT
 	struct phy_device *phydev = NULL;
 #endif
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
-
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is sgmii mode\n", uniphy_index);
@@ -985,76 +985,10 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 			i, A_FALSE);
 	}
 	/* configure uniphy to Athr mode and sgmii mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_SGMII_CHANNEL0, channel);
 
 	ssdk_port = adpt_hppe_port_get_by_uniphy(dev_id, uniphy_index, channel);
-	if ((A_TRUE == hsl_port_is_sfp(dev_id, ssdk_port)) &&
-		(A_TRUE != hsl_port_feature_get(dev_id, ssdk_port, PHY_F_SFP_SGMII))) {
-		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m =
-			UNIPHY_1000BASE_X_MODE;
-		SSDK_DEBUG("port_id %d is a fiber port!\n", ssdk_port);
-	} else {
-		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m =
-			UNIPHY_SGMII_MAC_MODE;
-		SSDK_DEBUG("port_id %d is a sfp sgmii or phy port!\n", ssdk_port);
-	}
-
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode =
-		UNIPHY_ATHEROS_NEGOTIATION;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_DISABLE;
-	if((adpt_chip_type_get(dev_id) == CHIP_HPPE ||
-		adpt_ppe_type_get(dev_id) == APPE_TYPE)
-		&& uniphy_index == SSDK_UNIPHY_INSTANCE0)
-	{
-		uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-			UNIPHY_SGMII_MODE_DISABLE;
-		/* select channel as a sgmii interface */
-		if (channel == SSDK_UNIPHY_CHANNEL0)
-		{
-			uniphy_mode_ctrl.bf.newaddedfromhere_ch1_ch0_sgmii =
-				UNIPHY_SGMII_CHANNEL1_DISABLE;
-			uniphy_mode_ctrl.bf.newaddedfromhere_ch4_ch1_0_sgmii =
-				UNIPHY_SGMII_CHANNEL4_DISABLE;
-		}
-		else if (channel == SSDK_UNIPHY_CHANNEL1)
-		{
-			uniphy_mode_ctrl.bf.newaddedfromhere_ch1_ch0_sgmii =
-				UNIPHY_SGMII_CHANNEL1_ENABLE;
-			uniphy_mode_ctrl.bf.newaddedfromhere_ch4_ch1_0_sgmii =
-				UNIPHY_SGMII_CHANNEL4_DISABLE;
-		}
-		else if (channel == SSDK_UNIPHY_CHANNEL4)
-		{
-			uniphy_mode_ctrl.bf.newaddedfromhere_ch1_ch0_sgmii =
-				UNIPHY_SGMII_CHANNEL1_DISABLE;
-			uniphy_mode_ctrl.bf.newaddedfromhere_ch4_ch1_0_sgmii =
-				UNIPHY_SGMII_CHANNEL4_ENABLE;
-		}
-	}
-	else
-	{
-		uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-			UNIPHY_SGMII_MODE_ENABLE;
-	}
-
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
-
 	force_port = hsl_port_feature_get(dev_id,
 		ssdk_port, PHY_F_FORCE);
 	if (force_port == A_TRUE) {
@@ -1122,9 +1056,6 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	a_uint32_t i;
 	sw_error_t rv = SW_OK;
 
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
-
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	/* configure malibu phy to qsgmii mode*/
@@ -1146,29 +1077,8 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	}
 
 	/* configure uniphy to Athr mode and qsgmii mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode =
-		UNIPHY_ATHEROS_NEGOTIATION;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_QSGMII_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_QSGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_QSGMII, SSDK_UNIPHY_CHANNEL0);
 
 	/* configure uniphy gcc software reset */
 	__adpt_ppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
@@ -1195,9 +1105,6 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	a_uint32_t i;
 	sw_error_t rv = SW_OK;
 
-	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
-
-	memset(&uniphy_mode_ctrl, 0, sizeof(uniphy_mode_ctrl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	SSDK_DEBUG("uniphy %d is psgmii mode\n", uniphy_index);
@@ -1216,29 +1123,8 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 			i, A_FALSE);
 	}
 	/* configure uniphy to Athr mode and psgmii mode */
-	hppe_uniphy_mode_ctrl_get(dev_id, uniphy_index, &uniphy_mode_ctrl);
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_autoneg_mode =
-		UNIPHY_ATHEROS_NEGOTIATION;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii =
-		UNIPHY_CH0_PSGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii =
-		UNIPHY_CH0_SGMII_MODE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sg_mode =
-		UNIPHY_SGMII_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_sgplus_mode =
-		UNIPHY_SGMIIPLUS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode =
-		UNIPHY_XPCS_MODE_DISABLE;
-	uniphy_mode_ctrl.bf.newaddedfromhere_usxg_en = false;
-#if defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xpcs_mode_12p5g = false;
-#endif
-#if defined(HMSPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_pon_mode = UNIPHY_PON_MODE_DISABLE;
-#elif defined(JHPPE)
-	uniphy_mode_ctrl.bf.newaddedfromhere_xlgpcs_en = false;
-#endif
-	hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index, &uniphy_mode_ctrl);
+	__adpt_hppe_uniphy_mode_ctrl_set(dev_id, uniphy_index,
+			PORT_WRAPPER_PSGMII, SSDK_UNIPHY_CHANNEL0);
 
 	/* configure uniphy gcc software reset */
 	__adpt_ppe_gcc_uniphy_software_reset(dev_id, uniphy_index);
