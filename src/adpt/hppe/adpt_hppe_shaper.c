@@ -44,6 +44,37 @@ static a_uint32_t hppe_shaper_token_unit[NR_ADPT_HPPE_SHAPER_METER_UNIT]
 	512 * 8,128 * 8,32 * 8,8 * 8,2 * 8, 4, 1},
 	{2097152,524288,131072,32768,8192,2048,512,128}};
 
+/* Returns A_TRUE if chip has E shaper limitation (must force C-path only).
+ * JHPPE: only rev 1.0 requires C-path only; rev 2.0+ supports E-shaper.
+ * HMSPPE: only rev 1.0 requires C-path only; rev 1.1/1.2+ supports E-shaper.
+ * Any unknown revision is assumed E-shaper capable (safe default for newer silicon).
+ */
+static a_bool_t __adpt_ppe_eshaper_disable_required(a_uint32_t dev_id)
+{
+	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
+	a_uint32_t rev = adpt_chip_revision_get(dev_id);
+
+	if (ppe_type == CHIP_JHPPE) {
+		/* rev==0 means uninitialized; treat as 1.0 (safe/conservative) */
+		if (rev == 0 || rev == JHPPE_CHIP_REV_1_0)
+			return A_TRUE;
+		if (rev != JHPPE_CHIP_REV_2_0)
+			SSDK_WARN("JHPPE: unknown revision 0x%04x, assuming E-shaper capable\n", rev);
+		return A_FALSE;
+	}
+
+	if (ppe_type == CHIP_HMSPPE) {
+		/* rev==0 means uninitialized; treat as 1.0 (safe/conservative) */
+		if (rev == 0 || rev == HMSPPE_CHIP_REV_1_0)
+			return A_TRUE;
+		if (rev != HMSPPE_CHIP_REV_1_1 && rev != HMSPPE_CHIP_REV_1_2)
+			SSDK_WARN("HMSPPE: unknown revision 0x%04x, assuming E-shaper capable\n", rev);
+		return A_FALSE;
+	}
+
+	return A_FALSE;
+}
+
 /* Helper function to get per-device shaper private data */
 static inline ssdk_ppe_shaper_priv_t *
 __adpt_ppe_shaper_priv_get(a_uint32_t dev_id)
@@ -999,7 +1030,6 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	fal_shaper_token_number_t token_number;
 	a_uint64_t temp_cir_max = 0, temp_eir_max =0;
 	a_uint32_t hppe_cir_max = 0, hppe_eir_max= 0;
-	a_uint32_t ppe_type = adpt_chip_type_get(dev_id);
 	a_uint32_t byte_max_rate  = __adpt_ppe_shaper_byte_max_rate_get(dev_id);
 	a_uint32_t frame_max_rate = __adpt_ppe_shaper_frame_max_rate_get(dev_id);
 
@@ -1131,8 +1161,8 @@ adpt_hppe_flow_shaper_set(a_uint32_t dev_id, a_uint32_t flow_id,
 	l1_shp_cfg_tbl.bf.c_shaper_enable = shaper->c_shaper_en;
 	l1_shp_cfg_tbl.bf.cbs = hppe_cbs;
 	l1_shp_cfg_tbl.bf.cir = hppe_cir;
-	/* HMSPPE/JHPPE: force C-path only; HTTPPE allows E-shaper on all flow IDs */
-	if ((ppe_type == CHIP_HMSPPE) || (ppe_type == CHIP_JHPPE)) {
+	/* HMSPPE 1.0 / JHPPE 1.0: force C-path only; 1.1/1.2 and 2.0 support E-shaper */
+	if (__adpt_ppe_eshaper_disable_required(dev_id)) {
 		if (hppe_cir == 0) {
 			l1_shp_cfg_tbl.bf.cir = hppe_eir & 0x3ffff;
 			hppe_cir_max = hppe_eir_max & 0x3ffff;
@@ -1531,8 +1561,8 @@ adpt_hppe_queue_shaper_set(a_uint32_t dev_id,a_uint32_t queue_id,
 	l0_shp_cfg_tbl.bf.c_shaper_enable = shaper->c_shaper_en;
 	l0_shp_cfg_tbl.bf.cbs = hppe_cbs;
 	l0_shp_cfg_tbl.bf.cir = hppe_cir;
-	/* HMSPPE/JHPPE and HTTPPE multicast queues (256-299): force C-path only */
-	if ((ppe_type == CHIP_HMSPPE) || (ppe_type == CHIP_JHPPE) ||
+	/* HMSPPE 1.0 / JHPPE 1.0 and HTTPPE multicast queues (256-299): force C-path only */
+	if (__adpt_ppe_eshaper_disable_required(dev_id) ||
 		((ppe_type == CHIP_HTTPPE) && (queue_id >= SSDK_L0SCHEDULER_UCASTQ_CFG_MAX))) {
 		if (hppe_cir == 0) {
 			l0_shp_cfg_tbl.bf.cir = hppe_eir & 0x3ffff;
