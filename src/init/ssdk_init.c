@@ -2038,6 +2038,46 @@ static int chip_is_scomphy(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 	return rv;
 }
 
+#if defined(JHPPE) || defined(HMSPPE)
+/**
+ * ssdk_tcsr_soc_hw_version_get - Read chip revision from TCSR SOC HW VERSION.
+ * Valid only on IPQ96xx (JHPPE) and IPQ52xx (HMSPPE) SoCs.
+ * Returns encoded revision 0xMMmm, or 0 on failure.
+ * Result is cached after the first successful read.
+ */
+static a_uint32_t ssdk_tcsr_soc_hw_version_get(void)
+{
+	static a_uint32_t cached_revision = 0;
+	static a_bool_t cached = A_FALSE;
+	void __iomem *tcsr_base;
+	a_uint32_t val;
+
+	if (cached)
+		return cached_revision;
+
+	tcsr_base = ioremap(TCSR_SOC_HW_VERSION_PHYS, TCSR_SOC_HW_VERSION_SIZE);
+	if (!tcsr_base) {
+		SSDK_ERROR("ioremap failed for TCSR_SOC_HW_VERSION 0x%x\n",
+			   TCSR_SOC_HW_VERSION_PHYS);
+		return 0;
+	}
+
+	val = readl(tcsr_base);
+	iounmap(tcsr_base);
+
+	cached_revision = TCSR_SOC_CHIP_REVISION(val);
+	cached = A_TRUE;
+
+	SSDK_INFO("TCSR_SOC_HW_VERSION: reg=0x%08x major=%d minor=%d revision=0x%04x\n",
+		  val,
+		  TCSR_SOC_VERSION_MAJOR(val),
+		  TCSR_SOC_VERSION_MINOR(val),
+		  cached_revision);
+
+	return cached_revision;
+}
+#endif
+
 static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 {
 	int rv = SW_OK;
@@ -2096,9 +2136,15 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 			break;
 		case QCA_VER_JHPPE:
 			cfg->chip_type = CHIP_JHPPE;
+#if defined(JHPPE)
+			cfg->chip_revision = ssdk_tcsr_soc_hw_version_get();
+#endif
 			break;
 		case QCA_VER_HMSPPE:
 			cfg->chip_type = CHIP_HMSPPE;
+#if defined(HMSPPE)
+			cfg->chip_revision = ssdk_tcsr_soc_hw_version_get();
+#endif
 			break;
 		case QCA_VER_HTTPPE:
 			cfg->chip_type = CHIP_HTTPPE;

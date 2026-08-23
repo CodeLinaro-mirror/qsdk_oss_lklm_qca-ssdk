@@ -198,6 +198,28 @@ enum {
 	QCA_VER_SCOMPHY = 0xEE
 };
 /*qca808x_end*/
+
+/* TCSR SOC HW version register — physical address */
+#define TCSR_SOC_HW_VERSION_PHYS      0x0194D000
+#define TCSR_SOC_HW_VERSION_SIZE      0x4
+
+/* bits[15:8] = major version, bits[7:0] = minor version */
+#define TCSR_SOC_VERSION_MAJOR(val)   (((val) & 0x0000ff00) >> 8)
+#define TCSR_SOC_VERSION_MINOR(val)   ((val) & 0x000000ff)
+
+/* encode major/minor into single revision value 0xMMmm */
+#define TCSR_SOC_CHIP_REVISION(val)   ((TCSR_SOC_VERSION_MAJOR(val) << 8) | \
+                                        TCSR_SOC_VERSION_MINOR(val))
+
+/* Juhu (IPQ96xx) chip revisions */
+#define JHPPE_CHIP_REV_1_0            0x0100
+#define JHPPE_CHIP_REV_2_0            0x0200
+
+/* Hermosa (IPQ52xx) chip revisions */
+#define HMSPPE_CHIP_REV_1_0           0x0100
+#define HMSPPE_CHIP_REV_1_1           0x0101
+#define HMSPPE_CHIP_REV_1_2           0x0102
+
 /*poll mib per 120secs*/
 #define QCA_PHY_MIB_WORK_DELAY	120000
 #define QCA_MIB_ITEM_NUMBER \
