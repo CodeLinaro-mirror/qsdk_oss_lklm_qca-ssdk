@@ -176,6 +176,22 @@ hppe_l0_flow_port_map_tbl_port_num_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+#define RFC_BLOCK_TBL_MAX_ENTRY	RFC_BLOCK_TBL_NUM
+
+sw_error_t
+hppe_rfc_block_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union rfc_block_tbl_u *value);
+
+#define RFC_STATUS_TBL_MAX_ENTRY	RFC_STATUS_TBL_NUM
+
+sw_error_t
+hppe_rfc_status_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union rfc_status_tbl_u *value);
+
 #define DEQ_DIS_TBL_MAX_ENTRY	DEQ_DIS_TBL_NUM
 
 sw_error_t

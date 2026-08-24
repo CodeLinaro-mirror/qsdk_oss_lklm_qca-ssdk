@@ -124,6 +124,52 @@ union l0_flow_port_map_tbl_u {
 	struct l0_flow_port_map_tbl bf;
 };
 
+/*[table] RFC_BLOCK_TBL*/
+#define RFC_BLOCK_TBL
+#define RFC_BLOCK_TBL_ADDRESS 0x2c000
+#define RFC_BLOCK_TBL_NUM     300
+#define RFC_BLOCK_TBL_INC     0x10
+#define RFC_BLOCK_TBL_TYPE    REG_TYPE_RO
+#define RFC_BLOCK_TBL_DEFAULT 0x0
+	/*[field] RFC_BLOCK*/
+	#define RFC_BLOCK_TBL_RFC_BLOCK
+	#define RFC_BLOCK_TBL_RFC_BLOCK_OFFSET  0
+	#define RFC_BLOCK_TBL_RFC_BLOCK_LEN     1
+	#define RFC_BLOCK_TBL_RFC_BLOCK_DEFAULT 0x0
+
+struct rfc_block_tbl {
+	a_uint32_t  rfc_block:1;
+	a_uint32_t  _reserved0:31;
+};
+
+union rfc_block_tbl_u {
+	a_uint32_t val;
+	struct rfc_block_tbl bf;
+};
+
+/*[table] RFC_STATUS_TBL*/
+#define RFC_STATUS_TBL
+#define RFC_STATUS_TBL_ADDRESS 0x2e000
+#define RFC_STATUS_TBL_NUM     300
+#define RFC_STATUS_TBL_INC     0x10
+#define RFC_STATUS_TBL_TYPE    REG_TYPE_RO
+#define RFC_STATUS_TBL_DEFAULT 0x0
+	/*[field] RFC_STATUS*/
+	#define RFC_STATUS_TBL_RFC_STATUS
+	#define RFC_STATUS_TBL_RFC_STATUS_OFFSET  0
+	#define RFC_STATUS_TBL_RFC_STATUS_LEN     1
+	#define RFC_STATUS_TBL_RFC_STATUS_DEFAULT 0x0
+
+struct rfc_status_tbl {
+	a_uint32_t  rfc_status:1;
+	a_uint32_t  _reserved0:31;
+};
+
+union rfc_status_tbl_u {
+	a_uint32_t val;
+	struct rfc_status_tbl bf;
+};
+
 /*[table] DEQ_DIS_TBL*/
 #define DEQ_DIS_TBL
 #define DEQ_DIS_TBL_ADDRESS 0x30000

@@ -136,6 +136,8 @@ typedef struct {
 	a_uint64_t drop_bytes[FAL_QM_DROP_ITEMS];
 	a_uint32_t ddrq_packets;
 	a_uint64_t ddrq_bytes;
+	a_uint32_t rfc_block;
+	a_uint32_t rfc_status;
 } fal_queue_stats_t;
 
 typedef enum {

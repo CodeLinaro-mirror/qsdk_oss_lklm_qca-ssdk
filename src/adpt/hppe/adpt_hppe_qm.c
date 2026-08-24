@@ -1291,6 +1291,8 @@ adpt_hppe_queue_counter_get(a_uint32_t dev_id, a_uint32_t queue_id, fal_queue_st
 	union queue_tx_counter_tbl_u tx_cnt;
 	union ac_mul_queue_cnt_tbl_u mul_cnt;
 	union ac_uni_queue_cnt_tbl_u uni_cnt;
+	union rfc_block_tbl_u rfc_block;
+	union rfc_status_tbl_u rfc_status;
 	a_uint32_t i = 0;
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -1336,6 +1338,16 @@ adpt_hppe_queue_counter_get(a_uint32_t dev_id, a_uint32_t queue_id, fal_queue_st
 		SW_RTN_ON_ERROR(rv);
 #endif
 	}
+
+	rv = hppe_rfc_block_tbl_get(dev_id, queue_id, &rfc_block);
+	if( rv != SW_OK )
+		return rv;
+	rv = hppe_rfc_status_tbl_get(dev_id, queue_id, &rfc_status);
+	if( rv != SW_OK )
+		return rv;
+	info->rfc_block = rfc_block.bf.rfc_block;
+	info->rfc_status = rfc_status.bf.rfc_status;
+
 	info->tx_packets = tx_cnt.bf.tx_packets;
 	info->tx_bytes = (a_uint64_t)tx_cnt.bf.tx_bytes_0 | (a_uint64_t)tx_cnt.bf.tx_bytes_1 << 32;
 

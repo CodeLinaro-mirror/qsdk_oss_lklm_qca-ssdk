@@ -212,6 +212,36 @@ hppe_ring_q_map_tbl_set(
 }
 
 sw_error_t
+hppe_rfc_block_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union rfc_block_tbl_u *value)
+{
+	if (index >= RFC_BLOCK_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + RFC_BLOCK_TBL_ADDRESS + \
+				index * RFC_BLOCK_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
+hppe_rfc_status_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union rfc_status_tbl_u *value)
+{
+	if (index >= RFC_STATUS_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				TRAFFIC_MANAGER_BASE_ADDR + RFC_STATUS_TBL_ADDRESS + \
+				index * RFC_STATUS_TBL_INC,
+				&value->val);
+}
+
+sw_error_t
 hppe_deq_dis_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,
