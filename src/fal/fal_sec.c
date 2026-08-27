@@ -39,10 +39,12 @@ sw_error_t fal_sec_tunnel_l3_excep_parser_ctrl_set(a_uint32_t dev_id, fal_l3_exc
 
 sw_error_t fal_sec_tunnel_l3_excep_parser_ctrl_get(a_uint32_t dev_id, fal_l3_excep_parser_ctrl *ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(sec_tunnel_l3_excep_parser_ctrl_get, dev_id, ctrl)
+#endif
 
 sw_error_t fal_sec_tunnel_l4_excep_parser_ctrl_set(a_uint32_t dev_id, fal_l4_excep_parser_ctrl *ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(sec_tunnel_l4_excep_parser_ctrl_set, dev_id, ctrl)
 
+#ifndef IN_SEC_MINI
 sw_error_t fal_sec_tunnel_l4_excep_parser_ctrl_get(a_uint32_t dev_id, fal_l4_excep_parser_ctrl *ctrl)
     DEFINE_FAL_FUNC_ADPT_EXPORT(sec_tunnel_l4_excep_parser_ctrl_get, dev_id, ctrl)
 
