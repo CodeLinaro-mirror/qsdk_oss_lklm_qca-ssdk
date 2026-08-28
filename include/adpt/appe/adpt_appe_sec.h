@@ -27,10 +27,12 @@ adpt_appe_sec_tunnel_l3_excep_parser_ctrl_set(a_uint32_t dev_id, fal_l3_excep_pa
 
 sw_error_t
 adpt_appe_sec_tunnel_l3_excep_parser_ctrl_get(a_uint32_t dev_id, fal_l3_excep_parser_ctrl *ctrl);
+#endif
 
 sw_error_t
 adpt_appe_sec_tunnel_l4_excep_parser_ctrl_set(a_uint32_t dev_id, fal_l4_excep_parser_ctrl *ctrl);
 
+#ifndef IN_SEC_MINI
 sw_error_t
 adpt_appe_sec_tunnel_l4_excep_parser_ctrl_get(a_uint32_t dev_id, fal_l4_excep_parser_ctrl *ctrl);
 

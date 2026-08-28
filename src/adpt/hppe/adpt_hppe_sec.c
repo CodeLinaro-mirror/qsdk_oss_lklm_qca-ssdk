@@ -325,7 +325,9 @@ sw_error_t adpt_hppe_sec_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_sec_tunnel_excep_ctrl_get = adpt_appe_sec_tunnel_excep_ctrl_get;
 	p_adpt_api->adpt_sec_tunnel_l3_excep_parser_ctrl_set = adpt_appe_sec_tunnel_l3_excep_parser_ctrl_set;
 	p_adpt_api->adpt_sec_tunnel_l3_excep_parser_ctrl_get = adpt_appe_sec_tunnel_l3_excep_parser_ctrl_get;
+#endif
 	p_adpt_api->adpt_sec_tunnel_l4_excep_parser_ctrl_set = adpt_appe_sec_tunnel_l4_excep_parser_ctrl_set;
+#ifndef IN_SEC_MINI
 	p_adpt_api->adpt_sec_tunnel_l4_excep_parser_ctrl_get = adpt_appe_sec_tunnel_l4_excep_parser_ctrl_get;
 	p_adpt_api->adpt_sec_tunnel_flags_excep_parser_ctrl_set = adpt_appe_sec_tunnel_flags_excep_parser_ctrl_set;
 	p_adpt_api->adpt_sec_tunnel_flags_excep_parser_ctrl_get = adpt_appe_sec_tunnel_flags_excep_parser_ctrl_get;
