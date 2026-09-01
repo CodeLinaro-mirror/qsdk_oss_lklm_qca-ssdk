@@ -12,6 +12,10 @@
 #include "fal_flow.h"
 #include "adpt.h"
 
+#define FLOW_ENTRY_TYPE_IPV4 0
+#define FLOW_ENTRY_TYPE_IPV6 1
+#define FLOW_TUPLE_TYPE_3    0
+
 sw_error_t adpt_jhppe_flow_key_get(a_uint32_t dev_id,
 				   fal_flow_protocol_type_t key_type,
 				   fal_flow_key_t *flow_key)
@@ -176,6 +180,8 @@ sw_error_t adpt_jhppe_flow_sampling_id_get(a_uint32_t dev_id,
 {
 	sw_error_t rv = SW_OK;
 	union in_flow_tbl_u entry;
+	a_uint32_t op_index;
+	a_bool_t is_ipv6, is_3tuple, is_6tuple;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(sampling_id);
@@ -185,12 +191,75 @@ sw_error_t adpt_jhppe_flow_sampling_id_get(a_uint32_t dev_id,
 
 	aos_mem_zero(&entry, sizeof(entry));
 
-	rv = hppe_in_flow_tbl_get(dev_id, flow_index, &entry);
+	op_index = flow_index;
+	rv = hppe_flow_ipv4_5tuple_get(dev_id, INDEX_MODE,
+					&op_index, &entry);
 	SW_RTN_ON_ERROR(rv);
 
-	*sampling_id = entry.bf.counter_id;
+	is_ipv6 = (entry.bf.entry_type == FLOW_ENTRY_TYPE_IPV6);
+	is_3tuple = (entry.bf.protocol_type == FLOW_TUPLE_TYPE_3);
+	is_6tuple = (entry.bf.protocol_type == FAL_FLOW_NATT ||
+		     entry.bf.protocol_type == FAL_FLOW_KEY_GEN0 ||
+		     entry.bf.protocol_type == FAL_FLOW_KEY_GEN1);
 
-	return rv;
+	if ((is_ipv6 || is_6tuple) && (flow_index & 0x1))
+		return SW_BAD_PARAM;
+
+	if (is_6tuple) {
+		union in_flow_6tuple_tbl_u wide_entry;
+
+		aos_mem_zero(&wide_entry, sizeof(wide_entry));
+
+		op_index = flow_index;
+		rv = jhppe_flow_ip_6tuple_get(dev_id, INDEX_MODE,
+					      &op_index, &wide_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		*sampling_id = wide_entry.bf.counter_id_0;
+		*sampling_id |= wide_entry.bf.counter_id_1 <<
+			SW_FIELD_OFFSET_IN_WORD(IN_FLOW_6TUPLE_TBL_COUNTER_ID_OFFSET);
+	} else if (is_ipv6 && is_3tuple) {
+		union in_flow_ipv6_3tuple_tbl_u wide_entry;
+
+		aos_mem_zero(&wide_entry, sizeof(wide_entry));
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv6_3tuple_get(dev_id, INDEX_MODE,
+						&op_index, &wide_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		*sampling_id = wide_entry.bf.counter_id_0;
+		*sampling_id |= wide_entry.bf.counter_id_1 <<
+			SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_OFFSET);
+	} else if (is_ipv6) {
+		union in_flow_ipv6_5tuple_tbl_u wide_entry;
+
+		aos_mem_zero(&wide_entry, sizeof(wide_entry));
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv6_5tuple_get(dev_id, INDEX_MODE,
+						&op_index, &wide_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		*sampling_id = wide_entry.bf.counter_id_0;
+		*sampling_id |= wide_entry.bf.counter_id_1 <<
+			SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_OFFSET);
+	} else if (is_3tuple) {
+		union in_flow_3tuple_tbl_u narrow_entry;
+
+		aos_mem_zero(&narrow_entry, sizeof(narrow_entry));
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv4_3tuple_get(dev_id, INDEX_MODE,
+						&op_index, &narrow_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		*sampling_id = narrow_entry.bf.counter_id;
+	} else {
+		*sampling_id = entry.bf.counter_id;
+	}
+
+	return SW_OK;
 }
 
 sw_error_t adpt_jhppe_flow_sampling_id_set(a_uint32_t dev_id,
@@ -199,6 +268,8 @@ sw_error_t adpt_jhppe_flow_sampling_id_set(a_uint32_t dev_id,
 {
 	sw_error_t rv = SW_OK;
 	union in_flow_tbl_u entry;
+	a_uint32_t op_index;
+	a_bool_t is_ipv6, is_3tuple, is_6tuple;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
@@ -207,12 +278,95 @@ sw_error_t adpt_jhppe_flow_sampling_id_set(a_uint32_t dev_id,
 
 	aos_mem_zero(&entry, sizeof(entry));
 
-	rv = hppe_in_flow_tbl_get(dev_id, flow_index, &entry);
+	op_index = flow_index;
+	rv = hppe_flow_ipv4_5tuple_get(dev_id, INDEX_MODE,
+					&op_index, &entry);
 	SW_RTN_ON_ERROR(rv);
 
-	entry.bf.counter_id = sampling_id;
+	is_ipv6 = (entry.bf.entry_type == FLOW_ENTRY_TYPE_IPV6);
+	is_3tuple = (entry.bf.protocol_type == FLOW_TUPLE_TYPE_3);
+	is_6tuple = (entry.bf.protocol_type == FAL_FLOW_NATT ||
+		     entry.bf.protocol_type == FAL_FLOW_KEY_GEN0 ||
+		     entry.bf.protocol_type == FAL_FLOW_KEY_GEN1);
 
-	return hppe_in_flow_tbl_set(dev_id, flow_index, &entry);
+	if ((is_ipv6 || is_6tuple) && (flow_index & 0x1))
+		return SW_BAD_PARAM;
+
+	if (is_6tuple) {
+		union in_flow_6tuple_tbl_u wide_entry;
+
+		aos_mem_zero(&wide_entry, sizeof(wide_entry));
+
+		op_index = flow_index;
+		rv = jhppe_flow_ip_6tuple_get(dev_id, INDEX_MODE,
+					      &op_index, &wide_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		wide_entry.bf.counter_id_0 = sampling_id;
+		wide_entry.bf.counter_id_1 = sampling_id >>
+			SW_FIELD_OFFSET_IN_WORD(IN_FLOW_6TUPLE_TBL_COUNTER_ID_OFFSET);
+
+		op_index = flow_index;
+		rv = jhppe_flow_ip_6tuple_add(dev_id, HASH_MODE,
+					      &op_index, &wide_entry);
+	} else if (is_ipv6 && is_3tuple) {
+		union in_flow_ipv6_3tuple_tbl_u wide_entry;
+
+		aos_mem_zero(&wide_entry, sizeof(wide_entry));
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv6_3tuple_get(dev_id, INDEX_MODE,
+						&op_index, &wide_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		wide_entry.bf.counter_id_0 = sampling_id;
+		wide_entry.bf.counter_id_1 = sampling_id >>
+			SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_3TUPLE_TBL_COUNTER_ID_OFFSET);
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv6_3tuple_add(dev_id, HASH_MODE,
+						&op_index, &wide_entry);
+	} else if (is_ipv6) {
+		union in_flow_ipv6_5tuple_tbl_u wide_entry;
+
+		aos_mem_zero(&wide_entry, sizeof(wide_entry));
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv6_5tuple_get(dev_id, INDEX_MODE,
+						&op_index, &wide_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		wide_entry.bf.counter_id_0 = sampling_id;
+		wide_entry.bf.counter_id_1 = sampling_id >>
+			SW_FIELD_OFFSET_IN_WORD(IN_FLOW_IPV6_5TUPLE_TBL_COUNTER_ID_OFFSET);
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv6_5tuple_add(dev_id, HASH_MODE,
+						&op_index, &wide_entry);
+	} else if (is_3tuple) {
+		union in_flow_3tuple_tbl_u narrow_entry;
+
+		aos_mem_zero(&narrow_entry, sizeof(narrow_entry));
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv4_3tuple_get(dev_id, INDEX_MODE,
+						&op_index, &narrow_entry);
+		SW_RTN_ON_ERROR(rv);
+
+		narrow_entry.bf.counter_id = sampling_id;
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv4_3tuple_add(dev_id, HASH_MODE,
+						&op_index, &narrow_entry);
+	} else {
+		entry.bf.counter_id = sampling_id;
+
+		op_index = flow_index;
+		rv = hppe_flow_ipv4_5tuple_add(dev_id, HASH_MODE,
+						&op_index, &entry);
+	}
+
+	return rv;
 }
 
 sw_error_t adpt_jhppe_flow_gro_en_get(a_uint32_t dev_id,
