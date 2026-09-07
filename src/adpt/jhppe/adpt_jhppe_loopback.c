@@ -47,6 +47,7 @@ adpt_jhppe_switch_port_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
 	union lpbk_pps_ctrl_u loopback_rate_ctrl_tbl;
 	union port_bridge_ctrl_u port_bridge_ctrl;
 	a_uint32_t physical_port = 0;
+	a_uint32_t freq = 0, threshold = 0;
 
 	if (adpt_ppe_loopback_port_validate(dev_id, port_id) == A_FALSE)
 		return SW_NOT_SUPPORTED;
@@ -66,12 +67,17 @@ adpt_jhppe_switch_port_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
 	rv = jhppe_lpbk_pps_ctrl_get(dev_id, port_id, &loopback_rate_ctrl_tbl);
 	SW_RTN_ON_ERROR (rv);
 
-	if (adpt_ppe_type_get(dev_id) == HMSPPE_TYPE) {
-		loopback_rate_ctrl_tbl.bf.lpbk_pps_threshold =
-			ADPT_HMSPPE_FREQUENCY / loopback_cfg->loopback_rate;
-	} else if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE) {
-		loopback_rate_ctrl_tbl.bf.lpbk_pps_threshold =
-			ADPT_JHPPE_FREQUENCY / loopback_cfg->loopback_rate;
+	if (adpt_ppe_type_get(dev_id) == HMSPPE_TYPE)
+		freq = ADPT_HMSPPE_FREQUENCY;
+	else if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE)
+		freq = ADPT_JHPPE_FREQUENCY;
+
+	if (freq) {
+		if (loopback_cfg->loopback_rate == 0)
+			return SW_BAD_PARAM;
+		threshold = (freq + loopback_cfg->loopback_rate / 2)
+			/ loopback_cfg->loopback_rate;
+		loopback_rate_ctrl_tbl.bf.lpbk_pps_threshold = threshold;
 	}
 
 	rv = jhppe_lpbk_enable_get(dev_id, port_id, &loopback_cfg_tbl);
