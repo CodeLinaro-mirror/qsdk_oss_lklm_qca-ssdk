@@ -280,16 +280,6 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 	for (i = 0; i < PPE_BM_PORT_NUM; i++) {
 		a_uint16_t prealloc_buf = 0, react_buf = 0;
 		switch (chip_type) {
-			case JHPPE_TYPE:
-			case HMSPPE_TYPE:
-				if (i < PPE_BM_PHY_PORT_OFFSET) {
-					prealloc_buf = 0;
-					react_buf = 200;
-				} else {
-					prealloc_buf = 0;
-					react_buf = 228;
-				}
-				break;
 			case HPPE_TYPE:
 			case APPE_TYPE:
 				if (i < PPE_BM_PHY_PORT_OFFSET) {
@@ -304,6 +294,8 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 				}
 				break;
 			case MRPPE_TYPE:
+			case JHPPE_TYPE:
+			case HMSPPE_TYPE:
 				if (i < PPE_BM_PHY_PORT_OFFSET) {
 					prealloc_buf = 0;
 					react_buf = 100;
@@ -362,19 +354,11 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 				break;
 			case JHPPE_TYPE:
 			case HMSPPE_TYPE:
-				if (i == PPE_BM_PHY_PORT_OFFSET + 4 ||
-						i == PPE_BM_PHY_PORT_OFFSET + 5) {
-					share_ceiling = 1200;
-					cfg.resume_min_thresh = 0;
-					cfg.resume_off = 8;
-					cfg.weight= 7;
-				} else {
-					share_ceiling = 650;
-					phyport_share_ceiling = 650;
-					cfg.resume_min_thresh = 0;
-					cfg.resume_off = 36;
-					cfg.weight= 7;
-				}
+				share_ceiling = 250;
+				phyport_share_ceiling = 1300;
+				cfg.resume_min_thresh = 0;
+				cfg.resume_off = 36;
+				cfg.weight= 7;
 				break;
 			case APPE_TYPE:
 			case MRPPE_TYPE:
@@ -403,10 +387,10 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 				return SW_OUT_OF_RANGE;
 		}
 
-		if (i < PPE_BM_PHY_PORT_OFFSET)
-			cfg.shared_ceiling = share_ceiling;
-		else
+		if(i >= PPE_BM_PHY_PORT_OFFSET && i <= PPE_BM_PHY_PORT_MAX)
 			cfg.shared_ceiling = phyport_share_ceiling;
+		else
+			cfg.shared_ceiling = share_ceiling;
 
 		fal_bm_port_dynamic_thresh_set(dev_id, i, &cfg);
 	}
