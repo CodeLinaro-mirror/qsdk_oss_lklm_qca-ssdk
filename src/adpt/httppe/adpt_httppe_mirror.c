@@ -17,7 +17,7 @@ adpt_httppe_mirr_vp_in_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	if (!ADPT_IS_VPORT(port_id)) {
+	if (!FAL_IS_VPORT(port_id)) {
 		return SW_BAD_VALUE;
 	}
 
@@ -34,7 +34,7 @@ adpt_httppe_mirr_vp_eg_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	if (!ADPT_IS_VPORT(port_id)) {
+	if (!FAL_IS_VPORT(port_id)) {
 		return SW_BAD_VALUE;
 	}
 
@@ -50,7 +50,7 @@ adpt_httppe_mirr_vp_in_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (!ADPT_IS_VPORT(port_id)) {
+	if (!FAL_IS_VPORT(port_id)) {
 		return SW_BAD_VALUE;
 	}
 
@@ -66,7 +66,7 @@ adpt_httppe_mirr_vp_eg_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (!ADPT_IS_VPORT(port_id)) {
+	if (!FAL_IS_VPORT(port_id)) {
 		return SW_BAD_VALUE;
 	}
 
