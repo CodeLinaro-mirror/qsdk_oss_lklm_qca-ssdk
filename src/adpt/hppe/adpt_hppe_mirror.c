@@ -83,14 +83,14 @@ adpt_hppe_mirr_port_in_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	if (ADPT_IS_PPORT(port_id)) {
+	if (FAL_IS_PPORT(port_id)) {
 		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
 		SW_RTN_ON_ERROR(rv);
 
 		*enable = port_mirror.bf.in_mirr_en;
 	}
 
-	if (ADPT_IS_VPORT(port_id)) {
+	if (FAL_IS_VPORT(port_id)) {
 		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
 			rv = adpt_httppe_mirr_vp_in_get(dev_id, port_id, enable);
@@ -120,14 +120,14 @@ adpt_hppe_mirr_port_eg_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(enable);
 
-	if (ADPT_IS_PPORT(port_id)) {
+	if (FAL_IS_PPORT(port_id)) {
 		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
 		SW_RTN_ON_ERROR(rv);
 
 		*enable = port_mirror.bf.eg_mirr_en;
 	}
 
-	if (ADPT_IS_VPORT(port_id)) {
+	if (FAL_IS_VPORT(port_id)) {
 		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
 			rv = adpt_httppe_mirr_vp_eg_get(dev_id, port_id, enable);
@@ -185,10 +185,10 @@ adpt_hppe_mirr_port_in_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	SW_RTN_ON_ERROR(adpt_hppe_mirr_analysis_config_get(dev_id, FAL_MIRR_INGRESS,
 		&analysis_cfg));
-	if(!(ADPT_IS_PPORT(analysis_cfg.port_id) || ADPT_IS_TRUNK(analysis_cfg.port_id)))
+	if(!(FAL_IS_PPORT(analysis_cfg.port_id) || FAL_IS_TRUNK(analysis_cfg.port_id)))
 		return SW_BAD_VALUE;
 
-	if (ADPT_IS_PPORT(port_id)) {
+	if (FAL_IS_PPORT(port_id)) {
 		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
 		SW_RTN_ON_ERROR(rv);
 		port_mirror.bf.in_mirr_en = enable;
@@ -197,7 +197,7 @@ adpt_hppe_mirr_port_in_set(a_uint32_t dev_id, fal_port_t port_id,
 		SW_RTN_ON_ERROR(rv);
 	}
 
-	if (ADPT_IS_VPORT(port_id)) {
+	if (FAL_IS_VPORT(port_id)) {
 		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
 			rv = adpt_httppe_mirr_vp_in_set(dev_id, port_id, enable);
@@ -228,11 +228,11 @@ adpt_hppe_mirr_port_eg_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	SW_RTN_ON_ERROR(adpt_hppe_mirr_analysis_config_get(dev_id, FAL_MIRR_EGRESS,
 		&analysis_cfg));
-	if(!(ADPT_IS_PPORT(analysis_cfg.port_id) || ADPT_IS_TRUNK(analysis_cfg.port_id)))
+	if(!(FAL_IS_PPORT(analysis_cfg.port_id) || FAL_IS_TRUNK(analysis_cfg.port_id)))
 		return SW_BAD_VALUE;
 
 	/* from Juhu Mirror is supported on VP */
-	if (ADPT_IS_PPORT(port_id)) {
+	if (FAL_IS_PPORT(port_id)) {
 		rv = hppe_port_mirror_get(dev_id, FAL_PORT_ID_VALUE(port_id), &port_mirror);
 		SW_RTN_ON_ERROR(rv);
 		port_mirror.bf.eg_mirr_en = enable;
@@ -241,7 +241,7 @@ adpt_hppe_mirr_port_eg_set(a_uint32_t dev_id, fal_port_t port_id,
 		SW_RTN_ON_ERROR(rv);
 	}
 
-	if (ADPT_IS_VPORT(port_id)) {
+	if (FAL_IS_VPORT(port_id)) {
 		if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
 #if defined(HTTPPE)
 			rv = adpt_httppe_mirr_vp_eg_set(dev_id, port_id, enable);
