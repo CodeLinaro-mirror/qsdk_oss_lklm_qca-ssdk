@@ -849,7 +849,8 @@ sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
 			hsl_port_feature_clear(dev_id, port_id, PHY_F_SFP_SGMII);
 		}
 	}
-	else if(sfp_speed >= SFP_SPEED_10000M)
+	else if(sfp_speed >= SFP_SPEED_10000M &&
+		sfp_speed < SFP_SPEED_25000M)
 	{
 		*interface_mode_status = PORT_10GBASE_R;
 		if (sfp_phy_usxgmii_check(dev_id, port_id) == A_TRUE) {
