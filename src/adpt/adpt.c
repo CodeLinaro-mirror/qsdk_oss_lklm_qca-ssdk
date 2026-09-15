@@ -218,6 +218,28 @@ a_uint32_t ppe_port_to_xgmac_id(a_uint32_t dev_id, fal_port_t port_id)
 	return xgmac_id;
 }
 
+a_uint32_t ppe_xgmac_id_to_port(a_uint32_t dev_id, a_uint32_t xgmac_id)
+{
+	adpt_ppe_type_t ppe_type = adpt_ppe_type_get(dev_id);
+	a_uint32_t port_id = 0;
+
+	if (ppe_type == HMSPPE_TYPE) {
+		if (xgmac_id == 0)
+			port_id = xgmac_id + 1;
+		else
+			port_id = xgmac_id + 4;
+	} else if (ppe_type == HTTPPE_TYPE) {
+		if (xgmac_id == 0)
+			port_id = xgmac_id;
+		else
+			port_id = xgmac_id + 4;
+	} else {
+		port_id = xgmac_id + 1;
+	}
+
+	return port_id;
+}
+
 static sw_error_t adpt_appe_module_func_register(a_uint32_t dev_id, a_uint32_t module)
 {
 	sw_error_t rv= SW_OK;
