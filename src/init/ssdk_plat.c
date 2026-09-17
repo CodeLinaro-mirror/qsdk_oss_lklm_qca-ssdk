@@ -1578,7 +1578,7 @@ fail:
 	return -EINVAL;
 }
 
-static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
+static a_uint32_t ssdk_netdev_to_portid(a_uint32_t dev_id, struct net_device *dev)
 {
 	a_uint32_t mac_reg = 0, port_id = 0;
 
@@ -1586,10 +1586,12 @@ static a_uint32_t ssdk_netdev_to_portid(struct net_device *dev)
 	if (mac_reg < NSS_MAC_CSR_BASE_ADDR)
 		return SW_MAX_NR_PORT;
 	/*xgmac*/
-	if(mac_reg >= NSS_XGMAC_CSR_BASE_ADDR)
-		port_id = (mac_reg - NSS_XGMAC_CSR_BASE_ADDR)/MAC_TX_CONFIGURATION_INC + 1;
-	else
+	if (mac_reg >= NSS_XGMAC_CSR_BASE_ADDR) {
+		a_uint32_t xgmac_id = (mac_reg - NSS_XGMAC_CSR_BASE_ADDR)/MAC_TX_CONFIGURATION_INC;
+		port_id = ppe_xgmac_id_to_port(dev_id, xgmac_id);
+	} else {
 		port_id = (mac_reg - NSS_MAC_CSR_BASE_ADDR)/MAC_ENABLE_INC + 1;
+	}
 
 	return port_id;
 }
@@ -1601,7 +1603,7 @@ sw_error_t ssdk_netdev_switch_init(struct net_device *dev)
 	phy_info_t *phyinfo = NULL;
 
 	/* netdev info for PPE port */
-	port_id = ssdk_netdev_to_portid(dev);
+	port_id = ssdk_netdev_to_portid(dev_id, dev);
 	if (port_id >= SW_MAX_NR_PORT)
 		return SW_BAD_VALUE;
 
