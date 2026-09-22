@@ -2469,8 +2469,7 @@ static int __init regi_init(void)
 				if (dsa_node) {
 					struct clk *core_clk = of_clk_get_by_name(dsa_node, "core");
 					if (!IS_ERR(core_clk)) {
-						qca_phy_priv_global[dev_id]->core_clk_rate = clk_get_rate(core_clk);
-						clk_put(core_clk);
+						qca_phy_priv_global[dev_id]->core_clk = core_clk;
 					} else {
 						SSDK_ERROR("Failed to get HTTPPE core clock from DSA node\n");
 					}

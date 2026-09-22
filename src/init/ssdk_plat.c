@@ -2060,6 +2060,10 @@ ssdk_plat_exit(a_uint32_t dev_id)
 		iounmap(qca_phy_priv_global[dev_id]->uniphy_hw_addr);
 	}
 #endif
+	if (qca_phy_priv_global[dev_id]->core_clk) {
+		clk_put(qca_phy_priv_global[dev_id]->core_clk);
+		qca_phy_priv_global[dev_id]->core_clk = NULL;
+	}
 /*qca808x_start*/
 }
 /*qca808x_end*/

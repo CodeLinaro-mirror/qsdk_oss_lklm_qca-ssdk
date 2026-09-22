@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: ISC
  */
 
+#include <linux/clk.h>
 #include <linux/units.h>
 #include "adpt.h"
 #include "ssdk_init.h"
@@ -139,8 +140,8 @@ a_uint32_t adpt_chip_freq_get(a_uint32_t dev_id)
 		case HTTPPE_TYPE: {
 			struct qca_phy_priv *priv = ssdk_phy_priv_data_get(dev_id);
 
-			if (priv && priv->core_clk_rate)
-				ppe_freq = priv->core_clk_rate / HZ_PER_MHZ;
+			if (priv && priv->core_clk)
+				ppe_freq = clk_get_rate(priv->core_clk) / HZ_PER_MHZ;
 			else
 				ppe_freq = ADPT_HTTPPE_FREQUENCY;
 			break;
