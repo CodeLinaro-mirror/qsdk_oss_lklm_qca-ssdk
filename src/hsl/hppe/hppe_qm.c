@@ -614,6 +614,22 @@ hppe_ac_mul_queue_cnt_tbl_set(
 }
 
 sw_error_t
+hppe_ac_grp_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_cnt_tbl_u *value)
+{
+	if (index >= AC_GRP_CNT_TBL_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_tbl_get(
+				dev_id,
+				QUEUE_MANAGER_BASE_ADDR + AC_GRP_CNT_TBL_ADDRESS + \
+				index * AC_GRP_CNT_TBL_INC,
+				(a_uint32_t *)value,
+				sizeof(union ac_grp_cnt_tbl_u)/sizeof(a_uint32_t));
+}
+
+sw_error_t
 hppe_ac_uni_queue_drop_state_tbl_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

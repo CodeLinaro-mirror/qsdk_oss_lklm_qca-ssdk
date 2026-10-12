@@ -49,6 +49,14 @@ httppe_port_reacted_cnt_set(
 		a_uint32_t index,
 		union port_reacted_cnt_u *value);
 
+#define SHARED_GROUP_CNT_MAX_ENTRY	SHARED_GROUP_CNT_NUM
+
+sw_error_t
+httppe_shared_group_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union shared_group_cnt_u *value);
+
 #define SHARED_GROUP_CFG_MAX_ENTRY	SHARED_GROUP_CFG_NUM
 
 sw_error_t

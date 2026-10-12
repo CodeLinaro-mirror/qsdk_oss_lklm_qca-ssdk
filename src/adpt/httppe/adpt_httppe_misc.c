@@ -51,6 +51,83 @@ adpt_httppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, ch
 }
 
 void
+adpt_httppe_debug_queue_pending_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count)
+{
+	union ac_uni_queue_cnt_tbl_u uni_cnt;
+	union ac_mul_queue_cnt_tbl_u mul_cnt;
+	int i, tags = 0;
+
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "QUEUE_PENDING_CNT:");
+	for (i = 0; i < AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY; i++) {
+		aos_mem_zero(&uni_cnt, sizeof(uni_cnt));
+		httppe_ac_uni_queue_cnt_tbl_get(dev_id, i, &uni_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				uni_cnt.bf.ac_uni_queue_cnt, "queue", 4, i);
+	}
+	for (i = 0; i < AC_MUL_QUEUE_CNT_TBL_MAX_ENTRY; i++) {
+		aos_mem_zero(&mul_cnt, sizeof(mul_cnt));
+		httppe_ac_mul_queue_cnt_tbl_get(dev_id, i, &mul_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags, mul_cnt.bf.ac_mul_queue_cnt,
+				"queue", 4, i + AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+}
+
+void
+adpt_httppe_debug_ac_group_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count)
+{
+	union ac_grp_cnt_tbl_u grp_cnt;
+	int i, tags = 0;
+
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "AC_GRP_CNT:");
+	for (i = 0; i < AC_GRP_CNT_TBL_MAX_ENTRY; i++) {
+		aos_mem_zero(&grp_cnt, sizeof(grp_cnt));
+		httppe_ac_grp_cnt_tbl_get(dev_id, i, &grp_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				grp_cnt.bf.ac_grp_cnt, "group", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+}
+
+void
+adpt_httppe_debug_bm_group_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count)
+{
+	union shared_group_cnt_u group_cnt;
+	union port_cnt_u port_cnt;
+	union port_reacted_cnt_u port_reacted_cnt;
+	int i, tags = 0;
+
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "BM_PORT_USED_CNT:");
+	for (i = 0; i < PORT_CNT_MAX_ENTRY; i++) {
+		aos_mem_zero(&port_cnt, sizeof(port_cnt));
+		httppe_port_cnt_get(dev_id, i, &port_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				port_cnt.bf.port_cnt, "port", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+
+	tags = 0;
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "BM_PORT_REACT_CNT:");
+	for (i = 0; i < PORT_REACTED_CNT_MAX_ENTRY; i++) {
+		aos_mem_zero(&port_reacted_cnt, sizeof(port_reacted_cnt));
+		httppe_port_reacted_cnt_get(dev_id, i, &port_reacted_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				port_reacted_cnt.bf.port_reacted_cnt, "port", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+
+	tags = 0;
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "BM_SHARED_GROUP_CNT:");
+	for (i = 0; i < SHARED_GROUP_CNT_MAX_ENTRY; i++) {
+		aos_mem_zero(&group_cnt, sizeof(group_cnt));
+		httppe_shared_group_cnt_get(dev_id, i, &group_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				group_cnt.bf.shared_group_cnt, "group", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+}
+
+void
 adpt_httppe_queue_tx_counter_tbl_set(a_uint32_t dev_id)
 {
 	union queue_tx_counter_tbl_u queue_tx_counter_tbl = {0};
