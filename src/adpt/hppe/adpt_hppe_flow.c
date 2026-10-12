@@ -1462,6 +1462,11 @@ adpt_hppe_flow_entry_get(
 				entry.bf.protocol_type == FLOW_TUPLE_TYPE_3) {
 			return SW_BAD_VALUE;
 		}
+#if defined(JHPPE)
+		/* 6-tuple entry shares the same entry_type. */
+		if (entry.bf.protocol_type > FAL_FLOW_IPSEC)
+			return SW_BAD_VALUE;
+#endif
 
 		adpt_ppe_flow_ipv4_5tuple_convert(flow_entry, &entry, A_FALSE);
 		adpt_ppe_flow_key_ipv4_5tuple_convert(flow_entry, &entry, A_FALSE);
@@ -1475,6 +1480,11 @@ adpt_hppe_flow_entry_get(
 				entry.bf.protocol_type == FLOW_TUPLE_TYPE_3) {
 			return SW_BAD_VALUE;
 		}
+#if defined(JHPPE)
+		/* 6-tuple entry shares the same entry_type. */
+		if (entry.bf.protocol_type > FAL_FLOW_IPSEC)
+			return SW_BAD_VALUE;
+#endif
 
 		adpt_ppe_flow_ipv6_5tuple_convert(flow_entry, &entry, A_FALSE);
 		adpt_ppe_flow_key_ipv6_5tuple_convert(flow_entry, &entry, A_FALSE);
@@ -1514,6 +1524,15 @@ adpt_hppe_flow_entry_get(
 
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_TRUE);
 		rv = jhppe_flow_ip_6tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
+		if (rv != SW_OK)
+			return rv;
+
+		if (entry.bf.entry_type != ((type & FAL_FLOW_IP6_6TUPLE_ADDR) ?
+					FLOW_ENTRY_TYPE_IPV6 : FLOW_ENTRY_TYPE_IPV4) ||
+				entry.bf.protocol_type < FAL_FLOW_NATT) {
+			return SW_BAD_VALUE;
+		}
+
 		adpt_ppe_flow_ip_6tuple_convert(flow_entry, &entry, A_FALSE);
 		adpt_ppe_flow_key_ip_6tuple_convert(flow_entry, &entry, type, A_FALSE);
 	}
@@ -1575,6 +1594,18 @@ adpt_hppe_flow_entry_next(
 			i = (flow_entry->entry_id & ~1) + 2;
 		step = 2;
 	}
+#if defined(JHPPE)
+	else if (next_mode == FAL_FLOW_IP4_6TUPLE_ADDR ||
+		 next_mode == FAL_FLOW_IP6_6TUPLE_ADDR) {
+		/* 6-tuple entry occupies two entries with even index. */
+		if (FAL_NEXT_ENTRY_FIRST_ID != flow_entry->entry_id)
+			i = (flow_entry->entry_id & ~1) + 2;
+		step = 2;
+	}
+#endif
+	else
+		return SW_BAD_PARAM;
+
 	for (; i < IN_FLOW_CNT_TBL_NUM;) {
 		flow_entry->entry_type = next_mode;
 		flow_entry->entry_id = i;
