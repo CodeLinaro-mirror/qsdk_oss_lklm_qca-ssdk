@@ -344,7 +344,11 @@ union port_reacted_cnt_u {
 
 /*[register] SHARED_GROUP_CNT*/
 #define SHARED_GROUP_CNT
+#if defined(MRPPE)
+#define SHARED_GROUP_CNT_ADDRESS 0x2e0
+#else
 #define SHARED_GROUP_CNT_ADDRESS 0x280
+#endif
 #define SHARED_GROUP_CNT_NUM     4
 #define SHARED_GROUP_CNT_INC     0x4
 #define SHARED_GROUP_CNT_TYPE    REG_TYPE_RO

@@ -1065,6 +1065,14 @@ hppe_ac_mul_queue_cnt_tbl_ac_mul_queue_cnt_set(
 		a_uint32_t index,
 		a_uint32_t value);
 
+#define AC_GRP_CNT_TBL_MAX_ENTRY	AC_GRP_CNT_TBL_NUM
+
+sw_error_t
+hppe_ac_grp_cnt_tbl_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union ac_grp_cnt_tbl_u *value);
+
 #define AC_UNI_QUEUE_DROP_STATE_TBL_MAX_ENTRY	AC_UNI_QUEUE_DROP_STATE_TBL_NUM
 
 sw_error_t

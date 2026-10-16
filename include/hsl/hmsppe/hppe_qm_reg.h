@@ -782,6 +782,36 @@ union ac_mul_queue_cnt_tbl_u {
 	struct ac_mul_queue_cnt_tbl bf;
 };
 
+/*[table] AC_GRP_CNT_TBL*/
+#define AC_GRP_CNT_TBL
+#define AC_GRP_CNT_TBL_ADDRESS 0x55000
+#define AC_GRP_CNT_TBL_NUM     4
+#define AC_GRP_CNT_TBL_INC     0x10
+#define AC_GRP_CNT_TBL_TYPE    REG_TYPE_RW
+#define AC_GRP_CNT_TBL_DEFAULT 0x0
+	/*[field] AC_GRP_CNT*/
+	#define AC_GRP_CNT_TBL_AC_GRP_CNT
+	#define AC_GRP_CNT_TBL_AC_GRP_CNT_OFFSET  0
+	#define AC_GRP_CNT_TBL_AC_GRP_CNT_LEN     17
+	#define AC_GRP_CNT_TBL_AC_GRP_CNT_DEFAULT 0x0
+	/*[field] AC_GRP_ALLOC_USED*/
+	#define AC_GRP_CNT_TBL_AC_GRP_ALLOC_USED
+	#define AC_GRP_CNT_TBL_AC_GRP_ALLOC_USED_OFFSET  17
+	#define AC_GRP_CNT_TBL_AC_GRP_ALLOC_USED_LEN     17
+	#define AC_GRP_CNT_TBL_AC_GRP_ALLOC_USED_DEFAULT 0x0
+
+struct ac_grp_cnt_tbl {
+	a_uint32_t  ac_grp_cnt:17;
+	a_uint32_t  ac_grp_alloc_used_0:15;
+	a_uint32_t  ac_grp_alloc_used_1:2;
+	a_uint32_t  _reserved0:30;
+};
+
+union ac_grp_cnt_tbl_u {
+	a_uint32_t val[2];
+	struct ac_grp_cnt_tbl bf;
+};
+
 /*[table] AC_UNI_QUEUE_DROP_STATE_TBL*/
 #define AC_UNI_QUEUE_DROP_STATE_TBL
 #define AC_UNI_QUEUE_DROP_STATE_TBL_ADDRESS 0x56000

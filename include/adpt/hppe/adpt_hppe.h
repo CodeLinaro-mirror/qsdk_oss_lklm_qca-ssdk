@@ -33,6 +33,8 @@ void adpt_hppe_vsi_func_bitmap_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_vsi_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_misc_init(a_uint32_t dev_id);
+void adpt_hppe_debug_value_print(char **buf, ssize_t *count, int *tags,
+		a_uint32_t value, const char *key, int width, int index);
 
 void adpt_hppe_mirror_func_bitmap_init(a_uint32_t dev_id);
 sw_error_t adpt_hppe_mirror_init(a_uint32_t dev_id);

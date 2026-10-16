@@ -65,6 +65,21 @@ httppe_port_reacted_cnt_get(
 }
 
 sw_error_t
+httppe_shared_group_cnt_get(
+		a_uint32_t dev_id,
+		a_uint32_t index,
+		union shared_group_cnt_u *value)
+{
+	if (index >= SHARED_GROUP_CNT_MAX_ENTRY)
+		return SW_OUT_OF_RANGE;
+	return hppe_reg_get(
+				dev_id,
+				NSS_BM_CSR_BASE_ADDR + SHARED_GROUP_CNT_ADDRESS + \
+				index * SHARED_GROUP_CNT_INC,
+				&value->val);
+}
+
+sw_error_t
 httppe_shared_group_cfg_get(
 		a_uint32_t dev_id,
 		a_uint32_t index,

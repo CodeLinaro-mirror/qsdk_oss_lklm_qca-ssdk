@@ -920,6 +920,105 @@ adpt_hppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char
 	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
 }
 
+/*
+ * Print one non-zero counter value in the debug counter dump, three values
+ * per line aligned to the label column. *tags counts the values printed for
+ * the current label and must be zero before the first call. width is the
+ * zero-padded width of the index (0 for no padding).
+ */
+void
+adpt_hppe_debug_value_print(char **buf, ssize_t *count, int *tags,
+		a_uint32_t value, const char *key, int width, int index)
+{
+	if (value == 0)
+		return;
+
+	if (*tags && *tags % 3 == 0) {
+		*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+		*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "");
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%15u(%s=%0*d)",
+			value, key, width, index);
+	(*tags)++;
+}
+
+static void
+adpt_hppe_debug_queue_pending_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count)
+{
+	union ac_uni_queue_cnt_tbl_u uni_cnt;
+	union ac_mul_queue_cnt_tbl_u mul_cnt;
+	int i, tags = 0;
+
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "QUEUE_PENDING_CNT:");
+	for (i = 0; i < AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY; i++) {
+		aos_mem_zero(&uni_cnt, sizeof(uni_cnt));
+		hppe_ac_uni_queue_cnt_tbl_get(dev_id, i, &uni_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				uni_cnt.bf.ac_uni_queue_cnt, "queue", 4, i);
+	}
+	for (i = 0; i < AC_MUL_QUEUE_CNT_TBL_MAX_ENTRY; i++) {
+		aos_mem_zero(&mul_cnt, sizeof(mul_cnt));
+		hppe_ac_mul_queue_cnt_tbl_get(dev_id, i, &mul_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags, mul_cnt.bf.ac_mul_queue_cnt,
+				"queue", 4, i + AC_UNI_QUEUE_CNT_TBL_MAX_ENTRY);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+}
+
+static void
+adpt_hppe_debug_ac_group_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count)
+{
+	union ac_grp_cnt_tbl_u grp_cnt;
+	int i, tags = 0;
+
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "AC_GRP_CNT:");
+	for (i = 0; i < AC_GRP_CNT_TBL_MAX_ENTRY; i++) {
+		aos_mem_zero(&grp_cnt, sizeof(grp_cnt));
+		hppe_ac_grp_cnt_tbl_get(dev_id, i, &grp_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				grp_cnt.bf.ac_grp_cnt, "group", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+}
+
+static void
+adpt_hppe_debug_bm_group_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count)
+{
+	union shared_group_cnt_u group_cnt;
+	union port_cnt_u port_cnt;
+	union port_reacted_cnt_u port_reacted_cnt;
+	int i, tags = 0;
+
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "BM_PORT_USED_CNT:");
+	for (i = 0; i < PORT_CNT_MAX_ENTRY; i++) {
+		aos_mem_zero(&port_cnt, sizeof(port_cnt));
+		hppe_port_cnt_get(dev_id, i, &port_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				port_cnt.bf.port_cnt, "port", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+
+	tags = 0;
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "BM_PORT_REACT_CNT:");
+	for (i = 0; i < PORT_REACTED_CNT_MAX_ENTRY; i++) {
+		aos_mem_zero(&port_reacted_cnt, sizeof(port_reacted_cnt));
+		hppe_port_reacted_cnt_get(dev_id, i, &port_reacted_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				port_reacted_cnt.bf.port_reacted_cnt, "port", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+
+	tags = 0;
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "%-35s", "BM_SHARED_GROUP_CNT:");
+	for (i = 0; i < SHARED_GROUP_CNT_MAX_ENTRY; i++) {
+		aos_mem_zero(&group_cnt, sizeof(group_cnt));
+		hppe_shared_group_cnt_get(dev_id, i, &group_cnt);
+		adpt_hppe_debug_value_print(buf, count, &tags,
+				group_cnt.bf.shared_group_cnt, "group", 0, i);
+	}
+	*count += scnprintf(*buf + *count, SSDK_BUF_REMAINING(count), "\n");
+}
+
 static void
 adpt_hppe_debug_vp_tx_drop_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count)
 {
@@ -1163,6 +1262,15 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 	/* show PRX DROP_PKT_STAT */
 	adpt_hppe_debug_prx_drop_pkt_stat_get(dev_id, show_type, buf, count);
 
+	/* show BM PORT_CNT, PORT_REACTED_CNT and SHARED_GROUP_CNT */
+	if (adpt_chip_type_get(dev_id) == CHIP_HTTPPE) {
+#if defined(HTTPPE)
+		adpt_httppe_debug_bm_group_counter_get(dev_id, buf, count);
+#endif
+	} else {
+		adpt_hppe_debug_bm_group_counter_get(dev_id, buf, count);
+	}
+
 	/* show IPR_PKT_NUM */
 	adpt_hppe_debug_ipx_pkt_num_get(dev_id, show_type, buf, count);
 
@@ -1184,6 +1292,10 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 		adpt_httppe_debug_vp_tx_counter_get(dev_id, show_type, buf, count);
 
 		adpt_httppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
+
+		adpt_httppe_debug_queue_pending_counter_get(dev_id, buf, count);
+
+		adpt_httppe_debug_ac_group_counter_get(dev_id, buf, count);
 #endif
 	} else {
 		/* show EG_VSI_COUNTER_TBL */
@@ -1197,6 +1309,12 @@ adpt_hppe_debug_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, s
 
 		/* show QUEUE_TX_COUNTER_TBL */
 		adpt_hppe_debug_queue_tx_counter_get(dev_id, show_type, buf, count);
+
+		/* show QUEUE_PENDING_CNT */
+		adpt_hppe_debug_queue_pending_counter_get(dev_id, buf, count);
+
+		/* show AC_GRP_CNT_TBL */
+		adpt_hppe_debug_ac_group_counter_get(dev_id, buf, count);
 	}
 
 	/* show VP_TX_DROP_CNT_TBL */

@@ -76,6 +76,29 @@ union port_reacted_cnt_u {
 	struct port_reacted_cnt bf;
 };
 
+/*[register] SHARED_GROUP_CNT*/
+#define SHARED_GROUP_CNT
+#define SHARED_GROUP_CNT_ADDRESS 0x420
+#define SHARED_GROUP_CNT_NUM     4
+#define SHARED_GROUP_CNT_INC     0x4
+#define SHARED_GROUP_CNT_TYPE    REG_TYPE_RO
+#define SHARED_GROUP_CNT_DEFAULT 0x0
+	/*[field] SHARED_GROUP_CNT*/
+	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT
+	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_OFFSET  0
+	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_LEN     12
+	#define SHARED_GROUP_CNT_SHARED_GROUP_CNT_DEFAULT 0x0
+
+struct shared_group_cnt {
+	a_uint32_t  shared_group_cnt:12;
+	a_uint32_t  _reserved0:20;
+};
+
+union shared_group_cnt_u {
+	a_uint32_t val;
+	struct shared_group_cnt bf;
+};
+
 /*[register] SHARED_GROUP_CFG*/
 #define SHARED_GROUP_CFG
 #define SHARED_GROUP_CFG_ADDRESS 0x460

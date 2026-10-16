@@ -14,6 +14,15 @@ void
 adpt_httppe_debug_queue_tx_counter_get(a_uint32_t dev_id, a_bool_t show_type, char **buf, ssize_t *count);
 
 void
+adpt_httppe_debug_queue_pending_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count);
+
+void
+adpt_httppe_debug_ac_group_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count);
+
+void
+adpt_httppe_debug_bm_group_counter_get(a_uint32_t dev_id, char **buf, ssize_t *count);
+
+void
 adpt_httppe_queue_tx_counter_tbl_set(a_uint32_t dev_id);
 
 void
