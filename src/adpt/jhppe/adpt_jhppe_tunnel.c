@@ -874,3 +874,71 @@ adpt_jhppe_tunnel_decap_miss_action_get(a_uint32_t dev_id,
 	return SW_OK;
 }
 #endif
+
+sw_error_t
+adpt_jhppe_tunnel_app_type_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_uint32_t app_type)
+{
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (tunnel_type >= FAL_TUNNEL_TYPE_INVALID_TUNNEL ||
+			app_type > FAL_TUNNEL_APP_TYPE_MAX)
+		return SW_BAD_PARAM;
+
+	return jhppe_tunnel_type_mapping_app_type_set(dev_id, tunnel_type, app_type);
+}
+
+sw_error_t
+adpt_jhppe_tunnel_app_type_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_uint32_t *app_type)
+{
+	sw_error_t rv;
+	a_uint32_t type = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(app_type);
+
+	if (tunnel_type >= FAL_TUNNEL_TYPE_INVALID_TUNNEL)
+		return SW_BAD_PARAM;
+
+	rv = jhppe_tunnel_type_mapping_app_type_get(dev_id, tunnel_type, &type);
+	SW_RTN_ON_ERROR(rv);
+
+	*app_type = type;
+
+	return SW_OK;
+}
+
+sw_error_t
+adpt_jhppe_tunnel_outer_lookup_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_bool_t enable)
+{
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (tunnel_type >= FAL_TUNNEL_TYPE_INVALID_TUNNEL)
+		return SW_BAD_PARAM;
+
+	return jhppe_tunnel_type_mapping_outer_en_set(dev_id, tunnel_type,
+			enable ? 1 : 0);
+}
+
+sw_error_t
+adpt_jhppe_tunnel_outer_lookup_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_bool_t *enable)
+{
+	sw_error_t rv;
+	a_uint32_t outer_en = 0;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(enable);
+
+	if (tunnel_type >= FAL_TUNNEL_TYPE_INVALID_TUNNEL)
+		return SW_BAD_PARAM;
+
+	rv = jhppe_tunnel_type_mapping_outer_en_get(dev_id, tunnel_type, &outer_en);
+	SW_RTN_ON_ERROR(rv);
+
+	*enable = outer_en ? A_TRUE : A_FALSE;
+
+	return SW_OK;
+}

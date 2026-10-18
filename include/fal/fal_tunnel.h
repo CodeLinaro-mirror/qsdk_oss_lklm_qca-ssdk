@@ -662,6 +662,9 @@ typedef struct {
 	a_uint8_t service_code; /* service code */
 } fal_tunnel_decap_miss_action_t;
 
+/* max app type value mapped from tunnel type */
+#define FAL_TUNNEL_APP_TYPE_MAX	3
+
 sw_error_t
 fal_tunnel_decap_key_set(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_key_t *key_gen);
@@ -872,6 +875,23 @@ sw_error_t
 fal_tunnel_decap_miss_action_get(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action);
 #endif
+
+sw_error_t
+fal_tunnel_app_type_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_uint32_t app_type);
+
+sw_error_t
+fal_tunnel_app_type_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_uint32_t *app_type);
+
+/* enable: A_TRUE for outer header lookup, A_FALSE for inner header lookup */
+sw_error_t
+fal_tunnel_outer_lookup_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_bool_t enable);
+
+sw_error_t
+fal_tunnel_outer_lookup_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_bool_t *enable);
 
 #ifdef __cplusplus
 }

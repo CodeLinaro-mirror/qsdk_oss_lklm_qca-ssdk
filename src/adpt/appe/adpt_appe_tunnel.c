@@ -3037,6 +3037,14 @@ adpt_appe_tunnel_init(a_uint32_t dev_id)
 	p_adpt_api->adpt_tunnel_decap_miss_action_get =
 		adpt_jhppe_tunnel_decap_miss_action_get;
 #endif
+	p_adpt_api->adpt_tunnel_app_type_set =
+		adpt_jhppe_tunnel_app_type_set;
+	p_adpt_api->adpt_tunnel_app_type_get =
+		adpt_jhppe_tunnel_app_type_get;
+	p_adpt_api->adpt_tunnel_outer_lookup_set =
+		adpt_jhppe_tunnel_outer_lookup_set;
+	p_adpt_api->adpt_tunnel_outer_lookup_get =
+		adpt_jhppe_tunnel_outer_lookup_get;
 #endif
 	return SW_OK;
 }

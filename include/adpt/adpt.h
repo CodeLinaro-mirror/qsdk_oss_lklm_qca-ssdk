@@ -1553,6 +1553,18 @@ typedef sw_error_t
 typedef sw_error_t
 (*adpt_tunnel_decap_miss_action_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
 		fal_tunnel_decap_miss_action_t *miss_action);
+typedef sw_error_t
+(*adpt_tunnel_app_type_set_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_uint32_t app_type);
+typedef sw_error_t
+(*adpt_tunnel_app_type_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_uint32_t *app_type);
+typedef sw_error_t
+(*adpt_tunnel_outer_lookup_set_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_bool_t enable);
+typedef sw_error_t
+(*adpt_tunnel_outer_lookup_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_bool_t *enable);
 
 /*tunnel program*/
 typedef sw_error_t (*adpt_tunnel_program_entry_add_func)(a_uint32_t dev_id,
@@ -2463,6 +2475,10 @@ typedef struct
 	adpt_tunnel_tuple_entry_getnext_func adpt_tunnel_tuple_entry_getnext;
 	adpt_tunnel_decap_miss_action_set_func adpt_tunnel_decap_miss_action_set;
 	adpt_tunnel_decap_miss_action_get_func adpt_tunnel_decap_miss_action_get;
+	adpt_tunnel_app_type_set_func adpt_tunnel_app_type_set;
+	adpt_tunnel_app_type_get_func adpt_tunnel_app_type_get;
+	adpt_tunnel_outer_lookup_set_func adpt_tunnel_outer_lookup_set;
+	adpt_tunnel_outer_lookup_get_func adpt_tunnel_outer_lookup_get;
 
 	/*vxlan*/
 	adpt_vxlan_entry_add_func adpt_vxlan_entry_add;
