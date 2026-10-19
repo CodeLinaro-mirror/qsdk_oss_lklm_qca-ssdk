@@ -35,7 +35,7 @@
 	#define LPBK_EN_FLOWCTRL_MODE_DEFAULT 0x0
 	/*[field] CRC_STRIP_EN*/
 	#define LPBK_EN_CRC_STRIP_EN
-	#define LPBK_EN_CRC_STRIP_EN_OFFSET  2
+	#define LPBK_EN_CRC_STRIP_EN_OFFSET  3
 	#define LPBK_EN_CRC_STRIP_EN_LEN     1
 	#define LPBK_EN_CRC_STRIP_EN_DEFAULT 0x1
 struct lpbk_enable {

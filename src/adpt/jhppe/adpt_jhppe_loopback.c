@@ -160,6 +160,8 @@ adpt_jhppe_switch_port_loopback_flowctrl_set(a_uint32_t dev_id,
 	rv = jhppe_lpbk_enable_get(dev_id, port_id, &loopback_cfg_tbl);
 	SW_RTN_ON_ERROR (rv);
 	loopback_cfg_tbl.bf.flowctrl_en = enable;
+	if (enable)
+		loopback_cfg_tbl.bf.flowctrl_mode = LPBK_EN_FLOWCTRL_MODE_PKT_BOUNDARY;
 	rv = jhppe_lpbk_enable_set(dev_id, port_id, &loopback_cfg_tbl);
 
 	return rv;
