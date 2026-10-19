@@ -17,6 +17,8 @@ extern "C" {
 
 #define JHPPE_LOOPBACK_PORT_NUM                 0x1
 
+#define LPBK_EN_FLOWCTRL_MODE_PKT_BOUNDARY  0x1 /* stop at packet boundary */
+
 sw_error_t
 adpt_jhppe_switch_port_loopback_set(a_uint32_t dev_id,
 	fal_port_t port_id, fal_loopback_config_t *loopback_cfg);
