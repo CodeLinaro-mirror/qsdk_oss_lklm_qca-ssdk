@@ -99,6 +99,14 @@ sw_error_t
 adpt_httppe_qos_port_pcp_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
 		fal_qos_pcp_cfg_t *pcp_cfg);
 
+sw_error_t
+adpt_httppe_port_scheduler_cfg_reset(a_uint32_t dev_id, fal_port_t port_id);
+
+sw_error_t
+adpt_httppe_port_scheduler_resource_get(a_uint32_t dev_id,
+					fal_port_t port_id,
+					fal_portscheduler_resource_t *cfg);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

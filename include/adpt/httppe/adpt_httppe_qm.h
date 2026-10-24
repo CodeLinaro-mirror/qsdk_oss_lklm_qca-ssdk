@@ -60,6 +60,18 @@ sw_error_t
 adpt_httppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id);
 
 sw_error_t
+adpt_httppe_port_mcast_priority_class_set(a_uint32_t dev_id,
+					  fal_port_t port,
+					  a_uint8_t priority,
+					  a_uint8_t queue_class);
+
+sw_error_t
+adpt_httppe_ucast_priority_class_set(a_uint32_t dev_id,
+				     a_uint8_t profile,
+				     a_uint8_t priority,
+				     a_uint8_t class);
+
+sw_error_t
 adpt_httppe_queue_counter_ctrl_get(a_uint32_t dev_id, a_bool_t *cnt_en);
 
 sw_error_t

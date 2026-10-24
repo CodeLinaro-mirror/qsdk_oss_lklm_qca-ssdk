@@ -9,6 +9,9 @@
 #include "adpt.h"
 #include "hppe_global_reg.h"
 #include "hppe_global.h"
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+#include <linux/dsa/qce2204_api.h>
+#endif
 
 #define UCAST_QUEUE_ID_MAX	256
 #define ALL_QUEUE_ID_MAX	300
@@ -650,46 +653,42 @@ adpt_httppe_queue_counter_get(a_uint32_t dev_id, a_uint32_t queue_id, fal_queue_
 	return SW_OK;
 }
 
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+static struct net_device *
+adpt_httppe_any_netdev_get(struct qca_phy_priv *priv)
+{
+	int i;
+
+	for (i = 0; i < SW_MAX_NR_PORT; i++) {
+		if (priv->ports[i].netdev)
+			return priv->ports[i].netdev;
+	}
+
+	return NULL;
+}
+#endif
+
 sw_error_t
 adpt_httppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 {
-	a_uint16_t ceiling, green_max, weight, resume_offset;
-	adpt_ppe_type_t chip_type = adpt_ppe_type_get(dev_id);
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+	struct qca_phy_priv *priv;
+	struct net_device *netdev;
 
-	switch (chip_type) {
-		case HTTPPE_TYPE:
-			ceiling = 2200;
-			weight = 7;
-			resume_offset = 36;
-			green_max = 250;
-			break;
-		default:
-			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
-			return SW_OUT_OF_RANGE;
-	}
+	ADPT_DEV_ID_CHECK(dev_id);
+	priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv)
+		return SW_NOT_SUPPORTED;
 
-	if (queue_id < SSDK_L0SCHEDULER_UCASTQ_CFG_MAX) {
-		fal_ac_dynamic_threshold_t  dthresh_cfg;
+	netdev = adpt_httppe_any_netdev_get(priv);
+	if (!netdev)
+		return SW_NOT_SUPPORTED;
 
-		memset(&dthresh_cfg, 0, sizeof(dthresh_cfg));
-		dthresh_cfg.shared_weight = weight;
-		dthresh_cfg.ceiling = ceiling;
-		dthresh_cfg.green_resume_off = resume_offset;
-
-		return adpt_httppe_ac_dynamic_threshold_set(dev_id, queue_id, &dthresh_cfg);
-	} else {
-		fal_ac_static_threshold_t sthresh_cfg;
-		fal_ac_obj_t obj;
-
-		memset(&sthresh_cfg, 0, sizeof(sthresh_cfg));
-		sthresh_cfg.green_max = green_max;
-		sthresh_cfg.green_resume_off = resume_offset;
-
-		obj.type = FAL_AC_QUEUE;
-		obj.obj_id = queue_id;
-
-		return adpt_httppe_ac_static_threshold_set(dev_id, &obj, &sthresh_cfg);
-	}
+	return qce2204_ppe_qm_threshold_reset(netdev, queue_id) ?
+		SW_FAIL : SW_OK;
+#else
+	return SW_NOT_SUPPORTED;
+#endif
 }
 
 sw_error_t
@@ -812,7 +811,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
+	if (FAL_PORT_ID_VALUE(port_id) >= SW_MAX_NR_PORT)
 		return SW_OUT_OF_RANGE;
 
 	priv = ssdk_phy_priv_data_get(dev_id);
@@ -867,7 +866,7 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(ucast_enqueue_en);
 
-	if (FAL_PORT_ID_VALUE(port_id) > SW_MAX_NR_PORT)
+	if (FAL_PORT_ID_VALUE(port_id) >= SW_MAX_NR_PORT)
 		return SW_OUT_OF_RANGE;
 
 	priv = ssdk_phy_priv_data_get(dev_id);
@@ -889,4 +888,62 @@ adpt_httppe_qm_mcast_enqueue_ctrl_get(a_uint32_t dev_id, fal_port_t port_id,
 	aos_mutex_unlock(&priv->ppe_qm_lock.qm_mutex_lock);
 
 	return SW_OK;
+}
+
+sw_error_t
+adpt_httppe_port_mcast_priority_class_set(a_uint32_t dev_id,
+					  fal_port_t port,
+					  a_uint8_t priority,
+					  a_uint8_t queue_class)
+{
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+	struct qca_phy_priv *priv;
+	struct net_device *netdev;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if (FAL_PORT_ID_VALUE(port) >= SW_MAX_NR_PORT)
+		return SW_OUT_OF_RANGE;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv)
+		return SW_NOT_SUPPORTED;
+
+	netdev = priv->ports[FAL_PORT_ID_VALUE(port)].netdev;
+	if (!netdev)
+		return SW_NOT_SUPPORTED;
+
+	return qce2204_ppe_port_mcast_priority_class_set(netdev, priority,
+							 queue_class) ?
+		SW_FAIL : SW_OK;
+#else
+	return SW_NOT_SUPPORTED;
+#endif
+}
+
+sw_error_t
+adpt_httppe_ucast_priority_class_set(a_uint32_t dev_id,
+				     a_uint8_t profile,
+				     a_uint8_t priority,
+				     a_uint8_t class)
+{
+#if IS_ENABLED(CONFIG_NET_DSA_QCE2204)
+	struct qca_phy_priv *priv;
+	struct net_device *netdev;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	priv = ssdk_phy_priv_data_get(dev_id);
+	if (!priv)
+		return SW_NOT_SUPPORTED;
+
+	netdev = adpt_httppe_any_netdev_get(priv);
+	if (!netdev)
+		return SW_NOT_SUPPORTED;
+
+	return qce2204_ppe_ucast_priority_class_set(netdev, profile,
+						    priority, class) ?
+		SW_FAIL : SW_OK;
+#else
+	return SW_NOT_SUPPORTED;
+#endif
 }
