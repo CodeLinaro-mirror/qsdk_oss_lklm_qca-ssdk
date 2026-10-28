@@ -302,7 +302,9 @@ union port_fc_status_u {
 /*[register] DROP_CNT*/
 #define DROP_CNT
 #define DROP_CNT_ADDRESS 0x24
-#if defined(JHPPE)
+#if defined(BLMPPE)
+#define DROP_CNT_NUM     10
+#elif defined(JHPPE)
 #define DROP_CNT_NUM     9
 #elif defined(MRPPE)
 #define DROP_CNT_NUM     4
@@ -441,7 +443,12 @@ struct appe_port_mux_ctrl {
 	a_uint32_t  port4_mac_sel:1;
 	a_uint32_t  port5_mac_sel:1;
 	a_uint32_t  port6_mac_sel:1;
+#if defined(BLMPPE)
+	a_uint32_t  port7_mac_sel:1;
+	a_uint32_t  _reserved1:17;
+#else
 	a_uint32_t  _reserved1:18;
+#endif
 };
 
 union appe_port_mux_ctrl_u {

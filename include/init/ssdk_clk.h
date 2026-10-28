@@ -143,6 +143,7 @@ enum uniphy_rst_type {
 #define PORT4_MAC_CLK		"port4_mac_clk"
 #define PORT5_MAC_CLK		"port5_mac_clk"
 #define PORT6_MAC_CLK		"port6_mac_clk"
+#define PORT7_MAC_CLK		"port7_mac_clk"
 #define NSS_PPE_CLK		"nss_ppe_clk"
 #define NSS_PPE_CFG_CLK	"nss_ppe_cfg_clk"
 #define NSSNOC_PPE_CLK		"nssnoc_ppe_clk"
@@ -197,6 +198,8 @@ enum uniphy_rst_type {
 #define NSS_PORT5_TX_CLK	"nss_port5_tx_clk"
 #define NSS_PORT6_RX_CLK	"nss_port6_rx_clk"
 #define NSS_PORT6_TX_CLK	"nss_port6_tx_clk"
+#define NSS_PORT7_RX_CLK       "nss_port7_rx_clk"
+#define NSS_PORT7_TX_CLK       "nss_port7_tx_clk"
 #define UNIPHY0_PORT1_RX_CLK	"uniphy0_port1_rx_clk"
 #define UNIPHY0_PORT1_TX_CLK	"uniphy0_port1_tx_clk"
 #define UNIPHY0_PORT2_RX_CLK	"uniphy0_port2_rx_clk"
@@ -243,6 +246,8 @@ enum unphy_clk_type {
 	NSS_PORT5_TX_CLK_E,
 	NSS_PORT6_RX_CLK_E,
 	NSS_PORT6_TX_CLK_E,
+	NSS_PORT7_RX_CLK_E,
+	NSS_PORT7_TX_CLK_E,
 	UNIPHY0_PORT1_RX_CLK_E,
 	UNIPHY0_PORT1_TX_CLK_E,
 	UNIPHY0_PORT2_RX_CLK_E,

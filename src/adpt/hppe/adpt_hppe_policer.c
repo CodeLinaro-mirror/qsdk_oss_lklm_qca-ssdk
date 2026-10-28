@@ -108,6 +108,7 @@ static inline a_uint32_t __adpt_ppe_acl_policer_max_num_get(a_uint32_t dev_id)
 	case APPE_TYPE:
 	case MRPPE_TYPE:
 	case JHPPE_TYPE:
+	case BLMPPE_TYPE:
 		num = 511;
 		break;
 	default:
@@ -1302,6 +1303,7 @@ static inline a_uint32_t __adpt_ppe_policer_min_timeslot_get(a_uint32_t dev_id)
 	case APPE_TYPE:
 	case MRPPE_TYPE:
 	case JHPPE_TYPE:
+	case BLMPPE_TYPE:
 		min = 1024;
 		break;
 	default:

@@ -380,7 +380,11 @@ union vp_tx_counter_tbl_reg_u {
 /*[register] MAC_ENABLE*/
 #define MAC_ENABLE
 #define MAC_ENABLE_ADDRESS 0x0
+#if defined(BLMPPE)
+#define MAC_ENABLE_NUM     7
+#else
 #define MAC_ENABLE_NUM     6
+#endif
 #define MAC_ENABLE_INC     0x200
 #define MAC_ENABLE_TYPE    REG_TYPE_RW
 #define MAC_ENABLE_DEFAULT 0x10
@@ -428,7 +432,11 @@ union mac_enable_u {
 /*[register] MAC_SPEED*/
 #define MAC_SPEED
 #define MAC_SPEED_ADDRESS 0x4
+#if defined(BLMPPE)
+#define MAC_SPEED_NUM     7
+#else
 #define MAC_SPEED_NUM     6
+#endif
 #define MAC_SPEED_INC     0x200
 #define MAC_SPEED_TYPE    REG_TYPE_RW
 #define MAC_SPEED_DEFAULT 0x0
@@ -451,7 +459,11 @@ union mac_speed_u {
 /*[register] MAC_CTRL2*/
 #define MAC_CTRL2
 #define MAC_CTRL2_ADDRESS 0x18
+#if defined(BLMPPE)
+#define MAC_CTRL2_NUM     7
+#else
 #define MAC_CTRL2_NUM     6
+#endif
 #define MAC_CTRL2_INC     0x200
 #define MAC_CTRL2_TYPE    REG_TYPE_RW
 #define MAC_CTRL2_DEFAULT 0x271c40
@@ -516,7 +528,11 @@ union mac_ctrl2_u {
 /*[register] MAC_DBG_CTRL*/
 #define MAC_DBG_CTRL
 #define MAC_DBG_CTRL_ADDRESS 0x1c
+#if defined(BLMPPE)
+#define MAC_DBG_CTRL_NUM     7
+#else
 #define MAC_DBG_CTRL_NUM     6
+#endif
 #define MAC_DBG_CTRL_INC     0x200
 #define MAC_DBG_CTRL_TYPE    REG_TYPE_RW
 #define MAC_DBG_CTRL_DEFAULT 0x800701040
@@ -565,7 +581,11 @@ union mac_dbg_ctrl_u {
 /*[register] MAC_DBG_ADDR*/
 #define MAC_DBG_ADDR
 #define MAC_DBG_ADDR_ADDRESS 0x20
+#if defined(BLMPPE)
+#define MAC_DBG_ADDR_NUM     7
+#else
 #define MAC_DBG_ADDR_NUM     6
+#endif
 #define MAC_DBG_ADDR_INC     0x200
 #define MAC_DBG_ADDR_TYPE    REG_TYPE_RW
 #define MAC_DBG_ADDR_DEFAULT 0x0
@@ -588,7 +608,11 @@ union mac_dbg_addr_u {
 /*[register] MAC_DBG_DATA*/
 #define MAC_DBG_DATA
 #define MAC_DBG_DATA_ADDRESS 0x24
+#if defined(BLMPPE)
+#define MAC_DBG_DATA_NUM     7
+#else
 #define MAC_DBG_DATA_NUM     6
+#endif
 #define MAC_DBG_DATA_INC     0x200
 #define MAC_DBG_DATA_TYPE    REG_TYPE_RO
 #define MAC_DBG_DATA_DEFAULT 0x0
@@ -610,7 +634,11 @@ union mac_dbg_data_u {
 /*[register] MAC_JUMBO_SIZE*/
 #define MAC_JUMBO_SIZE
 #define MAC_JUMBO_SIZE_ADDRESS 0x30
+#if defined(BLMPPE)
+#define MAC_JUMBO_SIZE_NUM     7
+#else
 #define MAC_JUMBO_SIZE_NUM     6
+#endif
 #define MAC_JUMBO_SIZE_INC     0x200
 #define MAC_JUMBO_SIZE_TYPE    REG_TYPE_RW
 #define MAC_JUMBO_SIZE_DEFAULT 0x271c

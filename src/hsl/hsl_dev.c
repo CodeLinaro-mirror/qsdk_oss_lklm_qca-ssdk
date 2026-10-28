@@ -56,7 +56,8 @@ static const ppe_module_addr_pair ppe_base_addrs_table[] = {
 
 #define IS_APPE_OR_MRPPE(version) ((version) == QCA_VER_APPE || (version) == QCA_VER_MRPPE)
 #define IS_HMSPPE_JHPPE_OR_HTTPPE(version) \
-    ((version) == QCA_VER_HMSPPE || (version) == QCA_VER_JHPPE || (version) == QCA_VER_HTTPPE)
+    ((version) == QCA_VER_HMSPPE || (version) == QCA_VER_JHPPE || \
+     (version) == QCA_VER_HTTPPE || (version) == QCA_VER_BLMPPE)
 
 a_uint32_t hsl_ppe_module_base_get(a_uint32_t dev_id, a_uint32_t ppe_reg_module)
 {
@@ -201,6 +202,7 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
             break;
 	case CHIP_HTTPPE:
 	case CHIP_HMSPPE:
+	case CHIP_BLMPPE:
 	case CHIP_JHPPE:
         case CHIP_MRPPE:
         case CHIP_APPE:
@@ -287,6 +289,9 @@ hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
             break;
         case CHIP_HTTPPE:
             aos_mem_copy(ssdk_cfg->chip_type, "httppe", sizeof("httppe"));
+            break;
+        case CHIP_BLMPPE:
+            aos_mem_copy(ssdk_cfg->chip_type, "blmppe", sizeof("blmppe"));
             break;
         case CHIP_SCOMPHY:
 #ifdef MP

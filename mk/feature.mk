@@ -84,16 +84,16 @@ IN_MACBLOCK=FALSE
 #############################################
 #        Platform Special Features          #
 #############################################
-ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq53xx ipq54xx ipq95xx ipq807x ipq60xx))
+ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq56xx ipq53xx ipq54xx ipq95xx ipq807x ipq60xx))
 	PTP_FEATURE=enable
 endif
 
-ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq54xx ipq53xx ipq95xx ipq60xx))
+ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq56xx ipq54xx ipq53xx ipq95xx ipq60xx))
 	MHT_ENABLE=enable
 	HTTPPE_ENABLE=enable
 endif
 
-ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq54xx ipq53xx ipq807x ipq60xx ipq50xx))
+ifeq ($(SoC),$(filter $(SoC),ipq96xx ipq52xx ipq56xx ipq54xx ipq53xx ipq807x ipq60xx ipq50xx))
 	ISISC_ENABLE=enable
 endif
 
@@ -104,7 +104,7 @@ ifeq (APPE, $(CHIP_TYPE))
 	IN_AQUANTIA_PHY=TRUE
 	IN_SFP_PHY=TRUE
 	IN_SFP=TRUE
-else ifneq (, $(filter JHPPE HMSPPE MRPPE MPPE, $(CHIP_TYPE)))
+else ifneq (, $(filter BLMPPE JHPPE HMSPPE MRPPE MPPE, $(CHIP_TYPE)))
 	ifeq ($(LOWMEM_FLASH), enable)
 		IN_SFP_PHY=TRUE
 		IN_SFP=TRUE
@@ -134,7 +134,7 @@ endif
 #############################################
 # SDK Features According To Switch Chip     #
 #############################################
-ifneq (, $(filter JHPPE HMSPPE MRPPE MPPE APPE HPPE CPPE ALL_CHIP, $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE JHPPE HMSPPE MRPPE MPPE APPE HPPE CPPE ALL_CHIP, $(CHIP_TYPE)))
 	IN_FLOW=TRUE
 	IN_RSS_HASH=TRUE
 	IN_QM=TRUE
@@ -205,8 +205,8 @@ ifeq ($(MINI_SSDK), enable)
 	IN_SFP=FALSE
 	IN_PTP=FALSE
 
-	#disable modules for MINI HPPE/CPPE/APPE/MPPE/MRPPE/HMSPPE/JHPPE
-	ifneq (, $(filter JHPPE HMSPPE MRPPE MPPE APPE HPPE CPPE, $(CHIP_TYPE)))
+	#disable modules for MINI HPPE/CPPE/APPE/MPPE/MRPPE/HMSPPE/JHPPE/BLMPPE
+	ifneq (, $(filter BLMPPE JHPPE HMSPPE MRPPE MPPE APPE HPPE CPPE, $(CHIP_TYPE)))
 		IN_NAT=FALSE
 		IN_COSMAP=FALSE
 		IN_RATE=FALSE
@@ -273,7 +273,7 @@ ifeq (MP, $(CHIP_TYPE))
 	IN_CTRLPKT=TRUE
 endif
 
-ifneq (, $(filter JHPPE HMSPPE MRPPE MPPE APPE , $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE JHPPE HMSPPE MRPPE MPPE APPE , $(CHIP_TYPE)))
 	IN_VPORT=TRUE
 	IN_TUNNEL=TRUE
 	IN_VXLAN=TRUE
@@ -288,23 +288,23 @@ ifneq (, $(filter JHPPE HMSPPE MRPPE MPPE APPE , $(CHIP_TYPE)))
 	endif
 endif
 
-ifneq (, $(filter JHPPE HMSPPE MRPPE MPPE , $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE JHPPE HMSPPE MRPPE MPPE , $(CHIP_TYPE)))
 	IN_ATHTAG=TRUE
 endif
 
-ifneq (, $(filter JHPPE HMSPPE MRPPE, $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE JHPPE HMSPPE MRPPE, $(CHIP_TYPE)))
 	IN_PKTEDIT=TRUE
 endif
 
-ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE JHPPE HMSPPE, $(CHIP_TYPE)))
 	IN_SAMPL=TRUE
 endif
 
-ifneq (, $(filter HMSPPE, $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE HMSPPE, $(CHIP_TYPE)))
 	IN_PON=TRUE
 endif
 
-ifneq (, $(filter JHPPE HMSPPE, $(CHIP_TYPE)))
+ifneq (, $(filter BLMPPE JHPPE HMSPPE, $(CHIP_TYPE)))
 	IN_PON_PM=TRUE
 endif
 

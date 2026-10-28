@@ -1444,6 +1444,8 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 
 	switch (chip_type) {
 		case JHPPE_TYPE:
+		case HMSPPE_TYPE:
+		case BLMPPE_TYPE:
 			ceiling = 1200;
 			weight = 7;
 			resume_offset = 36;
@@ -1451,12 +1453,6 @@ adpt_ppe_qm_threshold_reset(a_uint32_t dev_id, a_uint32_t queue_id)
 			break;
 		case HTTPPE_TYPE:
 			ceiling = 3200;
-			weight = 7;
-			resume_offset = 36;
-			green_max = 250;
-			break;
-		case HMSPPE_TYPE:
-			ceiling = 1200;
 			weight = 7;
 			resume_offset = 36;
 			green_max = 250;
@@ -1678,6 +1674,7 @@ sw_error_t adpt_hppe_qm_init(a_uint32_t dev_id)
 #if defined(HTTPPE)
 	if (adpt_ppe_type_get(dev_id) == JHPPE_TYPE ||
 	    adpt_ppe_type_get(dev_id) == HMSPPE_TYPE ||
+	    adpt_ppe_type_get(dev_id) == BLMPPE_TYPE ||
 	    adpt_ppe_type_get(dev_id) == HTTPPE_TYPE) {
 		p_adpt_api->adpt_qm_mcast_enqueue_ctrl_get = adpt_httppe_qm_mcast_enqueue_ctrl_get;
 		if (adpt_ppe_type_get(dev_id) == HTTPPE_TYPE)

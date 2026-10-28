@@ -36,15 +36,18 @@ sw_error_t qca_hmsppe_omci_enq_vp_init(a_uint32_t dev_id, a_uint8_t enq_vp);
 #define HMSPPE_PORT_SHAPER_TIMESLOT_DFT     8
 #define JHPPE_PORT_SHAPER_TIMESLOT_DFT      9
 #define HTTPPE_PORT_SHAPER_TIMESLOT_DFT     6
+#define BLMPPE_PORT_SHAPER_TIMESLOT_DFT     10
 #define HMSPPE_QUEUE_SHAPER_TIMESLOT_DFT    429*2
 #define JHPPE_QUEUE_SHAPER_TIMESLOT_DFT     462*2
 #define HTTPPE_QUEUE_SHAPER_TIMESLOT_DFT    300*2
+#define BLMPPE_QUEUE_SHAPER_TIMESLOT_DFT    462*2
 #define APPE_POLICER_TIMESLOT_DFT           353*4
 #define MPPE_POLICER_TIMESLOT_DFT           200*2
 #define MRPPE_POLICER_TIMESLOT_DFT          375*4
 #define HMSPPE_POLICER_TIMESLOT_DFT         429*2
 #define JHPPE_POLICER_TIMESLOT_DFT          462*3
 #define HTTPPE_POLICER_TIMESLOT_DFT         250*2
+#define BLMPPE_POLICER_TIMESLOT_DFT         462*3
 #define POLICER_CFG_MAX_512                 512
 #define POLICER_CFG_MAX_128                 128
 #define POLICER_HEAD                        0
@@ -54,4 +57,3 @@ sw_error_t qca_hmsppe_omci_enq_vp_init(a_uint32_t dev_id, a_uint8_t enq_vp);
 }
 #endif                          /* __cplusplus */
 #endif                          /* _SSDK_APPE_H */
-

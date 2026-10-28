@@ -400,6 +400,11 @@ ifneq (,$(findstring JHPPE, $(SUPPORT_CHIP)))
   MODULE_CFLAG += -DJHPPE
 endif
 
+ifneq (,$(findstring BLMPPE, $(SUPPORT_CHIP)))
+  MODULE_CFLAG += -DBLMPPE
+  MODULE_CFLAG += -DSSDK_RAW_CLOCK
+endif
+
 ifneq (,$(findstring MHT, $(SUPPORT_CHIP)))
   MODULE_INC   += -I$(PRJ_PATH)/include/hsl/mht
   MODULE_CFLAG += -DMHT

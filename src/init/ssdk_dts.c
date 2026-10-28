@@ -974,7 +974,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		phy_features = 0;
 		of_property_read_u32(port_node, "phy_address", &phy_addr);
 		if (phy_mode == PHY_INTERFACE_MODE_INTERNAL &&
-			of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx")) {
+			(of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx") ||
+			 of_device_is_compatible(switch_node, "qcom,ess-switch-ipq56xx"))) {
 			struct mii_bus *mdio_ahb_bus = NULL;
 
 			mdio_ahb_bus = mdio_find_bus(MDIO_AHB_BUS_NAME);
@@ -1583,6 +1584,7 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq54xx") ||
 		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq96xx") ||
 		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq52xx") ||
+		of_device_is_compatible(switch_node, "qcom,ess-switch-ipq56xx") ||
 		of_device_is_compatible(switch_node, "qcom,ess-switch-qce22xx")) {
 		/* HPPE chip */
 		a_uint32_t mode = 0;
