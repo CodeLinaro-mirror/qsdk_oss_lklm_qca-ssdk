@@ -1746,11 +1746,31 @@ static void ssdk_dsa_intf_register(struct net_device *dev)
 		return;
 	}
 
+	{
+		struct dsa_port *dp = dsa_port_from_netdev(dev);
+		if (dp && dp->index < SW_MAX_NR_PORT)
+			priv->ports[dp->index].netdev = dev;
+	}
+
 	/* Initialization for QCE2204-DSA uninitialized modules */
 	if (ssdk_httppe_init_with_dsa(priv)){
 		SSDK_ERROR("HTTPPE Initializing for QCE DSA failed.\n");
 		return;
 	}
+}
+
+static void ssdk_dsa_intf_unregister(struct net_device *dev)
+{
+	struct qca_phy_priv *priv = ssdk_get_priv_with_dsa_dev(dev);
+	struct dsa_port *dp;
+
+	if (!priv)
+		return;
+
+	dp = dsa_port_from_netdev(dev);
+	if (dp && dp->index < SW_MAX_NR_PORT &&
+	    priv->ports[dp->index].netdev == dev)
+		priv->ports[dp->index].netdev = NULL;
 }
 
 static int ssdk_dsa_event_nb(struct notifier_block *unused,
@@ -2224,6 +2244,12 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 				ssdk_dsa_intf_register(dev);
 #endif
 			break;
+#if IS_ENABLED(CONFIG_NET_DSA)
+		case NETDEV_UNREGISTER:
+			if (dsa_slave_dev_check(dev))
+				ssdk_dsa_intf_unregister(dev);
+			break;
+#endif
 	}
 
 	return NOTIFY_DONE;
