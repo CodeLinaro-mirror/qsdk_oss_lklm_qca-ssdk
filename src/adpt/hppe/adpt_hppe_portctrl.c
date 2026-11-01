@@ -1796,6 +1796,7 @@ _adpt_hppe_xgmac_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 		break;
 #endif
 	case JHPPE_TYPE:
+	case BLMPPE_TYPE:
 #if defined(JHPPE)
 		rv = _adpt_jhppe_xgmac_chicken_set(dev_id, port_id, A_TRUE);
 		SW_RTN_ON_ERROR(rv);
@@ -1990,14 +1991,9 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id)
 		SW_RTN_ON_ERROR(rv);
 		rv = adpt_hppe_port_interface_mode_switch_port_clock_reset(dev_id, port_id);
 	}
-	if (adpt_chip_type_get(dev_id) == CHIP_APPE ||
-		adpt_chip_type_get(dev_id) == CHIP_MRPPE||
-		adpt_chip_type_get(dev_id) == CHIP_JHPPE ||
-		adpt_chip_type_get(dev_id) == CHIP_HMSPPE) {
-		rv = _adpt_appe_port_mux_mac_set(dev_id, port_id, port_type);
-	}
 
-	return rv;
+	return _adpt_appe_port_mux_mac_set(dev_id, port_id, port_type);
+
 }
 
 sw_error_t
@@ -4651,7 +4647,8 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 					priv->device_id, port_id);
 			}
 #ifdef HMSPPE
-			if (adpt_ppe_type_get(priv->device_id) == HMSPPE_TYPE) {
+			if (adpt_ppe_type_get(priv->device_id) == HMSPPE_TYPE ||
+			    adpt_ppe_type_get(priv->device_id) == BLMPPE_TYPE) {
 				rv = adpt_hmsppe_port_interface_clk_set(priv->device_id, port_id, A_FALSE);
 				if (rv != SW_OK) {
 					continue;
@@ -4797,7 +4794,8 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				adpt_hppe_uniphy_port_adapter_reset(priv->device_id, port_id);
 			}
 #ifdef HMSPPE
-			if (adpt_ppe_type_get(priv->device_id) == HMSPPE_TYPE) {
+			if (adpt_ppe_type_get(priv->device_id) == HMSPPE_TYPE ||
+			    adpt_ppe_type_get(priv->device_id) == BLMPPE_TYPE) {
 				rv = adpt_hmsppe_port_interface_clk_set(priv->device_id, port_id, A_TRUE);
 				if (rv != SW_OK) {
 					continue;

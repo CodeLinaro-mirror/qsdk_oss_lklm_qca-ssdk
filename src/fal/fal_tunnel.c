@@ -188,4 +188,12 @@ sw_error_t fal_tunnel_decap_miss_action_set(a_uint32_t dev_id, fal_tunnel_type_t
 sw_error_t fal_tunnel_decap_miss_action_get(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action)
     DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_decap_miss_action_get, dev_id, tunnel_type, miss_action)
 #endif
+sw_error_t fal_tunnel_app_type_set(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, a_uint32_t app_type)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_app_type_set, dev_id, tunnel_type, app_type)
+sw_error_t fal_tunnel_app_type_get(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, a_uint32_t *app_type)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_app_type_get, dev_id, tunnel_type, app_type)
+sw_error_t fal_tunnel_outer_lookup_set(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, a_bool_t enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_outer_lookup_set, dev_id, tunnel_type, enable)
+sw_error_t fal_tunnel_outer_lookup_get(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type, a_bool_t *enable)
+    DEFINE_FAL_FUNC_ADPT_EXPORT(tunnel_outer_lookup_get, dev_id, tunnel_type, enable)
 

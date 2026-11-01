@@ -33,6 +33,22 @@ sw_error_t
 adpt_jhppe_tunnel_decap_miss_action_get(a_uint32_t dev_id,
 		fal_tunnel_type_t tunnel_type, fal_tunnel_decap_miss_action_t *miss_action);
 #endif
+
+sw_error_t
+adpt_jhppe_tunnel_app_type_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_uint32_t app_type);
+
+sw_error_t
+adpt_jhppe_tunnel_app_type_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_uint32_t *app_type);
+
+sw_error_t
+adpt_jhppe_tunnel_outer_lookup_set(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_bool_t enable);
+
+sw_error_t
+adpt_jhppe_tunnel_outer_lookup_get(a_uint32_t dev_id,
+		fal_tunnel_type_t tunnel_type, a_bool_t *enable);
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

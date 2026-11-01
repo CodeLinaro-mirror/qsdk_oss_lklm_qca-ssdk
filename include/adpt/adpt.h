@@ -1553,6 +1553,18 @@ typedef sw_error_t
 typedef sw_error_t
 (*adpt_tunnel_decap_miss_action_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
 		fal_tunnel_decap_miss_action_t *miss_action);
+typedef sw_error_t
+(*adpt_tunnel_app_type_set_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_uint32_t app_type);
+typedef sw_error_t
+(*adpt_tunnel_app_type_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_uint32_t *app_type);
+typedef sw_error_t
+(*adpt_tunnel_outer_lookup_set_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_bool_t enable);
+typedef sw_error_t
+(*adpt_tunnel_outer_lookup_get_func)(a_uint32_t dev_id, fal_tunnel_type_t tunnel_type,
+		a_bool_t *enable);
 
 /*tunnel program*/
 typedef sw_error_t (*adpt_tunnel_program_entry_add_func)(a_uint32_t dev_id,
@@ -2463,6 +2475,10 @@ typedef struct
 	adpt_tunnel_tuple_entry_getnext_func adpt_tunnel_tuple_entry_getnext;
 	adpt_tunnel_decap_miss_action_set_func adpt_tunnel_decap_miss_action_set;
 	adpt_tunnel_decap_miss_action_get_func adpt_tunnel_decap_miss_action_get;
+	adpt_tunnel_app_type_set_func adpt_tunnel_app_type_set;
+	adpt_tunnel_app_type_get_func adpt_tunnel_app_type_get;
+	adpt_tunnel_outer_lookup_set_func adpt_tunnel_outer_lookup_set;
+	adpt_tunnel_outer_lookup_get_func adpt_tunnel_outer_lookup_get;
 
 	/*vxlan*/
 	adpt_vxlan_entry_add_func adpt_vxlan_entry_add;
@@ -2608,6 +2624,7 @@ typedef enum {
 	JHPPE_TYPE,
 	HMSPPE_TYPE,
 	HTTPPE_TYPE,
+	BLMPPE_TYPE,
 	MAX_PPE_TYPE,
 } adpt_ppe_type_t;
 
@@ -2794,10 +2811,13 @@ adpt_forward_action_convert(fal_fwd_cmd_t *fwd_cmd, a_uint32_t *value, a_bool_t 
 #define ADPT_JHPPE_FREQUENCY     462  /*MHZ*/
 #define ADPT_HMSPPE_FREQUENCY    429  /*MHZ*/
 #define ADPT_HTTPPE_FREQUENCY    250  /*MHZ*/
+#define ADPT_BLMPPE_FREQUENCY    462  /*MHZ*/
+
 /* Maximum valid physical port ID (inclusive) per chip type */
 #define JHPPE_PORT_ID_MAX   8   /* ports 0..8, 9 ports  (25G)    */
 #define MPPE_PORT_ID_MAX    6   /* ports 0..6, 7 ports  (Miami)  */
 #define HTTPPE_PORT_ID_MAX  5   /* ports 0..5, 6 ports  (HTTPPE) */
+#define BLMPPE_PORT_ID_MAX  9   /* ports 0..9, 10 ports (BLMPPE) */
 #define HPPE_PORT_ID_MAX    7   /* ports 0..7, 8 ports  (default: HPPE/APPE/MRPPE/HMSPPE) */
 
 adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id);

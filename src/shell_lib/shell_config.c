@@ -1431,6 +1431,8 @@ struct sub_cmd_des_t g_tunnel_des[] =
 #ifdef JHPPE
     {"TupleEntry", "set", SW_API_TUNNEL_TUPLE_ENTRY_ADD, NULL},
     {"DecapMissAction", "set", SW_API_TUNNEL_DECAP_MISS_ACTION_SET, NULL},
+    {"AppType", "set", SW_API_TUNNEL_APP_TYPE_SET, NULL},
+    {"OuterLookup", "set", SW_API_TUNNEL_OUTER_LOOKUP_SET, NULL},
 #endif
     {NULL, NULL, 0, NULL},/*end of desc*/
 };

@@ -267,6 +267,16 @@ static const char *tunnel_decapmissaction[] = {
 	"service_code_en",
 	"service_code",
 };
+
+static const char *tunnel_apptype[] = {
+	"tunnel_type",
+	"app_type",
+};
+
+static const char *tunnel_outerlookup[] = {
+	"tunnel_type",
+	"outer_lookup_en",
+};
 #endif
 
 int parse_tunnel(a_uint32_t dev_id, const char *command_name, struct switch_val *val)
@@ -330,6 +340,12 @@ int parse_tunnel(a_uint32_t dev_id, const char *command_name, struct switch_val 
 	} else if (!strcmp(command_name, "DecapMissAction")) {
 		rv = parse_uci_option(val, tunnel_decapmissaction,
 				ARRAY_SIZE(tunnel_decapmissaction));
+	} else if (!strcmp(command_name, "AppType")) {
+		rv = parse_uci_option(val, tunnel_apptype,
+				ARRAY_SIZE(tunnel_apptype));
+	} else if (!strcmp(command_name, "OuterLookup")) {
+		rv = parse_uci_option(val, tunnel_outerlookup,
+				ARRAY_SIZE(tunnel_outerlookup));
 #endif
 	}
 	return rv;

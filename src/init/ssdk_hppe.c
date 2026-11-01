@@ -269,6 +269,9 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 		case MPPE_TYPE:
 			group_buf = 360;
 			break;
+		case BLMPPE_TYPE:
+			group_buf = 2550;
+			break;
 		default:
 			SSDK_ERROR("Unsupported chip type: %d\n", chip_type);
 			return SW_OUT_OF_RANGE;
@@ -296,6 +299,7 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 			case MRPPE_TYPE:
 			case JHPPE_TYPE:
 			case HMSPPE_TYPE:
+			case BLMPPE_TYPE:
 				if (i < PPE_BM_PHY_PORT_OFFSET) {
 					prealloc_buf = 0;
 					react_buf = 100;
@@ -354,6 +358,7 @@ qca_hppe_bm_hw_init(a_uint32_t dev_id)
 				break;
 			case JHPPE_TYPE:
 			case HMSPPE_TYPE:
+			case BLMPPE_TYPE:
 				share_ceiling = 250;
 				phyport_share_ceiling = 1300;
 				cfg.resume_min_thresh = 0;
@@ -439,6 +444,9 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	case HMSPPE_TYPE:
 		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT7);
 		break;
+	case BLMPPE_TYPE:
+		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT9);
+		break;
 	default:
 		qbase = 128;
 		break;
@@ -462,6 +470,9 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	case APPE_TYPE:
 	case JHPPE_TYPE:
 		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT7);
+		break;
+	case BLMPPE_TYPE:
+		qbase = ssdk_ucast_queue_start_get(dev_id, SSDK_PHYSICAL_PORT8);
 		break;
 	default:
 		qbase = 252;
@@ -678,6 +689,7 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 			total_buf = 4000;
 			break;
 		case HMSPPE_TYPE:
+		case BLMPPE_TYPE:
 			total_buf = 2800;
 			break;
 		case MRPPE_TYPE:

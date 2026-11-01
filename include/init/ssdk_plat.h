@@ -195,6 +195,7 @@ enum {
 	QCA_VER_JHPPE = 0x30,
 	QCA_VER_HMSPPE = 0x40,
 	QCA_VER_HTTPPE = 0x50,
+	QCA_VER_BLMPPE = 0x60,
 	QCA_VER_SCOMPHY = 0xEE
 };
 /*qca808x_end*/
@@ -244,6 +245,7 @@ enum {
 #define SSDK_PHYSICAL_PORT6             6
 #define SSDK_PHYSICAL_PORT7             7
 #define SSDK_PHYSICAL_PORT8		8
+#define SSDK_PHYSICAL_PORT9		9
 /*qca808x_end*/
 #define SSDK_GLOBAL_INT0_ACL_INI_INT        (1<<29)
 #define SSDK_GLOBAL_INT0_LOOKUP_INI_INT     (1<<28)
